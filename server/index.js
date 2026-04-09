@@ -20,9 +20,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' 
-      ? "https://dm-automation-app.vercel.app" 
-      : "*", 
+    origin: "*", 
     methods: ["GET", "POST"]
   }
 });
@@ -30,10 +28,14 @@ const io = new Server(httpServer, {
 app.use(helmet());
 app.use(compression());
 app.use(morgan('combined'));
+// Request Logging for debugging CORS
+app.use((req, res, next) => {
+  console.log(`📡 [${new Date().toISOString()}] ${req.method} ${req.url} - Origin: ${req.headers.origin || 'No Origin'}`);
+  next();
+});
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? "https://dm-automation-app.vercel.app" 
-    : "*",
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));

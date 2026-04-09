@@ -34,7 +34,8 @@ export default function Signup() {
         setError(data.message || 'Signup failed');
       }
     } catch (err) {
-      setError('Something went wrong. Is the server running?');
+      console.error("Signup Error:", err);
+      setError(`Connection failed: ${err.message}. Check browser console for details.`);
     } finally {
       setLoading(false);
     }
@@ -71,7 +72,8 @@ export default function Signup() {
         setError(data.message || 'Google login failed');
       }
     } catch (err) {
-      setError('Google Auth failed');
+      console.error("Google Auth Error:", err);
+      setError(`Google Auth failed: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -110,7 +112,8 @@ export default function Signup() {
         setError(data.message || 'Facebook login failed');
       }
     } catch (err) {
-      setError('Facebook Auth failed');
+      console.error("Facebook Auth Error:", err);
+      setError(`Facebook Auth failed: ${err.message}`);
     } finally {
       setLoading(false);
     }

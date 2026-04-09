@@ -401,7 +401,8 @@ export default function Login() {
         setError(data.message || 'Login failed');
       }
     } catch (err) {
-      setError('Something went wrong. Is the server running?');
+      console.error("Login Error:", err);
+      setError(`Connection failed: ${err.message}. Check browser console for details.`);
     } finally {
       setLoading(false);
     }
@@ -445,7 +446,10 @@ export default function Login() {
       const data = await res.json();
       if (res.ok) { login(data.user, data.token); navigate('/dashboard'); }
       else { setError(data.message || 'Google login failed'); }
-    } catch { setError('Google Auth failed'); }
+    } catch (err) {
+      console.error("Google Auth Error:", err);
+      setError(`Google Auth failed: ${err.message}`);
+    }
     finally { setLoading(false); }
   };
 
@@ -471,7 +475,10 @@ export default function Login() {
       const data = await res.json();
       if (res.ok) { login(data.user, data.token); navigate('/dashboard'); }
       else { setError(data.message || 'Facebook login failed'); }
-    } catch { setError('Facebook Auth failed'); }
+    } catch (err) {
+      console.error("Facebook Auth Error:", err);
+      setError(`Facebook Auth failed: ${err.message}`);
+    }
     finally { setLoading(false); }
   };
 
