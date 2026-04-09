@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ShieldCheck, Instagram, Facebook, MessageSquare, Key, MapPin, Save, Info, CheckCircle, XCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../config';
 
 export default function Settings() {
   const { user } = useAuth();
@@ -26,7 +27,7 @@ export default function Settings() {
 
   useEffect(() => {
     const token = localStorage.getItem('insta_agent_token');
-    fetch('http://localhost:5000/api/settings', {
+    fetch(`${API_BASE_URL}/api/settings`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -45,7 +46,7 @@ export default function Settings() {
 
     try {
       const token = localStorage.getItem('insta_agent_token');
-      const res = await fetch('http://localhost:5000/api/settings', {
+      const res = await fetch(`${API_BASE_URL}/api/settings`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

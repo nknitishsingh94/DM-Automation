@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Bot, LogIn, Mail, Lock, Info, Facebook } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL, GOOGLE_CLIENT_ID } from '../config';
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -387,7 +388,7 @@ export default function Login() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -410,7 +411,7 @@ export default function Login() {
     const initGoogle = () => {
       if (window.google && document.getElementById("googleBtn")) {
         window.google.accounts.id.initialize({
-          client_id: "172282091381-3djv5rjg2mfdhid2o0i31ujss6hbsemb.apps.googleusercontent.com",
+          client_id: GOOGLE_CLIENT_ID,
           callback: handleGoogleResponse
         });
         window.google.accounts.id.renderButton(
@@ -436,7 +437,7 @@ export default function Login() {
   const handleGoogleResponse = async (response) => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/auth/google', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: response.credential })
@@ -462,7 +463,7 @@ export default function Login() {
   const processFacebookLogin = async (authResponse) => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/auth/facebook', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/facebook`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ accessToken: authResponse.accessToken, userId: authResponse.userID })

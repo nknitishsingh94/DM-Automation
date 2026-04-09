@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Bot, UserPlus, Mail, Lock, User, Info, Facebook } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL, GOOGLE_CLIENT_ID } from '../config';
 
 
 
@@ -19,7 +20,7 @@ export default function Signup() {
     setError('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/signup', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -43,7 +44,7 @@ export default function Signup() {
     /* Initialize Google Login */
     if (window.google) {
       window.google.accounts.id.initialize({
-        client_id: "172282091381-3djv5rjg2mfdhid2o0i31ujss6hbsemb.apps.googleusercontent.com",
+        client_id: GOOGLE_CLIENT_ID,
         callback: handleGoogleResponse
       });
       window.google.accounts.id.renderButton(
@@ -57,7 +58,7 @@ export default function Signup() {
   const handleGoogleResponse = async (response) => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/auth/google', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: response.credential })
@@ -96,7 +97,7 @@ export default function Signup() {
   const processFacebookLogin = async (authResponse) => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/auth/facebook', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/facebook`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ accessToken: authResponse.accessToken, userId: authResponse.userID })

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Activity, MessageCircle, RefreshCw, TrendingUp, Users, Crown, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 export default function Dashboard() {
   const [stats, setStats] = useState({ 
@@ -22,11 +23,11 @@ export default function Dashboard() {
       const headers = { 'Authorization': `Bearer ${token}` };
 
       try {
-        const statsRes = await fetch('http://localhost:5000/api/stats', { headers });
+        const statsRes = await fetch(`${API_BASE_URL}/api/stats`, { headers });
         const statsData = await statsRes.json();
         setStats(statsData);
 
-        const campaignsRes = await fetch('http://localhost:5000/api/campaigns', { headers });
+        const campaignsRes = await fetch(`${API_BASE_URL}/api/campaigns`, { headers });
         const campaignsData = await campaignsRes.json();
         setCampaigns(campaignsData);
       } catch (err) {

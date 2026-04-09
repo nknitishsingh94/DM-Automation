@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Check, X, Crown, Sparkles, MessageCircle, Smartphone, ShieldCheck, Zap, CreditCard, QrCode, ChevronLeft, Lock, Copy } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../config';
 
 export default function Subscription() {
   const { user } = useAuth();
@@ -44,7 +45,7 @@ export default function Subscription() {
     
     try {
       // 1. Create order on server
-      const response = await fetch('http://localhost:5000/api/payment/create-order', {
+      const response = await fetch(`${API_BASE_URL}/api/payment/create-order`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -66,7 +67,7 @@ export default function Subscription() {
         order_id: order.id,
         handler: async function (response) {
           // 3. Verify payment on server
-          const verifyRes = await fetch('http://localhost:5000/api/payment/verify-payment', {
+          const verifyRes = await fetch(`${API_BASE_URL}/api/payment/verify-payment`, {
             method: 'POST',
             headers: { 
               'Content-Type': 'application/json',

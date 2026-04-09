@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Zap, Plus, Trash2, Power, MessageCircle, AlertCircle, CheckCircle, Video, Link as LinkIcon } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 export default function Campaigns() {
   const [campaigns, setCampaigns] = useState([]);
@@ -11,7 +12,7 @@ export default function Campaigns() {
   const fetchCampaigns = async () => {
     const token = localStorage.getItem('insta_agent_token');
     try {
-      const res = await fetch('http://localhost:5000/api/campaigns', {
+      const res = await fetch(`${API_BASE_URL}/api/campaigns`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -31,7 +32,7 @@ export default function Campaigns() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('insta_agent_token');
-      const res = await fetch('http://localhost:5000/api/campaigns', {
+      const res = await fetch(`${API_BASE_URL}/api/campaigns`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -54,7 +55,7 @@ export default function Campaigns() {
     const newStatus = currentStatus === 'Active' ? 'Paused' : 'Active';
     const token = localStorage.getItem('insta_agent_token');
     try {
-      const res = await fetch(`http://localhost:5000/api/campaigns/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/campaigns/${id}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
@@ -72,7 +73,7 @@ export default function Campaigns() {
     if (!window.confirm("Are you sure you want to delete this campaign?")) return;
     const token = localStorage.getItem('insta_agent_token');
     try {
-      const res = await fetch(`http://localhost:5000/api/campaigns/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/campaigns/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

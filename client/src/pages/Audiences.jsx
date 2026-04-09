@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Search, ChevronLeft, Calendar, MessageCircle, Activity } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 export default function Audiences() {
   const [audiences, setAudiences] = useState([]);
@@ -12,7 +13,7 @@ export default function Audiences() {
     const fetchAudiences = async () => {
       const token = localStorage.getItem('insta_agent_token');
       try {
-        const res = await fetch('http://localhost:5000/api/messages', {
+        const res = await fetch(`${API_BASE_URL}/api/messages`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const messages = await res.json();

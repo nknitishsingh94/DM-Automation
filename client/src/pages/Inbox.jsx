@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { CheckCircle2, MoreHorizontal, Send, Trash2, Instagram, Facebook, MessageSquare, Video, ExternalLink, ChevronLeft } from 'lucide-react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../config';
 
 
 export default function Inbox() {
@@ -27,7 +28,7 @@ export default function Inbox() {
     const fetchMessages = async () => {
       const token = localStorage.getItem('insta_agent_token');
       try {
-        const res = await fetch('http://localhost:5000/api/messages', {
+        const res = await fetch(`${API_BASE_URL}/api/messages`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -41,7 +42,7 @@ export default function Inbox() {
     fetchMessages();
 
     // Socket Setup
-    const socket = io('http://localhost:5000');
+    const socket = io(API_BASE_URL);
 
     if (user && user.id) {
       socket.emit('join_room', user.id);
@@ -84,7 +85,7 @@ export default function Inbox() {
       }
 
       console.log("Sending message...", msgData);
-      const res = await fetch('http://localhost:5000/api/messages', {
+      const res = await fetch(`${API_BASE_URL}/api/messages`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -127,7 +128,7 @@ export default function Inbox() {
     if (!window.confirm("Delete this message?")) return;
     const token = localStorage.getItem('insta_agent_token');
     try {
-      const res = await fetch(`http://localhost:5000/api/messages/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/messages/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

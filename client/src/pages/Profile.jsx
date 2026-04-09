@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Info, Save, User as UserIcon } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 export default function Profile() {
   const { user, login } = useAuth();
@@ -18,7 +19,7 @@ export default function Profile() {
 
     try {
       const token = localStorage.getItem('insta_agent_token');
-      const res = await fetch('http://localhost:5000/api/auth/profile', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
