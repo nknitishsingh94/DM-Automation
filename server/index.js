@@ -198,21 +198,27 @@ app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
     const { status } = req.body;
     const campaign = await Campaign.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user.userId },
+      { _id: req.params.id, userId: new mongoose.Types.ObjectId(req.user.userId) },
       { status },
       { new: true }
     );
     res.json(campaign);
   } catch (err) {
+    console.error("❌ Error updating campaign:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
 
 app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
-    await Campaign.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+    const result = await Campaign.findOneAndDelete({ 
+      _id: req.params.id, 
+      userId: new mongoose.Types.ObjectId(req.user.userId) 
+    });
+    if (!result) return res.status(404).json({ message: "Campaign not found or unauthorized" });
     res.json({ message: 'Campaign deleted' });
   } catch (err) {
+    console.error("❌ Error deleting campaign:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
