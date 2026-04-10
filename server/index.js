@@ -211,15 +211,23 @@ app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
+    const campaignId = new mongoose.Types.ObjectId(req.params.id);
+    const userId = new mongoose.Types.ObjectId(req.user.userId);
+    
     const result = await Campaign.findOneAndDelete({ 
-      _id: req.params.id, 
-      userId: new mongoose.Types.ObjectId(req.user.userId) 
+      _id: campaignId, 
+      userId: userId 
     });
-    if (!result) return res.status(404).json({ message: "Campaign not found or unauthorized" });
-    res.json({ message: 'Campaign deleted' });
+    
+    if (!result) {
+      console.warn(`⚠️ Delete failed: Campaign ${req.params.id} not found for user ${req.user.userId}`);
+      return res.status(404).json({ message: "Campaign not found or unauthorized" });
+    }
+    
+    res.json({ message: 'Campaign deleted successfully' });
   } catch (err) {
     console.error("❌ Error deleting campaign:", err.message);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to delete campaign: " + err.message });
   }
 });
 
