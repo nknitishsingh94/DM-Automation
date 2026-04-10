@@ -280,6 +280,16 @@ app.post('/api/messages', verifyToken, async (req, res) => {
         if (match.requireFollow) {
           const isFollowing = await checkFollowerStatus(newMessage.platform, chatId);
           if (!isFollowing) {
+            const followPrompt = new Message({
+              userId: new mongoose.Types.ObjectId(req.user.id),
+              chatId: chatId || 'default',
+              sender: 'AI Agent',
+              text: match.unfollowedResponse || "Please follow our account first to unlock this automation!",
+              type: 'sent',
+              platform: newMessage.platform,
+              isAI: true,
+              timestamp: new Date()
+            });
             await followPrompt.save();
             io.to(req.user.id).emit('new_message', followPrompt);
             return res.json({ original: newMessage, reply: followPrompt, gated: true });
