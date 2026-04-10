@@ -169,8 +169,15 @@ app.get('/api/stats', verifyToken, async (req, res) => {
 
 // Campaigns API
 app.get('/api/campaigns', verifyToken, async (req, res) => {
-  const campaigns = await Campaign.find({ userId: req.user.id }).sort({ createdAt: -1 });
-  res.json(campaigns);
+  try {
+    const campaigns = await Campaign.find({ 
+      userId: new mongoose.Types.ObjectId(req.user.id) 
+    }).sort({ createdAt: -1 });
+    res.json(campaigns);
+  } catch (err) {
+    console.error("❌ Error fetching campaigns:", err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.post('/api/campaigns', verifyToken, async (req, res) => {
