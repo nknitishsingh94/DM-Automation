@@ -46,58 +46,60 @@ function Sidebar({ isMobileOpen, onClose }) {
             <X size={24} />
           </button>
         </div>
-      <nav className="nav-links">
-        <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-          <Home size={20} />
-          <span>Dashboard</span>
-        </NavLink>
-        <NavLink to="/inbox" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-          <MessageSquare size={20} />
-          <span>Live Inbox</span>
-        </NavLink>
-        <NavLink to="/campaigns" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-          <Zap size={20} />
-          <span>Campaigns</span>
-        </NavLink>
-        <NavLink to="/audiences" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-          <Users size={20} />
-          <span>Audiences</span>
-        </NavLink>
-        <NavLink to="/settings" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-          <Settings size={20} />
-          <span>Settings</span>
-        </NavLink>
-      </nav>
+      <div className="sidebar-middle-scroll">
+        <nav className="nav-links">
+          <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <Home size={20} />
+            <span>Dashboard</span>
+          </NavLink>
+          <NavLink to="/inbox" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <MessageSquare size={20} />
+            <span>Live Inbox</span>
+          </NavLink>
+          <NavLink to="/campaigns" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <Zap size={20} />
+            <span>Campaigns</span>
+          </NavLink>
+          <NavLink to="/audiences" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <Users size={20} />
+            <span>Audiences</span>
+          </NavLink>
+          <NavLink to="/settings" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <Settings size={20} />
+            <span>Settings</span>
+          </NavLink>
+        </nav>
 
-      <div style={{ padding: '0 20px', marginBottom: '20px' }}>
-        <NavLink to="/upgrade" style={{ 
-          background: 'linear-gradient(135deg, #a855f7 0%, #d946ef 100%)',
-          padding: '20px',
-          borderRadius: '16px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-          textDecoration: 'none',
-          color: 'white',
-          boxShadow: '0 10px 20px rgba(168, 85, 247, 0.3)',
-          position: 'relative',
-          overflow: 'hidden',
-          transition: 'all 0.3s'
-        }} className="upgrade-card-hover">
-          <div style={{ position: 'absolute', top: '-10px', right: '-10px', opacity: 0.2 }}>
-            <Crown size={60} />
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Sparkles size={18} />
-            <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Pro Plan</span>
-          </div>
-          <div style={{ fontWeight: '700', fontSize: '1rem' }}>Upgrade to Pro</div>
-          <div style={{ fontSize: '0.75rem', opacity: 0.9 }}>Get Unlimited AI DMs & Multi-Platform Support.</div>
-        </NavLink>
+        <div style={{ padding: '0 20px', marginBottom: '20px' }}>
+          <NavLink to="/upgrade" style={{ 
+            background: 'linear-gradient(135deg, #a855f7 0%, #d946ef 100%)',
+            padding: '20px',
+            borderRadius: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            textDecoration: 'none',
+            color: 'white',
+            boxShadow: '0 10px 20px rgba(168, 85, 247, 0.3)',
+            position: 'relative',
+            overflow: 'hidden',
+            transition: 'all 0.3s'
+          }} className="upgrade-card-hover">
+            <div style={{ position: 'absolute', top: '-10px', right: '-10px', opacity: 0.2 }}>
+              <Crown size={60} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Sparkles size={18} />
+              <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Pro Plan</span>
+            </div>
+            <div style={{ fontWeight: '700', fontSize: '1rem' }}>Upgrade to Pro</div>
+            <div style={{ fontSize: '0.75rem', opacity: 0.9 }}>Get Unlimited AI DMs & Multi-Platform Support.</div>
+          </NavLink>
+        </div>
       </div>
 
       {user && (
-        <div style={{ padding: '20px', borderTop: '1px solid var(--border-subtle)' }}>
+        <div className="sidebar-footer">
           <NavLink to="/profile" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', padding: '8px', borderRadius: '8px', transition: 'var(--transition-fast)' }} className="nav-item">
             <div style={{ 
               width: '36px', 
