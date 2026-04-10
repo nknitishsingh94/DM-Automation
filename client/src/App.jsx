@@ -99,7 +99,34 @@ function Sidebar({ isMobileOpen, onClose }) {
       </div>
 
       {user && (
-        <div className="sidebar-footer">
+        <div className="sidebar-footer" style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
+          <NavLink to="/profile" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px', borderRadius: '8px', transition: 'var(--transition-fast)' }} className="nav-item">
+            <div style={{ 
+              width: '32px', 
+              height: '32px', 
+              borderRadius: '50%', 
+              background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontSize: '12px',
+              fontWeight: '600',
+              overflow: 'hidden',
+              border: '1px solid var(--border-subtle)',
+              flexShrink: 0
+            }}>
+              {user.profilePhoto ? (
+                <img src={user.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                user.username.charAt(0).toUpperCase()
+              )}
+            </div>
+            <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {user.username}
+            </div>
+          </NavLink>
+        </div>
+      )}
     </aside>
     </>
   );
