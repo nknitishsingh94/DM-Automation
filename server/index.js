@@ -132,19 +132,19 @@ const PORT = process.env.PORT || 5000;
 app.get('/api/stats', verifyToken, async (req, res) => {
   try {
     const totalDMs = await Campaign.aggregate([
-      { $match: { userId: new mongoose.Types.ObjectId(req.user.id) } },
+      { $match: { userId: new mongoose.Types.ObjectId(req.user.userId) } },
       { $group: { _id: null, total: { $sum: "$dmsSent" } } }
     ]);
-    const campaignsCount = await Campaign.countDocuments({ userId: req.user.id });
-    const messagesCount = await Message.countDocuments({ userId: req.user.id });
+    const campaignsCount = await Campaign.countDocuments({ userId: req.user.userId });
+    const messagesCount = await Message.countDocuments({ userId: req.user.userId });
     
-    const sentMessages = await Message.countDocuments({ userId: req.user.id, type: 'sent' });
-    const receivedMessages = await Message.countDocuments({ userId: req.user.id, type: 'received' });
-    const aiSentMessages = await Message.countDocuments({ userId: req.user.id, type: 'sent', isAI: true });
+    const sentMessages = await Message.countDocuments({ userId: req.user.userId, type: 'sent' });
+    const receivedMessages = await Message.countDocuments({ userId: req.user.userId, type: 'received' });
+    const aiSentMessages = await Message.countDocuments({ userId: req.user.userId, type: 'sent', isAI: true });
     
     // Fetch unique contacts and user plan
-    const uniqueContacts = await Message.distinct('chatId', { userId: req.user.id });
-    const userProfile = await User.findById(req.user.id);
+    const uniqueContacts = await Message.distinct('chatId', { userId: req.user.userId });
+    const userProfile = await User.findById(req.user.userId);
 
     let accuracy = 0;
     if (receivedMessages > 0) {
@@ -171,7 +171,7 @@ app.get('/api/stats', verifyToken, async (req, res) => {
 app.get('/api/campaigns', verifyToken, async (req, res) => {
   try {
     const campaigns = await Campaign.find({ 
-      userId: new mongoose.Types.ObjectId(req.user.id) 
+      userId: new mongoose.Types.ObjectId(req.user.userId) 
     }).sort({ createdAt: -1 });
     res.json(campaigns);
   } catch (err) {
@@ -184,7 +184,7 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
   try {
     const newCampaign = new Campaign({ 
       ...req.body, 
-      userId: new mongoose.Types.ObjectId(req.user.id) 
+      userId: new mongoose.Types.ObjectId(req.user.userId) 
     });
     await newCampaign.save();
     res.json(newCampaign);
@@ -198,7 +198,7 @@ app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
     const { status } = req.body;
     const campaign = await Campaign.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user.id },
+      { _id: req.params.id, userId: req.user.userId },
       { status },
       { new: true }
     );
@@ -210,7 +210,7 @@ app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
-    await Campaign.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    await Campaign.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
     res.json({ message: 'Campaign deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -221,7 +221,7 @@ app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
 app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
   try {
     const logs = await Message.find({ 
-      userId: req.user.id, 
+      userId: req.user.userId, 
       campaignId: req.params.id 
     }).sort({ timestamp: -1 });
     res.json(logs);
@@ -232,7 +232,7 @@ app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
 
 // Messages API (Inbox)
 app.get('/api/messages', verifyToken, async (req, res) => {
-  const messages = await Message.find({ userId: req.user.id }).sort({ timestamp: 1 });
+  const messages = await Message.find({ userId: req.user.userId }).sort({ timestamp: 1 });
   res.json(messages);
 });
 
@@ -241,13 +241,13 @@ app.post('/api/messages', verifyToken, async (req, res) => {
     const { sender, text, type, chatId, platform } = req.body;
     
     // Check for Free Plan Limit (30 Unique Contacts)
-    const userProfile = await User.findById(req.user.id);
+    const userProfile = await User.findById(req.user.userId);
     if (userProfile && userProfile.plan === 'free') {
-      const existingMessage = await Message.findOne({ userId: req.user.id, chatId: chatId || 'default' });
+      const existingMessage = await Message.findOne({ userId: req.user.userId, chatId: chatId || 'default' });
       
       // If this is a message to a NEW contact
       if (!existingMessage) {
-        const uniqueContacts = await Message.distinct('chatId', { userId: req.user.id });
+        const uniqueContacts = await Message.distinct('chatId', { userId: req.user.userId });
         if (uniqueContacts.length >= 30) {
           return res.status(403).json({ 
             error: 'Contact limit reached.', 
@@ -259,7 +259,7 @@ app.post('/api/messages', verifyToken, async (req, res) => {
     
     // Explicitly casting userId to ObjectId to ensure it saves correctly
     const newMessage = new Message({
-      userId: new mongoose.Types.ObjectId(req.user.id),
+      userId: new mongoose.Types.ObjectId(req.user.userId),
       sender,
       text,
       type: type || 'sent', // Default to sent if missing
@@ -274,11 +274,11 @@ app.post('/api/messages', verifyToken, async (req, res) => {
     console.log("✅ Message saved to DB:", newMessage._id);
 
     // Emit new message via Socket.io to the specific user's room
-    io.to(req.user.id).emit('new_message', newMessage);
+    io.to(req.user.userId).emit('new_message', newMessage);
 
     // AI Auto-Reply Logic
     if (sender === 'user') {
-      const activeCampaigns = await Campaign.find({ userId: req.user.id, status: 'Active' });
+      const activeCampaigns = await Campaign.find({ userId: req.user.userId, status: 'Active' });
       const userMessage = text.toLowerCase();
       
       const match = activeCampaigns.find(c => {
@@ -292,7 +292,7 @@ app.post('/api/messages', verifyToken, async (req, res) => {
           const isFollowing = await checkFollowerStatus(newMessage.platform, chatId);
           if (!isFollowing) {
             const followPrompt = new Message({
-              userId: new mongoose.Types.ObjectId(req.user.id),
+              userId: new mongoose.Types.ObjectId(req.user.userId),
               chatId: chatId || 'default',
               sender: 'AI Agent',
               text: match.unfollowedResponse || "Please follow our account first to unlock this automation!",
@@ -302,14 +302,14 @@ app.post('/api/messages', verifyToken, async (req, res) => {
               timestamp: new Date()
             });
             await followPrompt.save();
-            io.to(req.user.id).emit('new_message', followPrompt);
+            io.to(req.user.userId).emit('new_message', followPrompt);
             return res.json({ original: newMessage, reply: followPrompt, gated: true });
           }
         }
         // -----------------------------
 
         const autoReply = new Message({
-          userId: new mongoose.Types.ObjectId(req.user.id),
+          userId: new mongoose.Types.ObjectId(req.user.userId),
           chatId: chatId || 'default',
           sender: 'AI Agent',
           text: match.response,
@@ -325,13 +325,13 @@ app.post('/api/messages', verifyToken, async (req, res) => {
         console.log("🤖 AI Reply saved:", autoReply._id);
         
         // Emit AI reply via Socket.io to the specific user's room
-        io.to(req.user.id).emit('new_message', autoReply);
+        io.to(req.user.userId).emit('new_message', autoReply);
         
         return res.json({ original: newMessage, reply: autoReply });
       } else {
         // Default AI Fallback Response
         const defaultReply = new Message({
-          userId: new mongoose.Types.ObjectId(req.user.id),
+          userId: new mongoose.Types.ObjectId(req.user.userId),
           chatId: chatId || 'default',
           sender: 'AI Agent',
           text: "Thanks for reaching out! Our team will get back to you shortly.",
@@ -343,7 +343,7 @@ app.post('/api/messages', verifyToken, async (req, res) => {
         await defaultReply.save();
         console.log("🤖 Default Fallback AI Reply saved:", defaultReply._id);
         
-        io.to(req.user.id).emit('new_message', defaultReply);
+        io.to(req.user.userId).emit('new_message', defaultReply);
         
         return res.json({ original: newMessage, reply: defaultReply });
       }
@@ -359,7 +359,7 @@ app.post('/api/messages', verifyToken, async (req, res) => {
 
 app.delete('/api/messages/:id', verifyToken, async (req, res) => {
   try {
-    await Message.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    await Message.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
     res.json({ message: 'Message deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
