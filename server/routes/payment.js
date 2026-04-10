@@ -18,6 +18,9 @@ if (!razorpay) {
 
 // 1. Create Order
 router.post('/create-order', verifyToken, async (req, res) => {
+  if (!razorpay) {
+    return res.status(503).json({ error: "Payment service is currently unavailable. Please configure Razorpay keys." });
+  }
   try {
     const options = {
       amount: 1599 * 100, // Amount in paise (₹1599)
@@ -35,6 +38,9 @@ router.post('/create-order', verifyToken, async (req, res) => {
 
 // 2. Verify Payment
 router.post('/verify-payment', verifyToken, async (req, res) => {
+  if (!razorpay) {
+    return res.status(503).json({ error: "Payment service is currently unavailable. Please configure Razorpay keys." });
+  }
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
