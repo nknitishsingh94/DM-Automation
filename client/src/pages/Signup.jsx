@@ -314,10 +314,6 @@ export default function Signup() {
         <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
           Already have an account? <Link to="/login" style={{ color: 'var(--accent-color)', fontWeight: '600' }}>Log in</Link>
         </div>
-
-        <div style={{ textAlign: 'center', marginTop: '40px', fontSize: '0.7rem', color: 'rgba(0,0,0,0.2)', letterSpacing: '1px' }}>
-          SYSTEM VERSION: v1.4.2-PROD
-        </div>
       </div>
     </div>
     </>
