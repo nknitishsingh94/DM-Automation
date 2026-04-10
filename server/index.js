@@ -61,19 +61,29 @@ app.use(cors({
 }));
 app.use(express.json());
 
+let lastDbError = null;
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('✅ Connected to MongoDB');
+    lastDbError = null;
+  })
+  .catch((err) => {
+    console.error('❌ MongoDB Connection Error:', err.message);
+    lastDbError = err.message;
+  });
+
 // Health Check Endpoint
 app.get('/health', async (req, res) => {
-  try {
-    const dbStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
-    res.status(200).json({ 
-      status: 'OK', 
-      database: dbStatus,
-      mongodb_uri_exists: !!process.env.MONGODB_URI,
-      timestamp: new Date() 
-    });
-  } catch (err) {
-    res.status(500).json({ status: 'Error', error: err.message });
-  }
+  const readyState = mongoose.connection.readyState;
+  const states = { 0: 'Disconnected', 1: 'Connected', 2: 'Connecting', 3: 'Disconnecting' };
+  
+  res.status(200).json({ 
+    status: 'OK', 
+    database: states[readyState] || 'Unknown',
+    db_error: lastDbError,
+    mongodb_uri_exists: !!process.env.MONGODB_URI,
+    timestamp: new Date() 
+  });
 });
 
 app.get('/', (req, res) => {
