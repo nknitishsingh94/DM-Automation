@@ -36,6 +36,7 @@ const styles = `
 
   .login-page-wrapper {
     min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,7 +46,10 @@ const styles = `
     background-position: center;
     background-attachment: fixed;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100vw;
+    padding: 20px 0;
     font-family: 'Inter', sans-serif;
   }
 
@@ -80,9 +84,9 @@ const styles = `
   .login-card {
     position: relative;
     z-index: 2;
-    width: 100%;
+    width: 90%;
+    margin: auto;
     max-width: 760px;
-    margin: 24px;
     background: #ffffff;
     border: 1px solid rgba(139, 92, 246, 0.1);
     border-radius: 24px;

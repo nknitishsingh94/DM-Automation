@@ -7,6 +7,41 @@ import { API_BASE_URL, GOOGLE_CLIENT_ID } from '../config';
 
 
 
+const styles = `
+  .signup-page-wrapper {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("/landing-bg.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    padding: 20px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100vw;
+  }
+
+  .signup-card {
+    width: 90%;
+    margin: auto;
+    max-width: 440px;
+    padding: 30px 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  @media (max-width: 480px) {
+    .signup-card {
+      padding: 24px 20px;
+    }
+  }
+`;
+
 export default function Signup() {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const [error, setError] = useState('');
@@ -123,24 +158,10 @@ export default function Signup() {
 
 
   return (
-    <div style={{ 
-      height: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      background: 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("/landing-bg.png")',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundAttachment: 'fixed'
-    }}>
-      <div className="table-card" style={{ 
-        width: '100%', 
-        maxWidth: '400px',
-        padding: '30px 40px', 
-        background: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: '20px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
-      }}>
+    <>
+      <style>{styles}</style>
+      <div className="signup-page-wrapper">
+        <div className="signup-card">
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <h1 style={{ fontSize: '1.8rem', fontWeight: '700' }}>Create Account</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join the AI DM Automation Platform</p>
