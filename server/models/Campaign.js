@@ -10,6 +10,8 @@ const campaignSchema = new mongoose.Schema({
   platform: { type: String, enum: ['instagram', 'facebook', 'whatsapp', 'all'], default: 'all' },
   videoUrl: { type: String, default: '' },
   linkUrl: { type: String, default: '' },
+  requireFollow: { type: Boolean, default: false },
+  unfollowedResponse: { type: String, default: 'Please follow our account first to get a reply!' },
   createdAt: { type: Date, default: Date.now }
 });
 

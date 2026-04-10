@@ -6,7 +6,16 @@ export default function Campaigns() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
-  const [newCamp, setNewCamp] = useState({ name: '', trigger: '', response: '', platform: 'all', videoUrl: '', linkUrl: '' });
+  const [newCamp, setNewCamp] = useState({ 
+    name: '', 
+    trigger: '', 
+    response: '', 
+    platform: 'all', 
+    videoUrl: '', 
+    linkUrl: '',
+    requireFollow: false,
+    unfollowedResponse: 'Please follow our account first to get a reply!'
+  });
   const [message, setMessage] = useState({ type: '', text: '' });
 
   const fetchCampaigns = async () => {
@@ -42,7 +51,16 @@ export default function Campaigns() {
       });
       if (res.ok) {
         setMessage({ type: 'success', text: 'Campaign created successfully!' });
-        setNewCamp({ name: '', trigger: '', response: '', platform: 'all', videoUrl: '', linkUrl: '' });
+        setNewCamp({ 
+          name: '', 
+          trigger: '', 
+          response: '', 
+          platform: 'all', 
+          videoUrl: '', 
+          linkUrl: '',
+          requireFollow: false,
+          unfollowedResponse: 'Please follow our account first to get a reply!'
+        });
         setShowAdd(false);
         fetchCampaigns();
       }
@@ -177,6 +195,29 @@ export default function Campaigns() {
                 />
               </div>
             </div>
+            <div className="input-group" style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'rgba(139, 92, 246, 0.05)', borderRadius: '8px', border: '1px dashed var(--accent-light)' }}>
+              <input 
+                type="checkbox" 
+                id="requireFollow"
+                checked={newCamp.requireFollow}
+                onChange={(e) => setNewCamp({...newCamp, requireFollow: e.target.checked})}
+                style={{ width: '18px', height: '18px', accentColor: 'var(--accent-color)' }}
+              />
+              <label htmlFor="requireFollow" style={{ fontSize: '0.9rem', fontWeight: '600', cursor: 'pointer' }}>Only reply if the user follows me (Instagram/Facebook)</label>
+            </div>
+
+            {newCamp.requireFollow && (
+              <div className="input-group" style={{ gridColumn: 'span 2', animation: 'fadeIn 0.2s ease-in' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', color: 'var(--accent-color)', fontWeight: '600' }}>Message for Non-Followers</label>
+                <textarea 
+                  required
+                  value={newCamp.unfollowedResponse}
+                  onChange={(e) => setNewCamp({...newCamp, unfollowedResponse: e.target.value})}
+                  placeholder="Hey! Please follow us first to unlock this info..."
+                  style={{ width: '100%', padding: '12px', background: 'white', color: 'var(--text-main)', border: '1px solid var(--accent-light)', borderRadius: '8px', height: '80px', outline: 'none', resize: 'none' }}
+                />
+              </div>
+            )}
 
             <div className="input-group" style={{ gridColumn: 'span 2' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem' }}>AI Response Message</label>
@@ -210,6 +251,7 @@ export default function Campaigns() {
               <th>Platform</th>
               <th>Keyword Trigger</th>
               <th>Media</th>
+              <th>Follow Check</th>
               <th>Status</th>
               <th style={{ textAlign: 'right' }}>Actions</th>
             </tr>
@@ -242,6 +284,17 @@ export default function Campaigns() {
                     {camp.videoUrl && <Video size={16} title="Includes Video" style={{ color: '#8b5cf6' }} />}
                     {camp.linkUrl && <LinkIcon size={16} title="Includes Link" style={{ color: '#3b82f6' }} />}
                     {!camp.videoUrl && !camp.linkUrl && <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>None</span>}
+                  </div>
+                </td>
+                <td>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    {camp.requireFollow ? (
+                      <span style={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', fontWeight: '600' }}>
+                        <CheckCircle size={14} /> Enabled
+                      </span>
+                    ) : (
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Disabled</span>
+                    )}
                   </div>
                 </td>
                 <td>
