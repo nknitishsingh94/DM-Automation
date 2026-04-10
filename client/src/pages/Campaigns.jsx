@@ -82,6 +82,12 @@ export default function Campaigns() {
 
   const toggleStatus = async (id, currentStatus) => {
     const newStatus = currentStatus === 'Active' ? 'Paused' : 'Active';
+    
+    // Optimistic Update: Update UI immediately
+    setCampaigns(prev => prev.map(c => 
+      c._id === id ? { ...c, status: newStatus } : c
+    ));
+
     const token = localStorage.getItem('insta_agent_token');
     try {
       const res = await fetch(`${API_BASE_URL}/api/campaigns/${id}`, {
@@ -92,30 +98,38 @@ export default function Campaigns() {
         },
         body: JSON.stringify({ status: newStatus })
       });
-      if (res.ok) fetchCampaigns();
+      if (!res.ok) {
+        // Rollback on error if needed or fetch fresh
+        fetchCampaigns();
+      }
     } catch (err) {
       console.error("Error toggling status:", err);
+      fetchCampaigns(); // Reset to server state
     }
   };
 
   const deleteCampaign = async (id) => {
-    // Temporarily removing confirm to ensure it doesn't block the action
+    // Optimistic Update: Remove from UI immediately
+    const previousCampaigns = [...campaigns];
+    setCampaigns(prev => prev.filter(c => c._id !== id));
+    
     const token = localStorage.getItem('insta_agent_token');
     try {
       const res = await fetch(`${API_BASE_URL}/api/campaigns/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      const data = await res.json();
       if (res.ok) {
         setMessage({ type: 'success', text: 'Campaign deleted successfully!' });
-        fetchCampaigns();
       } else {
+        const data = await res.json();
         setMessage({ type: 'error', text: data.message || 'Failed to delete campaign' });
+        setCampaigns(previousCampaigns); // Rollback
       }
     } catch (err) {
       console.error("Error deleting campaign:", err);
       setMessage({ type: 'error', text: 'Connection error' });
+      setCampaigns(previousCampaigns); // Rollback
     }
   };
 
