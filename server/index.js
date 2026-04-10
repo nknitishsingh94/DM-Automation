@@ -211,22 +211,12 @@ app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
-    // Basic validation to ensure the ID is valid for MongoDB
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ error: "Invalid Campaign ID format" });
-    }
-
-    const campaignId = new mongoose.Types.ObjectId(req.params.id);
-    const userId = new mongoose.Types.ObjectId(req.user.userId);
-    
-    // Using a more direct delete approach
-    const result = await Campaign.deleteOne({ 
-      _id: campaignId, 
-      userId: userId 
+    const result = await Campaign.findOneAndDelete({ 
+      _id: req.params.id, 
+      userId: new mongoose.Types.ObjectId(req.user.userId) 
     });
     
-    if (result.deletedCount === 0) {
-      console.warn(`⚠️ Delete failed: No campaign found with ID ${req.params.id} for user ${req.user.userId}`);
+    if (!result) {
       return res.status(404).json({ message: "Campaign not found or unauthorized to delete" });
     }
     
