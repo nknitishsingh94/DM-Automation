@@ -206,6 +206,19 @@ app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
   }
 });
 
+// Campaign Logs Endpoint
+app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
+  try {
+    const logs = await Message.find({ 
+      userId: req.user.id, 
+      campaignId: req.params.id 
+    }).sort({ timestamp: -1 });
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Messages API (Inbox)
 app.get('/api/messages', verifyToken, async (req, res) => {
   const messages = await Message.find({ userId: req.user.id }).sort({ timestamp: 1 });
@@ -267,16 +280,6 @@ app.post('/api/messages', verifyToken, async (req, res) => {
         if (match.requireFollow) {
           const isFollowing = await checkFollowerStatus(newMessage.platform, chatId);
           if (!isFollowing) {
-            const followPrompt = new Message({
-              userId: new mongoose.Types.ObjectId(req.user.id),
-              chatId: chatId || 'default',
-              sender: 'AI Agent',
-              text: match.unfollowedResponse || "Please follow our account first to unlock this automation!",
-              type: 'sent',
-              platform: newMessage.platform,
-              isAI: true,
-              timestamp: new Date()
-            });
             await followPrompt.save();
             io.to(req.user.id).emit('new_message', followPrompt);
             return res.json({ original: newMessage, reply: followPrompt, gated: true });
@@ -294,6 +297,7 @@ app.post('/api/messages', verifyToken, async (req, res) => {
           videoUrl: match.videoUrl || '',
           linkUrl: match.linkUrl || '',
           isAI: true,
+          campaignId: match._id,
           timestamp: new Date()
         });
         await autoReply.save();

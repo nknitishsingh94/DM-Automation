@@ -10,7 +10,8 @@ const messageSchema = new mongoose.Schema({
   isAI: { type: Boolean, default: false },
   platform: { type: String, enum: ['instagram', 'facebook', 'whatsapp', 'unknown'], default: 'instagram' },
   videoUrl: { type: String, default: '' },
-  linkUrl: { type: String, default: '' }
+  linkUrl: { type: String, default: '' },
+  campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'Campaign' }
 });
 
 export default mongoose.model('Message', messageSchema);

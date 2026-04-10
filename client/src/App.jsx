@@ -100,41 +100,6 @@ function Sidebar({ isMobileOpen, onClose }) {
 
       {user && (
         <div className="sidebar-footer">
-          <NavLink to="/profile" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', padding: '8px', borderRadius: '8px', transition: 'var(--transition-fast)' }} className="nav-item">
-            <div style={{ 
-              width: '36px', 
-              height: '36px', 
-              borderRadius: '50%', 
-              background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              fontSize: '14px',
-              fontWeight: '600',
-              overflow: 'hidden',
-              border: '2px solid var(--border-subtle)',
-              flexShrink: 0
-            }}>
-              {user.profilePhoto ? (
-                <img src={user.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                user.username.charAt(0).toUpperCase()
-              )}
-            </div>
-            <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {user.username}
-            </div>
-          </NavLink>
-          <button 
-            onClick={logout} 
-            className="nav-item" 
-            style={{ width: '100%', justifyContent: 'flex-start', color: '#f87171' }}
-          >
-            <LogOut size={20} />
-            <span>Logout</span>
-          </button>
-        </div>
-      )}
     </aside>
     </>
   );

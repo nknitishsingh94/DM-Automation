@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Zap, Plus, Trash2, Power, MessageCircle, AlertCircle, CheckCircle, Video, Link as LinkIcon } from 'lucide-react';
+import { Zap, Plus, Trash2, Power, MessageCircle, AlertCircle, CheckCircle, Video, Link as LinkIcon, History, X } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 
 export default function Campaigns() {
@@ -17,6 +17,9 @@ export default function Campaigns() {
     unfollowedResponse: 'Please follow our account first to get a reply!'
   });
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [logs, setLogs] = useState([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
 
   const fetchCampaigns = async () => {
     const token = localStorage.getItem('insta_agent_token');
@@ -98,6 +101,23 @@ export default function Campaigns() {
       if (res.ok) fetchCampaigns();
     } catch (err) {
       console.error("Error deleting campaign:", err);
+    }
+  };
+
+  const viewLogs = async (campaign) => {
+    setSelectedCampaign(campaign);
+    setLoadingLogs(true);
+    const token = localStorage.getItem('insta_agent_token');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/campaigns/${campaign._id}/logs`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setLogs(data);
+    } catch (err) {
+      console.error("Error fetching logs:", err);
+    } finally {
+      setLoadingLogs(false);
     }
   };
 
@@ -305,6 +325,14 @@ export default function Campaigns() {
                 <td>
                   <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
                     <button 
+                      onClick={() => viewLogs(camp)}
+                      title="View History"
+                      className="action-btn"
+                      style={{ color: 'var(--accent-color)' }}
+                    >
+                      <History size={18} />
+                    </button>
+                    <button 
                       onClick={() => toggleStatus(camp._id, camp.status)}
                       title={camp.status === 'Active' ? 'Pause' : 'Activate'}
                       className="action-btn"
@@ -327,6 +355,61 @@ export default function Campaigns() {
           </tbody>
         </table>
       </div>
+
+      {/* Logs Modal */}
+      {selectedCampaign && (
+        <div className="modal-overlay" style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+        }} onClick={() => setSelectedCampaign(null)}>
+          <div className="table-card" style={{ 
+            width: '90%', maxWidth: '700px', maxHeight: '85vh', overflow: 'hidden',
+            display: 'flex', flexDirection: 'column'
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ padding: '24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: '700' }}>Process History: {selectedCampaign.name}</h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Real-time logs for keyword: "{selectedCampaign.trigger}"</p>
+              </div>
+              <button onClick={() => setSelectedCampaign(null)} style={{ color: 'var(--text-muted)' }}><X size={24} /></button>
+            </div>
+            
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+              {loadingLogs ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Fetching latest logs...</div>
+              ) : logs.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No messages processed yet for this campaign.</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  {logs.map((log) => (
+                    <div key={log._id} style={{ 
+                      padding: '16px', borderRadius: '12px', border: '1px solid var(--border-subtle)',
+                      background: 'rgba(255,255,255,0.3)', position: 'relative'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--accent-color)' }}>{log.platform || 'instagram'}</span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(log.timestamp).toLocaleString()}</span>
+                      </div>
+                      <div style={{ fontSize: '0.9rem', marginBottom: '4px' }}>
+                        <span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>Recipient:</span> {log.chatId}
+                      </div>
+                      <div style={{ fontSize: '0.9rem' }}>
+                        <span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>AI Sent:</span> "{log.text}"
+                      </div>
+                      {log.linkUrl && (
+                        <div style={{ marginTop: '8px', fontSize: '0.8rem', color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <LinkIcon size={14} /> Attached Link: {log.linkUrl}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

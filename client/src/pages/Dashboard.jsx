@@ -132,7 +132,7 @@ export default function Dashboard() {
       <div className="table-card" style={{ marginTop: '32px' }}>
         <div className="table-header">
           <h2 className="table-title">Live Automation Campaigns</h2>
-          <button style={{ color: 'var(--accent-color)', fontWeight: '500', fontSize: '0.9rem' }}>View All</button>
+          <Link to="/campaigns" style={{ color: 'var(--accent-color)', fontWeight: '500', fontSize: '0.9rem', textDecoration: 'none' }}>View All</Link>
         </div>
         <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <table style={{ minWidth: '600px', width: '100%' }}>

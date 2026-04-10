@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Info, Save, User as UserIcon } from 'lucide-react';
+import { Info, Save, User as UserIcon, LogOut } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 
 export default function Profile() {
-  const { user, login } = useAuth();
+  const { user, login, logout } = useAuth();
   const [profileData, setProfileData] = useState({
     username: user?.username || '',
     profilePhoto: user?.profilePhoto || ''
@@ -138,6 +138,32 @@ export default function Profile() {
           <ShieldCheck size={20} /> Identity Verified
         </h3>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Your account is currently linked to your unique workspace. All messages and campaigns are isolated to this identity.</p>
+      </div>
+
+      <div className="table-card" style={{ padding: '32px', border: '1px solid rgba(239, 68, 68, 0.2)', background: 'rgba(239, 68, 68, 0.02)' }}>
+        <h3 style={{ color: '#ef4444', marginBottom: '16px', fontSize: '1.2rem', fontWeight: '600' }}>Session Management</h3>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}>
+          Once you log out, you will need to sign back in with your credentials to access your dashboard.
+        </p>
+        <button 
+          onClick={logout}
+          style={{ 
+            background: 'rgba(239, 68, 68, 0.1)', 
+            color: '#f87171', 
+            padding: '12px 24px', 
+            borderRadius: '10px', 
+            fontWeight: '600',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+          className="logout-btn-hover"
+        >
+          <LogOut size={20} /> Sign Out of System
+        </button>
       </div>
     </div>
   );
