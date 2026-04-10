@@ -62,8 +62,18 @@ app.use(cors({
 app.use(express.json());
 
 // Health Check Endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'OK', timestamp: new Date() });
+app.get('/health', async (req, res) => {
+  try {
+    const dbStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
+    res.status(200).json({ 
+      status: 'OK', 
+      database: dbStatus,
+      mongodb_uri_exists: !!process.env.MONGODB_URI,
+      timestamp: new Date() 
+    });
+  } catch (err) {
+    res.status(500).json({ status: 'Error', error: err.message });
+  }
 });
 
 app.get('/', (req, res) => {
