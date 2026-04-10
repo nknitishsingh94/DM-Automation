@@ -62,18 +62,23 @@ app.use(cors({
 app.use(express.json());
 
 let lastDbError = null;
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log('✅ Connected to MongoDB');
     lastDbError = null;
-  })
-  .catch((err) => {
+  } catch (err) {
     console.error('❌ MongoDB Connection Error:', err.message);
     lastDbError = err.message;
-  });
+  }
+};
+
+// Start connection
+connectDB();
 
 // Health Check Endpoint
-app.get('/health', async (req, res) => {
+app.get('/health', (req, res) => {
   const readyState = mongoose.connection.readyState;
   const states = { 0: 'Disconnected', 1: 'Connected', 2: 'Connecting', 3: 'Disconnecting' };
   
@@ -113,11 +118,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentRoutes);
 
 const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI;
-
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('✅ Connected to MongoDB'))
-  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
 
 // Dashboard Stats Endpoint
 app.get('/api/stats', verifyToken, async (req, res) => {
