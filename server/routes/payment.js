@@ -6,11 +6,15 @@ import verifyToken from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Initialize Razorpay
-const razorpay = new Razorpay({
+// Initialize Razorpay (Optional to prevent crash if environmental variables are missing)
+const razorpay = process.env.RAZORPAY_KEY_ID ? new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+}) : null;
+
+if (!razorpay) {
+  console.warn("⚠️ [Payment] Razorpay keys are missing. Payment features will be disabled.");
+}
 
 // 1. Create Order
 router.post('/create-order', verifyToken, async (req, res) => {
