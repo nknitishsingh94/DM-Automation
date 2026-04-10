@@ -39,8 +39,22 @@ app.use((req, res, next) => {
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Dynamically allow the origin of the request to satisfy credentials: true
-    callback(null, true);
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:5000',
+      'https://dm-automation-roan.vercel.app',
+      'https://dm-automation-server.onrender.com'
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('vercel.app')) {
+      callback(null, true);
+    } else {
+      console.warn(`⚠️ [CORS] Origin ${origin} not explicitly allowed, but allowing for debugging`);
+      callback(null, true); // Still allow during debugging, but log it
+    }
   },
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true

@@ -31,7 +31,8 @@ export default function Signup() {
         login(data.user, data.token);
         navigate('/dashboard');
       } else {
-        setError(data.message || 'Signup failed');
+        // Look for message or error key from backend
+        setError(data.message || data.error || 'Signup failed. Please try again.');
       }
     } catch (err) {
       console.error("Signup Error:", err);
