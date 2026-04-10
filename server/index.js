@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import axios from 'axios';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
@@ -61,11 +62,97 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Helper to check if a user is following the account (Real API placeholder)
+// Meta Graph API Helper: Send Message
+const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '') => {
+  const accessToken = process.env.META_PAGE_ACCESS_TOKEN;
+  if (!accessToken) {
+    console.warn("⚠️ META_PAGE_ACCESS_TOKEN not set. Skipping real API call.");
+    return false;
+  }
+
+  try {
+    const url = `https://graph.facebook.com/v19.0/me/messages?access_token=${accessToken}`;
+    const payload = {
+      recipient: { id: recipientId },
+      messaging_type: "RESPONSE",
+      message: { text }
+    };
+
+    // If media is provided, we can handle it here (Meta requires different structure for media)
+    // For now, attaching link/video info to the text if present
+    if (mediaUrl) {
+      payload.message.text += `\n\nCheck this out: ${mediaUrl}`;
+    }
+
+    const response = await axios.post(url, payload);
+    console.log("✅ Message sent to Meta API:", response.data);
+    return true;
+  } catch (err) {
+    console.error("❌ Meta API Error:", err.response?.data || err.message);
+    return false;
+  }
+};
+
 const checkFollowerStatus = async (platform, chatId) => {
-  // TODO: Implement actual Meta Graph API calls here
-  // For now, we simulate a 'not following' state if message contains 'NOT_FOLLOWING' for testing
+  // TODO: Once you have the Business ID, implement the real check here
   return true; 
+};
+
+// Reusable Auto-Reply Logic
+const processAutoReply = async (userId, platform, chatId, text) => {
+  const userMessage = text.toLowerCase();
+  const activeCampaigns = await Campaign.find({ userId, status: 'Active' });
+  
+  const match = activeCampaigns.find(c => {
+    const platformMatch = c.platform === 'all' || c.platform === (platform || 'instagram');
+    return platformMatch && userMessage.includes(c.trigger.toLowerCase());
+  });
+
+  if (match) {
+    // --- Follower Check Gating ---
+    if (match.requireFollow) {
+      const isFollowing = await checkFollowerStatus(platform, chatId);
+      if (!isFollowing) {
+        const followText = match.unfollowedResponse || "Please follow our account first to unlock this automation!";
+        await sendMessageToInstagram(platform, chatId, followText);
+        
+        const followPrompt = new Message({
+          userId: new mongoose.Types.ObjectId(userId),
+          chatId: chatId || 'default',
+          sender: 'AI Agent',
+          text: followText,
+          type: 'sent',
+          platform: platform,
+          isAI: true,
+          timestamp: new Date()
+        });
+        await followPrompt.save();
+        io.to(userId).emit('new_message', followPrompt);
+        return { reply: followPrompt, gated: true };
+      }
+    }
+
+    // --- Send Real Message ---
+    await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl);
+
+    const autoReply = new Message({
+      userId: new mongoose.Types.ObjectId(userId),
+      chatId: chatId || 'default',
+      sender: 'AI Agent',
+      text: match.response,
+      type: 'sent',
+      platform: platform,
+      videoUrl: match.videoUrl || '',
+      linkUrl: match.linkUrl || '',
+      isAI: true,
+      campaignId: match._id,
+      timestamp: new Date()
+    });
+    await autoReply.save();
+    io.to(userId).emit('new_message', autoReply);
+    return { reply: autoReply };
+  }
+  return null;
 };
 
 let lastDbError = null;
@@ -122,6 +209,64 @@ io.on('connection', (socket) => {
   });
 });
 
+
+// --- Meta Webhook Verification (GET) ---
+app.get('/api/webhook', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+
+  if (mode && token) {
+    if (mode === 'subscribe' && token === (process.env.META_VERIFY_TOKEN || 'dm_automate_verify_123')) {
+      console.log('✅ Webhook Verified');
+      res.status(200).send(challenge);
+    } else {
+      res.sendStatus(403);
+    }
+  }
+});
+
+app.post('/api/webhook', async (req, res) => {
+  const body = req.body;
+
+  if (body.object === 'instagram' || body.object === 'page') {
+    for (const entry of body.entry) {
+      for (const messaging of entry.messaging) {
+        const senderId = messaging.sender.id;
+        const text = messaging.message?.text;
+        
+        if (text) {
+          console.log(`📬 Received Message from ${senderId}: ${text}`);
+          
+          // Find the user associated with this Page (For multi-tenancy)
+          // For now, we assume the first user or a specific user for testing
+          // In a real app, you'd find user by Meta Page ID
+          const someUser = await User.findOne(); 
+          if (someUser) {
+            // 1. Save incoming message to DB
+            const incoming = new Message({
+              userId: someUser._id,
+              chatId: senderId,
+              sender: 'user',
+              text: text,
+              type: 'received',
+              platform: body.object === 'instagram' ? 'instagram' : 'facebook',
+              timestamp: new Date()
+            });
+            await incoming.save();
+            io.to(someUser._id.toString()).emit('new_message', incoming);
+
+            // 2. Trigger Auto-Reply
+            await processAutoReply(someUser._id.toString(), incoming.platform, senderId, text);
+          }
+        }
+      }
+    }
+    res.status(200).send('EVENT_RECEIVED');
+  } else {
+    res.sendStatus(404);
+  }
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentRoutes);
@@ -288,77 +433,9 @@ app.post('/api/messages', verifyToken, async (req, res) => {
 
     // AI Auto-Reply Logic
     if (sender === 'user') {
-      const activeCampaigns = await Campaign.find({ userId: req.user.userId, status: 'Active' });
-      const userMessage = text.toLowerCase();
-      
-      const match = activeCampaigns.find(c => {
-        const platformMatch = c.platform === 'all' || c.platform === (platform || 'instagram');
-        return platformMatch && userMessage.includes(c.trigger.toLowerCase());
-      });
-
-      if (match) {
-        // --- Follower Check Gating ---
-        if (match.requireFollow) {
-          const isFollowing = await checkFollowerStatus(newMessage.platform, chatId);
-          if (!isFollowing) {
-            const followPrompt = new Message({
-              userId: new mongoose.Types.ObjectId(req.user.userId),
-              chatId: chatId || 'default',
-              sender: 'AI Agent',
-              text: match.unfollowedResponse || "Please follow our account first to unlock this automation!",
-              type: 'sent',
-              platform: newMessage.platform,
-              isAI: true,
-              timestamp: new Date()
-            });
-            await followPrompt.save();
-            io.to(req.user.userId).emit('new_message', followPrompt);
-            return res.json({ original: newMessage, reply: followPrompt, gated: true });
-          }
-        }
-        // -----------------------------
-
-        const autoReply = new Message({
-          userId: new mongoose.Types.ObjectId(req.user.userId),
-          chatId: chatId || 'default',
-          sender: 'AI Agent',
-          text: match.response,
-          type: 'sent',
-          platform: newMessage.platform,
-          videoUrl: match.videoUrl || '',
-          linkUrl: match.linkUrl || '',
-          isAI: true,
-          campaignId: match._id,
-          timestamp: new Date()
-        });
-        await autoReply.save();
-        console.log("🤖 AI Reply saved:", autoReply._id);
-        
-        // Emit AI reply via Socket.io to the specific user's room
-        io.to(req.user.userId).emit('new_message', autoReply);
-        
-        return res.json({ original: newMessage, reply: autoReply });
-      } else {
-        // Default AI Fallback Response
-        const defaultReply = new Message({
-          userId: new mongoose.Types.ObjectId(req.user.userId),
-          chatId: chatId || 'default',
-          sender: 'AI Agent',
-          text: "Thanks for reaching out! Our team will get back to you shortly.",
-          type: 'sent',
-          platform: newMessage.platform,
-          isAI: true,
-          timestamp: new Date()
-        });
-        await defaultReply.save();
-        console.log("🤖 Default Fallback AI Reply saved:", defaultReply._id);
-        
-        io.to(req.user.userId).emit('new_message', defaultReply);
-        
-        return res.json({ original: newMessage, reply: defaultReply });
-      }
+      await processAutoReply(req.user.userId, newMessage.platform, chatId, text);
     }
-
+    
     res.json(newMessage);
 
   } catch (err) {
