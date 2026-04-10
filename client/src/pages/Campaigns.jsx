@@ -99,16 +99,23 @@ export default function Campaigns() {
   };
 
   const deleteCampaign = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this campaign?")) return;
+    // Temporarily removing confirm to ensure it doesn't block the action
     const token = localStorage.getItem('insta_agent_token');
     try {
       const res = await fetch(`${API_BASE_URL}/api/campaigns/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (res.ok) fetchCampaigns();
+      const data = await res.json();
+      if (res.ok) {
+        setMessage({ type: 'success', text: 'Campaign deleted successfully!' });
+        fetchCampaigns();
+      } else {
+        setMessage({ type: 'error', text: data.message || 'Failed to delete campaign' });
+      }
     } catch (err) {
       console.error("Error deleting campaign:", err);
+      setMessage({ type: 'error', text: 'Connection error' });
     }
   };
 
