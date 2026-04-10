@@ -175,10 +175,14 @@ app.get('/api/campaigns', verifyToken, async (req, res) => {
 
 app.post('/api/campaigns', verifyToken, async (req, res) => {
   try {
-    const newCampaign = new Campaign({ ...req.body, userId: req.user.id });
+    const newCampaign = new Campaign({ 
+      ...req.body, 
+      userId: new mongoose.Types.ObjectId(req.user.id) 
+    });
     await newCampaign.save();
     res.json(newCampaign);
   } catch (err) {
+    console.error("❌ Error creating campaign:", err.message);
     res.status(500).json({ error: err.message });
   }
 });

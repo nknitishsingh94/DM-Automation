@@ -17,6 +17,7 @@ export default function Campaigns() {
     unfollowedResponse: 'Please follow our account first to get a reply!'
   });
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [submitting, setSubmitting] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [logs, setLogs] = useState([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
@@ -42,6 +43,8 @@ export default function Campaigns() {
 
   const handleAddSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+    setMessage({ type: '', text: '' });
     try {
       const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/campaigns`, {
@@ -52,6 +55,7 @@ export default function Campaigns() {
         },
         body: JSON.stringify(newCamp)
       });
+      const data = await res.json();
       if (res.ok) {
         setMessage({ type: 'success', text: 'Campaign created successfully!' });
         setNewCamp({ 
@@ -66,9 +70,13 @@ export default function Campaigns() {
         });
         setShowAdd(false);
         fetchCampaigns();
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Failed to create campaign' });
       }
     } catch (err) {
-      setMessage({ type: 'error', text: 'Something went wrong.' });
+      setMessage({ type: 'error', text: 'Connection error. Please try again.' });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -249,8 +257,20 @@ export default function Campaigns() {
                 style={{ width: '100%', padding: '12px', background: 'white', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '8px', height: '100px', outline: 'none', resize: 'none' }}
               />
             </div>
-            <button type="submit" style={{ gridColumn: 'span 2', background: 'var(--accent-color)', color: 'white', padding: '14px', borderRadius: '8px', fontWeight: '600' }}>
-              Create Campaign
+            <button 
+              type="submit" 
+              disabled={submitting}
+              style={{ 
+                gridColumn: 'span 2', 
+                background: submitting ? 'var(--text-muted)' : 'var(--accent-color)', 
+                color: 'white', 
+                padding: '14px', 
+                borderRadius: '8px', 
+                fontWeight: '600',
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s'
+              }}>
+              {submitting ? 'Creating Campaign...' : 'Create Campaign'}
             </button>
           </form>
         </div>
