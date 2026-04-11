@@ -40,7 +40,7 @@ function Sidebar({ isMobileOpen, onClose }) {
         <div className="sidebar-header" style={{ justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Bot size={28} className="logo-icon" />
-            <span className="logo-text">DM Automate</span>
+            <span className="logo-text">Harichat</span>
           </div>
           <button onClick={onClose} className="mobile-show" style={{ color: 'var(--text-muted)' }}>
             <X size={24} />
