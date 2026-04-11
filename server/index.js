@@ -13,6 +13,7 @@ import Campaign from './models/Campaign.js';
 import Message from './models/Message.js';
 import Settings from './models/Settings.js';
 import User from './models/User.js';
+import Contact from './models/Contact.js';
 import authRoutes from './routes/auth.js';
 import paymentRoutes from './routes/payment.js';
 import verifyToken from './middleware/auth.js';
@@ -313,6 +314,29 @@ app.post('/api/webhook', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentRoutes);
 
+// --- Contacts API (Tagging & Notes) ---
+app.get('/api/contacts', verifyToken, async (req, res) => {
+  try {
+    const contacts = await Contact.find({ userId: req.user.userId }).sort({ lastActive: -1 });
+    res.json(contacts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/contacts/:id', verifyToken, async (req, res) => {
+  try {
+    const contact = await Contact.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.userId },
+      { ...req.body },
+      { new: true }
+    );
+    res.json(contact);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 
 // Dashboard Stats Endpoint
@@ -469,6 +493,28 @@ app.post('/api/messages', verifyToken, async (req, res) => {
     
     await newMessage.save();
     console.log("✅ Message saved to DB:", newMessage._id);
+
+    // Auto-Upsert Contact Metadata
+    try {
+      await Contact.findOneAndUpdate(
+        { userId: req.user.userId, chatId: chatId || 'default' },
+        { 
+          $set: { 
+            lastActive: new Date(),
+            platform: platform || 'instagram'
+          },
+          $inc: { totalMessages: 1 },
+          $setOnInsert: { 
+            name: sender !== 'AI Agent' && sender !== 'admin' ? sender : (chatId || 'default'),
+            tags: [],
+            notes: ''
+          }
+        },
+        { upsert: true, new: true }
+      );
+    } catch (contactErr) {
+      console.error("⚠️ Failed to update contact metadata:", contactErr.message);
+    }
 
     // Emit new message via Socket.io to the specific user's room
     const emissionPayload = newMessage.toObject();

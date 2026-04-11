@@ -135,24 +135,61 @@ export default function Dashboard() {
           <Link to="/campaigns" style={{ color: 'var(--accent-color)', fontWeight: '500', fontSize: '0.9rem', textDecoration: 'none' }}>View All</Link>
         </div>
         <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-          <table style={{ minWidth: '600px', width: '100%' }}>
+          <table style={{ minWidth: '800px', width: '100%' }}>
             <thead>
               <tr>
                 <th>Campaign Name</th>
                 <th>Trigger Keyword</th>
+                <th>AI Response Preview</th>
                 <th>DMs Sent</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {campaigns.map((camp) => (
-                <tr key={camp._id}>
-                  <td>{camp.name}</td>
-                  <td>"{camp.trigger}"</td>
-                  <td>{camp.dmsSent.toLocaleString()}</td>
-                  <td><span className={`status-badge ${camp.status === 'Active' ? 'status-success' : 'status-pending'}`}>{camp.status}</span></td>
+              {campaigns.length === 0 ? (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: 'center', padding: '60px 20px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                      <Activity size={48} style={{ color: 'var(--text-muted)', opacity: 0.3 }} />
+                      <div>
+                        <div style={{ fontWeight: '600', fontSize: '1.1rem', marginBottom: '4px' }}>No Active Campaigns</div>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '300px', margin: '0 auto 16px' }}>
+                          Create your first automation trigger to start replying to DMs automatically.
+                        </p>
+                        <Link to="/campaigns" className="landing-cta" style={{ padding: '10px 24px', fontSize: '0.9rem', boxShadow: 'none' }}>
+                          Create Campaign
+                        </Link>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                campaigns.map((camp) => (
+                  <tr key={camp._id}>
+                    <td>
+                      <div style={{ fontWeight: '600' }}>{camp.name}</div>
+                    </td>
+                    <td>
+                      <code style={{ background: 'rgba(139, 92, 246, 0.1)', color: 'var(--accent-color)', padding: '4px 8px', borderRadius: '4px', fontSize: '0.85rem' }}>
+                        {camp.trigger}
+                      </code>
+                    </td>
+                    <td style={{ maxWidth: '300px' }}>
+                      <div style={{ 
+                        fontSize: '0.85rem', 
+                        color: 'var(--text-muted)', 
+                        whiteSpace: 'nowrap', 
+                        overflow: 'hidden', 
+                        textOverflow: 'ellipsis' 
+                      }}>
+                        {camp.response}
+                      </div>
+                    </td>
+                    <td>{camp.dmsSent.toLocaleString()}</td>
+                    <td><span className={`status-badge ${camp.status === 'Active' ? 'status-success' : 'status-pending'}`}>{camp.status}</span></td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
