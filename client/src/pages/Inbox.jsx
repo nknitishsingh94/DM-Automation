@@ -127,9 +127,18 @@ export default function Inbox() {
 
       const data = await res.json();
       console.log("Message saved successfully:", data);
-      
-      // Update the temporary message with real DB message
-      setMessages(prev => prev.map(m => m._id === tempId ? data : m));
+
+      // Update UI: Avoid duplicate if socket already added the message
+      setMessages(prev => {
+        const hasSocketVersion = prev.find(m => m._id === data._id);
+        if (hasSocketVersion) {
+          // Keep the socket version, remove the temporary one
+          return prev.filter(m => m._id !== tempId);
+        } else {
+          // Replace temp version with DB version
+          return prev.map(m => m._id === tempId ? data : m);
+        }
+      });
 
     } catch (err) {
       console.error("Network/App Error:", err);

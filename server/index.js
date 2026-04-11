@@ -151,6 +151,22 @@ const processAutoReply = async (userId, platform, chatId, text) => {
     await autoReply.save();
     io.to(userId.toString()).emit('new_message', autoReply);
     return { reply: autoReply };
+  } else if (chatId === 'ai_bot_support') {
+    // FALLBACK FOR INBOX TESTING
+    const fallbackText = "🤖 Test Mode: No active campaign trigger word found in your message. Set a trigger word like 'Price' in positive campaigns to see me in action!";
+    const fallbackReply = new Message({
+      userId: new mongoose.Types.ObjectId(userId),
+      chatId: 'ai_bot_support',
+      sender: 'AI Agent',
+      text: fallbackText,
+      type: 'sent',
+      platform: platform,
+      isAI: true,
+      timestamp: new Date()
+    });
+    await fallbackReply.save();
+    io.to(userId.toString()).emit('new_message', fallbackReply);
+    return { reply: fallbackReply, fallback: true };
   }
   return null;
 };
