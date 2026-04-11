@@ -363,12 +363,14 @@ const styles = `
 
   #googleBtn {
     width: 100% !important;
+    display: flex;
+    justify-content: center;
   }
 
-  #googleBtn iframe,
   #googleBtn > div {
     width: 100% !important;
-    border-radius: 12px !important;
+    max-width: 100% !important;
+    border-radius: 14px !important;
     overflow: hidden;
   }
 
@@ -422,7 +424,7 @@ export default function Login() {
         });
         window.google.accounts.id.renderButton(
           document.getElementById("googleBtn"),
-          { theme: "outline", size: "large", width: "300", logo_alignment: "center" }
+          { theme: "outline", size: "large", width: "360", logo_alignment: "center", shape: "rectangular" }
         );
       }
     };

@@ -86,7 +86,7 @@ export default function Signup() {
       });
       window.google.accounts.id.renderButton(
         document.getElementById("googleBtn"),
-        { theme: "outline", size: "large", width: "320" }
+        { theme: "outline", size: "large", width: "360", shape: "rectangular" }
       );
     }
   }, []);
@@ -164,7 +164,7 @@ export default function Signup() {
         <div className="signup-card">
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <h1 style={{ fontSize: '1.8rem', fontWeight: '700' }}>Create Account</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join the AI DM Automation Platform</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join the DM Automate Automation Platform</p>
         </div>
 
         {error && (
@@ -291,21 +291,23 @@ export default function Signup() {
             onClick={handleFacebookLogin}
             style={{
               width: '100%',
-              maxWidth: '320px',
-              padding: '10px',
-              borderRadius: '6px',
-              border: '1px solid #1877f2',
-              background: 'white',
-              color: '#1877f2',
-              fontWeight: '600',
+              maxWidth: '360px',
+              padding: '12px',
+              borderRadius: '8px',
+              border: 'none',
+              background: '#1877f2',
+              color: 'white',
+              fontWeight: '700',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '10px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(24, 119, 242, 0.2)',
+              transition: 'all 0.2s'
             }}
           >
-            <Facebook size={20} fill="#1877f2" /> Continue with Facebook
+            <Facebook size={20} fill="white" color="white" /> Continue with Facebook
           </button>
         </div>
 
