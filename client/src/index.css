@@ -361,28 +361,6 @@ tr:hover {
   color: #fbbf24;
 }
 
-/* Landing Page Redesign - Zorcha Style */
-.landing-white-theme {
-  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), 
-              url('/landing_bg_tech.png');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  color: #1a1a1a;
-  min-height: 100vh;
-  font-family: 'Outfit', sans-serif;
-}
-
-.sticky-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-}
-
 /* Live Inbox Styles */
 .inbox-container {
   display: flex;
@@ -695,22 +673,8 @@ tr:hover {
 .feature-icon-blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
 
 .feature-text { text-align: left; }
-.feature-item-content h3 {
-  font-size: 1.8rem;
-  font-weight: 800;
-  margin: 0 0 10px;
-  color: #111827;
-  letter-spacing: -0.02em;
-}
-
-.feature-item-content p {
-  color: #64748b;
-  line-height: 1.6;
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 500;
-  max-width: 500px;
-}
+.feature-text h3 { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+.feature-text p { font-size: 0.85rem; color: #9ca3af; margin: 0; }
 
 
 /* Social Proof */
