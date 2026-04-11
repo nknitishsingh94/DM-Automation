@@ -127,7 +127,7 @@ const processAutoReply = async (userId, platform, chatId, text) => {
           timestamp: new Date()
         });
         await followPrompt.save();
-        io.to(userId).emit('new_message', followPrompt);
+        io.to(userId.toString()).emit('new_message', followPrompt);
         return { reply: followPrompt, gated: true };
       }
     }
@@ -149,7 +149,7 @@ const processAutoReply = async (userId, platform, chatId, text) => {
       timestamp: new Date()
     });
     await autoReply.save();
-    io.to(userId).emit('new_message', autoReply);
+    io.to(userId.toString()).emit('new_message', autoReply);
     return { reply: autoReply };
   }
   return null;
@@ -200,7 +200,7 @@ io.on('connection', (socket) => {
   console.log('🔌 New client connected:', socket.id);
   
   socket.on('join_room', (userId) => {
-    socket.join(userId);
+    socket.join(userId.toString());
     console.log(`👤 User ${userId} joined their private room`);
   });
 

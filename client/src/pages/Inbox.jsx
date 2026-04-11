@@ -16,7 +16,11 @@ export default function Inbox() {
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Scroll only the specific chat messages container
+    const chatContainer = document.querySelector('.chat-messages');
+    if (chatContainer) {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
   };
 
   useEffect(() => {
@@ -104,16 +108,11 @@ export default function Inbox() {
       const data = await res.json();
       console.log("Message saved successfully:", data);
       
-      // Update UI immediately (handling both simple message and auto-reply structure)
+      // Update UI immediately
       setMessages(prev => {
-        const newMsgs = [];
-        if (data.original) {
-          if (!prev.find(m => m._id === data.original._id)) newMsgs.push(data.original);
-          if (data.reply && !prev.find(m => m._id === data.reply._id)) newMsgs.push(data.reply);
-        } else {
-          if (!prev.find(m => m._id === data._id)) newMsgs.push(data);
-        }
-        return newMsgs.length > 0 ? [...prev, ...newMsgs] : prev;
+        // Only add if not already present (socket might have already added it)
+        if (prev.find(m => m._id === data._id)) return prev;
+        return [...prev, data];
       });
       
       setNewMessage("");
@@ -145,7 +144,7 @@ export default function Inbox() {
   };
 
   return (
-    <div className="inbox-container">
+    <div className="inbox-container" style={{ flex: 1, minHeight: 0, background: 'transparent', display: 'flex' }}>
       <div className={`inbox-sidebar ${isChatViewMobile ? 'mobile-hide' : ''}`}>
         <div style={{ padding: '20px', borderBottom: '1px solid var(--border-subtle)', fontWeight: '600', color: 'var(--text-main)' }}>
           Active Conversations
@@ -176,7 +175,7 @@ export default function Inbox() {
         </div>
       </div>
       
-      <div className={`inbox-main ${!isChatViewMobile ? 'mobile-hide' : ''}`} style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'white' }}>
+      <div className={`inbox-main ${!isChatViewMobile ? 'mobile-hide' : ''}`} style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'white', minWidth: 0, height: '100%' }}>
         <div className="chat-header">
           <button 
             onClick={() => setIsChatViewMobile(false)}

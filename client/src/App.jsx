@@ -198,11 +198,14 @@ function MainLayout() {
   const isPublic = ['/', '/login', '/signup'].includes(location.pathname);
 
   return (
-    <div className="app-container">
+    <div className="app-container" style={{ height: '100%', width: '100%', position: 'fixed', top: 0, left: 0 }}>
       {user && !isPublic && <Sidebar isMobileOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />}
       <main className="main-content">
         {!isPublic && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
-        <div className="page-container" style={{ padding: isPublic ? '0' : '32px' }}>
+        <div className="page-container" style={{ 
+          padding: (isPublic || location.pathname === '/inbox') ? '0' : undefined,
+          overflow: (isPublic || location.pathname === '/inbox') ? 'hidden' : 'auto'
+        }}>
           <Routes>
             <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
