@@ -56,7 +56,10 @@ export default function Inbox() {
       console.log("📨 Real-time message received:", message);
       setMessages((prev) => {
         // Prevent duplicate if message was already added via REST response
-        if (prev.find(m => m._id === message._id)) return prev;
+        // Also check if the socket message matches a tempId we optimistically added
+        if (prev.find(m => m._id === message._id || (message.tempId && m._id === message.tempId))) {
+          return prev;
+        }
         return [...prev, message];
       });
     });
@@ -113,7 +116,7 @@ export default function Inbox() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(msgData)
+        body: JSON.stringify({ ...msgData, tempId })
       });
 
       if (!res.ok) {

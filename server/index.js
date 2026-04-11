@@ -445,7 +445,11 @@ app.post('/api/messages', verifyToken, async (req, res) => {
     console.log("✅ Message saved to DB:", newMessage._id);
 
     // Emit new message via Socket.io to the specific user's room
-    io.to(req.user.userId).emit('new_message', newMessage);
+    const emissionPayload = newMessage.toObject();
+    if (req.body.tempId) {
+      emissionPayload.tempId = req.body.tempId;
+    }
+    io.to(req.user.userId).emit('new_message', emissionPayload);
 
     // AI Auto-Reply Logic (Run asynchronously so it doesn't block the response)
     if (sender === 'user') {
