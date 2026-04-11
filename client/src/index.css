@@ -723,8 +723,7 @@ tr:hover {
 
 @keyframes floatBubble {
   0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-15px)  cursor: pointer;
-  transition: all 0.2s;
+  100% { transform: translateY(-15px) rotate(2deg); }
 }
 
 /* Harichat Landing Page Styles */
