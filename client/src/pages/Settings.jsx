@@ -52,16 +52,25 @@ export default function Settings() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(settings)
+        body: JSON.stringify({ ...settings, _platform: activeTab })
       });
       const data = await res.json();
-      setSettings(s => ({ ...s, ...data }));
-      setMessage({ type: 'success', text: 'Configuration saved successfully!' });
       
-      // Auto-hide message after 3 seconds
-      setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+      if (!res.ok) {
+        // Backend returned an error (token validation failed)
+        setMessage({ type: 'error', text: data.error || 'Connection failed. Please check your credentials.' });
+        // Update connection status to disconnected
+        if (activeTab === 'instagram') setSettings(s => ({ ...s, isAccountConnected: false }));
+        if (activeTab === 'facebook') setSettings(s => ({ ...s, isFacebookConnected: false }));
+        if (activeTab === 'whatsapp') setSettings(s => ({ ...s, isWhatsAppConnected: false }));
+      } else {
+        // Success — token is valid and connection is verified
+        setSettings(s => ({ ...s, ...data }));
+        setMessage({ type: 'success', text: '✅ Connection verified and saved successfully!' });
+        setTimeout(() => setMessage({ type: '', text: '' }), 5000);
+      }
     } catch (err) {
-      setMessage({ type: 'error', text: 'Failed to save settings.' });
+      setMessage({ type: 'error', text: 'Network error. Could not reach the server.' });
     } finally {
       setSavingSettings(false);
     }

@@ -585,9 +585,83 @@ app.get('/api/settings', verifyToken, async (req, res) => {
 
 app.post('/api/settings', verifyToken, async (req, res) => {
   try {
+    const data = { ...req.body, updatedAt: new Date() };
+    const platform = req.body._platform; // frontend sends which platform is being saved
+    delete data._platform;
+
+    // ── Validate tokens against Meta Graph API ──
+    if (platform === 'instagram') {
+      if (data.instagramAccessToken) {
+        try {
+          const testRes = await axios.get(`https://graph.facebook.com/v19.0/me?access_token=${data.instagramAccessToken}`);
+          if (testRes.data && testRes.data.id) {
+            data.isAccountConnected = true;
+            data.connectionError = '';
+            console.log('✅ Instagram token validated:', testRes.data.name || testRes.data.id);
+          }
+        } catch (metaErr) {
+          data.isAccountConnected = false;
+          const errMsg = metaErr.response?.data?.error?.message || 'Invalid Access Token';
+          data.connectionError = errMsg;
+          return res.status(400).json({ 
+            error: `Instagram connection failed: ${errMsg}`,
+            isAccountConnected: false 
+          });
+        }
+      } else {
+        data.isAccountConnected = false;
+      }
+    }
+
+    if (platform === 'facebook') {
+      if (data.facebookAccessToken && data.facebookPageId) {
+        try {
+          const testRes = await axios.get(`https://graph.facebook.com/v19.0/${data.facebookPageId}?access_token=${data.facebookAccessToken}`);
+          if (testRes.data && testRes.data.id) {
+            data.isFacebookConnected = true;
+            data.connectionError = '';
+            console.log('✅ Facebook token validated:', testRes.data.name || testRes.data.id);
+          }
+        } catch (metaErr) {
+          data.isFacebookConnected = false;
+          const errMsg = metaErr.response?.data?.error?.message || 'Invalid Access Token or Page ID';
+          data.connectionError = errMsg;
+          return res.status(400).json({ 
+            error: `Facebook connection failed: ${errMsg}`,
+            isFacebookConnected: false 
+          });
+        }
+      } else {
+        data.isFacebookConnected = false;
+      }
+    }
+
+    if (platform === 'whatsapp') {
+      if (data.whatsappToken && data.whatsappPhoneNumberId) {
+        try {
+          const testRes = await axios.get(`https://graph.facebook.com/v19.0/${data.whatsappPhoneNumberId}?access_token=${data.whatsappToken}`);
+          if (testRes.data && testRes.data.id) {
+            data.isWhatsAppConnected = true;
+            data.connectionError = '';
+            console.log('✅ WhatsApp token validated:', testRes.data.id);
+          }
+        } catch (metaErr) {
+          data.isWhatsAppConnected = false;
+          const errMsg = metaErr.response?.data?.error?.message || 'Invalid Access Token or Phone Number ID';
+          data.connectionError = errMsg;
+          return res.status(400).json({ 
+            error: `WhatsApp connection failed: ${errMsg}`,
+            isWhatsAppConnected: false 
+          });
+        }
+      } else {
+        data.isWhatsAppConnected = false;
+      }
+    }
+
     const settings = await Settings.findOneAndUpdate(
       { userId: req.user.id },
-      { ...req.body, updatedAt: new Date() },
+      data,
       { upsert: true, new: true }
     );
     res.json(settings);

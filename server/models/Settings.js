@@ -15,6 +15,8 @@ const settingsSchema = new mongoose.Schema({
   whatsappPhoneNumberId: { type: String, default: "" },
   isWhatsAppConnected: { type: Boolean, default: false },
 
+  connectionError: { type: String, default: "" },
+  lastTestedAt: { type: Date },
   updatedAt: { type: Date, default: Date.now }
 });
 
