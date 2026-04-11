@@ -244,6 +244,7 @@ button {
   flex: 1;
   padding: 32px;
   overflow-y: auto;
+  min-height: 0; 
 }
 
 /* Dashboard Grid */
@@ -846,7 +847,7 @@ tr:hover {
   }
 
   .inbox-container {
-    height: calc(100vh - 72px) !important;
+    height: 100% !important;
     border-radius: 0 !important;
   }
 
