@@ -509,7 +509,7 @@ export default function Login() {
             {/* Logo */}
             <div className="login-logo-wrap">
               <h1 className="login-title">Welcome Back</h1>
-              <p className="login-subtitle">Sign in to your DM Automate account</p>
+              <p className="login-subtitle">Sign in to your ZenXchat account</p>
             </div>
 
             {/* Error */}
