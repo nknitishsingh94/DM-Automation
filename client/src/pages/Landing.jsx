@@ -34,7 +34,7 @@ export default function Landing() {
         <div className="feature-list">
           <div className="feature-item">
             <div className="feature-item-icon">
-              <MessageSquare color="#f472b6" size={28} />
+              <MessageSquare color="#f472b6" size={32} />
             </div>
             <div className="feature-item-content">
               <h3>Respond to every comment</h3>
@@ -42,8 +42,8 @@ export default function Landing() {
           </div>
 
           <div className="feature-item">
-            <div className="feature-item-icon">
-              <UserCheck color="#8b5cf6" size={28} />
+            <div className="feature-item-icon" style={{ marginTop: '4px' }}>
+              <UserCheck color="#8b5cf6" size={32} />
             </div>
             <div className="feature-item-content">
               <h3>Only send links after they follow you</h3>
@@ -53,7 +53,7 @@ export default function Landing() {
 
           <div className="feature-item">
             <div className="feature-item-icon">
-              <ListTodo color="#64748b" size={28} />
+              <ListTodo color="#64748b" size={32} />
             </div>
             <div className="feature-item-content">
               <h3>Create data collection forms</h3>
@@ -62,7 +62,7 @@ export default function Landing() {
 
           <div className="feature-item">
             <div className="feature-item-icon">
-              <Zap color="#f472b6" size={28} />
+              <Zap color="#f472b6" size={32} />
             </div>
             <div className="feature-item-content">
               <h3>Never leave a DM unanswered</h3>
