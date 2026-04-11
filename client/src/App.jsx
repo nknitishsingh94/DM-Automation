@@ -39,7 +39,7 @@ function Sidebar({ isMobileOpen, onClose }) {
       <aside className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
         <div className="sidebar-header" style={{ justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Bot size={28} className="logo-icon" />
+            <img src="/zenxchat-logo.png" alt="ZenXchat" style={{ width: '32px', height: '32px', borderRadius: '8px' }} />
             <span className="logo-text">ZenXchat</span>
           </div>
           <button onClick={onClose} className="mobile-show" style={{ color: 'var(--text-muted)' }}>
