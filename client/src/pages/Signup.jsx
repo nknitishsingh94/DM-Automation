@@ -33,8 +33,8 @@ const styles = `
   .signup-card {
     width: 90%;
     margin: auto;
-    max-width: 400px;
-    padding: 30px 40px;
+    max-width: 520px;
+    padding: 36px 48px;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 24px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -52,7 +52,7 @@ const styles = `
 
   #googleBtn {
     width: 100%;
-    max-width: 320px;
+    max-width: 100%;
     display: flex;
     justify-content: center;
     margin: 0 auto;
@@ -211,10 +211,10 @@ export default function Signup() {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div className="input-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ width: '100%', maxWidth: '430px' }}>
+            <div style={{ width: '100%' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '500' }}>Full Name</label>
             </div>
-            <div style={{ position: 'relative', width: '100%', maxWidth: '430px' }}>
+            <div style={{ position: 'relative', width: '100%' }}>
               <User size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
               <input 
                 type="text" 
@@ -238,10 +238,10 @@ export default function Signup() {
           </div>
 
           <div className="input-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ width: '100%', maxWidth: '430px' }}>
+            <div style={{ width: '100%' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '500' }}>Email Address</label>
             </div>
-            <div style={{ position: 'relative', width: '100%', maxWidth: '430px' }}>
+            <div style={{ position: 'relative', width: '100%' }}>
               <Mail size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
               <input 
                 type="email" 
@@ -265,10 +265,10 @@ export default function Signup() {
           </div>
 
           <div className="input-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ width: '100%', maxWidth: '430px' }}>
+            <div style={{ width: '100%' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '500' }}>Password</label>
             </div>
-            <div style={{ position: 'relative', width: '100%', maxWidth: '430px' }}>
+            <div style={{ position: 'relative', width: '100%' }}>
               <Lock size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
               <input 
                 type="password" 
@@ -302,7 +302,7 @@ export default function Signup() {
               padding: '10px 24px',
               borderRadius: '8px',
               fontWeight: '600',
-              maxWidth: '430px',
+              maxWidth: '100%',
               width: '100%',
               margin: '10px auto 0 auto',
               display: 'flex',
@@ -330,7 +330,7 @@ export default function Signup() {
             onClick={handleFacebookLogin}
             style={{
               width: '100%',
-              maxWidth: '320px',
+              maxWidth: '100%',
               height: '40px',
               borderRadius: '10px',
               border: 'none',
