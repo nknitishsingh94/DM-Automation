@@ -21,7 +21,6 @@ export default function Signup() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // Handle manual signup
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (authMode === 'phone' && !isOtpSent) {
@@ -56,7 +55,6 @@ export default function Signup() {
 
   const handleSendOtp = () => {
     setLoading(true);
-    // Mocking OTP send
     setTimeout(() => {
       setLoading(false);
       setIsOtpSent(true);
@@ -64,7 +62,6 @@ export default function Signup() {
   };
 
   useEffect(() => {
-    /* Initialize Google Login */
     if (window.google) {
       window.google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
@@ -86,31 +83,19 @@ export default function Signup() {
         body: JSON.stringify({ token: response.credential })
       });
       const data = await res.json();
-      if (res.ok) {
-        login(data.user, data.token);
-        navigate('/dashboard');
-      } else {
-        setError(data.message || 'Google login failed');
-      }
+      if (res.ok) { login(data.user, data.token); navigate('/dashboard'); }
+      else { setError(data.message || 'Google login failed'); }
     } catch (err) {
       console.error("Google Auth Error:", err);
       setError(`Google Auth failed: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   const handleFacebookLogin = () => {
-    if (!window.FB) {
-      setError('Facebook SDK not loaded. Please check your internet.');
-      return;
-    }
+    if (!window.FB) { setError('Facebook SDK not loaded.'); return; }
     window.FB.login((response) => {
-      if (response.authResponse) {
-        processFacebookLogin(response.authResponse);
-      } else {
-        setError('Facebook login was cancelled or failed.');
-      }
+      if (response.authResponse) processFacebookLogin(response.authResponse);
+      else setError('Facebook login cancelled.');
     }, { scope: 'public_profile,email' });
   };
 
@@ -123,150 +108,144 @@ export default function Signup() {
         body: JSON.stringify({ accessToken: authResponse.accessToken, userId: authResponse.userID })
       });
       const data = await res.json();
-      if (res.ok) {
-        login(data.user, data.token);
-        navigate('/dashboard');
-      } else {
-        setError(data.message || 'Facebook login failed');
-      }
+      if (res.ok) { login(data.user, data.token); navigate('/dashboard'); }
+      else { setError(data.message || 'Facebook login failed'); }
     } catch (err) {
-      console.error("Facebook Auth Error:", err);
+      console.error("Facebook Error:", err);
       setError(`Facebook Auth failed: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   return (
-    <div className="min-h-screen bg-white flex">
-      {/* Left Column: Form Section */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-12">
-        <div className="max-w-md w-full mx-auto">
-          <div className="mb-10 text-center lg:text-left">
-            <h1 className="text-4xl font-extrabold text-gray-900 mb-2">Get Started</h1>
-            <p className="text-gray-500">
-              Already have an account? 
-              <Link to="/login" className="ml-1 text-accent font-semibold hover:underline">Sign In</Link>
-            </p>
+    <div className="min-h-screen relative flex items-center justify-center px-4 py-12 overflow-hidden">
+      {/* Background with Overlay */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed"
+        style={{ backgroundImage: 'url("/landing-bg.png")' }}
+      >
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+      </div>
+
+      {/* Auth Card (The "Box") */}
+      <div className="relative z-10 w-full max-w-md animate-in fade-in zoom-in duration-500">
+        <div className="bg-white/95 backdrop-blur-md rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/20 p-8 sm:p-12">
+          
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Get Started</h1>
+            <p className="text-gray-500 text-sm">Join the professional DM Automate platform</p>
           </div>
 
-          {/* Social Buttons Section */}
+          {/* Social Buttons */}
           <div className="space-y-4 mb-8">
             <div id="googleBtn" className="w-full"></div>
-            
             <button
               onClick={handleFacebookLogin}
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors duration-200"
+              className="w-full h-[40px] flex items-center justify-center gap-3 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all font-semibold text-[#1877F2]"
             >
-              <Facebook size={20} className="text-[#1877F2] fill-[#1877F2]" />
-              <span className="text-gray-700 font-medium">Continue with Facebook</span>
+              <Facebook size={20} fill="#1877F2" /> Continue with Facebook
             </button>
           </div>
 
-          <div className="flex items-center gap-4 my-8">
+          <div className="flex items-center gap-4 my-6">
             <div className="flex-1 h-px bg-gray-200"></div>
-            <span className="text-gray-400 text-sm font-medium uppercase tracking-wider">or</span>
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">or</span>
             <div className="flex-1 h-px bg-gray-200"></div>
           </div>
 
-          {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-red-600"></span>
+            <div className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-xs font-semibold flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-600"></span>
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {!isOtpSent ? (
               <>
                 {authMode === 'phone' ? (
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700 block text-left">Phone Number</label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <span className="text-gray-500 text-sm font-medium pr-2 border-r border-gray-200">+91</span>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-gray-700 uppercase tracking-tight ml-1">Phone Number</label>
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 border-r border-gray-100 pr-2">
+                        <span className="text-sm font-bold">+91</span>
                       </div>
                       <input
                         type="tel"
                         required
                         value={formData.phone}
                         onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        className="block w-full pl-14 pr-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all"
-                        placeholder="98765 43210"
+                        className="block w-full pl-14 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all"
+                        placeholder="00000 00000"
                       />
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700 block text-left">Email Address</label>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-gray-700 uppercase tracking-tight ml-1">Email Address</label>
                     <div className="relative group">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors group-focus-within:text-accent">
-                        <Mail size={18} className="text-gray-400" />
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                        <Mail size={16} className="text-gray-400 group-focus-within:text-accent" />
                       </div>
                       <input
                         type="email"
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        className="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all"
-                        placeholder="admin@example.com"
+                        className="block w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all"
+                        placeholder="your@email.com"
                       />
                     </div>
                   </div>
                 )}
 
-                <div className="flex justify-start">
+                <div className="flex justify-end">
                   <button
                     type="button"
                     onClick={() => setAuthMode(authMode === 'phone' ? 'email' : 'phone')}
-                    className="text-sm font-semibold text-accent hover:text-accent/80 transition-colors flex items-center gap-1.5"
+                    className="text-xs font-bold text-accent hover:text-accent/80 transition-colors flex items-center gap-1"
                   >
-                    {authMode === 'phone' ? <Mail size={16} /> : <Phone size={16} />}
-                    Use {authMode === 'phone' ? 'email' : 'phone'}
+                    {authMode === 'phone' ? 'Use Email instead' : 'Use Phone instead'}
                   </button>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-green-50/50 rounded-xl border border-green-100">
+                <div className="flex items-center gap-2.5 p-3.5 bg-gray-50 rounded-xl border border-gray-100 cursor-pointer hover:bg-white transition-colors">
                   <input
                     type="checkbox"
                     id="whatsapp-otp"
                     checked={formData.otpViaWhatsapp}
                     onChange={(e) => setFormData({...formData, otpViaWhatsapp: e.target.checked})}
-                    className="w-5 h-5 rounded border-gray-300 text-accent focus:ring-accent/20"
+                    className="w-4 h-4 rounded border-gray-300 text-accent focus:ring-accent/20 shadow-sm"
                   />
-                  <label htmlFor="whatsapp-otp" className="text-sm text-gray-600 font-medium cursor-pointer">
-                    OTP via WhatsApp
+                  <label htmlFor="whatsapp-otp" className="text-xs text-gray-600 font-bold select-none cursor-pointer">
+                    Get OTP on WhatsApp
                   </label>
                 </div>
               </>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-5 py-2">
                 <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 text-green-600 mb-4">
-                    <CheckCircle2 size={24} />
+                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-accent/10 text-accent mb-4 shadow-inner">
+                    <CheckCircle2 size={28} />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900">Verify OTP</h3>
-                  <p className="text-sm text-gray-500 mt-1">We've sent a code to your {authMode === 'phone' ? 'phone' : 'email'}.</p>
+                  <h3 className="text-xl font-bold text-gray-900 italic">Verify It's You</h3>
+                  <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-bold">Check your {authMode}</p>
                 </div>
                 
-                <div className="flex justify-between gap-2">
-                  <input
-                    type="text"
-                    maxLength="6"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    className="block w-full text-center tracking-[0.5em] text-2xl font-bold py-4 border-2 border-accent/20 rounded-2xl focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none bg-white transition-all"
-                    placeholder="••••••"
-                  />
-                </div>
+                <input
+                  type="text"
+                  maxLength="6"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="block w-full text-center tracking-[0.8em] text-2xl font-black py-4 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl focus:bg-white focus:border-accent focus:border-solid outline-none transition-all"
+                  placeholder="000000"
+                />
                 
                 <button
                   type="button"
                   onClick={() => setIsOtpSent(false)}
-                  className="w-full text-sm font-semibold text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1.5"
+                  className="w-full text-[10px] font-black uppercase text-gray-400 hover:text-accent transition-colors flex items-center justify-center gap-1"
                 >
-                  <ArrowLeft size={14} /> Change {authMode}
+                  <ArrowLeft size={10} /> Change {authMode} information
                 </button>
               </div>
             )}
@@ -274,59 +253,27 @@ export default function Signup() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-accent hover:bg-accent/90 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg shadow-accent/25 transform transition-all active:scale-95 disabled:opacity-70 disabled:pointer-events-none flex items-center justify-center gap-2"
+              className="w-full bg-accent hover:bg-accent/90 text-white font-black uppercase tracking-widest py-4 px-6 rounded-xl shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transform active:scale-95 transition-all disabled:opacity-50"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
                 <>
-                  {isOtpSent ? 'Complete Signup' : 'Send OTP'}
+                  {isOtpSent ? 'Verify & Create' : 'Send OTP'}
                   <ArrowRight size={18} />
                 </>
               )}
             </button>
           </form>
 
-          <p className="mt-12 text-center text-xs text-gray-400 leading-relaxed">
-            By proceeding, you agree to our 
-            <a href="#" className="mx-1 text-gray-500 font-semibold hover:underline">Terms of Service</a>
-            and
-            <a href="#" className="mx-1 text-gray-500 font-semibold hover:underline">Privacy Policy</a>
-          </p>
-        </div>
-      </div>
-
-      {/* Right Column: Hero Image Section */}
-      <div className="hidden lg:flex w-1/2 relative bg-gray-50 items-center justify-center p-12">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="/signup-hero.png" 
-            alt="Success Onboarding" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/40 to-transparent"></div>
+          <div className="mt-8 text-center text-[10px] text-gray-400 font-bold uppercase tracking-tight leading-relaxed">
+            Already have an account? <Link to="/login" className="text-accent hover:underline">Sign In Now</Link>
+          </div>
         </div>
         
-        {/* Floating Testimonial Card */}
-        <div className="relative z-10 max-w-sm p-8 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl text-white">
-          <div className="flex gap-1 mb-4">
-            {[...Array(5)].map((_, i) => (
-              <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-              </svg>
-            ))}
-          </div>
-          <p className="text-xl font-medium leading-relaxed italic mb-6">
-            "Automating our customer interactions changed everything. We've seen a 300% increase in conversion since using DM Automate."
-          </p>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-accent/30 border border-white/20"></div>
-            <div>
-              <p className="font-bold text-lg text-white">Sarah Jenkins</p>
-              <p className="text-white/60 text-sm">Growth Lead @ MetaFlow</p>
-            </div>
-          </div>
-        </div>
+        <p className="mt-8 text-center text-[10px] text-white/40 font-bold uppercase tracking-tighter">
+          By continuing you agree to our Terms & Privacy Policy
+        </p>
       </div>
     </div>
   );
