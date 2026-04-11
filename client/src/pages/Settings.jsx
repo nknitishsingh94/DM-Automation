@@ -143,44 +143,75 @@ export default function Settings() {
               </div>
             </div>
 
-            <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div className="input-group">
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                  <Key size={14} style={{ marginRight: '6px' }} /> Instagram Access Token
-                </label>
-                <input 
-                  type="password" placeholder="EAA..."
-                  value={settings.instagramAccessToken || ''}
-                  onChange={(e) => setSettings({...settings, instagramAccessToken: e.target.value})}
-                  style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                />
+            {/* Connected State */}
+            {settings.isAccountConnected ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ padding: '20px', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                    <CheckCircle size={24} color="#10b981" />
+                    <div>
+                      <p style={{ fontWeight: '700', fontSize: '1.1rem', color: '#10b981' }}>Successfully Connected</p>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                        Account: <strong>{settings.connectedInstagramName || 'Instagram Business'}</strong>
+                      </p>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+                    ✅ Your Instagram account is linked. Auto-replies and DM campaigns will now work with real messages.
+                  </p>
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setSettings({...settings, instagramAccessToken: '', instagramPageId: '', businessAccountId: '', isAccountConnected: false, connectedInstagramName: ''});
+                    setMessage({ type: '', text: '' });
+                  }}
+                  style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
+                >
+                  <XCircle size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Disconnect Account
+                </button>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            ) : (
+              /* Disconnected State — Show Form */
+              <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div className="input-group">
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                    <MapPin size={14} style={{ marginRight: '6px' }} /> Page ID
+                    <Key size={14} style={{ marginRight: '6px' }} /> Instagram Access Token
                   </label>
                   <input 
-                    type="text" placeholder="123456789..."
-                    value={settings.instagramPageId || ''}
-                    onChange={(e) => setSettings({...settings, instagramPageId: e.target.value})}
+                    type="password" placeholder="EAA..."
+                    value={settings.instagramAccessToken || ''}
+                    onChange={(e) => setSettings({...settings, instagramAccessToken: e.target.value})}
                     style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
                   />
                 </div>
-                <div className="input-group">
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                    <ShieldCheck size={14} style={{ marginRight: '6px' }} /> Business Account ID
-                  </label>
-                  <input 
-                    type="text" placeholder="Optional ID..."
-                    value={settings.businessAccountId || ''}
-                    onChange={(e) => setSettings({...settings, businessAccountId: e.target.value})}
-                    style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                  />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
+                      <MapPin size={14} style={{ marginRight: '6px' }} /> Page ID
+                    </label>
+                    <input 
+                      type="text" placeholder="123456789..."
+                      value={settings.instagramPageId || ''}
+                      onChange={(e) => setSettings({...settings, instagramPageId: e.target.value})}
+                      style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
+                      <ShieldCheck size={14} style={{ marginRight: '6px' }} /> Business Account ID
+                    </label>
+                    <input 
+                      type="text" placeholder="Optional ID..."
+                      value={settings.businessAccountId || ''}
+                      onChange={(e) => setSettings({...settings, businessAccountId: e.target.value})}
+                      style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                    />
+                  </div>
                 </div>
-              </div>
-              <SaveButton savingSettings={savingSettings} message={message} />
-            </form>
+                <SaveButton savingSettings={savingSettings} message={message} />
+              </form>
+            )}
           </>
         )}
 
@@ -204,31 +235,60 @@ export default function Settings() {
               </div>
             </div>
 
-            <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div className="input-group">
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                  <Key size={14} style={{ marginRight: '6px' }} /> Facebook Page Access Token
-                </label>
-                <input 
-                  type="password" placeholder="EAA..."
-                  value={settings.facebookAccessToken || ''}
-                  onChange={(e) => setSettings({...settings, facebookAccessToken: e.target.value})}
-                  style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                />
+            {settings.isFacebookConnected ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ padding: '20px', background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.2)', borderRadius: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                    <CheckCircle size={24} color="#3b82f6" />
+                    <div>
+                      <p style={{ fontWeight: '700', fontSize: '1.1rem', color: '#3b82f6' }}>Successfully Connected</p>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                        Page: <strong>{settings.connectedFacebookName || 'Facebook Page'}</strong>
+                      </p>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+                    ✅ Your Facebook Page is linked. Messenger auto-replies are now active.
+                  </p>
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setSettings({...settings, facebookAccessToken: '', facebookPageId: '', isFacebookConnected: false, connectedFacebookName: ''});
+                    setMessage({ type: '', text: '' });
+                  }}
+                  style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
+                >
+                  <XCircle size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Disconnect Page
+                </button>
               </div>
-              <div className="input-group">
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                  <MapPin size={14} style={{ marginRight: '6px' }} /> Facebook Page ID
-                </label>
-                <input 
-                  type="text" placeholder="123456789..."
-                  value={settings.facebookPageId || ''}
-                  onChange={(e) => setSettings({...settings, facebookPageId: e.target.value})}
-                  style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                />
-              </div>
-              <SaveButton savingSettings={savingSettings} message={message} />
-            </form>
+            ) : (
+              <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div className="input-group">
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
+                    <Key size={14} style={{ marginRight: '6px' }} /> Facebook Page Access Token
+                  </label>
+                  <input 
+                    type="password" placeholder="EAA..."
+                    value={settings.facebookAccessToken || ''}
+                    onChange={(e) => setSettings({...settings, facebookAccessToken: e.target.value})}
+                    style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                  />
+                </div>
+                <div className="input-group">
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
+                    <MapPin size={14} style={{ marginRight: '6px' }} /> Facebook Page ID
+                  </label>
+                  <input 
+                    type="text" placeholder="123456789..."
+                    value={settings.facebookPageId || ''}
+                    onChange={(e) => setSettings({...settings, facebookPageId: e.target.value})}
+                    style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                  />
+                </div>
+                <SaveButton savingSettings={savingSettings} message={message} />
+              </form>
+            )}
           </>
         )}
 
@@ -252,31 +312,60 @@ export default function Settings() {
               </div>
             </div>
 
-            <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div className="input-group">
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                  <Key size={14} style={{ marginRight: '6px' }} /> WhatsApp Access Token
-                </label>
-                <input 
-                  type="password" placeholder="EAA..."
-                  value={settings.whatsappToken || ''}
-                  onChange={(e) => setSettings({...settings, whatsappToken: e.target.value})}
-                  style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                />
+            {settings.isWhatsAppConnected ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ padding: '20px', background: 'rgba(37, 211, 102, 0.08)', border: '1px solid rgba(37, 211, 102, 0.2)', borderRadius: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                    <CheckCircle size={24} color="#25D366" />
+                    <div>
+                      <p style={{ fontWeight: '700', fontSize: '1.1rem', color: '#25D366' }}>Successfully Connected</p>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                        Phone: <strong>{settings.connectedWhatsAppName || 'WhatsApp Business'}</strong>
+                      </p>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+                    ✅ Your WhatsApp Business is linked. Automated messages are now active.
+                  </p>
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setSettings({...settings, whatsappToken: '', whatsappPhoneNumberId: '', isWhatsAppConnected: false, connectedWhatsAppName: ''});
+                    setMessage({ type: '', text: '' });
+                  }}
+                  style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
+                >
+                  <XCircle size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Disconnect WhatsApp
+                </button>
               </div>
-              <div className="input-group">
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                  <MapPin size={14} style={{ marginRight: '6px' }} /> Phone Number ID
-                </label>
-                <input 
-                  type="text" placeholder="123456789..."
-                  value={settings.whatsappPhoneNumberId || ''}
-                  onChange={(e) => setSettings({...settings, whatsappPhoneNumberId: e.target.value})}
-                  style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                />
-              </div>
-              <SaveButton savingSettings={savingSettings} message={message} />
-            </form>
+            ) : (
+              <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div className="input-group">
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
+                    <Key size={14} style={{ marginRight: '6px' }} /> WhatsApp Access Token
+                  </label>
+                  <input 
+                    type="password" placeholder="EAA..."
+                    value={settings.whatsappToken || ''}
+                    onChange={(e) => setSettings({...settings, whatsappToken: e.target.value})}
+                    style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                  />
+                </div>
+                <div className="input-group">
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
+                    <MapPin size={14} style={{ marginRight: '6px' }} /> Phone Number ID
+                  </label>
+                  <input 
+                    type="text" placeholder="123456789..."
+                    value={settings.whatsappPhoneNumberId || ''}
+                    onChange={(e) => setSettings({...settings, whatsappPhoneNumberId: e.target.value})}
+                    style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                  />
+                </div>
+                <SaveButton savingSettings={savingSettings} message={message} />
+              </form>
+            )}
           </>
         )}
 

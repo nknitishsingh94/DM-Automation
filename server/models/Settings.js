@@ -16,6 +16,9 @@ const settingsSchema = new mongoose.Schema({
   isWhatsAppConnected: { type: Boolean, default: false },
 
   connectionError: { type: String, default: "" },
+  connectedInstagramName: { type: String, default: "" },
+  connectedFacebookName: { type: String, default: "" },
+  connectedWhatsAppName: { type: String, default: "" },
   lastTestedAt: { type: Date },
   updatedAt: { type: Date, default: Date.now }
 });

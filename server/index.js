@@ -597,7 +597,9 @@ app.post('/api/settings', verifyToken, async (req, res) => {
           if (testRes.data && testRes.data.id) {
             data.isAccountConnected = true;
             data.connectionError = '';
-            console.log('✅ Instagram token validated:', testRes.data.name || testRes.data.id);
+            data.connectedInstagramName = testRes.data.name || testRes.data.id;
+            data.lastTestedAt = new Date();
+            console.log('✅ Instagram token validated:', data.connectedInstagramName);
           }
         } catch (metaErr) {
           data.isAccountConnected = false;
@@ -620,7 +622,9 @@ app.post('/api/settings', verifyToken, async (req, res) => {
           if (testRes.data && testRes.data.id) {
             data.isFacebookConnected = true;
             data.connectionError = '';
-            console.log('✅ Facebook token validated:', testRes.data.name || testRes.data.id);
+            data.connectedFacebookName = testRes.data.name || testRes.data.id;
+            data.lastTestedAt = new Date();
+            console.log('✅ Facebook token validated:', data.connectedFacebookName);
           }
         } catch (metaErr) {
           data.isFacebookConnected = false;
@@ -643,7 +647,9 @@ app.post('/api/settings', verifyToken, async (req, res) => {
           if (testRes.data && testRes.data.id) {
             data.isWhatsAppConnected = true;
             data.connectionError = '';
-            console.log('✅ WhatsApp token validated:', testRes.data.id);
+            data.connectedWhatsAppName = testRes.data.verified_name || testRes.data.display_phone_number || testRes.data.id;
+            data.lastTestedAt = new Date();
+            console.log('✅ WhatsApp token validated:', data.connectedWhatsAppName);
           }
         } catch (metaErr) {
           data.isWhatsAppConnected = false;
