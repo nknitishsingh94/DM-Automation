@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { CheckCircle2, MoreHorizontal, Send, Trash2, Instagram, Facebook, MessageSquare, Video, ExternalLink, ChevronLeft } from 'lucide-react';
+import { CheckCircle2, MoreHorizontal, Send, Trash2, Copy, Download, Instagram, Facebook, MessageSquare, Video, ExternalLink, ChevronLeft } from 'lucide-react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
@@ -13,8 +13,20 @@ export default function Inbox() {
   const [loading, setLoading] = useState(true);
   const [isChatViewMobile, setIsChatViewMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: "", message: "", onConfirm: null });
   const { user } = useAuth();
   const messagesEndRef = useRef(null);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    }
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   const scrollToBottom = () => {
     // Scroll only the specific chat messages container
@@ -159,44 +171,86 @@ export default function Inbox() {
   };
 
   const deleteMessage = async (id) => {
-    if (!window.confirm("Delete this message?")) return;
-    const token = localStorage.getItem('insta_agent_token');
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/messages/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        setMessages(prev => prev.filter(m => m._id !== id));
-      } else {
-        const errData = await res.json();
-        alert("Delete failed: " + errData.message);
+    setConfirmModal({
+      isOpen: true,
+      title: "Delete Message",
+      message: "Are you sure you want to remove this message? This cannot be undone.",
+      onConfirm: async () => {
+        const token = localStorage.getItem('insta_agent_token');
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/messages/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            setMessages(prev => prev.filter(m => m._id !== id));
+            setConfirmModal({ isOpen: false });
+          } else {
+            console.error("Delete failed");
+            setConfirmModal({ isOpen: false });
+          }
+        } catch (err) {
+          console.error("Error deleting message:", err);
+          setConfirmModal({ isOpen: false });
+        }
       }
-    } catch (err) {
-      console.error("Error deleting message:", err);
-      alert("Error deleting message. Check console.");
-    }
+    });
   };
 
   const deleteAllMessages = async () => {
-    if (!window.confirm("Are you sure you want to delete ALL messages? This action cannot be undone.")) return;
-    const token = localStorage.getItem('insta_agent_token');
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/messages/all`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        setMessages([]);
-        setIsMenuOpen(false);
-      } else {
-        const errData = await res.json();
-        alert("Failed to clear chat: " + errData.message);
+    setIsMenuOpen(false); // Close menu first
+    setConfirmModal({
+      isOpen: true,
+      title: "Clear All Chat",
+      message: "This will permanently delete ALL messages in this conversation. Are you sure?",
+      onConfirm: async () => {
+        const token = localStorage.getItem('insta_agent_token');
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/messages/all`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            setMessages([]);
+            setConfirmModal({ isOpen: false });
+          } else {
+            setConfirmModal({ isOpen: false });
+          }
+        } catch (err) {
+          console.error("Error clearing chat:", err);
+          setConfirmModal({ isOpen: false });
+        }
       }
-    } catch (err) {
-      console.error("Error clearing chat:", err);
-      alert("Error clearing chat. Check console.");
+    });
+  };
+
+  const copyToClipboard = () => {
+    console.log("📋 Copying chat transcript...");
+    if (messages.length === 0) return;
+    const transcript = messages.map(m => `[${new Date(m.timestamp).toLocaleString()}] ${m.sender}: ${m.text}`).join('\n');
+    navigator.clipboard.writeText(transcript).then(() => {
+      setIsMenuOpen(false);
+    }).catch(err => console.error(err));
+  };
+
+  const saveChatAsFile = () => {
+    console.log("💾 Saving chat as file...");
+    if (messages.length === 0) {
+      alert("Nothing to save!");
+      return;
     }
+    const transcript = messages.map(m => `[${new Date(m.timestamp).toLocaleString()}] ${m.sender}: ${m.text}`).join('\n');
+    const blob = new Blob([transcript], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `chat_transcript_${user?.username || 'user'}_${new Date().toLocaleDateString()}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    setIsMenuOpen(false);
+    console.log("✅ File download triggered.");
   };
 
   return (
@@ -262,10 +316,23 @@ export default function Inbox() {
             </div>
           </div>
 
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative' }} ref={menuRef}>
             <button 
               className="action-btn" 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: isMenuOpen ? '#f3f4f6' : 'transparent',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer',
+                border: 'none',
+                color: 'var(--text-muted)'
+              }}
             >
               <MoreHorizontal size={20} />
             </button>
@@ -275,36 +342,91 @@ export default function Inbox() {
                 position: 'absolute',
                 top: '100%',
                 right: '0',
-                marginTop: '8px',
+                marginTop: '10px',
                 background: 'white',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: '8px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                zIndex: 10,
-                minWidth: '150px'
+                border: '1px solid #e5e7eb',
+                borderRadius: '12px',
+                boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
+                zIndex: 100,
+                minWidth: '200px',
+                overflow: 'hidden',
+                animation: 'slideUp 0.2s ease-out'
               }}>
-                <button 
-                  onClick={deleteAllMessages}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    color: '#ef4444',
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: '500',
-                    fontSize: '0.9rem',
-                    textAlign: 'left'
-                  }}
-                  onMouseOver={(e) => e.target.style.background = '#fef2f2'}
-                  onMouseOut={(e) => e.target.style.background = 'transparent'}
-                >
-                  <Trash2 size={16} />
-                  Clear All Chat
-                </button>
+                <div style={{ padding: '8px 0' }}>
+                  <button 
+                    onClick={copyToClipboard}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      color: 'var(--text-main)',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: '500',
+                      fontSize: '0.9rem',
+                      textAlign: 'left',
+                      transition: 'background 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#f9fafb'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <Copy size={16} color="#6b7280" />
+                    Copy Transcript
+                  </button>
+
+                  <button 
+                    onClick={saveChatAsFile}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      color: 'var(--text-main)',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: '500',
+                      fontSize: '0.9rem',
+                      textAlign: 'left',
+                      transition: 'background 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#f9fafb'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <Download size={16} color="#6b7280" />
+                    Download Chat (.txt)
+                  </button>
+
+                  <div style={{ height: '1px', background: '#f3f4f6', margin: '4px 0' }}></div>
+
+                  <button 
+                    onClick={deleteAllMessages}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      color: '#ef4444',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: '500',
+                      fontSize: '0.9rem',
+                      textAlign: 'left',
+                      transition: 'background 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#fef2f2'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <Trash2 size={16} />
+                    Clear Chat History
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -471,6 +593,81 @@ export default function Inbox() {
           </button>
         </form>
       </div>
+
+      {/* --- PREMIUM CONFIRM MODAL --- */}
+      {confirmModal.isOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            padding: '30px',
+            width: '100%',
+            maxWidth: '400px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            textAlign: 'center',
+            animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              background: '#fee2e2',
+              color: '#ef4444',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px'
+            }}>
+              <Trash2 size={30} />
+            </div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '10px', color: '#111827' }}>{confirmModal.title}</h3>
+            <p style={{ color: '#6b7280', fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '25px' }}>{confirmModal.message}</p>
+            
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button 
+                onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  borderRadius: '12px',
+                  border: '1px solid #e5e7eb',
+                  background: 'white',
+                  fontWeight: '600',
+                  color: '#374151',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmModal.onConfirm}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  background: '#ef4444',
+                  fontWeight: '600',
+                  color: 'white',
+                  cursor: 'pointer'
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
