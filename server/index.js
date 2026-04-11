@@ -151,12 +151,22 @@ const processAutoReply = async (userId, platform, chatId, text) => {
     await autoReply.save();
     io.to(userId.toString()).emit('new_message', autoReply);
     return { reply: autoReply };
-  } else if (chatId === 'ai_bot_support') {
-    // FALLBACK FOR INBOX TESTING
-    const fallbackText = "🤖 Test Mode: No active campaign trigger word found in your message. Set a trigger word like 'Price' in positive campaigns to see me in action!";
+  } else {
+    // FALLBACK AI AGENT REPLY (Timezone specific Default Response)
+    // Using Indian Standard Time (IST) as default based on locale, but can be made dynamic later
+    const options = { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false };
+    const formatter = new Intl.DateTimeFormat('en-US', options);
+    const hour = parseInt(formatter.format(new Date()));
+    
+    let greeting = "Good Evening 🌙";
+    if (hour < 12) greeting = "Good Morning ☀️";
+    else if (hour < 17) greeting = "Good Afternoon 🌤️";
+
+    const fallbackText = `🤖 ${greeting}!\n\nMain ek Auto-AI Assistant hoon. Main aapke liye kya kar sakta hoon? (Test Mode: No specific trigger keyword matched.)`;
+    
     const fallbackReply = new Message({
       userId: new mongoose.Types.ObjectId(userId),
-      chatId: 'ai_bot_support',
+      chatId: chatId || 'default',
       sender: 'AI Agent',
       text: fallbackText,
       type: 'sent',
@@ -165,7 +175,15 @@ const processAutoReply = async (userId, platform, chatId, text) => {
       timestamp: new Date()
     });
     await fallbackReply.save();
-    io.to(userId.toString()).emit('new_message', fallbackReply);
+    
+    const emissionPayload = fallbackReply.toObject();
+    io.to(userId.toString()).emit('new_message', emissionPayload);
+    
+    // Also send real message to Instagram if it's not the test chat
+    if (chatId !== 'ai_bot_support') {
+      await sendMessageToInstagram(platform, chatId, fallbackText);
+    }
+    
     return { reply: fallbackReply, fallback: true };
   }
   return null;
