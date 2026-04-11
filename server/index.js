@@ -457,6 +457,19 @@ app.get('/api/messages', verifyToken, async (req, res) => {
   res.json(messages);
 });
 
+// Optimized route for Audience Manager history
+app.get('/api/messages/contact/:chatId', verifyToken, async (req, res) => {
+  try {
+    const messages = await Message.find({ 
+      userId: req.user.userId,
+      chatId: req.params.chatId
+    }).sort({ timestamp: -1 }).limit(100);
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post('/api/messages', verifyToken, async (req, res) => {
   try {
     const { sender, text, type, chatId, platform } = req.body;

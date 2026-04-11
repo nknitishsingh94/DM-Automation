@@ -4,8 +4,9 @@ import { API_BASE_URL } from '../config';
 
 export default function Audiences() {
   const [contacts, setContacts] = useState([]);
-  const [allMessages, setAllMessages] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMessages, setLoadingMessages] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedContact, setSelectedContact] = useState(null);
   const [selectedTagFilter, setSelectedTagFilter] = useState('All');
@@ -18,16 +19,11 @@ export default function Audiences() {
   const fetchContactsData = async () => {
     const token = localStorage.getItem('insta_agent_token');
     try {
-      const [contactsRes, messagesRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/contacts`, { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch(`${API_BASE_URL}/api/messages`, { headers: { 'Authorization': `Bearer ${token}` } })
-      ]);
-      
-      const contactsData = await contactsRes.json();
-      const messagesData = await messagesRes.json();
-      
+      const res = await fetch(`${API_BASE_URL}/api/contacts`, { 
+        headers: { 'Authorization': `Bearer ${token}` } 
+      });
+      const contactsData = await res.json();
       setContacts(contactsData);
-      setAllMessages(messagesData);
       
       // If a contact was selected, update its local state too
       if (selectedContact) {
@@ -41,9 +37,34 @@ export default function Audiences() {
     }
   };
 
+  const fetchContactHistory = async (chatId) => {
+    setLoadingMessages(true);
+    const token = localStorage.getItem('insta_agent_token');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/messages/contact/${chatId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setMessages(data);
+    } catch (err) {
+      console.error("Error fetching history:", err);
+    } finally {
+      setLoadingMessages(false);
+    }
+  };
+
   useEffect(() => {
     fetchContactsData();
   }, []);
+
+  useEffect(() => {
+    if (selectedContact) {
+      fetchContactHistory(selectedContact.chatId);
+      setNoteInput(selectedContact.notes || '');
+    } else {
+      setMessages([]);
+    }
+  }, [selectedContact?._id]);
 
   const handleUpdateContact = async (updates) => {
     if (!selectedContact) return;
@@ -175,18 +196,27 @@ export default function Audiences() {
               <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Activity size={20} color="var(--accent-color)" /> Interaction History
               </h3>
-              <div className="table-card">
-                {userMessages.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No historical messages found.</div>
+              <div className="table-card" style={{ minHeight: '200px', display: 'flex', flexDirection: 'column' }}>
+                {loadingMessages ? (
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                      <div className="spinner" style={{ width: '24px', height: '24px', border: '3px solid #f3f3f3', borderTop: '3px solid var(--accent-color)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                      Loading history...
+                    </div>
+                  </div>
+                ) : messages.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '60px 40px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                    No historical messages found for this contact.
+                  </div>
                 ) : (
                   <div style={{ padding: '0 24px' }}>
-                    {userMessages.map((msg, idx) => {
+                    {messages.map((msg, idx) => {
                       const isAI = msg.sender === 'AI Agent';
                       const isAdmin = msg.sender === 'admin';
                       return (
                         <div key={msg._id || idx} style={{ 
                           display: 'flex', gap: '16px', padding: '16px 0', 
-                          borderBottom: idx !== userMessages.length - 1 ? '1px solid var(--border-subtle)' : 'none' 
+                          borderBottom: idx !== messages.length - 1 ? '1px solid var(--border-subtle)' : 'none' 
                         }}>
                           <div style={{ 
                             width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
