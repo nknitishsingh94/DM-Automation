@@ -52,7 +52,7 @@ const styles = `
 
   #googleBtn {
     width: 100%;
-    max-width: 100%;
+    max-width: 320px;
     display: flex;
     justify-content: center;
     margin: 0 auto;
@@ -302,7 +302,7 @@ export default function Signup() {
               padding: '10px 24px',
               borderRadius: '8px',
               fontWeight: '600',
-              maxWidth: '100%',
+              maxWidth: '320px',
               width: '100%',
               margin: '10px auto 0 auto',
               display: 'flex',
@@ -312,7 +312,7 @@ export default function Signup() {
               marginTop: '10px'
             }}
           >
-            <UserPlus size={18} /> {loading ? 'Creating Account...' : 'Sign Up'}
+            <UserPlus size={16} /> {loading ? 'Creating Account...' : 'Sign Up'}
           </button>
         </form>
 
@@ -330,7 +330,7 @@ export default function Signup() {
             onClick={handleFacebookLogin}
             style={{
               width: '100%',
-              maxWidth: '100%',
+              maxWidth: '320px',
               height: '40px',
               borderRadius: '10px',
               border: 'none',
@@ -347,7 +347,7 @@ export default function Signup() {
               margin: '0 auto'
             }}
           >
-            <Facebook size={20} fill="white" color="white" /> Continue with Facebook
+            <Facebook size={18} fill="white" color="white" /> Continue with Facebook
           </button>
         </div>
 
