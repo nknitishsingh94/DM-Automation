@@ -431,9 +431,11 @@ app.post('/api/messages', verifyToken, async (req, res) => {
     // Emit new message via Socket.io to the specific user's room
     io.to(req.user.userId).emit('new_message', newMessage);
 
-    // AI Auto-Reply Logic
+    // AI Auto-Reply Logic (Run asynchronously so it doesn't block the response)
     if (sender === 'user') {
-      await processAutoReply(req.user.userId, newMessage.platform, chatId, text);
+      processAutoReply(req.user.userId, newMessage.platform, chatId, text).catch(err => {
+        console.error("AutoReply error:", err);
+      });
     }
     
     res.json(newMessage);

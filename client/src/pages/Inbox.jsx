@@ -105,17 +105,17 @@ export default function Inbox() {
         return;
       }
 
+      // Optimistically clear the input field instantly
+      setNewMessage("");
+
       const data = await res.json();
       console.log("Message saved successfully:", data);
       
-      // Update UI immediately
+      // Update UI immediately (if not already handled by socket)
       setMessages(prev => {
-        // Only add if not already present (socket might have already added it)
         if (prev.find(m => m._id === data._id)) return prev;
         return [...prev, data];
       });
-      
-      setNewMessage("");
 
     } catch (err) {
       console.error("Network/App Error:", err);
