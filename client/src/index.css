@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --bg-dark: #f0f2f5;
   --bg-card: rgba(255, 255, 255, 0.7);

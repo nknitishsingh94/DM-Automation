@@ -1,408 +1,41 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Bot, LogIn, Mail, Lock, Info, Facebook } from 'lucide-react';
+import { Facebook, Mail, Phone, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL, GOOGLE_CLIENT_ID } from '../config';
 
-const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-  @keyframes loginFloat {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    33% { transform: translateY(-18px) rotate(1deg); }
-    66% { transform: translateY(-8px) rotate(-1deg); }
-  }
-
-  @keyframes loginOrb {
-    0% { transform: scale(1) translate(0, 0); opacity: 0.4; }
-    50% { transform: scale(1.2) translate(30px, -20px); opacity: 0.7; }
-    100% { transform: scale(1) translate(0, 0); opacity: 0.4; }
-  }
-
-  @keyframes loginFadeIn {
-    from { opacity: 0; transform: translateY(24px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  @keyframes loginShimmer {
-    0%   { background-position: -200% center; }
-    100% { background-position: 200% center; }
-  }
-
-  @keyframes loginPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
-    50%       { box-shadow: 0 0 0 8px rgba(139, 92, 246, 0); }
-  }
-
-  .login-page-wrapper {
-    min-height: 100vh;
-    min-height: 100svh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                url('/landing-bg.png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    position: relative;
-    overflow-x: hidden;
-    overflow-y: auto;
-    width: 100vw;
-    padding: 20px 0;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .login-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
-  }
-
-  .login-orb-1 {
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
-    top: -200px; right: -150px;
-    animation: loginOrb 12s ease-in-out infinite;
-  }
-
-  .login-orb-2 {
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%);
-    bottom: -150px; left: -100px;
-    animation: loginOrb 16s ease-in-out infinite reverse;
-  }
-
-  .login-orb-3 {
-    width: 350px; height: 350px;
-    background: radial-gradient(circle, rgba(236,72,153,0.05) 0%, transparent 70%);
-    top: 60%; left: 60%;
-    animation: loginOrb 20s ease-in-out infinite;
-  }
-
-  .login-card {
-    position: relative;
-    z-index: 2;
-    width: 90%;
-    margin: auto;
-    max-width: 700px;
-    background: #ffffff;
-    border: 1px solid rgba(139, 92, 246, 0.1);
-    border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(139, 92, 246, 0.12), 0 4px 16px rgba(0,0,0,0.06);
-    animation: loginFadeIn 0.6s cubic-bezier(0.4,0,0.2,1) both;
-    display: flex;
-    overflow: hidden;
-    min-height: 480px;
-  }
-
-  /* LEFT PANEL — form */
-  .login-left {
-    flex: 1;
-    width: 50%;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-
-  /* RIGHT PANEL — social */
-  .login-right {
-    flex: 1;
-    width: 50%;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #f8f7ff;
-    border-left: 1px solid rgba(139, 92, 246, 0.15);
-    gap: 14px;
-  }
-
-  .login-right-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin-bottom: 4px;
-    text-align: center;
-  }
-
-  .login-right-subtitle {
-    font-size: 0.82rem;
-    color: #6b7280;
-    text-align: center;
-    margin-bottom: 8px;
-    line-height: 1.5;
-  }
-
-  .login-logo-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 28px;
-  }
-
-  .login-logo-circle {
-    width: 56px; height: 56px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #8b5cf6, #6366f1, #3b82f6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
-    box-shadow: 0 6px 20px rgba(139,92,246,0.4);
-    animation: loginPulse 3s ease-in-out infinite;
-  }
-
-  .login-title {
-    font-size: 1.7rem;
-    font-weight: 800;
-    color: #1a1a1a;
-    letter-spacing: -0.5px;
-    margin-bottom: 4px;
-  }
-
-  .login-subtitle {
-    font-size: 0.86rem;
-    color: #65676b;
-    font-weight: 500;
-  }
-
-  .login-error {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 16px;
-    background: rgba(239,68,68,0.12);
-    border: 1px solid rgba(239,68,68,0.25);
-    color: #f87171;
-    border-radius: 14px;
-    font-size: 0.84rem;
-    margin-bottom: 22px;
-  }
-
-  .login-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #4b5563;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-  }
-
-  .login-input-wrap {
-    position: relative;
-    margin-bottom: 18px;
-  }
-
-  .login-input-icon {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9ca3af;
-    pointer-events: none;
-  }
-
-  .login-input {
-    width: 100%;
-    padding: 14px 16px 14px 46px;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    color: #1a1a1a;
-    font-size: 0.95rem;
-    font-family: 'Inter', sans-serif;
-    outline: none;
-    transition: border 0.2s, box-shadow 0.2s, background 0.2s;
-  }
-
-  .login-input::placeholder { color: #9ca3af; }
-
-  .login-input:focus {
-    border-color: rgba(139,92,246,0.6);
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
-  }
-
-  .login-submit-btn {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 14px;
-    font-size: 1rem;
-    font-weight: 700;
-    color: #fff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 8px;
-    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #3b82f6 100%);
-    background-size: 200% auto;
-    transition: background-position 0.4s, transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 6px 24px rgba(139,92,246,0.45);
-    letter-spacing: 0.3px;
-  }
-
-  .login-submit-btn:hover:not(:disabled) {
-    background-position: right center;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 32px rgba(139,92,246,0.6);
-  }
-
-  .login-submit-btn:active:not(:disabled) { transform: translateY(0); }
-
-  .login-submit-btn:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-  }
-
-  .login-divider {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin: 28px 0;
-  }
-
-  .login-divider-line {
-    flex: 1;
-    height: 1px;
-    background: #e5e7eb;
-  }
-
-  .login-divider-text {
-    font-size: 0.78rem;
-    color: #9ca3af;
-    font-weight: 500;
-    white-space: nowrap;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-  }
-
-  .login-social-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    align-items: stretch;
-    width: 100%;
-  }
-
-  .login-fb-btn {
-    width: 100%;
-    max-width: 340px;
-    height: 40px;
-    border-radius: 10px;
-    border: none;
-    background: #1877f2;
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 0.93rem;
-    font-family: 'Inter', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
-    letter-spacing: 0.2px;
-    box-shadow: 0 4px 12px rgba(24, 119, 242, 0.12);
-  }
-
-  .login-fb-btn:hover {
-    background: #166fe5;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(24, 119, 242, 0.25);
-  }
-
-  .login-fb-btn:active { transform: translateY(0); }
-
-  .login-fb-icon-wrap {
-    width: 28px; height: 28px;
-    border-radius: 7px;
-    background: #1877f2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .login-social-note {
-    font-size: 0.78rem;
-    color: #9ca3af;
-    text-align: center;
-    margin-top: 4px;
-    line-height: 1.5;
-  }
-
-  .login-social-note a {
-    color: #8b5cf6;
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  .login-footer {
-    text-align: left;
-    margin-top: 24px;
-    font-size: 0.86rem;
-    color: #6b7280;
-  }
-
-  .login-footer a {
-    color: #8b5cf6;
-    font-weight: 700;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .login-footer a:hover { color: #7c3aed; }
-
-  #googleBtn {
-    width: 100% !important;
-    max-width: 340px !important;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-  }
-
-  #googleBtn > div {
-    width: 100% !important;
-    max-width: 100% !important;
-    border-radius: 10px !important;
-    overflow: hidden;
-    height: 40px !important;
-  }
-
-  @media (max-width: 640px) {
-    .login-card { flex-direction: column; }
-    .login-right { width: 100%; border-left: none; border-top: 2px solid rgba(139,92,246,0.1); padding: 32px 28px; }
-    .login-left { padding: 36px 28px; }
-  }
-`;
-
 export default function Login() {
+  const [authMode, setAuthMode] = useState('phone'); // 'phone' or 'email'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [otpViaWhatsapp, setOtpViaWhatsapp] = useState(true);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("🚀 Connection Attempt to:", API_BASE_URL);
+    if (authMode === 'phone' && !isOtpSent) {
+      handleSendOtp();
+      return;
+    }
+
     setLoading(true);
     setError('');
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ 
+          email: authMode === 'email' ? email : undefined, 
+          password: authMode === 'email' ? password : undefined,
+          phone: authMode === 'phone' ? phone : undefined
+        })
       });
       const data = await res.json();
       if (res.ok) {
@@ -413,37 +46,35 @@ export default function Login() {
       }
     } catch (err) {
       console.error("Login Error:", err);
-      setError(`Connection failed: ${err.message}. Check browser console for details.`);
+      setError(`Connection failed: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSendOtp = () => {
+    setLoading(true);
+    // Mocking OTP send
+    setTimeout(() => {
+      setLoading(false);
+      setIsOtpSent(true);
+    }, 1500);
+  };
+
   useEffect(() => {
     const initGoogle = () => {
-      if (window.google && document.getElementById("googleBtn")) {
+      if (window.google) {
         window.google.accounts.id.initialize({
           client_id: GOOGLE_CLIENT_ID,
           callback: handleGoogleResponse
         });
         window.google.accounts.id.renderButton(
           document.getElementById("googleBtn"),
-          { theme: "outline", size: "large", width: "340", logo_alignment: "center", shape: "rectangular" }
+          { theme: "outline", size: "large", width: "100%", shape: "rectangular", text: "signin_with" }
         );
       }
     };
-
-    if (window.google) {
-      initGoogle();
-    } else {
-      const intervalId = setInterval(() => {
-        if (window.google) {
-          clearInterval(intervalId);
-          initGoogle();
-        }
-      }, 100);
-      return () => clearInterval(intervalId);
-    }
+    initGoogle();
   }, []);
 
   const handleGoogleResponse = async (response) => {
@@ -460,13 +91,12 @@ export default function Login() {
     } catch (err) {
       console.error("Google Auth Error:", err);
       setError(`Google Auth failed: ${err.message}`);
-    }
-    finally { setLoading(false); }
+    } finally { setLoading(false); }
   };
 
   const handleFacebookLogin = () => {
     if (!window.FB) {
-      setError('Facebook SDK not loaded. Please check your internet or App ID.');
+      setError('Facebook SDK not loaded. Please check your internet.');
       return;
     }
     window.FB.login((response) => {
@@ -489,117 +119,211 @@ export default function Login() {
     } catch (err) {
       console.error("Facebook Auth Error:", err);
       setError(`Facebook Auth failed: ${err.message}`);
-    }
-    finally { setLoading(false); }
+    } finally { setLoading(false); }
   };
 
   return (
-    <>
-      <style>{styles}</style>
-      <div className="login-page-wrapper">
-        {/* Animated background orbs */}
-        <div className="login-orb login-orb-1" />
-        <div className="login-orb login-orb-2" />
-        <div className="login-orb login-orb-3" />
-
-        <div className="login-card">
-
-          {/* ── LEFT PANEL: Form ── */}
-          <div className="login-left">
-            {/* Logo */}
-            <div className="login-logo-wrap">
-              <h1 className="login-title">Welcome Back</h1>
-              <p className="login-subtitle">Sign in to your DM Automate account</p>
-            </div>
-
-            {/* Error */}
-            {error && (
-              <div className="login-error">
-                <Info size={16} style={{ flexShrink: 0 }} /> {error}
-              </div>
-            )}
-
-            {/* Form */}
-            <form onSubmit={handleSubmit}>
-              <div className="login-input-wrap">
-                <label className="login-label">Email Address</label>
-                <div style={{ position: 'relative' }}>
-                  <Mail size={17} className="login-input-icon" />
-                  <input
-                    className="login-input"
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@example.com"
-                  />
-                </div>
-              </div>
-
-              <div className="login-input-wrap">
-                <label className="login-label">Password</label>
-                <div style={{ position: 'relative' }}>
-                  <Lock size={17} className="login-input-icon" />
-                  <input
-                    className="login-input"
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                  />
-                </div>
-              </div>
-
-              <button type="submit" className="login-submit-btn" disabled={loading}>
-                <LogIn size={18} />
-                {loading ? 'Signing in...' : 'Sign In'}
-              </button>
-            </form>
-
-            {/* Footer */}
-            <div className="login-footer" style={{ marginTop: '20px' }}>
-              Don't have an account?{' '}
-              <Link to="/signup">Create one</Link>
-            </div>
-          </div>
-
-
-          {/* ── RIGHT PANEL: Social Login ── */}
-          <div className="login-right">
-            <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-              <p className="login-right-title">Quick Sign In</p>
-              <p className="login-right-subtitle">Use your Google or Facebook account to sign in instantly</p>
-            </div>
-
-            <div className="login-social-wrap">
-              {/* Google */}
-              <div
-                id="googleBtn"
-                style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
-              />
-
-              {/* Facebook */}
-              <button
-                type="button"
-                className="login-fb-btn"
-                onClick={handleFacebookLogin}
-              >
-                <div className="login-fb-icon-wrap">
-                  <Facebook size={16} color="#fff" fill="#fff" />
-                </div>
-                Continue with Facebook
-              </button>
-            </div>
-
-            <p className="login-social-note">
-              By continuing, you agree to our{' '}
-              <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a>
+    <div className="min-h-screen bg-white flex">
+      {/* Left Column: Form Section */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-12">
+        <div className="max-w-md w-full mx-auto">
+          <div className="mb-10 text-center lg:text-left">
+            <h1 className="text-4xl font-extrabold text-gray-900 mb-2">Sign In</h1>
+            <p className="text-gray-500">
+              Don't have an account? 
+              <Link to="/signup" className="ml-1 text-accent font-semibold hover:underline">Sign Up</Link>
             </p>
           </div>
 
+          {/* Social Buttons Section */}
+          <div className="space-y-4 mb-8">
+            <div id="googleBtn" className="w-full"></div>
+            
+            <button
+              onClick={handleFacebookLogin}
+              className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors duration-200"
+            >
+              <Facebook size={20} className="text-[#1877F2] fill-[#1877F2]" />
+              <span className="text-gray-700 font-medium">Continue with Facebook</span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-4 my-8">
+            <div className="flex-1 h-px bg-gray-200"></div>
+            <span className="text-gray-400 text-sm font-medium uppercase tracking-wider">or</span>
+            <div className="flex-1 h-px bg-gray-200"></div>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-red-600"></span>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {!isOtpSent ? (
+              <>
+                {authMode === 'phone' ? (
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-gray-700 block text-left">Phone Number</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <span className="text-gray-500 text-sm font-medium pr-2 border-r border-gray-200">+91</span>
+                      </div>
+                      <input
+                        type="tel"
+                        required
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="block w-full pl-14 pr-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all"
+                        placeholder="98765 43210"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-gray-700 block text-left">Email Address</label>
+                      <div className="relative group">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors group-focus-within:text-accent">
+                          <Mail size={18} className="text-gray-400" />
+                        </div>
+                        <input
+                          type="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all"
+                          placeholder="admin@example.com"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-gray-700 block text-left">Password</label>
+                      <input
+                        type="password"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="block w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all"
+                        placeholder="••••••••"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-start">
+                  <button
+                    type="button"
+                    onClick={() => setAuthMode(authMode === 'phone' ? 'email' : 'phone')}
+                    className="text-sm font-semibold text-accent hover:text-accent/80 transition-colors flex items-center gap-1.5"
+                  >
+                    {authMode === 'phone' ? <Mail size={16} /> : <Phone size={16} />}
+                    Use {authMode === 'phone' ? 'email' : 'phone'}
+                  </button>
+                </div>
+
+                {authMode === 'phone' && (
+                  <div className="flex items-center gap-3 p-3 bg-green-50/50 rounded-xl border border-green-100">
+                    <input
+                      type="checkbox"
+                      id="whatsapp-otp"
+                      checked={otpViaWhatsapp}
+                      onChange={(e) => setOtpViaWhatsapp(e.target.checked)}
+                      className="w-5 h-5 rounded border-gray-300 text-accent focus:ring-accent/20"
+                    />
+                    <label htmlFor="whatsapp-otp" className="text-sm text-gray-600 font-medium cursor-pointer">
+                      OTP via WhatsApp
+                    </label>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 text-green-600 mb-4">
+                    <CheckCircle2 size={24} />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900">Verify OTP</h3>
+                  <p className="text-sm text-gray-500 mt-1">We've sent a code via {otpViaWhatsapp ? 'WhatsApp' : 'SMS'}.</p>
+                </div>
+                
+                <div className="flex justify-between gap-2">
+                  <input
+                    type="text"
+                    maxLength="6"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    className="block w-full text-center tracking-[0.5em] text-2xl font-bold py-4 border-2 border-accent/20 rounded-2xl focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none bg-white transition-all"
+                    placeholder="••••••"
+                  />
+                </div>
+                
+                <button
+                  type="button"
+                  onClick={() => setIsOtpSent(false)}
+                  className="w-full text-sm font-semibold text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1.5"
+                >
+                  <ArrowLeft size={14} /> Change {authMode}
+                </button>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-accent hover:bg-accent/90 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg shadow-accent/25 transform transition-all active:scale-95 disabled:opacity-70 disabled:pointer-events-none flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  {isOtpSent || authMode === 'email' ? 'Sign In' : 'Send OTP'}
+                  <ArrowRight size={18} />
+                </>
+              )}
+            </button>
+          </form>
+
+          <p className="mt-12 text-center text-xs text-gray-400 leading-relaxed">
+            By proceeding, you agree to our 
+            <a href="#" className="mx-1 text-gray-500 font-semibold hover:underline">Terms of Service</a>
+            and
+            <a href="#" className="mx-1 text-gray-500 font-semibold hover:underline">Privacy Policy</a>
+          </p>
         </div>
       </div>
-    </>
+
+      {/* Right Column: Hero Image Section */}
+      <div className="hidden lg:flex w-1/2 relative bg-gray-50 items-center justify-center p-12 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/signup-hero.png" 
+            alt="DM Automate" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/40 to-transparent"></div>
+        </div>
+        
+        {/* Floating Info Card */}
+        <div className="relative z-10 max-w-sm p-8 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl text-white">
+          <p className="text-xl font-medium leading-relaxed mb-6">
+            "Manage your Instagram automation with simplicity and power. DM Automate helps you grow faster."
+          </p>
+          <div className="flex items-center gap-4">
+            <div className="flex -space-x-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-accent/30 flex items-center justify-center text-[10px] font-bold">
+                  U{i}
+                </div>
+              ))}
+            </div>
+            <p className="text-white/80 text-sm font-medium">Joined by 2,000+ creators</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
