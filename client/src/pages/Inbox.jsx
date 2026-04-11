@@ -81,6 +81,24 @@ export default function Inbox() {
     };
 
 
+    const tempId = Date.now().toString();
+    const tempMessage = {
+      _id: tempId,
+      sender: senderRole === "admin" ? "admin" : "user",
+      text: newMessage,
+      type: senderRole === "admin" ? "sent" : "received",
+      chatId: "ai_bot_support",
+      platform: selectedPlatform,
+      timestamp: new Date().toISOString()
+    };
+
+    // 1. Optimistically clear input instantly
+    setNewMessage("");
+    
+    // 2. Optimistically add to UI instantly
+    setMessages(prev => [...prev, tempMessage]);
+    setTimeout(scrollToBottom, 50);
+
     try {
       const token = localStorage.getItem('insta_agent_token');
       if (!token) {
@@ -102,20 +120,16 @@ export default function Inbox() {
         const errorData = await res.json();
         console.error("Server Error:", errorData);
         alert("Backend failed to save: " + (errorData.message || res.statusText));
+        // Revert message on failure
+        setMessages(prev => prev.filter(m => m._id !== tempId));
         return;
       }
-
-      // Optimistically clear the input field instantly
-      setNewMessage("");
 
       const data = await res.json();
       console.log("Message saved successfully:", data);
       
-      // Update UI immediately (if not already handled by socket)
-      setMessages(prev => {
-        if (prev.find(m => m._id === data._id)) return prev;
-        return [...prev, data];
-      });
+      // Update the temporary message with real DB message
+      setMessages(prev => prev.map(m => m._id === tempId ? data : m));
 
     } catch (err) {
       console.error("Network/App Error:", err);
