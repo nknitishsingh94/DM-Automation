@@ -13,7 +13,7 @@ const seedCampaigns = async () => {
       {
         name: "Welcome Greeting",
         trigger: "Hello",
-        response: "Hi there! 👋 Welcome to DM Automate. I'm your AI assistant. How can I help you today?",
+        response: "Hi there! 👋 Welcome to Harichat. I'm your AI assistant. How can I help you today?",
         status: "Active"
       },
       {

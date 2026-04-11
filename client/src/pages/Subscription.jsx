@@ -61,7 +61,7 @@ export default function Subscription() {
         key: 'rzp_test_Sb7Jacv3IT4KbJ', // Updated with your real Key ID
         amount: order.amount,
         currency: order.currency,
-        name: "DM Automate",
+        name: "Harichat",
         description: "Professional AI Automation Pro Plan",
         image: "https://instant-logo.png", // Icon
         order_id: order.id,
@@ -284,7 +284,7 @@ export default function Subscription() {
                     onClick={() => setPaymentStep('qr')} 
                   />
                   <div style={{ marginTop: '12px', textAlign: 'center' }}>
-                    <p style={{ fontSize: '0.8rem', color: '#888' }}>Secure encrypted payments powered by DM Automate</p>
+                    <p style={{ fontSize: '0.8rem', color: '#888' }}>Secure encrypted payments powered by Harichat</p>
                   </div>
                 </div>
               )}

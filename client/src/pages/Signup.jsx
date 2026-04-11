@@ -164,7 +164,7 @@ export default function Signup() {
         <div className="signup-card">
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <h1 style={{ fontSize: '1.8rem', fontWeight: '700' }}>Create Account</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join the AI DM Automation Platform</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join the Harichat Automation Platform</p>
         </div>
 
         {error && (
