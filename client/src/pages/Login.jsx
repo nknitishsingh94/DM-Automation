@@ -267,7 +267,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-accent hover:bg-accent/90 text-white font-black uppercase tracking-widest py-4 px-6 rounded-xl shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transform active:scale-95 transition-all disabled:opacity-50"
+              className={`w-full ${(isOtpSent || authMode === 'email') ? 'bg-blue-600 hover:bg-blue-700' : 'bg-black hover:bg-black/90'} text-white font-black uppercase tracking-widest py-4 px-6 rounded-xl shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transform active:scale-95 transition-all disabled:opacity-50`}
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
