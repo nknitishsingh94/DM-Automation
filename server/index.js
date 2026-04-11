@@ -162,7 +162,15 @@ const processAutoReply = async (userId, platform, chatId, text) => {
     if (hour < 12) greeting = "Good Morning ☀️";
     else if (hour < 17) greeting = "Good Afternoon 🌤️";
 
-    const fallbackText = `🤖 ${greeting}!\n\nMain ek Auto-AI Assistant hoon. Main aapke liye kya kar sakta hoon? (Test Mode: No specific trigger keyword matched.)`;
+    const hinglishKeywords = ['kya', 'hai', 'kaise', 'kaisa', 'hoon', 'kyu', 'kyun', 'bhai', 'haan', 'nahi', 'karo', 'liye', 'mera', 'tum', 'aap', 'kaam', 'yeh'];
+    const isHinglish = userMessage.split(/\W+/).some(word => hinglishKeywords.includes(word));
+    
+    let fallbackText = '';
+    if (isHinglish) {
+      fallbackText = `🤖 ${greeting}!\n\nMain ek Auto-AI Assistant hoon. Main aapke liye kya kar sakta hoon? (Test Mode: No specific trigger keyword matched.)`;
+    } else {
+      fallbackText = `🤖 ${greeting}!\n\nI am an Auto-AI Assistant. How can I help you today? (Test Mode: No specific trigger keyword matched.)`;
+    }
     
     const fallbackReply = new Message({
       userId: new mongoose.Types.ObjectId(userId),
