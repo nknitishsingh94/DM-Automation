@@ -27,8 +27,8 @@ const styles = `
   .signup-card {
     width: 90%;
     margin: auto;
-    max-width: 440px;
-    padding: 30px 40px;
+    max-width: 400px;
+    padding: 24px 32px;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 24px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -43,7 +43,7 @@ const styles = `
 
   #googleBtn {
     width: 100%;
-    max-width: 400px;
+    max-width: 340px;
     display: flex;
     justify-content: center;
     margin: 0 auto;
@@ -52,9 +52,9 @@ const styles = `
   #googleBtn > div {
     width: 100% !important;
     max-width: 100% !important;
-    border-radius: 12px !important;
+    border-radius: 10px !important;
     overflow: hidden;
-    height: 44px !important;
+    height: 40px !important;
   }
 `;
 
@@ -100,10 +100,10 @@ export default function Signup() {
         client_id: GOOGLE_CLIENT_ID,
         callback: handleGoogleResponse
       });
-      window.google.accounts.id.renderButton(
-        document.getElementById("googleBtn"),
-        { theme: "outline", size: "large", width: "400", shape: "rectangular" }
-      );
+        window.google.accounts.id.renderButton(
+          document.getElementById("googleBtn"),
+          { theme: "outline", size: "large", width: "340", shape: "rectangular" }
+        );
     }
   }, []);
 
@@ -279,9 +279,12 @@ export default function Signup() {
             style={{
               background: 'var(--accent-color)',
               color: 'white',
-              padding: '12px',
+              padding: '10px 24px',
               borderRadius: '8px',
               fontWeight: '600',
+              maxWidth: '340px',
+              width: '100%',
+              margin: '10px auto 0 auto',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -307,9 +310,9 @@ export default function Signup() {
             onClick={handleFacebookLogin}
             style={{
               width: '100%',
-              maxWidth: '400px',
-              height: '44px',
-              borderRadius: '12px',
+              maxWidth: '340px',
+              height: '40px',
+              borderRadius: '10px',
               border: 'none',
               background: '#1877f2',
               color: 'white',
@@ -319,7 +322,7 @@ export default function Signup() {
               justifyContent: 'center',
               gap: '12px',
               cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(24, 119, 242, 0.2)',
+              boxShadow: '0 4px 12px rgba(24, 119, 242, 0.12)',
               transition: 'all 0.2s',
               margin: '0 auto'
             }}

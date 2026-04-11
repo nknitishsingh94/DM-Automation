@@ -86,7 +86,7 @@ const styles = `
     z-index: 2;
     width: 90%;
     margin: auto;
-    max-width: 760px;
+    max-width: 700px;
     background: #ffffff;
     border: 1px solid rgba(139, 92, 246, 0.1);
     border-radius: 24px;
@@ -295,28 +295,9 @@ const styles = `
 
   .login-fb-btn {
     width: 100%;
-    padding: 13px 20px;
-    border-radius: 14px;
-    border: 1px solid rgba(24,119,242,0.4);
-    background: rgba(24,119,242,0.06);
-    color: #1877f2;
-    font-weight: 700;
-    font-size: 0.93rem;
-    font-family: 'Inter', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: background 0.25s, border-color 0.25s, transform 0.2s, box-shadow 0.25s;
-    letter-spacing: 0.2px;
-  }
-
-  .login-fb-btn {
-    width: 100%;
-    max-width: 400px;
-    height: 44px;
-    border-radius: 12px;
+    max-width: 340px;
+    height: 40px;
+    border-radius: 10px;
     border: none;
     background: #1877f2;
     color: #ffffff;
@@ -330,13 +311,13 @@ const styles = `
     cursor: pointer;
     transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
     letter-spacing: 0.2px;
-    box-shadow: 0 4px 12px rgba(24, 119, 242, 0.2);
+    box-shadow: 0 4px 12px rgba(24, 119, 242, 0.12);
   }
 
   .login-fb-btn:hover {
     background: #166fe5;
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(24, 119, 242, 0.3);
+    box-shadow: 0 6px 20px rgba(24, 119, 242, 0.25);
   }
 
   .login-fb-btn:active { transform: translateY(0); }
@@ -383,7 +364,7 @@ const styles = `
 
   #googleBtn {
     width: 100% !important;
-    max-width: 400px !important;
+    max-width: 340px !important;
     display: flex;
     justify-content: center;
     margin: 0 auto;
@@ -392,9 +373,9 @@ const styles = `
   #googleBtn > div {
     width: 100% !important;
     max-width: 100% !important;
-    border-radius: 12px !important;
+    border-radius: 10px !important;
     overflow: hidden;
-    height: 44px !important;
+    height: 40px !important;
   }
 
   @media (max-width: 640px) {
@@ -447,7 +428,7 @@ export default function Login() {
         });
         window.google.accounts.id.renderButton(
           document.getElementById("googleBtn"),
-          { theme: "outline", size: "large", width: "400", logo_alignment: "center", shape: "rectangular" }
+          { theme: "outline", size: "large", width: "340", logo_alignment: "center", shape: "rectangular" }
         );
       }
     };
@@ -528,7 +509,7 @@ export default function Login() {
             {/* Logo */}
             <div className="login-logo-wrap">
               <h1 className="login-title">Welcome Back</h1>
-              <p className="login-subtitle">Sign in to your Auto Chat account</p>
+              <p className="login-subtitle">Sign in to your DM Automate account</p>
             </div>
 
             {/* Error */}
