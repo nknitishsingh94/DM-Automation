@@ -1,41 +1,408 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Facebook, Mail, Phone, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Bot, LogIn, Mail, Lock, Info, Facebook } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL, GOOGLE_CLIENT_ID } from '../config';
 
+const styles = `
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  @keyframes loginFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-18px) rotate(1deg); }
+    66% { transform: translateY(-8px) rotate(-1deg); }
+  }
+
+  @keyframes loginOrb {
+    0% { transform: scale(1) translate(0, 0); opacity: 0.4; }
+    50% { transform: scale(1.2) translate(30px, -20px); opacity: 0.7; }
+    100% { transform: scale(1) translate(0, 0); opacity: 0.4; }
+  }
+
+  @keyframes loginFadeIn {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes loginShimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  @keyframes loginPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+    50%       { box-shadow: 0 0 0 8px rgba(139, 92, 246, 0); }
+  }
+
+  .login-page-wrapper {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                url('/landing-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100vw;
+    padding: 20px 0;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .login-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+
+  .login-orb-1 {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
+    top: -200px; right: -150px;
+    animation: loginOrb 12s ease-in-out infinite;
+  }
+
+  .login-orb-2 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%);
+    bottom: -150px; left: -100px;
+    animation: loginOrb 16s ease-in-out infinite reverse;
+  }
+
+  .login-orb-3 {
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(236,72,153,0.05) 0%, transparent 70%);
+    top: 60%; left: 60%;
+    animation: loginOrb 20s ease-in-out infinite;
+  }
+
+  .login-card {
+    position: relative;
+    z-index: 2;
+    width: 90%;
+    margin: auto;
+    max-width: 700px;
+    background: #ffffff;
+    border: 1px solid rgba(139, 92, 246, 0.1);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(139, 92, 246, 0.12), 0 4px 16px rgba(0,0,0,0.06);
+    animation: loginFadeIn 0.6s cubic-bezier(0.4,0,0.2,1) both;
+    display: flex;
+    overflow: hidden;
+    min-height: 480px;
+  }
+
+  /* LEFT PANEL — form */
+  .login-left {
+    flex: 1;
+    width: 50%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+
+  /* RIGHT PANEL — social */
+  .login-right {
+    flex: 1;
+    width: 50%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f8f7ff;
+    border-left: 1px solid rgba(139, 92, 246, 0.15);
+    gap: 14px;
+  }
+
+  .login-right-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+
+  .login-right-subtitle {
+    font-size: 0.82rem;
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .login-logo-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 28px;
+  }
+
+  .login-logo-circle {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1, #3b82f6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    box-shadow: 0 6px 20px rgba(139,92,246,0.4);
+    animation: loginPulse 3s ease-in-out infinite;
+  }
+
+  .login-title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+
+  .login-subtitle {
+    font-size: 0.86rem;
+    color: #65676b;
+    font-weight: 500;
+  }
+
+  .login-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: rgba(239,68,68,0.12);
+    border: 1px solid rgba(239,68,68,0.25);
+    color: #f87171;
+    border-radius: 14px;
+    font-size: 0.84rem;
+    margin-bottom: 22px;
+  }
+
+  .login-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #4b5563;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .login-input-wrap {
+    position: relative;
+    margin-bottom: 18px;
+  }
+
+  .login-input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+  }
+
+  .login-input {
+    width: 100%;
+    padding: 14px 16px 14px 46px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    color: #1a1a1a;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+  }
+
+  .login-input::placeholder { color: #9ca3af; }
+
+  .login-input:focus {
+    border-color: rgba(139,92,246,0.6);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
+  }
+
+  .login-submit-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 8px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #3b82f6 100%);
+    background-size: 200% auto;
+    transition: background-position 0.4s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 6px 24px rgba(139,92,246,0.45);
+    letter-spacing: 0.3px;
+  }
+
+  .login-submit-btn:hover:not(:disabled) {
+    background-position: right center;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(139,92,246,0.6);
+  }
+
+  .login-submit-btn:active:not(:disabled) { transform: translateY(0); }
+
+  .login-submit-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  .login-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 28px 0;
+  }
+
+  .login-divider-line {
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+  }
+
+  .login-divider-text {
+    font-size: 0.78rem;
+    color: #9ca3af;
+    font-weight: 500;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .login-social-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .login-fb-btn {
+    width: 100%;
+    max-width: 340px;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+    background: #1877f2;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.93rem;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+    letter-spacing: 0.2px;
+    box-shadow: 0 4px 12px rgba(24, 119, 242, 0.12);
+  }
+
+  .login-fb-btn:hover {
+    background: #166fe5;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(24, 119, 242, 0.25);
+  }
+
+  .login-fb-btn:active { transform: translateY(0); }
+
+  .login-fb-icon-wrap {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    background: #1877f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .login-social-note {
+    font-size: 0.78rem;
+    color: #9ca3af;
+    text-align: center;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  .login-social-note a {
+    color: #8b5cf6;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .login-footer {
+    text-align: left;
+    margin-top: 24px;
+    font-size: 0.86rem;
+    color: #6b7280;
+  }
+
+  .login-footer a {
+    color: #8b5cf6;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .login-footer a:hover { color: #7c3aed; }
+
+  #googleBtn {
+    width: 100% !important;
+    max-width: 340px !important;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  #googleBtn > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 10px !important;
+    overflow: hidden;
+    height: 40px !important;
+  }
+
+  @media (max-width: 640px) {
+    .login-card { flex-direction: column; }
+    .login-right { width: 100%; border-left: none; border-top: 2px solid rgba(139,92,246,0.1); padding: 32px 28px; }
+    .login-left { padding: 36px 28px; }
+  }
+`;
+
 export default function Login() {
-  const [authMode, setAuthMode] = useState('phone'); // 'phone' or 'email'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState('');
-  const [otpViaWhatsapp, setOtpViaWhatsapp] = useState(true);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [otp, setOtp] = useState('');
-
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (authMode === 'phone' && !isOtpSent) {
-      handleSendOtp();
-      return;
-    }
-
+    console.log("🚀 Connection Attempt to:", API_BASE_URL);
     setLoading(true);
     setError('');
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email: authMode === 'email' ? email : undefined, 
-          password: authMode === 'email' ? password : undefined,
-          phone: authMode === 'phone' ? phone : undefined
-        })
+        body: JSON.stringify({ email, password })
       });
       const data = await res.json();
       if (res.ok) {
@@ -46,30 +413,36 @@ export default function Login() {
       }
     } catch (err) {
       console.error("Login Error:", err);
-      setError(`Connection failed: ${err.message}`);
+      setError(`Connection failed: ${err.message}. Check browser console for details.`);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSendOtp = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setIsOtpSent(true);
-    }, 1500);
-  };
-
   useEffect(() => {
+    const initGoogle = () => {
+      if (window.google && document.getElementById("googleBtn")) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleResponse
+        });
+        window.google.accounts.id.renderButton(
+          document.getElementById("googleBtn"),
+          { theme: "outline", size: "large", width: "340", logo_alignment: "center", shape: "rectangular" }
+        );
+      }
+    };
+
     if (window.google) {
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: handleGoogleResponse
-      });
-      window.google.accounts.id.renderButton(
-        document.getElementById("googleBtn"),
-        { theme: "outline", size: "large", width: "100%", shape: "rectangular", text: "signin_with" }
-      );
+      initGoogle();
+    } else {
+      const intervalId = setInterval(() => {
+        if (window.google) {
+          clearInterval(intervalId);
+          initGoogle();
+        }
+      }, 100);
+      return () => clearInterval(intervalId);
     }
   }, []);
 
@@ -87,14 +460,18 @@ export default function Login() {
     } catch (err) {
       console.error("Google Auth Error:", err);
       setError(`Google Auth failed: ${err.message}`);
-    } finally { setLoading(false); }
+    }
+    finally { setLoading(false); }
   };
 
   const handleFacebookLogin = () => {
-    if (!window.FB) { setError('Facebook SDK not loaded.'); return; }
+    if (!window.FB) {
+      setError('Facebook SDK not loaded. Please check your internet or App ID.');
+      return;
+    }
     window.FB.login((response) => {
       if (response.authResponse) processFacebookLogin(response.authResponse);
-      else setError('Facebook login cancelled.');
+      else setError('Facebook login was cancelled or failed.');
     }, { scope: 'public_profile,email' });
   };
 
@@ -110,185 +487,119 @@ export default function Login() {
       if (res.ok) { login(data.user, data.token); navigate('/dashboard'); }
       else { setError(data.message || 'Facebook login failed'); }
     } catch (err) {
-      console.error("Facebook Error:", err);
+      console.error("Facebook Auth Error:", err);
       setError(`Facebook Auth failed: ${err.message}`);
-    } finally { setLoading(false); }
+    }
+    finally { setLoading(false); }
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center px-4 py-12 overflow-hidden">
-      {/* Background with Overlay */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed"
-        style={{ backgroundImage: 'url("/landing-bg.png")' }}
-      >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
-      </div>
+    <>
+      <style>{styles}</style>
+      <div className="login-page-wrapper">
+        {/* Animated background orbs */}
+        <div className="login-orb login-orb-1" />
+        <div className="login-orb login-orb-2" />
+        <div className="login-orb login-orb-3" />
 
-      {/* Auth Card (The "Box") */}
-      <div className="relative z-10 w-full max-w-md animate-in fade-in zoom-in duration-500">
-        <div className="bg-white/95 backdrop-blur-md rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/20 p-8 sm:p-12">
-          
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Sign In</h1>
-            <p className="text-gray-500 text-sm italic">Welcome back to DM Automate</p>
-          </div>
+        <div className="login-card">
 
-          {/* Social Buttons */}
-          <div className="space-y-4 mb-8">
-            <div id="googleBtn" className="w-full"></div>
-            <button
-              onClick={handleFacebookLogin}
-              className="w-full h-[40px] flex items-center justify-center gap-3 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all font-semibold text-[#1877F2]"
-            >
-              <Facebook size={20} fill="#1877F2" /> Continue with Facebook
-            </button>
-          </div>
-
-          <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-gray-200"></div>
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">or</span>
-            <div className="flex-1 h-px bg-gray-200"></div>
-          </div>
-
-          {error && (
-            <div className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-xs font-semibold flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-600"></span>
-              {error}
+          {/* ── LEFT PANEL: Form ── */}
+          <div className="login-left">
+            {/* Logo */}
+            <div className="login-logo-wrap">
+              <h1 className="login-title">Welcome Back</h1>
+              <p className="login-subtitle">Sign in to your DM Automate account</p>
             </div>
-          )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {!isOtpSent ? (
-              <>
-                {authMode === 'phone' ? (
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-tight ml-1">Phone Number</label>
-                    <div className="relative group">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 border-r border-gray-100 pr-2">
-                        <span className="text-sm font-bold">+91</span>
-                      </div>
-                      <input
-                        type="tel"
-                        required
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="block w-full pl-14 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all"
-                        placeholder="00000 00000"
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-gray-700 uppercase tracking-tight ml-1">Email Address</label>
-                      <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                          <Mail size={16} className="text-gray-400 group-focus-within:text-accent" />
-                        </div>
-                        <input
-                          type="email"
-                          required
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="block w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all"
-                          placeholder="your@email.com"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-gray-700 uppercase tracking-tight ml-1">Password</label>
-                      <input
-                        type="password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all"
-                        placeholder="••••••••"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode(authMode === 'phone' ? 'email' : 'phone')}
-                    className="text-xs font-bold text-accent hover:text-accent/80 transition-colors flex items-center gap-1"
-                  >
-                    {authMode === 'phone' ? 'Use Email instead' : 'Use Phone instead'}
-                  </button>
-                </div>
-
-                {authMode === 'phone' && (
-                  <div className="flex items-center gap-2.5 p-3.5 bg-gray-50 rounded-xl border border-gray-100 cursor-pointer hover:bg-white transition-colors">
-                    <input
-                      type="checkbox"
-                      id="whatsapp-otp-login"
-                      checked={otpViaWhatsapp}
-                      onChange={(e) => setOtpViaWhatsapp(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300 text-accent focus:ring-accent/20 shadow-sm"
-                    />
-                    <label htmlFor="whatsapp-otp-login" className="text-xs text-gray-600 font-bold select-none cursor-pointer">
-                      Get Login Link on WhatsApp
-                    </label>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="space-y-5 py-2">
-                <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-accent/10 text-accent mb-4 shadow-inner">
-                    <CheckCircle2 size={28} />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 italic">Welcome Back</h3>
-                  <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-bold">Verifying your information</p>
-                </div>
-                
-                <input
-                  type="text"
-                  maxLength="6"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  className="block w-full text-center tracking-[0.8em] text-2xl font-black py-4 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl focus:bg-white focus:border-accent focus:border-solid outline-none transition-all"
-                  placeholder="000000"
-                />
-                
-                <button
-                  type="button"
-                  onClick={() => setIsOtpSent(false)}
-                  className="w-full text-[10px] font-black uppercase text-gray-400 hover:text-accent transition-colors flex items-center justify-center gap-1"
-                >
-                  <ArrowLeft size={10} /> Try a different method
-                </button>
+            {/* Error */}
+            {error && (
+              <div className="login-error">
+                <Info size={16} style={{ flexShrink: 0 }} /> {error}
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full ${(isOtpSent || authMode === 'email') ? 'bg-blue-600 hover:bg-blue-700' : 'bg-black hover:bg-black/90'} text-white font-black uppercase tracking-widest py-4 px-6 rounded-xl shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transform active:scale-95 transition-all disabled:opacity-50`}
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              ) : (
-                <>
-                  {isOtpSent || authMode === 'email' ? 'Enter Dashboard' : 'Send Access Link'}
-                  <ArrowRight size={18} />
-                </>
-              )}
-            </button>
-          </form>
+            {/* Form */}
+            <form onSubmit={handleSubmit}>
+              <div className="login-input-wrap">
+                <label className="login-label">Email Address</label>
+                <div style={{ position: 'relative' }}>
+                  <Mail size={17} className="login-input-icon" />
+                  <input
+                    className="login-input"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@example.com"
+                  />
+                </div>
+              </div>
 
-          <div className="mt-8 text-center text-[10px] text-gray-400 font-bold uppercase tracking-tight leading-relaxed">
-            New to DM Automate? <Link to="/signup" className="text-accent hover:underline">Create Account</Link>
+              <div className="login-input-wrap">
+                <label className="login-label">Password</label>
+                <div style={{ position: 'relative' }}>
+                  <Lock size={17} className="login-input-icon" />
+                  <input
+                    className="login-input"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+
+              <button type="submit" className="login-submit-btn" disabled={loading}>
+                <LogIn size={18} />
+                {loading ? 'Signing in...' : 'Sign In'}
+              </button>
+            </form>
+
+            {/* Footer */}
+            <div className="login-footer" style={{ marginTop: '20px' }}>
+              Don't have an account?{' '}
+              <Link to="/signup">Create one</Link>
+            </div>
           </div>
+
+
+          {/* ── RIGHT PANEL: Social Login ── */}
+          <div className="login-right">
+            <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+              <p className="login-right-title">Quick Sign In</p>
+              <p className="login-right-subtitle">Use your Google or Facebook account to sign in instantly</p>
+            </div>
+
+            <div className="login-social-wrap">
+              {/* Google */}
+              <div
+                id="googleBtn"
+                style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+              />
+
+              {/* Facebook */}
+              <button
+                type="button"
+                className="login-fb-btn"
+                onClick={handleFacebookLogin}
+              >
+                <div className="login-fb-icon-wrap">
+                  <Facebook size={16} color="#fff" fill="#fff" />
+                </div>
+                Continue with Facebook
+              </button>
+            </div>
+
+            <p className="login-social-note">
+              By continuing, you agree to our{' '}
+              <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a>
+            </p>
+          </div>
+
         </div>
-        
-        <p className="mt-8 text-center text-[10px] text-white/40 font-bold uppercase tracking-tighter">
-          Secure, automated, and professional dashboard access.
-        </p>
       </div>
-    </div>
+    </>
   );
 }

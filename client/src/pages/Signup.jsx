@@ -1,33 +1,82 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Facebook, Mail, Phone, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Bot, UserPlus, Mail, Lock, User, Info, Facebook } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL, GOOGLE_CLIENT_ID } from '../config';
 
+
+
+
+const styles = `
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .signup-page-wrapper {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("/landing-bg.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    padding: 20px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100vw;
+  }
+
+  .signup-card {
+    width: 90%;
+    margin: auto;
+    max-width: 400px;
+    padding: 30px 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.6s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  @media (max-width: 480px) {
+    .signup-card {
+      padding: 24px 20px;
+    }
+  }
+
+  #googleBtn {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    min-height: 40px;
+  }
+
+  #googleBtn > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 10px !important;
+    overflow: hidden;
+    height: 40px !important;
+  }
+`;
+
 export default function Signup() {
-  const [authMode, setAuthMode] = useState('phone'); // 'phone' or 'email'
-  const [formData, setFormData] = useState({ 
-    username: '', 
-    email: '', 
-    password: '', 
-    phone: '',
-    otpViaWhatsapp: true 
-  });
+  const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [otp, setOtp] = useState('');
-
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (authMode === 'phone' && !isOtpSent) {
-      handleSendOtp();
-      return;
-    }
-
     setLoading(true);
     setError('');
 
@@ -43,36 +92,31 @@ export default function Signup() {
         login(data.user, data.token);
         navigate('/dashboard');
       } else {
+        // Look for message or error key from backend
         setError(data.message || data.error || 'Signup failed. Please try again.');
       }
     } catch (err) {
       console.error("Signup Error:", err);
-      setError(`Connection failed: ${err.message}`);
+      setError(`Connection failed: ${err.message}. Check browser console for details.`);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSendOtp = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setIsOtpSent(true);
-    }, 1500);
-  };
-
   useEffect(() => {
+    /* Initialize Google Login */
     if (window.google) {
       window.google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
         callback: handleGoogleResponse
       });
-      window.google.accounts.id.renderButton(
-        document.getElementById("googleBtn"),
-        { theme: "outline", size: "large", width: "100%", shape: "rectangular", text: "continue_with" }
-      );
+        window.google.accounts.id.renderButton(
+          document.getElementById("googleBtn"),
+          { theme: "outline", size: "large", width: "320", shape: "rectangular" }
+        );
     }
   }, []);
+
 
   const handleGoogleResponse = async (response) => {
     setLoading(true);
@@ -83,21 +127,36 @@ export default function Signup() {
         body: JSON.stringify({ token: response.credential })
       });
       const data = await res.json();
-      if (res.ok) { login(data.user, data.token); navigate('/dashboard'); }
-      else { setError(data.message || 'Google login failed'); }
+      if (res.ok) {
+        login(data.user, data.token);
+        navigate('/dashboard');
+      } else {
+        setError(data.message || 'Google login failed');
+      }
     } catch (err) {
       console.error("Google Auth Error:", err);
       setError(`Google Auth failed: ${err.message}`);
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFacebookLogin = () => {
-    if (!window.FB) { setError('Facebook SDK not loaded.'); return; }
+    if (!window.FB) {
+      setError('Facebook SDK not loaded. Please check your internet or App ID.');
+      return;
+    }
     window.FB.login((response) => {
-      if (response.authResponse) processFacebookLogin(response.authResponse);
-      else setError('Facebook login cancelled.');
+      if (response.authResponse) {
+        processFacebookLogin(response.authResponse);
+      } else {
+        setError('Facebook login was cancelled or failed.');
+      }
     }, { scope: 'public_profile,email' });
   };
+
+
+
 
   const processFacebookLogin = async (authResponse) => {
     setLoading(true);
@@ -108,173 +167,196 @@ export default function Signup() {
         body: JSON.stringify({ accessToken: authResponse.accessToken, userId: authResponse.userID })
       });
       const data = await res.json();
-      if (res.ok) { login(data.user, data.token); navigate('/dashboard'); }
-      else { setError(data.message || 'Facebook login failed'); }
+      if (res.ok) {
+        login(data.user, data.token);
+        navigate('/dashboard');
+      } else {
+        setError(data.message || 'Facebook login failed');
+      }
     } catch (err) {
-      console.error("Facebook Error:", err);
+      console.error("Facebook Auth Error:", err);
       setError(`Facebook Auth failed: ${err.message}`);
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
+
+
   return (
-    <div className="min-h-screen relative flex items-center justify-center px-4 py-12 overflow-hidden">
-      {/* Background with Overlay */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed"
-        style={{ backgroundImage: 'url("/landing-bg.png")' }}
-      >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
-      </div>
-
-      {/* Auth Card (The "Box") */}
-      <div className="relative z-10 w-full max-w-md animate-in fade-in zoom-in duration-500">
-        <div className="bg-white/95 backdrop-blur-md rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/20 p-8 sm:p-12">
-          
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Get Started</h1>
-            <p className="text-gray-500 text-sm">Join the professional DM Automate platform</p>
-          </div>
-
-          {/* Social Buttons */}
-          <div className="space-y-4 mb-8">
-            <div id="googleBtn" className="w-full"></div>
-            <button
-              onClick={handleFacebookLogin}
-              className="w-full h-[40px] flex items-center justify-center gap-3 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all font-semibold text-[#1877F2]"
-            >
-              <Facebook size={20} fill="#1877F2" /> Continue with Facebook
-            </button>
-          </div>
-
-          <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-gray-200"></div>
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">or</span>
-            <div className="flex-1 h-px bg-gray-200"></div>
-          </div>
-
-          {error && (
-            <div className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-xs font-semibold flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-600"></span>
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {!isOtpSent ? (
-              <>
-                {authMode === 'phone' ? (
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-tight ml-1">Phone Number</label>
-                    <div className="relative group">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 border-r border-gray-100 pr-2">
-                        <span className="text-sm font-bold">+91</span>
-                      </div>
-                      <input
-                        type="tel"
-                        required
-                        value={formData.phone}
-                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        className="block w-full pl-14 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all"
-                        placeholder="00000 00000"
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-tight ml-1">Email Address</label>
-                    <div className="relative group">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <Mail size={16} className="text-gray-400 group-focus-within:text-accent" />
-                      </div>
-                      <input
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        className="block w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none transition-all"
-                        placeholder="your@email.com"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode(authMode === 'phone' ? 'email' : 'phone')}
-                    className="text-xs font-bold text-accent hover:text-accent/80 transition-colors flex items-center gap-1"
-                  >
-                    {authMode === 'phone' ? 'Use Email instead' : 'Use Phone instead'}
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-2.5 p-3.5 bg-gray-50 rounded-xl border border-gray-100 cursor-pointer hover:bg-white transition-colors">
-                  <input
-                    type="checkbox"
-                    id="whatsapp-otp"
-                    checked={formData.otpViaWhatsapp}
-                    onChange={(e) => setFormData({...formData, otpViaWhatsapp: e.target.checked})}
-                    className="w-4 h-4 rounded border-gray-300 text-accent focus:ring-accent/20 shadow-sm"
-                  />
-                  <label htmlFor="whatsapp-otp" className="text-xs text-gray-600 font-bold select-none cursor-pointer">
-                    Get OTP on WhatsApp
-                  </label>
-                </div>
-              </>
-            ) : (
-              <div className="space-y-5 py-2">
-                <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-accent/10 text-accent mb-4 shadow-inner">
-                    <CheckCircle2 size={28} />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 italic">Verify It's You</h3>
-                  <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-bold">Check your {authMode}</p>
-                </div>
-                
-                <input
-                  type="text"
-                  maxLength="6"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  className="block w-full text-center tracking-[0.8em] text-2xl font-black py-4 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl focus:bg-white focus:border-accent focus:border-solid outline-none transition-all"
-                  placeholder="000000"
-                />
-                
-                <button
-                  type="button"
-                  onClick={() => setIsOtpSent(false)}
-                  className="w-full text-[10px] font-black uppercase text-gray-400 hover:text-accent transition-colors flex items-center justify-center gap-1"
-                >
-                  <ArrowLeft size={10} /> Change {authMode} information
-                </button>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full ${isOtpSent ? 'bg-blue-600 hover:bg-blue-700' : 'bg-black hover:bg-black/90'} text-white font-black uppercase tracking-widest py-4 px-6 rounded-xl shadow-lg shadow-accent/20 flex items-center justify-center gap-2 transform active:scale-95 transition-all disabled:opacity-50`}
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              ) : (
-                <>
-                  {isOtpSent ? 'Verify & Create' : 'Send OTP'}
-                  <ArrowRight size={18} />
-                </>
-              )}
-            </button>
-          </form>
-
-          <div className="mt-8 text-center text-[10px] text-gray-400 font-bold uppercase tracking-tight leading-relaxed">
-            Already have an account? <Link to="/login" className="text-accent hover:underline">Sign In Now</Link>
-          </div>
+    <>
+      <style>{styles}</style>
+      <div className="signup-page-wrapper">
+        <div className="signup-card">
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: '700' }}>Create Account</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join the DM Automate Automation Platform</p>
         </div>
-        
-        <p className="mt-8 text-center text-[10px] text-white/40 font-bold uppercase tracking-tighter">
-          By continuing you agree to our Terms & Privacy Policy
-        </p>
+
+        {error && (
+          <div style={{ 
+            padding: '12px', 
+            background: 'rgba(239, 68, 68, 0.1)', 
+            color: '#f87171', 
+            borderRadius: '8px', 
+            fontSize: '0.85rem', 
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <Info size={16} /> {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div className="input-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ width: '100%', maxWidth: '320px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '500' }}>Full Name</label>
+            </div>
+            <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
+              <User size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
+              <input 
+                type="text" 
+                required
+                value={formData.username}
+                onChange={(e) => setFormData({...formData, username: e.target.value})}
+                placeholder="John Doe"
+                style={{
+                  width: '100%',
+                  padding: '12px 12px 12px 40px',
+                  background: 'white',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: '12px',
+                  color: 'var(--text-main)',
+                  outline: 'none',
+                  transition: 'var(--transition-fast)',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="input-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ width: '100%', maxWidth: '320px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '500' }}>Email Address</label>
+            </div>
+            <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
+              <Mail size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
+              <input 
+                type="email" 
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                placeholder="admin@example.com"
+                style={{
+                  width: '100%',
+                  padding: '12px 12px 12px 40px',
+                  background: 'white',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: '12px',
+                  color: 'var(--text-main)',
+                  outline: 'none',
+                  transition: 'var(--transition-fast)',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="input-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ width: '100%', maxWidth: '320px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '500' }}>Password</label>
+            </div>
+            <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
+              <Lock size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
+              <input 
+                type="password" 
+                required
+                minLength="6"
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                placeholder="••••••••"
+                style={{
+                  width: '100%',
+                  padding: '12px 12px 12px 40px',
+                  background: 'white',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: '12px',
+                  color: 'var(--text-main)',
+                  outline: 'none',
+                  transition: 'var(--transition-fast)',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={loading}
+            style={{
+              background: 'var(--accent-color)',
+              color: 'white',
+              padding: '10px 24px',
+              borderRadius: '8px',
+              fontWeight: '600',
+              maxWidth: '320px',
+              width: '100%',
+              margin: '10px auto 0 auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              marginTop: '10px'
+            }}
+          >
+            <UserPlus size={18} /> {loading ? 'Creating Account...' : 'Sign Up'}
+          </button>
+        </form>
+
+        <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0', gap: '10px' }}>
+          <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }}></div>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>or continue with</span>
+          <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }}></div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+          <div id="googleBtn" style={{ width: '100%' }}></div>
+
+          <button 
+            type="button"
+            onClick={handleFacebookLogin}
+            style={{
+              width: '100%',
+              maxWidth: '320px',
+              height: '40px',
+              borderRadius: '10px',
+              border: 'none',
+              background: '#1877f2',
+              color: 'white',
+              fontWeight: '700',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(24, 119, 242, 0.12)',
+              transition: 'all 0.2s',
+              margin: '0 auto'
+            }}
+          >
+            <Facebook size={20} fill="white" color="white" /> Continue with Facebook
+          </button>
+        </div>
+
+
+
+        <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+          Already have an account? <Link to="/login" style={{ color: 'var(--accent-color)', fontWeight: '600' }}>Log in</Link>
+        </div>
       </div>
     </div>
+    </>
   );
 }
