@@ -544,6 +544,8 @@ export default function Login() {
                     className="login-input"
                     type="password"
                     required
+                    minLength="8"
+                    maxLength="12"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
