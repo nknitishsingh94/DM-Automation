@@ -209,7 +209,7 @@ export default function Signup() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
           <div className="input-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div style={{ width: '100%' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '500' }}>Full Name</label>
@@ -316,13 +316,13 @@ export default function Signup() {
           </button>
         </form>
 
-        <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0', gap: '10px', width: '100%' }}>
           <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }}></div>
           <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>or continue with</span>
           <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }}></div>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', width: '100%' }}>
           <div id="googleBtn" style={{ width: '100%' }}></div>
 
           <button 
