@@ -58,7 +58,14 @@ export default function Inbox() {
       setMessages((prev) => {
         // Prevent duplicate if message was already added via REST response
         // Also check if the socket message matches a tempId we optimistically added
-        if (prev.find(m => m._id === message._id || (message.tempId && m._id === message.tempId))) {
+        const isDuplicate = prev.some(m => 
+          String(m._id) === String(message._id) || 
+          (message.tempId && String(m._id) === String(message.tempId)) ||
+          (message.tempId && String(m.tempId) === String(message.tempId))
+        );
+
+        if (isDuplicate) {
+          console.log("♻️ Duplicate message detected via Socket, ignoring.");
           return prev;
         }
         return [...prev, message];
@@ -88,6 +95,7 @@ export default function Inbox() {
     const tempId = Date.now().toString();
     const tempMessage = {
       _id: tempId,
+      tempId: tempId,
       sender: senderRole === "admin" ? "admin" : "user",
       text: newMessage,
       type: senderRole === "admin" ? "sent" : "received",
