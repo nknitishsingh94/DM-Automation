@@ -12,6 +12,7 @@ export default function Inbox() {
   const [senderRole, setSenderRole] = useState("admin");
   const [loading, setLoading] = useState(true);
   const [isChatViewMobile, setIsChatViewMobile] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user } = useAuth();
   const messagesEndRef = useRef(null);
 
@@ -169,6 +170,27 @@ export default function Inbox() {
     }
   };
 
+  const deleteAllMessages = async () => {
+    if (!window.confirm("Are you sure you want to delete ALL messages? This action cannot be undone.")) return;
+    const token = localStorage.getItem('insta_agent_token');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/messages/all`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setMessages([]);
+        setIsMenuOpen(false);
+      } else {
+        const errData = await res.json();
+        alert("Failed to clear chat: " + errData.message);
+      }
+    } catch (err) {
+      console.error("Error clearing chat:", err);
+      alert("Error clearing chat. Check console.");
+    }
+  };
+
   return (
     <div className="inbox-container" style={{ flex: 1, minHeight: 0, background: 'transparent', display: 'flex' }}>
       <div className={`inbox-sidebar ${isChatViewMobile ? 'mobile-hide' : ''}`}>
@@ -232,9 +254,52 @@ export default function Inbox() {
             </div>
           </div>
 
-          <button className="action-btn">
-             <MoreHorizontal size={20} />
-          </button>
+          <div style={{ position: 'relative' }}>
+            <button 
+              className="action-btn" 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              <MoreHorizontal size={20} />
+            </button>
+            
+            {isMenuOpen && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                right: '0',
+                marginTop: '8px',
+                background: 'white',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                zIndex: 10,
+                minWidth: '150px'
+              }}>
+                <button 
+                  onClick={deleteAllMessages}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    color: '#ef4444',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontWeight: '500',
+                    fontSize: '0.9rem',
+                    textAlign: 'left'
+                  }}
+                  onMouseOver={(e) => e.target.style.background = '#fef2f2'}
+                  onMouseOut={(e) => e.target.style.background = 'transparent'}
+                >
+                  <Trash2 size={16} />
+                  Clear All Chat
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         
         <div className="chat-messages">

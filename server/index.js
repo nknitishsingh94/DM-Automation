@@ -484,6 +484,15 @@ app.post('/api/messages', verifyToken, async (req, res) => {
   }
 });
 
+app.delete('/api/messages/all', verifyToken, async (req, res) => {
+  try {
+    await Message.deleteMany({ userId: req.user.userId });
+    res.json({ message: 'All messages deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.delete('/api/messages/:id', verifyToken, async (req, res) => {
   try {
     await Message.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
