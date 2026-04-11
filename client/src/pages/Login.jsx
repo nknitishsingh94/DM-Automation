@@ -86,7 +86,7 @@ const styles = `
     z-index: 2;
     width: 90%;
     margin: auto;
-    max-width: 700px;
+    max-width: 860px;
     background: #ffffff;
     border: 1px solid rgba(139, 92, 246, 0.1);
     border-radius: 24px;
@@ -295,7 +295,7 @@ const styles = `
 
   .login-fb-btn {
     width: 100%;
-    max-width: 340px;
+    max-width: 400px;
     height: 40px;
     border-radius: 10px;
     border: none;
@@ -364,7 +364,7 @@ const styles = `
 
   #googleBtn {
     width: 100% !important;
-    max-width: 340px !important;
+    max-width: 400px !important;
     display: flex;
     justify-content: center;
     margin: 0 auto;

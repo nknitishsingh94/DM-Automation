@@ -211,10 +211,10 @@ export default function Signup() {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div className="input-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ width: '100%', maxWidth: '320px' }}>
+            <div style={{ width: '100%', maxWidth: '430px' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '500' }}>Full Name</label>
             </div>
-            <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
+            <div style={{ position: 'relative', width: '100%', maxWidth: '430px' }}>
               <User size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
               <input 
                 type="text" 
@@ -238,10 +238,10 @@ export default function Signup() {
           </div>
 
           <div className="input-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ width: '100%', maxWidth: '320px' }}>
+            <div style={{ width: '100%', maxWidth: '430px' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '500' }}>Email Address</label>
             </div>
-            <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
+            <div style={{ position: 'relative', width: '100%', maxWidth: '430px' }}>
               <Mail size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
               <input 
                 type="email" 
@@ -265,10 +265,10 @@ export default function Signup() {
           </div>
 
           <div className="input-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ width: '100%', maxWidth: '320px' }}>
+            <div style={{ width: '100%', maxWidth: '430px' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '500' }}>Password</label>
             </div>
-            <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
+            <div style={{ position: 'relative', width: '100%', maxWidth: '430px' }}>
               <Lock size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
               <input 
                 type="password" 
@@ -302,7 +302,7 @@ export default function Signup() {
               padding: '10px 24px',
               borderRadius: '8px',
               fontWeight: '600',
-              maxWidth: '320px',
+              maxWidth: '430px',
               width: '100%',
               margin: '10px auto 0 auto',
               display: 'flex',
