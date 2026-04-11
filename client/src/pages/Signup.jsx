@@ -40,6 +40,22 @@ const styles = `
       padding: 24px 20px;
     }
   }
+
+  #googleBtn {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  #googleBtn > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+    height: 44px !important;
+  }
 `;
 
 export default function Signup() {
@@ -86,7 +102,7 @@ export default function Signup() {
       });
       window.google.accounts.id.renderButton(
         document.getElementById("googleBtn"),
-        { theme: "outline", size: "large", width: "360", shape: "rectangular" }
+        { theme: "outline", size: "large", width: "400", shape: "rectangular" }
       );
     }
   }, []);
@@ -291,9 +307,9 @@ export default function Signup() {
             onClick={handleFacebookLogin}
             style={{
               width: '100%',
-              maxWidth: '360px',
-              padding: '12px',
-              borderRadius: '8px',
+              maxWidth: '400px',
+              height: '44px',
+              borderRadius: '12px',
               border: 'none',
               background: '#1877f2',
               color: 'white',
@@ -301,10 +317,11 @@ export default function Signup() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '10px',
+              gap: '12px',
               cursor: 'pointer',
               boxShadow: '0 4px 12px rgba(24, 119, 242, 0.2)',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              margin: '0 auto'
             }}
           >
             <Facebook size={20} fill="white" color="white" /> Continue with Facebook
