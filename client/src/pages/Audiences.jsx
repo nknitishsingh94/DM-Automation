@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Search, ChevronLeft, MessageCircle, Activity, Instagram, Facebook, Phone, Tag, StickyNote, Plus, X, Filter } from 'lucide-react';
+import { Search, ChevronLeft, MessageCircle, Activity, Instagram, Facebook, Phone, Tag, StickyNote, Plus, X, Filter, Users } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 
 export default function Audiences() {
