@@ -1619,7 +1619,7 @@ tr:hover {
   font-weight: 500;
 }
 
-/* .help-chat-widget {
+.help-chat-widget {
   position: fixed;
   bottom: 24px;
   right: 24px;
@@ -1635,7 +1635,7 @@ tr:hover {
   cursor: pointer;
   transition: transform 0.2s ease;
   z-index: 1000;
-} */
+}
 
 .help-chat-widget:hover {
   transform: scale(1.05);

@@ -9,7 +9,7 @@ export default function HelpCenter() {
       <div className="help-hero-bg">
         <header className="help-header">
           <div className="help-logo">
-            <img src="/zenxchat-logo.png" alt="ZenXchat Logo" style={{ filter: 'brightness(0) invert(1)' }} onError={(e) => { e.target.style.display = 'none'; }} />
+            {/* <img src="/zenxchat-logo.png" alt="ZenXchat Logo" style={{ filter: 'brightness(0) invert(1)' }} onError={(e) => { e.target.style.display = 'none'; }} /> */}
             <span>ZenXchat</span>
           </div>
           <nav className="help-nav">
