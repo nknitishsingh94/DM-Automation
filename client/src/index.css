@@ -1086,13 +1086,17 @@ tr:hover {
 
 /* Landing Page Header Styles */
 .landing-header {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
-  padding: 24px 40px;
-  background: transparent;
+  z-index: 1000;
+  padding: 16px 40px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
 }
 
 .header-content {
