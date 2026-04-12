@@ -28,11 +28,11 @@ export default function Landing() {
           <h1 className="landing-headline">
             Welcome to my<br /> <span className="highlight-text">real world interaction</span>
           </h1>
-          
+
           <p className="landing-sub">
             The ultimate multi-channel AI Agent for SaaS and agencies. Seamlessly automate Instagram, Facebook, and WhatsApp messaging while you focus on what really matters.
           </p>
-          
+
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '40px' }}>
             <Link to="/login" className="landing-cta">
               Get Started Free <ArrowRight size={20} />
@@ -52,7 +52,7 @@ export default function Landing() {
               <p>Zero wait time</p>
             </div>
           </div>
-          
+
           <div className="feature-card">
             <div className="feature-icon feature-icon-dark">
               <Bot size={24} />
@@ -64,27 +64,7 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Integrations */}
-        <div className="social-proof">
-          <div className="sp-text" style={{ marginBottom: '16px', letterSpacing: '2px', textTransform: 'uppercase' }}>
-            Seamlessly Integrated With
-          </div>
-          
-          <div className="sp-logos">
-            <div className="sp-logo-placeholder">
-              <Infinity size={28} /> META
-            </div>
-            <div className="sp-logo-placeholder">
-              <Instagram size={28} /> INSTAGRAM
-            </div>
-            <div className="sp-logo-placeholder">
-              <Facebook size={28} /> FACEBOOK
-            </div>
-            <div className="sp-logo-placeholder">
-              <MessageCircle size={28} /> WHATSAPP
-            </div>
-          </div>
-        </div>
+
       </section>
 
       <section id="pricing" className="pricing-section">
@@ -93,7 +73,7 @@ export default function Landing() {
             <h2>Simple, transparent pricing</h2>
             <p>Choose the plan that's right for your business. No hidden fees.</p>
           </div>
-          
+
           <div className="pricing-grid">
             <div className="pricing-card">
               <div className="card-header">
