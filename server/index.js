@@ -63,15 +63,28 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Meta Graph API Helper: Send Message
-const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '') => {
-  const accessToken = process.env.META_PAGE_ACCESS_TOKEN;
-  if (!accessToken) {
-    console.warn("⚠️ META_PAGE_ACCESS_TOKEN not set. Skipping real API call.");
-    return false;
-  }
-
+// Meta Graph API Helper: Send Message (Per-User Token from Settings DB)
+const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null) => {
   try {
+    // Look up user's own access token from Settings
+    let accessToken = process.env.META_PAGE_ACCESS_TOKEN; // fallback to env
+    
+    if (userId) {
+      const userSettings = await Settings.findOne({ userId });
+      if (userSettings) {
+        if (platform === 'facebook' && userSettings.facebookAccessToken) {
+          accessToken = userSettings.facebookAccessToken;
+        } else if (userSettings.instagramAccessToken) {
+          accessToken = userSettings.instagramAccessToken;
+        }
+      }
+    }
+    
+    if (!accessToken) {
+      console.warn("⚠️ No access token found for user. Skipping real API call.");
+      return false;
+    }
+
     const url = `https://graph.facebook.com/v19.0/me/messages?access_token=${accessToken}`;
     const payload = {
       recipient: { id: recipientId },
@@ -79,8 +92,6 @@ const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = ''
       message: { text }
     };
 
-    // If media is provided, we can handle it here (Meta requires different structure for media)
-    // For now, attaching link/video info to the text if present
     if (mediaUrl) {
       payload.message.text += `\n\nCheck this out: ${mediaUrl}`;
     }
@@ -90,6 +101,44 @@ const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = ''
     return true;
   } catch (err) {
     console.error("❌ Meta API Error:", err.response?.data || err.message);
+    return false;
+  }
+};
+
+// WhatsApp Cloud API: Send Message
+const sendWhatsAppMessage = async (recipientPhone, text, userId = null) => {
+  try {
+    let accessToken = '';
+    let phoneNumberId = '';
+
+    if (userId) {
+      const userSettings = await Settings.findOne({ userId });
+      if (userSettings && userSettings.whatsappToken && userSettings.whatsappPhoneNumberId) {
+        accessToken = userSettings.whatsappToken;
+        phoneNumberId = userSettings.whatsappPhoneNumberId;
+      }
+    }
+
+    if (!accessToken || !phoneNumberId) {
+      console.warn("⚠️ WhatsApp token not configured. Skipping.");
+      return false;
+    }
+
+    const url = `https://graph.facebook.com/v19.0/${phoneNumberId}/messages`;
+    const payload = {
+      messaging_product: "whatsapp",
+      to: recipientPhone,
+      type: "text",
+      text: { body: text }
+    };
+
+    const response = await axios.post(url, payload, {
+      headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' }
+    });
+    console.log("✅ WhatsApp message sent:", response.data);
+    return true;
+  } catch (err) {
+    console.error("❌ WhatsApp API Error:", err.response?.data || err.message);
     return false;
   }
 };
@@ -115,7 +164,7 @@ const processAutoReply = async (userId, platform, chatId, text) => {
       const isFollowing = await checkFollowerStatus(platform, chatId);
       if (!isFollowing) {
         const followText = match.unfollowedResponse || "Please follow our account first to unlock this automation!";
-        await sendMessageToInstagram(platform, chatId, followText);
+        await sendMessageToInstagram(platform, chatId, followText, '', userId);
         
         const followPrompt = new Message({
           userId: new mongoose.Types.ObjectId(userId),
@@ -134,7 +183,7 @@ const processAutoReply = async (userId, platform, chatId, text) => {
     }
 
     // --- Send Real Message ---
-    await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl);
+    await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId);
 
     const autoReply = new Message({
       userId: new mongoose.Types.ObjectId(userId),
@@ -190,7 +239,7 @@ const processAutoReply = async (userId, platform, chatId, text) => {
     
     // Also send real message to Instagram if it's not the test chat
     if (chatId !== 'ai_bot_support') {
-      await sendMessageToInstagram(platform, chatId, fallbackText);
+      await sendMessageToInstagram(platform, chatId, fallbackText, '', userId);
     }
     
     return { reply: fallbackReply, fallback: true };
@@ -274,33 +323,107 @@ app.post('/api/webhook', async (req, res) => {
 
   if (body.object === 'instagram' || body.object === 'page') {
     for (const entry of body.entry) {
+      const pageId = entry.id; // The Page/Instagram ID that received the message
+      
       for (const messaging of entry.messaging) {
         const senderId = messaging.sender.id;
         const text = messaging.message?.text;
         
         if (text) {
-          console.log(`📬 Received Message from ${senderId}: ${text}`);
+          console.log(`📬 Received Message on Page ${pageId} from ${senderId}: ${text}`);
           
-          // Find the user associated with this Page (For multi-tenancy)
-          // For now, we assume the first user or a specific user for testing
-          // In a real app, you'd find user by Meta Page ID
-          const someUser = await User.findOne(); 
-          if (someUser) {
+          // Find the user who connected this Page ID in their Settings
+          const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
+          let userSettings;
+          
+          if (platform === 'instagram') {
+            userSettings = await Settings.findOne({ 
+              $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }]
+            });
+          } else {
+            userSettings = await Settings.findOne({ facebookPageId: pageId });
+          }
+          
+          let targetUserId;
+          if (userSettings) {
+            targetUserId = userSettings.userId;
+            console.log(`✅ Matched Page ${pageId} to User ${targetUserId}`);
+          } else {
+            // Fallback: find first user (for testing/single-user setups)
+            const fallbackUser = await User.findOne();
+            if (fallbackUser) {
+              targetUserId = fallbackUser._id;
+              console.warn(`⚠️ No Settings match for Page ${pageId}, using fallback user ${targetUserId}`);
+            }
+          }
+          
+          if (targetUserId) {
             // 1. Save incoming message to DB
             const incoming = new Message({
-              userId: someUser._id,
+              userId: targetUserId,
               chatId: senderId,
               sender: 'user',
               text: text,
               type: 'received',
-              platform: body.object === 'instagram' ? 'instagram' : 'facebook',
+              platform: platform,
               timestamp: new Date()
             });
             await incoming.save();
-            io.to(someUser._id.toString()).emit('new_message', incoming);
+            io.to(targetUserId.toString()).emit('new_message', incoming);
 
-            // 2. Trigger Auto-Reply
-            await processAutoReply(someUser._id.toString(), incoming.platform, senderId, text);
+            // 2. Trigger Auto-Reply (with userId so it uses correct token)
+            await processAutoReply(targetUserId.toString(), platform, senderId, text);
+          }
+        }
+      }
+    }
+    res.status(200).send('EVENT_RECEIVED');
+  
+  // WhatsApp webhook handling
+  } else if (body.object === 'whatsapp_business_account') {
+    for (const entry of body.entry) {
+      const changes = entry.changes || [];
+      for (const change of changes) {
+        if (change.field === 'messages') {
+          const value = change.value;
+          const phoneNumberId = value?.metadata?.phone_number_id;
+          const messages = value?.messages || [];
+          
+          for (const msg of messages) {
+            const senderPhone = msg.from;
+            const text = msg.text?.body;
+            
+            if (text) {
+              console.log(`📬 WhatsApp Message from ${senderPhone}: ${text}`);
+              
+              // Find user by WhatsApp Phone Number ID
+              const userSettings = await Settings.findOne({ whatsappPhoneNumberId: phoneNumberId });
+              let targetUserId;
+              
+              if (userSettings) {
+                targetUserId = userSettings.userId;
+              } else {
+                const fallbackUser = await User.findOne();
+                if (fallbackUser) targetUserId = fallbackUser._id;
+              }
+              
+              if (targetUserId) {
+                const incoming = new Message({
+                  userId: targetUserId,
+                  chatId: senderPhone,
+                  sender: 'user',
+                  text: text,
+                  type: 'received',
+                  platform: 'whatsapp',
+                  timestamp: new Date()
+                });
+                await incoming.save();
+                io.to(targetUserId.toString()).emit('new_message', incoming);
+                
+                // Auto-reply
+                await processAutoReply(targetUserId.toString(), 'whatsapp', senderPhone, text);
+              }
+            }
           }
         }
       }
