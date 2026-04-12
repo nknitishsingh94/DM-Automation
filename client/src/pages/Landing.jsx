@@ -15,7 +15,7 @@ export default function Landing() {
             <div className="header-divider"></div>
             <nav className="header-nav">
               <a href="#about">About</a>
-              <Link to="/help">Help & Support</Link>
+              <a href="#resources">Resources</a>
               <a href="#pricing">Pricing</a>
             </nav>
           </div>
@@ -179,7 +179,7 @@ export default function Landing() {
             <ul>
               <li><a href="#">Become a Partner</a></li>
               <li><a href="#">Blog</a></li>
-              <li><a href="#">Help & Support</a></li>
+              <li><Link to="/help">Help & Support</Link></li>
             </ul>
           </div>
         </div>
