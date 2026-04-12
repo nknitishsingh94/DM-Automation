@@ -552,9 +552,7 @@ tr:hover {
   overflow-x: hidden;
   text-align: center;
   padding: 80px 20px 40px;
-  background-image: url('/landing-bg.png');
-  background-size: cover;
-  background-position: center;
+  background-color: #000000;
   color: #ffffff;
 }
 
