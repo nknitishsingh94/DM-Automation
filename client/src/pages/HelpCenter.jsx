@@ -86,7 +86,11 @@ export default function HelpCenter() {
       
       {/* Chat floating widget UI Mockup */}
       <div className="help-chat-widget">
-        <MessageCircle size={28} fill="white" color="white" />
+        <img 
+          src="/zenxchat-logo.png" 
+          alt="Chat Logo" 
+          style={{ width: '30px', height: '30px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} 
+        />
         <span className="widget-badge">1</span>
       </div>
     </div>
