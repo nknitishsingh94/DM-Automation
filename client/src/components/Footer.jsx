@@ -26,9 +26,7 @@ export default function Footer() {
           </Link>
           <ul>
             <li><Link to="/about">About</Link></li>
-            <li><a href="/#pricing" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Globe size={14} /> English
-            </a></li>
+            <li><a href="/#pricing">Pricing</a></li>
             <li><a href="#">Legal</a></li>
             <li><a href="https://www.instagram.com/zenxchat/" target="_blank" rel="noopener noreferrer">Instagram: @zenxchat</a></li>
           </ul>
