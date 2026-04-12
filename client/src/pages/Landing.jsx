@@ -179,18 +179,8 @@ export default function Landing() {
           </div>
 
           <div className="footer-col">
-            <h3>Compare</h3>
-            <ul>
-              <li><a href="#">vs Manychat</a></li>
-              <li><a href="#">vs ChatFuel</a></li>
-              <li><a href="#">vs LinkDM</a></li>
-            </ul>
-          </div>
-
-          <div className="footer-col">
             <h3>Resources</h3>
             <ul>
-              <li><a href="#">Become a Partner</a></li>
               <li><a href="#">Blog</a></li>
               <li><Link to="/help">Help & Support</Link></li>
             </ul>
