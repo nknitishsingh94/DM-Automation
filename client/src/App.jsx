@@ -13,6 +13,7 @@ import Signup from './pages/Signup';
 import Subscription from './pages/Subscription';
 import HelpCenter from './pages/HelpCenter';
 import About from './pages/About';
+import Resources from './pages/Resources';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 function ProtectedRoute({ children }) {
@@ -197,7 +198,7 @@ function MainLayout() {
   const { user } = useAuth();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const isPublic = ['/', '/login', '/signup', '/help', '/about'].includes(location.pathname);
+  const isPublic = ['/', '/login', '/signup', '/help', '/about', '/resources'].includes(location.pathname);
 
   return (
     <div className="app-container" style={{ height: '100%', width: '100%', position: 'fixed', top: 0, left: 0 }}>
@@ -224,6 +225,7 @@ function MainLayout() {
             <Route path="/signup" element={user ? <Navigate to="/dashboard" /> : <Signup />} />
             <Route path="/help" element={<HelpCenter />} />
             <Route path="/about" element={<About />} />
+            <Route path="/resources" element={<Resources />} />
             <Route path="*" element={<div style={{textAlign:'center', marginTop:'50px', color:'var(--text-muted)'}}>Page Under Construction</div>} />
           </Routes>
         </div>
