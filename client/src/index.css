@@ -554,10 +554,10 @@ tr:hover {
 
 .hero-section {
   padding: 160px 20px 80px;
-  background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+  background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%);
   display: flex;
   justify-content: center;
-  border-bottom: 1px solid rgba(239, 68, 68, 0.1);
+  border-bottom: 1px solid rgba(124, 58, 237, 0.1);
 }
 
 .landing-content {
@@ -580,7 +580,7 @@ tr:hover {
 }
 
 .highlight-text {
-  color: #ef4444; /* Primary Red */
+  color: #7c3aed; /* Primary Purple */
 }
 
 @media (max-width: 768px) {
@@ -603,19 +603,19 @@ tr:hover {
   align-items: center;
   gap: 12px;
   padding: 18px 48px;
-  background: #ef4444;
+  background: #7c3aed;
   color: #ffffff;
   border-radius: 50px;
   font-size: 1.2rem;
   font-weight: 700;
-  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
 }
 
 .landing-cta:hover {
   transform: scale(1.05);
-  box-shadow: 0 15px 40px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4);
 }
 
 
@@ -650,8 +650,8 @@ tr:hover {
 
 .feature-card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.2);
+  box-shadow: 0 20px 40px rgba(124, 58, 237, 0.15);
+  border-color: rgba(124, 58, 237, 0.2);
 }
 
 .feature-icon {
@@ -663,7 +663,7 @@ tr:hover {
   justify-content: center;
 }
 
-.feature-icon-red { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.feature-icon-purple { background: rgba(124, 58, 237, 0.1); color: #7c3aed; }
 .feature-icon-dark { background: rgba(15, 23, 42, 0.05); color: #0f172a; }
 
 .feature-text { text-align: left; }
@@ -1219,11 +1219,11 @@ tr:hover {
 /* Pricing Section Styles */
 .pricing-section {
   padding: 120px 20px;
-  background: #fff5f5; /* Very light red/pink */
+  background: #f5f3ff; /* Very light purple */
   color: var(--text-main);
   position: relative;
   z-index: 10;
-  border-top: 1px solid rgba(239, 68, 68, 0.05);
+  border-top: 1px solid rgba(124, 58, 237, 0.05);
 }
 
 .pricing-container {
@@ -1277,8 +1277,8 @@ tr:hover {
 
 .pro-card {
   transform: scale(1.05);
-  border: 2px solid #ef4444; /* Primary Red border */
-  box-shadow: 0 20px 40px rgba(239, 68, 68, 0.15);
+  border: 2px solid #7c3aed; /* Primary Purple border */
+  box-shadow: 0 20px 40px rgba(124, 58, 237, 0.15);
   position: relative;
 }
 
@@ -1291,7 +1291,7 @@ tr:hover {
   top: -14px;
   left: 50%;
   transform: translateX(-50%);
-  background: #ef4444; /* Primary Red background */
+  background: #7c3aed; /* Primary Purple background */
   color: #fff;
   font-size: 0.8rem;
   font-weight: 700;
@@ -1363,8 +1363,8 @@ tr:hover {
 }
 
 .check-icon {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.1);
   padding: 2px;
   border-radius: 50%;
   min-width: 20px;
@@ -1383,23 +1383,23 @@ tr:hover {
 
 .outline-btn {
   background: transparent;
-  color: #ef4444;
-  border: 2px solid #ef4444;
+  color: #7c3aed;
+  border: 2px solid #7c3aed;
 }
 
 .outline-btn:hover {
-  background: rgba(239, 68, 68, 0.05);
+  background: rgba(124, 58, 237, 0.05);
 }
 
 .solid-btn {
-  background: #ef4444;
+  background: #7c3aed;
   color: #fff;
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
 }
 
 .solid-btn:hover {
-  background: #dc2626;
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+  background: #6d28d9;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
 }
 
 @media (max-width: 1024px) {

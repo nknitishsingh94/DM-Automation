@@ -47,7 +47,7 @@ export default function Landing() {
       <section className="features-section">
         <div className="landing-features">
           <div className="feature-card">
-            <div className="feature-icon feature-icon-red">
+            <div className="feature-icon feature-icon-purple">
               <Zap size={24} />
             </div>
             <div className="feature-text">
