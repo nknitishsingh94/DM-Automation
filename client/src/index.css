@@ -555,7 +555,6 @@ tr:hover {
   background-image: url('/landing-bg.png');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
   color: #ffffff;
 }
 
