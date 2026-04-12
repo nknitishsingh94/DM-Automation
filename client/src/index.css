@@ -1421,10 +1421,13 @@ tr:hover {
 }
 
 /* Resources Page Hub Styles */
-.resources-page-container {
+.resources-page-container, .about-page-container, .help-page-container {
   min-height: 100vh;
   background-color: #fafafa;
   color: #0f172a;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
 }
 
 .resources-grid-section {
@@ -1433,6 +1436,8 @@ tr:hover {
   margin: -40px auto 0;
   position: relative;
   z-index: 10;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .resources-grid {
