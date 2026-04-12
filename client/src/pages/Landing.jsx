@@ -7,18 +7,21 @@ export default function Landing() {
     <div className="landing-container">
       <header className="landing-header">
         <div className="header-content">
-          <div className="header-logo">
-            <img src="/zenxchat-logo.png" alt="ZenXchat Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
-            <span>ZenXchat</span>
+          <div className="header-left">
+            <div className="header-logo">
+              <img src="/zenxchat-logo.png" alt="Zorcha Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
+              <span className="logo-text">ZenXchat</span>
+            </div>
+            <div className="header-divider"></div>
+            <nav className="header-nav">
+              <a href="#about">About</a>
+              <a href="#resources">Resources</a>
+              <a href="#pricing">Pricing</a>
+            </nav>
           </div>
-          <nav className="header-nav">
-            <a href="#features">Features</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#about">About</a>
-          </nav>
           <div className="header-actions">
-            <Link to="/login" className="header-login">Log in</Link>
-            <Link to="/signup" className="header-signup">Sign up free</Link>
+            <Link to="/login" className="header-login">Sign In</Link>
+            <Link to="/signup" className="header-signup">Start For Free</Link>
           </div>
         </div>
       </header>

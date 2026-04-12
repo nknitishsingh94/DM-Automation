@@ -1083,33 +1083,54 @@ tr:hover {
 /* Landing Page Header Styles */
 .landing-header {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1000px;
   z-index: 1000;
-  padding: 16px 40px;
-  background: rgba(255, 255, 255, 0.85); /* Light glassmorphism */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  padding: 12px 24px;
+  background: #ffffff;
+  border-radius: 50px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.landing-header:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
 .header-content {
-  max-width: 1200px;
-  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-divider {
+  width: 1px;
+  height: 24px;
+  background-color: #cbd5e1;
+  margin: 0 4px;
 }
 
 .header-logo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 1.5rem;
-  font-weight: 800;
+  gap: 8px;
   color: #0f172a; /* Dark text */
+}
+
+.logo-text {
+  font-size: 1.4rem;
+  font-weight: 800;
   letter-spacing: -0.5px;
 }
 
@@ -1121,19 +1142,19 @@ tr:hover {
 
 .header-nav {
   display: flex;
-  gap: 32px;
+  gap: 28px;
 }
 
 .header-nav a {
   color: #475569;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.95rem;
   transition: color 0.3s ease;
   position: relative;
 }
 
 .header-nav a:hover {
-  color: #ef4444; /* Primary Red */
+  color: #7c3aed; /* Perfect Purple */
 }
 
 .header-nav a::after {
@@ -1143,7 +1164,7 @@ tr:hover {
   left: 0;
   width: 0;
   height: 2px;
-  background: #ef4444; /* Primary Red */
+  background: #7c3aed;
   transition: width 0.3s ease;
 }
 
@@ -1154,40 +1175,43 @@ tr:hover {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .header-login {
   color: #0f172a;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 0.95rem;
   transition: color 0.3s ease;
 }
 
 .header-login:hover {
-  color: #ef4444;
+  color: #7c3aed;
 }
 
 .header-signup {
-  background: #ef4444;
+  background: #7c3aed; /* Perfect Purple */
   color: #fff;
-  padding: 10px 24px;
+  padding: 10px 20px;
   border-radius: 50px;
   font-weight: 700;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.2);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
 }
 
 .header-signup:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
-  background: #dc2626;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+  background: #6d28d9;
 }
 
 @media (max-width: 768px) {
   .landing-header {
-    padding: 16px 20px;
+    padding: 12px 20px;
+    top: 16px;
   }
-  .header-nav {
+  .header-nav, .header-divider {
     display: none;
   }
 }
