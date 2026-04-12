@@ -8,14 +8,14 @@ export default function Resources() {
     <div className="resources-page-container">
       {/* Header Overlay */}
       <header className="about-header">
-        <div className="landing-header-content" style={{ width: '100%', maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px' }}>
+        <div className="landing-header-content" style={{ width: '100%', maxWidth: '1100px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px', flexDirection: 'row-reverse' }}>
           <div className="header-logo">
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
               <img src="/zenxchat-logo.png" alt="ZenXchat Logo" style={{ width: '32px', height: '32px' }} />
               <span className="logo-text" style={{ color: '#0f172a' }}>ZenXchat</span>
             </Link>
           </div>
-          <nav className="header-nav">
+          <nav className="header-nav" style={{ display: 'flex', gap: '24px' }}>
             <Link to="/about">About</Link>
             <Link to="/resources" style={{ fontWeight: '700', color: '#7c3aed' }}>Resources</Link>
             <Link to="/#pricing">Pricing</Link>
