@@ -1420,15 +1420,134 @@ tr:hover {
   }
 }
 
-@media (max-width: 768px) {
-  .pricing-heading h2 {
+/* Feature Breakdown Section */
+.feature-breakdown-section {
+  padding: 100px 20px;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+.feature-focus-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 80px;
+}
+
+.feature-focus-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #7c3aed;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.feature-focus-header h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 24px;
+}
+
+.feature-focus-description {
+  font-size: 1.25rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.feature-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto 120px;
+  gap: 80px;
+}
+
+.feature-row.reverse {
+  flex-direction: row-reverse;
+}
+
+.feature-text-content {
+  flex: 1;
+  max-width: 500px;
+}
+
+.feature-text-content h3 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 24px;
+  line-height: 1.2;
+}
+
+.feature-text-content p {
+  font-size: 1.15rem;
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+.phone-mockup-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.phone-mockup-wrapper img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 32px;
+  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.15));
+  transition: transform 0.4s ease;
+}
+
+.phone-mockup-wrapper:hover img {
+  transform: translateY(-10px) rotate(1deg);
+}
+
+@media (max-width: 991px) {
+  .feature-row {
+    gap: 40px;
+  }
+  .feature-text-content h3 {
     font-size: 2rem;
   }
-  .pricing-grid {
-    grid-template-columns: 1fr;
+}
+
+@media (max-width: 768px) {
+  .feature-breakdown-section {
+    padding: 60px 20px;
   }
-  .pro-card {
-    grid-column: span 1;
+  
+  .feature-focus-header h2 {
+    font-size: 2.25rem;
+  }
+
+  /* Reset alternating layout on mobile */
+  .feature-row, .feature-row.reverse {
+    flex-direction: column !important; /* Forces normal column layout */
+    text-align: center;
+    gap: 40px;
+    margin-bottom: 80px;
+  }
+
+  .feature-text-content {
+    max-width: 100%;
+    order: 2; /* Text goes second */
+  }
+
+  .phone-mockup-wrapper {
+    width: 100%;
+    order: 1; /* Image/Phone goes first */
+  }
+  
+  .phone-mockup-wrapper img {
+    max-width: 300px;
+    margin: 0 auto;
   }
 }
 

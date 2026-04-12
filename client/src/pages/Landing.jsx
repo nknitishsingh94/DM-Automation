@@ -77,6 +77,76 @@ export default function Landing() {
           </div>
         </div>
 
+        <div className="feature-breakdown-section">
+          <div className="feature-focus-header">
+            <span className="feature-focus-label">Feature Focus</span>
+            <h2>Feature Breakdown</h2>
+            <p className="feature-focus-description">
+              Dive into the specifics of each feature, understanding its functionality and how it can elevate your Instagram strategy.
+            </p>
+          </div>
+
+          <div className="feature-row">
+            <div className="phone-mockup-wrapper">
+              <img src="/features/reel-mockup.png" alt="Auto-Reply to Reels" />
+            </div>
+            <div className="feature-text-content">
+              <h3>Auto-Reply to Instagram Reel Comments</h3>
+              <p>
+                Reply to Instagram reel comments automatically with a DM sent straight to the users inbox. Add trigger keywords or respond to all comments.
+              </p>
+            </div>
+          </div>
+
+          <div className="feature-row reverse">
+            <div className="phone-mockup-wrapper">
+              <img src="/features/post-mockup.png" alt="Auto-Reply to Posts" />
+            </div>
+            <div className="feature-text-content">
+              <h3>Auto-Reply to Instagram Post Comments</h3>
+              <p>
+                Reply to Instagram post comments automatically with a DM sent straight to the users inbox. Add trigger keywords or respond to all comments.
+              </p>
+            </div>
+          </div>
+
+          <div className="feature-row">
+            <div className="phone-mockup-wrapper">
+              <img src="/features/story-reply-mockup.png" alt="Auto-Respond to Story Replies" />
+            </div>
+            <div className="feature-text-content">
+              <h3>Auto-Respond to Instagram Story Replies</h3>
+              <p>
+                Automatically respond to story replies with a DM sent directly to the users inbox. Add trigger keywords or respond to all comments.
+              </p>
+            </div>
+          </div>
+
+          <div className="feature-row reverse">
+            <div className="phone-mockup-wrapper">
+              <img src="/features/story-mention-mockup.png" alt="Auto-Reply to Story Mentions" />
+            </div>
+            <div className="feature-text-content">
+              <h3>Auto-Reply to Instagram Story Mentions</h3>
+              <p>
+                Automatically respond to story @mentions with a message sent directly to the users inbox.
+              </p>
+            </div>
+          </div>
+
+          <div className="feature-row">
+            <div className="phone-mockup-wrapper">
+              <img src="/features/ad-mockup.png" alt="Auto-Reply to Sponsored Ad Comments" />
+            </div>
+            <div className="feature-text-content">
+              <h3>Auto-Reply to Sponsored Ad Comments</h3>
+              <p>
+                Auto-reply to post comments on your sponsored content with a DM sent directly to the users inbox. Respond to keywords or all comments.
+              </p>
+            </div>
+          </div>
+        </div>
+
 
       </section>
 
