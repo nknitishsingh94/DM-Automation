@@ -1222,7 +1222,7 @@ tr:hover {
 
 /* Pricing Section Styles */
 .pricing-section {
-  padding: 120px 20px;
+  padding: 80px 20px 120px;
   background: #f5f3ff; /* Very light purple */
   color: var(--text-main);
   position: relative;
