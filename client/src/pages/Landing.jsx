@@ -23,41 +23,42 @@ export default function Landing() {
         </div>
       </header>
 
-      <div className="landing-overlay"></div>
-      
-      <div className="landing-content">
-        
-        <h1 className="landing-headline">
-          Welcome to my<br /> real world interaction
-        </h1>
-        
-        <p className="landing-sub">
-          The ultimate multi-channel AI Agent for SaaS and agencies. Seamlessly automate Instagram, Facebook, and WhatsApp messaging while you focus on what really matters.
-        </p>
-        
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '40px' }}>
-          <Link to="/login" className="landing-cta">
-            Get Started Free <ArrowRight size={20} />
-          </Link>
+      <div className="hero-section">
+        <div className="landing-content">
+          <h1 className="landing-headline">
+            Welcome to my<br /> <span className="highlight-text">real world interaction</span>
+          </h1>
+          
+          <p className="landing-sub">
+            The ultimate multi-channel AI Agent for SaaS and agencies. Seamlessly automate Instagram, Facebook, and WhatsApp messaging while you focus on what really matters.
+          </p>
+          
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '40px' }}>
+            <Link to="/login" className="landing-cta">
+              Get Started Free <ArrowRight size={20} />
+            </Link>
+          </div>
         </div>
+      </div>
 
+      <section className="features-section">
         <div className="landing-features">
           <div className="feature-card">
-            <div className="feature-icon feature-icon-green">
+            <div className="feature-icon feature-icon-red">
               <Zap size={24} />
             </div>
             <div className="feature-text">
-              <h3 style={{ color: '#fff' }}>Instantly Active</h3>
+              <h3>Instantly Active</h3>
               <p>Zero wait time</p>
             </div>
           </div>
           
           <div className="feature-card">
-            <div className="feature-icon feature-icon-blue">
+            <div className="feature-icon feature-icon-dark">
               <Bot size={24} />
             </div>
             <div className="feature-text">
-              <h3 style={{ color: '#fff' }}>Multi-Platform</h3>
+              <h3>Multi-Platform</h3>
               <p>IG, FB & WhatsApp</p>
             </div>
           </div>
@@ -70,21 +71,21 @@ export default function Landing() {
           </div>
           
           <div className="sp-logos">
-            <div className="sp-logo-placeholder" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="sp-logo-placeholder">
               <Infinity size={28} /> META
             </div>
-            <div className="sp-logo-placeholder" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="sp-logo-placeholder">
               <Instagram size={28} /> INSTAGRAM
             </div>
-            <div className="sp-logo-placeholder" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="sp-logo-placeholder">
               <Facebook size={28} /> FACEBOOK
             </div>
-            <div className="sp-logo-placeholder" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="sp-logo-placeholder">
               <MessageCircle size={28} /> WHATSAPP
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <section id="pricing" className="pricing-section">
         <div className="pricing-container">
