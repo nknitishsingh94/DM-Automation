@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Search, BookOpen, GitBranch, AlertCircle, Sparkles, ChevronRight, MessageSquare } from 'lucide-react';
+import { Search, BookOpen, GitBranch, AlertCircle, Sparkles, ChevronRight, MessageCircle } from 'lucide-react';
 
 export default function HelpCenter() {
   return (
@@ -86,7 +86,7 @@ export default function HelpCenter() {
       
       {/* Chat floating widget UI Mockup */}
       <div className="help-chat-widget">
-        <MessageSquare size={24} fill="white" color="white" style={{ border: 'none' }} />
+        <MessageCircle size={28} fill="white" color="white" />
         <span className="widget-badge">1</span>
       </div>
     </div>
