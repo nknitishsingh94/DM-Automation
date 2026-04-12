@@ -179,7 +179,9 @@ export default function Landing() {
           </div>
 
           <div className="footer-col">
-            <h3>Resources</h3>
+            <Link to="/help" style={{ textDecoration: 'none' }}>
+              <h3 style={{ cursor: 'pointer' }}>Resources</h3>
+            </Link>
             <ul>
               <li><a href="#">Blog</a></li>
               <li><Link to="/help">Help & Support</Link></li>
