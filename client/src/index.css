@@ -30,11 +30,16 @@
   100% { transform: translate(0, 0) scale(1); }
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 body {
@@ -1773,7 +1778,8 @@ tr:hover {
 }
 
 @media (max-width: 768px) {
-  .about-hero h1 { font-size: 2.5rem; }
+  .about-hero h1 { font-size: 2.25rem; }
+  .about-hero p { font-size: 1rem; }
   .mission-grid { grid-template-columns: 1fr; }
   .values-grid { grid-template-columns: 1fr; gap: 32px; }
   .cta-content { padding: 40px 24px; }
