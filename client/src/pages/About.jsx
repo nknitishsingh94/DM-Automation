@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, Target, Zap, Heart, Shield, ArrowRight } from 'lucide-react';
+import Footer from '../components/Footer';
 
 export default function About() {
   return (
@@ -96,9 +97,7 @@ export default function About() {
       </section>
 
       {/* Footer */}
-      <footer className="about-footer">
-        <p>© 2026 ZenXchat. Made with ❤️ for creators.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Users, Newspaper, Activity, ArrowRight, MessageCircle } from 'lucide-react';
+import Footer from '../components/Footer';
 
 export default function Resources() {
   return (
@@ -105,9 +106,7 @@ export default function Resources() {
       </section>
 
       {/* Mini Footer */}
-      <footer className="about-footer">
-        <p>© 2026 ZenXchat Resources. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }
