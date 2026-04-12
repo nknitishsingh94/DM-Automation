@@ -115,7 +115,7 @@ export default function Landing() {
             <div className="pricing-card">
               <div className="card-header">
                 <h3>Agency</h3>
-                <div className="price"><span>$</span>99<span>/mo</span></div>
+                <div className="price"><span>$</span>50<span>/mo</span></div>
                 <p>For agencies managing multi-accounts.</p>
               </div>
               <div className="card-features">
