@@ -8,23 +8,18 @@ export default function About() {
     <div className="about-page-container">
       {/* Header Overlay */}
       <header className="landing-header">
-        <div className="header-content">
-          <div className="header-left">
-            <div className="header-logo">
-              <img src="/zenxchat-logo.png" alt="ZenXchat Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
-              <span className="logo-text">ZenXchat</span>
-            </div>
-            <div className="header-divider"></div>
-             <nav className="header-nav">
-               <Link to="/about">About</Link>
-               <Link to="/resources">Resources</Link>
-               <Link to="/#pricing">Pricing</Link>
-             </nav>
+        <div className="header-content" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between' }}>
+          <div className="header-logo">
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
+              <img src="/zenxchat-logo.png" alt="ZenXchat Logo" style={{ width: '32px', height: '32px' }} />
+              <span className="logo-text" style={{ color: '#0f172a' }}>ZenXchat</span>
+            </Link>
           </div>
-          <div className="header-actions">
-            <Link to="/login" className="header-login">Sign In</Link>
-            <Link to="/signup" className="header-signup">Start For Free</Link>
-          </div>
+          <nav className="header-nav">
+            <Link to="/about" style={{ fontWeight: '700', color: '#7c3aed' }}>About</Link>
+            <Link to="/resources">Resources</Link>
+            <Link to="/#pricing">Pricing</Link>
+          </nav>
         </div>
       </header>
 
