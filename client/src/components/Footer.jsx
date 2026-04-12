@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Facebook, Instagram, Youtube, Linkedin } from 'lucide-react';
+import { Heart, Facebook, Instagram, Youtube, Linkedin, Globe } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -21,10 +21,14 @@ export default function Footer() {
         </div>
 
         <div className="footer-col">
-          <h3>Company</h3>
+          <Link to="/about" style={{ textDecoration: 'none' }}>
+            <h3 style={{ cursor: 'pointer' }}>Company</h3>
+          </Link>
           <ul>
             <li><Link to="/about">About</Link></li>
-            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/#pricing" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Globe size={14} /> English
+            </a></li>
             <li><a href="#">Legal</a></li>
             <li><a href="https://www.instagram.com/zenxchat/" target="_blank" rel="noopener noreferrer">Instagram: @zenxchat</a></li>
           </ul>
