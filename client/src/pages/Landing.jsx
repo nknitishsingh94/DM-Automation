@@ -24,11 +24,11 @@ export default function Landing() {
               <span className="logo-text">ZenXchat</span>
             </div>
             <div className="header-divider"></div>
-             <nav className="header-nav">
-               <Link to="/about">About</Link>
-               <Link to="/resources">Resources</Link>
-               <a href="#pricing">Pricing</a>
-             </nav>
+            <nav className="header-nav">
+              <Link to="/about">About</Link>
+              <Link to="/resources">Resources</Link>
+              <a href="#pricing">Pricing</a>
+            </nav>
           </div>
           <div className="header-actions">
             <Link to="/login" className="header-login">Sign In</Link>
