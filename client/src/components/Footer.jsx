@@ -18,6 +18,11 @@ export default function Footer() {
             <a href="#" className="social-link yt"><Youtube size={20} /></a>
             <a href="#" className="social-link li"><Linkedin size={20} /></a>
           </div>
+          <div style={{ marginTop: '24px' }}>
+            <Link to="/" className="back-home-footer">
+              <span style={{ marginRight: '8px' }}>←</span> Back to Home
+            </Link>
+          </div>
         </div>
 
         <div className="footer-col">

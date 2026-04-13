@@ -2140,3 +2140,25 @@ tr:hover {
   .help-header { padding: 16px 20px; }
   .help-nav { display: none; }
 }
+
+.back-home-footer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(124, 58, 237, 0.1);
+  color: #7c3aed;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+.back-home-footer:hover {
+  background: #7c3aed;
+  color: white;
+  transform: translateX(-5px);
+  box-shadow: 0 10px 20px rgba(124, 58, 237, 0.2);
+}
