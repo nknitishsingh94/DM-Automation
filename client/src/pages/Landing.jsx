@@ -48,7 +48,7 @@ export default function Landing() {
           </p>
 
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '40px' }}>
-            <Link to="/login" className="landing-cta">
+            <Link to="/signup" className="landing-cta">
               Get Started Free <ArrowRight size={20} />
             </Link>
           </div>
