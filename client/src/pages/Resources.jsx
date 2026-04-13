@@ -63,7 +63,7 @@ export default function Resources() {
             </div>
           </a>
 
-          <Link to="#" className="resource-card glass-morphism">
+          <Link to="/blog" className="resource-card glass-morphism">
             <div className="resource-icon blue">
               <Newspaper size={28} />
             </div>

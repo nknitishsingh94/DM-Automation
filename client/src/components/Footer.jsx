@@ -47,7 +47,7 @@ export default function Footer() {
             <h3 style={{ cursor: 'pointer' }}>Resources</h3>
           </Link>
           <ul>
-            <li><a href="#">Blog</a></li>
+            <li><Link to="/blog">Blog</Link></li>
             <li><Link to="/help">Help & Support</Link></li>
           </ul>
         </div>
