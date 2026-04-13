@@ -113,6 +113,21 @@ export default function Blog() {
         </div>
       </section>
 
+      {/* Blog CTA Section */}
+      <section className="article-cta">
+        <div className="cta-content glass-morphism">
+          <div className="cta-logo">
+            <img src="/zenxchat-logo.png" alt="ZenXchat" />
+            <span>ZenXchat</span>
+          </div>
+          <h2>Ready to automate your social growth?</h2>
+          <p>Start your journey with ZenXchat today and see the results in real-time.</p>
+          <Link to="/signup" className="cta-button pulse-animation">
+            Get Started Now
+          </Link>
+        </div>
+      </section>
+
       <Footer />
 
       <style dangerouslySetInnerHTML={{ __html: `
@@ -460,6 +475,87 @@ export default function Blog() {
         @keyframes scaleIn {
           from { opacity: 0; transform: scale(0.9); }
           to { opacity: 1; transform: scale(1); }
+        }
+
+        .article-cta {
+          max-width: 1200px;
+          margin: 0 auto 100px;
+          padding: 0 20px;
+        }
+
+        .cta-content {
+          padding: 80px 40px;
+          text-align: center;
+          border-radius: 40px;
+          background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(217, 70, 239, 0.05) 100%);
+          border: 1px solid rgba(139, 92, 246, 0.2);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .cta-logo {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
+          margin-bottom: 25px;
+        }
+
+        .cta-logo img {
+          width: 50px;
+          height: 50px;
+        }
+
+        .cta-logo span {
+          font-size: 2.2rem;
+          font-weight: 800;
+          color: #0f172a;
+          letter-spacing: -1px;
+          background: linear-gradient(135deg, #0f172a 0%, #4c1d95 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .cta-content h2 {
+          font-size: 2.5rem;
+          color: #0f172a;
+          margin-bottom: 15px;
+          font-weight: 800;
+        }
+
+        .cta-content p {
+          color: #64748b;
+          font-size: 1.2rem;
+          max-width: 600px;
+          margin: 0 auto 40px;
+        }
+
+        .cta-button {
+          display: inline-block;
+          padding: 18px 45px;
+          background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+          color: white;
+          border-radius: 100px;
+          font-weight: 700;
+          font-size: 1.1rem;
+          box-shadow: 0 20px 40px -10px rgba(139, 92, 246, 0.4);
+          transition: all 0.3s;
+          text-decoration: none;
+        }
+
+        .cta-button:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.5);
+        }
+
+        .pulse-animation {
+          animation: pulseShadow 2s infinite;
+        }
+
+        @keyframes pulseShadow {
+          0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+          70% { box-shadow: 0 0 0 20px rgba(139, 92, 246, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
         }
 
         @media (max-width: 968px) {
