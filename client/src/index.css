@@ -2212,3 +2212,31 @@ tr:hover {
   transform: translateX(-5px);
   box-shadow: 0 10px 20px rgba(124, 58, 237, 0.2);
 }
+
+/* Sidebar Profile Dropdown */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.profile-hover:hover {
+  background: #f8fafc;
+}

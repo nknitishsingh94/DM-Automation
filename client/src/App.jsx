@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, NavLink, useLocation, Navigate } from 'react-router-dom';
-import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X } from 'lucide-react';
+import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate } from 'react-router-dom';
+import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut } from 'lucide-react';
 import Dashboard from './pages/Dashboard';
 import Inbox from './pages/Inbox';
 import SettingsPage from './pages/Settings';
@@ -30,6 +30,7 @@ function ProtectedRoute({ children }) {
 function Sidebar({ isMobileOpen, onClose }) {
   const { logout, user } = useAuth();
   const location = useLocation();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
     if (isMobileOpen) onClose();
@@ -43,10 +44,14 @@ function Sidebar({ isMobileOpen, onClose }) {
       />
       
       <aside className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
-        <div className="sidebar-header" style={{ padding: '20px 24px', borderBottom: 'none' }}>
+        <div className="sidebar-header" style={{ padding: '20px 24px', borderBottom: 'none', position: 'relative' }}>
           {user && (
             <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+               <div 
+                 onClick={() => setShowProfileMenu(!showProfileMenu)}
+                 className="profile-hover"
+                 style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '6px 8px', margin: '-6px -8px', borderRadius: '8px', transition: 'background 0.2s' }}
+               >
                 <div style={{ 
                   width: '32px', 
                   height: '32px', 
@@ -67,9 +72,45 @@ function Sidebar({ isMobileOpen, onClose }) {
                   )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>{user.username} v</span>
+                  <span style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    {user.username} <ChevronDown size={14} color="#94a3b8" />
+                  </span>
                 </div>
               </div>
+
+              {showProfileMenu && (
+                <div style={{
+                  position: 'absolute', top: '70px', left: '24px', width: '240px',
+                  background: 'white', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                  border: '1px solid #f1f5f9', zIndex: 100, padding: '8px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 12px', marginBottom: '8px' }}>
+                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '700', color: 'white', overflow: 'hidden' }}>
+                      {user.profilePhoto ? <img src={user.profilePhoto} alt="Nk" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : user.username.charAt(0).toUpperCase()}
+                    </div>
+                    <span style={{ fontSize: '14px', fontWeight: '600', color: '#1e293b' }}>{user.username}</span>
+                  </div>
+                  
+                  <button className="dropdown-item">
+                    <PlusSquare size={16} color="#64748b" /> Add New Workspace
+                  </button>
+                  
+                  <div style={{ height: '1px', background: '#f1f5f9', margin: '4px 0' }}></div>
+                  
+                  <Link to="/help" onClick={() => setShowProfileMenu(false)} className="dropdown-item">
+                    <FileText size={16} color="#64748b" /> Help Center
+                  </Link>
+                  <button className="dropdown-item">
+                    <Headphones size={16} color="#64748b" /> Chat with Us
+                  </button>
+
+                  <div style={{ height: '1px', background: '#f1f5f9', margin: '4px 0' }}></div>
+                  
+                  <button onClick={() => { logout(); setShowProfileMenu(false); }} className="dropdown-item">
+                    <LogOut size={16} color="#64748b" /> Sign out
+                  </button>
+                </div>
+              )}
               <button onClick={onClose} className="mobile-show" style={{ color: 'var(--text-muted)' }}>
                 <X size={20} />
               </button>
