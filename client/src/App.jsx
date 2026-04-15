@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, useLocation, Navigate } from 'react-router-dom';
-import { Bot, Home, MessageSquare, Settings, Users, Bell, Zap, LogOut, Crown, CreditCard, Sparkles, Menu as MenuIcon, X } from 'lucide-react';
+import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X } from 'lucide-react';
 import Dashboard from './pages/Dashboard';
 import Inbox from './pages/Inbox';
 import SettingsPage from './pages/Settings';
@@ -16,6 +16,9 @@ import About from './pages/About';
 import Resources from './pages/Resources';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
+import AIStudio from './pages/AIStudio';
+import Forms from './pages/Forms';
+import Referral from './pages/Referral';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 function ProtectedRoute({ children }) {
@@ -28,111 +31,151 @@ function Sidebar({ isMobileOpen, onClose }) {
   const { logout, user } = useAuth();
   const location = useLocation();
 
-  // Close sidebar on navigation (on mobile)
   useEffect(() => {
     if (isMobileOpen) onClose();
   }, [location.pathname]);
 
   return (
     <>
-      {/* Backdrop for mobile */}
       <div 
         className={`sidebar-overlay ${isMobileOpen ? 'visible' : ''}`} 
         onClick={onClose}
       />
       
       <aside className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
-        <div className="sidebar-header" style={{ justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <img src="/zenxchat-logo.png" alt="ZenXchat" style={{ width: '32px', height: '32px', borderRadius: '8px' }} />
-            <span className="logo-text">ZenXchat</span>
-          </div>
-          <button onClick={onClose} className="mobile-show" style={{ color: 'var(--text-muted)' }}>
-            <X size={24} />
-          </button>
+        <div className="sidebar-header" style={{ padding: '20px 24px', borderBottom: 'none' }}>
+          {user && (
+            <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ 
+                  width: '32px', 
+                  height: '32px', 
+                  borderRadius: '6px', 
+                  background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: 'white',
+                  overflow: 'hidden'
+                }}>
+                  {user.profilePhoto ? (
+                    <img src={user.profilePhoto} alt="Nk" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    user.username.charAt(0).toUpperCase()
+                  )}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>{user.username} v</span>
+                </div>
+              </div>
+              <button onClick={onClose} className="mobile-show" style={{ color: 'var(--text-muted)' }}>
+                <X size={20} />
+              </button>
+            </div>
+          )}
         </div>
-      <div className="sidebar-middle-scroll">
-        <nav className="nav-links">
-          <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-            <Home size={20} />
-            <span>Dashboard</span>
-          </NavLink>
-          <NavLink to="/inbox" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-            <MessageSquare size={20} />
-            <span>Live Inbox</span>
-          </NavLink>
-          <NavLink to="/campaigns" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-            <Zap size={20} />
-            <span>Campaigns</span>
-          </NavLink>
-          <NavLink to="/audiences" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-            <Users size={20} />
-            <span>Audiences</span>
-          </NavLink>
-          <NavLink to="/settings" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-            <Settings size={20} />
-            <span>Settings</span>
-          </NavLink>
-        </nav>
 
-        <div style={{ padding: '0 20px', marginBottom: '20px' }}>
-          <NavLink to="/upgrade" style={{ 
-            background: 'linear-gradient(135deg, #a855f7 0%, #d946ef 100%)',
-            padding: '20px',
-            borderRadius: '16px',
+        <div className="sidebar-middle-scroll">
+          <nav className="nav-links">
+            <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Home size={18} />
+              <span>Home</span>
+            </NavLink>
+            <NavLink to="/ai-studio" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Sparkles size={18} />
+              <span>AI Studio</span>
+              <span className="sidebar-badge badge-new">NEW</span>
+            </NavLink>
+            <NavLink to="/link-in-bio" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Bot size={18} />
+              <span>Link in Bio</span>
+              <span className="sidebar-badge badge-soon">SOON</span>
+            </NavLink>
+            <NavLink to="/campaigns" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Zap size={18} />
+              <span>Automations</span>
+            </NavLink>
+            <NavLink to="/forms" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <MessageSquare size={18} />
+              <span>Forms</span>
+            </NavLink>
+            <NavLink to="/audiences" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Users size={18} />
+              <span>Contacts</span>
+            </NavLink>
+            <NavLink to="/upgrade" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <CreditCard size={18} />
+              <span>Billing</span>
+            </NavLink>
+            <NavLink to="/refer" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Users size={18} />
+              <span>Refer & Earn</span>
+            </NavLink>
+            <NavLink to="/settings" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Settings size={18} />
+              <span>Settings</span>
+            </NavLink>
+          </nav>
+        </div>
+
+        {/* Fixed Upgrade Card at the bottom */}
+        <div style={{ padding: '16px 20px', borderTop: '1px solid #f1f5f9', flexShrink: 0 }}>
+          <div style={{ 
+            padding: '16px 18px', 
+            borderRadius: '20px', 
+            background: '#f8fafc',
+            border: '1px solid #f1f5f9',
             display: 'flex',
             flexDirection: 'column',
-            gap: '12px',
-            textDecoration: 'none',
-            color: 'white',
-            boxShadow: '0 10px 20px rgba(168, 85, 247, 0.3)',
-            position: 'relative',
-            overflow: 'hidden',
-            transition: 'all 0.3s'
-          }} className="upgrade-card-hover">
-            <div style={{ position: 'absolute', top: '-10px', right: '-10px', opacity: 0.2 }}>
-              <Crown size={60} />
+            gap: '10px'
+          }}>
+            <h3 style={{ fontSize: '14px', fontWeight: '800', color: '#1e293b', lineHeight: '1.3' }}>
+              Upgrade to<br />Unlock your Growth
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: '600' }}>
+                 <span style={{ color: '#ec4899', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ec4899', display: 'inline-block' }}></span>
+                   AI Credits
+                 </span>
+                 <span style={{ color: '#94a3b8' }}>1X</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: '600' }}>
+                 <span style={{ color: '#7c3aed', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#7c3aed', display: 'inline-block' }}></span>
+                   Automations
+                 </span>
+                 <span style={{ color: '#94a3b8' }}>Unlimited</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: '600' }}>
+                 <span style={{ color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#3b82f6', display: 'inline-block' }}></span>
+                   Forms
+                 </span>
+                 <span style={{ color: '#94a3b8' }}>Unlimited</span>
+              </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Sparkles size={18} />
-              <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>Pro Plan</span>
-            </div>
-            <div style={{ fontWeight: '700', fontSize: '1rem' }}>Upgrade to Pro</div>
-            <div style={{ fontSize: '0.75rem', opacity: 0.9 }}>Get Unlimited AI DMs & Multi-Platform Support.</div>
-          </NavLink>
-        </div>
-      </div>
-
-      {user && (
-        <div className="sidebar-footer" style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
-          <NavLink to="/profile" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px', borderRadius: '8px', transition: 'var(--transition-fast)' }} className="nav-item">
-            <div style={{ 
-              width: '32px', 
-              height: '32px', 
-              borderRadius: '50%', 
-              background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
-              display: 'flex', 
-              alignItems: 'center', 
+            <NavLink to="/upgrade" style={{ 
+              width: '100%', 
+              padding: '10px', 
+              fontSize: '13px', 
+              borderRadius: '12px', 
               justifyContent: 'center', 
-              fontSize: '12px',
-              fontWeight: '600',
-              overflow: 'hidden',
-              border: '1px solid var(--border-subtle)',
-              flexShrink: 0
+              background: '#0f172a',
+              color: 'white',
+              fontWeight: '700',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              textAlign: 'center'
             }}>
-              {user.profilePhoto ? (
-                <img src={user.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                user.username.charAt(0).toUpperCase()
-              )}
-            </div>
-            <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {user.username}
-            </div>
-          </NavLink>
+              Upgrade Plan
+            </NavLink>
+          </div>
         </div>
-      )}
-    </aside>
+      </aside>
     </>
   );
 }
@@ -140,56 +183,35 @@ function Sidebar({ isMobileOpen, onClose }) {
 function TopBar({ onMenuClick }) {
   const location = useLocation();
   const { user } = useAuth();
+  
   const getTitle = () => {
-    // ... Switch logic stays same ...
     switch(location.pathname) {
-      case '/dashboard': return 'Dashboard Overview';
-      case '/inbox': return 'Live Inbox';
-      case '/campaigns': return 'Auto-Reply Campaigns';
-      case '/audiences': return 'Audience Manager';
-      case '/settings': return 'Instagram Integration';
-      case '/profile': return 'User Profile';
-      case '/upgrade': return 'Upgrade to Pro';
-      default: return 'Admin Console';
+      case '/dashboard': return 'Home';
+      case '/campaigns': return 'Automations';
+      case '/audiences': return 'Contacts';
+      case '/settings': return 'Settings';
+      case '/upgrade': return 'Billing';
+      case '/ai-studio': return 'AI Studio';
+      case '/forms': return 'Forms';
+      case '/refer': return 'Refer & Earn';
+      default: return 'Home';
     }
   };
 
   if (!user) return null;
 
   return (
-    <header className={`topbar ${location.pathname === '/' ? 'topbar-dashboard' : ''}`}>
+    <header className="topbar" style={{ background: 'transparent', borderBottom: 'none', height: '80px', padding: '0 40px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <button onClick={onMenuClick} className="mobile-show" style={{ color: 'var(--accent-color)' }}>
+        <button onClick={onMenuClick} className="mobile-show" style={{ color: '#1e293b' }}>
           <MenuIcon size={24} />
         </button>
-        <h1 className="page-title">{getTitle()}</h1>
+        <h1 className="page-title" style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b' }}>{getTitle()}</h1>
       </div>
       <div className="topbar-actions">
-        <button className="action-btn">
-          <Bell size={20} />
-        </button>
-        <NavLink to="/profile" style={{ 
-          width: '36px', 
-          height: '36px', 
-          borderRadius: '50%', 
-          background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '14px',
-          fontWeight: '600',
-          border: '2px solid var(--border-subtle)',
-          cursor: 'pointer',
-          transition: 'var(--transition-fast)',
-          textDecoration: 'none',
-          color: 'inherit'
-        }} className="avatar-hover">
-          {user.profilePhoto ? (
-            <img src={user.profilePhoto} alt="Profile icon" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          ) : (
-            user.username.charAt(0).toUpperCase()
-          )}
+        <NavLink to="/help" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#7c3aed', fontWeight: '700', textDecoration: 'none' }}>
+          <Users size={20} />
+          <span>Support</span>
         </NavLink>
       </div>
     </header>
@@ -221,8 +243,11 @@ function MainLayout() {
             <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
             <Route path="/audiences" element={<ProtectedRoute><Audiences /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/upgrade" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
+            <Route path="/ai-studio" element={<ProtectedRoute><AIStudio /></ProtectedRoute>} />
+            <Route path="/forms" element={<ProtectedRoute><Forms /></ProtectedRoute>} />
+            <Route path="/refer" element={<ProtectedRoute><Referral /></ProtectedRoute>} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
             <Route path="/signup" element={user ? <Navigate to="/dashboard" /> : <Signup />} />
             <Route path="/help" element={<HelpCenter />} />

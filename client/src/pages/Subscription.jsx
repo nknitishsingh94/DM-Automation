@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { Check, X, Crown, Sparkles, MessageCircle, Smartphone, ShieldCheck, Zap, CreditCard, QrCode, ChevronLeft, Lock, Copy } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
+import { Link } from 'react-router-dom';
 
 export default function Subscription() {
   const { user } = useAuth();
   const [showPayment, setShowPayment] = useState(false);
-  const [paymentStep, setPaymentStep] = useState('select'); // 'select', 'upi', 'card', 'qr'
+  const [paymentStep, setPaymentStep] = useState('select');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -16,7 +17,6 @@ export default function Subscription() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Load Razorpay Script
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
@@ -44,7 +44,6 @@ export default function Subscription() {
     const token = localStorage.getItem('insta_agent_token');
     
     try {
-      // 1. Create order on server
       const response = await fetch(`${API_BASE_URL}/api/payment/create-order`, {
         method: 'POST',
         headers: { 
@@ -56,17 +55,15 @@ export default function Subscription() {
 
       if (!order.id) throw new Error("Could not create order");
 
-      // 2. Options for Razorpay
       const options = {
-        key: 'rzp_test_Sb7Jacv3IT4KbJ', // Updated with your real Key ID
+        key: 'rzp_test_Sb7Jacv3IT4KbJ',
         amount: order.amount,
         currency: order.currency,
         name: "ZenXchat",
         description: "Professional AI Automation Pro Plan",
-        image: "https://instant-logo.png", // Icon
+        image: "https://instant-logo.png",
         order_id: order.id,
         handler: async function (response) {
-          // 3. Verify payment on server
           const verifyRes = await fetch(`${API_BASE_URL}/api/payment/verify-payment`, {
             method: 'POST',
             headers: { 
@@ -109,104 +106,81 @@ export default function Subscription() {
   const upiLink = (app) => `upi://pay?pa=8795919866@ybl&pn=DMAutomate&am=${inrPrice}&cu=INR&tn=ProUpgrade_${user?.username}`;
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', paddingBottom: '60px' }}>
-      
-      {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-        <h2 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '16px' }}>
-          Upgrade to <span style={{ background: 'linear-gradient(135deg, #a855f7, #d946ef)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Pro Mastery</span>
-        </h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
-          Choose the best plan to automate your social media interactions and multiply your business results.
-        </p>
-      </div>
+    <div style={{ padding: '0 40px 60px' }}>
 
-      {/* Pricing Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-        
-        {/* Free Plan */}
-        <div className="table-card" style={{ padding: '40px', display: 'flex', flexDirection: 'column', gap: '30px', position: 'relative', border: '1px solid var(--border-subtle)' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Starter Free</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Perfect for individual sellers</p>
+      {/* Use Landing Page Style Pricing Section */}
+      <section className="pricing-section" style={{ background: 'transparent', border: 'none', padding: '0' }}>
+        <div className="pricing-container">
+          <div className="pricing-heading" style={{ marginBottom: '60px' }}>
+            <h2>Simple, transparent pricing</h2>
+            <p>Choose the plan that's right for your business. No hidden fees.</p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-            <span style={{ fontSize: '2.5rem', fontWeight: '800' }}>$0</span>
-            <span style={{ color: 'var(--text-muted)' }}>/ month</span>
-          </div>
-          <button style={{ 
-            width: '100%', 
-            padding: '14px', 
-            borderRadius: '12px', 
-            border: '2px solid var(--border-subtle)', 
-            background: 'transparent', 
-            color: 'var(--text-main)',
-            fontWeight: '600',
-             cursor: 'not-allowed',
-            opacity: 0.7
-          }}>
-            Your Current Plan
-          </button>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <FeatureItem text="Instagram integration only" />
-            <FeatureItem text="100 AI Auto-Replies /mo" />
-            <FeatureItem text="Basic Keyword Triggers" />
-            <FeatureItem text="Standard Dashboard" />
-            <FeatureItem text="Community Support" isX />
+
+          <div className="pricing-grid">
+            {/* Starter Plan */}
+            <div className="pricing-card">
+              <div className="card-header">
+                <h3>Starter</h3>
+                <div className="price"><span>$</span>0<span>/mo</span></div>
+                <p>Perfect for trying out the platform.</p>
+              </div>
+              <div className="card-features">
+                <ul>
+                  <li><Check size={18} className="check-icon" /> 100 Auto-Replies / month</li>
+                  <li><Check size={18} className="check-icon" /> Basic Flow Builder</li>
+                  <li><Check size={18} className="check-icon" /> Standard Support</li>
+                </ul>
+              </div>
+              <button className="pricing-btn outline-btn">
+                Get Started Free
+              </button>
+            </div>
+
+            {/* Pro Plan */}
+            <div className="pricing-card pro-card">
+              <div className="pro-badge">Most Popular</div>
+              <div className="card-header">
+                <h3>Pro</h3>
+                <div className="price"><span>$</span>29<span>/mo</span></div>
+                <p>For growing creators and businesses.</p>
+              </div>
+              <div className="card-features">
+                <ul>
+                  <li><Check size={18} className="check-icon" /> Unlimited Auto-Replies</li>
+                  <li><Check size={18} className="check-icon" /> Advanced AI AI-Agent</li>
+                  <li><Check size={18} className="check-icon" /> Analytics Dashboard</li>
+                  <li><Check size={18} className="check-icon" /> Priority Support</li>
+                </ul>
+              </div>
+              <button className="pricing-btn solid-btn" onClick={() => handleSelectPlan('Pro')}>
+                Upgrade to Pro
+              </button>
+            </div>
+
+            {/* Agency Plan */}
+            <div className="pricing-card">
+              <div className="card-header">
+                <h3>Agency</h3>
+                <div className="price"><span>$</span>50<span>/mo</span></div>
+                <p>For agencies managing multi-accounts.</p>
+              </div>
+              <div className="card-features">
+                <ul>
+                  <li><Check size={18} className="check-icon" /> Everything in Pro</li>
+                  <li><Check size={18} className="check-icon" /> White-labeling Options</li>
+                  <li><Check size={18} className="check-icon" /> Manage up to 10 Clients</li>
+                  <li><Check size={18} className="check-icon" /> Dedicated Account Manager</li>
+                </ul>
+              </div>
+              <button className="pricing-btn outline-btn" onClick={() => handleSelectPlan('Pro')}>
+                Contact Sales
+              </button>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Pro Plan */}
-        <div className="table-card" style={{ 
-          padding: '40px', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: '30px', 
-          position: 'relative', 
-          border: '2px solid #a855f7',
-          boxShadow: '0 20px 40px rgba(168, 85, 247, 0.15)',
-          background: 'rgba(255, 255, 255, 0.02)'
-        }}>
-          <div style={{ position: 'absolute', top: '20px', right: '20px', background: 'linear-gradient(135deg, #a855f7, #d946ef)', color: 'white', padding: '6px 12px', borderRadius: '50px', fontSize: '0.8rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Sparkles size={14} /> BEST VALUE
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#a855f7' }}>Mastery Pro</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>For growing SaaS & Agencies</p>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-            <span style={{ fontSize: '2.5rem', fontWeight: '800' }}>$19</span>
-            <span style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>/ month</span>
-            <span style={{ color: '#a855f7', fontSize: '0.9rem', fontWeight: '600' }}>(≈ ₹1,600)</span>
-          </div>
-          <button 
-            onClick={() => handleSelectPlan('Pro')}
-            style={{ 
-              width: '100%', 
-              padding: '14px', 
-              borderRadius: '12px', 
-              background: 'linear-gradient(135deg, #a855f7, #d946ef)', 
-              color: 'white',
-              fontWeight: '700',
-              border: 'none',
-              cursor: 'pointer',
-              boxShadow: '0 10px 20px rgba(168, 85, 247, 0.3)',
-              transition: 'all 0.3s'
-            }} className="upgrade-btn-hover">
-            Upgrade to Pro Mastery
-          </button>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <FeatureItem text="Multi-Platform (IG, FB, WhatsApp)" highlighted />
-            <FeatureItem text="Unlimited AI Auto-Replies" highlighted />
-            <FeatureItem text="Advanced Flow Builder" highlighted />
-            <FeatureItem text="Full Analytics Dashboard" highlighted />
-            <FeatureItem text="24/7 Priority Support" highlighted />
-          </div>
-        </div>
-
-      </div>
-
-      {/* Payment Modal */}
+      {/* Payment Modal (same as before) */}
       {showPayment && (
         <div style={{
           position: 'fixed',
@@ -246,7 +220,6 @@ export default function Subscription() {
             )}
 
             <div style={{ padding: '30px' }}>
-              {/* Common Header */}
               <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                 <div style={{ width: '50px', height: '50px', background: '#f3f0ff', color: '#a855f7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
                   <Crown size={28} />
@@ -259,7 +232,6 @@ export default function Subscription() {
                 <p style={{ color: '#666', fontSize: '0.9rem' }}>Total Amount: <strong>${usdPrice} (₹{inrPrice})</strong></p>
               </div>
 
-              {/* Step: Select Method */}
               {paymentStep === 'select' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <PaymentMethodButton 
@@ -289,10 +261,8 @@ export default function Subscription() {
                 </div>
               )}
 
-              {/* Step: UPI & QR Combined */}
               {paymentStep === 'upi' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  {/* QR Code Section */}
                   <div style={{ background: '#f9fafb', border: '1px solid #eee', borderRadius: '16px', padding: '15px', textAlign: 'center' }}>
                     <div style={{ width: '140px', height: '140px', background: 'white', border: '1px solid #ddd', borderRadius: '12px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
                       <Zap size={60} color="#a855f7" strokeWidth={1} style={{ opacity: 0.2 }} />
@@ -303,7 +273,6 @@ export default function Subscription() {
                     <p style={{ fontSize: '0.75rem', color: '#888', marginTop: '10px' }}>Works with any UPI App (GPay, PhonePe, etc.)</p>
                   </div>
 
-                  {/* App Buttons Section */}
                   <div style={{ textAlign: 'center' }}>
                     <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '12px', fontWeight: '600' }}>Quick Pay Apps (Mobile only)</p>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
@@ -314,7 +283,6 @@ export default function Subscription() {
                     </div>
                   </div>
 
-                  {/* Manual Copy Section */}
                   <div style={{ borderTop: '1px solid #eee', paddingTop: '15px' }}>
                     <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '10px', textAlign: 'center' }}>Or Copy UPI ID manually</p>
                     <div style={{ 
@@ -336,7 +304,6 @@ export default function Subscription() {
                 </div>
               )}
 
-              {/* Step: Card */}
               {paymentStep === 'card' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div style={{ position: 'relative' }}>
@@ -363,7 +330,6 @@ export default function Subscription() {
                 </div>
               )}
 
-              {/* Step: QR Code (Removed separate step as it's now integrated) */}
               {paymentStep === 'qr' && (
                  <div style={{ textAlign: 'center' }}>
                     <div style={{ background: '#f9fafb', border: '2px dashed #e5e7eb', borderRadius: '20px', padding: '20px', marginBottom: '20px' }}>
@@ -389,7 +355,7 @@ export default function Subscription() {
       )}
 
       {/* Trust Badges */}
-      <div style={{ marginTop: '80px', display: 'flex', flexWrap: 'wrap', gap: '40px', justifyContent: 'center', opacity: 0.6 }}>
+      <div style={{ marginTop: '60px', display: 'flex', flexWrap: 'wrap', gap: '40px', justifyContent: 'center', opacity: 0.6 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', fontWeight: '500' }}>
           <ShieldCheck size={20} /> Secure Manual Activation
         </div>
@@ -405,27 +371,6 @@ export default function Subscription() {
   );
 }
 
-function FeatureItem({ text, highlighted, isX }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.95rem' }}>
-      <div style={{ 
-        width: '20px', 
-        height: '20px', 
-        borderRadius: '50%', 
-        background: isX ? 'rgba(239, 68, 68, 0.1)' : (highlighted ? 'rgba(168, 85, 247, 0.1)' : 'rgba(16, 185, 129, 0.1)'),
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: isX ? '#ef4444' : (highlighted ? '#a855f7' : '#10b981')
-      }}>
-        {isX ? <X size={12} strokeWidth={3} /> : <Check size={12} strokeWidth={3} />}
-      </div>
-      <span style={{ color: isX ? 'var(--text-muted)' : 'var(--text-main)', fontWeight: highlighted ? '600' : '400' }}>{text}</span>
-    </div>
-  );
-}
-
-// Helper Components for Payment Modal
 function PaymentMethodButton({ icon, title, onClick, highlighted }) {
   return (
     <button 
