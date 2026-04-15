@@ -71,10 +71,10 @@ export default function Dashboard() {
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '32px', padding: '0 40px 40px' }}>
       {/* Left Column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-        <div className="stat-card" style={{ padding: '40px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-             <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '2px solid #e2e8f0' }}></div>
-             <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#1e293b' }}>Get setup</h2>
+        <div className="stat-card" style={{ padding: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+             <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '2px solid #e2e8f0' }}></div>
+             <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#1e293b' }}>Get setup</h2>
           </div>
 
           <div className="checklist-container">
@@ -85,7 +85,7 @@ export default function Dashboard() {
                 style={{ 
                   cursor: 'pointer', 
                   borderBottom: index < checklistItems.length - 1 ? '1px solid #f1f5f9' : 'none',
-                  paddingBottom: '16px'
+                  paddingBottom: index < checklistItems.length - 1 ? '8px' : '0'
                 }}
                 onClick={() => setOpenItem(openItem === index ? -1 : index)}
               >

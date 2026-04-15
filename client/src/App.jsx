@@ -88,11 +88,6 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>AI Studio</span>
               <span className="sidebar-badge badge-new">NEW</span>
             </NavLink>
-            <NavLink to="/link-in-bio" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Bot size={18} />
-              <span>Link in Bio</span>
-              <span className="sidebar-badge badge-soon">SOON</span>
-            </NavLink>
             <NavLink to="/campaigns" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Zap size={18} />
               <span>Automations</span>

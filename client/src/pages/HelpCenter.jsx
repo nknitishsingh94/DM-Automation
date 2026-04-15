@@ -38,7 +38,7 @@ export default function HelpCenter() {
               <ChevronRight size={18} color="#7c3aed" />
             </Link>
             <Link to="#" className="help-start-link">
-              <span>ZenXchat — Official Meta Partner</span>
+              <span>ZenXchat — Official Meta Partner in coming year</span>
               <ChevronRight size={18} color="#7c3aed" />
             </Link>
           </div>
