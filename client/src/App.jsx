@@ -157,57 +157,72 @@ function Sidebar({ isMobileOpen, onClose }) {
         </div>
 
         {/* Fixed Upgrade Card at the bottom */}
-        <div style={{ padding: '16px 20px', borderTop: '1px solid #f1f5f9', flexShrink: 0 }}>
+        <div style={{ padding: '16px', borderTop: '1px solid #f1f5f9', flexShrink: 0 }}>
           <div style={{ 
-            padding: '16px 18px', 
-            borderRadius: '20px', 
-            background: '#f8fafc',
-            border: '1px solid #f1f5f9',
+            padding: '18px', 
+            borderRadius: '16px', 
+            background: '#0f172a',
+            border: '1px solid #1e293b',
             display: 'flex',
             flexDirection: 'column',
-            gap: '10px'
+            gap: '14px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
           }}>
-            <h3 style={{ fontSize: '14px', fontWeight: '800', color: '#1e293b', lineHeight: '1.3' }}>
-              Upgrade to<br />Unlock your Growth
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: '600' }}>
-                 <span style={{ color: '#ec4899', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ec4899', display: 'inline-block' }}></span>
+            <div>
+              <h3 style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px' }}>
+                Premium Access
+              </h3>
+              <p style={{ fontSize: '14px', color: '#f8fafc', fontWeight: '600', lineHeight: '1.4' }}>
+                Unlock all advanced features
+              </p>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '14px 0', borderTop: '1px solid rgba(255, 255, 255, 0.08)', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontWeight: '600' }}>
+                 <span style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                   <div style={{ padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                     <Sparkles size={12} color="#3b82f6" />
+                   </div>
                    AI Credits
                  </span>
-                 <span style={{ color: '#94a3b8' }}>1X</span>
+                 <span style={{ color: '#f8fafc', fontWeight: '800' }}>1X</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: '600' }}>
-                 <span style={{ color: '#7c3aed', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#7c3aed', display: 'inline-block' }}></span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontWeight: '600' }}>
+                 <span style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                   <div style={{ padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                     <Zap size={12} color="#3b82f6" />
+                   </div>
                    Automations
                  </span>
-                 <span style={{ color: '#94a3b8' }}>Unlimited</span>
+                 <span style={{ color: '#f8fafc', fontWeight: '800' }}>Infinite</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: '600' }}>
-                 <span style={{ color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#3b82f6', display: 'inline-block' }}></span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontWeight: '600' }}>
+                 <span style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                   <div style={{ padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                     <FileText size={12} color="#3b82f6" />
+                   </div>
                    Forms
                  </span>
-                 <span style={{ color: '#94a3b8' }}>Unlimited</span>
+                 <span style={{ color: '#f8fafc', fontWeight: '800' }}>Infinite</span>
               </div>
             </div>
-            <NavLink to="/upgrade" style={{ 
+
+            <NavLink to="/upgrade" className="upgrade-btn-zoom" style={{ 
               width: '100%', 
-              padding: '10px', 
+              padding: '12px', 
               fontSize: '13px', 
-              borderRadius: '12px', 
+              borderRadius: '10px', 
               justifyContent: 'center', 
-              background: '#0f172a',
-              color: 'white',
-              fontWeight: '700',
+              background: '#ffffff',
+              color: '#0f172a',
+              fontWeight: '800',
               textDecoration: 'none',
               display: 'flex',
               alignItems: 'center',
+              gap: '6px',
               textAlign: 'center'
             }}>
-              Upgrade Plan
+              <Crown size={15} color="#3b82f6" /> Upgrade Now
             </NavLink>
           </div>
         </div>
