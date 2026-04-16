@@ -202,44 +202,57 @@ export default function Settings() {
                 </div>
 
                 {/* Manual Form Area */}
-                <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: '#f8fafc', padding: '24px', borderRadius: '16px', border: '1px dashed #cbd5e1' }}>
-                <div className="input-group">
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                    <Key size={14} style={{ marginRight: '6px' }} /> Instagram Access Token
-                  </label>
-                  <input 
-                    type="password" placeholder="EAA..."
-                    value={settings.instagramAccessToken || ''}
-                    onChange={(e) => setSettings({...settings, instagramAccessToken: e.target.value})}
-                    style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                  />
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                  <div className="input-group">
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                      <MapPin size={14} style={{ marginRight: '6px' }} /> Page ID
+                {/* Complete Premium Custom Form */}
+                <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '24px', background: '#fafafa', padding: '36px', borderRadius: '24px', border: '1px solid #f1f5f9', boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.02)' }}>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <label style={{ fontWeight: '700', fontSize: '0.95rem', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Key size={16} color="#8b5cf6" /> Instagram Access Token
                     </label>
                     <input 
-                      type="text" placeholder="123456789..."
-                      value={settings.instagramPageId || ''}
-                      onChange={(e) => setSettings({...settings, instagramPageId: e.target.value})}
-                      style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                      type="password" placeholder="e.g. EAAQw..."
+                      value={settings.instagramAccessToken || ''}
+                      onChange={(e) => setSettings({...settings, instagramAccessToken: e.target.value})}
+                      style={{ width: '100%', background: '#ffffff', border: '1px solid #cbd5e1', padding: '16px 20px', borderRadius: '14px', color: '#1e293b', fontSize: '1rem', outline: 'none', transition: 'all 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}
+                      onFocus={(e) => { e.target.style.borderColor = '#8b5cf6'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }}
+                      onBlur={(e) => { e.target.style.borderColor = '#cbd5e1'; e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)'; }}
                     />
                   </div>
-                  <div className="input-group">
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                      <ShieldCheck size={14} style={{ marginRight: '6px' }} /> Business Account ID
-                    </label>
-                    <input 
-                      type="text" placeholder="Optional ID..."
-                      value={settings.businessAccountId || ''}
-                      onChange={(e) => setSettings({...settings, businessAccountId: e.target.value})}
-                      style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                    />
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) minmax(200px, 1fr)', gap: '24px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <label style={{ fontWeight: '700', fontSize: '0.95rem', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <MapPin size={16} color="#ec4899" /> Page ID
+                      </label>
+                      <input 
+                        type="text" placeholder="123456789..."
+                        value={settings.instagramPageId || ''}
+                        onChange={(e) => setSettings({...settings, instagramPageId: e.target.value})}
+                        style={{ width: '100%', background: '#ffffff', border: '1px solid #cbd5e1', padding: '16px 20px', borderRadius: '14px', color: '#1e293b', fontSize: '1rem', outline: 'none', transition: 'all 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}
+                        onFocus={(e) => { e.target.style.borderColor = '#ec4899'; e.target.style.boxShadow = '0 0 0 4px rgba(236, 72, 153, 0.1)'; }}
+                        onBlur={(e) => { e.target.style.borderColor = '#cbd5e1'; e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)'; }}
+                      />
+                    </div>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <label style={{ fontWeight: '700', fontSize: '0.95rem', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <ShieldCheck size={16} color="#f59e0b" /> Business Account ID
+                      </label>
+                      <input 
+                        type="text" placeholder="Optional ID..."
+                        value={settings.businessAccountId || ''}
+                        onChange={(e) => setSettings({...settings, businessAccountId: e.target.value})}
+                        style={{ width: '100%', background: '#ffffff', border: '1px solid #cbd5e1', padding: '16px 20px', borderRadius: '14px', color: '#1e293b', fontSize: '1rem', outline: 'none', transition: 'all 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}
+                        onFocus={(e) => { e.target.style.borderColor = '#f59e0b'; e.target.style.boxShadow = '0 0 0 4px rgba(245, 158, 11, 0.1)'; }}
+                        onBlur={(e) => { e.target.style.borderColor = '#cbd5e1'; e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)'; }}
+                      />
+                    </div>
                   </div>
-                </div>
-                <SaveButton savingSettings={savingSettings} message={message} />
-              </form>
+
+                  <div style={{ marginTop: '12px' }}>
+                    <SaveButton savingSettings={savingSettings} message={message} />
+                  </div>
+                </form>
               </div>
             )}
           </>
