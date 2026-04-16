@@ -81,47 +81,49 @@ export default function Settings() {
   return (
     <div style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
       
-      {/* Platform Tabs */}
-      <div style={{ display: 'flex', gap: '12px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
-        <button 
-          onClick={() => { setActiveTab('instagram'); setMessage({type:'',text:''}); }}
-          style={{ 
-            display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '8px', fontWeight: '600',
-            background: activeTab === 'instagram' ? 'rgba(236, 72, 153, 0.1)' : 'transparent',
-            color: activeTab === 'instagram' ? '#ec4899' : 'var(--text-muted)',
-            border: activeTab === 'instagram' ? '1px solid rgba(236, 72, 153, 0.2)' : '1px solid transparent',
-            cursor: 'pointer', transition: 'all 0.2s'
-          }}
-        >
-          <Instagram size={18} /> Instagram
-        </button>
-        <button 
-          onClick={() => { setActiveTab('facebook'); setMessage({type:'',text:''}); }}
-          style={{ 
-            display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '8px', fontWeight: '600',
-            background: activeTab === 'facebook' ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-            color: activeTab === 'facebook' ? '#3b82f6' : 'var(--text-muted)',
-            border: activeTab === 'facebook' ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
-            cursor: 'pointer', transition: 'all 0.2s'
-          }}
-        >
-          <Facebook size={18} /> Facebook
-        </button>
-        <button 
-          onClick={() => { setActiveTab('whatsapp'); setMessage({type:'',text:''}); }}
-          style={{ 
-            display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '8px', fontWeight: '600',
-            background: activeTab === 'whatsapp' ? 'rgba(16, 185, 129, 0.1)' : 'transparent',
-            color: activeTab === 'whatsapp' ? '#10b981' : 'var(--text-muted)',
-            border: activeTab === 'whatsapp' ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid transparent',
-            cursor: 'pointer', transition: 'all 0.2s'
-          }}
-        >
-          <MessageSquare size={18} /> WhatsApp
-        </button>
+      {/* Premium Platform Tabs */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+        <div style={{ display: 'inline-flex', background: '#f1f5f9', padding: '8px', borderRadius: '20px', gap: '8px', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}>
+          <button 
+            onClick={() => { setActiveTab('instagram'); setMessage({type:'',text:''}); }}
+            style={{ 
+               display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 28px', borderRadius: '14px', fontWeight: '700', fontSize: '0.95rem',
+               background: activeTab === 'instagram' ? '#ffffff' : 'transparent',
+               color: activeTab === 'instagram' ? '#ec4899' : '#64748b',
+               border: 'none', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+               boxShadow: activeTab === 'instagram' ? '0 4px 12px rgba(236, 72, 153, 0.15)' : 'none'
+            }}
+          >
+            <Instagram size={20} /> Instagram
+          </button>
+          <button 
+            onClick={() => { setActiveTab('facebook'); setMessage({type:'',text:''}); }}
+            style={{ 
+               display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 28px', borderRadius: '14px', fontWeight: '700', fontSize: '0.95rem',
+               background: activeTab === 'facebook' ? '#ffffff' : 'transparent',
+               color: activeTab === 'facebook' ? '#3b82f6' : '#64748b',
+               border: 'none', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+               boxShadow: activeTab === 'facebook' ? '0 4px 12px rgba(59, 130, 246, 0.15)' : 'none'
+            }}
+          >
+            <Facebook size={20} /> Facebook
+          </button>
+          <button 
+            onClick={() => { setActiveTab('whatsapp'); setMessage({type:'',text:''}); }}
+            style={{ 
+               display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 28px', borderRadius: '14px', fontWeight: '700', fontSize: '0.95rem',
+               background: activeTab === 'whatsapp' ? '#ffffff' : 'transparent',
+               color: activeTab === 'whatsapp' ? '#10b981' : '#64748b',
+               border: 'none', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+               boxShadow: activeTab === 'whatsapp' ? '0 4px 12px rgba(16, 185, 129, 0.15)' : 'none'
+            }}
+          >
+            <MessageSquare size={20} /> WhatsApp
+          </button>
+        </div>
       </div>
 
-      <div className="table-card" style={{ padding: '32px', animation: 'fadeIn 0.3s ease-out' }}>
+      <div style={{ background: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 12px 40px rgba(0,0,0,0.04)', padding: '40px', animation: 'fadeIn 0.4s ease-out' }}>
         
         {/* INSTAGRAM CONFIG */}
         {activeTab === 'instagram' && (
