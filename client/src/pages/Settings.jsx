@@ -172,8 +172,35 @@ export default function Settings() {
                 </button>
               </div>
             ) : (
-              /* Disconnected State — Show Form */
-              <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              /* Disconnected State — Show Auth Flow */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                {/* 1-Click Connect Box */}
+                <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px', textAlign: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.02)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '8px', color: '#1e293b' }}>Fast Connection</h3>
+                  <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '20px' }}>Securely connect your Meta accounts in one click.</p>
+                  
+                  <button 
+                    type="button"
+                    onClick={() => alert('Meta OAuth Login Flow will initiate here. Requires App ID.')}
+                    style={{ 
+                      width: '100%', maxWidth: '300px', background: '#1877F2', color: 'white', border: 'none', borderRadius: '8px', 
+                      padding: '14px', fontSize: '1rem', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                      cursor: 'pointer', margin: '0 auto', boxShadow: '0 4px 14px rgba(24, 119, 242, 0.3)'
+                    }}>
+                    <Facebook size={20} /> Continue with Facebook
+                  </button>
+                  <div style={{ marginTop: '16px', fontSize: '0.75rem', color: '#94a3b8' }}>
+                    Requires Developer App ID & Secret inside .env
+                  </div>
+                </div>
+
+                <div style={{ position: 'relative', textAlign: 'center' }}>
+                  <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', height: '1px', background: '#e2e8f0', zIndex: 0 }}></div>
+                  <span style={{ position: 'relative', background: '#ffffff', padding: '0 16px', color: '#94a3b8', fontSize: '0.85rem', fontWeight: '600', zIndex: 1 }}>OR ENTER MANUALLY</span>
+                </div>
+
+                {/* Manual Form Area */}
+                <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: '#f8fafc', padding: '24px', borderRadius: '16px', border: '1px dashed #cbd5e1' }}>
                 <div className="input-group">
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
                     <Key size={14} style={{ marginRight: '6px' }} /> Instagram Access Token
@@ -211,6 +238,7 @@ export default function Settings() {
                 </div>
                 <SaveButton savingSettings={savingSettings} message={message} />
               </form>
+              </div>
             )}
           </>
         )}

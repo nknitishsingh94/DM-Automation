@@ -40,11 +40,11 @@ export default function Landing() {
       <div className="hero-section">
         <div className="landing-content">
           <h1 className="landing-headline">
-            Welcome to my<br /> <span className="highlight-text">real world interaction</span>
+            Automate Your DMs.<br /> <span className="highlight-text">Multiply Your Sales.</span>
           </h1>
 
           <p className="landing-sub">
-            The ultimate multi-channel AI Agent for SaaS and agencies. Seamlessly automate Instagram, Facebook, and WhatsApp messaging while you focus on what really matters.
+            Deploy intelligent AI Agents that instantly reply to comments, engage followers 24/7, and convert conversations into loyal customers across Instagram, Facebook, and WhatsApp.
           </p>
 
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '40px' }}>
@@ -80,10 +80,10 @@ export default function Landing() {
 
         <div className="feature-breakdown-section">
           <div className="feature-focus-header">
-            <span className="feature-focus-label">Feature Focus</span>
-            <h2>Feature Breakdown</h2>
+            <span className="feature-focus-label">Core Capabilities</span>
+            <h2>Turn Engagement Into Revenue</h2>
             <p className="feature-focus-description">
-              Dive into the specifics of each feature, understanding its functionality and how it can elevate your Instagram strategy.
+              Stop losing leads to slow response times. Let ZenXchat handle every interaction seamlessly, converting your audience while you sleep.
             </p>
           </div>
 
@@ -92,9 +92,9 @@ export default function Landing() {
               <img src="/features/reel-mockup.png" alt="Auto-Reply to Reels" />
             </div>
             <div className="feature-text-content">
-              <h3>Auto-Reply to Instagram Reel Comments</h3>
+              <h3>Turn Reel Views into Customers</h3>
               <p>
-                Reply to Instagram reel comments automatically with a DM sent straight to the users inbox. Add trigger keywords or respond to all comments.
+                Automatically DM users who comment on your Reels. Capitalize on viral moments by delivering links, lead magnets, and customized responses instantly without missing a single lead.
               </p>
             </div>
           </div>
@@ -104,9 +104,9 @@ export default function Landing() {
               <img src="/features/post-mockup.png" alt="Auto-Reply to Posts" />
             </div>
             <div className="feature-text-content">
-              <h3>Auto-Reply to Instagram Post Comments</h3>
+              <h3>Smart Post Engagement</h3>
               <p>
-                Reply to Instagram post comments automatically with a DM sent straight to the users inbox. Add trigger keywords or respond to all comments.
+                Reward engaged followers by automatically sending them a private DM the exact second they comment on your posts. Set up specific trigger words (e.g., "Send Link") to drive sales effortlessly.
               </p>
             </div>
           </div>
@@ -116,9 +116,9 @@ export default function Landing() {
               <img src="/features/story-reply-mockup.png" alt="Auto-Respond to Story Replies" />
             </div>
             <div className="feature-text-content">
-              <h3>Auto-Respond to Instagram Story Replies</h3>
+              <h3>Scale Your Story Sales</h3>
               <p>
-                Automatically respond to story replies with a DM sent directly to the users inbox. Add trigger keywords or respond to all comments.
+                Stories generate the highest intent leads. Use AI to auto-respond to story replies, process inquiries, and guide users through personalized funnels—all within their inbox.
               </p>
             </div>
           </div>
@@ -128,9 +128,9 @@ export default function Landing() {
               <img src="/features/story-mention-mockup.png" alt="Auto-Reply to Story Mentions" />
             </div>
             <div className="feature-text-content">
-              <h3>Auto-Reply to Instagram Story Mentions</h3>
+              <h3>Gratitude on Autopilot</h3>
               <p>
-                Automatically respond to story @mentions with a message sent directly to the users inbox.
+                When someone tags your brand in their story, automatically send them a "Thank You" message, a discount code, or a VIP offer. Build brand loyalty without lifting a finger.
               </p>
             </div>
           </div>
@@ -140,9 +140,9 @@ export default function Landing() {
               <img src="/features/ad-mockup.png" alt="Auto-Reply to Sponsored Ad Comments" />
             </div>
             <div className="feature-text-content">
-              <h3>Auto-Reply to Sponsored Ad Comments</h3>
+              <h3>Maximize Ad ROI</h3>
               <p>
-                Auto-reply to post comments on your sponsored content with a DM sent directly to the users inbox. Respond to keywords or all comments.
+                Don't let expensive ad clicks go to waste. Instantly capture intent by automatically DMing users who comment on your sponsored Facebook and Instagram Ads.
               </p>
             </div>
           </div>

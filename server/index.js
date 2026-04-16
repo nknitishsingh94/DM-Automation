@@ -465,19 +465,38 @@ const PORT = process.env.PORT || 5000;
 // Dashboard Stats Endpoint
 app.get('/api/stats', verifyToken, async (req, res) => {
   try {
+    const { filter } = req.query;
+    let dateQuery = {};
+    
+    if (filter === '7d') {
+      const d = new Date(); d.setDate(d.getDate() - 7);
+      dateQuery = { $gte: d };
+    } else if (filter === '30d') {
+      const d = new Date(); d.setDate(d.getDate() - 30);
+      dateQuery = { $gte: d };
+    }
+
+    const campaignMatch = { userId: new mongoose.Types.ObjectId(req.user.userId) };
+    const messageMatch = { userId: new mongoose.Types.ObjectId(req.user.userId) };
+    
+    if (Object.keys(dateQuery).length > 0) {
+      campaignMatch.createdAt = dateQuery;
+      messageMatch.timestamp = dateQuery;
+    }
+
     const totalDMs = await Campaign.aggregate([
-      { $match: { userId: new mongoose.Types.ObjectId(req.user.userId) } },
+      { $match: campaignMatch },
       { $group: { _id: null, total: { $sum: "$dmsSent" } } }
     ]);
-    const campaignsCount = await Campaign.countDocuments({ userId: req.user.userId });
-    const messagesCount = await Message.countDocuments({ userId: req.user.userId });
+    const campaignsCount = await Campaign.countDocuments(campaignMatch);
+    const messagesCount = await Message.countDocuments(messageMatch);
     
-    const sentMessages = await Message.countDocuments({ userId: req.user.userId, type: 'sent' });
-    const receivedMessages = await Message.countDocuments({ userId: req.user.userId, type: 'received' });
-    const aiSentMessages = await Message.countDocuments({ userId: req.user.userId, type: 'sent', isAI: true });
+    const sentMessages = await Message.countDocuments({ ...messageMatch, type: 'sent' });
+    const receivedMessages = await Message.countDocuments({ ...messageMatch, type: 'received' });
+    const aiSentMessages = await Message.countDocuments({ ...messageMatch, type: 'sent', isAI: true });
     
     // Fetch unique contacts and user plan
-    const uniqueContacts = await Message.distinct('chatId', { userId: req.user.userId });
+    const uniqueContacts = await Message.distinct('chatId', messageMatch);
     const userProfile = await User.findById(req.user.userId);
 
     let accuracy = 0;

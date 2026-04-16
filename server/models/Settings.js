@@ -20,6 +20,15 @@ const settingsSchema = new mongoose.Schema({
   connectedFacebookName: { type: String, default: "" },
   connectedWhatsAppName: { type: String, default: "" },
   lastTestedAt: { type: Date },
+
+  // --- AI Studio Configurations ---
+  aiName: { type: String, default: "Zen Assistant" },
+  aiTone: { type: String, default: "friendly and concise" },
+  aiKnowledgeBase: { type: String, default: "" },
+  aiTemperature: { type: Number, default: 0.7 },
+  aiFallbackMessage: { type: String, default: "I'm not sure about that, please contact human support." },
+  aiHumanEscalation: { type: Boolean, default: false },
+
   updatedAt: { type: Date, default: Date.now }
 });
 

@@ -318,30 +318,47 @@ export default function Audiences() {
 
   return (
     <div style={{ maxWidth: '1000px', animation: 'fadeIn 0.5s ease-out' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-        <div>
-          <h2 style={{ fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.5px' }}>Audience Insights</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>Manage and categorize your AI Agent's interactions.</p>
+      {/* Stunning Header Banner */}
+      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', borderRadius: '24px', padding: '40px', color: 'white', marginBottom: '32px', position: 'relative', overflow: 'hidden', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.2)' }}>
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '10px', borderRadius: '14px', backdropFilter: 'blur(10px)' }}>
+              <Users size={24} color="#a78bfa" />
+            </div>
+            <span style={{ color: '#a78bfa', fontWeight: '700', letterSpacing: '1px', fontSize: '0.85rem', textTransform: 'uppercase' }}>Audience Manager</span>
+          </div>
+          <h2 style={{ fontSize: '2.5rem', fontWeight: '800', letterSpacing: '-1px', marginBottom: '12px', lineHeight: '1.1' }}>Manage your<br/>growing community.</h2>
+          <p style={{ color: '#94a3b8', fontSize: '1.05rem', maxWidth: '400px', margin: 0, lineHeight: '1.5' }}>Categorize interactions, assign tags, and track how your AI Agent is converting leads into loyal customers.</p>
         </div>
+        
+        {/* Decorative Background Elements */}
+        <div style={{ position: 'absolute', right: '-10%', top: '-20%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(139,92,246,0.3) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%' }}></div>
+        <div style={{ position: 'absolute', right: '5%', bottom: '-20%', width: '200px', height: '200px', background: 'radial-gradient(circle, rgba(56,189,248,0.2) 0%, rgba(0,0,0,0) 70%)', borderRadius: '50%' }}></div>
+        <Users size={240} style={{ position: 'absolute', right: '-20px', bottom: '-40px', opacity: 0.05, transform: 'rotate(-10deg)' }} />
       </div>
 
+      {/* Advanced Search & Filter Bar */}
       <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', flexWrap: 'wrap' }}>
-        <div className="table-card" style={{ padding: '8px 16px', flex: 1, display: 'flex', alignItems: 'center', minWidth: '300px' }}>
-          <Search size={18} style={{ color: 'var(--text-muted)', marginRight: '12px' }} />
+        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '18px', padding: '14px 24px', flex: 1, display: 'flex', alignItems: 'center', minWidth: '300px', transition: 'all 0.3s ease', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}
+             onMouseOver={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.05)'; }}
+             onMouseOut={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.02)'; }}>
+          <Search size={20} style={{ color: '#8b5cf6', marginRight: '16px' }} />
           <input 
             type="text" 
-            placeholder="Search name, ID or notes..." 
+            placeholder="Search by name, ID, or private notes..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: '100%', padding: '8px 0', background: 'transparent', border: 'none', outline: 'none', fontSize: '0.95rem' }}
+            style={{ width: '100%', padding: '0', background: 'transparent', border: 'none', outline: 'none', fontSize: '1rem', color: '#1e293b', fontWeight: '500' }}
           />
         </div>
-        <div className="table-card" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Filter size={18} style={{ color: 'var(--text-muted)' }} />
+        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '18px', padding: '14px 24px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', transition: 'all 0.3s ease' }}
+             onMouseOver={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.05)'; }}
+             onMouseOut={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.02)'; }}>
+          <Filter size={20} style={{ color: '#8b5cf6' }} />
           <select 
             value={selectedTagFilter} 
             onChange={(e) => setSelectedTagFilter(e.target.value)}
-            style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.9rem', fontWeight: '600', color: 'var(--text-main)', cursor: 'pointer' }}
+            style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '1rem', fontWeight: '600', color: '#334155', cursor: 'pointer' }}
           >
             <option value="All">All Tags</option>
             {allAvailableTags.map(tag => <option key={tag} value={tag}>{tag}</option>)}
@@ -349,23 +366,32 @@ export default function Audiences() {
         </div>
       </div>
 
-      <div className="table-card">
+      {/* Premium Data Table Container */}
+      <div style={{ background: '#ffffff', borderRadius: '24px', border: '1px solid #f1f5f9', overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.04)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr>
-              <th style={{ padding: '20px 24px', textAlign: 'left', borderBottom: '2px solid var(--border-subtle)', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contact</th>
-              <th style={{ padding: '20px 24px', textAlign: 'left', borderBottom: '2px solid var(--border-subtle)', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category Tags</th>
-              <th style={{ padding: '20px 24px', textAlign: 'left', borderBottom: '2px solid var(--border-subtle)', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Interactions</th>
-              <th style={{ padding: '20px 24px', textAlign: 'left', borderBottom: '2px solid var(--border-subtle)', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Last Live</th>
+            <tr style={{ background: 'rgba(248, 250, 252, 0.5)', borderBottom: '1px solid #f1f5f9' }}>
+              <th style={{ padding: '24px', textAlign: 'left', color: '#94a3b8', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Contact Identity</th>
+              <th style={{ padding: '24px', textAlign: 'left', color: '#94a3b8', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Category Tags</th>
+              <th style={{ padding: '24px', textAlign: 'left', color: '#94a3b8', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Total Interactions</th>
+              <th style={{ padding: '24px', textAlign: 'left', color: '#94a3b8', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Last Active</th>
             </tr>
           </thead>
           <tbody>
             {filteredContacts.length === 0 ? (
               <tr>
-                <td colSpan="4" style={{ textAlign: 'center', padding: '100px 20px' }}>
-                  <div style={{ opacity: 0.4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                    <Users size={64} />
-                    <div style={{ fontSize: '1.2rem', fontWeight: '600' }}>No Audience Matches</div>
+                <td colSpan="4" style={{ textAlign: 'center', padding: '100px 20px', background: '#ffffff' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', animation: 'fadeIn 0.5s ease-out' }}>
+                    <div style={{ position: 'relative' }}>
+                      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(139,92,246,0.2) 0%, rgba(255,255,255,0) 70%)', borderRadius: '50%', zIndex: 0 }}></div>
+                      <div style={{ background: '#ffffff', padding: '24px', borderRadius: '50%', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', position: 'relative', zIndex: 1 }}>
+                        <Users size={56} style={{ color: '#c084fc' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>No Audience Found</div>
+                      <div style={{ color: '#64748b', fontSize: '1rem', maxWidth: '300px', margin: '0 auto' }}>Try adjusting your search filters or wait for new AI interactions.</div>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -373,43 +399,57 @@ export default function Audiences() {
               <tr 
                 key={contact._id} 
                 onClick={() => setSelectedContact(contact)}
-                style={{ cursor: 'pointer', borderBottom: '1px solid var(--border-subtle)', transition: 'all 0.2s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(139, 92, 246, 0.03)'; e.currentTarget.style.transform = 'scale(1.002)'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'none'; }}
+                style={{ cursor: 'pointer', borderBottom: '1px solid #f1f5f9', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', background: '#ffffff' }}
+                onMouseOver={(e) => { 
+                  e.currentTarget.style.background = '#f8fafc'; 
+                  e.currentTarget.style.transform = 'translateY(-2px)'; 
+                  e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0,0,0,0.05)'; 
+                  e.currentTarget.style.zIndex = '10';
+                  e.currentTarget.style.position = 'relative';
+                }}
+                onMouseOut={(e) => { 
+                  e.currentTarget.style.background = '#ffffff'; 
+                  e.currentTarget.style.transform = 'none'; 
+                  e.currentTarget.style.boxShadow = 'none'; 
+                  e.currentTarget.style.zIndex = '1';
+                }}
               >
-                <td style={{ padding: '16px 24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <td style={{ padding: '20px 24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                      <div style={{ 
-                        width: '40px', height: '40px', borderRadius: '12px', 
-                        background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
+                        width: '46px', height: '46px', borderRadius: '14px', 
+                        background: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)', 
                         display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                        color: 'white', fontWeight: '700', boxShadow: '0 4px 10px rgba(139, 92, 246, 0.2)'
+                        color: 'white', fontWeight: '800', fontSize: '1.2rem', boxShadow: '0 4px 14px rgba(168, 85, 247, 0.3)'
                       }}>
                        {contact.name.charAt(0).toUpperCase()}
                      </div>
                      <div>
-                       <div style={{ fontWeight: '700', color: 'var(--text-main)', fontSize: '1rem' }}>{contact.name}</div>
-                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                         {getPlatformIcon(contact.platform)} {contact.platform}
+                       <div style={{ fontWeight: '800', color: '#1e293b', fontSize: '1.05rem', marginBottom: '4px' }}>{contact.name}</div>
+                       <div style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
+                         {getPlatformIcon(contact.platform)} <span style={{ textTransform: 'capitalize' }}>{contact.platform}</span>
                        </div>
                      </div>
                   </div>
                 </td>
-                <td style={{ padding: '16px 24px' }}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                <td style={{ padding: '20px 24px' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     {contact.tags.length > 0 ? contact.tags.map(tag => (
-                      <span key={tag} style={{ ...getTagColor(tag), padding: '2px 10px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: '700', border: `1px solid ${getTagColor(tag).border}` }}>{tag}</span>
-                    )) : <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontStyle: 'italic' }}>Untagged</span>}
+                      <span key={tag} style={{ ...getTagColor(tag), padding: '4px 12px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: '700', border: `1px solid ${getTagColor(tag).border}` }}>{tag}</span>
+                    )) : <span style={{ color: '#94a3b8', fontSize: '0.8rem', fontStyle: 'italic', fontWeight: '500' }}>Untagged</span>}
                   </div>
                 </td>
-                <td style={{ padding: '16px 24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '700', fontSize: '1rem' }}>
-                    <MessageCircle size={16} color="var(--accent-color)" /> {contact.totalMessages}
+                <td style={{ padding: '20px 24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '800', fontSize: '1.1rem', color: '#334155' }}>
+                    <div style={{ padding: '8px', background: '#f3e8ff', borderRadius: '10px' }}>
+                      <MessageCircle size={16} color="#9333ea" />
+                    </div>
+                    {contact.totalMessages}
                   </div>
                 </td>
-                <td style={{ padding: '16px 24px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                  <div>{new Date(contact.lastActive).toLocaleDateString()}</div>
-                  <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>{new Date(contact.lastActive).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                <td style={{ padding: '20px 24px' }}>
+                  <div style={{ color: '#1e293b', fontWeight: '600', fontSize: '0.95rem', marginBottom: '2px' }}>{new Date(contact.lastActive).toLocaleDateString()}</div>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: '500' }}>{new Date(contact.lastActive).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
                 </td>
               </tr>
             ))}
