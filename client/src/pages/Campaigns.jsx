@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Zap, Plus, Trash2, Power, MessageCircle, AlertCircle, CheckCircle, Video, Link as LinkIcon, History, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { useNotification } from '../App';
 
 export default function Campaigns() {
   const navigate = useNavigate();
+  const { notify } = useNotification();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
@@ -154,6 +156,30 @@ export default function Campaigns() {
       setCampaigns(previousCampaigns); // Rollback
     }
   };
+  const deleteFlow = async (id, e) => {
+    e.stopPropagation(); // Prevent navigating to builder
+    if (!window.confirm("Are you sure you want to delete this flow?")) return;
+
+    const previousFlows = [...flows];
+    setFlows(prev => prev.filter(f => f._id !== id));
+    
+    const token = localStorage.getItem('insta_agent_token');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/flows/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        notify("Flow deleted successfully!", "success");
+      } else {
+        setFlows(previousFlows);
+        notify("Failed to delete flow", "error");
+      }
+    } catch (err) {
+      console.error("Error deleting flow:", err);
+      setFlows(previousFlows);
+    }
+  };
 
   const viewLogs = async (campaign) => {
     setSelectedCampaign(campaign);
@@ -237,7 +263,14 @@ export default function Campaigns() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                   <Zap size={14} /> Triggers on: <span style={{ color: 'var(--accent-color)', fontWeight: '700' }}>"{flow.triggerKeyword || '*'}"</span>
                 </div>
-                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <button 
+                    onClick={(e) => deleteFlow(flow._id, e)}
+                    style={{ color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
+                    title="Delete Flow"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                   <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     Edit Flow <History size={14} />
                   </span>
