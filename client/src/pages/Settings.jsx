@@ -183,7 +183,10 @@ export default function Settings() {
                   
                   <button 
                     type="button"
-                    onClick={() => alert('Meta OAuth Login Flow will initiate here. Requires App ID.')}
+                    onClick={() => {
+                      const token = localStorage.getItem('insta_agent_token');
+                      window.location.href = `${API_BASE_URL}/api/oauth/facebook?token=${token}`;
+                    }}
                     style={{ 
                       width: '100%', maxWidth: '300px', background: '#1877F2', color: 'white', border: 'none', borderRadius: '8px', 
                       padding: '14px', fontSize: '1rem', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
