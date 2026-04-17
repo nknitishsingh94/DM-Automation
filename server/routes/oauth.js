@@ -13,7 +13,7 @@ router.get('/facebook', verifyToken, (req, res) => {
   // Scope defines what permissions we are asking for
   const scope = 'instagram_manage_messages,pages_manage_metadata,pages_messaging';
   // State is used to pass the user ID through the OAuth flow securely
-  const state = req.user.id; 
+  const state = req.user.userId; 
 
   if (!appId) {
     return res.status(500).json({ error: "Missing META_APP_ID in environment variables" });
@@ -21,7 +21,7 @@ router.get('/facebook', verifyToken, (req, res) => {
 
   const authUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}&response_type=code`;
   
-  res.json({ url: authUrl });
+  res.redirect(authUrl);
 });
 
 // Step 2: Handle OAuth Callback
