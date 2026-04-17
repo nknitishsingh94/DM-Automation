@@ -1,7 +1,7 @@
 import Flow from '../models/Flow.js';
 import Message from '../models/Message.js';
 import Contact from '../models/Contact.js';
-import { sendMessageToInstagram, sendPrivateReply } from '../index.js'; // Note: circular dep check
+import { sendMessageToInstagram, sendPrivateReply } from './metaApi.js';
 import mongoose from 'mongoose';
 
 /**

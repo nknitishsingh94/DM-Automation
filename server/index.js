@@ -17,6 +17,7 @@ import User from './models/User.js';
 import Contact from './models/Contact.js';
 import Flow from './models/Flow.js';
 import { runFlow } from './utils/FlowRunner.js';
+import { sendMessageToInstagram, sendWhatsAppMessage, sendPrivateReply } from './utils/metaApi.js';
 import authRoutes from './routes/auth.js';
 import paymentRoutes from './routes/payment.js';
 import oauthRoutes from './routes/oauth.js';
@@ -67,110 +68,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Meta Graph API Helper: Send Message (Per-User Token from Settings DB)
-export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null) => {
-  try {
-    // Look up user's own access token from Settings
-    let accessToken = process.env.META_PAGE_ACCESS_TOKEN; // fallback to env
-    
-    if (userId) {
-      const userSettings = await Settings.findOne({ userId });
-      if (userSettings) {
-        if (platform === 'facebook' && userSettings.facebookAccessToken) {
-          accessToken = userSettings.facebookAccessToken;
-        } else if (userSettings.instagramAccessToken) {
-          accessToken = userSettings.instagramAccessToken;
-        }
-      }
-    }
-    
-    if (!accessToken) {
-      console.warn("⚠️ No access token found for user. Skipping real API call.");
-      return false;
-    }
-
-    const url = `https://graph.facebook.com/v19.0/me/messages?access_token=${accessToken}`;
-    const payload = {
-      recipient: { id: recipientId },
-      messaging_type: "RESPONSE",
-      message: { text }
-    };
-
-    if (mediaUrl) {
-      payload.message.text += `\n\nCheck this out: ${mediaUrl}`;
-    }
-
-    const response = await axios.post(url, payload);
-    console.log("✅ Message sent to Meta API:", response.data);
-    return true;
-  } catch (err) {
-    console.error("❌ Meta API Error:", err.response?.data || err.message);
-    return false;
-  }
-};
-
-// WhatsApp Cloud API: Send Message
-const sendWhatsAppMessage = async (recipientPhone, text, userId = null) => {
-  try {
-    let accessToken = '';
-    let phoneNumberId = '';
-
-    if (userId) {
-      const userSettings = await Settings.findOne({ userId });
-      if (userSettings && userSettings.whatsappToken && userSettings.whatsappPhoneNumberId) {
-        accessToken = userSettings.whatsappToken;
-        phoneNumberId = userSettings.whatsappPhoneNumberId;
-      }
-    }
-
-    if (!accessToken || !phoneNumberId) {
-      console.warn("⚠️ WhatsApp token not configured. Skipping.");
-      return false;
-    }
-
-    const url = `https://graph.facebook.com/v19.0/${phoneNumberId}/messages`;
-    const payload = {
-      messaging_product: "whatsapp",
-      to: recipientPhone,
-      type: "text",
-      text: { body: text }
-    };
-
-    const response = await axios.post(url, payload, {
-      headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' }
-    });
-    console.log("✅ WhatsApp message sent:", response.data);
-    return true;
-  } catch (err) {
-    console.error("❌ WhatsApp API Error:", err.response?.data || err.message);
-    return false;
-  }
-};
-
-// Meta Private Reply: Respond to a Comment with a DM
-export const sendPrivateReply = async (platform, commentId, text, userId = null) => {
-  try {
-    let accessToken = process.env.META_PAGE_ACCESS_TOKEN;
-    if (userId) {
-      const userSettings = await Settings.findOne({ userId });
-      if (userSettings) {
-        accessToken = platform === 'facebook' ? userSettings.facebookAccessToken : userSettings.instagramAccessToken;
-      }
-    }
-
-    if (!accessToken) return false;
-
-    const url = `https://graph.facebook.com/v19.0/${commentId}/private_replies`;
-    const response = await axios.post(url, { message: text }, {
-      headers: { 'Authorization': `Bearer ${accessToken}` }
-    });
-    console.log("✅ Private reply sent to comment:", response.data);
-    return true;
-  } catch (err) {
-    console.error("❌ Private Reply Error:", err.response?.data || err.message);
-    return false;
-  }
-};
+// (Messaging helpers moved to utils/metaApi.js for cleaner architecture)
 
 const checkFollowerStatus = async (platform, chatId) => {
   // TODO: Once you have the Business ID, implement the real check here
@@ -187,16 +85,18 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   }
 
   // 1. Check for Active Flows first (Advanced Automation)
-  const activeFlow = await Flow.findOne({ 
-    userId, 
-    status: 'Active',
-    triggerKeyword: { $regex: new RegExp(`^${text}$`, 'i') } 
+  const activeFlows = await Flow.find({ userId, status: 'Active' });
+  
+  const matchedFlow = activeFlows.find(f => {
+    if (!f.triggerKeyword) return false;
+    const keywords = f.triggerKeyword.split(',').map(k => k.trim().toLowerCase());
+    return keywords.some(k => text.toLowerCase().includes(k));
   });
   
-  if (activeFlow) {
-    console.log(`🌊 Triggering Flow: ${activeFlow.name} for ${chatId}`);
-    await runFlow(userId, activeFlow._id, chatId, platform, text);
-    return { flow: activeFlow.name };
+  if (matchedFlow) {
+    console.log(`🌊 Triggering Flow: ${matchedFlow.name} for ${chatId}`);
+    await runFlow(userId, matchedFlow._id, chatId, platform, text, commentId);
+    return { flow: matchedFlow.name };
   }
 
   const userMessage = text.toLowerCase();
