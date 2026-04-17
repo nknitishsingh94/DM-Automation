@@ -158,8 +158,8 @@ export default function Campaigns() {
   };
   const deleteFlow = async (id, e) => {
     e.stopPropagation(); // Prevent navigating to builder
-    if (!window.confirm("Are you sure you want to delete this flow?")) return;
-
+    
+    // Optimistic Update
     const previousFlows = [...flows];
     setFlows(prev => prev.filter(f => f._id !== id));
     
