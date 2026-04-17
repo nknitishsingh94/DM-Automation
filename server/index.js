@@ -1,5 +1,18 @@
 import 'dotenv/config';
 import express from 'express';
+
+// --- GLOBAL STABILITY GUARD ---
+// Prevents the server from crashing on unhandled errors
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('🔥 CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason);
+  // Optional: Send alert to monitoring service
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('🔥 CRITICAL: Uncaught Exception thrown:', err.message);
+  console.error(err.stack);
+  // Keep the process alive if possible, or restart gracefully
+});
 import axios from 'axios';
 import { createServer } from 'http';
 import { Server } from 'socket.io';

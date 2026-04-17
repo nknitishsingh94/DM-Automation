@@ -30,7 +30,7 @@ router.get('/facebook/callback', async (req, res) => {
   const { code, state, error } = req.query;
 
   // Render frontend URL for redirection after success/failure
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
 
   if (error) {
     console.error("OAuth Error:", error);
@@ -86,6 +86,7 @@ router.get('/facebook/callback', async (req, res) => {
     let whatsappName = '';
     let whatsappAccessToken = longToken; 
 
+    let whatsappDiscoveryError = '';
     try {
       const wabaUrl = `https://graph.facebook.com/v19.0/me/whatsapp_business_accounts?access_token=${longToken}`;
       const wabaRes = await axios.get(wabaUrl);
@@ -101,10 +102,15 @@ router.get('/facebook/callback', async (req, res) => {
         if (phones && phones.length > 0) {
           whatsappPhoneId = phones[0].id;
           whatsappName = phones[0].display_phone_number || phones[0].verified_name || "WhatsApp Business";
+        } else {
+          whatsappDiscoveryError = 'WABA found, but no verified phone numbers found in this account.';
         }
+      } else {
+        whatsappDiscoveryError = 'No WhatsApp Business Accounts found. Make sure you have created one in Meta Business Suite.';
       }
     } catch (wErr) {
-      console.warn("⚠️ WhatsApp discovery failed (User might not have WABA):", wErr.response?.data || wErr.message);
+      whatsappDiscoveryError = wErr.response?.data?.error?.message || wErr.message;
+      console.warn("⚠️ WhatsApp discovery failed:", whatsappDiscoveryError);
     }
 
     // 5. Save the Tokens and IDs to the Database
@@ -124,6 +130,7 @@ router.get('/facebook/callback', async (req, res) => {
         connectedInstagramName: accountName,
         connectedFacebookName: accountName,
         connectedWhatsAppName: whatsappName,
+        whatsappError: whatsappDiscoveryError,
         lastTestedAt: new Date()
       },
       { upsert: true, new: true }

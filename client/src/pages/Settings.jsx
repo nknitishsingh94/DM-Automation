@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ShieldCheck, Instagram, Facebook, MessageSquare, Key, MapPin, Save, Info, CheckCircle, XCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
 
 export default function Settings() {
@@ -25,18 +26,40 @@ export default function Settings() {
   const [savingSettings, setSavingSettings] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
+  const { notify } = useNotification();
+
   useEffect(() => {
     const token = localStorage.getItem('insta_agent_token');
-    fetch(`${API_BASE_URL}/api/settings`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(data => {
-        // Merge fetched data to ensure defaults if missing
+    const loadSettings = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/settings`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
         setSettings(s => ({ ...s, ...data }));
         setLoading(false);
-      })
-      .catch(err => console.error("Error loading settings:", err));
+      } catch (err) {
+        console.error("Error loading settings:", err);
+      }
+    };
+
+    loadSettings();
+
+    // --- HANDLE OAUTH FEEDBACK ---
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('oauth_success')) {
+      notify("✅ Meta account(s) connected successfully!", "success");
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (params.get('oauth_error')) {
+      const errorType = params.get('oauth_error');
+      let msg = "Facebook/Meta connection failed.";
+      if (errorType === 'declined') msg = "Meta connection was declined.";
+      if (errorType === 'exchange_failed') msg = "Token exchange failed. Check server logs.";
+      
+      notify(msg, "error");
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   }, []);
 
   const handleSaveSettings = async (e) => {
@@ -407,10 +430,27 @@ export default function Settings() {
                   </button>
                 </div>
 
-                <div style={{ position: 'relative', textAlign: 'center' }}>
-                  <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', height: '1px', background: '#e2e8f0', zIndex: 0 }}></div>
-                  <span style={{ position: 'relative', background: '#ffffff', padding: '0 16px', color: '#94a3b8', fontSize: '0.85rem', fontWeight: '600', zIndex: 1 }}>OR SETUP MANUALLY</span>
-                </div>
+                {settings?.whatsappError && !settings?.isWhatsAppConnected && (
+                  <div style={{ padding: '20px', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '16px', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
+                      <XCircle size={20} color="#ef4444" style={{ marginTop: '2px' }} />
+                      <div>
+                        <p style={{ color: '#ef4444', fontWeight: '700', fontSize: '1rem' }}>WhatsApp Connection Issue</p>
+                        <p style={{ color: '#ef4444', opacity: 0.8, fontSize: '0.85rem' }}>{settings.whatsappError}</p>
+                      </div>
+                    </div>
+                    
+                    <div style={{ paddingTop: '12px', borderTop: '1px solid rgba(239, 68, 68, 0.1)', marginTop: '12px' }}>
+                      <p style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '8px' }}>Troubleshooting Checklist:</p>
+                      <ul style={{ paddingLeft: '20px', fontSize: '0.82rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <li>✅ Check if <strong>WhatsApp product</strong> is added to your Meta App.</li>
+                        <li>✅ Ensure you have a <strong>WhatsApp Business Account (WABA)</strong>.</li>
+                        <li>✅ Confirm you have a <strong>verified Phone Number</strong> in Meta Suite.</li>
+                        <li>✅ App must be in <strong>Live Mode</strong> (or user must be an admin).</li>
+                      </ul>
+                    </div>
+                  </div>
+                )}
 
                 <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   <div className="input-group">
