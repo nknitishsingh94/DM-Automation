@@ -71,16 +71,29 @@ export const runFlow = async (userId, flowId, contactId, platform, initialText =
 
       // Handle branching for 'condition' type nodes
       if (currentNode.type === 'condition') {
-        // TODO: Implement logic based on edge labels like 'True'/'False'
-        // For now, always take first path or use simple criteria
-        currentNode = flow.nodes.find(n => n.id === outgoingEdges[0].target);
+        // If there are multiple edges, we look for one labeled 'True' or just pick the first one
+        const trueEdge = outgoingEdges.find(e => e.label === 'True' || e.data?.label === 'True');
+        currentNode = flow.nodes.find(n => n.id === (trueEdge?.target || outgoingEdges[0].target));
       } else {
-        // Standard linear path
+        // Standard linear path: just take the first connection
         currentNode = flow.nodes.find(n => n.id === outgoingEdges[0].target);
       }
 
-      // If next node is a "wait" or "user_input" we would break here and save state
-      // For mvp, we run linearly
+      console.log(`➡️ Moving to next node: ${currentNode?.id} (${currentNode?.type})`);
+      
+      // If next node is a "wait", we would ideally implement a delay
+      if (currentNode?.type === 'wait') {
+        const delay = parseInt(currentNode.data?.delay) || 2;
+        console.log(`⏱️ Waiting ${delay} seconds...`);
+        await new Promise(r => setTimeout(r, delay * 1000));
+        // Continue to next node after wait
+        const nextEdges = flow.edges.filter(e => e.source === currentNode.id);
+        if (nextEdges.length > 0) {
+           currentNode = flow.nodes.find(n => n.id === nextEdges[0].target);
+        } else {
+           break;
+        }
+      }
     }
 
   } catch (err) {
