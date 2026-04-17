@@ -22,6 +22,23 @@ import Referral from './pages/Referral';
 import Broadcasts from './pages/Broadcasts';
 import FlowBuilder from './pages/FlowBuilder';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { createContext, useContext, useCallback } from 'react';
+
+const NotificationContext = createContext();
+export const useNotification = () => useContext(NotificationContext);
+
+const Toast = ({ message, type, onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000);
+    return () => clearTimeout(timer);
+  }, [onClose, message]);
+
+  return (
+    <div className={`toast toast-${type}`}>
+      {type === 'success' ? '✅' : '❌'} {message}
+    </div>
+  );
+};
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
@@ -331,12 +348,30 @@ function MainLayout() {
 }
 
 function App() {
+  const [toasts, setToasts] = useState([]);
+
+  const notify = useCallback((message, type = 'success') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+  }, []);
+
+  const removeToast = useCallback((id) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
+
   return (
-    <AuthProvider>
-      <Router>
-        <MainLayout />
-      </Router>
-    </AuthProvider>
+    <NotificationContext.Provider value={{ notify }}>
+      <AuthProvider>
+        <Router>
+          <MainLayout />
+        </Router>
+      </AuthProvider>
+      <div className="toast-container">
+        {toasts.map(t => (
+          <Toast key={t.id} {...t} onClose={() => removeToast(t.id)} />
+        ))}
+      </div>
+    </NotificationContext.Provider>
   );
 }
 

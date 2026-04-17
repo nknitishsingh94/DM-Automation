@@ -3,6 +3,7 @@ import { CheckCircle2, MoreHorizontal, Send, Trash2, Copy, Download, Instagram, 
 import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
+import { useNotification } from '../App';
 
 
 export default function Inbox() {
@@ -17,6 +18,7 @@ export default function Inbox() {
   const [contactId, setContactId] = useState(null);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: "", message: "", onConfirm: null });
   const { user } = useAuth();
+  const { notify } = useNotification();
   const messagesEndRef = useRef(null);
   const menuRef = useRef(null);
 
@@ -636,6 +638,8 @@ export default function Inbox() {
             placeholder="Type a message..." 
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
+            onFocus={() => {/* could pause socket updates here if needed */}}
+            autoFocus
             style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid var(--border-subtle)', outline: 'none' }}
           />
           <button type="submit" className="send-btn" style={{ padding: '12px', borderRadius: '12px', background: 'var(--accent-color)', color: 'white' }}>

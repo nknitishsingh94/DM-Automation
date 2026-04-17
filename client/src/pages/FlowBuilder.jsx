@@ -14,6 +14,7 @@ import '@xyflow/react/dist/style.css';
 import { Save, Play, ArrowLeft, MessageSquare, Zap, Activity, Trash2, Plus, Info } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { useNotification } from '../App';
 
 // --- Custom Node Components ---
 
@@ -69,11 +70,52 @@ const nodeTypes = {
   condition: ConditionNode,
 };
 
+// --- Optimized Input Component to prevent lag/word-loss ---
+const StableInput = ({ value, onChange, placeholder, isTextArea = false }) => {
+  const [localValue, setLocalValue] = useState(value);
+
+  // Sync if external value changes (selection change)
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  const commit = () => {
+    if (localValue !== value) {
+      onChange(localValue);
+    }
+  };
+
+  if (isTextArea) {
+    return (
+      <textarea
+        value={localValue}
+        onChange={(e) => setLocalValue(e.target.value)}
+        onBlur={commit}
+        placeholder={placeholder}
+        style={{ width: '100%', minHeight: '120px', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', outline: 'none', resize: 'none' }}
+      />
+    );
+  }
+
+  return (
+    <input
+      type="text"
+      value={localValue}
+      onChange={(e) => setLocalValue(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => e.key === 'Enter' && commit()}
+      placeholder={placeholder}
+      style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', outline: 'none' }}
+    />
+  );
+};
+
 // --- Main Flow Builder Component ---
 
 export default function FlowBuilder() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { notify } = useNotification();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [flowName, setFlowName] = useState('New Automation Flow');
@@ -137,10 +179,14 @@ export default function FlowBuilder() {
       });
       if (res.ok) {
         const saved = await res.json();
+        notify("Flow published successfully!", "success");
         if (id === 'new') navigate(`/flow-builder/${saved._id}`);
+      } else {
+        notify("Failed to publish flow", "error");
       }
     } catch (err) {
       console.error("Save error:", err);
+      notify("Network error while saving", "error");
     } finally {
       setIsSaving(false);
     }
@@ -218,17 +264,22 @@ export default function FlowBuilder() {
             </div>
           ) : (
             <div>
-              <h4 style={{ fontSize: '0.85rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '20px' }}>Node Properties</h4>
-              
-              {selectedNode.type === 'trigger' && (
+               <div style={{ padding: '0 0 20px', marginBottom: '20px', borderBottom: '1px solid #f1f5f9' }}>
+                 <h4 style={{ fontSize: '0.85rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>
+                   Node Properties
+                 </h4>
+                 <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
+                   Editing {selectedNode.type === 'trigger' ? 'Flow Trigger' : 'Message Action'}
+                 </div>
+               </div>
+               
+               {selectedNode.type === 'trigger' && (
                 <div className="input-group">
                   <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Keyword Trigger</label>
-                  <input 
-                    type="text"
-                    value={selectedNode.data.keyword}
-                    onChange={(e) => updateNodeData('keyword', e.target.value)}
+                  <StableInput 
+                    value={selectedNode.data.keyword || ''}
+                    onChange={(val) => updateNodeData('keyword', val)}
                     placeholder="e.g. START"
-                    style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', outline: 'none' }}
                   />
                 </div>
               )}
@@ -236,10 +287,10 @@ export default function FlowBuilder() {
               {selectedNode.type === 'message' && (
                 <div className="input-group">
                   <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Message Text</label>
-                  <textarea 
-                    value={selectedNode.data.text}
-                    onChange={(e) => updateNodeData('text', e.target.value)}
-                    style={{ width: '100%', minHeight: '120px', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', outline: 'none', resize: 'none' }}
+                  <StableInput 
+                    value={selectedNode.data.text || ''}
+                    onChange={(val) => updateNodeData('text', val)}
+                    isTextArea={true}
                   />
                 </div>
               )}
