@@ -34,7 +34,7 @@ router.post('/signup', async (req, res) => {
     });
     await welcomeMessage.save();
     
-    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '1d' });
+    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
     res.status(201).json({ token, user: { id: newUser._id, username: newUser.username, email: newUser.email, profilePhoto: newUser.profilePhoto } });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
     const isMatch = await user.comparePassword(password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
     
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '1d' });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
 
     // Ensure welcome message exists for the user
     const messageCount = await Message.countDocuments({ userId: user._id });
@@ -89,7 +89,7 @@ router.post('/google', async (req, res) => {
         user = new User({ username: "Demo Google User", email, googleId: "mock_google_id" });
         await user.save();
       }
-      const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '1d' });
+      const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
       return res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email } });
     }
 
@@ -126,7 +126,7 @@ router.post('/google', async (req, res) => {
       await welcomeMessage.save();
     }
 
-    const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '1d' });
+    const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
     res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto } });
   } catch (err) {
     console.error("❌ Google Auth Error:", err.message);
@@ -169,7 +169,7 @@ router.post('/google_custom', async (req, res) => {
       await welcomeMessage.save();
     }
 
-    const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '1d' });
+    const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
     res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto } });
   } catch (err) {
     console.error("❌ Custom Google Auth Error:", err.message);
@@ -190,7 +190,7 @@ router.post('/facebook', async (req, res) => {
         user = new User({ username: "Demo Facebook User", email, facebookId: "mock_fb_id" });
         await user.save();
       }
-      const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '1d' });
+      const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
       return res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email } });
     }
     
@@ -235,7 +235,7 @@ router.post('/facebook', async (req, res) => {
       await welcomeMessage.save();
     }
 
-    const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '1d' });
+    const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
     res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto } });
   } catch (err) {
     console.error("❌ Facebook Auth Error:", err.message);

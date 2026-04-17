@@ -15,6 +15,8 @@ import Message from './models/Message.js';
 import Settings from './models/Settings.js';
 import User from './models/User.js';
 import Contact from './models/Contact.js';
+import Flow from './models/Flow.js';
+import { runFlow } from './utils/FlowRunner.js';
 import authRoutes from './routes/auth.js';
 import paymentRoutes from './routes/payment.js';
 import oauthRoutes from './routes/oauth.js';
@@ -66,7 +68,7 @@ app.use(cors({
 app.use(express.json());
 
 // Meta Graph API Helper: Send Message (Per-User Token from Settings DB)
-const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null) => {
+export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null) => {
   try {
     // Look up user's own access token from Settings
     let accessToken = process.env.META_PAGE_ACCESS_TOKEN; // fallback to env
@@ -145,20 +147,66 @@ const sendWhatsAppMessage = async (recipientPhone, text, userId = null) => {
   }
 };
 
+// Meta Private Reply: Respond to a Comment with a DM
+export const sendPrivateReply = async (platform, commentId, text, userId = null) => {
+  try {
+    let accessToken = process.env.META_PAGE_ACCESS_TOKEN;
+    if (userId) {
+      const userSettings = await Settings.findOne({ userId });
+      if (userSettings) {
+        accessToken = platform === 'facebook' ? userSettings.facebookAccessToken : userSettings.instagramAccessToken;
+      }
+    }
+
+    if (!accessToken) return false;
+
+    const url = `https://graph.facebook.com/v19.0/${commentId}/private_replies`;
+    const response = await axios.post(url, { message: text }, {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    console.log("✅ Private reply sent to comment:", response.data);
+    return true;
+  } catch (err) {
+    console.error("❌ Private Reply Error:", err.response?.data || err.message);
+    return false;
+  }
+};
+
 const checkFollowerStatus = async (platform, chatId) => {
   // TODO: Once you have the Business ID, implement the real check here
   return true; 
 };
 
 // Reusable Auto-Reply Logic
-const processAutoReply = async (userId, platform, chatId, text) => {
+const processAutoReply = async (userId, platform, chatId, text, source = 'dm', commentId = null) => {
+  // Human Handover Check
+  const contact = await Contact.findOne({ userId, chatId });
+  if (contact && contact.isBotMuted) {
+    console.log(`🔇 Bot is muted for contact ${chatId}. Skipping auto-reply.`);
+    return { skipped: true, reason: 'muted' };
+  }
+
+  // 1. Check for Active Flows first (Advanced Automation)
+  const activeFlow = await Flow.findOne({ 
+    userId, 
+    status: 'Active',
+    triggerKeyword: { $regex: new RegExp(`^${text}$`, 'i') } 
+  });
+  
+  if (activeFlow) {
+    console.log(`🌊 Triggering Flow: ${activeFlow.name} for ${chatId}`);
+    await runFlow(userId, activeFlow._id, chatId, platform, text);
+    return { flow: activeFlow.name };
+  }
+
   const userMessage = text.toLowerCase();
   
-  // 1. Keyword Campaign Checking
+  // 2. Keyword Campaign Checking
   const activeCampaigns = await Campaign.find({ userId, status: 'Active' });
   const match = activeCampaigns.find(c => {
     const platformMatch = c.platform === 'all' || c.platform === (platform || 'instagram');
-    return platformMatch && userMessage.includes(c.trigger.toLowerCase());
+    const sourceMatch = (c.triggerSource || 'dm') === source;
+    return platformMatch && sourceMatch && userMessage.includes(c.trigger.toLowerCase());
   });
 
   if (match) {
@@ -178,7 +226,11 @@ const processAutoReply = async (userId, platform, chatId, text) => {
       }
     }
 
-    await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId);
+    if (source === 'comment' && commentId) {
+      await sendPrivateReply(platform, commentId, match.response, userId);
+    } else {
+      await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId);
+    }
 
     const autoReply = new Message({
       userId: new mongoose.Types.ObjectId(userId),
@@ -239,7 +291,11 @@ const processAutoReply = async (userId, platform, chatId, text) => {
   io.to(userId.toString()).emit('new_message', fallbackReply.toObject());
   
   if (chatId !== 'ai_bot_support') {
-    await sendMessageToInstagram(platform, chatId, fallbackText, '', userId);
+    if (source === 'comment' && commentId) {
+      await sendPrivateReply(platform, commentId, fallbackText, userId);
+    } else {
+      await sendMessageToInstagram(platform, chatId, fallbackText, '', userId);
+    }
   }
   
   return { reply: fallbackReply, fallback: true };
@@ -327,50 +383,93 @@ app.post('/api/webhook', async (req, res) => {
         const senderId = messaging.sender.id;
         const text = messaging.message?.text;
         
-        if (text) {
-          console.log(`📬 Received Message on Page ${pageId} from ${senderId}: ${text}`);
-          
-          // Find the user who connected this Page ID in their Settings
-          const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
-          let userSettings;
-          
-          if (platform === 'instagram') {
-            userSettings = await Settings.findOne({ 
-              $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }]
-            });
-          } else {
-            userSettings = await Settings.findOne({ facebookPageId: pageId });
-          }
-          
-          let targetUserId;
-          if (userSettings) {
-            targetUserId = userSettings.userId;
-            console.log(`✅ Matched Page ${pageId} to User ${targetUserId}`);
-          } else {
-            // Fallback: find first user (for testing/single-user setups)
-            const fallbackUser = await User.findOne();
-            if (fallbackUser) {
-              targetUserId = fallbackUser._id;
-              console.warn(`⚠️ No Settings match for Page ${pageId}, using fallback user ${targetUserId}`);
+          if (text || messaging.message?.story) {
+            const isStoryMention = !!messaging.message?.story;
+            const messageText = text || (isStoryMention ? "[Story Mention]" : "");
+            
+            console.log(`📬 Received ${isStoryMention ? 'Story Mention' : 'Message'} on Page ${pageId} from ${senderId}: ${messageText}`);
+            
+            // Find the user who connected this Page ID in their Settings
+            const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
+            let userSettings;
+            
+            if (platform === 'instagram') {
+              userSettings = await Settings.findOne({ 
+                $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }]
+              });
+            } else {
+              userSettings = await Settings.findOne({ facebookPageId: pageId });
+            }
+            
+            let targetUserId;
+            if (userSettings) {
+              targetUserId = userSettings.userId;
+              console.log(`✅ Matched Page ${pageId} to User ${targetUserId}`);
+            } else {
+              // Fallback: find first user (for testing/single-user setups)
+              const fallbackUser = await User.findOne();
+              if (fallbackUser) {
+                targetUserId = fallbackUser._id;
+                console.warn(`⚠️ No Settings match for Page ${pageId}, using fallback user ${targetUserId}`);
+              }
+            }
+            
+            if (targetUserId) {
+              // 1. Save incoming message to DB
+              const incoming = new Message({
+                userId: targetUserId,
+                chatId: senderId,
+                sender: 'user',
+                text: messageText,
+                type: 'received',
+                platform: platform,
+                timestamp: new Date()
+              });
+              await incoming.save();
+              io.to(targetUserId.toString()).emit('new_message', incoming);
+
+              // 2. Trigger Auto-Reply (with userId so it uses correct token)
+              // If it's a story mention, we pass "story_mention" as source. 
+              // We use messageText as the "text" to match triggers, but story mentions might match "*" or specific keywords if they also sent text.
+              await processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm");
             }
           }
-          
-          if (targetUserId) {
-            // 1. Save incoming message to DB
-            const incoming = new Message({
-              userId: targetUserId,
-              chatId: senderId,
-              sender: 'user',
-              text: text,
-              type: 'received',
-              platform: platform,
-              timestamp: new Date()
-            });
-            await incoming.save();
-            io.to(targetUserId.toString()).emit('new_message', incoming);
 
-            // 2. Trigger Auto-Reply (with userId so it uses correct token)
-            await processAutoReply(targetUserId.toString(), platform, senderId, text);
+        // --- Handle Comments (Feed/Feed Changes) ---
+        const changes = entry.changes || [];
+        for (const change of changes) {
+          if (change.field === 'feed' || change.field === 'comments') {
+            const val = change.value;
+            const text = val.text || val.message;
+            const senderId = val.from?.id;
+            const commentId = val.id || val.comment_id;
+
+            if (text && senderId && commentId && senderId !== pageId) {
+              console.log(`💬 Received Comment on Page ${pageId} from ${senderId}: ${text}`);
+              
+              const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
+              let userSettings;
+              if (platform === 'instagram') {
+                userSettings = await Settings.findOne({ $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }] });
+              } else {
+                userSettings = await Settings.findOne({ facebookPageId: pageId });
+              }
+
+              let targetUserId = userSettings?.userId || (await User.findOne())?._id;
+
+              if (targetUserId) {
+                // Save comment as a "received" message item for history
+                const incoming = new Message({
+                  userId: targetUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
+                  type: 'received', platform: platform, timestamp: new Date()
+                });
+                await incoming.save();
+                io.to(targetUserId.toString()).emit('new_message', incoming);
+
+                // Process Comment-to-DM Trigger
+                await processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId);
+              }
+            }
           }
         }
       }
@@ -713,9 +812,9 @@ app.delete('/api/messages/:id', verifyToken, async (req, res) => {
 // Settings API
 app.get('/api/settings', verifyToken, async (req, res) => {
   try {
-    let settings = await Settings.findOne({ userId: req.user.id });
+    let settings = await Settings.findOne({ userId: req.user.userId });
     if (!settings) {
-      settings = new Settings({ userId: req.user.id });
+      settings = new Settings({ userId: req.user.userId });
       await settings.save();
     }
     res.json(settings);
@@ -807,11 +906,110 @@ app.post('/api/settings', verifyToken, async (req, res) => {
     }
 
     const settings = await Settings.findOneAndUpdate(
-      { userId: req.user.id },
+      { userId: req.user.userId },
       data,
       { upsert: true, new: true }
     );
     res.json(settings);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- FLOWS API ---
+app.get('/api/flows', verifyToken, async (req, res) => {
+  try {
+    const flows = await Flow.find({ userId: req.user.userId });
+    res.json(flows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/flows/:id', verifyToken, async (req, res) => {
+  try {
+    const flow = await Flow.findOne({ _id: req.params.id, userId: req.user.userId });
+    if (!flow) return res.status(404).json({ error: 'Flow not found' });
+    res.json(flow);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/flows', verifyToken, async (req, res) => {
+  try {
+    const newFlow = new Flow({ ...req.body, userId: req.user.userId });
+    await newFlow.save();
+    res.json(newFlow);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/flows/:id', verifyToken, async (req, res) => {
+  try {
+    const flow = await Flow.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.userId },
+      { ...req.body, updatedAt: new Date() },
+      { new: true }
+    );
+    res.json(flow);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/flows/:id', verifyToken, async (req, res) => {
+  try {
+    await Flow.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+    res.json({ message: 'Flow deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Broadcast API: Send Bulk Messages
+app.post('/api/broadcasts', verifyToken, async (req, res) => {
+  const { contactIds, text, platform } = req.body;
+  if (!contactIds || !text || !Array.isArray(contactIds)) {
+    return res.status(400).json({ error: 'Missing contactIds (array) or text' });
+  }
+
+  try {
+    const results = { success: 0, failed: 0 };
+    
+    for (const contactId of contactIds) {
+      const contact = await Contact.findOne({ _id: contactId, userId: req.user.userId });
+      if (!contact) {
+        results.failed++;
+        continue;
+      }
+
+      const sent = await sendMessageToInstagram(platform || contact.platform || 'instagram', contact.chatId, text, '', req.user.userId);
+      
+      if (sent) {
+        const msg = new Message({
+          userId: req.user.userId,
+          chatId: contact.chatId,
+          sender: 'admin',
+          text: text,
+          type: 'sent',
+          platform: platform || contact.platform || 'instagram',
+          isAI: false,
+          timestamp: new Date()
+        });
+        await msg.save();
+        io.to(req.user.userId.toString()).emit('new_message', msg);
+        results.success++;
+      } else {
+        results.failed++;
+      }
+
+      // 0.5s delay to prevent burst
+      await new Promise(r => setTimeout(r, 500));
+    }
+
+    res.json({ message: 'Broadcast completed', results });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

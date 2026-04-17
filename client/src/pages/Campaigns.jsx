@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { Zap, Plus, Trash2, Power, MessageCircle, AlertCircle, CheckCircle, Video, Link as LinkIcon, History, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 
 export default function Campaigns() {
@@ -9,6 +9,7 @@ export default function Campaigns() {
   const [newCamp, setNewCamp] = useState({ 
     name: '', 
     trigger: '', 
+    triggerSource: 'dm',
     response: '', 
     platform: 'all', 
     videoUrl: '', 
@@ -21,6 +22,8 @@ export default function Campaigns() {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [logs, setLogs] = useState([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
+  const [flows, setFlows] = useState([]);
+  const [loadingFlows, setLoadingFlows] = useState(true);
 
   const fetchCampaigns = async () => {
     const token = localStorage.getItem('insta_agent_token');
@@ -37,8 +40,24 @@ export default function Campaigns() {
     }
   };
 
+  const fetchFlows = async () => {
+    const token = localStorage.getItem('insta_agent_token');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/flows`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setFlows(data);
+    } catch (err) {
+      console.error("Error fetching flows:", err);
+    } finally {
+      setLoadingFlows(false);
+    }
+  };
+
   useEffect(() => {
     fetchCampaigns();
+    fetchFlows();
   }, []);
 
   const handleAddSubmit = async (e) => {
@@ -61,6 +80,7 @@ export default function Campaigns() {
         setNewCamp({ 
           name: '', 
           trigger: '', 
+          triggerSource: 'dm',
           response: '', 
           platform: 'all', 
           videoUrl: '', 
@@ -150,7 +170,7 @@ export default function Campaigns() {
     }
   };
 
-  if (loading) return <div style={{ color: 'var(--text-muted)' }}>Loading campaigns...</div>;
+  if (loading || loadingFlows) return <div style={{ color: 'var(--text-muted)', padding: '40px', textAlign: 'center' }}>Loading automations...</div>;
 
   return (
     <div style={{ maxWidth: '1000px' }}>
@@ -159,21 +179,74 @@ export default function Campaigns() {
           <h2 style={{ fontSize: '1.8rem', fontWeight: '700' }}>Automation Campaigns</h2>
           <p style={{ color: 'var(--text-muted)' }}>Active triggers for your AI Agent in Instagram DMs.</p>
         </div>
-        <button 
-          onClick={() => setShowAdd(!showAdd)}
-          style={{ 
-            background: 'var(--accent-color)', 
-            color: 'white', 
-            padding: '12px 24px', 
-            borderRadius: '8px', 
-            fontWeight: '600',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
-          <Plus size={20} /> {showAdd ? 'Cancel' : 'New Campaign'}
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button 
+            onClick={() => navigate('/flow-builder/new')}
+            style={{ 
+              background: 'white', 
+              color: 'var(--accent-color)', 
+              border: '1px solid var(--accent-color)',
+              padding: '12px 24px', 
+              borderRadius: '8px', 
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+            <Zap size={20} /> Advanced Flow
+          </button>
+          <button 
+            onClick={() => setShowAdd(!showAdd)}
+            style={{ 
+              background: 'var(--accent-color)', 
+              color: 'white', 
+              padding: '12px 24px', 
+              borderRadius: '8px', 
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+            <Plus size={20} /> {showAdd ? 'Cancel' : 'Simple Campaign'}
+          </button>
+        </div>
       </div>
+
+      {/* Advanced Flows Section */}
+      {flows.length > 0 && (
+        <div style={{ marginBottom: '48px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+             <div style={{ padding: '8px', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '10px' }}>
+               <Zap size={20} color="var(--accent-color)" />
+             </div>
+             <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>Visual Automation Flows <span className="sidebar-badge badge-new" style={{ marginLeft: '8px' }}>PRO</span></h3>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+            {flows.map(flow => (
+              <div key={flow._id} className="table-card" style={{ padding: '24px', cursor: 'pointer', transition: 'all 0.3s ease', position: 'relative' }} 
+                   onClick={() => navigate(`/flow-builder/${flow._id}`)}
+                   onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                   onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--accent-color)', textTransform: 'uppercase' }}>Active Flow</span>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
+                </div>
+                <h4 style={{ margin: '0 0 8px', fontSize: '1.1rem', fontWeight: '800' }}>{flow.name}</h4>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  <Zap size={14} /> Triggers on: <span style={{ color: 'var(--accent-color)', fontWeight: '700' }}>"{flow.triggerKeyword || '*'}"</span>
+                </div>
+                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    Edit Flow <History size={14} />
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {flows.length > 0 && <div style={{ height: '1px', background: 'var(--border-subtle)', marginBottom: '48px' }}></div>}
 
       {showAdd && (
         <div className="table-card" style={{ padding: '24px', marginBottom: '32px', animation: 'fadeIn 0.3s ease-out' }}>
@@ -202,7 +275,21 @@ export default function Campaigns() {
               />
             </div>
             
-            <div className="input-group" style={{ gridColumn: 'span 2' }}>
+            <div className="input-group">
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem' }}>Trigger Source</label>
+              <select 
+                required
+                value={newCamp.triggerSource}
+                onChange={(e) => setNewCamp({...newCamp, triggerSource: e.target.value})}
+                style={{ width: '100%', padding: '12px', background: 'white', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '8px', outline: 'none' }}
+              >
+                <option value="dm">Direct Chat Message</option>
+                <option value="comment">Comments on Post/Reel</option>
+                <option value="story_mention">Story Mention (Instagram)</option>
+              </select>
+            </div>
+            
+            <div className="input-group">
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem' }}>Platform</label>
               <select 
                 required
@@ -310,7 +397,7 @@ export default function Campaigns() {
             <tr>
               <th>Campaign Name</th>
               <th>Platform</th>
-              <th>Keyword Trigger</th>
+              <th>Trigger Source</th>
               <th>Media</th>
               <th>Follow Check</th>
               <th>Status</th>
@@ -336,9 +423,12 @@ export default function Campaigns() {
                   </span>
                 </td>
                 <td>
-                  <span style={{ background: 'rgba(139, 92, 246, 0.1)', color: 'var(--accent-color)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: '500' }}>
+                  <span style={{ background: 'rgba(139, 92, 246, 0.1)', color: 'var(--accent-color)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: '500', display: 'inline-block', marginBottom: '4px' }}>
                     "{camp.trigger}"
                   </span>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    {camp.triggerSource === 'comment' ? '🗣️ Post Comment' : (camp.triggerSource === 'story_mention' ? '📸 Story Mention' : '💬 Direct Message')}
+                  </div>
                 </td>
                 <td>
                   <div style={{ display: 'flex', gap: '8px' }}>

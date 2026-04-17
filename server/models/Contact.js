@@ -7,6 +7,7 @@ const contactSchema = new mongoose.Schema({
   platform: { type: String, enum: ['instagram', 'facebook', 'whatsapp', 'unknown'], default: 'instagram' },
   tags: [{ type: String }],
   notes: { type: String, default: '' },
+  isBotMuted: { type: Boolean, default: false },
   lastActive: { type: Date, default: Date.now },
   totalMessages: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now }

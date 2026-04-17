@@ -13,10 +13,31 @@ export default function Inbox() {
   const [loading, setLoading] = useState(true);
   const [isChatViewMobile, setIsChatViewMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isBotMuted, setIsBotMuted] = useState(false);
+  const [contactId, setContactId] = useState(null);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: "", message: "", onConfirm: null });
   const { user } = useAuth();
   const messagesEndRef = useRef(null);
   const menuRef = useRef(null);
+
+  const toggleMute = async () => {
+    if (!contactId) return;
+    const token = localStorage.getItem('insta_agent_token');
+    const newState = !isBotMuted;
+    setIsBotMuted(newState);
+    try {
+      await fetch(`${API_BASE_URL}/api/contacts/${contactId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ isBotMuted: newState })
+      });
+    } catch(err) {
+      setIsBotMuted(!newState); // revert on error
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -41,7 +62,6 @@ export default function Inbox() {
   }, [messages]);
 
   useEffect(() => {
-    // Initial fetch
     const fetchMessages = async () => {
       const token = localStorage.getItem('insta_agent_token');
       try {
@@ -56,7 +76,26 @@ export default function Inbox() {
         setLoading(false);
       }
     };
+    
+    const fetchContacts = async () => {
+      const token = localStorage.getItem('insta_agent_token');
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/contacts`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        const contact = data.find(c => c.chatId === 'ai_bot_support');
+        if (contact) {
+          setIsBotMuted(contact.isBotMuted);
+          setContactId(contact._id);
+        }
+      } catch (err) {
+        console.error("Error fetching contacts:", err);
+      }
+    };
+
     fetchMessages();
+    fetchContacts();
 
     // Socket Setup
     const socket = io(API_BASE_URL);
@@ -256,8 +295,19 @@ export default function Inbox() {
   return (
     <div className="inbox-container" style={{ flex: 1, minHeight: 0, background: 'transparent', display: 'flex' }}>
       <div className={`inbox-sidebar ${isChatViewMobile ? 'mobile-hide' : ''}`}>
-        <div style={{ padding: '20px', borderBottom: '1px solid var(--border-subtle)', fontWeight: '600', color: 'var(--text-main)' }}>
-          Active Conversations
+        <div style={{ padding: '20px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontWeight: '600', color: 'var(--text-main)' }}>Active Conversations</div>
+          {contactId && (
+            <button
+              onClick={toggleMute}
+              style={{
+                background: isBotMuted ? '#ef4444' : '#10b981',
+                color: 'white', border: 'none', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
+              }}
+            >
+              {isBotMuted ? '🔇 AI Paused' : '🤖 AI Active'}
+            </button>
+          )}
         </div>
         <div className="inbox-list">
           <div className="chat-item active" onClick={() => setIsChatViewMobile(true)}>

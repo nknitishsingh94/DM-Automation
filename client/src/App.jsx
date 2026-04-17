@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate } from 'react-router-dom';
-import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut } from 'lucide-react';
+import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone } from 'lucide-react';
 import Dashboard from './pages/Dashboard';
 import Inbox from './pages/Inbox';
 import SettingsPage from './pages/Settings';
@@ -19,6 +19,8 @@ import BlogPost from './pages/BlogPost';
 import AIStudio from './pages/AIStudio';
 import Forms from './pages/Forms';
 import Referral from './pages/Referral';
+import Broadcasts from './pages/Broadcasts';
+import FlowBuilder from './pages/FlowBuilder';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 function ProtectedRoute({ children }) {
@@ -141,6 +143,15 @@ function Sidebar({ isMobileOpen, onClose }) {
               <Users size={18} />
               <span>Contacts</span>
             </NavLink>
+            <NavLink to="/broadcasts" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Megaphone size={18} />
+              <span>Broadcasts</span>
+            </NavLink>
+            <NavLink to="/flow-builder/new" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Zap size={18} />
+              <span>Visual Flows</span>
+              <span className="sidebar-badge badge-new">PRO</span>
+            </NavLink>
             <NavLink to="/upgrade" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <CreditCard size={18} />
               <span>Billing</span>
@@ -244,8 +255,11 @@ function TopBar({ onMenuClick }) {
       case '/upgrade': return 'Billing';
       case '/ai-studio': return 'AI Studio';
       case '/forms': return 'Forms';
-      case '/refer': return 'Refer & Earn';
-      default: return 'Home';
+      case '/broadcasts': return 'Broadcasts';
+      case '/flow-builder/new': return 'Visual Flow Builder';
+      default: 
+        if (location.pathname.startsWith('/flow-builder/')) return 'Editing Flow';
+        return 'Home';
     }
   };
 
@@ -298,6 +312,8 @@ function MainLayout() {
             <Route path="/upgrade" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
             <Route path="/ai-studio" element={<ProtectedRoute><AIStudio /></ProtectedRoute>} />
             <Route path="/forms" element={<ProtectedRoute><Forms /></ProtectedRoute>} />
+            <Route path="/broadcasts" element={<ProtectedRoute><Broadcasts /></ProtectedRoute>} />
+            <Route path="/flow-builder/:id" element={<ProtectedRoute><FlowBuilder /></ProtectedRoute>} />
             <Route path="/refer" element={<ProtectedRoute><Referral /></ProtectedRoute>} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
             <Route path="/signup" element={user ? <Navigate to="/dashboard" /> : <Signup />} />
