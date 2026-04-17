@@ -16,11 +16,10 @@ import About from './pages/About';
 import Resources from './pages/Resources';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
-import AIStudio from './pages/AIStudio';
-import Forms from './pages/Forms';
-import Referral from './pages/Referral';
 import Broadcasts from './pages/Broadcasts';
 import FlowBuilder from './pages/FlowBuilder';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { createContext, useContext, useCallback } from 'react';
 
@@ -338,7 +337,9 @@ function MainLayout() {
             <Route path="/about" element={<About />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:id" element={<BlogPost />} />
+             <Route path="/blog/:id" element={<BlogPost />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<div style={{textAlign:'center', marginTop:'50px', color:'var(--text-muted)'}}>Page Under Construction</div>} />
           </Routes>
         </div>

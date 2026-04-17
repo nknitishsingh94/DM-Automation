@@ -65,8 +65,8 @@ export default function Footer() {
       <div className="footer-bottom">
         <p className="copyright">&copy; 2026 ZenXchat. All rights reserved</p>
         <div className="footer-legal">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
+          <Link to="/privacy">Privacy Policy</Link>
+          <Link to="/terms">Terms of Service</Link>
           <a href="#">Cookie Statement</a>
         </div>
       </div>

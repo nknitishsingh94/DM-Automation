@@ -16,16 +16,37 @@ export default function Dashboard() {
   const [timeFilter, setTimeFilter] = useState('7d');
   const [activeDropdown, setActiveDropdown] = useState(null);
 
+  const [setupStatus, setSetupStatus] = useState({
+    profileDone: true,
+    metaDone: false,
+    flowDone: false
+  });
+
   useEffect(() => {
     const fetchData = async () => {
-      // Don't set global loading to true on filter change so UI doesn't visually jump
       const token = localStorage.getItem('insta_agent_token');
       const headers = { 'Authorization': `Bearer ${token}` };
 
       try {
-        const statsRes = await fetch(`${API_BASE_URL}/api/stats?filter=${timeFilter}`, { headers });
+        const [statsRes, settingsRes, flowsRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/stats?filter=${timeFilter}`, { headers }),
+          fetch(`${API_BASE_URL}/api/settings`, { headers }),
+          fetch(`${API_BASE_URL}/api/flows`, { headers })
+        ]);
+
         const statsData = await statsRes.json();
+        const settingsData = await settingsRes.json();
+        const flowsData = await flowsRes.json();
+
         setStats(statsData);
+        
+        // Check setup progress
+        setSetupStatus({
+          profileDone: true, 
+          metaDone: settingsData.isAccountConnected || settingsData.isFacebookConnected || settingsData.isWhatsAppConnected,
+          flowDone: Array.isArray(flowsData) && flowsData.length > 0
+        });
+
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
       } finally {
@@ -35,38 +56,11 @@ export default function Dashboard() {
     fetchData();
   }, [timeFilter]);
 
-  const checklistItems = [
-    {
-      title: 'Launch your first automation',
-      desc: 'Automate conversations and watch your DMs do the work for you',
-      cta: 'Create Automation',
-      link: '/campaigns'
-    },
-    {
-      title: 'Get a follow before DM',
-      desc: 'Require users to follow your account before receiving automated DMs',
-      cta: 'Setup Follow Gate',
-      link: '/settings'
-    },
-    {
-      title: 'Answer all your FAQs',
-      desc: 'Set up AI-powered responses to handle common questions automatically',
-      cta: 'Create FAQ Bot',
-      link: '/ai-studio'
-    },
-    {
-      title: 'Collect data with forms',
-      desc: 'Build custom forms to capture leads and data directly through DMs',
-      cta: 'Create Form',
-      link: '/forms'
-    },
-    {
-      title: 'Refer & Earn',
-      desc: 'Invite friends to ZenXchat and earn rewards for every referral',
-      cta: 'Start Referring',
-      link: '/refer'
-    }
-  ];
+  const getSetupProgress = () => {
+    const items = [setupStatus.profileDone, setupStatus.metaDone, setupStatus.flowDone];
+    const completed = items.filter(Boolean).length;
+    return Math.round((completed / items.length) * 100);
+  };
 
   if (loading) return <div style={{ padding: '40px', color: 'var(--text-muted)' }}>Loading dashboard...</div>;
 
@@ -98,61 +92,65 @@ export default function Dashboard() {
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '32px', padding: '0 40px 40px' }}>
       {/* Left Column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-        <div className="stat-card" style={{ padding: '24px', background: 'linear-gradient(145deg, #ffffff 0%, #f3f4f6 100%)', border: '1px solid #e5e7eb' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-             <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '2px solid #e2e8f0' }}></div>
-             <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#1e293b' }}>Get setup</h2>
+        <div className="stat-card" style={{ padding: '24px', background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', border: 'none', color: 'white' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Zap size={20} color="#3b82f6" />
+                </div>
+                <div>
+                  <h2 style={{ fontSize: '18px', fontWeight: '800', margin: 0 }}>Launch Readiness</h2>
+                  <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Complete these steps to start automating</p>
+                </div>
+             </div>
+             <div style={{ textAlign: 'right' }}>
+               <span style={{ fontSize: '24px', fontWeight: '800', color: '#3b82f6' }}>{getSetupProgress()}%</span>
+               <p style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px' }}>Completed</p>
+             </div>
           </div>
 
-          <div className="checklist-container">
-            {checklistItems.map((item, index) => (
-              <div 
-                key={index} 
-                className="checklist-item" 
-                style={{ 
-                  cursor: 'pointer', 
-                  borderBottom: index < checklistItems.length - 1 ? '1px solid #f1f5f9' : 'none',
-                  paddingBottom: index < checklistItems.length - 1 ? '8px' : '0'
-                }}
-                onClick={() => setOpenItem(openItem === index ? -1 : index)}
-              >
-                <div className="checklist-circle"></div>
-                <div className="checklist-content" style={{ flex: 1 }}>
-                  <h4 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    {item.title}
-                    <ChevronDown 
-                      size={18} 
-                      color="#94a3b8" 
-                      style={{ 
-                        transition: 'transform 0.3s ease',
-                        transform: openItem === index ? 'rotate(180deg)' : 'rotate(0deg)',
-                        flexShrink: 0
-                      }} 
-                    />
-                  </h4>
-                  {openItem === index && (
-                    <div style={{ animation: 'fadeIn 0.3s ease' }}>
-                      <p>{item.desc}</p>
-                      <Link 
-                        to={item.link} 
-                        className="landing-cta" 
-                        style={{ 
-                          background: '#0f172a', 
-                          padding: '10px 24px', 
-                          fontSize: '14px', 
-                          borderRadius: '12px', 
-                          marginTop: '12px', 
-                          display: 'inline-flex' 
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {item.cta}
-                      </Link>
-                    </div>
-                  )}
+          <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', marginBottom: '32px', overflow: 'hidden' }}>
+            <div style={{ width: `${getSetupProgress()}%`, height: '100%', background: 'linear-gradient(90deg, #3b82f6, #60a5fa)', transition: 'width 0.5s ease' }}></div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.profileDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Star size={14} color="white" />
                 </div>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.profileDone ? 'white' : '#94a3b8' }}>Create your account</span>
               </div>
-            ))}
+              {setupStatus.profileDone && <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.metaDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Users size={14} color="white" />
+                </div>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.metaDone ? 'white' : '#94a3b8' }}>Connect Instagram or WhatsApp</span>
+              </div>
+              {setupStatus.metaDone ? (
+                <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>
+              ) : (
+                <Link to="/settings" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT NOW</Link>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.flowDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Zap size={14} color="white" />
+                </div>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.flowDone ? 'white' : '#94a3b8' }}>Build your first visual flow</span>
+              </div>
+              {setupStatus.flowDone ? (
+                <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>
+              ) : (
+                <Link to="/flow-builder/new" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>BUILD FLOW</Link>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -33,12 +33,16 @@ export default function HelpCenter() {
         <div className="help-start-box">
           <h2>Start Here</h2>
           <div className="help-start-links">
-            <Link to="#" className="help-start-link">
-              <span>Introducing AI FAQs</span>
+            <Link to="/settings" className="help-start-link">
+              <span>Setup Guide: Linking Instagram Business</span>
+              <ChevronRight size={18} color="#7c3aed" />
+            </Link>
+            <Link to="/settings" className="help-start-link">
+              <span>Setting up WhatsApp Cloud API for Automations</span>
               <ChevronRight size={18} color="#7c3aed" />
             </Link>
             <Link to="#" className="help-start-link">
-              <span>ZenXchat — Official Meta Partner in coming year</span>
+              <span>ZenXchat — Official Meta Partner onboarding roadmap</span>
               <ChevronRight size={18} color="#7c3aed" />
             </Link>
           </div>
