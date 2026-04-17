@@ -11,7 +11,8 @@ router.get('/facebook', verifyToken, (req, res) => {
   const appId = process.env.META_APP_ID;
   const redirectUri = encodeURIComponent(`${process.env.API_BASE_URL || 'http://localhost:5000'}/api/oauth/facebook/callback`);
   // Scope defines what permissions we are asking for
-  const scope = 'instagram_manage_messages,pages_manage_metadata,pages_messaging';
+  // Unified scope for Instagram, Facebook Pages, and WhatsApp Business
+  const scope = 'instagram_manage_messages,pages_manage_metadata,pages_messaging,whatsapp_business_management,whatsapp_business_messaging,business_management';
   // State is used to pass the user ID through the OAuth flow securely
   const state = req.user.userId; 
 
@@ -80,19 +81,49 @@ router.get('/facebook/callback', async (req, res) => {
       }
     }
 
-    // 4. Save the Tokens and IDs to the Database
-    await Settings.findOneAndUpdate(
+    // 4. GET WHATSAPP BUSINESS ACCOUNTS AND PHONE NUMBERS (Auto-Discovery)
+    let whatsappPhoneId = '';
+    let whatsappName = '';
+    let whatsappAccessToken = longToken; 
+
+    try {
+      const wabaUrl = `https://graph.facebook.com/v19.0/me/whatsapp_business_accounts?access_token=${longToken}`;
+      const wabaRes = await axios.get(wabaUrl);
+      const wabaData = wabaRes.data.data;
+
+      if (wabaData && wabaData.length > 0) {
+        // Use the first WhatsApp Business Account
+        const wabaId = wabaData[0].id;
+        const phoneUrl = `https://graph.facebook.com/v19.0/${wabaId}/phone_numbers?access_token=${longToken}`;
+        const phoneRes = await axios.get(phoneUrl);
+        const phones = phoneRes.data.data;
+
+        if (phones && phones.length > 0) {
+          whatsappPhoneId = phones[0].id;
+          whatsappName = phones[0].display_phone_number || phones[0].verified_name || "WhatsApp Business";
+        }
+      }
+    } catch (wErr) {
+      console.warn("⚠️ WhatsApp discovery failed (User might not have WABA):", wErr.response?.data || wErr.message);
+    }
+
+    // 5. Save the Tokens and IDs to the Database
+    const updatedSettings = await Settings.findOneAndUpdate(
       { userId: userId },
       {
         instagramAccessToken: longToken,
         facebookAccessToken: longToken,
+        whatsappToken: whatsappPhoneId ? longToken : "", // only set if we found a phone ID
         instagramPageId: pageId,
         businessAccountId: businessAccountId,
         facebookPageId: pageId,
-        isAccountConnected: true,
-        isFacebookConnected: true,
+        whatsappPhoneNumberId: whatsappPhoneId,
+        isAccountConnected: !!businessAccountId,
+        isFacebookConnected: !!pageId,
+        isWhatsAppConnected: !!whatsappPhoneId,
         connectedInstagramName: accountName,
         connectedFacebookName: accountName,
+        connectedWhatsAppName: whatsappName,
         lastTestedAt: new Date()
       },
       { upsert: true, new: true }

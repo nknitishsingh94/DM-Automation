@@ -362,16 +362,16 @@ export default function Settings() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div style={{ padding: '20px', background: 'rgba(37, 211, 102, 0.08)', border: '1px solid rgba(37, 211, 102, 0.2)', borderRadius: '12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                    <CheckCircle size={24} color="#25D366" />
+                    <MessageSquare size={24} color="#25D366" />
                     <div>
                       <p style={{ fontWeight: '700', fontSize: '1.1rem', color: '#25D366' }}>Successfully Connected</p>
                       <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                        Phone: <strong>{settings.connectedWhatsAppName || 'WhatsApp Business'}</strong>
+                        Connected: <strong>{settings.connectedWhatsAppName || 'WhatsApp Business'}</strong>
                       </p>
                     </div>
                   </div>
                   <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
-                    ✅ Your WhatsApp Business is linked. Automated messages are now active.
+                    ✅ Your WhatsApp Business account is linked and ready for automation.
                   </p>
                 </div>
                 <button 
@@ -386,31 +386,58 @@ export default function Settings() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div className="input-group">
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                    <Key size={14} style={{ marginRight: '6px' }} /> WhatsApp Access Token
-                  </label>
-                  <input 
-                    type="password" placeholder="EAA..."
-                    value={settings.whatsappToken || ''}
-                    onChange={(e) => setSettings({...settings, whatsappToken: e.target.value})}
-                    style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                  />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                {/* 1-Click WhatsApp Connect */}
+                <div style={{ background: '#f0fdf4', borderRadius: '16px', border: '1px solid #bdfbd7', padding: '24px', textAlign: 'center' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '8px', color: '#166534' }}>1-Click WhatsApp Setup</h3>
+                  <p style={{ color: '#166534', fontSize: '0.9rem', marginBottom: '20px', opacity: 0.8 }}>We'll automatically find your WhatsApp Business numbers.</p>
+                  
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      const token = localStorage.getItem('insta_agent_token');
+                      window.location.href = `${API_BASE_URL}/api/oauth/facebook?token=${token}`;
+                    }}
+                    style={{ 
+                      width: '100%', maxWidth: '300px', background: '#25D366', color: 'white', border: 'none', borderRadius: '8px', 
+                      padding: '14px', fontSize: '1rem', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                      cursor: 'pointer', margin: '0 auto', boxShadow: '0 4px 14px rgba(37, 211, 102, 0.3)'
+                    }}>
+                    <MessageSquare size={20} /> Continue with Meta Login
+                  </button>
                 </div>
-                <div className="input-group">
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                    <MapPin size={14} style={{ marginRight: '6px' }} /> Phone Number ID
-                  </label>
-                  <input 
-                    type="text" placeholder="123456789..."
-                    value={settings.whatsappPhoneNumberId || ''}
-                    onChange={(e) => setSettings({...settings, whatsappPhoneNumberId: e.target.value})}
-                    style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                  />
+
+                <div style={{ position: 'relative', textAlign: 'center' }}>
+                  <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', height: '1px', background: '#e2e8f0', zIndex: 0 }}></div>
+                  <span style={{ position: 'relative', background: '#ffffff', padding: '0 16px', color: '#94a3b8', fontSize: '0.85rem', fontWeight: '600', zIndex: 1 }}>OR SETUP MANUALLY</span>
                 </div>
-                <SaveButton savingSettings={savingSettings} message={message} />
-              </form>
+
+                <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '700', fontSize: '0.9rem' }}>
+                      <Key size={14} style={{ marginRight: '6px' }} /> WhatsApp Access Token
+                    </label>
+                    <input 
+                      type="password" placeholder="EAA..."
+                      value={settings.whatsappToken || ''}
+                      onChange={(e) => setSettings({...settings, whatsappToken: e.target.value})}
+                      style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '16px 16px', borderRadius: '14px', color: 'var(--text-main)', outline: 'none' }}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '700', fontSize: '0.9rem' }}>
+                      <MapPin size={14} style={{ marginRight: '6px' }} /> Phone Number ID
+                    </label>
+                    <input 
+                      type="text" placeholder="123456789..."
+                      value={settings.whatsappPhoneNumberId || ''}
+                      onChange={(e) => setSettings({...settings, whatsappPhoneNumberId: e.target.value})}
+                      style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '16px 16px', borderRadius: '14px', color: 'var(--text-main)', outline: 'none' }}
+                    />
+                  </div>
+                  <SaveButton savingSettings={savingSettings} message={message} />
+                </form>
+              </div>
             )}
           </>
         )}
