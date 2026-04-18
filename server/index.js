@@ -71,11 +71,11 @@ app.use(cors({
       'https://dm-automation-server.onrender.com'
     ];
     
-    if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('vercel.app')) {
+    if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app') || origin.includes('vercel.app')) {
       callback(null, true);
     } else {
-      console.warn(`⚠️ [CORS] Origin ${origin} not explicitly allowed, but allowing for debugging`);
-      callback(null, true); // Still allow during debugging, but log it
+      console.warn(`⚠️ [CORS] Origin ${origin} blocked, but allowing for debugging`);
+      callback(null, true); 
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE"],

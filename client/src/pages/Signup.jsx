@@ -76,11 +76,7 @@ export default function Signup() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    if (!formData.email.toLowerCase().endsWith('@gmail.com')) {
-      setError('Only Gmail addresses (@gmail.com) are allowed to create an account.');
-      setLoading(false);
-      return;
-    }
+    // Removed Gmail-only restriction to allow universal signup
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
@@ -276,7 +272,7 @@ export default function Signup() {
                 type="password" 
                 required
                 minLength="8"
-                maxLength="12"
+                maxLength="50"
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 placeholder="••••••••"
