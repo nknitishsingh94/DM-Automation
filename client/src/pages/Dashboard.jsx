@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MessageCircle, Zap, Users, ChevronRight, Activity, Calendar, Sparkles, Bot, ChevronDown, Crown, Star } from 'lucide-react';
+import { MessageCircle, Zap, Users, ChevronRight, Activity, Calendar, Sparkles, Bot, ChevronDown, Crown, Star, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 
@@ -62,6 +62,30 @@ export default function Dashboard() {
     return Math.round((completed / items.length) * 100);
   };
 
+  const exploreItems = [
+    {
+      title: 'Answer all your FAQs',
+      desc: 'Set up AI-powered responses to handle common questions automatically',
+      cta: 'Create FAQ Bot',
+      link: '/ai-studio',
+      icon: <Sparkles size={18} color="#8b5cf6" />
+    },
+    {
+      title: 'Collect data with forms',
+      desc: 'Build custom forms to capture leads and data directly through DMs',
+      cta: 'Create Form',
+      link: '/forms',
+      icon: <BookOpen size={18} color="#0ea5e9" />
+    },
+    {
+      title: 'Refer & Earn',
+      desc: 'Invite friends to ZenXchat and earn rewards for every referral',
+      cta: 'Start Referring',
+      link: '/refer',
+      icon: <Users size={18} color="#f59e0b" />
+    }
+  ];
+
   if (loading) return <div style={{ padding: '40px', color: 'var(--text-muted)' }}>Loading dashboard...</div>;
 
   const displayStats = {
@@ -92,7 +116,75 @@ export default function Dashboard() {
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '32px', padding: '0 40px 40px' }}>
       {/* Left Column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-        <div className="stat-card" style={{ padding: '24px', background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', border: 'none', color: 'white' }}>
+        {/* PEHLE WALA PART (RESTORED TO TOP) */}
+        <div className="stat-card" style={{ padding: '24px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '24px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+             <div style={{ width: '36px', height: '36px', background: '#f8fafc', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+               <Sparkles size={18} color="#64748b" />
+             </div>
+             <div>
+               <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#1e293b', margin: 0 }}>Discover Features</h3>
+               <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Automate your growth and engagement</p>
+             </div>
+          </div>
+
+          <div className="checklist-container">
+            {exploreItems.map((item, index) => (
+              <div 
+                key={index} 
+                className="checklist-item" 
+                style={{ 
+                  cursor: 'pointer', 
+                  borderBottom: index < exploreItems.length - 1 ? '1px solid #f1f5f9' : 'none',
+                  paddingBottom: index < exploreItems.length - 1 ? '16px' : '0',
+                  paddingTop: index > 0 ? '16px' : '0'
+                }}
+                onClick={() => setOpenItem(openItem === (index + 10) ? -1 : (index + 10))}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {item.icon}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: 0 }}>
+                      {item.title}
+                      <ChevronDown 
+                        size={16} 
+                        color="#94a3b8" 
+                        style={{ 
+                          transition: 'transform 0.3s ease',
+                          transform: openItem === (index + 10) ? 'rotate(180deg)' : 'rotate(0deg)'
+                        }} 
+                      />
+                    </h4>
+                    {openItem === (index + 10) && (
+                      <div style={{ animation: 'fadeIn 0.3s ease', marginTop: '12px' }}>
+                        <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px', lineHeight: '1.5' }}>{item.desc}</p>
+                        <Link 
+                          to={item.link} 
+                          className="landing-cta" 
+                          style={{ 
+                            background: '#0f172a', 
+                            padding: '10px 24px', 
+                            fontSize: '13px', 
+                            borderRadius: '12px', 
+                            display: 'inline-flex' 
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {item.cta}
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* NAYA SETUP PART (MOVED BELOW) */}
+        <div className="stat-card" style={{ padding: '24px', background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', border: 'none', color: 'white', borderRadius: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -100,12 +192,11 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <h2 style={{ fontSize: '18px', fontWeight: '800', margin: 0 }}>Launch Readiness</h2>
-                  <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Complete these steps to start automating</p>
+                  <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Complete setup to unlock full power</p>
                 </div>
              </div>
              <div style={{ textAlign: 'right' }}>
                <span style={{ fontSize: '24px', fontWeight: '800', color: '#3b82f6' }}>{getSetupProgress()}%</span>
-               <p style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px' }}>Completed</p>
              </div>
           </div>
 
@@ -119,7 +210,7 @@ export default function Dashboard() {
                 <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.profileDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Star size={14} color="white" />
                 </div>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.profileDone ? 'white' : '#94a3b8' }}>Create your account</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.profileDone ? 'white' : '#94a3b8' }}>Account Verification</span>
               </div>
               {setupStatus.profileDone && <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>}
             </div>
@@ -129,27 +220,9 @@ export default function Dashboard() {
                 <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.metaDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Users size={14} color="white" />
                 </div>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.metaDone ? 'white' : '#94a3b8' }}>Connect Instagram or WhatsApp</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.metaDone ? 'white' : '#94a3b8' }}>Connect IG/WhatsApp</span>
               </div>
-              {setupStatus.metaDone ? (
-                <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>
-              ) : (
-                <Link to="/settings" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT NOW</Link>
-              )}
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.flowDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Zap size={14} color="white" />
-                </div>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.flowDone ? 'white' : '#94a3b8' }}>Build your first visual flow</span>
-              </div>
-              {setupStatus.flowDone ? (
-                <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>
-              ) : (
-                <Link to="/flow-builder/new" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>BUILD FLOW</Link>
-              )}
+              {setupStatus.metaDone ? <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span> : <Link to="/settings" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT</Link>}
             </div>
           </div>
         </div>

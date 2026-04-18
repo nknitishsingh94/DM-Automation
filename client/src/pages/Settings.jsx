@@ -48,6 +48,8 @@ export default function Settings() {
     // --- HANDLE OAUTH FEEDBACK ---
     const params = new URLSearchParams(window.location.search);
     if (params.get('oauth_success')) {
+      // Re-load settings explicitly to get the new tokens from DB
+      loadSettings();
       notify("✅ Meta account(s) connected successfully!", "success");
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -222,10 +224,28 @@ export default function Settings() {
                   </div>
                 </div>
 
-                <div style={{ position: 'relative', textAlign: 'center' }}>
-                  <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', height: '1px', background: '#e2e8f0', zIndex: 0 }}></div>
-                  <span style={{ position: 'relative', background: '#ffffff', padding: '0 16px', color: '#94a3b8', fontSize: '0.85rem', fontWeight: '600', zIndex: 1 }}>OR ENTER MANUALLY</span>
-                </div>
+                 {/* Meta Diagnostic Box - If FB is connected but IG is not */}
+                 {settings.isFacebookConnected && !settings.isAccountConnected && (
+                   <div style={{ background: '#fffbeb', border: '1px solid #fef3c7', borderRadius: '16px', padding: '24px', marginBottom: '24px' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#b45309', marginBottom: '12px' }}>
+                       <Info size={20} />
+                       <h4 style={{ fontWeight: '700', fontSize: '1rem', margin: 0 }}>Almost there! Action required.</h4>
+                     </div>
+                     <p style={{ color: '#92400e', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '12px' }}>
+                       We connected to your Facebook successfully, but we couldn't find an **Instagram Business Account** linked to your pages.
+                     </p>
+                     <ul style={{ color: '#92400e', fontSize: '0.85rem', lineHeight: '1.8' }}>
+                       <li>• Ensure your IG account is set as a <strong>Business Account</strong>.</li>
+                       <li>• Link it to your <strong>Facebook Page</strong> in Meta Business Suite.</li>
+                       <li>• When connecting, select <strong>"All Pages"</strong> in the Meta popup.</li>
+                     </ul>
+                   </div>
+                 )}
+
+                 <div style={{ position: 'relative', textAlign: 'center' }}>
+                   <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', height: '1px', background: '#e2e8f0', zIndex: 0 }}></div>
+                   <span style={{ position: 'relative', background: '#ffffff', padding: '0 16px', color: '#94a3b8', fontSize: '0.85rem', fontWeight: '600', zIndex: 1 }}>OR ENTER MANUALLY</span>
+                 </div>
 
                 {/* Manual Form Area */}
                 {/* Complete Premium Custom Form */}
@@ -411,9 +431,9 @@ export default function Settings() {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                 {/* 1-Click WhatsApp Connect */}
-                <div style={{ background: '#f0fdf4', borderRadius: '16px', border: '1px solid #bdfbd7', padding: '24px', textAlign: 'center' }}>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '8px', color: '#166534' }}>1-Click WhatsApp Setup</h3>
-                  <p style={{ color: '#166534', fontSize: '0.9rem', marginBottom: '20px', opacity: 0.8 }}>We'll automatically find your WhatsApp Business numbers.</p>
+                <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px', textAlign: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.02)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '8px', color: '#1e293b' }}>Fast Connection</h3>
+                  <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '20px' }}>Securely connect your WhatsApp Cloud API in one click.</p>
                   
                   <button 
                     type="button"
@@ -428,29 +448,53 @@ export default function Settings() {
                     }}>
                     <MessageSquare size={20} /> Continue with Meta Login
                   </button>
+                  <div style={{ marginTop: '16px', fontSize: '0.75rem', color: '#94a3b8' }}>
+                    Requires Developer App ID & WhatsApp Product enabled
+                  </div>
                 </div>
 
-                {settings?.whatsappError && !settings?.isWhatsAppConnected && (
-                  <div style={{ padding: '20px', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '16px', marginBottom: '24px' }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
-                      <XCircle size={20} color="#ef4444" style={{ marginTop: '2px' }} />
-                      <div>
-                        <p style={{ color: '#ef4444', fontWeight: '700', fontSize: '1rem' }}>WhatsApp Connection Issue</p>
-                        <p style={{ color: '#ef4444', opacity: 0.8, fontSize: '0.85rem' }}>{settings.whatsappError}</p>
-                      </div>
-                    </div>
-                    
-                    <div style={{ paddingTop: '12px', borderTop: '1px solid rgba(239, 68, 68, 0.1)', marginTop: '12px' }}>
-                      <p style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '8px' }}>Troubleshooting Checklist:</p>
-                      <ul style={{ paddingLeft: '20px', fontSize: '0.82rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <li>✅ Check if <strong>WhatsApp product</strong> is added to your Meta App.</li>
-                        <li>✅ Ensure you have a <strong>WhatsApp Business Account (WABA)</strong>.</li>
-                        <li>✅ Confirm you have a <strong>verified Phone Number</strong> in Meta Suite.</li>
-                        <li>✅ App must be in <strong>Live Mode</strong> (or user must be an admin).</li>
-                      </ul>
-                    </div>
-                  </div>
-                )}
+                {/* WhatsApp Diagnostic Box - If FB is connected but WA is not */}
+                {settings.isFacebookConnected && !settings.isWhatsAppConnected && (
+                   <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', marginBottom: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#1e293b', marginBottom: '16px' }}>
+                       <Info size={24} className="text-secondary" />
+                       <h4 style={{ fontWeight: '800', fontSize: '1.2rem', margin: 0 }}>WhatsApp Connection Check</h4>
+                     </div>
+                     
+                     {settings.whatsappError && settings.whatsappError.includes('ACTION REQUIRED') ? (
+                       <div style={{ padding: '20px', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid #ef4444', borderRadius: '12px', marginBottom: '16px' }}>
+                          <p style={{ color: '#ef4444', fontWeight: '800', fontSize: '1rem', marginBottom: '8px' }}>🚨 Action Needed on Meta Portal</p>
+                          <p style={{ color: '#b91c1c', fontSize: '0.92rem', lineHeight: '1.6', marginBottom: '12px' }}>{settings.whatsappError}</p>
+                          <a 
+                            href="https://developers.facebook.com/apps/" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{ display: 'inline-block', background: '#ef4444', color: 'white', padding: '8px 16px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: '700', textDecoration: 'none' }}
+                          >
+                            Go to Meta Developer Portal
+                          </a>
+                       </div>
+                     ) : settings.whatsappError ? (
+                       <div style={{ padding: '16px', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.15)', borderRadius: '12px', marginBottom: '16px' }}>
+                          <p style={{ color: '#ef4444', fontWeight: '700', fontSize: '0.95rem', marginBottom: '4px' }}>Scan Result:</p>
+                          <p style={{ color: '#ef4444', fontSize: '0.9rem', lineHeight: '1.5' }}>{settings.whatsappError}</p>
+                       </div>
+                     ) : (
+                       <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '16px' }}>
+                         Facebook is connected, but we couldn't automatically find a verified WhatsApp Business Number.
+                       </p>
+                     )}
+
+                     <div style={{ background: '#ffffff', borderRadius: '12px', padding: '16px', border: '1px solid #e2e8f0' }}>
+                       <p style={{ color: '#1e293b', fontWeight: '700', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>Setup Checklist:</p>
+                       <ul style={{ color: '#64748b', fontSize: '0.88rem', lineHeight: '1.8', paddingLeft: '20px' }}>
+                         <li>✅ **WhatsApp Product**: Ensure it is added in Meta Developer Portal (left menu).</li>
+                         <li>✅ **Phone Number**: Number must be verified in Meta Business Suite &gt; WhatsApp Manager.</li>
+                         <li>✅ **Business Sync**: Ensure your Facebook Page is linked to your WhatsApp Business Account.</li>
+                       </ul>
+                     </div>
+                   </div>
+                 )}
 
                 <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   <div className="input-group">
