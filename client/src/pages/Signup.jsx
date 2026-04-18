@@ -94,8 +94,12 @@ export default function Signup() {
         setError(data.message || data.error || 'Signup failed. Please try again.');
       }
     } catch (err) {
-      console.error("Signup Error:", err);
-      setError(`Connection failed: ${err.message}. Check browser console for details.`);
+      console.error("Signup Error Details:", {
+        message: err.message,
+        apiUrl: `${API_BASE_URL}/api/auth/signup`,
+        stack: err.stack
+      });
+      setError(`Connection Error: ${err.message}. Backend at ${API_BASE_URL} is either down or misconfigured (CORS).`);
     } finally {
       setLoading(false);
     }

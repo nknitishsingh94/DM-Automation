@@ -82,6 +82,8 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.get('/api/health', (req, res) => res.json({ status: 'ok', domain: req.hostname, timestamp: new Date() }));
+app.get('/api/ping', (req, res) => res.send('pong'));
 
 // (Messaging helpers moved to utils/metaApi.js for cleaner architecture)
 
