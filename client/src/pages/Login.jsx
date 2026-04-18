@@ -472,7 +472,7 @@ export default function Login() {
     window.FB.login((response) => {
       if (response.authResponse) processFacebookLogin(response.authResponse);
       else setError('Facebook login was cancelled or failed.');
-    }, { scope: 'public_profile,email' });
+    }, { scope: 'openid,email' });
   };
 
   const processFacebookLogin = async (authResponse) => {

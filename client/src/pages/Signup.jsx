@@ -154,7 +154,7 @@ export default function Signup() {
       } else {
         setError('Facebook login was cancelled or failed.');
       }
-    }, { scope: 'public_profile,email' });
+    }, { scope: 'openid,email' });
   };
 
 
