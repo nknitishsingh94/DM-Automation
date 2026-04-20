@@ -281,7 +281,7 @@ export default function Campaigns() {
                 navigate('/flow-builder/new');
               } else {
                 notify('💎 Advanced Flows require a Pro Subscription. Upgrade to unlock!', 'error');
-                navigate('/subscription');
+                navigate('/upgrade');
               }
             }}
             style={{ 
