@@ -37,6 +37,7 @@ import { sendMessageToInstagram, sendWhatsAppMessage, sendPrivateReply } from '.
 import authRoutes from './routes/auth.js';
 import paymentRoutes from './routes/payment.js';
 import formRoutes from './routes/forms.js';
+import oauthRoutes from './routes/oauth.js';
 // --- MULTER SETUP (Media Uploads) ---
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
