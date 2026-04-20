@@ -28,6 +28,8 @@ export default function Campaigns() {
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [flows, setFlows] = useState([]);
   const [loadingFlows, setLoadingFlows] = useState(true);
+  const [mediaMode, setMediaMode] = useState('link'); // 'link' or 'upload'
+  const [uploading, setUploading] = useState(false);
 
   const fetchCampaigns = async () => {
     const token = localStorage.getItem('insta_agent_token');
@@ -56,6 +58,35 @@ export default function Campaigns() {
       console.error("Error fetching flows:", err);
     } finally {
       setLoadingFlows(false);
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('media', file);
+
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/upload`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setNewCamp({ ...newCamp, videoUrl: data.url });
+        notify('✅ File uploaded successfully!', 'success');
+      } else {
+        notify(data.error || 'Upload failed', 'error');
+      }
+    } catch (err) {
+      notify('Upload failed', 'error');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -349,32 +380,60 @@ export default function Campaigns() {
               </select>
             </div>
 
-            <div className="input-group">
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem' }}>Auto-Send Video (URL)</label>
-              <div style={{ position: 'relative' }}>
-                <Video size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
-                <input 
-                  type="text" 
-                  value={newCamp.videoUrl}
-                  onChange={(e) => setNewCamp({...newCamp, videoUrl: e.target.value})}
-                  placeholder="e.g. https://youtu.be/..."
-                  style={{ width: '100%', padding: '12px 12px 12px 40px', background: 'white', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '8px', outline: 'none' }}
-                />
+            <div className="input-group" style={{ gridColumn: 'span 2' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: '700' }}>Media (Image/Video)</label>
+                <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: '8px', padding: '2px' }}>
+                  <button 
+                    type="button" 
+                    onClick={() => setMediaMode('link')}
+                    style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '6px', border: 'none', background: mediaMode === 'link' ? 'white' : 'transparent', color: mediaMode === 'link' ? 'var(--accent-color)' : '#64748b', fontWeight: '700', cursor: 'pointer', boxShadow: mediaMode === 'link' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none' }}
+                  >
+                    Use Link
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => setMediaMode('upload')}
+                    style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '6px', border: 'none', background: mediaMode === 'upload' ? 'white' : 'transparent', color: mediaMode === 'upload' ? 'var(--accent-color)' : '#64748b', fontWeight: '700', cursor: 'pointer', boxShadow: mediaMode === 'upload' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none' }}
+                  >
+                    Upload File
+                  </button>
+                </div>
               </div>
-            </div>
-
-            <div className="input-group">
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem' }}>Auto-Send Link (URL)</label>
-              <div style={{ position: 'relative' }}>
-                <LinkIcon size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
-                <input 
-                  type="text" 
-                  value={newCamp.linkUrl}
-                  onChange={(e) => setNewCamp({...newCamp, linkUrl: e.target.value})}
-                  placeholder="e.g. https://my-product.com"
-                  style={{ width: '100%', padding: '12px 12px 12px 40px', background: 'white', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '8px', outline: 'none' }}
-                />
-              </div>
+              
+              {mediaMode === 'link' ? (
+                <div style={{ position: 'relative' }}>
+                  <LinkIcon size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
+                  <input 
+                    type="text" 
+                    value={newCamp.videoUrl}
+                    onChange={(e) => setNewCamp({...newCamp, videoUrl: e.target.value})}
+                    placeholder="Paste image or video URL here..."
+                    style={{ width: '100%', padding: '12px 12px 12px 40px', background: 'white', border: '1px solid var(--border-subtle)', borderRadius: '10px' }}
+                  />
+                </div>
+              ) : (
+                <div style={{ border: '2px dashed var(--border-subtle)', borderRadius: '10px', padding: '20px', textAlign: 'center', position: 'relative' }}>
+                  {uploading ? (
+                    <div style={{ color: 'var(--accent-color)', fontWeight: '700' }}>Uploading...</div>
+                  ) : (
+                    <>
+                      <input 
+                        type="file" 
+                        onChange={handleFileUpload}
+                        style={{ opacity: 0, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', cursor: 'pointer' }}
+                      />
+                      <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                        {newCamp.videoUrl ? (
+                          <span style={{ color: '#10b981' }}>✅ {newCamp.videoUrl.split('/').pop()} uploaded</span>
+                        ) : (
+                          'Click or drag to upload media (max 5MB)'
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
             <div className="input-group" style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'rgba(139, 92, 246, 0.05)', borderRadius: '8px', border: '1px dashed var(--accent-light)' }}>
               <input 

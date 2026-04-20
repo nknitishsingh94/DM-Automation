@@ -1,5 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // --- GLOBAL STABILITY GUARD ---
 // Prevents the server from crashing on unhandled errors
@@ -33,8 +36,19 @@ import { runFlow } from './utils/FlowRunner.js';
 import { sendMessageToInstagram, sendWhatsAppMessage, sendPrivateReply } from './utils/metaApi.js';
 import authRoutes from './routes/auth.js';
 import paymentRoutes from './routes/payment.js';
-import oauthRoutes from './routes/oauth.js';
+// --- MULTER SETUP (Media Uploads) ---
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } }); // 5MB limit
 import verifyToken from './middleware/auth.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const httpServer = createServer(app);
@@ -59,28 +73,18 @@ app.use((req, res, next) => {
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
     const allowedOrigins = [
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://localhost:5175',
-      'http://localhost:5000',
-      'https://dm-automation-roan.vercel.app',
-      'https://dm-automation-server.onrender.com'
+      'http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5000',
+      'https://dm-automation-roan.vercel.app'
     ];
-    
-    if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app') || origin.includes('vercel.app')) {
-      callback(null, true);
-    } else {
-      console.warn(`⚠️ [CORS] Origin ${origin} blocked, but allowing for debugging`);
-      callback(null, true); 
-    }
+    callback(null, true); 
   },
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.get('/api/health', (req, res) => res.json({ status: 'ok', domain: req.hostname, timestamp: new Date() }));
 app.get('/api/ping', (req, res) => res.send('pong'));
@@ -472,6 +476,21 @@ app.post('/api/webhook', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/oauth', oauthRoutes);
+
+// --- MEDIA UPLOAD ROUTE ---
+app.post('/api/upload', verifyToken, upload.single('media'), (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    
+    const baseUrl = process.env.API_BASE_URL || 'http://localhost:5000';
+    const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    const fileUrl = `${cleanBaseUrl}/uploads/${req.file.filename}`;
+    
+    res.json({ url: fileUrl });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // --- Contacts API (Tagging & Notes) ---
 app.get('/api/contacts', verifyToken, async (req, res) => {
