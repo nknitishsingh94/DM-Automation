@@ -335,7 +335,7 @@ export default function Campaigns() {
                        navigate(`/flow-builder/${flow._id}`);
                      } else {
                        notify('💎 Upgrade to PRO to edit this advanced automation.', 'error');
-                       navigate('/subscription');
+                       navigate('/upgrade');
                      }
                    }}
                    onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
