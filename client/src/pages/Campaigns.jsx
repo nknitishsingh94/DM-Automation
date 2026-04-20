@@ -40,9 +40,14 @@ export default function Campaigns() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
-      setCampaigns(data);
+      if (Array.isArray(data)) {
+        setCampaigns(data);
+      } else {
+        setCampaigns([]);
+      }
     } catch (err) {
       console.error("Error fetching campaigns:", err);
+      setCampaigns([]);
     } finally {
       setLoading(false);
     }
@@ -55,9 +60,14 @@ export default function Campaigns() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
-      setFlows(data);
+      if (Array.isArray(data)) {
+        setFlows(data);
+      } else {
+        setFlows([]);
+      }
     } catch (err) {
       console.error("Error fetching flows:", err);
+      setFlows([]);
     } finally {
       setLoadingFlows(false);
     }
