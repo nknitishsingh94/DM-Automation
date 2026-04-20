@@ -113,11 +113,9 @@ const checkFollowerStatus = async (platform, chatId, userId) => {
     // If the API returns the user, they follow. If not, it might error or return empty data.
     return res.data && res.data.data && res.data.data.length > 0;
   } catch (err) {
-    console.warn("🔍 Follower check failed or restricted:", err.message);
-    // FALLBACK: In a real-world SaaS, if we can't verify (e.g. private account), 
-    // we often default to 'false' to encourage the follow, or 'true' to avoid blocking the user.
-    // For this implementation, we return false to trigger the 'Please Follow' prompt.
-    return false; 
+    // FALLBACK: If we can't verify (e.g. permission missing or private), 
+    // we return 'true' to ensure the user's automation isn't blocked.
+    return true; 
   }
 };
 
