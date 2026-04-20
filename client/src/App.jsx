@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate } from 'react-router-dom';
 import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
