@@ -113,7 +113,12 @@ export default function Dashboard() {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', gap: '32px', padding: '0 40px 40px' }}>
+    <div style={{ 
+      display: 'grid', 
+      gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', 
+      gap: window.innerWidth < 640 ? '16px' : '32px', 
+      padding: window.innerWidth < 640 ? '0 16px 20px' : '0 40px 40px' 
+    }}>
       {/* Left Column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
         {/* PEHLE WALA PART (RESTORED TO TOP) */}

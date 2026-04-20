@@ -285,7 +285,7 @@ function TopBar({ onMenuClick }) {
   if (!user) return null;
 
   return (
-    <header className="topbar" style={{ background: 'transparent', borderBottom: 'none', height: '80px', padding: '0 40px' }}>
+    <header className="topbar" style={{ background: 'transparent', borderBottom: 'none', height: '80px', padding: window.innerWidth < 640 ? '0 16px' : '0 40px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         <button onClick={onMenuClick} className="mobile-show" style={{ color: '#1e293b' }}>
           <MenuIcon size={24} />
