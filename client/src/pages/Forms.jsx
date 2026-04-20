@@ -307,13 +307,6 @@ export default function Forms() {
                     </div>
                   </div>
                 </div>
-
-                <div style={{ marginTop: '40px', display: 'flex', gap: '12px' }}>
-                  <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setIsModalOpen(false)}>Cancel</button>
-                  <button className="btn-primary" style={{ flex: 1 }} onClick={() => setWizardStep(2)}>
-                    Next Step <ArrowRight size={16} />
-                  </button>
-                </div>
               </div>
             ) : (
               <div>
@@ -384,15 +377,27 @@ export default function Forms() {
                     onChange={val => setNewForm({...newForm, settings: {...newForm.settings, successMessage: val}})}
                   />
                 </div>
+              </div>
+            )}
+            </div>
 
-                <div style={{ marginTop: '40px', display: 'flex', gap: '12px' }}>
+            {/* Sticky Footer */}
+            <div style={{ padding: '20px 32px 32px', borderTop: '1px solid var(--border)', background: 'var(--bg-white)', display: 'flex', gap: '12px' }}>
+              {wizardStep === 1 ? (
+                <>
+                  <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setIsModalOpen(false)}>Cancel</button>
+                  <button className="btn-primary" style={{ flex: 1 }} onClick={() => setWizardStep(2)}>
+                    Next Step <ArrowRight size={16} />
+                  </button>
+                </>
+              ) : (
+                <>
                   <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setWizardStep(1)}>Back</button>
                   <button className="btn-primary" style={{ flex: 1 }} onClick={handleCreateForm}>
                     <Save size={18} /> Finish & Create
                   </button>
-                </div>
-              </div>
-            )}
+                </>
+              )}
             </div>
           </div>
         </div>
