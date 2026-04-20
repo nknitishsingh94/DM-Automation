@@ -201,7 +201,7 @@ export default function Campaigns() {
   if (loading || loadingFlows) return <div style={{ color: 'var(--text-muted)', padding: '40px', textAlign: 'center' }}>Loading automations...</div>;
 
   return (
-    <div style={{ maxWidth: '1000px' }}>
+    <div style={{ maxWidth: '1200px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
           <h2 style={{ fontSize: '1.8rem', fontWeight: '700' }}>Automation Campaigns</h2>
@@ -286,7 +286,7 @@ export default function Campaigns() {
       {showAdd && (
         <div className="table-card" style={{ padding: '24px', marginBottom: '32px', animation: 'fadeIn 0.3s ease-out' }}>
           <h3 style={{ marginBottom: '20px' }}>Add New Trigger</h3>
-          <form onSubmit={handleAddSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <form onSubmit={handleAddSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
             <div className="input-group">
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem' }}>Campaign Name</label>
               <input 
@@ -426,8 +426,8 @@ export default function Campaigns() {
         </div>
       )}
 
-      <div className="table-card">
-        <table>
+      <div className="table-card" style={{ overflowX: 'auto', width: '100%' }}>
+        <table style={{ minWidth: '800px' }}>
           <thead>
             <tr>
               <th>Campaign Name</th>

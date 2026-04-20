@@ -116,8 +116,7 @@ export default function Dashboard() {
     <div style={{ 
       display: 'grid', 
       gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', 
-      gap: window.innerWidth < 640 ? '16px' : '32px', 
-      padding: window.innerWidth < 640 ? '0 16px 20px' : '0 40px 40px' 
+      gap: '32px'
     }}>
       {/* Left Column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -308,7 +307,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
             {/* KPI Block 1 */}
             <Link to="/audiences" style={{ textDecoration: 'none' }}>
               <div className="interactive-card" style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', height: '100%' }}>

@@ -11,6 +11,13 @@
   --transition-fast: 0.2s ease-out;
   --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   --sidebar-width: 280px;
+  --page-padding: 40px;
+}
+
+@media (max-width: 1000px) {
+  :root {
+    --page-padding: 16px;
+  }
 }
 
 .mobile-show { display: none; }
@@ -122,8 +129,20 @@ button {
   display: flex;
   flex-direction: column;
   transition: var(--transition-smooth);
-  z-index: 10;
+  z-index: 1000;
   overflow: hidden;
+}
+
+@media (max-width: 1000px) {
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    top: 0;
+    box-shadow: 20px 0 50px rgba(0,0,0,0.1);
+  }
+  .sidebar.mobile-open {
+    left: 0;
+  }
 }
 
 .sidebar-header {
@@ -255,7 +274,7 @@ button {
 /* Page Container */
 .page-container {
   flex: 1;
-  padding: 32px;
+  padding: var(--page-padding);
   overflow-y: auto;
   min-height: 0; 
 }

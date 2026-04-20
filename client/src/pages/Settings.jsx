@@ -104,7 +104,7 @@ export default function Settings() {
   if (loading) return <div style={{ color: 'var(--text-muted)' }}>Loading configuration...</div>;
 
   return (
-    <div style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '24px', padding: window.innerWidth < 640 ? '0 16px' : '0' }}>
+    <div style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
       
       {/* Premium Platform Tabs */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
@@ -148,7 +148,7 @@ export default function Settings() {
         </div>
       </div>
 
-      <div style={{ background: '#ffffff', borderRadius: window.innerWidth < 640 ? '16px' : '24px', border: '1px solid #e2e8f0', boxShadow: '0 8px 30px rgba(0,0,0,0.03)', padding: window.innerWidth < 640 ? '16px' : '40px', animation: 'fadeIn 0.4s ease-out', overflowX: 'hidden' }}>
+      <div style={{ background: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 12px 40px rgba(0,0,0,0.04)', padding: 'var(--page-padding)', animation: 'fadeIn 0.4s ease-out', overflowX: 'hidden' }}>
         
         {/* INSTAGRAM CONFIG */}
         {activeTab === 'instagram' && (

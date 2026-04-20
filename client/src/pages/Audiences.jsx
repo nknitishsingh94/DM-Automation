@@ -148,14 +148,14 @@ export default function Audiences() {
     const userMessages = allMessages.filter(m => m.chatId === selectedContact.chatId).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 50);
 
     return (
-      <div style={{ maxWidth: '1000px', animation: 'fadeIn 0.3s ease-out' }}>
+      <div style={{ maxWidth: '1200px', animation: 'fadeIn 0.3s ease-out' }}>
         <button 
           onClick={() => setSelectedContact(null)}
           style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', marginBottom: '24px', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '500' }}>
           <ChevronLeft size={18} /> Back to Audience List
         </button>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '24px', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '24px', alignItems: 'start' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Profile Header Card */}
             <div className="table-card" style={{ padding: '32px', display: 'flex', gap: '24px', alignItems: 'center' }}>
@@ -317,9 +317,9 @@ export default function Audiences() {
   }
 
   return (
-    <div style={{ maxWidth: '1000px', animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ maxWidth: '1200px', animation: 'fadeIn 0.5s ease-out' }}>
       {/* Stunning Header Banner */}
-      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', borderRadius: '24px', padding: '40px', color: 'white', marginBottom: '32px', position: 'relative', overflow: 'hidden', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.2)' }}>
+      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', borderRadius: '24px', padding: 'var(--page-padding)', color: 'white', marginBottom: '32px', position: 'relative', overflow: 'hidden', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.2)' }}>
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
             <div style={{ background: 'rgba(255,255,255,0.1)', padding: '10px', borderRadius: '14px', backdropFilter: 'blur(10px)' }}>
@@ -367,8 +367,8 @@ export default function Audiences() {
       </div>
 
       {/* Premium Data Table Container */}
-      <div style={{ background: '#ffffff', borderRadius: '24px', border: '1px solid #f1f5f9', overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.04)' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <div style={{ background: '#ffffff', borderRadius: '24px', border: '1px solid #f1f5f9', overflowX: 'auto', boxShadow: '0 12px 40px rgba(0,0,0,0.04)', width: '100%' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '700px' }}>
           <thead>
             <tr style={{ background: 'rgba(248, 250, 252, 0.5)', borderBottom: '1px solid #f1f5f9' }}>
               <th style={{ padding: '24px', textAlign: 'left', color: '#94a3b8', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Contact Identity</th>
