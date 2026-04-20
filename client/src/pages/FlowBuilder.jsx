@@ -11,7 +11,7 @@ import {
   Position
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { Save, Play, ArrowLeft, MessageSquare, Zap, Activity, Trash2, Plus, Info } from 'lucide-react';
+import { Save, Play, ArrowLeft, MessageSquare, Zap, Activity, Trash2, Plus, Info, Sparkles } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
@@ -64,10 +64,44 @@ const ConditionNode = ({ data }) => (
   </div>
 );
 
+const AiNode = ({ data }) => (
+  <div style={{ 
+    padding: '12px', 
+    background: 'linear-gradient(135deg, #faf5ff 0%, #ffffff 100%)', 
+    borderRadius: '12px', 
+    border: '2px solid #a855f7', 
+    minWidth: '200px',
+    boxShadow: '0 8px 20px rgba(168, 85, 247, 0.15)',
+    position: 'relative',
+    overflow: 'hidden'
+  }}>
+    <div style={{ 
+      position: 'absolute', top: '-10px', right: '-10px', width: '40px', height: '40px', 
+      background: 'rgba(168, 85, 247, 0.1)', borderRadius: '50%', zIndex: 0 
+    }}></div>
+    
+    <Handle type="target" position={Position.Top} style={{ background: '#a855f7' }} />
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', position: 'relative', zIndex: 1 }}>
+      <div style={{ padding: '4px', background: '#f5f3ff', borderRadius: '6px' }}>
+        <Sparkles size={14} color="#a855f7" />
+      </div>
+      <span style={{ fontSize: '13px', fontWeight: '800', color: '#6b21a8' }}>AI Agent Response</span>
+    </div>
+    <div style={{ fontSize: '11px', color: '#7e22ce', fontWeight: '600', marginBottom: '4px' }}>
+      Brain: <span style={{ color: '#581c87' }}>AI Studio Config</span>
+    </div>
+    <p style={{ fontSize: '10px', color: '#9333ea', margin: 0, opacity: 0.8, fontStyle: 'italic' }}>
+      "Will respond dynamically based on personality and history."
+    </p>
+    <Handle type="source" position={Position.Bottom} style={{ background: '#a855f7' }} />
+  </div>
+);
+
 const nodeTypes = {
   message: MessageNode,
   trigger: TriggerNode,
   condition: ConditionNode,
+  ai: AiNode,
 };
 
 // --- Optimized Input Component to prevent lag/word-loss ---
@@ -252,6 +286,10 @@ export default function FlowBuilder() {
                   <Activity size={20} color="#ec4899" />
                   <span style={{ fontSize: '12px', fontWeight: '700' }}>Condition</span>
                 </button>
+                <button onClick={() => addNode('ai')} style={{ padding: '16px', borderRadius: '12px', border: '1px solid #f3e8ff', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer', gridColumn: 'span 2' }}>
+                  <Sparkles size={20} color="#a855f7" />
+                  <span style={{ fontSize: '12px', fontWeight: '800', color: '#6b21a8' }}>AI Agent (Smart Reply)</span>
+                </button>
               </div>
               <div style={{ marginTop: '40px', padding: '20px', borderRadius: '16px', background: '#eff6ff', border: '1px solid #dbeafe' }}>
                 <div style={{ display: 'flex', gap: '8px', color: '#1e40af', marginBottom: '8px' }}>
@@ -292,6 +330,18 @@ export default function FlowBuilder() {
                     onChange={(val) => updateNodeData('text', val)}
                     isTextArea={true}
                   />
+                </div>
+              )}
+
+              {selectedNode.type === 'ai' && (
+                <div style={{ padding: '16px', background: '#faf5ff', borderRadius: '12px', border: '1px solid #e9d5ff' }}>
+                  <div style={{ display: 'flex', gap: '8px', color: '#7e22ce', marginBottom: '12px' }}>
+                     <Sparkles size={18} /> <span style={{ fontWeight: '800', fontSize: '13px' }}>AI Studio Integration</span>
+                  </div>
+                  <p style={{ fontSize: '12px', color: '#6b21a8', lineHeight: '1.5', margin: 0 }}>
+                    This node uses the personality, tone, and knowledge base you defined in <strong>AI Studio</strong>. 
+                    It is perfect for handling open-ended questions or complex customer inquiries mid-flow.
+                  </p>
                 </div>
               )}
 

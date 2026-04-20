@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Sparkles, Save, Brain, MessageSquare, Sliders, Database, Play, CheckCircle, Smartphone, Send, Settings as SettingsIcon, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
@@ -15,6 +15,22 @@ export default function AIStudio() {
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const contextRef = useRef(null);
+
+  const scrollToContext = () => {
+    contextRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    contextRef.current?.focus();
+  };
+
+  const useTemplate = () => {
+    const template = `You are a helpful customer support agent for [Business Name]. 
+Our products: [Product 1], [Product 2].
+Our hours: 9 AM - 6 PM.
+Free delivery on orders over $50.
+Tone: Always be polite and help users find the right product.`;
+    setAiSettings({ ...aiSettings, aiKnowledgeBase: template });
+    toast.success('Template loaded! Please customize it.');
+  };
 
   // Mapped to backend schema names
   const [aiSettings, setAiSettings] = useState({
@@ -167,7 +183,7 @@ export default function AIStudio() {
           <p>Train your custom AI Agent and test its personality in real-time.</p>
         </div>
         <div className="header-actions">
-          <button className="btn-secondary">
+          <button onClick={scrollToContext} className="btn-secondary">
             <Database size={18} /> Manage Knowledge Base
           </button>
           <button
@@ -230,7 +246,8 @@ export default function AIStudio() {
                   value={aiSettings.aiKnowledgeBase}
                   onChange={val => setAiSettings({ ...aiSettings, aiKnowledgeBase: val })}
                   error={errors.aiKnowledgeBase}
-                  extraLabel={<span style={{ color: '#8b5cf6', fontSize: '0.8rem', cursor: 'pointer' }}>Use Template</span>}
+                  extraLabel={<span onClick={useTemplate} style={{ color: '#8b5cf6', fontSize: '0.8rem', cursor: 'pointer', fontWeight: '800' }}>Use Template</span>}
+                  inputRef={contextRef}
                 />
               </div>
 

@@ -38,6 +38,7 @@ import authRoutes from './routes/auth.js';
 import paymentRoutes from './routes/payment.js';
 import formRoutes from './routes/forms.js';
 import oauthRoutes from './routes/oauth.js';
+import { generateAIResponse } from './utils/aiHandler.js';
 // --- MULTER SETUP (Media Uploads) ---
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
@@ -186,45 +187,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   } 
 
   // 2. Dynamic OpenAI Fallback
-  let fallbackText = '';
-  try {
-    const userSettings = await Settings.findOne({ userId });
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error("OpenAI Key not configured in env");
-    }
-
-    const aiName = userSettings?.aiName || "Zen Assistant";
-    const aiTone = userSettings?.aiTone || "friendly and concise";
-    const aiKnowledgeBase = userSettings?.aiKnowledgeBase || "You are an AI helpful assistant.";
-    const aiTemperature = userSettings?.aiTemperature !== undefined ? userSettings.aiTemperature : 0.7;
-    const aiFallback = userSettings?.aiFallbackMessage || "I'm not exactly sure, let me connect you to a human.";
-
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    
-    // Check for Human Escalation intent
-    if (userSettings?.aiHumanEscalation && (userMessage.includes("angry") || userMessage.includes("stupid") || userMessage.includes("human") || userMessage.includes("manager"))) {
-       fallbackText = "I understand you might be frustrated. Let me escalate this to my human manager right away. They will reply shortly.";
-    } else {
-       const response = await openai.chat.completions.create({
-         model: "gpt-4-turbo",
-         messages: [
-           { role: "system", content: `You are ${aiName}, a DM Automation Agent. Tone: ${aiTone}. Context: ${aiKnowledgeBase}. Keep replies very short for direct messages. Provide helpful information if possible.` },
-           { role: "user", content: text }
-         ],
-         temperature: aiTemperature,
-         max_tokens: 150,
-       });
-       fallbackText = response.choices[0]?.message?.content || aiFallback;
-    }
-  } catch (err) {
-    console.error("OpenAI Fallback Error:", err.message);
-    const options = { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false };
-    const formatter = new Intl.DateTimeFormat('en-US', options);
-    const hour = parseInt(formatter.format(new Date()));
-    let greeting = hour < 12 ? "Good Morning ☀️" : (hour < 17 ? "Good Afternoon 🌤️" : "Good Evening 🌙");
-    
-    fallbackText = `🤖 ${greeting}!\n\nI am currently operating in limited test mode. Please leave a message and a human will respond shortly.`;
-  }
+  const fallbackText = await generateAIResponse(userId, text);
     
   const fallbackReply = new Message({
     userId: new mongoose.Types.ObjectId(userId),

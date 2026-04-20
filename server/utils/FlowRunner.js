@@ -1,8 +1,5 @@
-import Flow from '../models/Flow.js';
-import Message from '../models/Message.js';
-import Contact from '../models/Contact.js';
-import { sendMessageToInstagram, sendPrivateReply } from './metaApi.js';
 import mongoose from 'mongoose';
+import { generateAIResponse } from './aiHandler.js';
 
 /**
  * FlowRunner Engine
@@ -49,6 +46,23 @@ export const runFlow = async (userId, flowId, contactId, platform, initialText =
         const aiMsg = new Message({
           userId: new mongoose.Types.ObjectId(userId),
           chatId: contactId, sender: 'AI Agent', text, type: 'sent', platform, isAI: true, timestamp: new Date()
+        });
+        await aiMsg.save();
+      }
+
+      if (currentNode.type === 'ai') {
+        // Generate Dynamic AI Response
+        const responseText = await generateAIResponse(userId, initialText || "Continue Conversation");
+        
+        if (commentId) {
+          await sendPrivateReply(platform, commentId, responseText, userId);
+        } else {
+          await sendMessageToInstagram(platform, contactId, responseText, '', userId);
+        }
+
+        const aiMsg = new Message({
+          userId: new mongoose.Types.ObjectId(userId),
+          chatId: contactId, sender: 'AI Agent', text: responseText, type: 'sent', platform, isAI: true, timestamp: new Date()
         });
         await aiMsg.save();
       }
