@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Sparkles, Save, Brain, MessageSquare, Sliders, Database, Play, CheckCircle, Smartphone, Send, Settings as SettingsIcon, User } from 'lucide-react';
+import { Sparkles, Save, Brain, MessageSquare, Sliders, Database, Play, CheckCircle, Smartphone, Send, Settings as SettingsIcon, User, RotateCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import toast, { Toaster } from 'react-hot-toast';
@@ -129,6 +129,24 @@ Tone: Always be polite and help users find the right product.`;
       toast.error('Failed to get AI response');
     } finally {
       setIsTyping(false);
+    }
+  };
+
+  const handleClearChat = async () => {
+    if (!window.confirm("Are you sure you want to clear the entire chat history?")) return;
+    
+    const token = localStorage.getItem('insta_agent_token');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/chats`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setChatHistory([{ role: 'ai', text: 'History cleared. How can I help you today?' }]);
+        toast.success('Chat history cleared');
+      }
+    } catch (err) {
+      toast.error('Failed to clear history');
     }
   };
 
@@ -317,13 +335,23 @@ Tone: Always be polite and help users find the right product.`;
 
             {/* Simulator Header */}
             <div className="simulator-header">
-              <Smartphone size={20} />
-              <div>
-                <div>Live Preview</div>
-                <div className="status-badge">
-                  <div></div> Agent Active
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Smartphone size={18} />
+                <div style={{ fontSize: '0.8rem', fontWeight: '700' }}>Live Preview</div>
               </div>
+              <button 
+                onClick={handleClearChat}
+                className="btn-icon" 
+                title="Reset Chat"
+                style={{ 
+                  background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', 
+                  padding: '4px', borderRadius: '4px', display: 'flex', alignItems: 'center', transition: 'all 0.2s' 
+                }}
+                onMouseOver={(e) => e.currentTarget.style.color = '#7c3aed'}
+                onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}
+              >
+                <RotateCcw size={16} />
+              </button>
             </div>
 
             {/* Chat History */}

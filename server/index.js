@@ -514,6 +514,15 @@ app.post('/api/chat', verifyToken, async (req, res) => {
   }
 });
 
+app.delete('/api/chats', verifyToken, async (req, res) => {
+  try {
+    await ChatMessage.deleteMany({ userId: req.user.userId });
+    res.json({ success: true, message: 'Chat history cleared' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Dashboard Stats Endpoint
 app.get('/api/stats', verifyToken, async (req, res) => {
   try {
