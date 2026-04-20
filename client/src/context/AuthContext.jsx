@@ -3,17 +3,19 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('insta_agent_user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('insta_agent_user');
+    // Check if token still exists to maintain login
     const token = localStorage.getItem('insta_agent_token');
-    if (savedUser && token) {
-      setUser(JSON.parse(savedUser));
+    if (!token && user) {
+      setUser(null);
     }
-    setLoading(false);
-  }, []);
+  }, [user]);
 
   const login = (userData, token) => {
     setUser(userData);

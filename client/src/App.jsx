@@ -1,31 +1,32 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate } from 'react-router-dom';
 import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone } from 'lucide-react';
-import Dashboard from './pages/Dashboard';
-import Inbox from './pages/Inbox';
-import SettingsPage from './pages/Settings';
-import Profile from './pages/Profile';
-import Campaigns from './pages/Campaigns';
-import Audiences from './pages/Audiences';
+import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import Subscription from './pages/Subscription';
-import HelpCenter from './pages/HelpCenter';
-import About from './pages/About';
-import Resources from './pages/Resources';
-import Blog from './pages/Blog';
-import BlogPost from './pages/BlogPost';
-import AIStudio from './pages/AIStudio';
-import Forms from './pages/Forms';
-import FormDetail from './pages/FormDetail';
-import Referral from './pages/Referral';
-import Broadcasts from './pages/Broadcasts';
-import FlowBuilder from './pages/FlowBuilder';
-import Privacy from './pages/Privacy';
-import Terms from './pages/Terms';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { createContext, useContext, useCallback } from 'react';
+
+// Lazy load heavy components
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Inbox = lazy(() => import('./pages/Inbox'));
+const SettingsPage = lazy(() => import('./pages/Settings'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Campaigns = lazy(() => import('./pages/Campaigns'));
+const Audiences = lazy(() => import('./pages/Audiences'));
+const Subscription = lazy(() => import('./pages/Subscription'));
+const HelpCenter = lazy(() => import('./pages/HelpCenter'));
+const AIStudio = lazy(() => import('./pages/AIStudio'));
+const Forms = lazy(() => import('./pages/Forms'));
+const FormDetail = lazy(() => import('./pages/FormDetail'));
+const Referral = lazy(() => import('./pages/Referral'));
+const Broadcasts = lazy(() => import('./pages/Broadcasts'));
+const FlowBuilder = lazy(() => import('./pages/FlowBuilder'));
+const About = lazy(() => import('./pages/About'));
+const Resources = lazy(() => import('./pages/Resources'));
+const Blog = lazy(() => import('./pages/Blog'));
+const BlogPost = lazy(() => import('./pages/BlogPost'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Terms = lazy(() => import('./pages/Terms'));
 
 const NotificationContext = createContext();
 export const useNotification = () => useContext(NotificationContext);
@@ -320,32 +321,38 @@ function MainLayout() {
           display: 'flex',
           flexDirection: 'column'
         }}>
-          <Routes>
-            <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
-            <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
-            <Route path="/audiences" element={<ProtectedRoute><Audiences /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/upgrade" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
-            <Route path="/ai-studio" element={<ProtectedRoute><AIStudio /></ProtectedRoute>} />
-            <Route path="/forms" element={<ProtectedRoute><Forms /></ProtectedRoute>} />
-            <Route path="/forms/:id" element={<ProtectedRoute><FormDetail /></ProtectedRoute>} />
-            <Route path="/broadcasts" element={<ProtectedRoute><Broadcasts /></ProtectedRoute>} />
-            <Route path="/flow-builder/:id" element={<ProtectedRoute><FlowBuilder /></ProtectedRoute>} />
-            <Route path="/refer" element={<ProtectedRoute><Referral /></ProtectedRoute>} />
-            <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
-            <Route path="/signup" element={user ? <Navigate to="/dashboard" /> : <Signup />} />
-            <Route path="/help" element={<HelpCenter />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/blog" element={<Blog />} />
-             <Route path="/blog/:id" element={<BlogPost />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="*" element={<div style={{textAlign:'center', marginTop:'50px', color:'var(--text-muted)'}}>Page Under Construction</div>} />
-          </Routes>
+          <Suspense fallback={
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '40px' }}>
+              <div className="animate-spin" style={{ width: '32px', height: '32px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%' }}></div>
+            </div>
+          }>
+            <Routes>
+              <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
+              <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
+              <Route path="/audiences" element={<ProtectedRoute><Audiences /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/upgrade" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
+              <Route path="/ai-studio" element={<ProtectedRoute><AIStudio /></ProtectedRoute>} />
+              <Route path="/forms" element={<ProtectedRoute><Forms /></ProtectedRoute>} />
+              <Route path="/forms/:id" element={<ProtectedRoute><FormDetail /></ProtectedRoute>} />
+              <Route path="/broadcasts" element={<ProtectedRoute><Broadcasts /></ProtectedRoute>} />
+              <Route path="/flow-builder/:id" element={<ProtectedRoute><FlowBuilder /></ProtectedRoute>} />
+              <Route path="/refer" element={<ProtectedRoute><Referral /></ProtectedRoute>} />
+              <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+              <Route path="/signup" element={user ? <Navigate to="/dashboard" /> : <Signup />} />
+              <Route path="/help" element={<HelpCenter />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/blog" element={<Blog />} />
+               <Route path="/blog/:id" element={<BlogPost />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="*" element={<div style={{textAlign:'center', marginTop:'50px', color:'var(--text-muted)'}}>Page Under Construction</div>} />
+            </Routes>
+          </Suspense>
         </div>
       </main>
     </div>
