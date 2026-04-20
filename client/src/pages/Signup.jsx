@@ -76,6 +76,7 @@ export default function Signup() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     // Removed Gmail-only restriction to allow universal signup
 
     try {
