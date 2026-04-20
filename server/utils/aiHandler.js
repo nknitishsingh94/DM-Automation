@@ -11,8 +11,11 @@ export const generateAIResponse = async (userId, userMessage) => {
   try {
     const userSettings = await Settings.findOne({ userId });
     
-    if (!process.env.OPENAI_API_KEY) {
-      console.warn("⚠️ OpenAI Key not configured in env.");
+    const groqKey = process.env.GROQ_API_KEY;
+    const openaiKey = process.env.OPENAI_API_KEY;
+
+    if (!groqKey && !openaiKey) {
+      console.warn("⚠️ No AI API Keys configured in env.");
       return userSettings?.aiFallbackMessage || "I'm currently in limited mode, please contact support.";
     }
 
@@ -20,42 +23,52 @@ export const generateAIResponse = async (userId, userMessage) => {
     const aiTone = userSettings?.aiTone || "friendly and concise";
     const aiKnowledgeBase = userSettings?.aiKnowledgeBase || "You are an AI helpful assistant.";
     const aiTemperature = userSettings?.aiTemperature !== undefined ? userSettings.aiTemperature : 0.7;
-    const aiFallback = userSettings?.aiFallbackMessage || "I'm not exactly sure, let me connect you to a human.";
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    
-    // Check for Human Escalation intent (Basic check)
-    const keywords = ["angry", "stupid", "human", "manager", "stolen", "scam"];
-    const needsEscalation = keywords.some(k => userMessage.toLowerCase().includes(k));
+    // --- Provider Selection ---
+    let client;
+    let modelName;
 
-    if (userSettings?.aiHumanEscalation && needsEscalation) {
-       return "I understand you might be frustrated. Let me escalate this to my human manager right away. They will reply shortly.";
+    if (groqKey) {
+      // Use Groq (Free / Fast)
+      client = new OpenAI({ 
+        apiKey: groqKey,
+        baseURL: "https://api.groq.com/openai/v1"
+      });
+      modelName = "llama-3.1-70b-versatile"; // High performance free model
+      console.log(`🚀 Using Groq for user ${userId}`);
+    } else {
+      // Fallback to OpenAI
+      client = new OpenAI({ apiKey: openaiKey });
+      modelName = "gpt-4o-mini";
+      console.log(`🤖 Using OpenAI for user ${userId}`);
     }
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // Most reliable and available model
+    // --- Human Escalation Check ---
+    const keywords = ["angry", "stupid", "human", "manager", "stolen", "scam"];
+    const needsEscalation = keywords.some(k => userMessage.toLowerCase().includes(k));
+    if (userSettings?.aiHumanEscalation && needsEscalation) {
+       return "I understand you might be frustrated. Let me escalate this to my human manager right away.";
+    }
+
+    const response = await client.chat.completions.create({
+      model: modelName,
       messages: [
-        { role: "system", content: `You are ${aiName}. Tone: ${aiTone}. Context: ${aiKnowledgeBase}.` },
+        { role: "system", content: `You are ${aiName}. Tone: ${aiTone}. Context: ${aiKnowledgeBase}. Keep replies very short.` },
         { role: "user", content: userMessage }
       ],
       temperature: aiTemperature,
-      max_tokens: 300,
+      max_tokens: 350,
     });
 
     const reply = response.choices[0]?.message?.content;
-    if (!reply) throw new Error("Empty response from OpenAI");
+    if (!reply) throw new Error("Empty response from AI Provider");
     return reply;
 
   } catch (err) {
-    console.error("❌ OpenAI API Error:", err.response?.data || err.message);
+    console.error("❌ AI API Error:", err.message);
     
-    // Check for specific common errors to guide the user
-    if (err.message?.includes('401') || err.message?.includes('auth')) {
-      return "AI Connection Error: Check if your OpenAI API Key is valid and active.";
-    }
-    if (err.message?.includes('429') || err.message?.includes('quota')) {
-      return "AI Quota Error: Your OpenAI account seems to have $0 balance. Please add credits.";
-    }
+    if (err.message?.includes('401')) return "AI Error: Invalid API Key.";
+    if (err.message?.includes('429')) return "AI Error: Rate limit or Quota exceeded.";
 
     return "I'm having trouble thinking right now. (Internal: " + (err.message || "Unknown error") + ")";
   }
