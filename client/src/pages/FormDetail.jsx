@@ -23,8 +23,8 @@ export default function FormDetail() {
   const fetchData = async () => {
     try {
       const [formRes, subRes] = await Promise.all([
-        fetch(`/api/forms/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }),
-        fetch(`/api/forms/${id}/submissions`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
+        fetch(`/api/forms/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` } }),
+        fetch(`/api/forms/${id}/submissions`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` } })
       ]);
       
       const formData = await formRes.json();

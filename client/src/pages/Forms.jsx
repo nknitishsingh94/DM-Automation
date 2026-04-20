@@ -52,7 +52,7 @@ export default function Forms() {
   const fetchForms = async () => {
     try {
       const res = await fetch('/api/forms', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` }
       });
       const data = await res.json();
       setForms(data);
@@ -69,7 +69,7 @@ export default function Forms() {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}`
         },
         body: JSON.stringify(newForm)
       });
@@ -93,7 +93,7 @@ export default function Forms() {
     try {
       await fetch(`/api/forms/${id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` }
       });
       setForms(forms.filter(f => f._id !== id));
       toast.success('Form deleted');
@@ -106,7 +106,7 @@ export default function Forms() {
     try {
       const res = await fetch(`/api/forms/${id}/toggle`, {
         method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` }
       });
       const updated = await res.json();
       setForms(forms.map(f => f._id === id ? updated : f));
