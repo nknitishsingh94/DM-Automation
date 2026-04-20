@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import FormField from '../components/FormField';
 import '../styles/theme.css';
 
@@ -51,7 +52,7 @@ export default function Forms() {
 
   const fetchForms = async () => {
     try {
-      const res = await fetch('/api/forms', {
+      const res = await fetch(`${API_BASE_URL}/api/forms`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` }
       });
       const data = await res.json();
@@ -69,7 +70,7 @@ export default function Forms() {
 
   const handleCreateForm = async () => {
     try {
-      const res = await fetch('/api/forms', {
+      const res = await fetch(`${API_BASE_URL}/api/forms`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -95,7 +96,7 @@ export default function Forms() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this form?')) return;
     try {
-      await fetch(`/api/forms/${id}`, {
+      await fetch(`${API_BASE_URL}/api/forms/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` }
       });
@@ -108,7 +109,7 @@ export default function Forms() {
 
   const handleToggle = async (id) => {
     try {
-      const res = await fetch(`/api/forms/${id}/toggle`, {
+      const res = await fetch(`${API_BASE_URL}/api/forms/${id}/toggle`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` }
       });

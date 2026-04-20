@@ -3,9 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ChevronLeft, Download, Search, 
   Filter, Calendar, User, Mail, 
-  Phone, Trash2, Loader2, Sparkles 
+  Phone, Trash2, Loader2, Sparkles, Users 
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { API_BASE_URL } from '../config';
 import '../styles/theme.css';
 
 export default function FormDetail() {
@@ -23,8 +24,8 @@ export default function FormDetail() {
   const fetchData = async () => {
     try {
       const [formRes, subRes] = await Promise.all([
-        fetch(`/api/forms/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` } }),
-        fetch(`/api/forms/${id}/submissions`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` } })
+        fetch(`${API_BASE_URL}/api/forms/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` } }),
+        fetch(`${API_BASE_URL}/api/forms/${id}/submissions`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` } })
       ]);
       
       const formData = await formRes.json();
