@@ -9,10 +9,15 @@ const router = express.Router();
 // Step 1: Redirect to Facebook OAuth
 router.get('/facebook', verifyToken, (req, res) => {
   const appId = process.env.META_APP_ID;
-  const baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+  let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
   
+  // Clean trailing slash to prevent double-slash issues
+  if (baseUrl.endsWith('/')) {
+    baseUrl = baseUrl.slice(0, -1);
+  }
+
   if (!process.env.API_BASE_URL && process.env.NODE_ENV === 'production') {
-    return res.status(500).json({ error: "Missing API_BASE_URL in production environment. Please set it in Render/Vercel settings." });
+    return res.status(500).json({ error: "Missing API_BASE_URL in production. Set it in Render/Vercel settings." });
   }
 
   const redirectUri = encodeURIComponent(`${baseUrl}/api/oauth/facebook/callback`);
@@ -53,7 +58,8 @@ router.get('/facebook/callback', async (req, res) => {
   try {
     const appId = process.env.META_APP_ID;
     const appSecret = process.env.META_APP_SECRET;
-    const baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
     const redirectUri = `${baseUrl}/api/oauth/facebook/callback`;
 
     // 1. Exchange the auth 'code' for a short-lived access token
