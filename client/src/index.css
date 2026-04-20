@@ -18,7 +18,7 @@
 @media (max-width: 1000px) {
   :root {
     --page-padding: 16px;
-    --page-padding-bottom: 100px; /* Extra space to prevent bottom cut-off */
+    --page-padding-bottom: 150px !important; /* Maximum safety for mobile navigation bars */
   }
 }
 

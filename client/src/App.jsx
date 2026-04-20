@@ -316,7 +316,6 @@ function MainLayout() {
         <div className="page-container" style={{ 
           padding: (isPublic || location.pathname === '/inbox') ? '0' : undefined,
           overflow: (location.pathname === '/inbox') ? 'hidden' : 'auto',
-          height: '100%',
           display: 'flex',
           flexDirection: 'column'
         }}>
