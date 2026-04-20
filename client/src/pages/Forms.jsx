@@ -266,10 +266,14 @@ export default function Forms() {
       {/* Creation Modal */}
       {isModalOpen && (
         <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ overflow: 'visible' }}>
-            <button className="btn-icon" style={{ position: 'absolute', top: '20px', right: '20px' }} onClick={() => setIsModalOpen(false)}>
-              <X size={20} />
-            </button>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
+            <div style={{ padding: '32px 32px 10px', position: 'relative' }}>
+              <button className="btn-icon" style={{ position: 'absolute', top: '20px', right: '20px' }} onClick={() => setIsModalOpen(false)}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <div style={{ padding: '0 32px 32px', overflowY: 'auto', flex: 1 }}>
 
             {wizardStep === 1 ? (
               <div style={{ textAlign: 'center' }}>
@@ -389,6 +393,7 @@ export default function Forms() {
                 </div>
               </div>
             )}
+            </div>
           </div>
         </div>
       )}
