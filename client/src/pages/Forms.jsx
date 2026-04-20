@@ -284,7 +284,7 @@ export default function Forms() {
                     label="Form Name" 
                     placeholder="e.g. Winter Sale Leads"
                     value={newForm.name}
-                    onChange={e => setNewForm({...newForm, name: e.target.value})}
+                    onChange={val => setNewForm({...newForm, name: val})}
                   />
 
                   <div style={{ marginTop: '24px' }}>
@@ -316,18 +316,59 @@ export default function Forms() {
                 <h3 className="title-md" style={{ marginBottom: '8px' }}>Configure Fields</h3>
                 <p className="text-secondary" style={{ marginBottom: '24px' }}>These fields will be collected sequentially in the DM.</p>
 
-                <div style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '8px' }}>
+                <div style={{ maxHeight: '350px', overflowY: 'auto', paddingRight: '8px' }}>
                   {newForm.steps[0].fields.map((field, idx) => (
-                    <div key={idx} className="stat-card" style={{ padding: '12px', marginBottom: '10px', background: 'var(--bg-light)', border: 'none' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span className="text-bold" style={{ fontSize: '13px' }}>{field.label}</span>
-                        <span className="badge badge-draft" style={{ fontSize: '10px' }}>{field.type}</span>
+                    <div key={idx} className="stat-card" style={{ padding: '16px', marginBottom: '12px', background: 'var(--bg-light)', border: 'none', position: 'relative' }}>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
+                        <div style={{ flex: 1 }}>
+                          <FormField 
+                            label={`Field ${idx + 1} Label`}
+                            value={field.label}
+                            onChange={val => {
+                              const updatedFields = [...newForm.steps[0].fields];
+                              updatedFields[idx].label = val;
+                              setNewForm({
+                                ...newForm,
+                                steps: [{ ...newForm.steps[0], fields: updatedFields }]
+                              });
+                            }}
+                          />
+                        </div>
+                        <div style={{ width: '100px' }}>
+                          <label className="form-label">Type</label>
+                          <div className="badge badge-draft" style={{ height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px' }}>
+                            {field.type}
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => {
+                            const updatedFields = newForm.steps[0].fields.filter((_, i) => i !== idx);
+                            setNewForm({
+                              ...newForm,
+                              steps: [{ ...newForm.steps[0], fields: updatedFields }]
+                            });
+                          }}
+                          className="btn-icon" 
+                          style={{ color: '#ef4444', marginBottom: '8px' }}
+                        >
+                          <Trash size={18} />
+                        </button>
                       </div>
                     </div>
                   ))}
                   
-                  <button className="btn-secondary" style={{ width: '100%', borderStyle: 'dashed', fontSize: '12px' }}>
-                    <Plus size={14} /> Add Another Field
+                  <button 
+                    className="btn-secondary" 
+                    style={{ width: '100%', borderStyle: 'dashed', fontSize: '13px', padding: '12px' }}
+                    onClick={() => {
+                      const updatedFields = [...newForm.steps[0].fields, { label: 'New Field', type: 'text', placeholder: '', required: true }];
+                      setNewForm({
+                        ...newForm,
+                        steps: [{ ...newForm.steps[0], fields: updatedFields }]
+                      });
+                    }}
+                  >
+                    <Plus size={16} /> Add Another Field
                   </button>
                 </div>
 
@@ -336,7 +377,7 @@ export default function Forms() {
                     label="Success Message" 
                     type="textarea"
                     value={newForm.settings.successMessage}
-                    onChange={e => setNewForm({...newForm, settings: {...newForm.settings, successMessage: e.target.value}})}
+                    onChange={val => setNewForm({...newForm, settings: {...newForm.settings, successMessage: val}})}
                   />
                 </div>
 
