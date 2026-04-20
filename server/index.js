@@ -898,6 +898,10 @@ app.get('/api/flows/:id', verifyToken, async (req, res) => {
 
 app.post('/api/flows', verifyToken, async (req, res) => {
   try {
+    const user = await User.findById(req.user.userId);
+    if (!user || user.plan !== 'pro') {
+      return res.status(403).json({ error: 'Pro plan required to create advanced flows.' });
+    }
     const newFlow = new Flow({ ...req.body, userId: req.user.userId });
     await newFlow.save();
     res.json(newFlow);
@@ -908,6 +912,10 @@ app.post('/api/flows', verifyToken, async (req, res) => {
 
 app.put('/api/flows/:id', verifyToken, async (req, res) => {
   try {
+    const user = await User.findById(req.user.userId);
+    if (!user || user.plan !== 'pro') {
+       return res.status(403).json({ error: 'Pro plan required to update advanced flows.' });
+    }
     const flow = await Flow.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.userId },
       { ...req.body, updatedAt: new Date() },
@@ -921,6 +929,10 @@ app.put('/api/flows/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/flows/:id', verifyToken, async (req, res) => {
   try {
+    const user = await User.findById(req.user.userId);
+    if (!user || user.plan !== 'pro') {
+       return res.status(403).json({ error: 'Pro plan required to delete advanced flows.' });
+    }
     await Flow.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
     res.json({ message: 'Flow deleted' });
   } catch (err) {

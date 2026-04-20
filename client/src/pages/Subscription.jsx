@@ -5,7 +5,7 @@ import { API_BASE_URL } from '../config';
 import { Link } from 'react-router-dom';
 
 export default function Subscription() {
-  const { user } = useAuth();
+  const { user, syncPlan } = useAuth();
   const [showPayment, setShowPayment] = useState(false);
   const [paymentStep, setPaymentStep] = useState('select');
   const [loading, setLoading] = useState(false);
@@ -74,8 +74,9 @@ export default function Subscription() {
           });
           const result = await verifyRes.json();
           if (result.success) {
+            await syncPlan();
             alert("Payment Successful! Your Pro plan is now active.");
-            window.location.reload();
+            setShowPayment(false); 
           } else {
             alert("Verification failed. Please contact the founder.");
           }

@@ -34,8 +34,27 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('insta_agent_token');
   };
 
+  const syncPlan = async () => {
+    const token = localStorage.getItem('insta_agent_token');
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:5000' : 'https://dm-automation-lu44.onrender.com'}/api/auth/profile`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const userData = await res.json();
+        setUser(userData);
+        localStorage.setItem('insta_agent_user', JSON.stringify(userData));
+        return userData;
+      }
+    } catch (err) {
+      console.error("Plan sync failed:", err);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, syncPlan, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -259,9 +259,27 @@ router.put('/profile', async (req, res) => {
     if (profilePhoto !== undefined) user.profilePhoto = profilePhoto;
     
     await user.save();
-    res.json({ id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto });
+    res.json({ id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// GET Current Profile (Sync)
+router.get('/profile', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ message: 'No token provided' });
+    
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
+    
+    const user = await User.findById(decoded.userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    
+    res.json({ id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan });
+  } catch (err) {
+    res.status(401).json({ message: 'Invalid token' });
   }
 });
 

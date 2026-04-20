@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Zap, Plus, Trash2, Power, MessageCircle, AlertCircle, CheckCircle, Video, Link as LinkIcon, History, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 
 export default function Campaigns() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { notify } = useNotification();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -254,7 +256,14 @@ export default function Campaigns() {
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button 
-            onClick={() => navigate('/flow-builder/new')}
+            onClick={() => {
+              if (user?.plan === 'pro') {
+                navigate('/flow-builder/new');
+              } else {
+                notify('💎 Advanced Flows require a Pro Subscription. Upgrade to unlock!', 'error');
+                navigate('/subscription');
+              }
+            }}
             style={{ 
               background: 'white', 
               color: 'var(--accent-color)', 
@@ -264,9 +273,13 @@ export default function Campaigns() {
               fontWeight: '600',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              gap: '8px',
+              position: 'relative'
             }}>
             <Zap size={20} /> Advanced Flow
+            {user?.plan !== 'pro' && (
+              <span style={{ position: 'absolute', top: '-10px', right: '-10px', background: 'var(--accent-main)', color: 'white', fontSize: '10px', padding: '2px 6px', borderRadius: '4px', fontWeight: '800', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>PRO</span>
+            )}
           </button>
           <button 
             onClick={() => setShowAdd(!showAdd)}
@@ -296,10 +309,24 @@ export default function Campaigns() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
             {flows.map(flow => (
-              <div key={flow._id} className="table-card" style={{ padding: '24px', cursor: 'pointer', transition: 'all 0.3s ease', position: 'relative' }} 
-                   onClick={() => navigate(`/flow-builder/${flow._id}`)}
+              <div key={flow._id} className="table-card" style={{ padding: '24px', cursor: 'pointer', transition: 'all 0.3s ease', position: 'relative', opacity: user?.plan === 'pro' ? 1 : 0.8 }} 
+                   onClick={() => {
+                     if (user?.plan === 'pro') {
+                       navigate(`/flow-builder/${flow._id}`);
+                     } else {
+                       notify('💎 Upgrade to PRO to edit this advanced automation.', 'error');
+                       navigate('/subscription');
+                     }
+                   }}
                    onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
                    onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+                {user?.plan !== 'pro' && (
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(1px)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'inherit', zIndex: 5 }}>
+                    <div style={{ background: 'white', padding: '8px 16px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '800', border: '1px solid var(--accent-light)', color: 'var(--accent-main)', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                      <Crown size={14} /> UNLOCK PRO
+                    </div>
+                  </div>
+                )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                   <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--accent-color)', textTransform: 'uppercase' }}>Active Flow</span>
                   <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
@@ -310,7 +337,7 @@ export default function Campaigns() {
                 </div>
                 <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <button 
-                    onClick={(e) => deleteFlow(flow._id, e)}
+                    onClick={(e) => { e.stopPropagation(); deleteFlow(flow._id, e); }}
                     style={{ color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
                     title="Delete Flow"
                   >
