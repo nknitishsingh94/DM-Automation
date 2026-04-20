@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { MessageCircle, Zap, Users, ChevronRight, Activity, Calendar, Sparkles, Bot, ChevronDown, Crown, Star, BookOpen } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 
 export default function Dashboard() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({ 
     sentMessages: 0, 
     receivedMessages: 0, 
@@ -33,6 +36,13 @@ export default function Dashboard() {
           fetch(`${API_BASE_URL}/api/settings`, { headers }),
           fetch(`${API_BASE_URL}/api/flows`, { headers })
         ]);
+        
+        // Handle Unauthorized
+        if (statsRes.status === 401 || settingsRes.status === 401 || flowsRes.status === 401) {
+          logout();
+          navigate('/login');
+          return;
+        }
 
         const statsData = await statsRes.json();
         const settingsData = await settingsRes.json();
