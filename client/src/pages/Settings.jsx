@@ -104,7 +104,7 @@ export default function Settings() {
   if (loading) return <div style={{ color: 'var(--text-muted)' }}>Loading configuration...</div>;
 
   return (
-    <div style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '24px', padding: window.innerWidth < 600 ? '0 10px' : '0' }}>
       
       {/* Premium Platform Tabs */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
@@ -148,7 +148,7 @@ export default function Settings() {
         </div>
       </div>
 
-      <div style={{ background: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 12px 40px rgba(0,0,0,0.04)', padding: '40px', animation: 'fadeIn 0.4s ease-out' }}>
+      <div style={{ background: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 12px 40px rgba(0,0,0,0.04)', padding: window.innerWidth < 640 ? '20px' : '40px', animation: 'fadeIn 0.4s ease-out', overflowX: 'hidden' }}>
         
         {/* INSTAGRAM CONFIG */}
         {activeTab === 'instagram' && (
@@ -265,7 +265,7 @@ export default function Settings() {
                     />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) minmax(200px, 1fr)', gap: '24px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       <label style={{ fontWeight: '700', fontSize: '0.95rem', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <MapPin size={16} color="#ec4899" /> Page ID
