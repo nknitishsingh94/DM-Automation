@@ -35,6 +35,7 @@ import Flow from './models/Flow.js';
 import { runFlow } from './utils/FlowRunner.js';
 import { sendMessageToInstagram, sendWhatsAppMessage, sendPrivateReply } from './utils/metaApi.js';
 import authRoutes from './routes/auth.js';
+import ChatMessage from './models/ChatMessage.js';
 import paymentRoutes from './routes/payment.js';
 import formRoutes from './routes/forms.js';
 import oauthRoutes from './routes/oauth.js';
@@ -482,6 +483,36 @@ app.put('/api/contacts/:id', verifyToken, async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
+
+// --- AI Studio Studio / Test Playground routes ---
+app.get('/api/chats', verifyToken, async (req, res) => {
+  try {
+    const messages = await ChatMessage.find({ userId: req.user.userId }).sort({ createdAt: 1 }).limit(50);
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/chats', verifyToken, async (req, res) => {
+  try {
+    const newMessage = new ChatMessage({ ...req.body, userId: req.user.userId });
+    await newMessage.save();
+    res.json(newMessage);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/chat', verifyToken, async (req, res) => {
+  try {
+    const { message } = req.body;
+    const reply = await generateAIResponse(req.user.userId, message);
+    res.json({ reply });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Dashboard Stats Endpoint
 app.get('/api/stats', verifyToken, async (req, res) => {
