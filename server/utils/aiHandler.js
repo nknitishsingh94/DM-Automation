@@ -33,19 +33,30 @@ export const generateAIResponse = async (userId, userMessage) => {
     }
 
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini", // Most reliable and available model
       messages: [
-        { role: "system", content: `You are ${aiName}, a DM Automation Agent. Tone: ${aiTone}. Context: ${aiKnowledgeBase}. Keep replies very short for direct messages. Provide helpful information if possible.` },
+        { role: "system", content: `You are ${aiName}. Tone: ${aiTone}. Context: ${aiKnowledgeBase}.` },
         { role: "user", content: userMessage }
       ],
       temperature: aiTemperature,
-      max_tokens: 250,
+      max_tokens: 300,
     });
 
-    return response.choices[0]?.message?.content || aiFallback;
+    const reply = response.choices[0]?.message?.content;
+    if (!reply) throw new Error("Empty response from OpenAI");
+    return reply;
 
   } catch (err) {
-    console.error("❌ aiHandler Error:", err.message);
-    return "I'm having trouble thinking right now. Please try again or leave a message.";
+    console.error("❌ OpenAI API Error:", err.response?.data || err.message);
+    
+    // Check for specific common errors to guide the user
+    if (err.message?.includes('401') || err.message?.includes('auth')) {
+      return "AI Connection Error: Check if your OpenAI API Key is valid and active.";
+    }
+    if (err.message?.includes('429') || err.message?.includes('quota')) {
+      return "AI Quota Error: Your OpenAI account seems to have $0 balance. Please add credits.";
+    }
+
+    return "I'm having trouble thinking right now. (Internal: " + (err.message || "Unknown error") + ")";
   }
 };
