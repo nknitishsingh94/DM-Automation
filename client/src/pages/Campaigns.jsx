@@ -62,6 +62,14 @@ export default function Campaigns() {
   useEffect(() => {
     fetchCampaigns();
     fetchFlows();
+
+    // --- AUTO-OPEN SETUP FLOW ---
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('setup')) {
+      setShowAdd(true);
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   }, []);
 
   const handleAddSubmit = async (e) => {
@@ -285,7 +293,9 @@ export default function Campaigns() {
 
       {showAdd && (
         <div className="table-card" style={{ padding: '24px', marginBottom: '32px', animation: 'fadeIn 0.3s ease-out' }}>
-          <h3 style={{ marginBottom: '20px' }}>Add New Trigger</h3>
+          <h3 style={{ marginBottom: '24px', fontSize: '1.5rem', fontWeight: '800', background: 'linear-gradient(90deg, var(--accent-main), #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            Configure Smart Automation Path
+          </h3>
           <form onSubmit={handleAddSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
             <div className="input-group">
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem' }}>Campaign Name</label>

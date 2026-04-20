@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { ShieldCheck, Instagram, Facebook, MessageSquare, Key, MapPin, Save, Info, CheckCircle, XCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ShieldCheck, Instagram, Facebook, MessageSquare, Key, MapPin, Save, Info, CheckCircle, XCircle, Rocket } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
 
 export default function Settings() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('instagram');
   const [settings, setSettings] = useState({
     instagramAccessToken: '',
@@ -50,9 +52,15 @@ export default function Settings() {
     if (params.get('oauth_success')) {
       // Re-load settings explicitly to get the new tokens from DB
       loadSettings();
-      notify("✅ Meta account(s) connected successfully!", "success");
+      notify("🚀 Meta account connected! Taking you to automation setup...", "success");
+      
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
+      
+      // AUTO-REDIRECT after a short delay for better UX
+      setTimeout(() => {
+        navigate('/campaigns?setup=true');
+      }, 2500);
     } else if (params.get('oauth_error')) {
       const errorType = params.get('oauth_error');
       let msg = "Facebook/Meta connection failed.";

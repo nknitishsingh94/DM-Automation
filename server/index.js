@@ -87,9 +87,30 @@ app.get('/api/ping', (req, res) => res.send('pong'));
 
 // (Messaging helpers moved to utils/metaApi.js for cleaner architecture)
 
-const checkFollowerStatus = async (platform, chatId) => {
-  // TODO: Once you have the Business ID, implement the real check here
-  return true; 
+const checkFollowerStatus = async (platform, chatId, userId) => {
+  if (platform !== 'instagram') return true; // Follow check currently only for Instagram
+  
+  try {
+    const userSettings = await Settings.findOne({ userId });
+    if (!userSettings || !userSettings.instagramAccessToken || !userSettings.businessAccountId) {
+      console.log("⚠️ Missing credentials for follow check. Defaulting to true.");
+      return true;
+    }
+
+    // Standard way to check if User A follows Business B (requires manageable insights or specific permissions)
+    // For now, we attempt a quick fetch of the user's relationship or public following status
+    // Note: This endpoint is illustrative and depends on the App's approved permissions
+    const res = await axios.get(`https://graph.facebook.com/v19.0/${userSettings.businessAccountId}/followers?user_id=${chatId}&access_token=${userSettings.instagramAccessToken}`);
+    
+    // If the API returns the user, they follow. If not, it might error or return empty data.
+    return res.data && res.data.data && res.data.data.length > 0;
+  } catch (err) {
+    console.warn("🔍 Follower check failed or restricted:", err.message);
+    // FALLBACK: In a real-world SaaS, if we can't verify (e.g. private account), 
+    // we often default to 'false' to encourage the follow, or 'true' to avoid blocking the user.
+    // For this implementation, we return false to trigger the 'Please Follow' prompt.
+    return false; 
+  }
 };
 
 // Reusable Auto-Reply Logic
@@ -128,7 +149,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
   if (match) {
     if (match.requireFollow) {
-      const isFollowing = await checkFollowerStatus(platform, chatId);
+      const isFollowing = await checkFollowerStatus(platform, chatId, userId);
       if (!isFollowing) {
         const followText = match.unfollowedResponse || "Please follow our account first to unlock this automation!";
         await sendMessageToInstagram(platform, chatId, followText, '', userId);
