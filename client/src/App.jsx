@@ -18,6 +18,7 @@ import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import AIStudio from './pages/AIStudio';
 import Forms from './pages/Forms';
+import FormDetail from './pages/FormDetail';
 import Referral from './pages/Referral';
 import Broadcasts from './pages/Broadcasts';
 import FlowBuilder from './pages/FlowBuilder';
@@ -330,6 +331,7 @@ function MainLayout() {
             <Route path="/upgrade" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
             <Route path="/ai-studio" element={<ProtectedRoute><AIStudio /></ProtectedRoute>} />
             <Route path="/forms" element={<ProtectedRoute><Forms /></ProtectedRoute>} />
+            <Route path="/forms/:id" element={<ProtectedRoute><FormDetail /></ProtectedRoute>} />
             <Route path="/broadcasts" element={<ProtectedRoute><Broadcasts /></ProtectedRoute>} />
             <Route path="/flow-builder/:id" element={<ProtectedRoute><FlowBuilder /></ProtectedRoute>} />
             <Route path="/refer" element={<ProtectedRoute><Referral /></ProtectedRoute>} />

@@ -168,24 +168,24 @@ export default function AIStudio() {
         </div>
         <div className="header-actions">
           <button className="btn-secondary">
-             <Database size={18} /> Manage Knowledge Base
+            <Database size={18} /> Manage Knowledge Base
           </button>
-          <button 
+          <button
             onClick={handleSave}
             disabled={isSaving}
             className="btn-primary"
           >
-             {isSaving ? 'Saving...' : <><Save size={18} /> Save Agent</>}
+            {isSaving ? 'Saving...' : <><Save size={18} /> Save Agent</>}
           </button>
         </div>
       </div>
 
       {/* Main Studio Grid */}
       <div className="studio-grid">
-        
+
         {/* LEFT COLUMN: Editor */}
         <div className="editor-column">
-          
+
           {/* Tabs */}
           <div className="tabs-container">
             {[
@@ -250,104 +250,104 @@ export default function AIStudio() {
           {activeTab === 'behavior' && (
             <div className="tab-content">
               <div className="card">
-                 <h3>Creativity vs Accuracy (Temperature)</h3>
-                 <div className="slider-container">
-                   <span>Strict</span>
-                   <input 
-                     type="range" 
-                     min="0" max="1" step="0.1" 
-                     value={aiSettings.aiTemperature}
-                     onChange={(e) => setAiSettings({...aiSettings, aiTemperature: parseFloat(e.target.value)})}
-                   />
-                   <span>Creative</span>
-                 </div>
-                 <div className="temp-display">{aiSettings.aiTemperature.toFixed(1)}</div>
-                 <p>Values closer to 0 adhere strictly to facts. Values near 1 generate highly creative responses.</p>
+                <h3>Creativity vs Accuracy (Temperature)</h3>
+                <div className="slider-container">
+                  <span>Strict</span>
+                  <input
+                    type="range"
+                    min="0" max="1" step="0.1"
+                    value={aiSettings.aiTemperature}
+                    onChange={(e) => setAiSettings({ ...aiSettings, aiTemperature: parseFloat(e.target.value) })}
+                  />
+                  <span>Creative</span>
+                </div>
+                <div className="temp-display">{aiSettings.aiTemperature.toFixed(1)}</div>
+                <p>Values closer to 0 adhere strictly to facts. Values near 1 generate highly creative responses.</p>
               </div>
 
               <div className="card">
-                 <div className="toggle-container">
-                   <div>
-                     <h3>Human Escalation</h3>
-                     <p>Transfer chat to admin when angry intent detected.</p>
-                   </div>
-                   <div 
-                     onClick={() => setAiSettings({...aiSettings, aiHumanEscalation: !aiSettings.aiHumanEscalation})}
-                     className={`toggle-switch ${aiSettings.aiHumanEscalation ? 'on' : ''}`}>
-                     <div className="toggle-thumb"></div>
-                   </div>
-                 </div>
+                <div className="toggle-container">
+                  <div>
+                    <h3>Human Escalation</h3>
+                    <p>Transfer chat to admin when angry intent detected.</p>
+                  </div>
+                  <div
+                    onClick={() => setAiSettings({ ...aiSettings, aiHumanEscalation: !aiSettings.aiHumanEscalation })}
+                    className={`toggle-switch ${aiSettings.aiHumanEscalation ? 'on' : ''}`}>
+                    <div className="toggle-thumb"></div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
           {activeTab === 'advanced' && (
-             <div className="card advanced-placeholder">
-                <Sliders size={48} />
-                <h3>OpenAI / Custom API Link</h3>
-                <p>Connect your own LLM model API wrapper for deeper customization.</p>
-                <div className="dev-mode-badge">
-                  Available in Developer Mode
-                </div>
-             </div>
+            <div className="card advanced-placeholder">
+              <Sliders size={48} />
+              <h3>OpenAI / Custom API Link</h3>
+              <p>Connect your own LLM model API wrapper for deeper customization.</p>
+              <div className="dev-mode-badge">
+                Available in Developer Mode
+              </div>
+            </div>
           )}
 
         </div>
 
         {/* RIGHT COLUMN: Mobile Simulator */}
         <div className="simulator-column">
-           <div className="mobile-simulator">
-             
-             {/* Simulator Header */}
-             <div className="simulator-header">
-               <Smartphone size={20} />
-               <div>
-                 <div>Live Preview</div>
-                 <div className="status-badge">
-                   <div></div> Agent Active
-                 </div>
-               </div>
-             </div>
+          <div className="mobile-simulator">
 
-             {/* Chat History */}
-             <div className="chat-history">
-               {chatHistory.map((msg, idx) => (
-                 <div key={idx} className={`chat-bubble ${msg.role}`}>
-                   <div className="avatar">
-                     {msg.role === 'user' ? <User size={14} /> : <Sparkles size={14} />}
-                   </div>
-                   <div className="message-text">
-                     {msg.text}
-                   </div>
-                 </div>
-               ))}
-               
-               {isTyping && (
-                 <div style={{ display: 'flex', gap: '12px', alignSelf: 'flex-start' }}>
-                   <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #db2777)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}><Sparkles size={14} /></div>
-                   <div style={{ padding: '12px 16px', borderRadius: '16px', background: '#ffffff', border: '1px solid #e2e8f0', borderTopLeftRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                     <div className="typing-dot" style={{width: '6px', height: '6px', background: '#cbd5e1', borderRadius: '50%', animation: 'pulse 1.5s infinite'}}></div>
-                     <div className="typing-dot" style={{width: '6px', height: '6px', background: '#cbd5e1', borderRadius: '50%', animation: 'pulse 1.5s infinite 0.2s'}}></div>
-                     <div className="typing-dot" style={{width: '6px', height: '6px', background: '#cbd5e1', borderRadius: '50%', animation: 'pulse 1.5s infinite 0.4s'}}></div>
-                   </div>
-                 </div>
-               )}
-             </div>
+            {/* Simulator Header */}
+            <div className="simulator-header">
+              <Smartphone size={20} />
+              <div>
+                <div>Live Preview</div>
+                <div className="status-badge">
+                  <div></div> Agent Active
+                </div>
+              </div>
+            </div>
 
-             {/* Chat Input */}
-             <form onSubmit={handleTestChat} style={{ padding: '16px', background: '#ffffff', borderTop: '1px solid #e2e8f0', display: 'flex', gap: '12px' }}>
-               <input 
-                 type="text" 
-                 placeholder="Type a message to test..." 
-                 value={testMessage}
-                 onChange={(e) => setTestMessage(e.target.value)}
-                 style={{ flex: 1, background: '#f1f5f9', border: 'none', padding: '12px 16px', borderRadius: '24px', outline: 'none', fontSize: '0.9rem' }}
-               />
-               <button type="submit" disabled={!testMessage.trim()} style={{ background: testMessage.trim() ? '#7c3aed' : '#e2e8f0', color: 'white', border: 'none', width: '42px', height: '42px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: testMessage.trim() ? 'pointer' : 'not-allowed', transition: 'all 0.2s' }}>
-                 <Send size={16} style={{ marginLeft: '2px' }} />
-               </button>
-             </form>
-           </div>
+            {/* Chat History */}
+            <div className="chat-history">
+              {chatHistory.map((msg, idx) => (
+                <div key={idx} className={`chat-bubble ${msg.role}`}>
+                  <div className="avatar">
+                    {msg.role === 'user' ? <User size={14} /> : <Sparkles size={14} />}
+                  </div>
+                  <div className="message-text">
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+
+              {isTyping && (
+                <div style={{ display: 'flex', gap: '12px', alignSelf: 'flex-start' }}>
+                  <div className="avatar ai">
+                    <Sparkles size={14} />
+                  </div>
+                  <div className="message-text">
+                    <TypingDots />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Chat Input */}
+            <form onSubmit={handleTestChat} style={{ padding: '16px', background: '#ffffff', borderTop: '1px solid #e2e8f0', display: 'flex', gap: '12px' }}>
+              <input
+                type="text"
+                placeholder="Type a message to test..."
+                value={testMessage}
+                onChange={(e) => setTestMessage(e.target.value)}
+                style={{ flex: 1, background: '#f1f5f9', border: 'none', padding: '12px 16px', borderRadius: '24px', outline: 'none', fontSize: '0.9rem' }}
+              />
+              <button type="submit" disabled={!testMessage.trim()} style={{ background: testMessage.trim() ? '#7c3aed' : '#e2e8f0', color: 'white', border: 'none', width: '42px', height: '42px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: testMessage.trim() ? 'pointer' : 'not-allowed', transition: 'all 0.2s' }}>
+                <Send size={16} style={{ marginLeft: '2px' }} />
+              </button>
+            </form>
+          </div>
         </div>
 
       </div>

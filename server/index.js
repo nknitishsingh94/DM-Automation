@@ -36,6 +36,7 @@ import { runFlow } from './utils/FlowRunner.js';
 import { sendMessageToInstagram, sendWhatsAppMessage, sendPrivateReply } from './utils/metaApi.js';
 import authRoutes from './routes/auth.js';
 import paymentRoutes from './routes/payment.js';
+import formRoutes from './routes/forms.js';
 // --- MULTER SETUP (Media Uploads) ---
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
@@ -476,6 +477,7 @@ app.post('/api/webhook', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/oauth', oauthRoutes);
+app.use('/api/forms', formRoutes);
 
 // --- MEDIA UPLOAD ROUTE ---
 app.post('/api/upload', verifyToken, upload.single('media'), (req, res) => {
