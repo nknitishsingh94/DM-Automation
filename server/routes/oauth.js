@@ -9,7 +9,13 @@ const router = express.Router();
 // Step 1: Redirect to Facebook OAuth
 router.get('/facebook', verifyToken, (req, res) => {
   const appId = process.env.META_APP_ID;
-  const redirectUri = encodeURIComponent(`${process.env.API_BASE_URL || 'http://localhost:5000'}/api/oauth/facebook/callback`);
+  const baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+  
+  if (!process.env.API_BASE_URL && process.env.NODE_ENV === 'production') {
+    return res.status(500).json({ error: "Missing API_BASE_URL in production environment. Please set it in Render/Vercel settings." });
+  }
+
+  const redirectUri = encodeURIComponent(`${baseUrl}/api/oauth/facebook/callback`);
   // Scope defines what permissions we are asking for
   // Unified scope for Instagram, Facebook Pages, and WhatsApp Business
   // Added 'instagram_basic' and 'pages_show_list' for more reliable account discovery
@@ -47,7 +53,8 @@ router.get('/facebook/callback', async (req, res) => {
   try {
     const appId = process.env.META_APP_ID;
     const appSecret = process.env.META_APP_SECRET;
-    const redirectUri = `${process.env.API_BASE_URL || 'http://localhost:5000'}/api/oauth/facebook/callback`;
+    const baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+    const redirectUri = `${baseUrl}/api/oauth/facebook/callback`;
 
     // 1. Exchange the auth 'code' for a short-lived access token
     const tokenUrl = `https://graph.facebook.com/v19.0/oauth/access_token?client_id=${appId}&redirect_uri=${redirectUri}&client_secret=${appSecret}&code=${code}`;
