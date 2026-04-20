@@ -34,7 +34,7 @@ export const generateAIResponse = async (userId, userMessage) => {
         apiKey: groqKey,
         baseURL: "https://api.groq.com/openai/v1"
       });
-      modelName = "llama-3.1-70b-versatile"; // High performance free model
+      modelName = "llama3-8b-8192"; // Super fast, high-limit free model
       console.log(`🚀 Using Groq for user ${userId}`);
     } else {
       // Fallback to OpenAI
