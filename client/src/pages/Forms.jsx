@@ -55,6 +55,11 @@ export default function Forms() {
       const res = await fetch(`${API_BASE_URL}/api/forms`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` }
       });
+      if (res.status === 401) {
+        logout();
+        navigate('/login');
+        return;
+      }
       const data = await res.json();
       if (Array.isArray(data)) {
         setForms(data);

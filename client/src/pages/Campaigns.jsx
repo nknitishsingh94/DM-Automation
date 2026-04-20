@@ -7,7 +7,7 @@ import { useNotification } from '../App';
 
 export default function Campaigns() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { notify } = useNotification();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +39,11 @@ export default function Campaigns() {
       const res = await fetch(`${API_BASE_URL}/api/campaigns`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      if (res.status === 401) {
+        logout();
+        navigate('/login');
+        return;
+      }
       const data = await res.json();
       if (Array.isArray(data)) {
         setCampaigns(data);
@@ -59,6 +64,11 @@ export default function Campaigns() {
       const res = await fetch(`${API_BASE_URL}/api/flows`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      if (res.status === 401) {
+        logout();
+        navigate('/login');
+        return;
+      }
       const data = await res.json();
       if (Array.isArray(data)) {
         setFlows(data);
