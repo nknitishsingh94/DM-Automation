@@ -142,7 +142,7 @@ export default function Subscription() {
               <div className="pro-badge">Most Popular</div>
               <div className="card-header">
                 <h3>Pro</h3>
-                <div className="price"><span>$</span>29<span>/mo</span></div>
+                <div className="price"><span>$</span>19<span>/mo</span></div>
                 <p>For growing creators and businesses.</p>
               </div>
               <div className="card-features">
@@ -162,7 +162,7 @@ export default function Subscription() {
             <div className="pricing-card">
               <div className="card-header">
                 <h3>Agency</h3>
-                <div className="price"><span>$</span>50<span>/mo</span></div>
+                <div className="price"><span>$</span>39<span>/mo</span></div>
                 <p>For agencies managing multi-accounts.</p>
               </div>
               <div className="card-features">
