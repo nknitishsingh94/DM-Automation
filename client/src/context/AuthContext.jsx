@@ -4,8 +4,13 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('insta_agent_user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      const savedUser = localStorage.getItem('insta_agent_user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (e) {
+      localStorage.removeItem('insta_agent_user');
+      return null;
+    }
   });
   const [loading, setLoading] = useState(false);
 

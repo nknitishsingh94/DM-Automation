@@ -55,7 +55,11 @@ export default function Forms() {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` }
       });
       const data = await res.json();
-      setForms(data);
+      if (Array.isArray(data)) {
+        setForms(data);
+      } else {
+        setForms([]);
+      }
     } catch (err) {
       toast.error('Failed to load forms');
     } finally {
