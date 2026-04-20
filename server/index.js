@@ -294,6 +294,7 @@ app.post('/api/webhook', async (req, res) => {
             const messageText = text || (isStoryMention ? "[Story Mention]" : "");
             
             console.log(`📬 Received ${isStoryMention ? 'Story Mention' : 'Message'} on Page ${pageId} from ${senderId}: ${messageText}`);
+            console.log(`🔍 DEBUG: Webhook Object: ${body.object}, Entry PageID: ${pageId}`);
             
             // Find the user who connected this Page ID in their Settings
             const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
