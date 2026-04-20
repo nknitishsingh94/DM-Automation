@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
 import { generateAIResponse } from './aiHandler.js';
+import Flow from '../models/Flow.js';
+import Contact from '../models/Contact.js';
+import Message from '../models/Message.js';
+import { sendMessageToInstagram, sendPrivateReply } from './metaApi.js';
 
 /**
  * FlowRunner Engine
