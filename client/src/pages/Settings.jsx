@@ -104,7 +104,7 @@ export default function Settings() {
   if (loading) return <div style={{ color: 'var(--text-muted)' }}>Loading configuration...</div>;
 
   return (
-    <div style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '24px' }}>
       
       {/* Premium Platform Tabs */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
@@ -265,7 +265,7 @@ export default function Settings() {
                     />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 640 ? '1fr' : '1fr 1fr', gap: '24px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       <label style={{ fontWeight: '700', fontSize: '0.95rem', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <MapPin size={16} color="#ec4899" /> Page ID
