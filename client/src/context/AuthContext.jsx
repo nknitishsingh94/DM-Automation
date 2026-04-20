@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 
 const AuthContext = createContext();
 
@@ -39,7 +40,7 @@ export function AuthProvider({ children }) {
     if (!token) return;
 
     try {
-      const res = await fetch(`${window.location.origin.includes('localhost') ? 'http://localhost:5000' : 'https://dm-automation-lu44.onrender.com'}/api/auth/profile`, {
+      const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {

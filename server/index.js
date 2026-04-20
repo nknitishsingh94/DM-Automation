@@ -75,12 +75,12 @@ app.use((req, res, next) => {
 
 app.use(cors({
   origin: (origin, callback) => {
+    // Permit all local origins and all Vercel subdomains dynamically to resolve CORS Blocked:Origin
     if (!origin) return callback(null, true);
-    const allowedOrigins = [
-      'http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5000',
-      'https://dm-automation-roan.vercel.app'
-    ];
-    callback(null, true); 
+    if (origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('vercel.app')) {
+      return callback(null, origin);
+    }
+    callback(new Error('Not allowed by CORS'));
   },
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
