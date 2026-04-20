@@ -109,14 +109,18 @@ export default function Signup() {
   useEffect(() => {
     /* Initialize Google Login */
     if (window.google) {
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: handleGoogleResponse
-      });
-        window.google.accounts.id.renderButton(
-          document.getElementById("googleBtn"),
-          { theme: "outline", size: "large", width: "320", shape: "rectangular" }
-        );
+      if (!window.google_initialized) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleResponse
+        });
+        window.google_initialized = true;
+      }
+      
+      window.google.accounts.id.renderButton(
+        document.getElementById("googleBtn"),
+        { theme: "outline", size: "large", width: "320", shape: "rectangular" }
+      );
     }
   }, []);
 

@@ -422,10 +422,15 @@ export default function Login() {
   useEffect(() => {
     const initGoogle = () => {
       if (window.google && document.getElementById("googleBtn")) {
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: handleGoogleResponse
-        });
+        // Prevent multiple initializations to satisfy GSI_LOGGER
+        if (!window.google_initialized) {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGoogleResponse
+          });
+          window.google_initialized = true;
+        }
+        
         window.google.accounts.id.renderButton(
           document.getElementById("googleBtn"),
           { theme: "outline", size: "large", width: "340", logo_alignment: "center", shape: "rectangular" }
