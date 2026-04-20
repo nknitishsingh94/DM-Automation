@@ -74,7 +74,7 @@ router.post('/login', async (req, res) => {
       await welcomeMessage.save();
     }
 
-    res.json({ token, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto } });
+    res.json({ token, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
 
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -132,7 +132,7 @@ router.post('/google', async (req, res) => {
     }
 
     const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
-    res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto } });
+    res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
   } catch (err) {
     console.error("❌ Google Auth Error:", err.message);
     res.status(500).json({ message: "Google Auth Failed: " + err.message });
@@ -175,7 +175,7 @@ router.post('/google_custom', async (req, res) => {
     }
 
     const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
-    res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto } });
+    res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
   } catch (err) {
     console.error("❌ Custom Google Auth Error:", err.message);
     res.status(500).json({ message: "Custom Google Auth Failed: " + err.message });
@@ -241,7 +241,7 @@ router.post('/facebook', async (req, res) => {
     }
 
     const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
-    res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto } });
+    res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
   } catch (err) {
     console.error("❌ Facebook Auth Error:", err.message);
     res.status(500).json({ message: "Facebook Auth Failed: " + err.message });
