@@ -7,27 +7,47 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 
-// Lazy load heavy components
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Inbox = lazy(() => import('./pages/Inbox'));
-const SettingsPage = lazy(() => import('./pages/Settings'));
-const Profile = lazy(() => import('./pages/Profile'));
-const Campaigns = lazy(() => import('./pages/Campaigns'));
-const Audiences = lazy(() => import('./pages/Audiences'));
-const Subscription = lazy(() => import('./pages/Subscription'));
-const HelpCenter = lazy(() => import('./pages/HelpCenter'));
-const AIStudio = lazy(() => import('./pages/AIStudio'));
-const Forms = lazy(() => import('./pages/Forms'));
-const FormDetail = lazy(() => import('./pages/FormDetail'));
-const Referral = lazy(() => import('./pages/Referral'));
-const Broadcasts = lazy(() => import('./pages/Broadcasts'));
-const FlowBuilder = lazy(() => import('./pages/FlowBuilder'));
-const About = lazy(() => import('./pages/About'));
-const Resources = lazy(() => import('./pages/Resources'));
-const Blog = lazy(() => import('./pages/Blog'));
-const BlogPost = lazy(() => import('./pages/BlogPost'));
-const Privacy = lazy(() => import('./pages/Privacy'));
-const Terms = lazy(() => import('./pages/Terms'));
+// Helper to handle lazy loading retries (Fixes 'Failed to fetch dynamically imported module')
+const lazyRetry = (componentImport) => {
+  return lazy(async () => {
+    const pageHasAlreadyBeenForceRefreshed = JSON.parse(
+      window.sessionStorage.getItem('page-has-been-force-refreshed') || 'false'
+    );
+    try {
+      const component = await componentImport();
+      window.sessionStorage.setItem('page-has-been-force-refreshed', 'false');
+      return component;
+    } catch (error) {
+      if (!pageHasAlreadyBeenForceRefreshed) {
+        window.sessionStorage.setItem('page-has-been-force-refreshed', 'true');
+        return window.location.reload();
+      }
+      throw error;
+    }
+  });
+};
+
+// Lazy load heavy components with retry logic
+const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
+const Inbox = lazyRetry(() => import('./pages/Inbox'));
+const SettingsPage = lazyRetry(() => import('./pages/Settings'));
+const Profile = lazyRetry(() => import('./pages/Profile'));
+const Campaigns = lazyRetry(() => import('./pages/Campaigns'));
+const Audiences = lazyRetry(() => import('./pages/Audiences'));
+const Subscription = lazyRetry(() => import('./pages/Subscription'));
+const HelpCenter = lazyRetry(() => import('./pages/HelpCenter'));
+const AIStudio = lazyRetry(() => import('./pages/AIStudio'));
+const Forms = lazyRetry(() => import('./pages/Forms'));
+const FormDetail = lazyRetry(() => import('./pages/FormDetail'));
+const Referral = lazyRetry(() => import('./pages/Referral'));
+const Broadcasts = lazyRetry(() => import('./pages/Broadcasts'));
+const FlowBuilder = lazyRetry(() => import('./pages/FlowBuilder'));
+const About = lazyRetry(() => import('./pages/About'));
+const Resources = lazyRetry(() => import('./pages/Resources'));
+const Blog = lazyRetry(() => import('./pages/Blog'));
+const BlogPost = lazyRetry(() => import('./pages/BlogPost'));
+const Privacy = lazyRetry(() => import('./pages/Privacy'));
+const Terms = lazyRetry(() => import('./pages/Terms'));
 
 const NotificationContext = createContext();
 export const useNotification = () => useContext(NotificationContext);
