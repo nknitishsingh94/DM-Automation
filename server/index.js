@@ -100,18 +100,17 @@ const checkFollowerStatus = async (platform, chatId, userId) => {
   
   try {
     const userSettings = await Settings.findOne({ userId });
-    if (!userSettings || !userSettings.instagramAccessToken || !userSettings.businessAccountId) {
+    if (!userSettings || !userSettings.instagramAccessToken) {
       console.log("⚠️ Missing credentials for follow check. Defaulting to true.");
       return true;
     }
 
-    // Standard way to check if User A follows Business B (requires manageable insights or specific permissions)
-    // For now, we attempt a quick fetch of the user's relationship or public following status
-    // Note: This endpoint is illustrative and depends on the App's approved permissions
-    const res = await axios.get(`https://graph.facebook.com/v19.0/${userSettings.businessAccountId}/followers?user_id=${chatId}&access_token=${userSettings.instagramAccessToken}`);
+    // Official Instagram Messaging API way to check if a user follows the business.
+    // Requires instagram_manage_messages and instagram_basic permissions.
+    const res = await axios.get(`https://graph.facebook.com/v19.0/${chatId}?fields=is_user_follow_business&access_token=${userSettings.instagramAccessToken}`);
     
-    // If the API returns the user, they follow. If not, it might error or return empty data.
-    return res.data && res.data.data && res.data.data.length > 0;
+    // is_user_follow_business is a boolean returned by Meta
+    return !!(res.data && res.data.is_user_follow_business === true);
   } catch (err) {
     // FALLBACK: If we can't verify (e.g. permission missing or private), 
     // we return 'true' to ensure the user's automation isn't blocked.
