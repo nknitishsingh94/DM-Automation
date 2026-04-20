@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import { Sparkles, Save, Brain, MessageSquare, Sliders, Database, Play, CheckCircle, Smartphone, Send, Settings as SettingsIcon, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import toast, { Toaster } from 'react-hot-toast';
+import TypingDots from '../components/TypingDots';
+import FormField from '../components/FormField';
+import '../styles/theme.css';
 
 export default function AIStudio() {
   const [activeTab, setActiveTab] = useState('persona');
@@ -14,16 +18,18 @@ export default function AIStudio() {
 
   // Mapped to backend schema names
   const [aiSettings, setAiSettings] = useState({
-    aiName: 'Zen Assistant',
+    aiName: 'ZenXchat Assistant',
     aiTone: 'professional, helpful, and concise',
     aiKnowledgeBase: 'We are a SaaS company providing DM automation.',
     aiTemperature: 0.7,
     aiFallbackMessage: 'I am not sure about that, please contact human support at help@zenxchat.com',
     aiHumanEscalation: false
   });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem('insta_agent_token');
+    // Load AI settings
     fetch(`${API_BASE_URL}/api/settings`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
@@ -41,71 +47,133 @@ export default function AIStudio() {
           }));
         }
       })
-      .catch(err => console.error("Error loading AI settings:", err));
+      .catch(err => console.error('Error loading AI settings:', err));
+
+    // Load persisted chat history
+    fetch(`${API_BASE_URL}/api/chats`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(messages => {
+        if (Array.isArray(messages)) setChatHistory(messages);
+      })
+      .catch(err => console.error('Error loading chat history:', err));
   }, []);
 
-  const handleTestChat = (e) => {
+  const handleTestChat = async (e) => {
     e.preventDefault();
     if (!testMessage.trim()) return;
-    
-    setChatHistory(prev => [...prev, { role: 'user', text: testMessage }]);
+
+    const token = localStorage.getItem('insta_agent_token');
+    const userMsg = { role: 'user', text: testMessage };
+    // Optimistically add user message
+    setChatHistory(prev => [...prev, userMsg]);
     setTestMessage('');
     setIsTyping(true);
 
-    // Simulate AI response based on settings
-    setTimeout(() => {
+    // Persist user message
+    try {
+      await fetch(`${API_BASE_URL}/api/chats`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(userMsg)
+      });
+    } catch (err) {
+      console.error('Error saving user message:', err);
+    }
+
+    // Call backend AI chat endpoint
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ message: testMessage, settings: aiSettings })
+      });
+      const data = await res.json();
+      const aiMsg = { role: 'ai', text: data.reply || 'No response' };
+      setChatHistory(prev => [...prev, aiMsg]);
+      // Persist AI message
+      await fetch(`${API_BASE_URL}/api/chats`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(aiMsg)
+      });
+      toast.success('AI responded');
+    } catch (err) {
+      console.error('Error fetching AI response:', err);
+      toast.error('Failed to get AI response');
+    } finally {
       setIsTyping(false);
-      setChatHistory(prev => [...prev, { role: 'ai', text: `As a ${aiSettings.aiTone} assistant, I understand. (Simulated Response based on: ${aiSettings.aiName})` }]);
-    }, 1500);
+    }
   };
 
   const handleSave = async () => {
+    // Simple validation for all required fields
+    const newErrors = {};
+    if (!aiSettings.aiName.trim()) newErrors.aiName = 'Agent name is required';
+    if (!aiSettings.aiTone.trim()) newErrors.aiTone = 'Conversational tone is required';
+    if (!aiSettings.aiKnowledgeBase.trim()) newErrors.aiKnowledgeBase = 'System prompt is required';
+    if (!aiSettings.aiFallbackMessage.trim()) newErrors.aiFallbackMessage = 'Fallback message is required';
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      toast.error('Please fix the highlighted errors');
+      return;
+    }
     setIsSaving(true);
     try {
       const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/settings`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        // We only send AI settings here; the backend will merge them keeping tokens intact
         body: JSON.stringify({ ...aiSettings, _platform: 'ai_studio' })
       });
-      
       if (res.ok) {
-        alert('AI Configuration Saved Successfully!');
+        toast.success('AI Configuration Saved Successfully!');
       } else {
-        alert('Failed to save configuration.');
+        const errData = await res.json();
+        toast.error(errData.error || 'Failed to save configuration');
       }
     } catch (err) {
-      alert('Network error while saving.');
+      toast.error('Network error while saving');
     } finally {
       setIsSaving(false);
     }
   };
 
   return (
-    <div style={{ padding: '0 40px 40px', display: 'flex', flexDirection: 'column', height: 'calc(100vh - 100px)' }}>
+    <div className="container">
+      <Toaster />
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      <div className="header-section">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
-            <div style={{ padding: '10px', background: 'linear-gradient(135deg, #7c3aed, #db2777)', borderRadius: '12px', color: 'white' }}>
+          <div className="header-title">
+            <div className="icon-box">
               <Sparkles size={24} />
             </div>
-            <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#1e293b' }}>AI Studio Configurator</h2>
+            <h2>AI Studio Configurator</h2>
           </div>
-          <p style={{ color: '#64748b', fontSize: '15px' }}>Train your custom AI Agent and test its personality in real-time.</p>
+          <p>Train your custom AI Agent and test its personality in real-time.</p>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button style={{ background: '#ffffff', color: '#1e293b', padding: '10px 20px', borderRadius: '12px', fontWeight: '700', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+        <div className="header-actions">
+          <button className="btn-secondary">
              <Database size={18} /> Manage Knowledge Base
           </button>
           <button 
             onClick={handleSave}
             disabled={isSaving}
-            style={{ background: '#7c3aed', color: 'white', padding: '10px 24px', borderRadius: '12px', fontWeight: '700', border: 'none', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', opacity: isSaving ? 0.7 : 1, boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)' }}
+            className="btn-primary"
           >
              {isSaving ? 'Saving...' : <><Save size={18} /> Save Agent</>}
           </button>
@@ -113,13 +181,13 @@ export default function AIStudio() {
       </div>
 
       {/* Main Studio Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 380px', gap: '32px', flex: 1, minHeight: 0 }}>
+      <div className="studio-grid">
         
         {/* LEFT COLUMN: Editor */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto', paddingRight: '12px' }}>
+        <div className="editor-column">
           
           {/* Tabs */}
-          <div style={{ display: 'flex', gap: '8px', background: '#f8fafc', padding: '6px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+          <div className="tabs-container">
             {[
               { id: 'persona', label: 'Persona & Role', icon: <Brain size={16} /> },
               { id: 'behavior', label: 'Behavioral Tuning', icon: <Sliders size={16} /> },
@@ -128,13 +196,7 @@ export default function AIStudio() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                style={{
-                  flex: 1, padding: '10px', borderRadius: '10px', fontWeight: '600', fontSize: '0.9rem',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: 'none', cursor: 'pointer', transition: 'all 0.2s',
-                  background: activeTab === tab.id ? '#ffffff' : 'transparent',
-                  color: activeTab === tab.id ? '#7c3aed' : '#64748b',
-                  boxShadow: activeTab === tab.id ? '0 2px 8px rgba(0,0,0,0.05)' : 'none'
-                }}
+                className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
               >
                 {tab.icon} {tab.label}
               </button>
@@ -143,54 +205,42 @@ export default function AIStudio() {
 
           {/* Persona Tab */}
           {activeTab === 'persona' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fadeIn 0.3s ease-out' }}>
-              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Identity & Voice</h3>
-                
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '600', color: '#475569', marginBottom: '8px' }}>Agent Name</label>
-                  <input 
-                    type="text" 
-                    value={aiSettings.aiName}
-                    onChange={(e) => setAiSettings({...aiSettings, aiName: e.target.value})}
-                    style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem', outline: 'none' }}
-                  />
-                </div>
+            <div className="tab-content">
+              <div className="card">
+                <h3>Identity & Voice</h3>
+                <FormField
+                  label="Agent Name"
+                  value={aiSettings.aiName}
+                  onChange={val => setAiSettings({ ...aiSettings, aiName: val })}
+                  error={errors.aiName}
+                />
 
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '600', color: '#475569', marginBottom: '8px' }}>Conversational Tone</label>
-                  <input 
-                    type="text" 
-                    placeholder="e.g. Friendly, professional, humorous..."
-                    value={aiSettings.aiTone}
-                    onChange={(e) => setAiSettings({...aiSettings, aiTone: e.target.value})}
-                    style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem', outline: 'none' }}
-                  />
-                </div>
+                <FormField
+                  label="Conversational Tone"
+                  placeholder="e.g. Friendly, professional, humorous..."
+                  value={aiSettings.aiTone}
+                  onChange={val => setAiSettings({ ...aiSettings, aiTone: val })}
+                  error={errors.aiTone}
+                />
 
-                <div>
-                  <label style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: '600', color: '#475569', marginBottom: '8px' }}>
-                    <span>System Prompt / Context</span>
-                    <span style={{ color: '#8b5cf6', fontSize: '0.8rem', cursor: 'pointer' }}>Use Template</span>
-                  </label>
-                  <textarea 
-                    rows={5}
-                    value={aiSettings.aiKnowledgeBase}
-                    onChange={(e) => setAiSettings({...aiSettings, aiKnowledgeBase: e.target.value})}
-                    style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem', outline: 'none', resize: 'vertical', fontFamily: 'inherit' }}
-                  />
-                  <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '8px' }}>Instruct the AI on strictly what rules to follow.</p>
-                </div>
+                <FormField
+                  label="System Prompt / Context"
+                  isTextarea={true}
+                  rows={5}
+                  value={aiSettings.aiKnowledgeBase}
+                  onChange={val => setAiSettings({ ...aiSettings, aiKnowledgeBase: val })}
+                  error={errors.aiKnowledgeBase}
+                  extraLabel={<span style={{ color: '#8b5cf6', fontSize: '0.8rem', cursor: 'pointer' }}>Use Template</span>}
+                />
               </div>
 
-              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Fallback Execution</h3>
-                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '600', color: '#475569', marginBottom: '8px' }}>Message to send when AI is unsure</label>
-                <input 
-                  type="text" 
+              <div className="card">
+                <h3>Fallback Execution</h3>
+                <FormField
+                  label="Message to send when AI is unsure"
                   value={aiSettings.aiFallbackMessage}
-                  onChange={(e) => setAiSettings({...aiSettings, aiFallbackMessage: e.target.value})}
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem', outline: 'none' }}
+                  onChange={val => setAiSettings({ ...aiSettings, aiFallbackMessage: val })}
+                  error={errors.aiFallbackMessage}
                 />
               </div>
             </div>
@@ -198,34 +248,33 @@ export default function AIStudio() {
 
           {/* Behavior Tab */}
           {activeTab === 'behavior' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fadeIn 0.3s ease-out' }}>
-              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
-                 <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>Creativity vs Accuracy (Temperature)</h3>
-                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
-                   <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#64748b' }}>Strict</span>
+            <div className="tab-content">
+              <div className="card">
+                 <h3>Creativity vs Accuracy (Temperature)</h3>
+                 <div className="slider-container">
+                   <span>Strict</span>
                    <input 
                      type="range" 
                      min="0" max="1" step="0.1" 
                      value={aiSettings.aiTemperature}
                      onChange={(e) => setAiSettings({...aiSettings, aiTemperature: parseFloat(e.target.value)})}
-                     style={{ flex: 1, accentColor: '#7c3aed' }}
                    />
-                   <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#64748b' }}>Creative</span>
+                   <span>Creative</span>
                  </div>
-                 <div style={{ textAlign: 'center', fontSize: '1.4rem', fontWeight: '800', color: '#7c3aed' }}>{aiSettings.aiTemperature.toFixed(1)}</div>
-                 <p style={{ fontSize: '0.85rem', color: '#94a3b8', textAlign: 'center', marginTop: '8px' }}>Values closer to 0 adhere strictly to facts. Values near 1 generate highly creative responses.</p>
+                 <div className="temp-display">{aiSettings.aiTemperature.toFixed(1)}</div>
+                 <p>Values closer to 0 adhere strictly to facts. Values near 1 generate highly creative responses.</p>
               </div>
 
-              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="card">
+                 <div className="toggle-container">
                    <div>
-                     <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '4px' }}>Human Escalation</h3>
-                     <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>Transfer chat to admin when angry intent detected.</p>
+                     <h3>Human Escalation</h3>
+                     <p>Transfer chat to admin when angry intent detected.</p>
                    </div>
                    <div 
                      onClick={() => setAiSettings({...aiSettings, aiHumanEscalation: !aiSettings.aiHumanEscalation})}
-                     style={{ width: '44px', height: '24px', background: aiSettings.aiHumanEscalation ? '#10b981' : '#e2e8f0', borderRadius: '12px', position: 'relative', cursor: 'pointer', transition: 'all 0.2s' }}>
-                     <div style={{ width: '20px', height: '20px', background: 'white', borderRadius: '50%', position: 'absolute', top: '2px', left: aiSettings.aiHumanEscalation ? '22px' : '2px', transition: 'all 0.2s' }}></div>
+                     className={`toggle-switch ${aiSettings.aiHumanEscalation ? 'on' : ''}`}>
+                     <div className="toggle-thumb"></div>
                    </div>
                  </div>
               </div>
@@ -233,11 +282,11 @@ export default function AIStudio() {
           )}
 
           {activeTab === 'advanced' && (
-             <div style={{ background: '#ffffff', borderRadius: '20px', padding: '40px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', textAlign: 'center' }}>
-                <Sliders size={48} color="#cbd5e1" style={{ marginBottom: '16px' }} />
-                <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>OpenAI / Custom API Link</h3>
-                <p style={{ color: '#64748b', fontSize: '0.95rem', marginBottom: '24px' }}>Connect your own LLM model API wrapper for deeper customization.</p>
-                <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px dashed #cbd5e1', color: '#94a3b8', fontSize: '0.9rem', fontWeight: '600' }}>
+             <div className="card advanced-placeholder">
+                <Sliders size={48} />
+                <h3>OpenAI / Custom API Link</h3>
+                <p>Connect your own LLM model API wrapper for deeper customization.</p>
+                <div className="dev-mode-badge">
                   Available in Developer Mode
                 </div>
              </div>
@@ -246,28 +295,28 @@ export default function AIStudio() {
         </div>
 
         {/* RIGHT COLUMN: Mobile Simulator */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '720px' }}>
-           <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '32px', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%', boxShadow: '0 20px 40px rgba(0,0,0,0.08)', position: 'relative' }}>
+        <div className="simulator-column">
+           <div className="mobile-simulator">
              
              {/* Simulator Header */}
-             <div style={{ background: '#f8fafc', padding: '20px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 10 }}>
-               <Smartphone size={20} color="#64748b" />
-               <div style={{ flex: 1 }}>
-                 <div style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Live Preview</div>
-                 <div style={{ fontSize: '0.75rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                   <div style={{ width: '6px', height: '6px', background: '#10b981', borderRadius: '50%' }}></div> Agent Active
+             <div className="simulator-header">
+               <Smartphone size={20} />
+               <div>
+                 <div>Live Preview</div>
+                 <div className="status-badge">
+                   <div></div> Agent Active
                  </div>
                </div>
              </div>
 
              {/* Chat History */}
-             <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', background: '#fafafa' }}>
+             <div className="chat-history">
                {chatHistory.map((msg, idx) => (
-                 <div key={idx} style={{ display: 'flex', gap: '12px', alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%', flexDirection: msg.role === 'user' ? 'row-reverse' : 'row' }}>
-                   <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: msg.role === 'user' ? '#cbd5e1' : 'linear-gradient(135deg, #7c3aed, #db2777)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0 }}>
+                 <div key={idx} className={`chat-bubble ${msg.role}`}>
+                   <div className="avatar">
                      {msg.role === 'user' ? <User size={14} /> : <Sparkles size={14} />}
                    </div>
-                   <div style={{ padding: '12px 16px', borderRadius: '16px', fontSize: '0.9rem', lineHeight: '1.4', background: msg.role === 'user' ? '#1e293b' : '#ffffff', color: msg.role === 'user' ? 'white' : '#1e293b', border: msg.role === 'user' ? 'none' : '1px solid #e2e8f0', borderTopLeftRadius: msg.role === 'ai' ? '4px' : '16px', borderTopRightRadius: msg.role === 'user' ? '4px' : '16px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                   <div className="message-text">
                      {msg.text}
                    </div>
                  </div>

@@ -61,10 +61,17 @@ export default function Campaigns() {
     }
   };
 
+  const [uploadError, setUploadError] = useState('');
+
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
+    // Client‑side size check (50 MB)
+    if (file.size > 50 * 1024 * 1024) {
+      setUploadError('❌ File is too large (max 50 MB). Please choose a smaller file.');
+      return;
+    }
+    setUploadError('');
     setUploading(true);
     const formData = new FormData();
     formData.append('media', file);
@@ -89,7 +96,6 @@ export default function Campaigns() {
       setUploading(false);
     }
   };
-
   useEffect(() => {
     fetchCampaigns();
     fetchFlows();
