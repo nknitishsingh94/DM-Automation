@@ -137,7 +137,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   });
   
   if (matchedFlow) {
-    console.log(`🌊 Triggering Flow: ${matchedFlow.name} for ${chatId}`);
+    console.log(`🌊 FLOW MATCH: Triggering Flow "${matchedFlow.name}" for Sender: ${chatId}`);
     await runFlow(userId, matchedFlow._id, chatId, platform, text, commentId);
     return { flow: matchedFlow.name };
   }
@@ -146,16 +146,27 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   
   // 2. Keyword Campaign Checking
   const activeCampaigns = await Campaign.find({ userId, status: 'Active' });
+  console.log(`🔍 CAMPAIGN AUDIT: Found ${activeCampaigns.length} active campaigns for user ${userId}.`);
+
   const match = activeCampaigns.find(c => {
     const platformMatch = c.platform === 'all' || c.platform === (platform || 'instagram');
     const sourceMatch = (c.triggerSource || 'dm') === source;
-    return platformMatch && sourceMatch && userMessage.includes(c.trigger.toLowerCase());
+    const keywordMatch = userMessage.includes(c.trigger.toLowerCase());
+    
+    if (keywordMatch) {
+        console.log(`🎯 KEYWORD FOUND: Trigger "${c.trigger}" matched in message. Checking conditions...`);
+    }
+    
+    return platformMatch && sourceMatch && keywordMatch;
   });
 
   if (match) {
+    console.log(`✅ CAMPAIGN MATCH: Using campaign "${match.name}" (ID: ${match._id})`);
     if (match.requireFollow) {
+      console.log(`🛡️ GATING: Campaign requires follower check for ${chatId}...`);
       const isFollowing = await checkFollowerStatus(platform, chatId, userId);
       if (!isFollowing) {
+        console.warn(`🛑 GATING FAIL: User ${chatId} does not follow the business account.`);
         const followText = match.unfollowedResponse || "Please follow our account first to unlock this automation!";
         await sendMessageToInstagram(platform, chatId, followText, '', userId);
         
@@ -185,6 +196,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   } 
 
   // 2. Dynamic OpenAI Fallback
+  console.log(`🤖 AI FALLBACK: No keyword matched. Generating dynamic response for: "${text}"`);
   const fallbackText = await generateAIResponse(userId, text);
     
   const fallbackReply = new Message({
@@ -310,13 +322,16 @@ app.post('/api/webhook', async (req, res) => {
             let targetUserId;
             if (userSettings) {
               targetUserId = userSettings.userId;
-              console.log(`✅ Matched Page ${pageId} to User ${targetUserId}`);
+              console.log(`✅ MATCH SUCCESS: Page ID ${pageId} matched User ${targetUserId} via Settings.`);
             } else {
+              console.warn(`🛑 MATCH FAIL: No user has connected Page/Business ID ${pageId} in their settings.`);
               // Fallback: find first user (for testing/single-user setups)
               const fallbackUser = await User.findOne();
               if (fallbackUser) {
                 targetUserId = fallbackUser._id;
-                console.warn(`⚠️ No Settings match for Page ${pageId}, using fallback user ${targetUserId}`);
+                console.warn(`⚠️ FALLBACK: Using first user ${targetUserId} for ID ${pageId}.`);
+              } else {
+                console.error(`💀 CRITICAL: No users exist in the database. Cannot process message.`);
               }
             }
             
@@ -675,7 +690,8 @@ app.post('/api/messages', verifyToken, async (req, res) => {
   try {
     const { sender, text, type, chatId, platform } = req.body;
     
-    // Check for Free Plan Limit (30 Unique Contacts)
+    // TEMPORARILY DISABLED FOR TESTING
+    /*
     const userProfile = await User.findById(req.user.userId);
     if (userProfile && userProfile.plan === 'free') {
       const existingMessage = await Message.findOne({ userId: req.user.userId, chatId: chatId || 'default' });
@@ -691,6 +707,7 @@ app.post('/api/messages', verifyToken, async (req, res) => {
         }
       }
     }
+    */
     
     // Explicitly casting userId to ObjectId to ensure it saves correctly
     const newMessage = new Message({

@@ -15,7 +15,7 @@ export const runFlow = async (userId, flowId, contactId, platform, initialText =
     if (!flow || flow.status !== 'Active') return;
 
     const contact = await Contact.findOne({ chatId: contactId, userId });
-    if (!contact || contact.isBotMuted) return;
+    if (contact && contact.isBotMuted) return;
 
     // 1. Identify starting point
     // We look for a node of type 'trigger' 
