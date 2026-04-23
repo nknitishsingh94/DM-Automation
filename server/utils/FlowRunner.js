@@ -18,14 +18,16 @@ export const runFlow = async (userId, flowId, contactId, platform, initialText =
     if (contact && contact.isBotMuted) return;
 
     // 1. Identify starting point
-    // We look for a node of type 'trigger' 
     let currentNode = flow.nodes.find(n => n.type === 'trigger');
-    if (!currentNode) {
-      // Fallback: use first message node
-      currentNode = flow.nodes.find(n => n.type === 'message');
+    if (!currentNode && flow.nodes.length > 0) {
+      // Fallback: use the very first node they dropped on the canvas
+      currentNode = flow.nodes[0]; 
     }
 
-    if (!currentNode) return;
+    if (!currentNode) {
+       console.log("⚠️ Flow is completely empty, nothing to execute.");
+       return;
+    }
 
     // 2. Traversal Loop
     let iterations = 0;

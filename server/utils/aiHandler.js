@@ -44,61 +44,36 @@ export const generateAIResponse = async (userId, userMessage) => {
     // Helper for Gemini Free API (Raw Axios - No SDK needed)
     const callGemini = async () => {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
-      // Import axios dynamically if not present (but we assume it is since index uses it, wait, we need to import it at the top. Let's assume axios is in scope or we require it).
       const axios = (await import('axios')).default;
-      const response = await axios.post(url, {
-        contents: [{
-            parts: [{ text: `System Instructions: You are ${aiName}. Tone: ${aiTone}. Context: ${aiKnowledgeBase}. Keep replies very short.\nUser: ${userMessage}` }]
-        }],
-        generationConfig: { temperature: aiTemperature, maxOutputTokens: 350 }
-      });
-      return response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      try {
+        const response = await axios.post(url, {
+          contents: [{
+              parts: [{ text: `System Instructions: You are ${aiName}. Tone: ${aiTone}. Context: ${aiKnowledgeBase}. Keep replies very short.\nUser: ${userMessage}` }]
+          }],
+          generationConfig: { temperature: Number(aiTemperature) || 0.7, maxOutputTokens: 350 }
+        });
+        return response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      } catch (err) {
+        const exactError = err.response?.data ? JSON.stringify(err.response.data) : err.message;
+        console.error("Gemini Exact Error:", exactError);
+        throw new Error(`GEMINI_DEBUG: ${exactError}`);
+      }
     };
 
     let reply;
 
-    // Try Gemini First (100% Free & Generous Limits)
     if (geminiKey) {
-      try {
-        console.log(`🚀 Trying Free Google Gemini API for user ${userId}...`);
-        reply = await callGemini();
-      } catch (err) {
-        console.warn(`⚠️ Gemini API Failed (${err.message}). Falling back...`);
-      }
+      console.log(`🚀 Trying Free Google Gemini API for user ${userId}...`);
+      reply = await callGemini();
+      if (reply) return reply;
     }
 
-    // Try Groq Second
-    if (!reply && groqKey) {
-      try {
-        const groqClient = new OpenAI({ apiKey: groqKey, baseURL: "https://api.groq.com/openai/v1" });
-        console.log(`🚀 Trying Groq API for user ${userId}...`);
-        reply = await callOpenAI(groqClient, "llama3-8b-8192");
-      } catch (err) {
-        console.warn(`⚠️ Groq API Failed (${err.message}). Falling back...`);
-      }
-    }
-
-    // Fallback to OpenAI
-    if (!reply && openaiKey) {
-      try {
-        const openaiClient = new OpenAI({ apiKey: openaiKey });
-        console.log(`🤖 Trying OpenAI API for user ${userId}...`);
-        reply = await callOpenAI(openaiClient, "gpt-4o-mini");
-      } catch (err) {
-         console.error(`⚠️ OpenAI API also failed:`, err.message);
-         throw err; 
-      }
-    }
-
-    if (!reply) throw new Error("Empty response from AI Providers");
-    return reply;
+    throw new Error("No valid API Key found or API failed.");
 
   } catch (err) {
     console.error("❌ AI API Error:", err.message);
-    
-    if (err.message?.includes('401')) return "AI Error: Invalid API Key.";
-    if (err.message?.includes('429')) return "AI Error: Rate limit or Quota exceeded.";
-
-    return "I'm having trouble thinking right now. (Internal: " + (err.message || "Unknown error") + ")";
+    // Explicitly return the raw error message to the Instagram DM for debugging
+    return `RAW API ERROR: ${err.message}. Please check terminal for full details.`;
   }
 };
