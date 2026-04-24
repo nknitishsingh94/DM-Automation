@@ -167,7 +167,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       const isFollowing = await checkFollowerStatus(platform, chatId, userId);
       if (!isFollowing) {
         console.warn(`🛑 GATING FAIL: User ${chatId} does not follow the business account.`);
-        const followText = match.unfollowedResponse || "Please follow our account first to unlock this automation!";
+        const followText = match.unfollowedResponse || "Hi there! 👋\n\nTo unlock this exclusive content, you must be a follower of our page.\n\n👉 Please hit the 'Follow' button on our profile, and then type your message again. Thank you!";
         await sendMessageToInstagram(platform, chatId, followText, '', userId);
         
         const followPrompt = new Message({
