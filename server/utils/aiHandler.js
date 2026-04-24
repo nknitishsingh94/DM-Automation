@@ -43,7 +43,7 @@ export const generateAIResponse = async (userId, userMessage) => {
 
     // Helper for Gemini Free API (Raw Axios - No SDK needed)
     const callGemini = async () => {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiKey}`;
       const axios = (await import('axios')).default;
       
       try {
@@ -53,7 +53,14 @@ export const generateAIResponse = async (userId, userMessage) => {
           }],
           generationConfig: { temperature: Number(aiTemperature) || 0.7, maxOutputTokens: 350 }
         });
-        return response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        
+        const extractedText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!extractedText) {
+           console.error("GEMINI RETURNED NO TEXT. RAW PAYLOAD:", JSON.stringify(response.data));
+           throw new Error(`GEMINI_DEBUG: No Text. Payload: ${JSON.stringify(response.data)}`);
+        }
+        return extractedText;
+        
       } catch (err) {
         const exactError = err.response?.data ? JSON.stringify(err.response.data) : err.message;
         console.error("Gemini Exact Error:", exactError);
