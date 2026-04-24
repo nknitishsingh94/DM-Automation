@@ -43,7 +43,7 @@ export const generateAIResponse = async (userId, userMessage) => {
 
     // Helper for Gemini Free API (Raw Axios - No SDK needed)
     const callGemini = async () => {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`;
       const axios = (await import('axios')).default;
       
       try {
