@@ -1033,7 +1033,21 @@ app.post('/api/debug/test-send', verifyToken, async (req, res) => {
   }
 });
 
-// --- EMERGENCY CAMPAIGN FIX ---
+// --- ENVIRONMENT DIAGNOSTICS ---
+app.get('/api/debug/env', async (req, res) => {
+  const uri = process.env.MONGODB_URI || "NOT_SET";
+  const maskedUri = uri.replace(/:([^@]+)@/, ":****@"); // Mask password for safety
+  res.json({
+    node_env: process.env.NODE_ENV,
+    mongodb_uri_masked: maskedUri,
+    port: process.env.PORT,
+    api_base_url: process.env.API_BASE_URL,
+    db_connected: mongoose.connection.readyState === 1 ? "YES" : "NO",
+    db_name: mongoose.connection.name
+  });
+});
+
+// Original fix endpoint remains...
 app.get('/api/debug/fix-campaigns', async (req, res) => {
   try {
     const targetUserIdStr = req.query.userId || '69e296ff2984f1ce44b2ec33';
