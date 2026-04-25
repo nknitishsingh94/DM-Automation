@@ -1057,6 +1057,6 @@ app.get('/api/debug/fix-campaigns', async (req, res) => {
 });
 
 // Start the server
-const server = app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
