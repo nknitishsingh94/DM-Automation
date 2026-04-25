@@ -1047,6 +1047,47 @@ app.get('/api/debug/env', async (req, res) => {
   });
 });
 
+// --- EMERGENCY SEED ---
+app.get('/api/debug/seed-campaigns', async (req, res) => {
+  try {
+    const targetIdStr = req.query.userId || '69e296ff2984f1ce44b2ec33';
+    const targetUserId = new mongoose.Types.ObjectId(targetIdStr);
+    const Campaign = mongoose.model('Campaign');
+    
+    console.log(`🌱 SEEDING campaigns for ${targetUserId}`);
+    
+    // Seed Price
+    await Campaign.findOneAndUpdate(
+      { trigger: 'Price', userId: targetUserId },
+      { 
+        name: 'Price Automation',
+        response: 'Hi! Our price is $99 for the full agent setup.',
+        status: 'Active',
+        platform: 'all',
+        triggerSource: 'dm'
+      },
+      { upsert: true, new: true }
+    );
+
+    // Seed Hello
+    await Campaign.findOneAndUpdate(
+      { trigger: 'HELLO', userId: targetUserId },
+      { 
+        name: 'Welcome Automation',
+        response: 'Hello there! 👋 I am the ZenXchat AI bot.',
+        status: 'Active',
+        platform: 'all',
+        triggerSource: 'dm'
+      },
+      { upsert: true, new: true }
+    );
+
+    res.json({ success: true, message: "Price and HELLO triggers created for " + targetIdStr });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Original fix endpoint remains...
 app.get('/api/debug/fix-campaigns', async (req, res) => {
   try {
