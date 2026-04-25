@@ -33,6 +33,7 @@ const Inbox = lazyRetry(() => import('./pages/Inbox'));
 const SettingsPage = lazyRetry(() => import('./pages/Settings'));
 const Profile = lazyRetry(() => import('./pages/Profile'));
 const Campaigns = lazyRetry(() => import('./pages/Campaigns'));
+const CampaignBuilder = lazyRetry(() => import('./pages/CampaignBuilder'));
 const Audiences = lazyRetry(() => import('./pages/Audiences'));
 const Subscription = lazyRetry(() => import('./pages/Subscription'));
 const HelpCenter = lazyRetry(() => import('./pages/HelpCenter'));
@@ -292,6 +293,7 @@ function TopBar({ onMenuClick }) {
     switch(location.pathname) {
       case '/dashboard': return 'Home';
       case '/campaigns': return 'Automations';
+      case '/campaign-builder/new': return 'Campaign Builder';
       case '/audiences': return 'Contacts';
       case '/settings': return 'Settings';
       case '/upgrade': return 'Billing';
@@ -352,6 +354,7 @@ function MainLayout() {
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
+              <Route path="/campaign-builder/new" element={<ProtectedRoute><CampaignBuilder /></ProtectedRoute>} />
               <Route path="/audiences" element={<ProtectedRoute><Audiences /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
