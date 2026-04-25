@@ -10,7 +10,7 @@ const router = express.Router();
 router.get('/facebook', verifyToken, (req, res) => {
   const appId = process.env.META_APP_ID;
   let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
-  
+
   // Clean trailing slash to prevent double-slash issues
   if (baseUrl.endsWith('/')) {
     baseUrl = baseUrl.slice(0, -1);
@@ -26,14 +26,14 @@ router.get('/facebook', verifyToken, (req, res) => {
   // Added 'instagram_basic' and 'pages_show_list' for more reliable account discovery
   const scope = 'instagram_basic,instagram_manage_messages,pages_show_list,pages_manage_metadata,pages_messaging,whatsapp_business_management,whatsapp_business_messaging,business_management';
   // State is used to pass the user ID through the OAuth flow securely
-  const state = req.user.userId; 
+  const state = req.user.userId;
 
   if (!appId) {
     return res.status(500).json({ error: "Missing META_APP_ID in environment variables" });
   }
 
   const authUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}&response_type=code`;
-  
+
   res.redirect(authUrl);
 });
 
@@ -75,7 +75,7 @@ router.get('/facebook/callback', async (req, res) => {
     // 3. Get User's Pages to extract Page ID and connected Instagram Account ID
     const pagesUrl = `https://graph.facebook.com/v19.0/me/accounts?fields=id,name,access_token,instagram_business_account&access_token=${longToken}`;
     const pagesRes = await axios.get(pagesUrl);
-    
+
     // Attempt to find the first page that has an Instagram Business Account connected
     let pageId = '';
     let businessAccountId = '';
@@ -84,16 +84,16 @@ router.get('/facebook/callback', async (req, res) => {
 
     const pages = pagesRes.data.data;
     console.log(`🔍 Meta Discovery: User has ${pages?.length || 0} pages.`);
-    
+
     if (pages && pages.length > 0) {
       // Find the page that actually has an IG account connected
       const pageWithInsta = pages.find(p => p.instagram_business_account);
-      
+
       if (pageWithInsta) {
         pageId = pageWithInsta.id;
         businessAccountId = pageWithInsta.instagram_business_account.id;
         accountName = pageWithInsta.name; // Initially use FB Page Name
-        
+
         // Try to fetch the IG Username (actual handle) for better UX
         try {
           const igUrl = `https://graph.facebook.com/v19.0/${businessAccountId}?fields=username,name&access_token=${longToken}`;
@@ -116,12 +116,12 @@ router.get('/facebook/callback', async (req, res) => {
     // 4. GET WHATSAPP BUSINESS ACCOUNTS AND PHONE NUMBERS (Robust Multi-Path Discovery)
     let whatsappPhoneId = '';
     let whatsappName = '';
-    let whatsappAccessToken = longToken; 
+    let whatsappAccessToken = longToken;
     let whatsappDiscoveryError = '';
 
     try {
       console.log("🔍 WhatsApp Discovery: Starting robust scan...");
-      
+
       // Path A: Direct Field Access (More reliable for certain App Types)
       const fieldUrl = `https://graph.facebook.com/v19.0/me?fields=whatsapp_business_accounts{id,name,phone_numbers}&access_token=${longToken}`;
       const fieldRes = await axios.get(fieldUrl);
@@ -129,7 +129,7 @@ router.get('/facebook/callback', async (req, res) => {
 
       if (wabaData && wabaData.length > 0) {
         console.log(`💬 WhatsApp Discovery: Found ${wabaData.length} WABAs via Field Access.`);
-        
+
         for (const waba of wabaData) {
           const phones = waba.phone_numbers?.data || [];
           if (phones && phones.length > 0) {
@@ -146,7 +146,7 @@ router.get('/facebook/callback', async (req, res) => {
         const edgeUrl = `https://graph.facebook.com/v19.0/me/whatsapp_business_accounts?access_token=${longToken}`;
         const edgeRes = await axios.get(edgeUrl);
         const edgeData = edgeRes.data.data || [];
-        
+
         if (edgeData.length > 0) {
           console.log(`📡 WhatsApp Discovery: Scanning ${edgeData.length} WABAs via Edge Access...`);
           for (const waba of edgeData) {
@@ -182,9 +182,9 @@ router.get('/facebook/callback', async (req, res) => {
     const updatedSettings = await Settings.findOneAndUpdate(
       { userId: userId },
       {
-        instagramAccessToken: longToken,
-        facebookAccessToken: longToken,
-        whatsappToken: whatsappPhoneId ? longToken : "", // only set if we found a phone ID
+        instagramAccessToken: pageAccessToken, // ✅ Page token required for Instagram Messaging API
+        facebookAccessToken: pageAccessToken,  // ✅ Page token required for Facebook Messaging API
+        whatsappToken: whatsappPhoneId ? longToken : "", // WhatsApp uses user/system token
         instagramPageId: pageId,
         businessAccountId: businessAccountId,
         facebookPageId: pageId,

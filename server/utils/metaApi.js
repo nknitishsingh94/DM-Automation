@@ -6,8 +6,8 @@ import Settings from '../models/Settings.js';
  */
 export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null) => {
   try {
-    let accessToken = process.env.META_PAGE_ACCESS_TOKEN; 
-    
+    let accessToken = process.env.META_PAGE_ACCESS_TOKEN;
+
     if (userId) {
       const userSettings = await Settings.findOne({ userId });
       if (userSettings) {
@@ -18,7 +18,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
         }
       }
     }
-    
+
     if (!accessToken) {
       console.warn("⚠️ No access token found. Skipping real API call.");
       return false;
@@ -44,9 +44,9 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
   } catch (err) {
     const errorData = err.response?.data || err.message;
     console.error(`❌ SEND FAIL (${platform}):`, JSON.stringify(errorData, null, 2));
-    
+
     if (JSON.stringify(errorData).includes("ID 'me' does not exist")) {
-        console.warn("💡 FIX TIP: Meta doesn't recognize '/me'. This usually means the token is a 'User Token' instead of a 'Page Token'. Please regenerate as a PAGE token in Graph API Explorer.");
+      console.warn("💡 FIX TIP: Meta doesn't recognize '/me'. This usually means the token is a 'User Token' instead of a 'Page Token'. Please regenerate as a PAGE token in Graph API Explorer.");
     }
     return false;
   }
