@@ -146,58 +146,55 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   
   // 2. Keyword Campaign Checking
   const activeCampaigns = await Campaign.find({ userId, status: 'Active' });
-  console.log(`🔍 CAMPAIGN AUDIT: Found ${activeCampaigns.length} active campaigns for user ${userId}.`);
+  console.log(`🔍 DEBUG: Checking ${activeCampaigns.length} active campaigns for user ${userId}. Message: "${text}"`);
 
   const match = activeCampaigns.find(c => {
     const platformMatch = c.platform === 'all' || c.platform === (platform || 'instagram');
     const sourceMatch = (c.triggerSource || 'dm') === source;
-    const keywordMatch = userMessage.includes(c.trigger.toLowerCase());
+    
+    // Improved Matching: trim spaces and case-insensitive
+    const cleanTrigger = c.trigger.trim().toLowerCase();
+    const cleanUserMsg = text.trim().toLowerCase();
+    const keywordMatch = cleanUserMsg.includes(cleanTrigger);
     
     if (keywordMatch) {
-        console.log(`🎯 KEYWORD FOUND: Trigger "${c.trigger}" matched in message. Checking conditions...`);
+        console.log(`🎯 MATCH FOUND! Trigger: "${c.trigger}" | Platform: ${c.platform} | Source: ${source}`);
     }
     
     return platformMatch && sourceMatch && keywordMatch;
   });
 
   if (match) {
-    console.log(`✅ CAMPAIGN MATCH: Using campaign "${match.name}" (ID: ${match._id})`);
+    console.log(`✅ EXECUTING: Sending response for campaign "${match.name}"`);
     if (match.requireFollow) {
-      console.log(`🛡️ GATING: Campaign requires follower check for ${chatId}...`);
+      console.log(`🛡️ GATING: Checking follower status for ${chatId}...`);
       const isFollowing = await checkFollowerStatus(platform, chatId, userId);
       if (!isFollowing) {
-        console.warn(`🛑 GATING FAIL: User ${chatId} does not follow the business account.`);
-        const followText = match.unfollowedResponse || "Hi there! 👋\n\nTo unlock this exclusive content, you must be a follower of our page.\n\n👉 Please hit the 'Follow' button on our profile, and then type your message again. Thank you!";
+        console.warn(`🛑 GATING FAIL: User ${chatId} is not following.`);
+        const followText = match.unfollowedResponse || "Please follow us to unlock this!";
         await sendMessageToInstagram(platform, chatId, followText, '', userId);
-        
-        const followPrompt = new Message({
-          userId: new mongoose.Types.ObjectId(userId),
-          chatId: chatId || 'default', sender: 'AI Agent', text: followText, type: 'sent', platform, isAI: true, timestamp: new Date()
-        });
-        await followPrompt.save();
-        io.to(userId.toString()).emit('new_message', followPrompt);
-        return { reply: followPrompt, gated: true };
+        return { gated: true };
       }
     }
 
-    if (source === 'comment' && commentId) {
-      await sendPrivateReply(platform, commentId, match.response, userId);
+    const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId);
+    
+    if (sent) {
+      const autoReply = new Message({
+        userId: new mongoose.Types.ObjectId(userId),
+        chatId: chatId || 'default', sender: 'AI Agent', text: match.response, type: 'sent', platform, isAI: true, campaignId: match._id, timestamp: new Date()
+      });
+      await autoReply.save();
+      io.to(userId.toString()).emit('new_message', autoReply);
+      console.log(`🚀 REPLY DISPATCHED to ${chatId}`);
+      return { reply: autoReply };
     } else {
-      await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId);
+      console.error(`❌ DISPATCH FAIL: metaApi.js could not send the message to ${chatId}`);
+      return { error: 'dispatch_failed' };
     }
-
-    const autoReply = new Message({
-      userId: new mongoose.Types.ObjectId(userId),
-      chatId: chatId || 'default', sender: 'AI Agent', text: match.response, type: 'sent', platform, videoUrl: match.videoUrl || '', linkUrl: match.linkUrl || '', isAI: true, campaignId: match._id, timestamp: new Date()
-    });
-    await autoReply.save();
-    io.to(userId.toString()).emit('new_message', autoReply);
-    return { reply: autoReply };
   } 
 
-  // 2. Dynamic OpenAI Fallback DISABLED per user request
-  // This completely separates the Campaign engine from the AI Studio
-  console.log(`🤖 AI FALLBACK DISABLED: No keyword matched for "${text}". Ignoring message.`);
+  console.log(`😴 NO MATCH: The message "${text}" did not trigger any active campaigns.`);
   return { skipped: true, reason: 'no keywords matched' };
 };
 
@@ -287,36 +284,21 @@ app.post('/api/webhook', async (req, res) => {
             const isStoryMention = !!messaging.message?.story;
             const messageText = text || (isStoryMention ? "[Story Mention]" : "");
             
-            console.log(`📬 Received ${isStoryMention ? 'Story Mention' : 'Message'} on Page ${pageId} from ${senderId}: ${messageText}`);
-            console.log(`🔍 DEBUG: Webhook Object: ${body.object}, Entry PageID: ${pageId}`);
+            console.log(`📬 INCOMING: ${isStoryMention ? 'Story' : 'DM'} | PageID: ${pageId} | Sender: ${senderId} | Msg: ${messageText}`);
             
-            // Find the user who connected this Page ID in their Settings
             const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
-            let userSettings;
+            let userSettings = await Settings.findOne({ 
+                $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }, { facebookPageId: pageId }]
+            });
             
-            if (platform === 'instagram') {
-              userSettings = await Settings.findOne({ 
-                $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }]
-              });
-            } else {
-              userSettings = await Settings.findOne({ facebookPageId: pageId });
+            if (!userSettings) {
+              console.warn(`🛑 UNKNOWN PAGE: ID ${pageId} is not linked to any user in our database.`);
+              // Try finding any user as a hard fallback if needed, but better to stop here
+              return;
             }
-            
-            let targetUserId;
-            if (userSettings) {
-              targetUserId = userSettings.userId;
-              console.log(`✅ MATCH SUCCESS: Page ID ${pageId} matched User ${targetUserId} via Settings.`);
-            } else {
-              console.warn(`🛑 MATCH FAIL: No user has connected Page/Business ID ${pageId} in their settings.`);
-              // Fallback: find first user (for testing/single-user setups)
-              const fallbackUser = await User.findOne();
-              if (fallbackUser) {
-                targetUserId = fallbackUser._id;
-                console.warn(`⚠️ FALLBACK: Using first user ${targetUserId} for ID ${pageId}.`);
-              } else {
-                console.error(`💀 CRITICAL: No users exist in the database. Cannot process message.`);
-              }
-            }
+
+            const targetUserId = userSettings.userId;
+            console.log(`🎯 ROUTING: Found User ${targetUserId} for Page ${pageId}`);
             
             if (targetUserId) {
               // 1. Save incoming message to DB
@@ -332,9 +314,7 @@ app.post('/api/webhook', async (req, res) => {
               await incoming.save();
               io.to(targetUserId.toString()).emit('new_message', incoming);
 
-              // 2. Trigger Auto-Reply (with userId so it uses correct token)
-              // If it's a story mention, we pass "story_mention" as source. 
-              // We use messageText as the "text" to match triggers, but story mentions might match "*" or specific keywords if they also sent text.
+              // 2. Trigger Auto-Reply
               await processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm");
             }
           }
