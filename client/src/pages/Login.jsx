@@ -422,32 +422,35 @@ export default function Login() {
   useEffect(() => {
     const initGoogle = () => {
       if (window.google && document.getElementById("googleBtn")) {
-        // Prevent multiple initializations to satisfy GSI_LOGGER
-        if (!window.google_initialized) {
+        console.log("🛠️ Initializing Google GSI with ID:", GOOGLE_CLIENT_ID);
+        try {
           window.google.accounts.id.initialize({
             client_id: GOOGLE_CLIENT_ID,
-            callback: handleGoogleResponse
+            callback: handleGoogleResponse,
+            auto_select: false,
+            itp_support: true
           });
-          window.google_initialized = true;
+          
+          window.google.accounts.id.renderButton(
+            document.getElementById("googleBtn"),
+            { theme: "outline", size: "large", width: "340", text: "continue_with", shape: "rectangular" }
+          );
+        } catch (err) {
+          console.error("Google Init Error:", err);
         }
-        
-        window.google.accounts.id.renderButton(
-          document.getElementById("googleBtn"),
-          { theme: "outline", size: "large", width: "340", logo_alignment: "center", shape: "rectangular" }
-        );
       }
     };
 
-    if (window.google) {
+    // Load script if not present
+    if (!document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) {
+      const script = document.createElement('script');
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      script.onload = initGoogle;
+      document.head.appendChild(script);
+    } else if (window.google) {
       initGoogle();
-    } else {
-      const intervalId = setInterval(() => {
-        if (window.google) {
-          clearInterval(intervalId);
-          initGoogle();
-        }
-      }, 100);
-      return () => clearInterval(intervalId);
     }
   }, []);
 
