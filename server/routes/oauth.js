@@ -168,6 +168,21 @@ router.get('/facebook/callback', async (req, res) => {
       console.error("❌ WhatsApp Discovery Error:", whatsappDiscoveryError);
     }
 
+    // 4.5. AUTOMATICALLY SUBSCRIBE APP TO PAGE WEBHOOKS (CRITICAL FOR RECEIVING MESSAGES)
+    if (pageId && pageAccessToken) {
+      try {
+        console.log(`🔌 Attempting to subscribe App to Page Webhooks for page ${pageId}...`);
+        const subscribeUrl = `https://graph.facebook.com/v19.0/${pageId}/subscribed_apps?subscribed_fields=messages,messaging_postbacks,comments&access_token=${pageAccessToken}`;
+        const subRes = await axios.post(subscribeUrl);
+        if (subRes.data && subRes.data.success) {
+          console.log(`✅ Webhook Subscription Successful for Page ${pageId}!`);
+        }
+      } catch (subErr) {
+        console.error(`❌ Webhook Subscription Failed:`, subErr.response?.data || subErr.message);
+        // We don't throw here, we still want to save tokens, but warn in logs
+      }
+    }
+
     // 5. Save to Database
     const updatedSettings = await Settings.findOneAndUpdate(
       { userId: userId },
