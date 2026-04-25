@@ -420,6 +420,22 @@ export default function Login() {
   };
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const magicToken = urlParams.get('token');
+    const userData = urlParams.get('user');
+
+    if (magicToken && userData) {
+      try {
+        const user = JSON.parse(decodeURIComponent(userData));
+        login(user, magicToken);
+        navigate('/dashboard');
+      } catch (err) {
+        console.error("Magic Login Failed:", err);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     const initGoogle = () => {
       if (window.google && document.getElementById("googleBtn")) {
         console.log("🛠️ Initializing Google GSI with ID:", GOOGLE_CLIENT_ID);
