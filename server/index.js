@@ -195,27 +195,10 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     return { reply: autoReply };
   } 
 
-  // 2. Dynamic OpenAI Fallback
-  console.log(`🤖 AI FALLBACK: No keyword matched. Generating dynamic response for: "${text}"`);
-  const fallbackText = await generateAIResponse(userId, text);
-    
-  const fallbackReply = new Message({
-    userId: new mongoose.Types.ObjectId(userId),
-    chatId: chatId || 'default', sender: 'AI Agent', text: fallbackText, type: 'sent', platform, isAI: true, timestamp: new Date()
-  });
-  await fallbackReply.save();
-  
-  io.to(userId.toString()).emit('new_message', fallbackReply.toObject());
-  
-  if (chatId !== 'ai_bot_support') {
-    if (source === 'comment' && commentId) {
-      await sendPrivateReply(platform, commentId, fallbackText, userId);
-    } else {
-      await sendMessageToInstagram(platform, chatId, fallbackText, '', userId);
-    }
-  }
-  
-  return { reply: fallbackReply, fallback: true };
+  // 2. Dynamic OpenAI Fallback DISABLED per user request
+  // This completely separates the Campaign engine from the AI Studio
+  console.log(`🤖 AI FALLBACK DISABLED: No keyword matched for "${text}". Ignoring message.`);
+  return { skipped: true, reason: 'no keywords matched' };
 };
 
 let lastDbError = null;
