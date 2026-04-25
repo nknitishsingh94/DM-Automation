@@ -988,6 +988,71 @@ app.post('/api/broadcasts', verifyToken, async (req, res) => {
   }
 });
 
+// --- DEBUG ENDPOINT: Check saved tokens & test Meta API ---
+app.get('/api/debug/settings', verifyToken, async (req, res) => {
+  try {
+    const settings = await Settings.findOne({ userId: req.user.userId });
+    if (!settings) return res.json({ error: 'No settings found for this user' });
+
+    const tokenPrefix = settings.instagramAccessToken ? settings.instagramAccessToken.substring(0, 20) + '...' : 'NOT SET';
+    const result = {
+      instagramPageId: settings.instagramPageId || 'NOT SET',
+      businessAccountId: settings.businessAccountId || 'NOT SET',
+      facebookPageId: settings.facebookPageId || 'NOT SET',
+      instagramTokenPrefix: tokenPrefix,
+      isAccountConnected: settings.isAccountConnected,
+    };
+
+    // Live test with Meta API
+    if (settings.instagramAccessToken && settings.instagramPageId) {
+      try {
+        const testUrl = `https://graph.facebook.com/v19.0/${settings.instagramPageId}?fields=name,id&access_token=${settings.instagramAccessToken}`;
+        const testRes = await axios.get(testUrl);
+        result.metaApiTest = { status: 'SUCCESS', data: testRes.data };
+      } catch (e) {
+        result.metaApiTest = { status: 'FAILED', error: e.response?.data || e.message };
+      }
+    } else {
+      result.metaApiTest = 'Skipped - missing token or pageId';
+    }
+
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- TEST SEND: Manually send a DM to verify the pipeline ---
+app.post('/api/debug/test-send', verifyToken, async (req, res) => {
+  try {
+    const { recipientId, text } = req.body;
+    if (!recipientId || !text) return res.status(400).json({ error: 'recipientId and text required' });
+
+    const settings = await Settings.findOne({ userId: req.user.userId });
+    if (!settings) return res.json({ error: 'No settings found' });
+
+    const accessToken = settings.instagramAccessToken;
+    const pageId = settings.instagramPageId || settings.businessAccountId;
+
+    if (!accessToken || !pageId) {
+      return res.json({ error: 'Missing token or pageId in Settings', settings: { hasToken: !!accessToken, hasPageId: !!pageId } });
+    }
+
+    const endpoint = pageId;
+    const url = `https://graph.facebook.com/v19.0/${endpoint}/messages?access_token=${accessToken}`;
+    const payload = { recipient: { id: recipientId }, messaging_type: "RESPONSE", message: { text } };
+
+    try {
+      const response = await axios.post(url, payload);
+      res.json({ success: true, metaResponse: response.data, usedEndpoint: url.replace(accessToken, '[TOKEN]') });
+    } catch (e) {
+      res.json({ success: false, error: e.response?.data || e.message, usedEndpoint: url.replace(accessToken, '[TOKEN]') });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
