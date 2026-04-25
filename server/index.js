@@ -1036,28 +1036,29 @@ app.post('/api/debug/test-send', verifyToken, async (req, res) => {
 // --- EMERGENCY CAMPAIGN FIX ---
 app.get('/api/debug/fix-campaigns', async (req, res) => {
   try {
-    const targetUserId = req.query.userId || '69e296ff2984f1ce44b2ec33';
+    const targetUserIdStr = req.query.userId || '69e296ff2984f1ce44b2ec33';
+    const targetUserIdObj = new mongoose.Types.ObjectId(targetUserIdStr);
     const Campaign = mongoose.model('Campaign');
-    const Flow = mongoose.model('Flow'); // Also check Flows
+    const Flow = mongoose.model('Flow');
     
-    console.log(`🔧 EMERGENCY FIX: Migrating all campaigns & flows to ${targetUserId}`);
+    console.log(`🔧 EMERGENCY SCAN: Searching for everything for ${targetUserIdStr}`);
     
-    const resCamp = await Campaign.updateMany({}, { $set: { userId: new mongoose.Types.ObjectId(targetUserId), status: 'Active' } });
-    const resFlow = await Flow.updateMany({}, { $set: { userId: new mongoose.Types.ObjectId(targetUserId), status: 'Active' } });
+    // 1. Try to find ANYTHING that looks like a campaign
+    const totalRaw = await Campaign.find({});
+    const totalFlows = await Flow.find({});
     
-    const camps = await Campaign.find({});
-    const flows = await Flow.find({});
+    // 2. Force assign ALL of them to this user
+    const resCamp = await Campaign.updateMany({}, { $set: { userId: targetUserIdObj, status: 'Active' } });
+    const resFlow = await Flow.updateMany({}, { $set: { userId: targetUserIdObj, status: 'Active' } });
     
+    // 3. Double check string format too (just in case)
+    const resCampStr = await Campaign.updateMany({ userId: { $exists: false } }, { $set: { userId: targetUserIdStr, status: 'Active' } });
+
     res.json({
       success: true,
-      migratedCampaigns: resCamp.modifiedCount,
-      migratedFlows: resFlow.modifiedCount,
-      totalCampaignsInDB: camps.length,
-      totalFlowsInDB: flows.length,
-      currentTriggers: [
-        ...camps.map(c => `Camp: ${c.trigger}`),
-        ...flows.map(f => `Flow: ${f.name}`)
-      ]
+      found_in_db: { campaigns: totalRaw.length, flows: totalFlows.length },
+      migrated: { camps: resCamp.modifiedCount, flows: resFlow.modifiedCount, string_camps: resCampStr.modifiedCount },
+      triggers_found: totalRaw.map(c => c.trigger)
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
