@@ -1038,18 +1038,26 @@ app.get('/api/debug/fix-campaigns', async (req, res) => {
   try {
     const targetUserId = req.query.userId || '69e296ff2984f1ce44b2ec33';
     const Campaign = mongoose.model('Campaign');
+    const Flow = mongoose.model('Flow'); // Also check Flows
     
-    console.log(`🔧 EMERGENCY FIX: Migrating all campaigns to ${targetUserId}`);
-    const results = await Campaign.updateMany({}, { 
-      $set: { userId: new mongoose.Types.ObjectId(targetUserId), status: 'Active' } 
-    });
+    console.log(`🔧 EMERGENCY FIX: Migrating all campaigns & flows to ${targetUserId}`);
     
-    const all = await Campaign.find({ userId: targetUserId });
+    const resCamp = await Campaign.updateMany({}, { $set: { userId: new mongoose.Types.ObjectId(targetUserId), status: 'Active' } });
+    const resFlow = await Flow.updateMany({}, { $set: { userId: new mongoose.Types.ObjectId(targetUserId), status: 'Active' } });
+    
+    const camps = await Campaign.find({});
+    const flows = await Flow.find({});
     
     res.json({
       success: true,
-      message: `Migrated ${results.modifiedCount} campaigns.`,
-      activeCampaigns: all.map(c => ({ trigger: c.trigger, status: c.status }))
+      migratedCampaigns: resCamp.modifiedCount,
+      migratedFlows: resFlow.modifiedCount,
+      totalCampaignsInDB: camps.length,
+      totalFlowsInDB: flows.length,
+      currentTriggers: [
+        ...camps.map(c => `Camp: ${c.trigger}`),
+        ...flows.map(f => `Flow: ${f.name}`)
+      ]
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
