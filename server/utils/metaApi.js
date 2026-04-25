@@ -35,15 +35,31 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     const endpoint = pageId ? pageId : 'me';
     const url = `https://graph.facebook.com/v19.0/${endpoint}/messages?access_token=${accessToken}`;
 
-    const messageBody = { text };
-    if (mediaUrl) {
-      messageBody.text += `\n\nCheck this out: ${mediaUrl}`;
+    // Check if the provided text is actually a JSON string for a structured message (ManyChat style)
+    let finalMessageBody = { text };
+    
+    if (text.trim().startsWith('{') && text.trim().endsWith('}')) {
+      try {
+        const structuredData = JSON.parse(text);
+        if (structuredData.attachment || structuredData.text || structuredData.quick_replies) {
+          finalMessageBody = structuredData;
+        }
+      } catch (e) {
+        // Not valid JSON, fallback to plain text
+        finalMessageBody = { text };
+      }
+    }
+
+    if (mediaUrl && !finalMessageBody.attachment) {
+      if (finalMessageBody.text) {
+        finalMessageBody.text += `\n\nCheck this out: ${mediaUrl}`;
+      }
     }
 
     const payload = {
       recipient: { id: recipientId },
       messaging_type: "RESPONSE",
-      message: messageBody
+      message: finalMessageBody
     };
 
     const response = await axios.post(url, payload);
