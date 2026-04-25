@@ -1033,7 +1033,30 @@ app.post('/api/debug/test-send', verifyToken, async (req, res) => {
   }
 });
 
-httpServer.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+// --- EMERGENCY CAMPAIGN FIX ---
+app.get('/api/debug/fix-campaigns', async (req, res) => {
+  try {
+    const targetUserId = req.query.userId || '69e296ff2984f1ce44b2ec33';
+    const Campaign = mongoose.model('Campaign');
+    
+    console.log(`🔧 EMERGENCY FIX: Migrating all campaigns to ${targetUserId}`);
+    const results = await Campaign.updateMany({}, { 
+      $set: { userId: new mongoose.Types.ObjectId(targetUserId), status: 'Active' } 
+    });
+    
+    const all = await Campaign.find({ userId: targetUserId });
+    
+    res.json({
+      success: true,
+      message: `Migrated ${results.modifiedCount} campaigns.`,
+      activeCampaigns: all.map(c => ({ trigger: c.trigger, status: c.status }))
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
+// Start the server
+const server = app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
