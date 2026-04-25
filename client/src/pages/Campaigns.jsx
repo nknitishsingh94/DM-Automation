@@ -12,6 +12,7 @@ export default function Campaigns() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
+  const [formStep, setFormStep] = useState(1);
   const [newCamp, setNewCamp] = useState({ 
     name: '', 
     trigger: '', 
@@ -159,6 +160,7 @@ export default function Campaigns() {
           requireFollow: false,
           unfollowedResponse: 'Please follow our account first to get a reply!'
         });
+        setFormStep(1);
         setShowAdd(false);
         fetchCampaigns();
       } else {
@@ -302,7 +304,10 @@ export default function Campaigns() {
             )}
           </button>
           <button 
-            onClick={() => setShowAdd(!showAdd)}
+            onClick={() => {
+              if (showAdd) setFormStep(1);
+              setShowAdd(!showAdd);
+            }}
             style={{ 
               background: 'var(--accent-color)', 
               color: 'white', 
@@ -376,167 +381,245 @@ export default function Campaigns() {
       {flows.length > 0 && <div style={{ height: '1px', background: 'var(--border-subtle)', marginBottom: '48px' }}></div>}
 
       {showAdd && (
-        <div className="table-card" style={{ padding: '24px', marginBottom: '32px', animation: 'fadeIn 0.3s ease-out' }}>
-          <h3 style={{ marginBottom: '24px', fontSize: '1.5rem', fontWeight: '800', background: 'linear-gradient(90deg, var(--accent-main), #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            Configure Smart Automation Path
-          </h3>
-          <form onSubmit={handleAddSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-            <div className="input-group">
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem' }}>Campaign Name</label>
-              <input 
-                type="text" 
-                required
-                value={newCamp.name}
-                onChange={(e) => setNewCamp({...newCamp, name: e.target.value})}
-                placeholder="e.g. Sales Inquiry"
-                style={{ width: '100%', padding: '12px', background: 'white', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '8px', outline: 'none' }}
-              />
-            </div>
-            <div className="input-group">
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem' }}>Trigger Keyword</label>
-              <input 
-                type="text" 
-                required
-                value={newCamp.trigger}
-                onChange={(e) => setNewCamp({...newCamp, trigger: e.target.value})}
-                placeholder="e.g. PRICE"
-                style={{ width: '100%', padding: '12px', background: 'white', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '8px', outline: 'none' }}
-              />
-            </div>
+        <div className="table-card" style={{ padding: '32px', marginBottom: '32px', animation: 'fadeIn 0.3s ease-out', border: '1px solid var(--border-subtle)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: '800', background: 'linear-gradient(90deg, var(--accent-main), #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
+              Configure Smart Automation
+            </h3>
             
-            <div className="input-group">
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem' }}>Trigger Source</label>
-              <select 
-                required
-                value={newCamp.triggerSource}
-                onChange={(e) => setNewCamp({...newCamp, triggerSource: e.target.value})}
-                style={{ width: '100%', padding: '12px', background: 'white', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '8px', outline: 'none' }}
-              >
-                <option value="dm">Direct Chat Message</option>
-                <option value="comment">Comments on Post/Reel</option>
-                <option value="story_mention">Story Mention (Instagram)</option>
-              </select>
-            </div>
-            
-            <div className="input-group">
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem' }}>Platform</label>
-              <select 
-                required
-                value={newCamp.platform}
-                onChange={(e) => setNewCamp({...newCamp, platform: e.target.value})}
-                style={{ width: '100%', padding: '12px', background: 'white', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '8px', outline: 'none' }}
-              >
-                <option value="all">All Platforms</option>
-                <option value="instagram">Instagram</option>
-                <option value="facebook">Facebook Messenger</option>
-                <option value="whatsapp">WhatsApp</option>
-              </select>
-            </div>
-
-            <div className="input-group" style={{ gridColumn: 'span 2' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <label style={{ fontSize: '0.9rem', fontWeight: '700' }}>Media (Image/Video)</label>
-                <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: '8px', padding: '2px' }}>
-                  <button 
-                    type="button" 
-                    onClick={() => setMediaMode('link')}
-                    style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '6px', border: 'none', background: mediaMode === 'link' ? 'white' : 'transparent', color: mediaMode === 'link' ? 'var(--accent-color)' : '#64748b', fontWeight: '700', cursor: 'pointer', boxShadow: mediaMode === 'link' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none' }}
-                  >
-                    Use Link
-                  </button>
-                  <button 
-                    type="button" 
-                    onClick={() => setMediaMode('upload')}
-                    style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '6px', border: 'none', background: mediaMode === 'upload' ? 'white' : 'transparent', color: mediaMode === 'upload' ? 'var(--accent-color)' : '#64748b', fontWeight: '700', cursor: 'pointer', boxShadow: mediaMode === 'upload' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none' }}
-                  >
-                    Upload File
-                  </button>
-                </div>
+            {/* Step Indicator */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: formStep >= 1 ? 'var(--accent-main)' : '#e2e8f0', color: formStep >= 1 ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.85rem', transition: 'all 0.3s' }}>1</div>
+                <span style={{ fontSize: '0.85rem', fontWeight: formStep >= 1 ? '700' : '600', color: formStep >= 1 ? 'var(--text-main)' : '#64748b' }}>Basics</span>
               </div>
-              
-              {mediaMode === 'link' ? (
-                <div style={{ position: 'relative' }}>
-                  <LinkIcon size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
+              <div style={{ width: '24px', height: '2px', background: formStep >= 2 ? 'var(--accent-main)' : '#e2e8f0', transition: 'all 0.3s' }}></div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: formStep >= 2 ? 'var(--accent-main)' : '#e2e8f0', color: formStep >= 2 ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.85rem', transition: 'all 0.3s' }}>2</div>
+                <span style={{ fontSize: '0.85rem', fontWeight: formStep >= 2 ? '700' : '600', color: formStep >= 2 ? 'var(--text-main)' : '#64748b' }}>Rules</span>
+              </div>
+              <div style={{ width: '24px', height: '2px', background: formStep >= 3 ? 'var(--accent-main)' : '#e2e8f0', transition: 'all 0.3s' }}></div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: formStep >= 3 ? 'var(--accent-main)' : '#e2e8f0', color: formStep >= 3 ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.85rem', transition: 'all 0.3s' }}>3</div>
+                <span style={{ fontSize: '0.85rem', fontWeight: formStep >= 3 ? '700' : '600', color: formStep >= 3 ? 'var(--text-main)' : '#64748b' }}>Action</span>
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleAddSubmit}>
+            
+            {/* STEP 1: BASICS */}
+            {formStep === 1 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', animation: 'fadeIn 0.3s' }}>
+                <div className="input-group" style={{ gridColumn: 'span 2' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '600' }}>Campaign Name</label>
                   <input 
                     type="text" 
-                    value={newCamp.videoUrl}
-                    onChange={(e) => setNewCamp({...newCamp, videoUrl: e.target.value})}
-                    placeholder="Paste image or video URL here..."
-                    style={{ width: '100%', padding: '12px 12px 12px 40px', background: 'white', border: '1px solid var(--border-subtle)', borderRadius: '10px' }}
+                    required
+                    value={newCamp.name}
+                    onChange={(e) => setNewCamp({...newCamp, name: e.target.value})}
+                    placeholder="e.g. Sales Inquiry Welcome"
+                    style={{ width: '100%', padding: '14px', background: '#f8fafc', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '10px', outline: 'none', transition: 'border 0.2s', fontSize: '1rem' }}
                   />
                 </div>
-              ) : (
-                <div style={{ border: '2px dashed var(--border-subtle)', borderRadius: '10px', padding: '20px', textAlign: 'center', position: 'relative' }}>
-                  {uploading ? (
-                    <div style={{ color: 'var(--accent-color)', fontWeight: '700' }}>Uploading...</div>
-                  ) : (
-                    <>
-                      <input 
-                        type="file" 
-                        onChange={handleFileUpload}
-                        style={{ opacity: 0, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', cursor: 'pointer' }}
-                      />
-                      <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                        {newCamp.videoUrl ? (
-                          <span style={{ color: '#10b981' }}>✅ {newCamp.videoUrl.split('/').pop()} uploaded</span>
-                        ) : (
-                          'Click or drag to upload media (max 5MB)'
-                        )}
-                      </div>
-                    </>
-                  )}
+                
+                <div className="input-group">
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '600' }}>Platform</label>
+                  <select 
+                    required
+                    value={newCamp.platform}
+                    onChange={(e) => setNewCamp({...newCamp, platform: e.target.value})}
+                    style={{ width: '100%', padding: '14px', background: '#f8fafc', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '10px', outline: 'none', fontSize: '1rem' }}
+                  >
+                    <option value="all">All Platforms</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="facebook">Facebook Messenger</option>
+                    <option value="whatsapp">WhatsApp</option>
+                  </select>
                 </div>
-              )}
-            </div>
-            <div className="input-group" style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'rgba(139, 92, 246, 0.05)', borderRadius: '8px', border: '1px dashed var(--accent-light)' }}>
-              <input 
-                type="checkbox" 
-                id="requireFollow"
-                checked={newCamp.requireFollow}
-                onChange={(e) => setNewCamp({...newCamp, requireFollow: e.target.checked})}
-                style={{ width: '18px', height: '18px', accentColor: 'var(--accent-color)' }}
-              />
-              <label htmlFor="requireFollow" style={{ fontSize: '0.9rem', fontWeight: '600', cursor: 'pointer' }}>Only reply if the user follows me (Instagram/Facebook)</label>
-            </div>
 
-            {newCamp.requireFollow && (
-              <div className="input-group" style={{ gridColumn: 'span 2', animation: 'fadeIn 0.2s ease-in' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', color: 'var(--accent-color)', fontWeight: '600' }}>Message for Non-Followers</label>
-                <textarea 
-                  required
-                  value={newCamp.unfollowedResponse}
-                  onChange={(e) => setNewCamp({...newCamp, unfollowedResponse: e.target.value})}
-                  placeholder="Hey! Please follow us first to unlock this info..."
-                  style={{ width: '100%', padding: '12px', background: 'white', color: 'var(--text-main)', border: '1px solid var(--accent-light)', borderRadius: '8px', height: '80px', outline: 'none', resize: 'none' }}
-                />
+                <div className="input-group">
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '600' }}>Trigger Source</label>
+                  <select 
+                    required
+                    value={newCamp.triggerSource}
+                    onChange={(e) => setNewCamp({...newCamp, triggerSource: e.target.value})}
+                    style={{ width: '100%', padding: '14px', background: '#f8fafc', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '10px', outline: 'none', fontSize: '1rem' }}
+                  >
+                    <option value="dm">Direct Chat Message</option>
+                    <option value="comment">Comments on Post/Reel</option>
+                    <option value="story_mention">Story Mention (Instagram)</option>
+                  </select>
+                </div>
               </div>
             )}
 
-            <div className="input-group" style={{ gridColumn: 'span 2' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem' }}>AI Response Message</label>
-              <textarea 
-                required
-                value={newCamp.response}
-                onChange={(e) => setNewCamp({...newCamp, response: e.target.value})}
-                placeholder="What should the AI say when this keyword is sent?"
-                style={{ width: '100%', padding: '12px', background: 'white', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '8px', height: '100px', outline: 'none', resize: 'none' }}
-              />
+            {/* STEP 2: TRIGGER RULES */}
+            {formStep === 2 && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px', animation: 'fadeIn 0.3s' }}>
+                <div className="input-group">
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '600' }}>Trigger Keyword <span style={{ color: 'var(--text-muted)', fontWeight: '400' }}>(What should the user type?)</span></label>
+                  <input 
+                    type="text" 
+                    required
+                    value={newCamp.trigger}
+                    onChange={(e) => setNewCamp({...newCamp, trigger: e.target.value})}
+                    placeholder="e.g. SEND LINK"
+                    style={{ width: '100%', padding: '14px', background: '#f8fafc', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '10px', outline: 'none', fontSize: '1rem' }}
+                  />
+                </div>
+
+                <div className="input-group" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: newCamp.requireFollow ? 'rgba(139, 92, 246, 0.05)' : '#f8fafc', borderRadius: '10px', border: newCamp.requireFollow ? '1px solid var(--accent-main)' : '1px solid var(--border-subtle)', transition: 'all 0.3s' }}>
+                  <input 
+                    type="checkbox" 
+                    id="requireFollow"
+                    checked={newCamp.requireFollow}
+                    onChange={(e) => setNewCamp({...newCamp, requireFollow: e.target.checked})}
+                    style={{ width: '20px', height: '20px', accentColor: 'var(--accent-color)', cursor: 'pointer' }}
+                  />
+                  <div>
+                    <label htmlFor="requireFollow" style={{ fontSize: '1rem', fontWeight: '700', cursor: 'pointer', display: 'block' }}>Require Follow to Unlock</label>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Only send the final action to users who follow your page.</span>
+                  </div>
+                </div>
+
+                {newCamp.requireFollow && (
+                  <div className="input-group" style={{ animation: 'fadeIn 0.2s ease-in' }}>
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', color: 'var(--accent-color)', fontWeight: '700' }}>Gating Message (Non-Followers)</label>
+                    <textarea 
+                      required
+                      value={newCamp.unfollowedResponse}
+                      onChange={(e) => setNewCamp({...newCamp, unfollowedResponse: e.target.value})}
+                      placeholder="Hi! Please follow our page first to receive this content..."
+                      style={{ width: '100%', padding: '14px', background: 'white', color: 'var(--text-main)', border: '1px solid var(--accent-light)', borderRadius: '10px', height: '100px', outline: 'none', resize: 'vertical', fontSize: '0.95rem', lineHeight: '1.5' }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* STEP 3: ACTION / RESPONSE */}
+            {formStep === 3 && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px', animation: 'fadeIn 0.3s' }}>
+                <div className="input-group">
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '600' }}>Target Response <span style={{ color: 'var(--text-muted)', fontWeight: '400' }}>(What arrives after they send the keyword?)</span></label>
+                  <textarea 
+                    required
+                    value={newCamp.response}
+                    onChange={(e) => setNewCamp({...newCamp, response: e.target.value})}
+                    placeholder="Here is the link you requested: [LINK]. Let us know if..."
+                    style={{ width: '100%', padding: '14px', background: '#f8fafc', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '10px', height: '120px', outline: 'none', resize: 'vertical', fontSize: '0.95rem', lineHeight: '1.5' }}
+                  />
+                </div>
+
+                <div className="input-group">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <label style={{ fontSize: '0.9rem', fontWeight: '700' }}>Bonus Attachment (Image/Video/Link)</label>
+                    <div style={{ display: 'flex', background: '#e2e8f0', borderRadius: '8px', padding: '3px' }}>
+                      <button 
+                        type="button" 
+                        onClick={() => setMediaMode('link')}
+                        style={{ padding: '6px 14px', fontSize: '0.8rem', borderRadius: '6px', border: 'none', background: mediaMode === 'link' ? 'white' : 'transparent', color: mediaMode === 'link' ? 'var(--accent-color)' : '#475569', fontWeight: '700', cursor: 'pointer', boxShadow: mediaMode === 'link' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}
+                      >
+                        Use Link
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => setMediaMode('upload')}
+                        style={{ padding: '6px 14px', fontSize: '0.8rem', borderRadius: '6px', border: 'none', background: mediaMode === 'upload' ? 'white' : 'transparent', color: mediaMode === 'upload' ? 'var(--accent-color)' : '#475569', fontWeight: '700', cursor: 'pointer', boxShadow: mediaMode === 'upload' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}
+                      >
+                        Upload File
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {mediaMode === 'link' ? (
+                    <div style={{ position: 'relative' }}>
+                      <LinkIcon size={18} style={{ position: 'absolute', left: '14px', top: '15px', color: 'var(--text-muted)' }} />
+                      <input 
+                        type="text" 
+                        value={newCamp.videoUrl}
+                        onChange={(e) => setNewCamp({...newCamp, videoUrl: e.target.value})}
+                        placeholder="Paste image or video direct URL here..."
+                        style={{ width: '100%', padding: '14px 14px 14px 44px', background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: '10px', outline: 'none', fontSize: '0.95rem' }}
+                      />
+                    </div>
+                  ) : (
+                    <div style={{ border: '2px dashed #cbd5e1', borderRadius: '10px', padding: '30px 20px', textAlign: 'center', position: 'relative', background: '#f8fafc', cursor: 'pointer', transition: 'border 0.2s' }} onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--accent-color)'} onMouseOut={(e) => e.currentTarget.style.borderColor = '#cbd5e1'}>
+                      {uploading ? (
+                        <div style={{ color: 'var(--accent-color)', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                          <div className="loader" style={{ width: '20px', height: '20px', border: '3px solid #e2e8f0', borderTopColor: 'var(--accent-color)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                          Uploading Media...
+                        </div>
+                      ) : (
+                        <>
+                          <input 
+                            type="file" 
+                            onChange={handleFileUpload}
+                            style={{ opacity: 0, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', cursor: 'pointer', zIndex: 5 }}
+                          />
+                          <div style={{ color: '#475569', fontSize: '0.95rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                            {newCamp.videoUrl ? (
+                              <>
+                                <CheckCircle size={32} color="#10b981" />
+                                <span style={{ color: '#10b981', fontWeight: '600' }}>Media Selected ({newCamp.videoUrl.split('/').pop().substring(0, 20)})</span>
+                              </>
+                            ) : (
+                              <>
+                                <Video size={32} color="#94a3b8" />
+                                <span>Click or drag to attach media (Max 50MB)</span>
+                              </>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* NAVIGATION BUTTONS */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)' }}>
+              <button 
+                type="button" 
+                onClick={() => setFormStep(prev => Math.max(1, prev - 1))}
+                style={{ 
+                  background: 'transparent', color: 'var(--text-muted)', border: '1px solid var(--border-subtle)', 
+                  padding: '12px 24px', borderRadius: '8px', fontWeight: '600', cursor: formStep === 1 ? 'not-allowed' : 'pointer',
+                  opacity: formStep === 1 ? 0 : 1, transition: 'all 0.2s', visibility: formStep === 1 ? 'hidden' : 'visible'
+                }}>
+                Back
+              </button>
+              
+              {formStep < 3 ? (
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    if (formStep === 1 && (!newCamp.name || !newCamp.platform)) return notify("Please fill all basic details", "error");
+                    if (formStep === 2 && !newCamp.trigger) return notify("Please enter a trigger keyword", "error");
+                    setFormStep(prev => Math.min(3, prev + 1));
+                  }}
+                  style={{ 
+                    background: 'var(--text-main)', color: 'white', border: 'none',
+                    padding: '12px 32px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                  }}>
+                  Continue Next →
+                </button>
+              ) : (
+                <button 
+                  type="submit" 
+                  disabled={submitting}
+                  style={{ 
+                    background: submitting ? 'var(--text-muted)' : 'var(--accent-color)', color: 'white', border: 'none',
+                    padding: '12px 32px', borderRadius: '8px', fontWeight: '700', cursor: submitting ? 'not-allowed' : 'pointer',
+                    boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '8px'
+                  }}>
+                  {submitting ? 'Deploying...' : <><Zap size={18} /> Launch Campaign</>}
+                </button>
+              )}
             </div>
-            <button 
-              type="submit" 
-              disabled={submitting}
-              style={{ 
-                gridColumn: 'span 2', 
-                background: submitting ? 'var(--text-muted)' : 'var(--accent-color)', 
-                color: 'white', 
-                padding: '14px', 
-                borderRadius: '8px', 
-                fontWeight: '600',
-                cursor: submitting ? 'not-allowed' : 'pointer',
-                transition: 'all 0.2s'
-              }}>
-              {submitting ? 'Creating Campaign...' : 'Create Campaign'}
-            </button>
           </form>
         </div>
       )}
