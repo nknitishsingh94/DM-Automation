@@ -15,11 +15,6 @@ router.post('/signup', async (req, res) => {
   try {
     const { username, email, password } = req.body;
     
-    // Restrict signup to Gmail only
-    if (!email.toLowerCase().endsWith('@gmail.com')) {
-      return res.status(400).json({ message: 'Only Gmail addresses are allowed to create an account.' });
-    }
-
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: 'User already exists' });
