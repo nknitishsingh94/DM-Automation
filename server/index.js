@@ -177,7 +177,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       }
     }
 
-    const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId);
+    const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText);
     
     if (sent) {
       const autoReply = new Message({
@@ -314,8 +314,10 @@ app.post('/api/webhook', async (req, res) => {
               await incoming.save();
               io.to(targetUserId.toString()).emit('new_message', incoming);
 
-              // 2. Trigger Auto-Reply
-              await processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm");
+              // 2. Trigger Auto-Reply (Background Process to prevent Meta timeouts/duplicates)
+              processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm").catch(err => {
+                console.error("🔥 Background AutoReply error:", err);
+              });
             }
           }
 

@@ -4,7 +4,7 @@ import Settings from '../models/Settings.js';
 /**
  * Meta Graph API Helper: Send Message (Instagram / Facebook)
  */
-export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null) => {
+export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null, buttonText = '') => {
   try {
     let accessToken = process.env.META_PAGE_ACCESS_TOKEN;
     let pageId = null;
@@ -54,6 +54,17 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
       if (finalMessageBody.text) {
         finalMessageBody.text += `\n\nCheck this out: ${mediaUrl}`;
       }
+    }
+
+    // --- ADD BUTTON SUPPORT (Quick Replies) ---
+    if (buttonText && !finalMessageBody.quick_replies) {
+      finalMessageBody.quick_replies = [
+        {
+          content_type: "text",
+          title: buttonText,
+          payload: buttonText
+        }
+      ];
     }
 
     const payload = {

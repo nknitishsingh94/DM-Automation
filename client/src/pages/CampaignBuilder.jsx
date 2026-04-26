@@ -23,6 +23,7 @@ export default function CampaignBuilder() {
     platform: 'all', 
     videoUrl: '', 
     linkUrl: '',
+    buttonText: '',
     requireFollow: false,
     unfollowedResponse: 'Hi! Please follow our page first to unlock this content! 🙏'
   });
@@ -235,6 +236,19 @@ export default function CampaignBuilder() {
                     />
                   </div>
 
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', fontWeight: '700' }}>
+                      Button Text (Optional) <span style={{ color: 'var(--text-muted)', fontWeight: '400', fontSize: '0.8rem' }}>(e.g. "Get Access Now")</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      value={newCamp.buttonText}
+                      onChange={(e) => setNewCamp({...newCamp, buttonText: e.target.value})}
+                      placeholder="e.g. Send me the access"
+                      style={{ width: '100%', padding: '14px', background: '#f8fafc', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '10px', outline: 'none', fontSize: '1rem' }}
+                    />
+                  </div>
+
                   <div className="input-group" style={{ background: 'white', padding: '20px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                       <label style={{ fontSize: '0.9rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px' }}><Video size={16} color="var(--accent-color)"/> Bonus Attachment (Optional)</label>
@@ -424,6 +438,24 @@ export default function CampaignBuilder() {
                       ) : (
                         <div style={{ background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', color: 'white', padding: '10px 14px', borderRadius: '18px 18px 18px 4px', fontSize: '0.9rem', fontWeight: '500', whiteSpace: 'pre-wrap', boxShadow: '0 4px 6px rgba(139, 92, 246, 0.2)' }}>
                           {newCamp.response || 'Your automated response will appear here when the keyword is triggered. Configure this in Step 3! ✨'}
+                        </div>
+                      )}
+
+                      {/* Quick Reply Button Preview */}
+                      {newCamp.buttonText && (
+                        <div style={{ alignSelf: 'center', marginTop: '8px' }}>
+                          <div style={{ 
+                            padding: '8px 20px', 
+                            background: 'white', 
+                            border: '1px solid #e2e8f0', 
+                            borderRadius: '20px', 
+                            color: '#3b82f6', 
+                            fontSize: '0.85rem', 
+                            fontWeight: '700',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                          }}>
+                            {newCamp.buttonText}
+                          </div>
                         </div>
                       )}
 
