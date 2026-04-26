@@ -16,6 +16,7 @@ const settingsSchema = new mongoose.Schema({
   isWhatsAppConnected: { type: Boolean, default: false },
 
   connectionError: { type: String, default: "" },
+  whatsappError: { type: String, default: "" }, // Added this field
   connectedInstagramName: { type: String, default: "" },
   connectedFacebookName: { type: String, default: "" },
   connectedWhatsAppName: { type: String, default: "" },
