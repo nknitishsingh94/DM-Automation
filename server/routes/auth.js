@@ -2,6 +2,14 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import Message from '../models/Message.js';
+import Settings from '../models/Settings.js';
+import Campaign from '../models/Campaign.js';
+import Contact from '../models/Contact.js';
+import Flow from '../models/Flow.js';
+import Form from '../models/Form.js';
+import FormSubmission from '../models/FormSubmission.js';
+import ChatMessage from '../models/ChatMessage.js';
+import verifyToken from '../middleware/auth.js';
 import { OAuth2Client } from 'google-auth-library';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -278,5 +286,46 @@ router.get('/profile', async (req, res) => {
   }
 });
 
+
+// Permanent Account Deletion
+router.delete('/account', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { password } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Verify password if the user has one (Email/Password login)
+    if (user.password) {
+      if (!password) {
+        return res.status(400).json({ message: 'Password is required to delete account' });
+      }
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
+        return res.status(401).json({ message: 'Incorrect password' });
+      }
+    }
+
+    // Delete all user-related data from all collections
+    await Promise.all([
+      User.findByIdAndDelete(userId),
+      Settings.deleteMany({ userId }),
+      Campaign.deleteMany({ userId }),
+      Message.deleteMany({ userId }),
+      Contact.deleteMany({ userId }),
+      Flow.deleteMany({ userId }),
+      Form.deleteMany({ userId }),
+      FormSubmission.deleteMany({ userId }),
+      ChatMessage.deleteMany({ userId })
+    ]);
+
+    console.log(`🗑️ PERMANENT DELETE: User ${userId} and all related data removed.`);
+    res.json({ success: true, message: 'Account and all data deleted permanently.' });
+  } catch (err) {
+    console.error("❌ Account Deletion Failed:", err.message);
+    res.status(500).json({ error: 'Failed to delete account' });
+  }
+});
 
 export default router;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, Instagram, Facebook, MessageSquare, Key, MapPin, Save, Info, CheckCircle, XCircle, Rocket } from 'lucide-react';
+import { ShieldCheck, Instagram, Facebook, MessageSquare, Key, MapPin, Save, Info, CheckCircle, XCircle, Rocket, Trash2, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
@@ -27,6 +27,9 @@ export default function Settings() {
   const [loading, setLoading] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   const { notify } = useNotification();
 
@@ -106,6 +109,38 @@ export default function Settings() {
       setMessage({ type: 'error', text: 'Network error. Could not reach the server.' });
     } finally {
       setSavingSettings(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/auth/account`, {
+        method: 'DELETE',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ password: deletePassword })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        notify("Account deleted successfully. We're sorry to see you go.", "success");
+        // Clear storage and redirect
+        localStorage.removeItem('insta_agent_token');
+        localStorage.removeItem('insta_agent_user');
+        window.location.href = '/';
+      } else {
+        notify(data.message || "Failed to delete account. Check your password.", "error");
+      }
+    } catch (err) {
+      notify("Network error occurred.", "error");
+    } finally {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -547,6 +582,84 @@ export default function Settings() {
           <li>Ensure you generate the respective access tokens with correct permissions.</li>
         </ul>
       </div>
+
+      {/* DANGER ZONE - Permanent Account Deletion */}
+      <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '24px', padding: '32px', marginTop: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#be123c', marginBottom: '16px' }}>
+          <AlertTriangle size={24} />
+          <h3 style={{ fontSize: '1.25rem', fontWeight: '800', margin: 0 }}>Danger Zone</h3>
+        </div>
+        
+        <p style={{ color: '#9f1239', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '24px', maxWidth: '700px' }}>
+          Once you delete your account, there is no going back. All your campaigns, messages, contacts, and connected Meta tokens will be removed from our database permanently.
+        </p>
+
+        {!showDeleteConfirm ? (
+          <button 
+            onClick={() => setShowDeleteConfirm(true)}
+            style={{ 
+              display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', borderRadius: '12px', background: '#e11d48', color: 'white', 
+              border: 'none', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(225, 29, 72, 0.2)'
+            }}>
+            <Trash2 size={18} /> Delete Account Permanently
+          </button>
+        ) : (
+          <div style={{ background: 'white', padding: '24px', borderRadius: '16px', border: '2px solid #e11d48', animation: 'shake 0.4s ease-in-out' }}>
+            <p style={{ fontWeight: '800', color: '#1e293b', marginBottom: '8px', fontSize: '1.1rem' }}>Are you absolutely sure?</p>
+            <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '20px' }}>This action is irreversible. All your data will be wiped.</p>
+            
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', fontWeight: '700', color: '#1e293b' }}>
+                Confirm with Password
+              </label>
+              <input 
+                type="password"
+                placeholder="Enter your account password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                style={{ 
+                  width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid #cbd5e1', outline: 'none',
+                  fontSize: '1rem', transition: 'border 0.2s'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#e11d48'}
+                onBlur={(e) => e.target.style.borderColor = '#cbd5e1'}
+              />
+              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '6px' }}>
+                *If you use Google/Facebook login, you can leave this blank.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button 
+                onClick={handleDeleteAccount}
+                disabled={deleting}
+                style={{ 
+                  flex: 1, padding: '14px', borderRadius: '10px', background: '#e11d48', color: 'white', border: 'none', 
+                  fontWeight: '800', cursor: 'pointer', opacity: deleting ? 0.7 : 1
+                }}>
+                {deleting ? 'Deleting Everything...' : 'Yes, Delete My Data'}
+              </button>
+              <button 
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={deleting}
+                style={{ 
+                  flex: 1, padding: '14px', borderRadius: '10px', background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0', 
+                  fontWeight: '700', cursor: 'pointer'
+                }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <style>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+      `}</style>
     </div>
   );
 }
