@@ -3,16 +3,19 @@ import {
   FileText, Plus, BarChart2, MousePointer, 
   CheckCircle, ChevronRight, X, Trash2, 
   Eye, ToggleLeft, ToggleRight, Loader2, Sparkles,
-  ArrowRight, Save, Trash
+  ArrowRight, Save, Trash, Layout, Send
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { useAuth } from '../context/AuthContext';
 import FormField from '../components/FormField';
 import '../styles/theme.css';
+import '../styles/Forms.css';
 
 export default function Forms() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -74,6 +77,8 @@ export default function Forms() {
   };
 
   const handleCreateForm = async () => {
+    if (!newForm.name) return toast.error('Please enter a form name');
+    
     try {
       const res = await fetch(`${API_BASE_URL}/api/forms`, {
         method: 'POST',
@@ -88,7 +93,6 @@ export default function Forms() {
         toast.success('Form created successfully!');
         setIsModalOpen(false);
         fetchForms();
-        // Reset state
         setWizardStep(1);
       } else {
         toast.error('Failed to create form');
@@ -145,192 +149,220 @@ export default function Forms() {
   };
 
   return (
-    <div className="container" style={{ maxWidth: '1200px' }}>
-      {/* Header Section */}
-      <div className="header-section">
-        <div>
-          <h2 className="title-lg">Forms & Lead Gen</h2>
-          <p className="text-secondary">Manage your automated data collection flows</p>
+    <div className="forms-container">
+      {/* Hero Header */}
+      <div className="forms-hero">
+        <div className="forms-title-group">
+          <h2>Forms & Studio</h2>
+          <p style={{ color: '#64748b', fontSize: '1rem' }}>Collect leads, feedback and data automatically via Instagram DMs.</p>
         </div>
-        <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
-          <Plus size={18} /> Create Form
+        <button className="btn-premium" onClick={() => { setWizardStep(1); setIsModalOpen(true); }}>
+          <Plus size={20} /> Create New Form
         </button>
       </div>
 
-      {/* Global Stats */}
-      <div className="studio-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: '32px' }}>
-        <div className="stat-card">
-          <span className="stat-label">Total Forms</span>
-          <span className="stat-value">{forms.length}</span>
+      {/* Modern Stats Grid */}
+      <div className="forms-stats-grid">
+        <div className="forms-stat-card">
+          <span className="forms-stat-label">Total Forms</span>
+          <span className="forms-stat-value">{forms.length}</span>
         </div>
-        <div className="stat-card">
-          <span className="stat-label">Total Submissions</span>
-          <span className="stat-value">{forms.reduce((acc, f) => acc + (f.submissionsCount || 0), 0)}</span>
+        <div className="forms-stat-card">
+          <span className="forms-stat-label">Active Gating</span>
+          <span className="forms-stat-value" style={{ color: '#10b981' }}>{forms.filter(f => f.active).length}</span>
         </div>
-        <div className="stat-card">
-          <span className="stat-label">Conversion Rate</span>
-          <span className="stat-value">12.4%</span>
+        <div className="forms-stat-card">
+          <span className="forms-stat-label">Total Leads</span>
+          <span className="forms-stat-value">{forms.reduce((acc, f) => acc + (f.submissionsCount || 0), 0)}</span>
         </div>
-        <div className="stat-card">
-          <span className="stat-label">Active Gating</span>
-          <span className="stat-value">{forms.filter(f => f.active).length}</span>
+        <div className="forms-stat-card">
+          <span className="forms-stat-label">Response rate</span>
+          <span className="forms-stat-value" style={{ color: '#7c3aed' }}>{forms.length > 0 ? '86%' : '0%'}</span>
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="studio-grid" style={{ gridTemplateColumns: '1fr 350px' }}>
-        {/* Left Side: Existing Forms */}
-        <div className="card">
-          <div className="card-header" style={{ borderBottom: '1px solid var(--border)' }}>
-            <h3 className="text-bold">Your Active Forms</h3>
+      <div className="forms-main-layout">
+        {/* Forms List Container */}
+        <div className="forms-list-card">
+          <div className="forms-list-header">
+            <h3 style={{ fontSize: '1.2rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Layout size={20} color="#7c3aed" /> Active Form Flows
+            </h3>
+            <div style={{ fontSize: '0.85rem', color: '#94a3b8', fontWeight: '600' }}>Manage existing automations</div>
           </div>
           
-          <div className="card-body">
+          <div className="forms-list-body" style={{ minHeight: '400px' }}>
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '40px' }}><Loader2 className="animate-spin" /></div>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
+                <Loader2 className="animate-spin" size={40} color="#7c3aed" />
+              </div>
             ) : forms.length === 0 ? (
-              <div className="empty-state">
-                <FileText size={48} style={{ marginBottom: '16px', opacity: 0.2 }} />
-                <p>No forms created yet. Start with a template!</p>
+              <div style={{ textAlign: 'center', padding: '100px 40px', color: '#94a3b8' }}>
+                <FileText size={64} style={{ opacity: 0.1, marginBottom: '16px' }} />
+                <p style={{ fontWeight: '700' }}>No forms found. Start with a template on the right!</p>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {forms.map(form => (
-                  <div key={form._id} className="stat-card" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px' }}>
-                    <div 
-                      style={{ display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}
-                      onClick={() => navigate(`/forms/${form._id}`)}
-                    >
-                      <div style={{ width: '40px', height: '40px', background: 'var(--bg-light)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
-                        <FileText size={20} />
-                      </div>
-                      <div>
-                        <h4 className="text-bold" style={{ fontSize: '14px' }}>{form.name}</h4>
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                          <span className={`badge ${form.active ? 'badge-active' : 'badge-draft'}`}>
-                            {form.active ? 'Active' : 'Paused'}
-                          </span>
-                          <span className="text-secondary" style={{ fontSize: '11px' }}>• {form.type}</span>
-                        </div>
-                      </div>
+              forms.map(form => (
+                <div key={form._id} className="form-item-row">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px', cursor: 'pointer', flex: 1 }} onClick={() => navigate(`/forms/${form._id}`)}>
+                    <div className="form-icon-circle">
+                      <FileText size={24} />
                     </div>
-                    
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ textAlign: 'right', marginRight: '16px' }}>
-                        <div className="text-bold" style={{ fontSize: '14px' }}>{form.submissionsCount || 0}</div>
-                        <div className="text-secondary" style={{ fontSize: '11px' }}>leads</div>
+                    <div>
+                      <h4 style={{ fontSize: '1rem', fontWeight: '800', marginBottom: '4px', color: '#1e293b' }}>{form.name}</h4>
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <span className={`badge-premium ${form.active ? 'badge-active-premium' : 'badge-paused-premium'}`}>
+                          {form.active ? 'Live' : 'Paused'}
+                        </span>
+                        <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: '500' }}>• {form.type}</span>
                       </div>
-                      <button onClick={() => handleToggle(form._id)} className="btn-icon">
-                        {form.active ? <ToggleRight size={24} color="var(--primary)" /> : <ToggleLeft size={24} color="#94a3b8" />}
-                      </button>
-                      <button onClick={() => navigate(`/forms/${form._id}`)} className="btn-icon"><Eye size={18} /></button>
-                      <button onClick={() => handleDelete(form._id)} className="btn-icon" style={{ color: '#ef4444' }}><Trash2 size={18} /></button>
                     </div>
                   </div>
-                ))}
-              </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e293b' }}>{form.submissionsCount || 0}</div>
+                      <div style={{ fontSize: '0.7rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase' }}>Leads</div>
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={() => handleToggle(form._id)} className="btn-icon" title={form.active ? "Pause" : "Resume"}>
+                        {form.active ? <ToggleRight size={32} color="#10b981" /> : <ToggleLeft size={32} color="#94a3b8" />}
+                      </button>
+                      <button onClick={() => navigate(`/forms/${form._id}`)} className="btn-icon" style={{ background: '#f8fafc', padding: '8px', borderRadius: '10px' }}><Eye size={18} /></button>
+                      <button onClick={() => handleDelete(form._id)} className="btn-icon" style={{ background: '#fff1f2', color: '#ef4444', padding: '8px', borderRadius: '10px' }}><Trash2 size={18} /></button>
+                    </div>
+                  </div>
+                </div>
+              ))
             )}
           </div>
         </div>
 
-        {/* Right Side: Templates */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className="card">
-            <div className="card-header">
-              <h3 className="text-bold" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Sparkles size={16} color="var(--primary)" /> Templates
-              </h3>
-            </div>
-            <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {/* Sidebar Templates */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div className="forms-list-card" style={{ padding: '24px' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '800', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Sparkles size={18} color="#f59e0b" /> Studio Templates
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {formTypes.map((t, i) => (
-                <div 
-                  key={i} 
-                  className="stat-card" 
-                  onClick={() => openWizard(t.title)}
-                  style={{ padding: '16px', cursor: 'pointer', border: '1px solid transparent', transition: 'all 0.2s' }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = t.color}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = 'transparent'}
-                >
+                <div key={i} className="template-card" onClick={() => openWizard(t.title)}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                    <div style={{ width: '32px', height: '32px', background: t.bg, color: t.color, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="template-icon-wrap" style={{ background: t.bg, color: t.color }}>
                       {t.icon}
                     </div>
-                    <h4 className="text-bold" style={{ fontSize: '13px' }}>{t.title}</h4>
+                    <div style={{ fontWeight: '800', fontSize: '0.9rem' }}>{t.title}</div>
                   </div>
-                  <p className="text-secondary" style={{ fontSize: '11px', lineHeight: '1.4' }}>{t.desc}</p>
+                  <p style={{ fontSize: '0.75rem', color: '#64748b', lineHeight: '1.5' }}>{t.desc}</p>
                 </div>
               ))}
             </div>
           </div>
           
-          <div className="stat-card" style={{ background: 'var(--primary)', color: 'white', border: 'none' }}>
-            <h4 className="text-bold" style={{ fontSize: '14px', marginBottom: '8px' }}>Need custom logic?</h4>
-            <p style={{ fontSize: '11px', opacity: 0.9, marginBottom: '16px' }}>Use the Flow Builder to create complex conditional forms and branching logic.</p>
-            <button className="btn-secondary" style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', width: '100%', fontSize: '12px' }}>
-              Open Flow Builder
-            </button>
+          <div style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%)', borderRadius: '24px', padding: '24px', color: 'white', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <h4 style={{ fontWeight: '800', fontSize: '1.1rem', marginBottom: '8px' }}>Power user?</h4>
+              <p style={{ fontSize: '0.8rem', opacity: 0.9, marginBottom: '20px' }}>Create multi-step flows with conditional branching logic in the Flow Builder.</p>
+              <button 
+                onClick={() => navigate('/flow-builder/new')}
+                className="btn-premium" 
+                style={{ background: 'rgba(255,255,255,0.2)', width: '100%', fontSize: '0.85rem', padding: '12px' }}
+              >
+                Open Flow Builder
+              </button>
+            </div>
+            <Sparkles size={120} color="rgba(255,255,255,0.05)" style={{ position: 'absolute', bottom: '-20px', right: '-20px' }} />
           </div>
         </div>
       </div>
 
-      {/* Creation Modal */}
+      {/* Creation Wizard Modal */}
       {isModalOpen && (
         <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
-            <div style={{ padding: '32px 32px 10px', position: 'relative' }}>
-              <button className="btn-icon" style={{ position: 'absolute', top: '20px', right: '20px' }} onClick={() => setIsModalOpen(false)}>
+          <div className="wizard-modal" onClick={e => e.stopPropagation()}>
+            <div className="wizard-header">
+              <div>
+                <div className="wizard-step-indicator">
+                  <div className={`step-dot ${wizardStep === 1 ? 'active' : ''}`}></div>
+                  <div className={`step-dot ${wizardStep === 2 ? 'active' : ''}`}></div>
+                </div>
+                <h3 style={{ fontSize: '1.8rem', fontWeight: '900', color: '#1e293b' }}>
+                  {wizardStep === 1 ? 'New Form Setup' : 'Form Configuration'}
+                </h3>
+                <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                  {wizardStep === 1 ? 'Start by naming your automation flow' : 'Configure the sequential questions to ask'}
+                </p>
+              </div>
+              <button className="btn-icon" onClick={() => setIsModalOpen(false)} style={{ background: '#f1f5f9', padding: '8px', borderRadius: '50%' }}>
                 <X size={20} />
               </button>
             </div>
 
-            <div style={{ padding: '0 32px 32px', overflowY: 'auto', flex: 1 }}>
-
-            {wizardStep === 1 ? (
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ width: '64px', height: '64px', background: 'var(--bg-light)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', margin: '0 auto 20px' }}>
-                  <Plus size={32} />
-                </div>
-                <h3 className="title-lg" style={{ marginBottom: '8px' }}>Create New Form</h3>
-                <p className="text-secondary" style={{ marginBottom: '32px' }}>Give your form a name and choose a starting type.</p>
-                
-                <div style={{ textAlign: 'left' }}>
+            <div style={{ padding: '0 40px 40px', overflowY: 'auto', flex: 1 }}>
+              {wizardStep === 1 ? (
+                <div style={{ padding: '20px 0' }}>
                   <FormField 
-                    label="Form Name" 
-                    placeholder="e.g. Winter Sale Leads"
+                    label="Give your form a name" 
+                    placeholder="e.g. Winter Sale Lead Capture"
                     value={newForm.name}
                     onChange={val => setNewForm({...newForm, name: val})}
                   />
 
-                  <div style={{ marginTop: '24px' }}>
-                    <label className="form-label">Type</label>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                  <div style={{ marginTop: '32px' }}>
+                    <label style={{ display: 'block', marginBottom: '12px', fontSize: '0.9rem', fontWeight: '800', color: '#1e293b' }}>Select Template Type</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
                       {formTypes.map(t => (
                         <div 
                           key={t.title}
-                          className={`stat-card ${newForm.type === t.title ? 'active' : ''}`}
                           onClick={() => setNewForm({...newForm, type: t.title})}
-                          style={{ padding: '12px', cursor: 'pointer', border: newForm.type === t.title ? '2px solid var(--primary)' : '1px solid var(--border)' }}
+                          style={{ 
+                            padding: '16px', borderRadius: '16px', cursor: 'pointer', border: '2px solid', 
+                            borderColor: newForm.type === t.title ? '#7c3aed' : '#f1f5f9',
+                            background: newForm.type === t.title ? '#fdfcff' : '#ffffff',
+                            transition: 'all 0.2s'
+                          }}
                         >
-                          <div style={{ fontSize: '12px', fontWeight: '700' }}>{t.title}</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ color: newForm.type === t.title ? '#7c3aed' : '#94a3b8' }}>{t.icon}</div>
+                            <div style={{ fontSize: '0.9rem', fontWeight: '800' }}>{t.title}</div>
+                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div>
-                <h3 className="title-md" style={{ marginBottom: '8px' }}>Configure Fields</h3>
-                <p className="text-secondary" style={{ marginBottom: '24px' }}>These fields will be collected sequentially in the DM.</p>
+              ) : (
+                <div style={{ padding: '20px 0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <h4 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e293b' }}>Sequences & Fields</h4>
+                    <button 
+                      className="btn-premium" 
+                      style={{ padding: '8px 16px', fontSize: '0.8rem', background: '#f8fafc', color: '#7c3aed', boxShadow: 'none', border: '1px solid #e2e8f0' }}
+                      onClick={() => {
+                        const updatedFields = [...newForm.steps[0].fields, { label: 'New Question', type: 'text', placeholder: '', required: true }];
+                        setNewForm({
+                          ...newForm,
+                          steps: [{ ...newForm.steps[0], fields: updatedFields }]
+                        });
+                      }}
+                    >
+                      <Plus size={16} /> Add Question
+                    </button>
+                  </div>
 
-                <div style={{ maxHeight: '350px', overflowY: 'auto', paddingRight: '8px' }}>
-                  {newForm.steps[0].fields.map((field, idx) => (
-                    <div key={idx} className="stat-card" style={{ padding: '16px', marginBottom: '12px', background: 'var(--bg-light)', border: 'none', position: 'relative' }}>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {newForm.steps[0].fields.map((field, idx) => (
+                      <div key={idx} className="field-editor-card">
+                        <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800', flexShrink: 0 }}>
+                          {idx + 1}
+                        </div>
                         <div style={{ flex: 1 }}>
                           <FormField 
-                            label={`Field ${idx + 1} Label`}
+                            label={`Question Text`}
+                            placeholder="What should the bot ask?"
                             value={field.label}
+                            isTextarea={field.type === 'textarea'}
                             onChange={val => {
                               const updatedFields = [...newForm.steps[0].fields];
                               updatedFields[idx].label = val;
@@ -341,13 +373,25 @@ export default function Forms() {
                             }}
                           />
                         </div>
-                        <div style={{ width: '100px' }}>
-                          <label className="form-label">Type</label>
-                          <div className="badge badge-draft" style={{ height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px' }}>
-                            {field.type}
-                          </div>
-                        </div>
+                        <select 
+                          value={field.type}
+                          onChange={(e) => {
+                            const updatedFields = [...newForm.steps[0].fields];
+                            updatedFields[idx].type = e.target.value;
+                            setNewForm({
+                              ...newForm,
+                              steps: [{ ...newForm.steps[0], fields: updatedFields }]
+                            });
+                          }}
+                          style={{ padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem', outline: 'none' }}
+                        >
+                          <option value="text">Short Text</option>
+                          <option value="textarea">Long Text</option>
+                          <option value="email">Email</option>
+                          <option value="phone">Phone</option>
+                        </select>
                         <button 
+                          className="delete-field-btn"
                           onClick={() => {
                             const updatedFields = newForm.steps[0].fields.filter((_, i) => i !== idx);
                             setNewForm({
@@ -355,56 +399,40 @@ export default function Forms() {
                               steps: [{ ...newForm.steps[0], fields: updatedFields }]
                             });
                           }}
-                          className="btn-icon" 
-                          style={{ color: '#ef4444', marginBottom: '8px' }}
                         >
-                          <Trash size={18} />
+                          <Trash size={14} />
                         </button>
                       </div>
-                    </div>
-                  ))}
-                  
-                  <button 
-                    className="btn-secondary" 
-                    style={{ width: '100%', borderStyle: 'dashed', fontSize: '13px', padding: '12px' }}
-                    onClick={() => {
-                      const updatedFields = [...newForm.steps[0].fields, { label: 'New Field', type: 'text', placeholder: '', required: true }];
-                      setNewForm({
-                        ...newForm,
-                        steps: [{ ...newForm.steps[0], fields: updatedFields }]
-                      });
-                    }}
-                  >
-                    <Plus size={16} /> Add Another Field
-                  </button>
-                </div>
+                    ))}
+                  </div>
 
-                <div style={{ marginTop: '32px' }}>
-                  <FormField 
-                    label="Success Message" 
-                    type="textarea"
-                    value={newForm.settings.successMessage}
-                    onChange={val => setNewForm({...newForm, settings: {...newForm.settings, successMessage: val}})}
-                  />
+                  <div style={{ marginTop: '32px' }}>
+                    <FormField 
+                      label="Automation Success Message" 
+                      subLabel="This message is sent after all questions are answered."
+                      isTextarea={true}
+                      value={newForm.settings.successMessage}
+                      onChange={val => setNewForm({...newForm, settings: {...newForm.settings, successMessage: val}})}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
             </div>
 
-            {/* Sticky Footer */}
-            <div style={{ padding: '20px 32px 32px', borderTop: '1px solid var(--border)', background: 'var(--bg-white)', display: 'flex', gap: '12px' }}>
+            {/* Footer Actions */}
+            <div style={{ padding: '30px 40px', borderTop: '1px solid #f1f5f9', background: '#ffffff', display: 'flex', gap: '16px' }}>
               {wizardStep === 1 ? (
                 <>
-                  <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setIsModalOpen(false)}>Cancel</button>
-                  <button className="btn-primary" style={{ flex: 1 }} onClick={() => setWizardStep(2)}>
-                    Next Step <ArrowRight size={16} />
+                  <button className="btn-secondary" style={{ flex: 1, padding: '14px', borderRadius: '16px' }} onClick={() => setIsModalOpen(false)}>Cancel</button>
+                  <button className="btn-premium" style={{ flex: 1 }} onClick={() => setWizardStep(2)}>
+                    Continue <ArrowRight size={18} />
                   </button>
                 </>
               ) : (
                 <>
-                  <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setWizardStep(1)}>Back</button>
-                  <button className="btn-primary" style={{ flex: 1 }} onClick={handleCreateForm}>
-                    <Save size={18} /> Finish & Create
+                  <button className="btn-secondary" style={{ flex: 1, padding: '14px', borderRadius: '16px' }} onClick={() => setWizardStep(1)}>Back</button>
+                  <button className="btn-premium" style={{ flex: 1 }} onClick={handleCreateForm}>
+                    <Send size={18} /> Launch Form Flow
                   </button>
                 </>
               )}

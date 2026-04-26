@@ -132,8 +132,9 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   
   const matchedFlow = activeFlows.find(f => {
     if (!f.triggerKeyword) return false;
-    const keywords = f.triggerKeyword.split(',').map(k => k.trim().toLowerCase());
-    return keywords.some(k => text.toLowerCase().includes(k));
+    const keywords = f.triggerKeyword.split(',').map(k => k.toLowerCase().replace(/\s+/g, ' ').trim());
+    const cleanUserMsg = text.toLowerCase().replace(/\s+/g, ' ').trim();
+    return keywords.some(k => cleanUserMsg.includes(k));
   });
   
   if (matchedFlow) {
@@ -152,9 +153,9 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     const platformMatch = c.platform === 'all' || c.platform === (platform || 'instagram');
     const sourceMatch = (c.triggerSource || 'dm') === source;
     
-    // Improved Matching: trim spaces and case-insensitive
-    const cleanTrigger = c.trigger.trim().toLowerCase();
-    const cleanUserMsg = text.trim().toLowerCase();
+    // Improved Matching: trim spaces, normalize multiple spaces, and case-insensitive
+    const cleanTrigger = c.trigger.toLowerCase().replace(/\s+/g, ' ').trim();
+    const cleanUserMsg = text.toLowerCase().replace(/\s+/g, ' ').trim();
     const keywordMatch = cleanUserMsg.includes(cleanTrigger);
     
     if (keywordMatch) {
