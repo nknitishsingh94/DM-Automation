@@ -1,108 +1,88 @@
 import { useState, useEffect, useRef } from 'react';
-import { Sparkles, Save, Brain, MessageSquare, Sliders, Database, Play, CheckCircle, Smartphone, Send, Settings as SettingsIcon, User, RotateCcw } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { 
+  Sparkles, Save, Brain, MessageSquare, Sliders, Database, 
+  Play, CheckCircle, Smartphone, Send, Settings as SettingsIcon, 
+  User, RotateCcw, Target, Zap, ShieldCheck, Heart
+} from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { useAuth } from '../context/AuthContext';
 import toast, { Toaster } from 'react-hot-toast';
 import TypingDots from '../components/TypingDots';
-import FormField from '../components/FormField';
 import '../styles/theme.css';
+import '../styles/AIStudio.css';
 
 export default function AIStudio() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState('persona');
   const [testMessage, setTestMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([
-    { role: 'ai', text: 'Hi there! I am your new AI assistant. How can I help?' }
+    { role: 'ai', text: 'Identity verified. AI Neural Link established. How can I assist you today?' }
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const contextRef = useRef(null);
+  const [showSaved, setShowSaved] = useState(false);
 
-  const scrollToContext = () => {
-    contextRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    contextRef.current?.focus();
+  const personas = [
+    { id: 'pro', name: 'Professional', icon: <ShieldCheck size={18} />, tone: 'Expert, efficient, and serious', prompt: 'You are a high-level executive assistant. Your goal is to solve problems quickly and use professional language.' },
+    { id: 'friendly', name: 'Friendly', icon: <Heart size={18} />, tone: 'Warm, welcoming, and helpful', prompt: 'You are a friendly concierge. Use warm greetings, emojis, and make the customer feel valued.' },
+    { id: 'sales', name: 'Sales Closer', icon: <Zap size={18} />, tone: 'Persuasive, energetic, and direct', prompt: 'You are a master salesperson. Focus on benefits, create urgency, and guide the user toward a purchase.' }
+  ];
+
+  const applyPersona = (p) => {
+    setAiSettings({
+      ...aiSettings,
+      aiTone: p.tone,
+      aiKnowledgeBase: p.prompt
+    });
+    toast.success(`Applied ${p.name} persona!`);
   };
 
-  const useTemplate = () => {
-    const template = `You are a helpful customer support agent for [Business Name]. 
-Our products: [Product 1], [Product 2].
-Our hours: 9 AM - 6 PM.
-Free delivery on orders over $50.
-Tone: Always be polite and help users find the right product.`;
-    setAiSettings({ ...aiSettings, aiKnowledgeBase: template });
-    toast.success('Template loaded! Please customize it.');
-  };
-
-  // Mapped to backend schema names
   const [aiSettings, setAiSettings] = useState({
-    aiName: 'ZenXchat Assistant',
-    aiTone: 'professional, helpful, and concise',
+    aiName: 'Zen Assistant',
+    aiTone: 'friendly and concise',
     aiKnowledgeBase: 'We are a SaaS company providing DM automation.',
     aiTemperature: 0.7,
-    aiFallbackMessage: 'I am not sure about that, please contact human support at help@zenxchat.com',
+    aiFallbackMessage: 'I am not sure about that, please contact human support.',
     aiHumanEscalation: false
   });
-  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem('insta_agent_token');
-    // Load AI settings
     fetch(`${API_BASE_URL}/api/settings`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-      .then(res => res.json())
+      .then(res => {
+        if (res.status === 401) { logout(); navigate('/login'); return; }
+        return res.json();
+      })
       .then(data => {
         if (data && data._id) {
-          setAiSettings(prev => ({
-            ...prev,
-            aiName: data.aiName || prev.aiName,
-            aiTone: data.aiTone || prev.aiTone,
-            aiKnowledgeBase: data.aiKnowledgeBase || prev.aiKnowledgeBase,
-            aiTemperature: data.aiTemperature !== undefined ? data.aiTemperature : prev.aiTemperature,
-            aiFallbackMessage: data.aiFallbackMessage || prev.aiFallbackMessage,
-            aiHumanEscalation: data.aiHumanEscalation || prev.aiHumanEscalation
-          }));
+          setAiSettings({
+            aiName: data.aiName || 'Zen Assistant',
+            aiTone: data.aiTone || 'friendly and concise',
+            aiKnowledgeBase: data.aiKnowledgeBase || '',
+            aiTemperature: data.aiTemperature ?? 0.7,
+            aiFallbackMessage: data.aiFallbackMessage || 'Contact support for more help.',
+            aiHumanEscalation: !!data.aiHumanEscalation
+          });
         }
       })
       .catch(err => console.error('Error loading AI settings:', err));
-
-    // Load persisted chat history
-    fetch(`${API_BASE_URL}/api/chats`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(messages => {
-        if (Array.isArray(messages)) setChatHistory(messages);
-      })
-      .catch(err => console.error('Error loading chat history:', err));
   }, []);
 
   const handleTestChat = async (e) => {
     e.preventDefault();
     if (!testMessage.trim()) return;
 
-    const token = localStorage.getItem('insta_agent_token');
     const userMsg = { role: 'user', text: testMessage };
-    // Optimistically add user message
     setChatHistory(prev => [...prev, userMsg]);
     setTestMessage('');
     setIsTyping(true);
 
-    // Persist user message
     try {
-      await fetch(`${API_BASE_URL}/api/chats`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(userMsg)
-      });
-    } catch (err) {
-      console.error('Error saving user message:', err);
-    }
-
-    // Call backend AI chat endpoint
-    try {
+      const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
         headers: {
@@ -112,56 +92,15 @@ Tone: Always be polite and help users find the right product.`;
         body: JSON.stringify({ message: testMessage, settings: aiSettings })
       });
       const data = await res.json();
-      const aiMsg = { role: 'ai', text: data.reply || 'No response' };
-      setChatHistory(prev => [...prev, aiMsg]);
-      // Persist AI message
-      await fetch(`${API_BASE_URL}/api/chats`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(aiMsg)
-      });
-      toast.success('AI responded');
+      setChatHistory(prev => [...prev, { role: 'ai', text: data.reply || 'Connection established, but no data received.' }]);
     } catch (err) {
-      console.error('Error fetching AI response:', err);
-      toast.error('Failed to get AI response');
+      toast.error('AI Link unstable. Check connection.');
     } finally {
       setIsTyping(false);
     }
   };
 
-  const handleClearChat = async () => {
-    if (!window.confirm("Are you sure you want to clear the entire chat history?")) return;
-    
-    const token = localStorage.getItem('insta_agent_token');
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/chats`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        setChatHistory([{ role: 'ai', text: 'History cleared. How can I help you today?' }]);
-        toast.success('Chat history cleared');
-      }
-    } catch (err) {
-      toast.error('Failed to clear history');
-    }
-  };
-
   const handleSave = async () => {
-    // Simple validation for all required fields
-    const newErrors = {};
-    if (!aiSettings.aiName.trim()) newErrors.aiName = 'Agent name is required';
-    if (!aiSettings.aiTone.trim()) newErrors.aiTone = 'Conversational tone is required';
-    if (!aiSettings.aiKnowledgeBase.trim()) newErrors.aiKnowledgeBase = 'System prompt is required';
-    if (!aiSettings.aiFallbackMessage.trim()) newErrors.aiFallbackMessage = 'Fallback message is required';
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) {
-      toast.error('Please fix the highlighted errors');
-      return;
-    }
     setIsSaving(true);
     try {
       const token = localStorage.getItem('insta_agent_token');
@@ -174,225 +113,146 @@ Tone: Always be polite and help users find the right product.`;
         body: JSON.stringify({ ...aiSettings, _platform: 'ai_studio' })
       });
       if (res.ok) {
-        toast.success('AI Configuration Saved Successfully!');
-      } else {
-        const errData = await res.json();
-        toast.error(errData.error || 'Failed to save configuration');
+        toast.success('Neural weights updated!');
+        setShowSaved(true);
+        setTimeout(() => setShowSaved(false), 3000);
       }
     } catch (err) {
-      toast.error('Network error while saving');
+      toast.error('Failed to sync settings');
     } finally {
       setIsSaving(false);
     }
   };
 
   return (
-    <div className="container">
-      <Toaster />
+    <div className="studio-container">
+      <Toaster position="top-right" />
+      
       {/* Header */}
-      <div className="header-section">
-        <div>
-          <div className="header-title">
-            <div className="icon-box">
-              <Sparkles size={24} />
-            </div>
-            <h2>AI Studio Configurator</h2>
+      <div className="studio-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div className="brain-glow">
+            <Brain size={28} color="white" />
           </div>
-          <p>Train your custom AI Agent and test its personality in real-time.</p>
+          <div>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>AI Neural Studio</h2>
+            <p style={{ color: '#94a3b8', margin: 0 }}>Configure and train your custom AI personality</p>
+          </div>
         </div>
-        <div className="header-actions">
-          <button onClick={scrollToContext} className="btn-secondary">
-            <Database size={18} /> Manage Knowledge Base
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="btn-primary"
-          >
-            {isSaving ? 'Saving...' : <><Save size={18} /> Save Agent</>}
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div className={`save-status ${showSaved ? 'visible' : ''}`}>
+            <CheckCircle size={14} /> Saved to cloud
+          </div>
+          <button onClick={handleSave} disabled={isSaving} className="btn-primary" style={{ background: '#8b5cf6', borderRadius: '14px', padding: '12px 24px' }}>
+            {isSaving ? 'Syncing...' : <><Save size={18} /> Update Agent</>}
           </button>
         </div>
       </div>
 
-      {/* Main Studio Grid */}
-      <div className="studio-grid">
+      <div className="studio-grid" style={{ gridTemplateColumns: '1fr 380px', gap: '32px' }}>
+        
+        {/* LEFT: Training Config */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          
+          <div className="studio-glass-card">
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '800', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Target size={18} color="#8b5cf6" /> Choose Agent Persona
+            </h3>
+            <div className="persona-grid">
+              {personas.map(p => (
+                <div 
+                  key={p.id} 
+                  className={`persona-option ${aiSettings.aiTone.toLowerCase().includes(p.name.toLowerCase()) ? 'active' : ''}`}
+                  onClick={() => applyPersona(p)}
+                >
+                  <div style={{ marginBottom: '8px', color: '#8b5cf6' }}>{p.icon}</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: '800' }}>{p.name}</div>
+                </div>
+              ))}
+            </div>
 
-        {/* LEFT COLUMN: Editor */}
-        <div className="editor-column">
+            <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
+              <div style={{ flex: 1 }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8', marginBottom: '8px', textTransform: 'uppercase' }}>Agent Identity</label>
+                <input 
+                  className="training-input"
+                  value={aiSettings.aiName}
+                  onChange={val => setAiSettings({...aiSettings, aiName: val.target.value})}
+                  placeholder="e.g. Zen Assistant"
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8', marginBottom: '8px', textTransform: 'uppercase' }}>Vocal Tone</label>
+                <input 
+                  className="training-input"
+                  value={aiSettings.aiTone}
+                  onChange={val => setAiSettings({...aiSettings, aiTone: val.target.value})}
+                  placeholder="e.g. Friendly, professional"
+                />
+              </div>
+            </div>
 
-          {/* Tabs */}
-          <div className="tabs-container">
-            {[
-              { id: 'persona', label: 'Persona & Role', icon: <Brain size={16} /> },
-              { id: 'behavior', label: 'Behavioral Tuning', icon: <Sliders size={16} /> },
-              { id: 'advanced', label: 'Advanced Settings', icon: <SettingsIcon size={16} /> }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-              >
-                {tab.icon} {tab.label}
-              </button>
-            ))}
+            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8', marginBottom: '8px', textTransform: 'uppercase' }}>Knowledge Base & Context</label>
+            <textarea 
+              className="training-input"
+              rows={8}
+              value={aiSettings.aiKnowledgeBase}
+              onChange={val => setAiSettings({...aiSettings, aiKnowledgeBase: val.target.value})}
+              placeholder="Tell the AI who you are and what your business does..."
+            />
           </div>
 
-          {/* Persona Tab */}
-          {activeTab === 'persona' && (
-            <div className="tab-content">
-              <div className="card">
-                <h3>Identity & Voice</h3>
-                <FormField
-                  label="Agent Name"
-                  value={aiSettings.aiName}
-                  onChange={val => setAiSettings({ ...aiSettings, aiName: val })}
-                  error={errors.aiName}
-                />
-
-                <FormField
-                  label="Conversational Tone"
-                  placeholder="e.g. Friendly, professional, humorous..."
-                  value={aiSettings.aiTone}
-                  onChange={val => setAiSettings({ ...aiSettings, aiTone: val })}
-                  error={errors.aiTone}
-                />
-
-                <FormField
-                  label="System Prompt / Context"
-                  isTextarea={true}
-                  rows={5}
-                  value={aiSettings.aiKnowledgeBase}
-                  onChange={val => setAiSettings({ ...aiSettings, aiKnowledgeBase: val })}
-                  error={errors.aiKnowledgeBase}
-                  extraLabel={<span onClick={useTemplate} style={{ color: '#8b5cf6', fontSize: '0.8rem', cursor: 'pointer', fontWeight: '800' }}>Use Template</span>}
-                  inputRef={contextRef}
-                />
-              </div>
-
-              <div className="card">
-                <h3>Fallback Execution</h3>
-                <FormField
-                  label="Message to send when AI is unsure"
-                  value={aiSettings.aiFallbackMessage}
-                  onChange={val => setAiSettings({ ...aiSettings, aiFallbackMessage: val })}
-                  error={errors.aiFallbackMessage}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Behavior Tab */}
-          {activeTab === 'behavior' && (
-            <div className="tab-content">
-              <div className="card">
-                <h3>Creativity vs Accuracy (Temperature)</h3>
-                <div className="slider-container">
-                  <span>Strict</span>
-                  <input
-                    type="range"
-                    min="0" max="1" step="0.1"
-                    value={aiSettings.aiTemperature}
-                    onChange={(e) => setAiSettings({ ...aiSettings, aiTemperature: parseFloat(e.target.value) })}
-                  />
-                  <span>Creative</span>
+          <div className="studio-glass-card" style={{ padding: '24px' }}>
+             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <h4 style={{ margin: 0, fontWeight: '800' }}>Neural Creativity</h4>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>Higher values make the bot more creative but less predictable.</p>
                 </div>
-                <div className="temp-display">{aiSettings.aiTemperature.toFixed(1)}</div>
-                <p>Values closer to 0 adhere strictly to facts. Values near 1 generate highly creative responses.</p>
-              </div>
-
-              <div className="card">
-                <div className="toggle-container">
-                  <div>
-                    <h3>Human Escalation</h3>
-                    <p>Transfer chat to admin when angry intent detected.</p>
-                  </div>
-                  <div
-                    onClick={() => setAiSettings({ ...aiSettings, aiHumanEscalation: !aiSettings.aiHumanEscalation })}
-                    className={`toggle-switch ${aiSettings.aiHumanEscalation ? 'on' : ''}`}>
-                    <div className="toggle-thumb"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'advanced' && (
-            <div className="card advanced-placeholder">
-              <Sliders size={48} />
-              <h3>OpenAI / Custom API Link</h3>
-              <p>Connect your own LLM model API wrapper for deeper customization.</p>
-              <div className="dev-mode-badge">
-                Available in Developer Mode
-              </div>
-            </div>
-          )}
+                <div style={{ fontSize: '1.5rem', fontWeight: '900', color: '#8b5cf6' }}>{aiSettings.aiTemperature.toFixed(1)}</div>
+             </div>
+             <input 
+                type="range" min="0" max="1" step="0.1" 
+                value={aiSettings.aiTemperature} 
+                onChange={e => setAiSettings({...aiSettings, aiTemperature: parseFloat(e.target.value)})}
+                style={{ width: '100%', marginTop: '16px', accentColor: '#8b5cf6' }}
+             />
+          </div>
 
         </div>
 
-        {/* RIGHT COLUMN: Mobile Simulator */}
-        <div className="simulator-column">
-          <div className="mobile-simulator">
-
-            {/* Simulator Header */}
-            <div className="simulator-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Smartphone size={18} />
-                <div style={{ fontSize: '0.8rem', fontWeight: '700' }}>Live Preview</div>
-              </div>
-              <button 
-                onClick={handleClearChat}
-                className="btn-icon" 
-                title="Reset Chat"
-                style={{ 
-                  background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', 
-                  padding: '4px', borderRadius: '4px', display: 'flex', alignItems: 'center', transition: 'all 0.2s' 
-                }}
-                onMouseOver={(e) => e.currentTarget.style.color = '#7c3aed'}
-                onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}
-              >
-                <RotateCcw size={16} />
-              </button>
-            </div>
-
-            {/* Chat History */}
-            <div className="chat-history">
-              {chatHistory.map((msg, idx) => (
-                <div key={idx} className={`chat-bubble ${msg.role}`}>
-                  <div className="avatar">
-                    {msg.role === 'user' ? <User size={14} /> : <Sparkles size={14} />}
-                  </div>
-                  <div className="message-text">
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-
-              {isTyping && (
-                <div style={{ display: 'flex', gap: '12px', alignSelf: 'flex-start' }}>
-                  <div className="avatar ai">
-                    <Sparkles size={14} />
-                  </div>
-                  <div className="message-text">
-                    <TypingDots />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Chat Input */}
-            <form onSubmit={handleTestChat} style={{ padding: '16px', background: '#ffffff', borderTop: '1px solid #e2e8f0', display: 'flex', gap: '12px' }}>
-              <input
-                type="text"
-                placeholder="Type a message to test..."
-                value={testMessage}
-                onChange={(e) => setTestMessage(e.target.value)}
-                style={{ flex: 1, background: '#f1f5f9', border: 'none', padding: '12px 16px', borderRadius: '24px', outline: 'none', fontSize: '0.9rem' }}
-              />
-              <button type="submit" disabled={!testMessage.trim()} style={{ background: testMessage.trim() ? '#7c3aed' : '#e2e8f0', color: 'white', border: 'none', width: '42px', height: '42px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: testMessage.trim() ? 'pointer' : 'not-allowed', transition: 'all 0.2s' }}>
-                <Send size={16} style={{ marginLeft: '2px' }} />
-              </button>
-            </form>
+        {/* RIGHT: Live Simulator */}
+        <div className="simulator-wrap">
+          <div className="simulator-top">
+             <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%' }}></div>
+             <div style={{ fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8' }}>LIVE NEURAL INTERFACE</div>
           </div>
+          
+          <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {chatHistory.map((msg, idx) => (
+              <div key={idx} className={msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai'}>
+                {msg.text}
+              </div>
+            ))}
+            {isTyping && (
+              <div className="chat-bubble-ai" style={{ width: '60px', display: 'flex', justifyContent: 'center' }}>
+                <TypingDots color="#ffffff" />
+              </div>
+            )}
+          </div>
+
+          <form onSubmit={handleTestChat} style={{ padding: '20px', background: '#1e293b', display: 'flex', gap: '12px' }}>
+            <input 
+              className="training-input"
+              value={testMessage}
+              onChange={e => setTestMessage(e.target.value)}
+              placeholder="Test the neural link..."
+              style={{ border: 'none', background: '#0f172a' }}
+            />
+            <button type="submit" disabled={!testMessage.trim()} style={{ background: '#8b5cf6', border: 'none', width: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}>
+               <Send size={18} />
+            </button>
+          </form>
         </div>
 
       </div>

@@ -195,8 +195,36 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
   } 
 
-  console.log(`😴 NO MATCH: The message "${text}" did not trigger any active campaigns.`);
-  return { skipped: true, reason: 'no keywords matched' };
+  console.log(`😴 NO KEYWORD MATCH: Falling back to AI Studio...`);
+  
+  try {
+    const aiResponse = await generateAIResponse(userId, text);
+    
+    if (aiResponse) {
+      const sent = await sendMessageToInstagram(platform, chatId, aiResponse, '', userId);
+      
+      if (sent) {
+        const autoReply = new Message({
+          userId: new mongoose.Types.ObjectId(userId),
+          chatId: chatId || 'default', 
+          sender: 'AI Agent', 
+          text: aiResponse, 
+          type: 'sent', 
+          platform, 
+          isAI: true, 
+          timestamp: new Date()
+        });
+        await autoReply.save();
+        io.to(userId.toString()).emit('new_message', autoReply);
+        console.log(`🤖 AI FALLBACK SUCCESS: Sent AI response to ${chatId}`);
+        return { ai_reply: aiResponse };
+      }
+    }
+  } catch (aiErr) {
+    console.error("🔥 AI Fallback failed:", aiErr);
+  }
+
+  return { skipped: true, reason: 'no keywords matched and AI failed' };
 };
 
 let lastDbError = null;
