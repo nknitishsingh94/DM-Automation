@@ -87,36 +87,29 @@ router.post('/login', async (req, res) => {
 // Google Login Route
 router.post('/google', async (req, res) => {
   try {
-    const { token } = req.body;
+    const { token, mode } = req.body;
     
-    // Mock Login Bypass for Demo
-    if (token === "mock_google_token") {
-      const email = "demo_google_user@example.com";
-      let user = await User.findOne({ email });
-      if (!user) {
-        user = new User({ username: "Demo Google User", email, googleId: "mock_google_id" });
-        await user.save();
-      }
-      const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
-      return res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email } });
-    }
-
+    // ... verification logic ...
     const ticket = await googleClient.verifyIdToken({
-
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID
     });
     const { sub, email, name, picture } = ticket.getPayload();
 
     let user = await User.findOne({ email });
+    
     if (!user) {
-      user = new User({
-        username: name,
-        email,
-        googleId: sub,
-        profilePhoto: picture
-      });
-      await user.save();
+      if (mode === 'signup') {
+        user = new User({
+          username: name,
+          email,
+          googleId: sub,
+          profilePhoto: picture
+        });
+        await user.save();
+      } else {
+        return res.status(404).json({ message: "Account not found. Please sign up first." });
+      }
     }
 
     // Ensure welcome message exists for the user
@@ -188,22 +181,9 @@ router.post('/google_custom', async (req, res) => {
 router.post('/facebook', async (req, res) => {
 
   try {
-    const { accessToken, userId } = req.body;
+    const { accessToken, userId, mode } = req.body;
 
-    // Mock Login Bypass for Demo
-    if (accessToken === "mock_token") {
-      const email = "demo_facebook_user@example.com";
-      let user = await User.findOne({ email });
-      if (!user) {
-        user = new User({ username: "Demo Facebook User", email, facebookId: "mock_fb_id" });
-        await user.save();
-      }
-      const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
-      return res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email } });
-    }
-    
     // Verify Facebook token (Server-to-Server)
-
     const fbRes = await fetch(`https://graph.facebook.com/me?access_token=${accessToken}&fields=id,name,email,picture`);
     const fbData = await fbRes.json();
 
@@ -215,13 +195,17 @@ router.post('/facebook', async (req, res) => {
     let user = await User.findOne({ email });
     
     if (!user) {
-      user = new User({
-        username: fbData.name,
-        email,
-        facebookId: fbData.id,
-        profilePhoto: fbData.picture?.data?.url
-      });
-      await user.save();
+      if (mode === 'signup') {
+        user = new User({
+          username: fbData.name,
+          email,
+          facebookId: fbData.id,
+          profilePhoto: fbData.picture?.data?.url
+        });
+        await user.save();
+      } else {
+        return res.status(404).json({ message: "Account not found. Please sign up first." });
+      }
     } else if (!user.facebookId) {
       user.facebookId = fbData.id;
       if (!user.profilePhoto) user.profilePhoto = fbData.picture?.data?.url;

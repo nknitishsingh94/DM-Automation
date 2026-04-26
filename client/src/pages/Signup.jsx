@@ -131,7 +131,7 @@ export default function Signup() {
       const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: response.credential })
+        body: JSON.stringify({ token: response.credential, mode: 'signup' })
       });
       const data = await res.json();
       if (res.ok) {
@@ -171,7 +171,7 @@ export default function Signup() {
       const res = await fetch(`${API_BASE_URL}/api/auth/facebook`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accessToken: authResponse.accessToken, userId: authResponse.userID })
+        body: JSON.stringify({ accessToken: authResponse.accessToken, userId: authResponse.userID, mode: 'signup' })
       });
       const data = await res.json();
       if (res.ok) {
