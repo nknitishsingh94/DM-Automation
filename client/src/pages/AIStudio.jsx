@@ -25,7 +25,7 @@ export default function AIStudio() {
   const [showSaved, setShowSaved] = useState(false);
 
   const personas = [
-    { id: 'pro', name: 'Professional', icon: <ShieldCheck size={18} />, tone: 'Expert, efficient, and serious', prompt: 'You are a high-level executive assistant. Your goal is to solve problems quickly and use professional language.' },
+    { id: 'pro', name: 'Professional', icon: <ShieldCheck size={18} />, tone: 'Expert, efficient, and serious', prompt: 'You are a high-level executive assistant. Your goal is to solve problems quickly and use professional language.'},
     { id: 'friendly', name: 'Friendly', icon: <Heart size={18} />, tone: 'Warm, welcoming, and helpful', prompt: 'You are a friendly concierge. Use warm greetings, emojis, and make the customer feel valued.' },
     { id: 'sales', name: 'Sales Closer', icon: <Zap size={18} />, tone: 'Persuasive, energetic, and direct', prompt: 'You are a master salesperson. Focus on benefits, create urgency, and guide the user toward a purchase.' }
   ];
@@ -241,13 +241,13 @@ export default function AIStudio() {
             )}
           </div>
 
-          <form onSubmit={handleTestChat} style={{ padding: '20px', background: '#1e293b', display: 'flex', gap: '12px' }}>
+          <form onSubmit={handleTestChat} style={{ padding: '20px', background: '#011C40', display: 'flex', gap: '12px' }}>
             <input 
               className="training-input"
               value={testMessage}
               onChange={e => setTestMessage(e.target.value)}
-              placeholder="Test the neural link..."
-              style={{ border: 'none', background: '#0f172a' }}
+              placeholder="Improve your Business...."
+              style={{ border: 'none', background: '#26658C', color: 'white' }}
             />
             <button type="submit" disabled={!testMessage.trim()} style={{ background: '#8b5cf6', border: 'none', width: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}>
                <Send size={18} />
