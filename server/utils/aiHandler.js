@@ -43,29 +43,32 @@ export const generateAIResponse = async (userId, userMessage) => {
 
     // Helper for Gemini Free API (Raw Axios - No SDK needed)
     const callGemini = async () => {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
+      // Try gemini-1.5-flash first on v1 endpoint
+      const models = ['gemini-1.5-flash', 'gemini-pro'];
       const axios = (await import('axios')).default;
-      
-      try {
-        const response = await axios.post(url, {
-          contents: [{
-              parts: [{ text: `System Instructions: You are ${aiName}. Tone: ${aiTone}. Context: ${aiKnowledgeBase}. Keep replies very short.\nUser: ${userMessage}` }]
-          }],
-          generationConfig: { temperature: Number(aiTemperature) || 0.7, maxOutputTokens: 350 }
-        });
-        
-        const extractedText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (!extractedText) {
-           console.error("GEMINI RETURNED NO TEXT. RAW PAYLOAD:", JSON.stringify(response.data));
-           throw new Error(`GEMINI_DEBUG: No Text`);
+      let lastError;
+
+      for (const modelName of models) {
+        try {
+          const url = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${geminiKey}`;
+          const response = await axios.post(url, {
+            contents: [{
+                parts: [{ text: `System Instructions: You are ${aiName}. Tone: ${aiTone}. Context: ${aiKnowledgeBase}. Keep replies very short.\nUser: ${userMessage}` }]
+            }],
+            generationConfig: { temperature: Number(aiTemperature) || 0.7, maxOutputTokens: 350 }
+          });
+          
+          const extractedText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (extractedText) return extractedText;
+          
+        } catch (err) {
+          lastError = err.response?.data ? JSON.stringify(err.response.data) : err.message;
+          console.warn(`⚠️ Gemini ${modelName} failed, trying next...`);
         }
-        return extractedText;
-        
-      } catch (err) {
-        const exactError = err.response?.data ? JSON.stringify(err.response.data) : err.message;
-        console.error("Gemini Exact Error:", exactError);
-        throw new Error(`GEMINI_DEBUG: ${exactError}`);
       }
+      
+      console.error("Gemini All Models Failed. Last Error:", lastError);
+      throw new Error(`GEMINI_DEBUG: ${lastError}`);
     };
 
     let reply;
