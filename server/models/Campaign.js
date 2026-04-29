@@ -3,7 +3,9 @@ import mongoose from 'mongoose';
 const campaignSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   trigger: { type: String, required: true },
-  triggerSource: { type: String, enum: ['dm', 'comment', 'story_mention'], default: 'dm' },
+  triggerOnDms: { type: Boolean, default: true },
+  triggerOnComments: { type: Boolean, default: false },
+  triggerOnStories: { type: Boolean, default: false },
   response: { type: String, required: true },
   status: { type: String, enum: ['Active', 'Paused'], default: 'Active' },
   dmsSent: { type: Number, default: 0 },

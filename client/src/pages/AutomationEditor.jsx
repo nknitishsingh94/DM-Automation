@@ -47,6 +47,9 @@ export default function AutomationEditor() {
   const [buttonText, setButtonText] = useState('Get the Link');
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [publicReply, setPublicReply] = useState("Check your DMs! 🚀 I've sent you the info.");
+  const [triggerOnDms, setTriggerOnDms] = useState(template === 'dms' || template === 'stories');
+  const [triggerOnComments, setTriggerOnComments] = useState(template === 'comments');
+  const [triggerOnStories, setTriggerOnStories] = useState(template === 'stories');
 
   const isValidUrl = (url) => {
     try {
@@ -151,6 +154,9 @@ export default function AutomationEditor() {
           openingMessageText: openingMessageText,
           openingMessageButton: openingMessageButton,
           publicReplyText: publicReply,
+          triggerOnDms,
+          triggerOnComments,
+          triggerOnStories,
           status: 'Active'
         })
       });
@@ -520,10 +526,50 @@ export default function AutomationEditor() {
             </div>
           )}
 
+            {/* Trigger Sources Selection */}
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>1</div>
+                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Trigger on:</h3>
+              </div>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <div 
+                  onClick={() => setTriggerOnDms(!triggerOnDms)}
+                  style={{ 
+                    padding: '10px 16px', borderRadius: '10px', border: triggerOnDms ? '2px solid #7c3aed' : '1.5px solid #e2e8f0',
+                    background: triggerOnDms ? '#f5f3ff' : 'white', color: triggerOnDms ? '#7c3aed' : '#64748b',
+                    cursor: 'pointer', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px'
+                  }}
+                >
+                  <Send size={14} /> DMs
+                </div>
+                <div 
+                  onClick={() => setTriggerOnComments(!triggerOnComments)}
+                  style={{ 
+                    padding: '10px 16px', borderRadius: '10px', border: triggerOnComments ? '2px solid #7c3aed' : '1.5px solid #e2e8f0',
+                    background: triggerOnComments ? '#f5f3ff' : 'white', color: triggerOnComments ? '#7c3aed' : '#64748b',
+                    cursor: 'pointer', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px'
+                  }}
+                >
+                  <ImageIcon size={14} /> Comments
+                </div>
+                <div 
+                  onClick={() => setTriggerOnStories(!triggerOnStories)}
+                  style={{ 
+                    padding: '10px 16px', borderRadius: '10px', border: triggerOnStories ? '2px solid #7c3aed' : '1.5px solid #e2e8f0',
+                    background: triggerOnStories ? '#f5f3ff' : 'white', color: triggerOnStories ? '#7c3aed' : '#64748b',
+                    cursor: 'pointer', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px'
+                  }}
+                >
+                  <Zap size={14} /> Story Mentions
+                </div>
+              </div>
+            </div>
+
             {/* Step 2 */}
             <div style={{ marginBottom: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>{template === 'dms' ? '1' : '2'}</div>
+                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>2</div>
                 <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Setup Keywords</h3>
               </div>
               <div style={{ padding: '20px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
@@ -570,7 +616,7 @@ export default function AutomationEditor() {
             {/* Step 3 */}
             <div style={{ marginBottom: '32px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>{template === 'dms' ? '2' : '3'}</div>
+                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>3</div>
                 <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Send a DM</h3>
               </div>
               <div style={{ padding: '20px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
@@ -741,8 +787,8 @@ export default function AutomationEditor() {
                 </div>
               )}
 
-              {/* Public Comment Reply (NEW - Only for Comments) */}
-              {template === 'comments' && (
+              {/* Public Comment Reply (Now shown if triggerOnComments is true) */}
+              {triggerOnComments && (
                 <div style={{ marginTop: '24px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                     <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b' }}>Public Comment Reply</h4>

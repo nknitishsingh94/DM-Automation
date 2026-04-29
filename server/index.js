@@ -157,7 +157,9 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
   const match = activeCampaigns.find(c => {
     const platformMatch = c.platform === 'all' || c.platform === (platform || 'instagram');
-    const sourceMatch = (c.triggerSource || 'dm') === source;
+    const sourceMatch = (source === 'dm' && c.triggerOnDms) || 
+                        (source === 'comment' && c.triggerOnComments) || 
+                        (source === 'story_mention' && c.triggerOnStories);
     
     const cleanUserMsg = text.toLowerCase().replace(/\s+/g, ' ').trim();
     
@@ -331,9 +333,8 @@ app.get('/api/webhook', (req, res) => {
 
 app.post('/api/webhook', async (req, res) => {
   const body = req.body;
-  console.log('🚀 --- WEBHOOK HIT ---');
-  console.log('📦 Object Type:', body.object);
-  console.log('📄 Full Body:', JSON.stringify(body, null, 2));
+  console.log('🚀 [SUPER LOG] Webhook Received! Object:', body.object);
+  console.log('📦 Full Payload:', JSON.stringify(body, null, 2));
 
   if (body.object === 'instagram' || body.object === 'page') {
     if (!body.entry || !Array.isArray(body.entry)) {
