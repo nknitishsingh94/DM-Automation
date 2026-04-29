@@ -318,7 +318,14 @@ export default function AutomationEditor() {
                       <img 
                         src={selectedMedia} 
                         alt="Media" 
-                        style={{ width: '100%', borderRadius: '12px', marginBottom: message ? '8px' : '0' }} 
+                        style={{ 
+                          width: '100%', 
+                          borderRadius: '12px', 
+                          marginBottom: message ? '12px' : '0',
+                          maxHeight: '220px',
+                          objectFit: 'cover',
+                          display: 'block'
+                        }} 
                       />
                     )}
                     {message}
