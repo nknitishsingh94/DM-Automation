@@ -462,7 +462,14 @@ app.post('/api/upload', verifyToken, upload.single('media'), (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
     
-    const baseUrl = process.env.API_BASE_URL || 'http://localhost:5000';
+    // Dynamically determine the base URL from the request
+    const host = req.get('host');
+    const protocol = req.protocol;
+    // Prioritize localhost for local testing even if API_BASE_URL is set (prevents ngrok tunnel issues)
+    const baseUrl = (host.includes('localhost') || host.includes('127.0.0.1')) 
+      ? `${protocol}://${host}` 
+      : (process.env.API_BASE_URL || `${protocol}://${host}`);
+    
     const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
     const fileUrl = `${cleanBaseUrl}/uploads/${req.file.filename}`;
     
