@@ -8,11 +8,18 @@ import Settings from '../models/Settings.js';
  * @returns {Promise<string>} - The AI generated response text
  */
 export const generateAIResponse = async (userId, userMessage) => {
+  // Force reload env for robustness
+  const dotenv = await import('dotenv');
+  dotenv.config();
+
   try {
     const userSettings = await Settings.findOne({ userId });
     
     const groqKey = process.env.GROQ_API_KEY;
     const openaiKey = process.env.OPENAI_API_KEY;
+    const geminiKey = process.env.GEMINI_API_KEY;
+
+    console.log(`🔍 AI DEBUG: Groq:${!!groqKey}, OpenAI:${!!openaiKey}, Gemini:${!!geminiKey}`);
 
     if (!groqKey && !openaiKey) {
       console.warn("⚠️ No AI API Keys configured in env.");
@@ -88,18 +95,7 @@ export const generateAIResponse = async (userId, userMessage) => {
 
     let reply;
 
-    // 1. Try OpenAI/Groq FIRST (Since it was working 'properly' before)
-    if (openaiKey) {
-      console.log(`🚀 Trying OpenAI (gpt-4o-mini) for user ${userId}...`);
-      try {
-        const openai = new OpenAI({ apiKey: openaiKey });
-        reply = await callOpenAI(openai, "gpt-4o-mini");
-        if (reply) return reply;
-      } catch (err) {
-        console.error("OpenAI Call Failed:", err.message);
-      }
-    }
-
+    // 1. Try GROQ FIRST (Most reliable free-ish option right now)
     if (groqKey) {
       console.log(`🚀 Trying Groq (llama-3.1-70b) for user ${userId}...`);
       try {
@@ -111,7 +107,19 @@ export const generateAIResponse = async (userId, userMessage) => {
       }
     }
 
-    // 2. Try Gemini as a Fallback
+    // 2. Try OpenAI
+    if (openaiKey) {
+      console.log(`🚀 Trying OpenAI (gpt-4o-mini) for user ${userId}...`);
+      try {
+        const openai = new OpenAI({ apiKey: openaiKey });
+        reply = await callOpenAI(openai, "gpt-4o-mini");
+        if (reply) return reply;
+      } catch (err) {
+        console.error("OpenAI Call Failed:", err.message);
+      }
+    }
+
+    // 3. Try Gemini as a Fallback
     if (geminiKey) {
       console.log(`🚀 Trying Google Gemini API for user ${userId}...`);
       try {
