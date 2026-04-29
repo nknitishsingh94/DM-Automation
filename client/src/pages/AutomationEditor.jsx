@@ -183,14 +183,25 @@ export default function AutomationEditor() {
             <div style={{ padding: '20px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #1a1a1a' }}>
               <ArrowLeft size={18} color="white" />
               <div style={{ 
-                width: '28px', 
-                height: '28px', 
+                width: '30px', 
+                height: '30px', 
                 borderRadius: '50%', 
-                background: user?.profilePhoto ? `url(${user.profilePhoto})` : '#333',
+                background: user?.profilePhoto 
+                  ? (user.profilePhoto.startsWith('http') ? `url(${user.profilePhoto})` : `url(${API_BASE_URL}/${user.profilePhoto})`)
+                  : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                border: '1px solid #333'
-              }}></div>
+                border: '1px solid #1a1a1a',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.7rem',
+                fontWeight: '800',
+                color: 'white',
+                flexShrink: 0
+              }}>
+                {!user?.profilePhoto && user?.username?.charAt(0).toUpperCase()}
+              </div>
               <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '700' }}>
                 {channel === 'facebook' 
                   ? (connectedSettings?.connectedFacebookName || 'Facebook Page')
