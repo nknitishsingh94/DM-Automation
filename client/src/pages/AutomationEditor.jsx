@@ -10,12 +10,18 @@ import {
   Zap, 
   Smartphone,
   CheckCircle2,
-  Send
+  Send,
+  Loader2
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../App';
+import { API_BASE_URL } from '../config';
 
 export default function AutomationEditor() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { notify } = useNotification();
+  const { user } = useAuth();
   const params = new URLSearchParams(location.search);
   const template = params.get('template');
   const channel = params.get('channel');
@@ -27,6 +33,8 @@ export default function AutomationEditor() {
   const [keywordInput, setKeywordInput] = useState('');
   const [message, setMessage] = useState('');
   const [openingMessage, setOpeningMessage] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [name, setName] = useState(`${template === 'stories' ? 'Story' : 'Comment'} Automation #${Math.floor(Math.random() * 1000)}`);
 
   const handleAddKeyword = (e) => {
     if (e.key === 'Enter' && keywordInput.trim()) {
@@ -39,6 +47,50 @@ export default function AutomationEditor() {
 
   const removeKeyword = (kw) => {
     setKeywords(keywords.filter(k => k !== kw));
+  };
+
+  const handleCreate = async () => {
+    if (!anyKeyword && keywords.length === 0) {
+      notify('Please add at least one keyword or select "Any keyword"', 'error');
+      return;
+    }
+    if (!message.trim()) {
+      notify('Please enter a response message', 'error');
+      return;
+    }
+
+    setSubmitting(true);
+    const token = localStorage.getItem('insta_agent_token');
+    
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/campaigns`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: name,
+          trigger: anyKeyword ? '*' : keywords.join(', '),
+          triggerSource: template === 'stories' ? 'story' : 'comment',
+          response: message,
+          platform: channel || 'instagram',
+          status: 'Active'
+        })
+      });
+
+      if (res.ok) {
+        notify('✅ Automation created successfully!', 'success');
+        navigate('/campaigns');
+      } else {
+        const data = await res.json();
+        notify(data.error || 'Failed to create automation', 'error');
+      }
+    } catch (err) {
+      notify('Connection error. Please try again.', 'error');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -153,6 +205,27 @@ export default function AutomationEditor() {
         >
           <div style={{ maxWidth: '500px', margin: '0 0' }}>
             
+            {/* Automation Name */}
+            <div style={{ marginBottom: '32px' }}>
+              <input 
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Name your automation..."
+                style={{
+                  fontSize: '1.8rem',
+                  fontWeight: '800',
+                  color: '#1e1b4b',
+                  border: 'none',
+                  outline: 'none',
+                  width: '100%',
+                  background: 'transparent',
+                  padding: 0
+                }}
+              />
+              <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>Click to rename your automation</p>
+            </div>
+
             {/* Step 1 */}
             <div style={{ marginBottom: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
@@ -292,6 +365,37 @@ export default function AutomationEditor() {
                 </div>
               </div>
             </div>
+
+            <button
+              onClick={handleCreate}
+              disabled={submitting}
+              style={{
+                width: '100%',
+                padding: '18px',
+                borderRadius: '16px',
+                background: '#7c3aed',
+                color: 'white',
+                border: 'none',
+                fontWeight: '800',
+                fontSize: '1.1rem',
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '12px',
+                marginTop: '10px',
+                boxShadow: '0 10px 15px -3px rgba(124, 58, 237, 0.3)',
+                transition: 'all 0.3s'
+              }}
+              onMouseEnter={(e) => {
+                if (!submitting) e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                if (!submitting) e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              {submitting ? <Loader2 className="animate-spin" size={24} /> : <><Zap size={24} fill="white" /> Create Automation</>}
+            </button>
           </div>
         </div>
       </div>
