@@ -157,9 +157,14 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
   const match = activeCampaigns.find(c => {
     const platformMatch = c.platform === 'all' || c.platform === (platform || 'instagram');
-    const sourceMatch = (source === 'dm' && c.triggerOnDms) || 
-                        (source === 'comment' && c.triggerOnComments) || 
-                        (source === 'story_mention' && c.triggerOnStories);
+    // Legacy support: If new booleans are missing, fallback to the old triggerSource string
+    const triggerDms = c.triggerOnDms ?? (c.triggerSource === 'dm' || !c.triggerSource);
+    const triggerComments = c.triggerOnComments ?? (c.triggerSource === 'comment');
+    const triggerStories = c.triggerOnStories ?? (c.triggerSource === 'story_mention');
+
+    const sourceMatch = (source === 'dm' && triggerDms) || 
+                        (source === 'comment' && triggerComments) || 
+                        (source === 'story_mention' && triggerStories);
     
     const cleanUserMsg = text.toLowerCase().replace(/\s+/g, ' ').trim();
     
@@ -349,6 +354,12 @@ app.post('/api/webhook', async (req, res) => {
       // 1. Handle Messaging (DMs)
       const messagingArray = entry.messaging || [];
       for (const messaging of messagingArray) {
+        // IGNORE ECHOS (Messages sent by the page/app itself)
+        if (messaging.message?.is_echo) {
+          console.log('⏭️ Skipping echo message (sent by us).');
+          continue;
+        }
+
         const senderId = messaging.sender.id;
         const text = messaging.message?.text;
         
@@ -397,6 +408,12 @@ app.post('/api/webhook', async (req, res) => {
           const text = val.text || val.message;
           const senderId = val.from?.id;
           const commentId = val.id || val.comment_id;
+
+          // CRITICAL: Ensure we are not replying to ourselves
+          if (senderId === pageId) {
+            console.log('⏭️ Skipping change from ourselves.');
+            continue;
+          }
 
           console.log(`💬 COMMENT DETECTED: "${text}" from ${senderId}`);
 
