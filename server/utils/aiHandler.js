@@ -79,18 +79,41 @@ export const generateAIResponse = async (userId, userMessage) => {
 
     let reply;
 
+    // 1. Try OpenAI/Groq FIRST (Since it was working 'properly' before)
+    if (openaiKey) {
+      console.log(`🚀 Trying OpenAI (gpt-4o-mini) for user ${userId}...`);
+      try {
+        const openai = new OpenAI({ apiKey: openaiKey });
+        reply = await callOpenAI(openai, "gpt-4o-mini");
+        if (reply) return reply;
+      } catch (err) {
+        console.error("OpenAI Call Failed:", err.message);
+      }
+    }
+
+    if (groqKey) {
+      console.log(`🚀 Trying Groq (llama-3.1-70b) for user ${userId}...`);
+      try {
+        const groq = new OpenAI({ apiKey: groqKey, baseURL: "https://api.groq.com/openai/v1" });
+        reply = await callOpenAI(groq, "llama-3.1-70b-versatile");
+        if (reply) return reply;
+      } catch (err) {
+        console.error("Groq Call Failed:", err.message);
+      }
+    }
+
+    // 2. Try Gemini as a Fallback
     if (geminiKey) {
-      console.log(`🚀 Trying Free Google Gemini API for user ${userId}...`);
+      console.log(`🚀 Trying Google Gemini API for user ${userId}...`);
       try {
         reply = await callGemini();
         if (reply) return reply;
       } catch (gemErr) {
-        console.error("Gemini Call Failed:", gemErr.message);
-        // Fallback to OpenAI/Groq if needed, or just proceed to catch
+        console.error("Gemini Fallback Failed:", gemErr.message);
       }
     }
 
-    throw new Error("No valid API Key found or AI service unavailable.");
+    throw new Error("No valid API Key found or all AI services failed.");
 
   } catch (err) {
     console.error("❌ AI API Error:", err.message);
