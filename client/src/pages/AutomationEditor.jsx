@@ -35,6 +35,23 @@ export default function AutomationEditor() {
   const [openingMessage, setOpeningMessage] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [name, setName] = useState(`${template === 'stories' ? 'Story' : 'Comment'} Automation #${Math.floor(Math.random() * 1000)}`);
+  const [connectedSettings, setConnectedSettings] = useState(null);
+
+  React.useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const token = localStorage.getItem('insta_agent_token');
+        const res = await fetch(`${API_BASE_URL}/api/settings`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        setConnectedSettings(data);
+      } catch (err) {
+        console.error("Failed to fetch settings:", err);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const handleAddKeyword = (e) => {
     if (e.key === 'Enter' && keywordInput.trim()) {
@@ -175,7 +192,10 @@ export default function AutomationEditor() {
                 border: '1px solid #333'
               }}></div>
               <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '700' }}>
-                {user?.username || 'user_name'}
+                {channel === 'facebook' 
+                  ? (connectedSettings?.connectedFacebookName || 'Facebook Page')
+                  : (connectedSettings?.connectedInstagramName || user?.username || 'Instagram Account')
+                }
               </div>
             </div>
 
