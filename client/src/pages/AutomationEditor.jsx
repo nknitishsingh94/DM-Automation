@@ -33,6 +33,8 @@ export default function AutomationEditor() {
   const [keywordInput, setKeywordInput] = useState('');
   const [message, setMessage] = useState('');
   const [openingMessage, setOpeningMessage] = useState(false);
+  const [openingMessageText, setOpeningMessageText] = useState("Hey there! I'm so happy you're here, thanks so much for your interest 😊\n\nClick below and I'll send you the link in just a sec 🚀");
+  const [openingMessageButton, setOpeningMessageButton] = useState("Send me the link");
   const [submitting, setSubmitting] = useState(false);
   const [name, setName] = useState(`${template === 'stories' ? 'Story' : 'Comment'} Automation #${Math.floor(Math.random() * 1000)}`);
   const [connectedSettings, setConnectedSettings] = useState(null);
@@ -211,21 +213,63 @@ export default function AutomationEditor() {
             </div>
 
             {/* Chat Area */}
-            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {keywords.length > 0 && (
-                <div style={{ 
-                  alignSelf: 'flex-end', 
-                  background: '#7c3aed', 
-                  color: 'white', 
-                  padding: '10px 16px', 
-                  borderRadius: '18px 18px 4px 18px',
-                  fontSize: '0.85rem',
-                  maxWidth: '80%',
-                  boxShadow: '0 4px 10px rgba(124, 58, 237, 0.3)'
-                }}>
-                  {keywords[0]}
+            <div style={{ 
+              padding: '20px', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '12px',
+              height: '400px',
+              overflowY: 'auto'
+            }}>
+              {/* User Trigger Bubble */}
+              <div style={{ 
+                alignSelf: 'flex-end', 
+                background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
+                color: 'white', 
+                padding: '10px 16px', 
+                borderRadius: '18px 18px 4px 18px',
+                fontSize: '0.8rem',
+                fontWeight: '500',
+                maxWidth: '85%',
+                boxShadow: '0 4px 10px rgba(124, 58, 237, 0.2)'
+              }}>
+                {keywords.length > 0 ? keywords[0] : 'Set a keyword'}
+              </div>
+
+              {/* AI Opening Message Bubble (Matching Photo) */}
+              {openingMessage && (
+                <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
+                  <div style={{ 
+                    background: '#262626', 
+                    color: 'white', 
+                    padding: '12px 16px', 
+                    borderRadius: '18px 18px 18px 4px',
+                    fontSize: '0.8rem',
+                    lineHeight: '1.4',
+                    marginBottom: '8px',
+                    border: '1px solid #333'
+                  }}>
+                    {openingMessageText}
+                    
+                    {/* Interactive Button inside Bubble */}
+                    <div style={{ 
+                      marginTop: '12px',
+                      padding: '10px',
+                      background: '#333',
+                      borderRadius: '10px',
+                      textAlign: 'center',
+                      fontSize: '0.75rem',
+                      fontWeight: '700',
+                      color: 'white',
+                      border: '1px solid #444'
+                    }}>
+                      {openingMessageButton}
+                    </div>
+                  </div>
                 </div>
               )}
+
+              {/* Final AI Response Bubble */}
               {message && (
                 <div style={{ 
                   alignSelf: 'flex-start', 
@@ -233,8 +277,9 @@ export default function AutomationEditor() {
                   color: 'white', 
                   padding: '10px 16px', 
                   borderRadius: '18px 18px 18px 4px',
-                  fontSize: '0.85rem',
-                  maxWidth: '80%'
+                  fontSize: '0.8rem',
+                  maxWidth: '85%',
+                  border: '1px solid #333'
                 }}>
                   {message}
                 </div>
@@ -439,13 +484,10 @@ export default function AutomationEditor() {
               </div>
             </div>
 
-            {/* Advanced Automations */}
+            {/* Advanced Automations (Matching Photo) */}
             <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '24px', paddingBottom: '60px' }}>
-              <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '4px' }}>Advanced</h4>
-              <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '16px' }}>Hands-free engagement.</p>
-              
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: '700', color: '#475569', fontSize: '0.85rem' }}>Opening Message</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b' }}>Advanced Automations</h4>
                 <div 
                   onClick={() => setOpeningMessage(!openingMessage)}
                   style={{ 
@@ -459,6 +501,42 @@ export default function AutomationEditor() {
                   }}></div>
                 </div>
               </div>
+              <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '20px' }}>Grow your audience faster — with smart, hands-free engagement.</p>
+              
+              {openingMessage && (
+                <div style={{ 
+                  padding: '20px', 
+                  borderRadius: '16px', 
+                  background: 'white', 
+                  border: '1px solid #7c3aed',
+                  boxShadow: '0 4px 20px rgba(124, 58, 237, 0.05)',
+                  marginBottom: '24px'
+                }}>
+                  <div style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '12px' }}>Opening Message</div>
+                  <textarea 
+                    value={openingMessageText}
+                    onChange={(e) => setOpeningMessageText(e.target.value)}
+                    placeholder="Enter opening message..."
+                    style={{ 
+                      width: '100%', height: '120px', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', 
+                      outline: 'none', fontSize: '0.85rem', resize: 'none', marginBottom: '16px', lineHeight: '1.5'
+                    }}
+                  ></textarea>
+                  <div style={{ position: 'relative' }}>
+                    <input 
+                      type="text" 
+                      value={openingMessageButton}
+                      onChange={(e) => setOpeningMessageButton(e.target.value)}
+                      placeholder="Button Label (e.g. Send me the link)"
+                      style={{ 
+                        width: '100%', padding: '12px 12px 12px 40px', borderRadius: '10px', border: '1px solid #e2e8f0', 
+                        outline: 'none', fontSize: '0.85rem', fontWeight: '700'
+                      }}
+                    />
+                    <CheckCircle2 size={18} color="#7c3aed" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  </div>
+                </div>
+              )}
             </div>
 
             <button
