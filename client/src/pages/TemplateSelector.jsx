@@ -76,7 +76,7 @@ export default function TemplateSelector() {
                 if (template.id === 'faqs') {
                   navigate('/ai-studio');
                 } else {
-                  navigate(`/new-automation?channel=${channel}&template=${template.id}`);
+                  navigate(`/automation-editor?channel=${channel}&template=${template.id}`);
                 }
               }}
               style={{
