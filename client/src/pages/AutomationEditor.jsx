@@ -94,7 +94,8 @@ export default function AutomationEditor() {
         notify(data.error || 'Upload failed', 'error');
       }
     } catch (err) {
-      notify('Upload failed', 'error');
+      console.error("🔥 Upload Error Details:", err);
+      notify(`Upload failed: ${err.message || 'Check connection'}`, 'error');
     } finally {
       setUploading(false);
     }
