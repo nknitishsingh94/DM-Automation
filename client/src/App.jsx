@@ -50,6 +50,7 @@ const BlogPost = lazyRetry(() => import('./pages/BlogPost'));
 const Privacy = lazyRetry(() => import('./pages/Privacy'));
 const Terms = lazyRetry(() => import('./pages/Terms'));
 const ChannelSelector = lazyRetry(() => import('./pages/ChannelSelector'));
+const TemplateSelector = lazyRetry(() => import('./pages/TemplateSelector'));
 
 const NotificationContext = createContext();
 export const useNotification = () => useContext(NotificationContext);
@@ -357,6 +358,7 @@ function MainLayout() {
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
               <Route path="/campaign-builder/new" element={<ProtectedRoute><CampaignBuilder /></ProtectedRoute>} />
               <Route path="/select-channel" element={<ProtectedRoute><ChannelSelector /></ProtectedRoute>} />
+              <Route path="/select-template" element={<ProtectedRoute><TemplateSelector /></ProtectedRoute>} />
               <Route path="/audiences" element={<ProtectedRoute><Audiences /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
