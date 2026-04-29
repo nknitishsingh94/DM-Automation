@@ -616,6 +616,17 @@ app.get('/api/campaigns', verifyToken, async (req, res) => {
 
 app.post('/api/campaigns', verifyToken, async (req, res) => {
   try {
+    const { linkUrl } = req.body;
+    
+    // Basic URL validation if link is provided
+    if (linkUrl) {
+      try {
+        new URL(linkUrl);
+      } catch (e) {
+        return res.status(400).json({ error: 'Invalid URL provided. Please enter a valid link (e.g., https://example.com)' });
+      }
+    }
+
     const newCampaign = new Campaign({ 
       ...req.body, 
       userId: new mongoose.Types.ObjectId(req.user.userId) 

@@ -43,6 +43,18 @@ export default function AutomationEditor() {
   const [realMedia, setRealMedia] = useState([]);
   const [loadingMedia, setLoadingMedia] = useState(false);
   const [selectedContentId, setSelectedContentId] = useState(null);
+  const [linkUrl, setLinkUrl] = useState('');
+  const [buttonText, setButtonText] = useState('Get the Link');
+  const [showLinkInput, setShowLinkInput] = useState(false);
+
+  const isValidUrl = (url) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
 
   const fetchRealMedia = async () => {
     setLoadingMedia(true);
@@ -106,6 +118,10 @@ export default function AutomationEditor() {
       notify('Please enter a response message', 'error');
       return;
     }
+    if (linkUrl && !isValidUrl(linkUrl)) {
+      notify('Please enter a valid URL (e.g., https://example.com)', 'error');
+      return;
+    }
 
     setSubmitting(true);
     const token = localStorage.getItem('insta_agent_token');
@@ -122,6 +138,8 @@ export default function AutomationEditor() {
           trigger: anyKeyword ? '*' : keywords.join(', '),
           triggerSource: template === 'stories' ? 'story_mention' : 'comment',
           response: message,
+          linkUrl: linkUrl,
+          buttonText: buttonText,
           postId: selectedContentId || '',
           platform: channel || 'instagram',
           requireFollow: requireFollow,
@@ -315,6 +333,22 @@ export default function AutomationEditor() {
                   }}>
                     {message}
                   </div>
+                  {linkUrl && isValidUrl(linkUrl) && (
+                    <div style={{ alignSelf: 'center', marginTop: '8px' }}>
+                      <div style={{ 
+                        padding: '8px 20px', 
+                        background: 'white', 
+                        border: '1px solid #333', 
+                        borderRadius: '20px', 
+                        color: '#7c3aed', 
+                        fontSize: '0.8rem', 
+                        fontWeight: '700',
+                        textAlign: 'center'
+                      }}>
+                        {buttonText || "Visit Link"}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -514,16 +548,67 @@ export default function AutomationEditor() {
                   }}
                 ></textarea>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                   <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{message.length}/1000</div>
-                   <button style={{ 
-                     background: 'white', border: '1px solid #e2e8f0', padding: '6px 12px', borderRadius: '8px',
-                     fontSize: '0.8rem', fontWeight: '700', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px'
-                   }}>
-                     <Plus size={14} /> Link
-                   </button>
-                </div>
-              </div>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{message.length}/1000</div>
+                    <button 
+                      onClick={() => setShowLinkInput(!showLinkInput)}
+                      style={{ 
+                        background: showLinkInput ? '#f5f3ff' : 'white', 
+                        border: showLinkInput ? '1px solid #7c3aed' : '1px solid #e2e8f0', 
+                        padding: '6px 12px', borderRadius: '8px',
+                        fontSize: '0.8rem', fontWeight: '700', color: showLinkInput ? '#7c3aed' : '#475569', 
+                        display: 'flex', alignItems: 'center', gap: '6px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <LinkIcon size={14} /> Link
+                    </button>
+                 </div>
+                 {showLinkInput && (
+                   <div style={{ marginTop: '16px', animation: 'fadeIn 0.2s' }}>
+                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                       <div>
+                         <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#475569', marginBottom: '8px' }}>
+                           Target URL
+                         </label>
+                         <div style={{ position: 'relative' }}>
+                           <input 
+                             type="text" 
+                             value={linkUrl}
+                             onChange={(e) => setLinkUrl(e.target.value)}
+                             placeholder="https://yourlink.com"
+                             style={{ 
+                               width: '100%', padding: '12px 12px 12px 40px', borderRadius: '10px', 
+                               border: linkUrl && !isValidUrl(linkUrl) ? '1px solid #ef4444' : '1px solid #e2e8f0', 
+                               outline: 'none', fontSize: '0.85rem' 
+                             }}
+                           />
+                           <LinkIcon size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                         </div>
+                       </div>
+                       <div>
+                         <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#475569', marginBottom: '8px' }}>
+                           Button Label
+                         </label>
+                         <input 
+                           type="text" 
+                           value={buttonText}
+                           onChange={(e) => setButtonText(e.target.value)}
+                           placeholder="e.g. Send me the link"
+                           style={{ 
+                             width: '100%', padding: '12px', borderRadius: '10px', 
+                             border: '1px solid #e2e8f0', 
+                             outline: 'none', fontSize: '0.85rem', fontWeight: '700'
+                           }}
+                         />
+                       </div>
+                     </div>
+                     {linkUrl && !isValidUrl(linkUrl) && (
+                       <p style={{ color: '#ef4444', fontSize: '0.7rem', marginTop: '0px', marginBottom: '12px' }}>Please enter a valid URL including http:// or https://</p>
+                     )}
+                   </div>
+                 )}
+               </div>
             </div>
 
             {/* Advanced Automations (Matching Photo) */}
