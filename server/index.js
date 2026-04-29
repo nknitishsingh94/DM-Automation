@@ -152,7 +152,15 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   const userMessage = text.toLowerCase();
 
   // 2. Keyword Campaign Checking
-  const activeCampaigns = await Campaign.find({ userId, status: 'Active' });
+  let activeCampaigns = await Campaign.find({ userId, status: 'Active' });
+  
+  // SORT: Specific keywords first, Wildcards (*) last
+  activeCampaigns = activeCampaigns.sort((a, b) => {
+    if (a.trigger === '*' && b.trigger !== '*') return 1;
+    if (a.trigger !== '*' && b.trigger === '*') return -1;
+    return 0;
+  });
+
   console.log(`🔍 DEBUG: Checking ${activeCampaigns.length} active campaigns for user ${userId}. Message: "${text}"`);
 
   const match = activeCampaigns.find(c => {
@@ -177,33 +185,43 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       return cleanUserMsg.includes(k);
     });
 
-    if (platformMatch && sourceMatch && keywordMatch) {
-      console.log(`🎯 MATCH FOUND! Campaign: "${c.name}" | Trigger: "${c.trigger}" | Platform: ${c.platform} | Source: ${source}`);
-    }
-
     return platformMatch && sourceMatch && keywordMatch;
   });
 
   if (match) {
-    console.log(`✅ EXECUTING: Sending response for campaign "${match.name}"`);
+    const campaignName = match.name || `Automation (${match.trigger})`;
+    console.log(`🎯 MATCH FOUND! Campaign: "${campaignName}" | Trigger: "${match.trigger}" | Platform: ${platform} | Source: ${source}`);
+    
+    // GATING: Follower Check
     if (match.requireFollow) {
       console.log(`🛡️ GATING: Checking follower status for ${chatId}...`);
       const isFollowing = await checkFollowerStatus(platform, chatId, userId);
+      
       if (!isFollowing) {
-        console.warn(`🛑 GATING FAIL: User ${chatId} is not following.`);
-        const followText = match.unfollowedResponse || "Please follow us to unlock this!";
+        console.log(`🚫 GATED: User ${chatId} is not following. Sending follow-request DM.`);
+        const followText = match.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊";
         await sendMessageToInstagram(platform, chatId, followText, '', userId);
+        
+        // Even if gated, send a "Check DM" public reply to build trust on the post
+        if (source === 'comment' && commentId) {
+          setTimeout(async () => {
+            const publicReplyGated = "I've sent you a DM! 🚀 (Be sure to follow us to see the link!)";
+            await sendPublicComment(platform, commentId, match.publicGatedReply || publicReplyGated, userId);
+          }, 2000);
+        }
         return { gated: true };
       }
+      console.log(`✅ UNGATED: User ${chatId} is a follower.`);
     }
 
     if (match.openingMessage && match.openingMessageText) {
-      console.log(`👋 Sending OPENING message for campaign "${match.name}"`);
+      console.log(`👋 Sending OPENING message for campaign "${campaignName}"`);
       await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, match.openingMessageButton);
       // Small delay for better UX
       await new Promise(r => setTimeout(r, 1200));
     }
 
+    console.log(`✅ EXECUTING: Dispatching response for "${campaignName}"`);
     const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText);
 
     // NEW: If it's a comment, also send a public reply to the comment
@@ -219,6 +237,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         chatId: chatId || 'default', sender: 'AI Agent', text: match.response, type: 'sent', platform, isAI: true, campaignId: match._id, timestamp: new Date()
       });
       await autoReply.save();
+      await Campaign.findByIdAndUpdate(match._id, { $inc: { dmsSent: 1 } });
       io.to(userId.toString()).emit('new_message', autoReply);
       console.log(`🚀 REPLY DISPATCHED to ${chatId}`);
       return { reply: autoReply };
