@@ -50,10 +50,6 @@ export default function TemplateSelector() {
           alignItems: 'center', 
           marginBottom: '32px' 
         }}>
-          <div>
-            <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e1b4b' }}>Templates</h1>
-            <p style={{ color: '#64748b', marginTop: '4px' }}>Select a pre-built automation to get started quickly.</p>
-          </div>
           <button 
             onClick={() => navigate('/select-channel')}
             style={{ 
