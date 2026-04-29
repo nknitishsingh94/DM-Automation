@@ -201,8 +201,9 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     
     // NEW: If it's a comment, also send a public reply to the comment
     if (source === 'comment' && commentId) {
-      console.log(`💬 Sending PUBLIC comment reply to ${commentId}`);
-      await sendPublicComment(platform, commentId, `Check your DMs! 🚀 I've sent you the info.`, userId);
+      console.log(`💬 Sending CUSTOM public comment reply to ${commentId}`);
+      const replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
+      await sendPublicComment(platform, commentId, replyText, userId);
     }
     
     if (sent) {

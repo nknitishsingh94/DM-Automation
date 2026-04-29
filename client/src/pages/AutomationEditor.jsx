@@ -46,6 +46,7 @@ export default function AutomationEditor() {
   const [linkUrl, setLinkUrl] = useState('');
   const [buttonText, setButtonText] = useState('Get the Link');
   const [showLinkInput, setShowLinkInput] = useState(false);
+  const [publicReply, setPublicReply] = useState("Check your DMs! 🚀 I've sent you the info.");
 
   const isValidUrl = (url) => {
     try {
@@ -149,6 +150,7 @@ export default function AutomationEditor() {
           openingMessage: openingMessage,
           openingMessageText: openingMessageText,
           openingMessageButton: openingMessageButton,
+          publicReplyText: publicReply,
           status: 'Active'
         })
       });
@@ -734,6 +736,35 @@ export default function AutomationEditor() {
                       outline: 'none', fontSize: '0.85rem', resize: 'none', lineHeight: '1.5'
                     }}
                   ></textarea>
+                </div>
+              )}
+
+              {/* Public Comment Reply (NEW - Only for Comments) */}
+              {template === 'comments' && (
+                <div style={{ marginTop: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b' }}>Public Comment Reply</h4>
+                    <span style={{ background: '#f5f3ff', color: '#7c3aed', padding: '2px 8px', borderRadius: '4px', fontSize: '0.65rem', fontWeight: '800' }}>RECOMMENDED</span>
+                  </div>
+                  <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '16px' }}>This message will be posted publicly on the user's comment.</p>
+                  
+                  <div style={{ 
+                    padding: '16px', 
+                    borderRadius: '12px', 
+                    background: '#f8fafc', 
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <input 
+                      type="text" 
+                      value={publicReply}
+                      onChange={(e) => setPublicReply(e.target.value)}
+                      placeholder="Check your DMs! 🚀"
+                      style={{ 
+                        width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', 
+                        outline: 'none', fontSize: '0.85rem', background: 'white'
+                      }}
+                    />
+                  </div>
                 </div>
               )}
             </div>
