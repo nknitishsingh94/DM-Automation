@@ -190,6 +190,13 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       }
     }
 
+    if (match.openingMessage && match.openingMessageText) {
+      console.log(`👋 Sending OPENING message for campaign "${match.name}"`);
+      await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, match.openingMessageButton);
+      // Small delay for better UX
+      await new Promise(r => setTimeout(r, 1200));
+    }
+
     const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText);
     
     // NEW: If it's a comment, also send a public reply to the comment

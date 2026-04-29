@@ -13,6 +13,9 @@ const campaignSchema = new mongoose.Schema({
   buttonText: { type: String, default: '' },
   requireFollow: { type: Boolean, default: false },
   unfollowedResponse: { type: String, default: 'Please follow our account first to get a reply!' },
+  openingMessage: { type: Boolean, default: false },
+  openingMessageText: { type: String, default: "" },
+  openingMessageButton: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now }
 });
 

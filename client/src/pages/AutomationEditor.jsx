@@ -146,6 +146,9 @@ export default function AutomationEditor() {
           platform: channel || 'instagram',
           requireFollow: requireFollow,
           unfollowedResponse: unfollowedMessage,
+          openingMessage: openingMessage,
+          openingMessageText: openingMessageText,
+          openingMessageButton: openingMessageButton,
           status: 'Active'
         })
       });
