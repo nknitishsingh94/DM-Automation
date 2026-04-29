@@ -133,11 +133,50 @@ export default function AutomationEditor() {
             boxShadow: '0 30px 60px -12px rgba(0,0,0,0.25)',
             transform: 'scale(0.95)'
           }}>
-            {/* Header */}
-            <div style={{ padding: '40px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Realistic Notch (Dynamic Island) */}
+            <div style={{
+              position: 'absolute',
+              top: '8px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '80px',
+              height: '18px',
+              background: '#000',
+              borderRadius: '20px',
+              zIndex: 10
+            }}></div>
+
+            {/* Status Bar */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '12px 24px 0',
+              fontSize: '0.65rem',
+              color: 'white',
+              fontWeight: '600'
+            }}>
+              <span>9:41</span>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <Zap size={10} fill="white" />
+                <div style={{ width: '12px', height: '6px', border: '1px solid white', borderRadius: '2px' }}></div>
+              </div>
+            </div>
+
+            {/* Instagram Header */}
+            <div style={{ padding: '20px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #1a1a1a' }}>
               <ArrowLeft size={18} color="white" />
-              <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#333' }}></div>
-              <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>user_name</div>
+              <div style={{ 
+                width: '28px', 
+                height: '28px', 
+                borderRadius: '50%', 
+                background: user?.profilePhoto ? `url(${user.profilePhoto})` : '#333',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                border: '1px solid #333'
+              }}></div>
+              <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '700' }}>
+                {user?.username || 'user_name'}
+              </div>
             </div>
 
             {/* Chat Area */}
