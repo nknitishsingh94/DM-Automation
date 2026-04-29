@@ -125,7 +125,7 @@ const checkFollowerStatus = async (platform, chatId, userId) => {
 };
 
 // Reusable Auto-Reply Logic
-const processAutoReply = async (userId, platform, chatId, text, source = 'dm', commentId = null) => {
+const processAutoReply = async (userId, platform, chatId, text, source = 'dm', commentId = null, passedToken = null) => {
   // Human Handover Check
   const contact = await Contact.findOne({ userId, chatId });
   if (contact && contact.isBotMuted) {
@@ -192,6 +192,9 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     const campaignName = match.name || `Automation (${match.trigger})`;
     console.log(`🎯 MATCH FOUND! Campaign: "${campaignName}" | Trigger: "${match.trigger}" | Platform: ${platform} | Source: ${source}`);
     
+    // Determine the best token to use
+    const activeToken = passedToken || process.env.META_PAGE_ACCESS_TOKEN;
+
     // GATING: Follower Check
     if (match.requireFollow) {
       console.log(`🛡️ GATING: Checking follower status for ${chatId}...`);
@@ -200,13 +203,13 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       if (!isFollowing) {
         console.log(`🚫 GATED: User ${chatId} is not following. Sending follow-request DM.`);
         const followText = match.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊";
-        await sendMessageToInstagram(platform, chatId, followText, '', userId);
+        await sendMessageToInstagram(platform, chatId, followText, '', userId, '', activeToken);
         
         // Even if gated, send a "Check DM" public reply to build trust on the post
         if (source === 'comment' && commentId) {
           setTimeout(async () => {
             const publicReplyGated = "I've sent you a DM! 🚀 (Be sure to follow us to see the link!)";
-            await sendPublicComment(platform, commentId, match.publicGatedReply || publicReplyGated, userId);
+            await sendPublicComment(platform, commentId, match.publicGatedReply || publicReplyGated, userId, activeToken);
           }, 2000);
         }
         return { gated: true };
@@ -222,13 +225,13 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
 
     console.log(`✅ EXECUTING: Dispatching response for "${campaignName}"`);
-    const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText);
+    const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken);
 
     // NEW: If it's a comment, also send a public reply to the comment
     if (source === 'comment' && commentId) {
       console.log(`💬 Sending CUSTOM public comment reply to ${commentId}`);
       const replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
-      await sendPublicComment(platform, commentId, replyText, userId);
+      await sendPublicComment(platform, commentId, replyText, userId, activeToken);
     }
 
     if (sent) {

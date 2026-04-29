@@ -4,9 +4,9 @@ import Settings from '../models/Settings.js';
 /**
  * Meta Graph API Helper: Send Message (Instagram / Facebook)
  */
-export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null, buttonText = '') => {
+export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null, buttonText = '', manualToken = null) => {
   try {
-    let accessToken = process.env.META_PAGE_ACCESS_TOKEN;
+    let accessToken = manualToken || process.env.META_PAGE_ACCESS_TOKEN;
     let pageId = null;
 
     if (userId) {
@@ -155,9 +155,9 @@ export const sendPrivateReply = async (platform, commentId, text, userId = null)
 /**
  * Meta Public Comment Reply: Respond to a Comment with another Comment
  */
-export const sendPublicComment = async (platform, commentId, text, userId = null) => {
+export const sendPublicComment = async (platform, commentId, text, userId = null, manualToken = null) => {
   try {
-    let accessToken = process.env.META_PAGE_ACCESS_TOKEN;
+    let accessToken = manualToken || process.env.META_PAGE_ACCESS_TOKEN;
     if (userId) {
       const userSettings = await Settings.findOne({ userId });
       if (userSettings) {
