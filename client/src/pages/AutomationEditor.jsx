@@ -32,10 +32,7 @@ export default function AutomationEditor() {
   const [keywords, setKeywords] = useState([]);
   const [keywordInput, setKeywordInput] = useState('');
   const [message, setMessage] = useState('');
-  const [selectedMedia, setSelectedMedia] = useState(null);
-  const [uploading, setUploading] = useState(false);
   const [openingMessage, setOpeningMessage] = useState(false);
-  const fileInputRef = React.useRef(null);
   const [openingMessageText, setOpeningMessageText] = useState("Hey there! I'm so happy you're here, thanks so much for your interest 😊\n\nClick below and I'll send you the link in just a sec 🚀");
   const [openingMessageButton, setOpeningMessageButton] = useState("Send me the link");
   const [requireFollow, setRequireFollow] = useState(false);
@@ -100,36 +97,6 @@ export default function AutomationEditor() {
     setKeywords(keywords.filter(k => k !== kw));
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    setUploading(true);
-    const formData = new FormData();
-    formData.append('media', file);
-
-    try {
-      const token = localStorage.getItem('insta_agent_token');
-      const res = await fetch(`${API_BASE_URL}/api/upload`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: formData
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setSelectedMedia(data.url);
-        notify('✅ Photo uploaded successfully!', 'success');
-      } else {
-        notify(data.error || 'Upload failed', 'error');
-      }
-    } catch (err) {
-      console.error("🔥 Upload Error Details:", err);
-      notify(`Upload failed: ${err.message || 'Check connection'}`, 'error');
-    } finally {
-      setUploading(false);
-    }
-  };
-
   const handleCreate = async () => {
     if (!anyKeyword && keywords.length === 0) {
       notify('Please add at least one keyword or select "Any keyword"', 'error');
@@ -155,7 +122,6 @@ export default function AutomationEditor() {
           trigger: anyKeyword ? '*' : keywords.join(', '),
           triggerSource: template === 'stories' ? 'story_mention' : 'comment',
           response: message,
-          videoUrl: selectedMedia || '',
           postId: selectedContentId || '',
           platform: channel || 'instagram',
           requireFollow: requireFollow,
@@ -336,31 +302,17 @@ export default function AutomationEditor() {
               )}
 
               {/* Final AI Response Bubble */}
-              {(message || selectedMedia) && (
+              {message && (
                 <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
                   <div style={{ 
                     background: '#262626', 
                     color: 'white', 
-                    padding: selectedMedia ? '8px' : '10px 16px', 
+                    padding: '10px 16px', 
                     borderRadius: '18px 18px 18px 4px',
                     fontSize: '0.8rem',
                     border: '1px solid #333',
                     overflow: 'hidden'
                   }}>
-                    {selectedMedia && (
-                      <img 
-                        src={selectedMedia} 
-                        alt="Media" 
-                        style={{ 
-                          width: '100%', 
-                          borderRadius: '12px', 
-                          marginBottom: message ? '12px' : '0',
-                          maxHeight: '220px',
-                          objectFit: 'cover',
-                          display: 'block'
-                        }} 
-                      />
-                    )}
                     {message}
                   </div>
                 </div>
@@ -552,37 +504,6 @@ export default function AutomationEditor() {
                 <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Send a DM</h3>
               </div>
               <div style={{ padding: '20px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleFileUpload} 
-                  accept="image/*" 
-                  style={{ display: 'none' }} 
-                />
-
-                <div 
-                  onClick={() => fileInputRef.current.click()}
-                  style={{ 
-                    height: '100px', border: '1px dashed #e2e8f0', borderRadius: '10px', background: 'white',
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', 
-                    color: uploading ? '#7c3aed' : '#94a3b8', fontSize: '0.8rem', cursor: 'pointer', marginBottom: '12px', transition: 'all 0.2s',
-                    overflow: 'hidden', position: 'relative'
-                  }} 
-                  onMouseEnter={(e) => e.currentTarget.style.borderColor = '#7c3aed'}
-                  onMouseLeave={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
-                >
-                  {uploading ? (
-                    <Loader2 className="animate-spin" size={24} />
-                  ) : selectedMedia ? (
-                    <img src={selectedMedia} alt="Selected" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <>
-                      <ImageIcon size={20} style={{ marginBottom: '4px' }} />
-                      Select Image
-                    </>
-                  )}
-                </div>
-                
                 <textarea 
                   placeholder="Enter message..."
                   value={message}
