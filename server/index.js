@@ -323,97 +323,106 @@ app.get('/api/webhook', (req, res) => {
 
 app.post('/api/webhook', async (req, res) => {
   const body = req.body;
+  console.log('🚀 --- WEBHOOK HIT ---');
+  console.log('📦 Object Type:', body.object);
+  console.log('📄 Full Body:', JSON.stringify(body, null, 2));
 
   if (body.object === 'instagram' || body.object === 'page') {
+    if (!body.entry || !Array.isArray(body.entry)) {
+      console.warn('⚠️ Webhook received but "entry" is missing or not an array.');
+      return res.status(200).send('NO_ENTRY');
+    }
+
     for (const entry of body.entry) {
-      const pageId = entry.id; // The Page/Instagram ID that received the message
+      const pageId = entry.id;
+      console.log(`🏠 Entry ID (Page/Account): ${pageId}`);
       
+      // 1. Handle Messaging (DMs)
       const messagingArray = entry.messaging || [];
       for (const messaging of messagingArray) {
         const senderId = messaging.sender.id;
         const text = messaging.message?.text;
         
-          if (text || messaging.message?.story) {
-            const isStoryMention = !!messaging.message?.story;
-            const messageText = text || (isStoryMention ? "[Story Mention]" : "");
-            
-            console.log(`📬 INCOMING: ${isStoryMention ? 'Story' : 'DM'} | PageID: ${pageId} | Sender: ${senderId} | Msg: ${messageText}`);
-            
+        console.log(`📩 Messaging detected from ${senderId}`);
+
+        if (text || messaging.message?.story) {
+          const isStoryMention = !!messaging.message?.story;
+          const messageText = text || (isStoryMention ? "[Story Mention]" : "");
+          
+          console.log(`📬 INCOMING DM: ${isStoryMention ? 'Story' : 'DM'} | Sender: ${senderId} | Msg: ${messageText}`);
+          
+          const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
+          let userSettings = await Settings.findOne({ 
+              $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }, { facebookPageId: pageId }]
+          });
+          
+          if (!userSettings) {
+            console.warn(`🛑 UNKNOWN PAGE: ID ${pageId} is not linked to any user.`);
+            continue; 
+          }
+
+          const targetUserId = userSettings.userId;
+          if (targetUserId) {
+            const incoming = new Message({
+              userId: targetUserId, chatId: senderId, sender: 'user', text: messageText,
+              type: 'received', platform, timestamp: new Date()
+            });
+            await incoming.save();
+            io.to(targetUserId.toString()).emit('new_message', incoming);
+
+            processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm").catch(err => {
+              console.error("🔥 AutoReply error:", err);
+            });
+          }
+        }
+      }
+
+      // 2. Handle Comments
+      const changes = entry.changes || [];
+      console.log(`🔄 Changes detected: ${changes.length}`);
+
+      for (const change of changes) {
+        console.log(`📝 Change Field: ${change.field}`);
+        if (change.field === 'feed' || change.field === 'comments') {
+          const val = change.value;
+          const text = val.text || val.message;
+          const senderId = val.from?.id;
+          const commentId = val.id || val.comment_id;
+
+          console.log(`💬 COMMENT DETECTED: "${text}" from ${senderId}`);
+
+          if (text && senderId && commentId && senderId !== pageId) {
             const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
             let userSettings = await Settings.findOne({ 
-                $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }, { facebookPageId: pageId }]
+              $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }, { facebookPageId: pageId }] 
             });
-            
-            if (!userSettings) {
-              console.warn(`🛑 UNKNOWN PAGE: ID ${pageId} is not linked to any user in our database.`);
-              // Try finding any user as a hard fallback if needed, but better to stop here
-              return;
+
+            let targetUserId = userSettings?.userId;
+            if (!targetUserId) {
+              const fallback = await User.findOne();
+              targetUserId = fallback?._id;
+              console.warn(`⚠️ User not found for Page ${pageId}, falling back to ${targetUserId}`);
             }
 
-            const targetUserId = userSettings.userId;
-            console.log(`🎯 ROUTING: Found User ${targetUserId} for Page ${pageId}`);
-            
             if (targetUserId) {
-              // 1. Save incoming message to DB
               const incoming = new Message({
-                userId: targetUserId,
-                chatId: senderId,
-                sender: 'user',
-                text: messageText,
-                type: 'received',
-                platform: platform,
-                timestamp: new Date()
+                userId: targetUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
+                type: 'received', platform, timestamp: new Date()
               });
               await incoming.save();
               io.to(targetUserId.toString()).emit('new_message', incoming);
 
-              // 2. Trigger Auto-Reply (Background Process to prevent Meta timeouts/duplicates)
-              processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm").catch(err => {
-                console.error("🔥 Background AutoReply error:", err);
+              processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId).catch(err => {
+                console.error("🔥 Comment Reply error:", err);
               });
             }
-          }
-      }
-
-        // --- Handle Comments (Feed/Feed Changes) ---
-        const changes = entry.changes || [];
-        for (const change of changes) {
-          if (change.field === 'feed' || change.field === 'comments') {
-            const val = change.value;
-            const text = val.text || val.message;
-            const senderId = val.from?.id;
-            const commentId = val.id || val.comment_id;
-
-            if (text && senderId && commentId && senderId !== pageId) {
-              console.log(`💬 Received Comment on Page ${pageId} from ${senderId}: ${text}`);
-              
-              const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
-              let userSettings;
-              if (platform === 'instagram') {
-                userSettings = await Settings.findOne({ $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }] });
-              } else {
-                userSettings = await Settings.findOne({ facebookPageId: pageId });
-              }
-
-              let targetUserId = userSettings?.userId || (await User.findOne())?._id;
-
-              if (targetUserId) {
-                // Save comment as a "received" message item for history
-                const incoming = new Message({
-                  userId: targetUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
-                  type: 'received', platform: platform, timestamp: new Date()
-                });
-                await incoming.save();
-                io.to(targetUserId.toString()).emit('new_message', incoming);
-
-                // Process Comment-to-DM Trigger
-                await processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId);
-              }
-            }
+          } else {
+            console.log(`⏭️ Skipping comment: text missing or sender is the page itself.`);
           }
         }
+      }
     }
-    res.status(200).send('EVENT_RECEIVED');
+    return res.status(200).send('EVENT_RECEIVED');
   
   // WhatsApp webhook handling
   } else if (body.object === 'whatsapp_business_account') {
