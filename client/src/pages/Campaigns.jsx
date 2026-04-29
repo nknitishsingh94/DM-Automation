@@ -348,6 +348,101 @@ export default function Campaigns() {
         </button>
       </div>
 
+      {/* Active Automations Grid */}
+      {campaigns.length > 0 && (
+        <div style={{ marginTop: '64px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e1b4b' }}>Active Automations</h3>
+            <span style={{ padding: '6px 16px', background: '#f5f3ff', color: '#7c3aed', borderRadius: '50px', fontSize: '0.85rem', fontWeight: '700' }}>
+              {campaigns.length} Total
+            </span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
+            {campaigns.map((campaign) => (
+              <div key={campaign._id} style={{ 
+                background: 'white', 
+                borderRadius: '24px', 
+                padding: '24px', 
+                border: '1px solid #f1f5f9',
+                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)',
+                transition: 'all 0.3s',
+                position: 'relative',
+                overflow: 'hidden'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0,0,0,0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)';
+              }}
+              >
+                {/* Type Badge */}
+                <div style={{ 
+                  position: 'absolute', top: '24px', right: '24px',
+                  padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800',
+                  background: campaign.triggerSource === 'story_mention' ? '#fdf2f8' : '#f0f9ff',
+                  color: campaign.triggerSource === 'story_mention' ? '#db2777' : '#0369a1',
+                  textTransform: 'uppercase'
+                }}>
+                  {campaign.triggerSource === 'story_mention' ? 'Story' : 'Comment'}
+                </div>
+
+                <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px', paddingRight: '60px' }}>
+                  {campaign.name}
+                </h4>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', marginBottom: '24px' }}>
+                  <MessageCircle size={16} />
+                  <span>Trigger: <strong style={{ color: '#1e1b4b' }}>{campaign.trigger === '*' ? 'Any' : campaign.trigger}</strong></span>
+                </div>
+
+                {/* Stats Row */}
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', padding: '16px', background: '#f8fafc', borderRadius: '16px' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '4px' }}>DMs Sent</div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b' }}>{campaign.dmsSent || 0}</div>
+                  </div>
+                  <div style={{ width: '1px', background: '#e2e8f0' }}></div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '4px' }}>Status</div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: '800', color: campaign.status === 'Active' ? '#10b981' : '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: campaign.status === 'Active' ? '#10b981' : '#94a3b8' }}></div>
+                      {campaign.status}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <button 
+                    onClick={() => toggleStatus(campaign._id, campaign.status)}
+                    style={{ flex: 1, padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#1e1b4b', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                  >
+                    <Power size={14} color={campaign.status === 'Active' ? '#10b981' : '#94a3b8'} />
+                    {campaign.status === 'Active' ? 'Pause' : 'Activate'}
+                  </button>
+                  <button 
+                    onClick={() => viewLogs(campaign)}
+                    style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', cursor: 'pointer' }}
+                  >
+                    <History size={18} />
+                  </button>
+                  <button 
+                    onClick={() => deleteCampaign(campaign._id)}
+                    style={{ padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', background: 'white', color: '#ef4444', cursor: 'pointer' }}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <style>{`
         .premium-btn:active {
           transform: scale(0.98);

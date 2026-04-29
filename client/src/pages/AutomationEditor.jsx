@@ -72,7 +72,7 @@ export default function AutomationEditor() {
         body: JSON.stringify({
           name: name,
           trigger: anyKeyword ? '*' : keywords.join(', '),
-          triggerSource: template === 'stories' ? 'story' : 'comment',
+          triggerSource: template === 'stories' ? 'story_mention' : 'comment',
           response: message,
           platform: channel || 'instagram',
           status: 'Active'
@@ -250,10 +250,35 @@ export default function AutomationEditor() {
                 </div>
                 {!anyStory && (
                   <div style={{ 
-                    height: '140px', border: '2px dashed #e2e8f0', borderRadius: '12px', 
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.9rem' 
+                    marginTop: '20px',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: '12px'
                   }}>
-                    Select content from your feed
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                      <div key={i} style={{ 
+                        aspectRatio: template === 'stories' ? '9/16' : '1/1',
+                        background: '#e2e8f0',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#94a3b8',
+                        fontSize: '0.7rem',
+                        fontWeight: '700',
+                        border: '2px solid transparent',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        overflow: 'hidden',
+                        position: 'relative'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#7c3aed'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = 'transparent'}
+                      >
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.1))' }}></div>
+                        {template === 'stories' ? 'Story' : 'Post'} {i}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
