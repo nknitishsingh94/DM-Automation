@@ -328,7 +328,8 @@ app.post('/api/webhook', async (req, res) => {
     for (const entry of body.entry) {
       const pageId = entry.id; // The Page/Instagram ID that received the message
       
-      for (const messaging of entry.messaging) {
+      const messagingArray = entry.messaging || [];
+      for (const messaging of messagingArray) {
         const senderId = messaging.sender.id;
         const text = messaging.message?.text;
         
@@ -372,6 +373,7 @@ app.post('/api/webhook', async (req, res) => {
               });
             }
           }
+      }
 
         // --- Handle Comments (Feed/Feed Changes) ---
         const changes = entry.changes || [];
@@ -410,7 +412,6 @@ app.post('/api/webhook', async (req, res) => {
             }
           }
         }
-      }
     }
     res.status(200).send('EVENT_RECEIVED');
   
