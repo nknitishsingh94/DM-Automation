@@ -73,7 +73,16 @@ export const generateAIResponse = async (userId, userMessage) => {
         }
       }
       
-      console.error("Gemini All Combinations Failed. Last Error:", lastError);
+      console.error("Gemini All Combinations Failed. Running Diagnostics...");
+      try {
+        const diagUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${geminiKey}`;
+        const diagResp = await axios.get(diagUrl);
+        const availableModels = diagResp.data?.models?.map(m => m.name) || [];
+        console.log("📋 [DIAGNOSTIC] Available Models for your Key:", availableModels.join(', '));
+      } catch (diagErr) {
+        console.error("❌ Diagnostic Failed:", diagErr.message);
+      }
+      
       throw new Error(`GEMINI_DEBUG: ${lastError}`);
     };
 
