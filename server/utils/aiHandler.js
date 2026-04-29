@@ -43,32 +43,37 @@ export const generateAIResponse = async (userId, userMessage) => {
 
     // Helper for Gemini Free API (Raw Axios - No SDK needed)
     const callGemini = async () => {
-      const models = ['gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-pro'];
+      const versions = ['v1beta', 'v1'];
+      const models = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro'];
       const axios = (await import('axios')).default;
       let lastError;
 
-      for (const modelName of models) {
-        try {
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${geminiKey}`;
-          console.log(`🤖 [AI DEBUG] Attempting Gemini model: ${modelName}`);
-          
-          const response = await axios.post(url, {
-            contents: [{
-                parts: [{ text: `System Instructions: You are ${aiName}. Tone: ${aiTone}. Context: ${aiKnowledgeBase}. Keep replies very short.\nUser: ${userMessage}` }]
-            }],
-            generationConfig: { temperature: Number(aiTemperature) || 0.7, maxOutputTokens: 350 }
-          });
-          
-          const extractedText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (extractedText) return extractedText;
-          
-        } catch (err) {
-          lastError = err.response?.data ? JSON.stringify(err.response.data) : err.message;
-          console.warn(`⚠️ Gemini ${modelName} failed.`);
+      for (const version of versions) {
+        for (const modelName of models) {
+          try {
+            const url = `https://generativelanguage.googleapis.com/${version}/models/${modelName}:generateContent?key=${geminiKey}`;
+            console.log(`🤖 [AI DEBUG] Trying ${version} with ${modelName}...`);
+            
+            const response = await axios.post(url, {
+              contents: [{
+                  parts: [{ text: `System Instructions: You are ${aiName}. Tone: ${aiTone}. Context: ${aiKnowledgeBase}. Keep replies very short.\nUser: ${userMessage}` }]
+              }],
+              generationConfig: { temperature: Number(aiTemperature) || 0.7, maxOutputTokens: 350 }
+            });
+            
+            const extractedText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (extractedText) {
+              console.log(`✅ Success with ${version}/${modelName}!`);
+              return extractedText;
+            }
+            
+          } catch (err) {
+            lastError = err.response?.data ? JSON.stringify(err.response.data) : err.message;
+          }
         }
       }
       
-      console.error("Gemini All Models Failed. Last Error:", lastError);
+      console.error("Gemini All Combinations Failed. Last Error:", lastError);
       throw new Error(`GEMINI_DEBUG: ${lastError}`);
     };
 
