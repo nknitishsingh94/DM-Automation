@@ -43,14 +43,15 @@ export const generateAIResponse = async (userId, userMessage) => {
 
     // Helper for Gemini Free API (Raw Axios - No SDK needed)
     const callGemini = async () => {
-      // Try gemini-1.5-flash first on v1 endpoint
-      const models = ['gemini-1.5-flash', 'gemini-pro'];
+      const models = ['gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-pro'];
       const axios = (await import('axios')).default;
       let lastError;
 
       for (const modelName of models) {
         try {
-          const url = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${geminiKey}`;
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${geminiKey}`;
+          console.log(`🤖 [AI DEBUG] Attempting Gemini model: ${modelName}`);
+          
           const response = await axios.post(url, {
             contents: [{
                 parts: [{ text: `System Instructions: You are ${aiName}. Tone: ${aiTone}. Context: ${aiKnowledgeBase}. Keep replies very short.\nUser: ${userMessage}` }]
@@ -63,7 +64,7 @@ export const generateAIResponse = async (userId, userMessage) => {
           
         } catch (err) {
           lastError = err.response?.data ? JSON.stringify(err.response.data) : err.message;
-          console.warn(`⚠️ Gemini ${modelName} failed, trying next...`);
+          console.warn(`⚠️ Gemini ${modelName} failed.`);
         }
       }
       
