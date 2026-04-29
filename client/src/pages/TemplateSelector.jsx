@@ -72,7 +72,13 @@ export default function TemplateSelector() {
           {templates.map((template) => (
             <div
               key={template.id}
-              onClick={() => navigate(`/campaign-builder/new?channel=${channel}&template=${template.id}`)}
+              onClick={() => {
+                if (template.id === 'faqs') {
+                  navigate('/ai-studio');
+                } else {
+                  navigate(`/campaign-builder/new?channel=${channel}&template=${template.id}`);
+                }
+              }}
               style={{
                 background: 'white',
                 padding: '32px',
