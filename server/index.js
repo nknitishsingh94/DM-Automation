@@ -414,10 +414,18 @@ app.post('/api/webhook', async (req, res) => {
         console.log(`📝 Change Field: ${change.field}`);
         if (change.field === 'feed' || change.field === 'comments') {
           const val = change.value;
-          console.log('💎 [DEEP DATA] Comment Value:', JSON.stringify(val, null, 2));
+          console.log('💎 [DEEP DATA] Interaction Detected! Field:', change.field);
+          console.log('📦 Value:', JSON.stringify(val, null, 2));
+          
           const text = val.text || val.message;
           const senderId = val.from?.id;
           const commentId = val.id || val.comment_id;
+          
+          // Also handle 'item': 'comment' inside 'feed' field
+          if (change.field === 'feed' && val.item !== 'comment' && val.item !== 'post') {
+            console.log(`⏭️ Skipping feed item: ${val.item}`);
+            continue;
+          }
 
           // CRITICAL: Ensure we are not replying to ourselves
           if (senderId === pageId) {
