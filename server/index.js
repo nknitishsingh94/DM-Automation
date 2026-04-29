@@ -414,6 +414,7 @@ app.post('/api/webhook', async (req, res) => {
         console.log(`📝 Change Field: ${change.field}`);
         if (change.field === 'feed' || change.field === 'comments') {
           const val = change.value;
+          console.log('💎 [DEEP DATA] Comment Value:', JSON.stringify(val, null, 2));
           const text = val.text || val.message;
           const senderId = val.from?.id;
           const commentId = val.id || val.comment_id;
