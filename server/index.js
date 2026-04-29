@@ -440,11 +440,8 @@ app.post('/api/webhook', async (req, res) => {
           const senderId = val.from?.id;
           const commentId = val.id || val.comment_id;
           
-          // Also handle 'item': 'comment' inside 'feed' field
-          if (change.field === 'feed' && val.item !== 'comment' && val.item !== 'post') {
-            console.log(`⏭️ Skipping feed item: ${val.item}`);
-            continue;
-          }
+          // Handle all interaction types (Comment, Post, Video, etc.)
+          console.log(`🎯 [REEL DEBUG] Processing interaction from ${change.field}. Item: ${val.item || 'N/A'}`);
 
           // CRITICAL: Ensure we are not replying to ourselves
           if (senderId === pageId) {
@@ -468,6 +465,8 @@ app.post('/api/webhook', async (req, res) => {
             }
 
             if (targetUserId) {
+              const accessToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+              
               const incoming = new Message({
                 userId: targetUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
                 type: 'received', platform, timestamp: new Date()
@@ -475,7 +474,8 @@ app.post('/api/webhook', async (req, res) => {
               await incoming.save();
               io.to(targetUserId.toString()).emit('new_message', incoming);
 
-              processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId).catch(err => {
+              // Pass the fresh token to processAutoReply
+              processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId, accessToken).catch(err => {
                 console.error("🔥 Comment Reply error:", err);
               });
             }
