@@ -363,6 +363,12 @@ app.post('/api/webhook', async (req, res) => {
         const senderId = messaging.sender.id;
         const text = messaging.message?.text;
         
+        // EXTRA SAFETY: If the sender is the page itself, skip it
+        if (senderId === pageId) {
+          console.log('⏭️ Skipping message from our own Page ID.');
+          continue;
+        }
+
         console.log(`📩 Messaging detected from ${senderId}`);
 
         if (text || messaging.message?.story) {
