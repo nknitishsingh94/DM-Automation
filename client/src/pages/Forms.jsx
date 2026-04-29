@@ -299,7 +299,7 @@ export default function Forms() {
               </button>
             </div>
 
-            <div style={{ padding: '0 40px 40px', overflowY: 'auto', flex: 1 }}>
+            <div style={{ padding: '0 40px 40px', overflowY: 'auto', flex: 1, minHeight: 0 }}>
               {wizardStep === 1 ? (
                 <div style={{ padding: '20px 0' }}>
                   <FormField 
@@ -432,7 +432,7 @@ export default function Forms() {
                 <>
                   <button className="btn-secondary" style={{ flex: 1, padding: '14px', borderRadius: '16px' }} onClick={() => setWizardStep(1)}>Back</button>
                   <button className="btn-premium" style={{ flex: 1 }} onClick={handleCreateForm}>
-                    <Send size={18} /> Launch Form Flow
+                    <Send size={18} /> Submit & Launch Form
                   </button>
                 </>
               )}

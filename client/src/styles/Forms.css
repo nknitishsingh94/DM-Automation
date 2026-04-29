@@ -165,6 +165,7 @@
 .wizard-modal {
   width: 95%;
   max-width: 800px;
+  max-height: 85vh; /* Reduced from 90vh to ensure it fits with overlay padding */
   background: #ffffff;
   border-radius: 32px;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
@@ -172,6 +173,7 @@
   flex-direction: column;
   overflow: hidden;
   animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1) both;
+  margin: 20px auto;
 }
 
 @keyframes modalPop {

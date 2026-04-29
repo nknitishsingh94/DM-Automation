@@ -49,6 +49,7 @@ const Blog = lazyRetry(() => import('./pages/Blog'));
 const BlogPost = lazyRetry(() => import('./pages/BlogPost'));
 const Privacy = lazyRetry(() => import('./pages/Privacy'));
 const Terms = lazyRetry(() => import('./pages/Terms'));
+const ChannelSelector = lazyRetry(() => import('./pages/ChannelSelector'));
 
 const NotificationContext = createContext();
 export const useNotification = () => useContext(NotificationContext);
@@ -355,6 +356,7 @@ function MainLayout() {
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
               <Route path="/campaign-builder/new" element={<ProtectedRoute><CampaignBuilder /></ProtectedRoute>} />
+              <Route path="/select-channel" element={<ProtectedRoute><ChannelSelector /></ProtectedRoute>} />
               <Route path="/audiences" element={<ProtectedRoute><Audiences /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
@@ -398,7 +400,7 @@ function App() {
   return (
     <NotificationContext.Provider value={{ notify }}>
       <AuthProvider>
-        <Router>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <MainLayout />
         </Router>
       </AuthProvider>

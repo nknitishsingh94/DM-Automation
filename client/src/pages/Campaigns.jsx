@@ -271,111 +271,11 @@ export default function Campaigns() {
 
   return (
     <div style={{ maxWidth: '1200px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-        <div>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '700' }}>Automation Campaigns</h2>
-          <p style={{ color: 'var(--text-muted)' }}>Active triggers for your AI Agent in Instagram DMs.</p>
-        </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button 
-            onClick={() => {
-              if (user?.plan === 'pro') {
-                navigate('/flow-builder/new');
-              } else {
-                notify('💎 Advanced Flows require a Pro Subscription. Upgrade to unlock!', 'error');
-                navigate('/upgrade');
-              }
-            }}
-            style={{ 
-              background: 'white', 
-              color: 'var(--accent-color)', 
-              border: '1px solid var(--accent-color)',
-              padding: '12px 24px', 
-              borderRadius: '8px', 
-              fontWeight: '600',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              position: 'relative'
-            }}>
-            <Zap size={20} /> Advanced Flow
-            {user?.plan !== 'pro' && (
-              <span style={{ position: 'absolute', top: '-10px', right: '-10px', background: 'var(--accent-main)', color: 'white', fontSize: '10px', padding: '2px 6px', borderRadius: '4px', fontWeight: '800', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>PRO</span>
-            )}
-          </button>
-          <button 
-            onClick={() => navigate('/campaign-builder/new')}
-            style={{ 
-              background: 'var(--accent-color)', 
-              color: 'white', 
-              padding: '12px 24px', 
-              borderRadius: '8px', 
-              fontWeight: '600',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-            <Plus size={20} /> Build New Campaign
-          </button>
-        </div>
+      <div style={{ marginBottom: '48px' }}>
+        <h2 style={{ fontSize: '2.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px' }}>Automations</h2>
+        <p style={{ color: '#64748b', fontSize: '1.1rem' }}>Design and deploy intelligent chat agents across your social channels.</p>
       </div>
 
-      {/* Advanced Flows Section */}
-      {flows.length > 0 && (
-        <div style={{ marginBottom: '48px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-             <div style={{ padding: '8px', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '10px' }}>
-               <Zap size={20} color="var(--accent-color)" />
-             </div>
-             <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>Visual Automation Flows <span className="sidebar-badge badge-new" style={{ marginLeft: '8px' }}>PRO</span></h3>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-            {flows.map(flow => (
-              <div key={flow._id} className="table-card" style={{ padding: '24px', cursor: 'pointer', transition: 'all 0.3s ease', position: 'relative', opacity: user?.plan === 'pro' ? 1 : 0.8 }} 
-                   onClick={() => {
-                     if (user?.plan === 'pro') {
-                       navigate(`/flow-builder/${flow._id}`);
-                     } else {
-                       notify('💎 Upgrade to PRO to edit this advanced automation.', 'error');
-                       navigate('/upgrade');
-                     }
-                   }}
-                   onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                   onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-                {user?.plan !== 'pro' && (
-                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(1px)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'inherit', zIndex: 5 }}>
-                    <div style={{ background: 'white', padding: '8px 16px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '800', border: '1px solid var(--accent-light)', color: 'var(--accent-main)', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-                      <Crown size={14} /> UNLOCK PRO
-                    </div>
-                  </div>
-                )}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--accent-color)', textTransform: 'uppercase' }}>Active Flow</span>
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
-                </div>
-                <h4 style={{ margin: '0 0 8px', fontSize: '1.1rem', fontWeight: '800' }}>{flow.name}</h4>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  <Zap size={14} /> Triggers on: <span style={{ color: 'var(--accent-color)', fontWeight: '700' }}>"{flow.triggerKeyword || '*'}"</span>
-                </div>
-                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); deleteFlow(flow._id, e); }}
-                    style={{ color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
-                    title="Delete Flow"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                  <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    Edit Flow <History size={14} />
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {flows.length > 0 && <div style={{ height: '1px', background: 'var(--border-subtle)', marginBottom: '48px' }}></div>}
 
       {/* Inline Form Removed: Moved to CampaignBuilder.jsx */}
 
@@ -386,101 +286,73 @@ export default function Campaigns() {
         </div>
       )}
 
-      <div className="table-card" style={{ overflowX: 'auto', width: '100%' }}>
-        <table style={{ minWidth: '800px' }}>
-          <thead>
-            <tr>
-              <th>Campaign Name</th>
-              <th>Platform</th>
-              <th>Trigger Source</th>
-              <th>Media</th>
-              <th>Follow Check</th>
-              <th>Status</th>
-              <th style={{ textAlign: 'right' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {campaigns.length === 0 ? (
-              <tr><td colSpan="4" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>No campaigns found. Create your first trigger!</td></tr>
-            ) : campaigns.map((camp) => (
-              <tr key={camp._id}>
-                <td>
-                  <div style={{ fontWeight: '600' }}>{camp.name}</div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>ID: {camp._id.slice(-6)}</div>
-                </td>
-                <td>
-                  <span style={{ 
-                    background: camp.platform === 'whatsapp' ? '#dcfce7' : (camp.platform === 'facebook' ? '#dbeafe' : (camp.platform === 'instagram' ? '#fce7f3' : '#f1f5f9')), 
-                    color: camp.platform === 'whatsapp' ? '#166534' : (camp.platform === 'facebook' ? '#1e40af' : (camp.platform === 'instagram' ? '#9d174d' : '#475569')), 
-                    padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600', textTransform: 'capitalize' 
-                  }}>
-                    {camp.platform || 'all'}
-                  </span>
-                </td>
-                <td>
-                  <span style={{ background: 'rgba(139, 92, 246, 0.1)', color: 'var(--accent-color)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: '500', display: 'inline-block', marginBottom: '4px' }}>
-                    "{camp.trigger}"
-                  </span>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    {camp.triggerSource === 'comment' ? '🗣️ Post Comment' : (camp.triggerSource === 'story_mention' ? '📸 Story Mention' : '💬 Direct Message')}
-                  </div>
-                </td>
-                <td>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    {camp.videoUrl && <Video size={16} title="Includes Video" style={{ color: '#8b5cf6' }} />}
-                    {camp.linkUrl && <LinkIcon size={16} title="Includes Link" style={{ color: '#3b82f6' }} />}
-                    {!camp.videoUrl && !camp.linkUrl && <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>None</span>}
-                  </div>
-                </td>
-                <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    {camp.requireFollow ? (
-                      <span style={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', fontWeight: '600' }}>
-                        <CheckCircle size={14} /> Enabled
-                      </span>
-                    ) : (
-                      <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Disabled</span>
-                    )}
-                  </div>
-                </td>
-                <td>
-                  <span className={`status-badge ${camp.status === 'Active' ? 'status-success' : 'status-pending'}`}>
-                    {camp.status}
-                  </span>
-                </td>
-                <td>
-                  <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                    <button 
-                      onClick={() => viewLogs(camp)}
-                      title="View History"
-                      className="action-btn"
-                      style={{ color: 'var(--accent-color)' }}
-                    >
-                      <History size={18} />
-                    </button>
-                    <button 
-                      onClick={() => toggleStatus(camp._id, camp.status)}
-                      title={camp.status === 'Active' ? 'Pause' : 'Activate'}
-                      className="action-btn"
-                      style={{ color: camp.status === 'Active' ? '#f59e0b' : '#10b981' }}
-                    >
-                      <Power size={18} />
-                    </button>
-                    <button 
-                      onClick={() => deleteCampaign(camp._id)}
-                      title="Delete"
-                      className="action-btn"
-                      style={{ color: '#f87171' }}
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        padding: '80px 20px',
+        background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%)',
+        borderRadius: '32px',
+        border: '1px dashed rgba(124, 58, 237, 0.2)',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          width: '80px',
+          height: '80px',
+          borderRadius: '24px',
+          background: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+          marginBottom: '24px'
+        }}>
+          <Zap size={40} color="#7c3aed" fill="#7c3aed" />
+        </div>
+        <h2 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '12px' }}>
+          Ready to Scale?
+        </h2>
+        <p style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '40px', maxWidth: '400px' }}>
+          Create high-converting automation campaigns and turn every interaction into a growth opportunity.
+        </p>
+        
+        <button 
+          onClick={() => navigate('/select-channel')}
+          className="premium-btn"
+          style={{ 
+            background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', 
+            color: 'white', 
+            padding: '18px 40px', 
+            borderRadius: '16px', 
+            fontWeight: '800',
+            fontSize: '1.1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 10px 15px -3px rgba(124, 58, 237, 0.4)',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+            e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(124, 58, 237, 0.5)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0) scale(1)';
+            e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(124, 58, 237, 0.4)';
+          }}
+        >
+          <Plus size={24} strokeWidth={3} /> Build New Campaign
+        </button>
       </div>
+
+      <style>{`
+        .premium-btn:active {
+          transform: scale(0.98);
+        }
+      `}</style>
 
       {/* Logs Modal */}
       {selectedCampaign && (
