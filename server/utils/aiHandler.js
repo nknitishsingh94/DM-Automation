@@ -32,7 +32,6 @@ export const generateAIResponse = async (userId, userMessage) => {
     const aiTemperature = userSettings?.aiTemperature !== undefined ? userSettings.aiTemperature : 0.7;
 
     // --- Provider Selection & Auto-Fallback ---
-    const geminiKey = process.env.GEMINI_API_KEY;
 
     // Helper for OpenAI/Groq (Axios)
     const callOpenAI = async (client, modelName) => {
