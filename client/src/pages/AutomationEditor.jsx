@@ -517,7 +517,8 @@ export default function AutomationEditor() {
                   </div>
                 )}
               </div>
-            )}
+            </div>
+          )}
 
             {/* Step 2 */}
             <div style={{ marginBottom: '24px' }}>
