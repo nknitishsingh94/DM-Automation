@@ -70,7 +70,7 @@ export default function ChannelSelector() {
             {channels.map((channel) => (
               <button
                 key={channel.id}
-                onClick={() => navigate(`/select-persona?channel=${channel.id}`)}
+                onClick={() => navigate(`/campaign-builder/new?channel=${channel.id}`)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
