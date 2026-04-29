@@ -74,6 +74,8 @@ export default function AutomationEditor() {
     }
   };
 
+  const selectedMedia = realMedia.find(m => m.id === selectedContentId);
+
   React.useEffect(() => {
     if (!anyStory) {
       fetchRealMedia();
@@ -271,6 +273,33 @@ export default function AutomationEditor() {
               height: '400px',
               overflowY: 'auto'
             }}>
+              {/* Selected Media Preview (Dynamic) */}
+              {selectedMedia && (
+                <div style={{ 
+                  width: '100%', 
+                  aspectRatio: template === 'stories' ? '9/16' : '1/1',
+                  borderRadius: '15px',
+                  overflow: 'hidden',
+                  marginBottom: '10px',
+                  border: '1.5px solid #262626',
+                  position: 'relative',
+                  flexShrink: 0
+                }}>
+                  <img 
+                    src={selectedMedia.thumbnail_url || selectedMedia.media_url} 
+                    alt="Selected Post" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  />
+                  <div style={{ 
+                    position: 'absolute', bottom: '10px', left: '10px', 
+                    background: 'rgba(0,0,0,0.5)', padding: '4px 8px', 
+                    borderRadius: '4px', fontSize: '0.6rem', color: 'white', fontWeight: '700' 
+                  }}>
+                    {template === 'stories' ? 'STORY PREVIEW' : 'POST PREVIEW'}
+                  </div>
+                </div>
+              )}
+
               {/* User Trigger Bubble */}
               <div style={{ 
                 alignSelf: 'flex-end', 

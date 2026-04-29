@@ -30,6 +30,8 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
 
     console.log(`🔑 Using Token (prefix): ${accessToken.substring(0, 10)}...`);
     console.log(`📄 Using Page ID: ${pageId || 'me (fallback)'}`);
+    console.log(`👤 Recipient ID: ${recipientId}`);
+    console.log(`📱 Platform: ${platform}`);
 
     // ✅ Use pageId endpoint — /me/messages does NOT work for page-owned Instagram accounts
     const endpoint = pageId ? pageId : 'me';
@@ -72,6 +74,8 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
       messaging_type: "RESPONSE",
       message: finalMessageBody
     };
+
+    console.log("📦 Sending Payload:", JSON.stringify(payload, null, 2));
 
     const response = await axios.post(url, payload);
     console.log(`✅ SEND SUCCESS: Message delivered to ${recipientId} via ${platform}`);

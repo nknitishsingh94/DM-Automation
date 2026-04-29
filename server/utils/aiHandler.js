@@ -43,7 +43,7 @@ export const generateAIResponse = async (userId, userMessage) => {
 
     // Helper for Gemini Free API (Raw Axios - No SDK needed)
     const callGemini = async () => {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
       const axios = (await import('axios')).default;
       
       try {
@@ -57,7 +57,7 @@ export const generateAIResponse = async (userId, userMessage) => {
         const extractedText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!extractedText) {
            console.error("GEMINI RETURNED NO TEXT. RAW PAYLOAD:", JSON.stringify(response.data));
-           throw new Error(`GEMINI_DEBUG: No Text. Payload: ${JSON.stringify(response.data)}`);
+           throw new Error(`GEMINI_DEBUG: No Text`);
         }
         return extractedText;
         
@@ -72,15 +72,22 @@ export const generateAIResponse = async (userId, userMessage) => {
 
     if (geminiKey) {
       console.log(`🚀 Trying Free Google Gemini API for user ${userId}...`);
-      reply = await callGemini();
-      if (reply) return reply;
+      try {
+        reply = await callGemini();
+        if (reply) return reply;
+      } catch (gemErr) {
+        console.error("Gemini Call Failed:", gemErr.message);
+        // Fallback to OpenAI/Groq if needed, or just proceed to catch
+      }
     }
 
-    throw new Error("No valid API Key found or API failed.");
+    throw new Error("No valid API Key found or AI service unavailable.");
 
   } catch (err) {
     console.error("❌ AI API Error:", err.message);
-    // Explicitly return the raw error message to the Instagram DM for debugging
-    return `RAW API ERROR: ${err.message}. Please check terminal for full details.`;
+    
+    // Fetch fallback message again in catch block
+    const finalSettings = await Settings.findOne({ userId });
+    return finalSettings?.aiFallbackMessage || "I'm currently busy, please try again in a bit! 😊";
   }
 };
