@@ -103,7 +103,7 @@ app.get('/api/ping', (req, res) => res.send('pong'));
 
 const checkFollowerStatus = async (platform, chatId, userId) => {
   if (platform !== 'instagram') return true; // Follow check currently only for Instagram
-  
+
   try {
     const userSettings = await Settings.findOne({ userId });
     if (!userSettings || !userSettings.instagramAccessToken) {
@@ -114,13 +114,13 @@ const checkFollowerStatus = async (platform, chatId, userId) => {
     // Official Instagram Messaging API way to check if a user follows the business.
     // Requires instagram_manage_messages and instagram_basic permissions.
     const res = await axios.get(`https://graph.facebook.com/v19.0/${chatId}?fields=is_user_follow_business&access_token=${userSettings.instagramAccessToken}`);
-    
+
     // is_user_follow_business is a boolean returned by Meta
     return !!(res.data && res.data.is_user_follow_business === true);
   } catch (err) {
     // FALLBACK: If we can't verify (e.g. permission missing or private), 
     // we return 'true' to ensure the user's automation isn't blocked.
-    return true; 
+    return true;
   }
 };
 
@@ -135,14 +135,14 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
   // 1. Check for Active Flows first (Advanced Automation)
   const activeFlows = await Flow.find({ userId, status: 'Active' });
-  
+
   const matchedFlow = activeFlows.find(f => {
     if (!f.triggerKeyword) return false;
     const keywords = f.triggerKeyword.split(',').map(k => k.toLowerCase().replace(/\s+/g, ' ').trim());
     const cleanUserMsg = text.toLowerCase().replace(/\s+/g, ' ').trim();
     return keywords.some(k => cleanUserMsg.includes(k));
   });
-  
+
   if (matchedFlow) {
     console.log(`🌊 FLOW MATCH: Triggering Flow "${matchedFlow.name}" for Sender: ${chatId}`);
     await runFlow(userId, matchedFlow._id, chatId, platform, text, commentId);
@@ -150,7 +150,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   }
 
   const userMessage = text.toLowerCase();
-  
+
   // 2. Keyword Campaign Checking
   const activeCampaigns = await Campaign.find({ userId, status: 'Active' });
   console.log(`🔍 DEBUG: Checking ${activeCampaigns.length} active campaigns for user ${userId}. Message: "${text}"`);
@@ -162,25 +162,25 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     const triggerComments = c.triggerOnComments ?? (c.triggerSource === 'comment');
     const triggerStories = c.triggerOnStories ?? (c.triggerSource === 'story_mention');
 
-    const sourceMatch = (source === 'dm' && triggerDms) || 
-                        (source === 'comment' && triggerComments) || 
-                        (source === 'story_mention' && triggerStories);
-    
+    const sourceMatch = (source === 'dm' && triggerDms) ||
+      (source === 'comment' && triggerComments) ||
+      (source === 'story_mention' && triggerStories);
+
     const cleanUserMsg = text.toLowerCase().replace(/\s+/g, ' ').trim();
-    
+
     // Support for multiple keywords separated by commas
     const keywords = c.trigger.split(',').map(k => k.toLowerCase().replace(/\s+/g, ' ').trim());
-    
+
     // Check if any keyword matches
     const keywordMatch = keywords.some(k => {
       if (k === '*') return true; // Wildcard match
       return cleanUserMsg.includes(k);
     });
-    
+
     if (platformMatch && sourceMatch && keywordMatch) {
-        console.log(`🎯 MATCH FOUND! Campaign: "${c.name}" | Trigger: "${c.trigger}" | Platform: ${c.platform} | Source: ${source}`);
+      console.log(`🎯 MATCH FOUND! Campaign: "${c.name}" | Trigger: "${c.trigger}" | Platform: ${c.platform} | Source: ${source}`);
     }
-    
+
     return platformMatch && sourceMatch && keywordMatch;
   });
 
@@ -205,14 +205,14 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
 
     const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText);
-    
+
     // NEW: If it's a comment, also send a public reply to the comment
     if (source === 'comment' && commentId) {
       console.log(`💬 Sending CUSTOM public comment reply to ${commentId}`);
       const replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
       await sendPublicComment(platform, commentId, replyText, userId);
     }
-    
+
     if (sent) {
       const autoReply = new Message({
         userId: new mongoose.Types.ObjectId(userId),
@@ -226,7 +226,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       console.error(`❌ DISPATCH FAIL: metaApi.js could not send the message to ${chatId}`);
       return { error: 'dispatch_failed' };
     }
-  } 
+  }
 
   // 3. AI Studio Fallback (Only if enabled)
   const settings = await Settings.findOne({ userId });
@@ -234,19 +234,19 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     console.log(`😴 NO KEYWORD MATCH: Falling back to AI Studio...`);
     try {
       const aiResponse = await generateAIResponse(userId, text);
-      
+
       if (aiResponse) {
         const sent = await sendMessageToInstagram(platform, chatId, aiResponse, '', userId);
-        
+
         if (sent) {
           const autoReply = new Message({
             userId: new mongoose.Types.ObjectId(userId),
-            chatId: chatId || 'default', 
-            sender: 'AI Agent', 
-            text: aiResponse, 
-            type: 'sent', 
-            platform, 
-            isAI: true, 
+            chatId: chatId || 'default',
+            sender: 'AI Agent',
+            text: aiResponse,
+            type: 'sent',
+            platform,
+            isAI: true,
             timestamp: new Date()
           });
           await autoReply.save();
@@ -287,18 +287,18 @@ connectDB();
 app.get('/health', (req, res) => {
   const readyState = mongoose.connection.readyState;
   const states = { 0: 'Disconnected', 1: 'Connected', 2: 'Connecting', 3: 'Disconnecting' };
-  
-  res.status(200).json({ 
-    status: 'OK', 
+
+  res.status(200).json({
+    status: 'OK',
     database: states[readyState] || 'Unknown',
     db_error: lastDbError,
     mongodb_uri_exists: !!process.env.MONGODB_URI,
-    timestamp: new Date() 
+    timestamp: new Date()
   });
 });
 
 app.get('/', (req, res) => {
-  res.status(200).json({ 
+  res.status(200).json({
     message: "🚀 Instagram DM Automation AI API is running!",
     status: "Healthy",
     docs: "Contact administrator for API documentation"
@@ -308,7 +308,7 @@ app.get('/', (req, res) => {
 // Socket.io Connection
 io.on('connection', (socket) => {
   console.log('🔌 New client connected:', socket.id);
-  
+
   socket.on('join_room', (userId) => {
     socket.join(userId.toString());
     console.log(`👤 User ${userId} joined their private room`);
@@ -350,7 +350,7 @@ app.post('/api/webhook', async (req, res) => {
     for (const entry of body.entry) {
       const pageId = entry.id;
       console.log(`🏠 Entry ID (Page/Account): ${pageId}`);
-      
+
       // 1. Handle Messaging (DMs)
       const messagingArray = entry.messaging || [];
       for (const messaging of messagingArray) {
@@ -362,7 +362,7 @@ app.post('/api/webhook', async (req, res) => {
 
         const senderId = messaging.sender.id;
         const text = messaging.message?.text;
-        
+
         // EXTRA SAFETY: If the sender is the page itself, skip it
         if (senderId === pageId) {
           console.log('⏭️ Skipping message from our own Page ID.');
@@ -374,17 +374,17 @@ app.post('/api/webhook', async (req, res) => {
         if (text || messaging.message?.story) {
           const isStoryMention = !!messaging.message?.story;
           const messageText = text || (isStoryMention ? "[Story Mention]" : "");
-          
+
           console.log(`📬 INCOMING DM: ${isStoryMention ? 'Story' : 'DM'} | Sender: ${senderId} | Msg: ${messageText}`);
-          
+
           const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
-          let userSettings = await Settings.findOne({ 
-              $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }, { facebookPageId: pageId }]
+          let userSettings = await Settings.findOne({
+            $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }, { facebookPageId: pageId }]
           });
-          
+
           if (!userSettings) {
             console.warn(`🛑 UNKNOWN PAGE: ID ${pageId} is not linked to any user.`);
-            continue; 
+            continue;
           }
 
           const targetUserId = userSettings.userId;
@@ -405,6 +405,9 @@ app.post('/api/webhook', async (req, res) => {
 
       // 2. Handle Comments
       const changes = entry.changes || [];
+      if (changes.length === 0 && body.object === 'instagram') {
+        console.warn('💡 CONNECTION DOCTOR: Received a webhook but "changes" (Comments) is empty. Please ensure you have subscribed to the "comments" field in your Meta Developer Dashboard -> Webhooks -> Instagram.');
+      }
       console.log(`🔄 Changes detected: ${changes.length}`);
 
       for (const change of changes) {
@@ -425,8 +428,8 @@ app.post('/api/webhook', async (req, res) => {
 
           if (text && senderId && commentId && senderId !== pageId) {
             const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
-            let userSettings = await Settings.findOne({ 
-              $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }, { facebookPageId: pageId }] 
+            let userSettings = await Settings.findOne({
+              $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }, { facebookPageId: pageId }]
             });
 
             let targetUserId = userSettings?.userId;
@@ -455,8 +458,8 @@ app.post('/api/webhook', async (req, res) => {
       }
     }
     return res.status(200).send('EVENT_RECEIVED');
-  
-  // WhatsApp webhook handling
+
+    // WhatsApp webhook handling
   } else if (body.object === 'whatsapp_business_account') {
     for (const entry of body.entry) {
       const changes = entry.changes || [];
@@ -465,25 +468,25 @@ app.post('/api/webhook', async (req, res) => {
           const value = change.value;
           const phoneNumberId = value?.metadata?.phone_number_id;
           const messages = value?.messages || [];
-          
+
           for (const msg of messages) {
             const senderPhone = msg.from;
             const text = msg.text?.body;
-            
+
             if (text) {
               console.log(`📬 WhatsApp Message from ${senderPhone}: ${text}`);
-              
+
               // Find user by WhatsApp Phone Number ID
               const userSettings = await Settings.findOne({ whatsappPhoneNumberId: phoneNumberId });
               let targetUserId;
-              
+
               if (userSettings) {
                 targetUserId = userSettings.userId;
               } else {
                 const fallbackUser = await User.findOne();
                 if (fallbackUser) targetUserId = fallbackUser._id;
               }
-              
+
               if (targetUserId) {
                 const incoming = new Message({
                   userId: targetUserId,
@@ -496,7 +499,7 @@ app.post('/api/webhook', async (req, res) => {
                 });
                 await incoming.save();
                 io.to(targetUserId.toString()).emit('new_message', incoming);
-                
+
                 // Auto-reply
                 await processAutoReply(targetUserId.toString(), 'whatsapp', senderPhone, text);
               }
@@ -520,18 +523,18 @@ app.use('/api/forms', formRoutes);
 app.post('/api/upload', verifyToken, upload.single('media'), (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    
+
     // Dynamically determine the base URL from the request
     const host = req.get('host');
     const protocol = req.protocol;
     // Prioritize localhost for local testing even if API_BASE_URL is set (prevents ngrok tunnel issues)
-    const baseUrl = (host.includes('localhost') || host.includes('127.0.0.1')) 
-      ? `${protocol}://${host}` 
+    const baseUrl = (host.includes('localhost') || host.includes('127.0.0.1'))
+      ? `${protocol}://${host}`
       : (process.env.API_BASE_URL || `${protocol}://${host}`);
-    
+
     const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
     const fileUrl = `${cleanBaseUrl}/uploads/${req.file.filename}`;
-    
+
     res.json({ url: fileUrl });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -607,7 +610,7 @@ app.get('/api/stats', verifyToken, async (req, res) => {
   try {
     const { filter } = req.query;
     let dateQuery = {};
-    
+
     if (filter === '7d') {
       const d = new Date(); d.setDate(d.getDate() - 7);
       dateQuery = { $gte: d };
@@ -618,7 +621,7 @@ app.get('/api/stats', verifyToken, async (req, res) => {
 
     const campaignMatch = { userId: new mongoose.Types.ObjectId(req.user.userId) };
     const messageMatch = { userId: new mongoose.Types.ObjectId(req.user.userId) };
-    
+
     if (Object.keys(dateQuery).length > 0) {
       campaignMatch.createdAt = dateQuery;
       messageMatch.timestamp = dateQuery;
@@ -630,11 +633,11 @@ app.get('/api/stats', verifyToken, async (req, res) => {
     ]);
     const campaignsCount = await Campaign.countDocuments(campaignMatch);
     const messagesCount = await Message.countDocuments(messageMatch);
-    
+
     const sentMessages = await Message.countDocuments({ ...messageMatch, type: 'sent' });
     const receivedMessages = await Message.countDocuments({ ...messageMatch, type: 'received' });
     const aiSentMessages = await Message.countDocuments({ ...messageMatch, type: 'sent', isAI: true });
-    
+
     // Fetch unique contacts and user plan
     const uniqueContacts = await Message.distinct('chatId', messageMatch);
     const userProfile = await User.findById(req.user.userId);
@@ -663,8 +666,8 @@ app.get('/api/stats', verifyToken, async (req, res) => {
 // Campaigns API
 app.get('/api/campaigns', verifyToken, async (req, res) => {
   try {
-    const campaigns = await Campaign.find({ 
-      userId: new mongoose.Types.ObjectId(req.user.userId) 
+    const campaigns = await Campaign.find({
+      userId: new mongoose.Types.ObjectId(req.user.userId)
     }).sort({ createdAt: -1 });
     res.json(campaigns);
   } catch (err) {
@@ -676,7 +679,7 @@ app.get('/api/campaigns', verifyToken, async (req, res) => {
 app.post('/api/campaigns', verifyToken, async (req, res) => {
   try {
     const { linkUrl } = req.body;
-    
+
     // Basic URL validation if link is provided
     if (linkUrl) {
       try {
@@ -686,9 +689,9 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
       }
     }
 
-    const newCampaign = new Campaign({ 
-      ...req.body, 
-      userId: new mongoose.Types.ObjectId(req.user.userId) 
+    const newCampaign = new Campaign({
+      ...req.body,
+      userId: new mongoose.Types.ObjectId(req.user.userId)
     });
     await newCampaign.save();
     res.json(newCampaign);
@@ -715,15 +718,15 @@ app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
-    const result = await Campaign.findOneAndDelete({ 
-      _id: req.params.id, 
-      userId: new mongoose.Types.ObjectId(req.user.userId) 
+    const result = await Campaign.findOneAndDelete({
+      _id: req.params.id,
+      userId: new mongoose.Types.ObjectId(req.user.userId)
     });
-    
+
     if (!result) {
       return res.status(404).json({ message: "Campaign not found or unauthorized to delete" });
     }
-    
+
     res.json({ message: 'Campaign deleted successfully' });
   } catch (err) {
     console.error("❌ Error deleting campaign:", err.message);
@@ -734,9 +737,9 @@ app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
 // Campaign Logs Endpoint
 app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
   try {
-    const logs = await Message.find({ 
-      userId: req.user.userId, 
-      campaignId: req.params.id 
+    const logs = await Message.find({
+      userId: req.user.userId,
+      campaignId: req.params.id
     }).sort({ timestamp: -1 });
     res.json(logs);
   } catch (err) {
@@ -753,7 +756,7 @@ app.get('/api/messages', verifyToken, async (req, res) => {
 // Optimized route for Audience Manager history
 app.get('/api/messages/contact/:chatId', verifyToken, async (req, res) => {
   try {
-    const messages = await Message.find({ 
+    const messages = await Message.find({
       userId: req.user.userId,
       chatId: req.params.chatId
     }).sort({ timestamp: -1 }).limit(100);
@@ -766,7 +769,7 @@ app.get('/api/messages/contact/:chatId', verifyToken, async (req, res) => {
 app.post('/api/messages', verifyToken, async (req, res) => {
   try {
     const { sender, text, type, chatId, platform } = req.body;
-    
+
     // TEMPORARILY DISABLED FOR TESTING
     /*
     const userProfile = await User.findById(req.user.userId);
@@ -785,7 +788,7 @@ app.post('/api/messages', verifyToken, async (req, res) => {
       }
     }
     */
-    
+
     // Explicitly casting userId to ObjectId to ensure it saves correctly
     const newMessage = new Message({
       userId: new mongoose.Types.ObjectId(req.user.userId),
@@ -798,7 +801,7 @@ app.post('/api/messages', verifyToken, async (req, res) => {
       linkUrl: req.body.linkUrl || '',
       timestamp: new Date()
     });
-    
+
     await newMessage.save();
     console.log("✅ Message saved to DB:", newMessage._id);
 
@@ -806,13 +809,13 @@ app.post('/api/messages', verifyToken, async (req, res) => {
     try {
       await Contact.findOneAndUpdate(
         { userId: req.user.userId, chatId: chatId || 'default' },
-        { 
-          $set: { 
+        {
+          $set: {
             lastActive: new Date(),
             platform: platform || 'instagram'
           },
           $inc: { totalMessages: 1 },
-          $setOnInsert: { 
+          $setOnInsert: {
             name: sender !== 'AI Agent' && sender !== 'admin' ? sender : (chatId || 'default'),
             tags: [],
             notes: ''
@@ -837,7 +840,7 @@ app.post('/api/messages', verifyToken, async (req, res) => {
         console.error("AutoReply error:", err);
       });
     }
-    
+
     res.json(newMessage);
 
   } catch (err) {
@@ -887,7 +890,7 @@ app.get('/api/instagram/media', verifyToken, async (req, res) => {
 
     const { type } = req.query; // 'media' or 'stories'
     const endpoint = type === 'stories' ? 'stories' : 'media';
-    
+
     const response = await axios.get(`https://graph.facebook.com/v19.0/${settings.businessAccountId}/${endpoint}`, {
       params: {
         fields: 'id,media_type,media_url,thumbnail_url,timestamp,permalink',
@@ -924,9 +927,9 @@ app.post('/api/settings', verifyToken, async (req, res) => {
           data.isAccountConnected = false;
           const errMsg = metaErr.response?.data?.error?.message || 'Invalid Access Token';
           data.connectionError = errMsg;
-          return res.status(400).json({ 
+          return res.status(400).json({
             error: `Instagram connection failed: ${errMsg}`,
-            isAccountConnected: false 
+            isAccountConnected: false
           });
         }
       } else {
@@ -949,9 +952,9 @@ app.post('/api/settings', verifyToken, async (req, res) => {
           data.isFacebookConnected = false;
           const errMsg = metaErr.response?.data?.error?.message || 'Invalid Access Token or Page ID';
           data.connectionError = errMsg;
-          return res.status(400).json({ 
+          return res.status(400).json({
             error: `Facebook connection failed: ${errMsg}`,
-            isFacebookConnected: false 
+            isFacebookConnected: false
           });
         }
       } else {
@@ -974,9 +977,9 @@ app.post('/api/settings', verifyToken, async (req, res) => {
           data.isWhatsAppConnected = false;
           const errMsg = metaErr.response?.data?.error?.message || 'Invalid Access Token or Phone Number ID';
           data.connectionError = errMsg;
-          return res.status(400).json({ 
+          return res.status(400).json({
             error: `WhatsApp connection failed: ${errMsg}`,
-            isWhatsAppConnected: false 
+            isWhatsAppConnected: false
           });
         }
       } else {
@@ -1033,7 +1036,7 @@ app.put('/api/flows/:id', verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user || user.plan !== 'pro') {
-       return res.status(403).json({ error: 'Pro plan required to update advanced flows.' });
+      return res.status(403).json({ error: 'Pro plan required to update advanced flows.' });
     }
     const flow = await Flow.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.userId },
@@ -1050,7 +1053,7 @@ app.delete('/api/flows/:id', verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user || user.plan !== 'pro') {
-       return res.status(403).json({ error: 'Pro plan required to delete advanced flows.' });
+      return res.status(403).json({ error: 'Pro plan required to delete advanced flows.' });
     }
     await Flow.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
     res.json({ message: 'Flow deleted' });
@@ -1068,7 +1071,7 @@ app.post('/api/broadcasts', verifyToken, async (req, res) => {
 
   try {
     const results = { success: 0, failed: 0 };
-    
+
     for (const contactId of contactIds) {
       const contact = await Contact.findOne({ _id: contactId, userId: req.user.userId });
       if (!contact) {
@@ -1077,7 +1080,7 @@ app.post('/api/broadcasts', verifyToken, async (req, res) => {
       }
 
       const sent = await sendMessageToInstagram(platform || contact.platform || 'instagram', contact.chatId, text, '', req.user.userId);
-      
+
       if (sent) {
         const msg = new Message({
           userId: req.user.userId,

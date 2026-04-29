@@ -38,7 +38,7 @@ export default function AutomationEditor() {
   const [requireFollow, setRequireFollow] = useState(false);
   const [unfollowedMessage, setUnfollowedMessage] = useState("Hey! Please follow our account first to get the link! 😊");
   const [submitting, setSubmitting] = useState(false);
-  const [name, setName] = useState(`${template === 'stories' ? 'Story' : 'Comment'} Automation #${Math.floor(Math.random() * 1000)}`);
+  const [name, setName] = useState(`${template === 'stories' ? 'Story' : (template === 'dms' ? 'DM' : 'Comment')} Automation #${Math.floor(Math.random() * 1000)}`);
   const [connectedSettings, setConnectedSettings] = useState(null);
   const [realMedia, setRealMedia] = useState([]);
   const [loadingMedia, setLoadingMedia] = useState(false);
