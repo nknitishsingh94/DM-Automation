@@ -159,13 +159,19 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     const platformMatch = c.platform === 'all' || c.platform === (platform || 'instagram');
     const sourceMatch = (c.triggerSource || 'dm') === source;
     
-    // Improved Matching: trim spaces, normalize multiple spaces, and case-insensitive
-    const cleanTrigger = c.trigger.toLowerCase().replace(/\s+/g, ' ').trim();
     const cleanUserMsg = text.toLowerCase().replace(/\s+/g, ' ').trim();
-    const keywordMatch = cleanUserMsg.includes(cleanTrigger);
     
-    if (keywordMatch) {
-        console.log(`🎯 MATCH FOUND! Trigger: "${c.trigger}" | Platform: ${c.platform} | Source: ${source}`);
+    // Support for multiple keywords separated by commas
+    const keywords = c.trigger.split(',').map(k => k.toLowerCase().replace(/\s+/g, ' ').trim());
+    
+    // Check if any keyword matches
+    const keywordMatch = keywords.some(k => {
+      if (k === '*') return true; // Wildcard match
+      return cleanUserMsg.includes(k);
+    });
+    
+    if (platformMatch && sourceMatch && keywordMatch) {
+        console.log(`🎯 MATCH FOUND! Campaign: "${c.name}" | Trigger: "${c.trigger}" | Platform: ${c.platform} | Source: ${source}`);
     }
     
     return platformMatch && sourceMatch && keywordMatch;
@@ -201,33 +207,38 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
   } 
 
-  console.log(`😴 NO KEYWORD MATCH: Falling back to AI Studio...`);
-  
-  try {
-    const aiResponse = await generateAIResponse(userId, text);
-    
-    if (aiResponse) {
-      const sent = await sendMessageToInstagram(platform, chatId, aiResponse, '', userId);
+  // 3. AI Studio Fallback (Only if enabled)
+  const settings = await Settings.findOne({ userId });
+  if (settings?.isAiEnabled) {
+    console.log(`😴 NO KEYWORD MATCH: Falling back to AI Studio...`);
+    try {
+      const aiResponse = await generateAIResponse(userId, text);
       
-      if (sent) {
-        const autoReply = new Message({
-          userId: new mongoose.Types.ObjectId(userId),
-          chatId: chatId || 'default', 
-          sender: 'AI Agent', 
-          text: aiResponse, 
-          type: 'sent', 
-          platform, 
-          isAI: true, 
-          timestamp: new Date()
-        });
-        await autoReply.save();
-        io.to(userId.toString()).emit('new_message', autoReply);
-        console.log(`🤖 AI FALLBACK SUCCESS: Sent AI response to ${chatId}`);
-        return { ai_reply: aiResponse };
+      if (aiResponse) {
+        const sent = await sendMessageToInstagram(platform, chatId, aiResponse, '', userId);
+        
+        if (sent) {
+          const autoReply = new Message({
+            userId: new mongoose.Types.ObjectId(userId),
+            chatId: chatId || 'default', 
+            sender: 'AI Agent', 
+            text: aiResponse, 
+            type: 'sent', 
+            platform, 
+            isAI: true, 
+            timestamp: new Date()
+          });
+          await autoReply.save();
+          io.to(userId.toString()).emit('new_message', autoReply);
+          console.log(`🤖 AI FALLBACK SUCCESS: Sent AI response to ${chatId}`);
+          return { ai_reply: aiResponse };
+        }
       }
+    } catch (aiErr) {
+      console.error("🔥 AI Fallback failed:", aiErr);
     }
-  } catch (aiErr) {
-    console.error("🔥 AI Fallback failed:", aiErr);
+  } else {
+    console.log(`😴 NO KEYWORD MATCH: AI Studio is disabled for user ${userId}.`);
   }
 
   return { skipped: true, reason: 'no keywords matched and AI failed' };

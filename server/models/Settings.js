@@ -29,6 +29,7 @@ const settingsSchema = new mongoose.Schema({
   aiTemperature: { type: Number, default: 0.7 },
   aiFallbackMessage: { type: String, default: "I'm not sure about that, please contact human support." },
   aiHumanEscalation: { type: Boolean, default: false },
+  isAiEnabled: { type: Boolean, default: false },
 
   updatedAt: { type: Date, default: Date.now }
 });
