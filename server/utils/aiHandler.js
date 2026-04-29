@@ -9,8 +9,8 @@ import Settings from '../models/Settings.js';
  */
 export const generateAIResponse = async (userId, userMessage) => {
   // Force reload env for robustness
-  const dotenv = await import('dotenv');
-  dotenv.config();
+  const dotenvModule = await import('dotenv');
+  dotenvModule.default.config();
 
   try {
     const userSettings = await Settings.findOne({ userId });
