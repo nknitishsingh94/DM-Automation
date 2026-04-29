@@ -38,6 +38,8 @@ export default function AutomationEditor() {
   const fileInputRef = React.useRef(null);
   const [openingMessageText, setOpeningMessageText] = useState("Hey there! I'm so happy you're here, thanks so much for your interest 😊\n\nClick below and I'll send you the link in just a sec 🚀");
   const [openingMessageButton, setOpeningMessageButton] = useState("Send me the link");
+  const [requireFollow, setRequireFollow] = useState(false);
+  const [unfollowedMessage, setUnfollowedMessage] = useState("Hey! Please follow our account first to get the link! 😊");
   const [submitting, setSubmitting] = useState(false);
   const [name, setName] = useState(`${template === 'stories' ? 'Story' : 'Comment'} Automation #${Math.floor(Math.random() * 1000)}`);
   const [connectedSettings, setConnectedSettings] = useState(null);
@@ -156,6 +158,8 @@ export default function AutomationEditor() {
           videoUrl: selectedMedia || '',
           postId: selectedContentId || '',
           platform: channel || 'instagram',
+          requireFollow: requireFollow,
+          unfollowedResponse: unfollowedMessage,
           status: 'Active'
         })
       });
@@ -652,6 +656,46 @@ export default function AutomationEditor() {
                     />
                     <CheckCircle2 size={18} color="#7c3aed" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                   </div>
+                </div>
+              )}
+
+              {/* Follower Check (NEW) */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', marginTop: '24px' }}>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b' }}>Follower Check</h4>
+                <div 
+                  onClick={() => setRequireFollow(!requireFollow)}
+                  style={{ 
+                    width: '40px', height: '22px', borderRadius: '11px', background: requireFollow ? '#10b981' : '#cbd5e1', 
+                    position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
+                  }}
+                >
+                  <div style={{ 
+                    width: '16px', height: '16px', borderRadius: '50%', background: 'white', 
+                    position: 'absolute', top: '3px', left: requireFollow ? '21px' : '3px', transition: 'all 0.3s' 
+                  }}></div>
+                </div>
+              </div>
+              <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '20px' }}>Only reply to people who are following you. Grow your fans!</p>
+              
+              {requireFollow && (
+                <div style={{ 
+                  padding: '20px', 
+                  borderRadius: '16px', 
+                  background: 'white', 
+                  border: '1px solid #10b981',
+                  boxShadow: '0 4px 20px rgba(16, 185, 129, 0.05)',
+                  marginBottom: '24px'
+                }}>
+                  <div style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '12px' }}>Message for non-followers</div>
+                  <textarea 
+                    value={unfollowedMessage}
+                    onChange={(e) => setUnfollowedMessage(e.target.value)}
+                    placeholder="E.g. Please follow us first!"
+                    style={{ 
+                      width: '100%', height: '80px', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', 
+                      outline: 'none', fontSize: '0.85rem', resize: 'none', lineHeight: '1.5'
+                    }}
+                  ></textarea>
                 </div>
               )}
             </div>
