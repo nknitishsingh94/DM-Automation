@@ -808,6 +808,30 @@ app.get('/api/settings', verifyToken, async (req, res) => {
   }
 });
 
+app.get('/api/instagram/media', verifyToken, async (req, res) => {
+  try {
+    const settings = await Settings.findOne({ userId: req.user.userId });
+    if (!settings || !settings.instagramAccessToken || !settings.businessAccountId) {
+      return res.status(400).json({ error: 'Instagram account not fully connected' });
+    }
+
+    const { type } = req.query; // 'media' or 'stories'
+    const endpoint = type === 'stories' ? 'stories' : 'media';
+    
+    const response = await axios.get(`https://graph.facebook.com/v19.0/${settings.businessAccountId}/${endpoint}`, {
+      params: {
+        fields: 'id,media_type,media_url,thumbnail_url,timestamp,permalink',
+        access_token: settings.instagramAccessToken
+      }
+    });
+
+    res.json(response.data.data || []);
+  } catch (err) {
+    console.error("❌ Error fetching IG media:", err.response?.data || err.message);
+    res.status(500).json({ error: 'Failed to fetch Instagram media' });
+  }
+});
+
 app.post('/api/settings', verifyToken, async (req, res) => {
   try {
     const data = { ...req.body, updatedAt: new Date() };

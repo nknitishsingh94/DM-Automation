@@ -41,6 +41,33 @@ export default function AutomationEditor() {
   const [submitting, setSubmitting] = useState(false);
   const [name, setName] = useState(`${template === 'stories' ? 'Story' : 'Comment'} Automation #${Math.floor(Math.random() * 1000)}`);
   const [connectedSettings, setConnectedSettings] = useState(null);
+  const [realMedia, setRealMedia] = useState([]);
+  const [loadingMedia, setLoadingMedia] = useState(false);
+  const [selectedContentId, setSelectedContentId] = useState(null);
+
+  const fetchRealMedia = async () => {
+    setLoadingMedia(true);
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/instagram/media?type=${template === 'stories' ? 'stories' : 'media'}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setRealMedia(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch IG media:", err);
+    } finally {
+      setLoadingMedia(false);
+    }
+  };
+
+  React.useEffect(() => {
+    if (!anyStory) {
+      fetchRealMedia();
+    }
+  }, [anyStory, template]);
 
   React.useEffect(() => {
     const fetchSettings = async () => {
@@ -127,6 +154,7 @@ export default function AutomationEditor() {
           triggerSource: template === 'stories' ? 'story_mention' : 'comment',
           response: message,
           videoUrl: selectedMedia || '',
+          postId: selectedContentId || '',
           platform: channel || 'instagram',
           status: 'Active'
         })
@@ -413,36 +441,54 @@ export default function AutomationEditor() {
                   </div>
                 </div>
                 {!anyStory && (
-                  <div style={{ 
-                    marginTop: '20px',
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: '12px'
-                  }}>
-                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                      <div key={i} style={{ 
-                        aspectRatio: template === 'stories' ? '9/16' : '1/1',
-                        background: '#e2e8f0',
-                        borderRadius: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#94a3b8',
-                        fontSize: '0.7rem',
-                        fontWeight: '700',
-                        border: '2px solid transparent',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        overflow: 'hidden',
-                        position: 'relative'
-                      }}
-                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#7c3aed'}
-                      onMouseLeave={(e) => e.currentTarget.style.borderColor = 'transparent'}
-                      >
-                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.1))' }}></div>
-                        {template === 'stories' ? 'Story' : 'Post'} {i}
+                  <div style={{ marginTop: '20px' }}>
+                    {loadingMedia ? (
+                      <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8' }}>
+                        <Loader2 className="animate-spin" style={{ margin: '0 auto 8px' }} />
+                        Fetching your {template === 'stories' ? 'stories' : 'posts'}...
                       </div>
-                    ))}
+                    ) : realMedia.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8', fontSize: '0.85rem' }}>
+                        No {template === 'stories' ? 'stories' : 'posts'} found.
+                      </div>
+                    ) : (
+                      <div style={{ 
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '12px'
+                      }}>
+                        {realMedia.map((item) => (
+                          <div 
+                            key={item.id} 
+                            onClick={() => setSelectedContentId(item.id)}
+                            style={{ 
+                              aspectRatio: template === 'stories' ? '9/16' : '1/1',
+                              background: '#e2e8f0',
+                              borderRadius: '12px',
+                              border: selectedContentId === item.id ? '3px solid #7c3aed' : '2px solid transparent',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s',
+                              overflow: 'hidden',
+                              position: 'relative'
+                            }}
+                          >
+                            <img 
+                              src={item.thumbnail_url || item.media_url} 
+                              alt="IG Media" 
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                            />
+                            {selectedContentId === item.id && (
+                              <div style={{ 
+                                position: 'absolute', top: '4px', right: '4px', 
+                                background: '#7c3aed', borderRadius: '50%', padding: '2px' 
+                              }}>
+                                <CheckCircle2 size={12} color="white" />
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
