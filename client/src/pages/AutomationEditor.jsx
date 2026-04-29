@@ -49,50 +49,6 @@ export default function AutomationEditor() {
       display: 'flex',
       flexDirection: 'column'
     }}>
-      {/* Top Header */}
-      <div style={{ 
-        height: '70px', 
-        background: 'white', 
-        borderBottom: '1px solid #e2e8f0', 
-        display: 'flex', 
-        alignItems: 'center', 
-        padding: '0 24px', 
-        justifyContent: 'space-between',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
-            <ChevronLeft size={24} />
-          </button>
-          <div>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#1e1b4b' }}>
-              {template === 'stories' ? 'Story Automation' : 'Comment Automation'}
-            </h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#94a3b8', fontWeight: '600' }}>
-              <span style={{ textTransform: 'uppercase' }}>Editor</span>
-              <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#cbd5e1' }}></div>
-              <span>Draft</span>
-            </div>
-          </div>
-        </div>
-        <button style={{ 
-          background: '#7c3aed', 
-          color: 'white', 
-          padding: '10px 24px', 
-          borderRadius: '10px', 
-          fontWeight: '700', 
-          border: 'none', 
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
-        }}>
-          Go Live <Zap size={16} fill="white" />
-        </button>
-      </div>
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         {/* Left Side: Preview (Fixed) */}
@@ -106,8 +62,8 @@ export default function AutomationEditor() {
           padding: '20px',
           borderRight: '1px solid #e2e8f0',
           position: 'sticky',
-          top: '70px',
-          height: 'calc(100vh - 70px)'
+          top: '0',
+          height: '100vh'
         }}>
           <div style={{ color: '#64748b', fontWeight: '700', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
             <Smartphone size={18} /> Preview Automation
@@ -192,7 +148,7 @@ export default function AutomationEditor() {
             background: 'white', 
             padding: '40px 60px', 
             overflowY: 'auto',
-            maxHeight: 'calc(100vh - 70px)'
+            maxHeight: '100vh'
           }}
         >
           <div style={{ maxWidth: '500px', margin: '0 0' }}>
