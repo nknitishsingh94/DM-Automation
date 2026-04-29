@@ -37,7 +37,7 @@ import User from './models/User.js';
 import Contact from './models/Contact.js';
 import Flow from './models/Flow.js';
 import { runFlow } from './utils/FlowRunner.js';
-import { sendMessageToInstagram, sendWhatsAppMessage, sendPrivateReply } from './utils/metaApi.js';
+import { sendMessageToInstagram, sendWhatsAppMessage, sendPrivateReply, sendPublicComment } from './utils/metaApi.js';
 import authRoutes from './routes/auth.js';
 import ChatMessage from './models/ChatMessage.js';
 import paymentRoutes from './routes/payment.js';
@@ -191,6 +191,12 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
 
     const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText);
+    
+    // NEW: If it's a comment, also send a public reply to the comment
+    if (source === 'comment' && commentId) {
+      console.log(`💬 Sending PUBLIC comment reply to ${commentId}`);
+      await sendPublicComment(platform, commentId, `Check your DMs! 🚀 I've sent you the info.`, userId);
+    }
     
     if (sent) {
       const autoReply = new Message({

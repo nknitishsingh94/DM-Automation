@@ -151,3 +151,30 @@ export const sendPrivateReply = async (platform, commentId, text, userId = null)
     return false;
   }
 };
+
+/**
+ * Meta Public Comment Reply: Respond to a Comment with another Comment
+ */
+export const sendPublicComment = async (platform, commentId, text, userId = null) => {
+  try {
+    let accessToken = process.env.META_PAGE_ACCESS_TOKEN;
+    if (userId) {
+      const userSettings = await Settings.findOne({ userId });
+      if (userSettings) {
+        accessToken = platform === 'facebook' ? userSettings.facebookAccessToken : userSettings.instagramAccessToken;
+      }
+    }
+
+    if (!accessToken) return false;
+
+    // For Instagram, the endpoint is /{comment-id}/replies
+    const url = `https://graph.facebook.com/v19.0/${commentId}/replies?access_token=${accessToken}`;
+    const response = await axios.post(url, { message: text });
+    console.log("✅ Public comment reply sent:", response.data);
+    return true;
+  } catch (err) {
+    const errorData = err.response?.data || err.message;
+    console.error("❌ Public Comment Error:", JSON.stringify(errorData, null, 2));
+    return false;
+  }
+};
