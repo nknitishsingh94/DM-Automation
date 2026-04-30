@@ -52,6 +52,7 @@ const Terms = lazyRetry(() => import('./pages/Terms'));
 const ChannelSelector = lazyRetry(() => import('./pages/ChannelSelector'));
 const TemplateSelector = lazyRetry(() => import('./pages/TemplateSelector'));
 const AutomationEditor = lazyRetry(() => import('./pages/AutomationEditor'));
+const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'));
 
 const NotificationContext = createContext();
 export const useNotification = () => useContext(NotificationContext);
@@ -361,6 +362,7 @@ function MainLayout() {
               <Route path="/select-channel" element={<ProtectedRoute><ChannelSelector /></ProtectedRoute>} />
               <Route path="/select-template" element={<ProtectedRoute><TemplateSelector /></ProtectedRoute>} />
               <Route path="/automation-editor" element={<ProtectedRoute><AutomationEditor /></ProtectedRoute>} />
+              <Route path="/dm-automation-editor" element={<ProtectedRoute><DmAutomationEditor /></ProtectedRoute>} />
               <Route path="/audiences" element={<ProtectedRoute><Audiences /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
