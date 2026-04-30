@@ -564,68 +564,83 @@ export default function AutomationEditor() {
               </div>
             </div>
 
-            {/* Step 2: Post Selection Cards (Restored from Pic) */}
-            <div style={{ marginBottom: '32px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div 
-                  onClick={() => setAnyStory(true)}
-                  style={{ 
-                    padding: '24px',
-                    borderRadius: '20px',
-                    background: anyStory ? '#fef2f2' : 'white',
-                    border: anyStory ? '2px solid #ef4444' : '1px solid #e2e8f0',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '12px',
-                    transition: 'all 0.2s',
-                    textAlign: 'center'
-                  }}
-                >
-                  <div style={{ 
-                    width: '48px', height: '48px', borderRadius: '12px', 
-                    background: anyStory ? '#ef4444' : '#f1f5f9', 
-                    color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' 
-                  }}>
-                    <Zap size={24} fill={anyStory ? 'white' : 'none'} color={anyStory ? 'white' : '#64748b'} />
-                  </div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: '800', color: anyStory ? '#991b1b' : '#64748b' }}>
-                    Next Post<br/>or Reel
+            {/* Step 2: Select a Post (Restored Old Design) */}
+            {template !== 'dms' && (
+              <div style={{ marginBottom: '32px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>2</div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>{template === 'stories' ? 'Select a Story' : 'Select a Post'}</h3>
+                </div>
+              <div style={{ padding: '20px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <span style={{ fontWeight: '700', color: '#475569' }}>Any {template === 'stories' ? 'story' : 'post'}</span>
+                  <div 
+                    onClick={() => setAnyStory(!anyStory)}
+                    style={{ 
+                      width: '44px', height: '24px', borderRadius: '12px', background: anyStory ? '#7c3aed' : '#cbd5e1', 
+                      position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
+                    }}
+                  >
+                    <div style={{ 
+                      width: '18px', height: '18px', borderRadius: '50%', background: 'white', 
+                      position: 'absolute', top: '3px', left: anyStory ? '23px' : '3px', transition: 'all 0.3s' 
+                    }}></div>
                   </div>
                 </div>
-
-                <div 
-                  onClick={() => setAnyStory(false)}
-                  style={{ 
-                    padding: '24px',
-                    borderRadius: '20px',
-                    background: !anyStory ? '#fef2f2' : 'white',
-                    border: !anyStory ? '2px solid #ef4444' : '1px dashed #cbd5e1',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '12px',
-                    transition: 'all 0.2s',
-                    textAlign: 'center'
-                  }}
-                >
-                  <div style={{ 
-                    width: '48px', height: '48px', borderRadius: '12px', 
-                    background: !anyStory ? '#ef4444' : 'transparent', 
-                    color: !anyStory ? 'white' : '#cbd5e1', 
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    border: !anyStory ? 'none' : '2px dashed #cbd5e1'
-                  }}>
-                    <ImageIcon size={24} color={!anyStory ? 'white' : '#cbd5e1'} />
+                {!anyStory && (
+                  <div style={{ marginTop: '20px' }}>
+                    {loadingMedia ? (
+                      <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8' }}>
+                        <Loader2 className="animate-spin" style={{ margin: '0 auto 8px' }} />
+                        Fetching your {template === 'stories' ? 'stories' : 'posts'}...
+                      </div>
+                    ) : realMedia.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8', fontSize: '0.85rem' }}>
+                        No {template === 'stories' ? 'stories' : 'posts'} found.
+                      </div>
+                    ) : (
+                      <div style={{ 
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '12px'
+                      }}>
+                        {realMedia.map((item) => (
+                          <div 
+                            key={item.id} 
+                            onClick={() => setSelectedContentId(item.id)}
+                            style={{ 
+                              aspectRatio: template === 'stories' ? '9/16' : '1/1',
+                              background: '#e2e8f0',
+                              borderRadius: '12px',
+                              border: selectedContentId === item.id ? '3px solid #7c3aed' : '2px solid transparent',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s',
+                              overflow: 'hidden',
+                              position: 'relative'
+                            }}
+                          >
+                            <img 
+                              src={item.thumbnail_url || item.media_url} 
+                              alt="IG Media" 
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                            />
+                            {selectedContentId === item.id && (
+                              <div style={{ 
+                                position: 'absolute', top: '4px', right: '4px', 
+                                background: '#7c3aed', borderRadius: '50%', padding: '2px' 
+                              }}>
+                                <CheckCircle2 size={12} color="white" />
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: '800', color: !anyStory ? '#991b1b' : '#cbd5e1' }}>
-                    Specific<br/>Content
-                  </div>
-                </div>
+                )}
               </div>
             </div>
+          )}
 
             {/* Trigger Sources Selection (Merged from Pic style) */}
             <div style={{ marginBottom: '32px' }}>
