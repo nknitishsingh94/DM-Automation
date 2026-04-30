@@ -476,44 +476,8 @@ export default function AutomationEditor() {
               </>
             )}
           </div>
-
-            {/* Bottom Navigation / Preview Switcher */}
-            <div style={{ position: 'absolute', bottom: '20px', left: 0, right: 0, padding: '0 20px' }}>
-              <div style={{ 
-                background: '#1a1a1a', 
-                borderRadius: '25px', 
-                padding: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                border: '1px solid #333'
-              }}>
-                <div 
-                  onClick={() => setPreviewMode('comment')}
-                  style={{ 
-                    flex: 1, padding: '8px', borderRadius: '20px', textAlign: 'center', fontSize: '0.75rem', fontWeight: '700',
-                    background: previewMode === 'comment' ? '#333' : 'transparent',
-                    color: previewMode === 'comment' ? 'white' : '#8e8e8e',
-                    cursor: 'pointer', transition: 'all 0.2s'
-                  }}
-                >
-                  Post View
-                </div>
-                <div 
-                  onClick={() => setPreviewMode('dm')}
-                  style={{ 
-                    flex: 1, padding: '8px', borderRadius: '20px', textAlign: 'center', fontSize: '0.75rem', fontWeight: '700',
-                    background: previewMode === 'dm' ? '#333' : 'transparent',
-                    color: previewMode === 'dm' ? 'white' : '#8e8e8e',
-                    cursor: 'pointer', transition: 'all 0.2s'
-                  }}
-                >
-                  DM View
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
+      </div>
 
         {/* Right Side: Configuration (Scrollable) */}
         <div 
