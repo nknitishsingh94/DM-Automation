@@ -405,35 +405,38 @@ export default function AutomationEditor() {
                 </div>
               )}
 
-              {/* Final AI Response Bubble */}
+              {/* Final AI Response Card (Generic Template Style) */}
               {message && (
                 <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
                   <div style={{ 
-                    background: '#262626', 
-                    color: 'white', 
-                    padding: '10px 16px', 
+                    background: 'white', 
                     borderRadius: '18px 18px 18px 4px',
-                    fontSize: '0.8rem',
-                    border: '1px solid #333',
-                    overflow: 'hidden'
+                    border: '1px solid #e2e8f0',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                   }}>
-                    {message}
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px', alignItems: 'center' }}>
+                    <div style={{ padding: '12px 16px', borderBottom: buttons.length > 0 ? '1px solid #f1f5f9' : 'none' }}>
+                      <div style={{ color: '#1e1b4b', fontSize: '0.85rem', fontWeight: '800', marginBottom: '4px' }}>
+                        Message
+                      </div>
+                      <div style={{ color: '#475569', fontSize: '0.8rem', lineHeight: '1.4' }}>
+                        {message}
+                      </div>
+                    </div>
                     {buttons.map((btn, idx) => (
-                      <div key={idx} style={{ width: '100%' }}>
-                        <div style={{ 
-                          padding: '8px 20px', 
-                          background: 'white', 
-                          border: '1px solid #333', 
-                          borderRadius: '20px', 
-                          color: '#7c3aed', 
-                          fontSize: '0.8rem', 
-                          fontWeight: '700',
-                          textAlign: 'center'
-                        }}>
-                          {btn.text || "Visit Link"}
-                        </div>
+                      <div 
+                        key={idx} 
+                        style={{ 
+                          padding: '12px', 
+                          textAlign: 'center', 
+                          borderBottom: idx === buttons.length - 1 ? 'none' : '1px solid #f1f5f9',
+                          color: '#7c3aed',
+                          fontSize: '0.8rem',
+                          fontWeight: '800',
+                          cursor: 'default'
+                        }}
+                      >
+                        {btn.text || "Visit Link"}
                       </div>
                     ))}
                   </div>
@@ -546,129 +549,96 @@ export default function AutomationEditor() {
               </div>
             </div>
 
-            {/* Step 2: Post Selection Cards */}
-            <div style={{ marginBottom: '32px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div 
-                  onClick={() => setAnyStory(true)}
-                  style={{ 
-                    padding: '24px',
-                    borderRadius: '20px',
-                    background: anyStory ? '#fef2f2' : 'white',
-                    border: anyStory ? '2px solid #ef4444' : '1px solid #e2e8f0',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '12px',
-                    transition: 'all 0.2s',
-                    textAlign: 'center'
-                  }}
-                >
-                  <div style={{ 
-                    width: '48px', height: '48px', borderRadius: '12px', 
-                    background: anyStory ? '#ef4444' : '#f1f5f9', 
-                    color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' 
-                  }}>
-                    <Zap size={24} fill={anyStory ? 'white' : 'none'} color={anyStory ? 'white' : '#64748b'} />
-                  </div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: '800', color: anyStory ? '#991b1b' : '#64748b' }}>
-                    Next Post<br/>or Reel
-                  </div>
+            {/* Step 2 */}
+            {template !== 'dms' && (
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>2</div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>{template === 'stories' ? 'Select a Story' : 'Select a Post'}</h3>
                 </div>
-
-                <div 
-                  onClick={() => setAnyStory(false)}
-                  style={{ 
-                    padding: '24px',
-                    borderRadius: '20px',
-                    background: !anyStory ? '#fef2f2' : 'white',
-                    border: !anyStory ? '2px solid #ef4444' : '1px dashed #cbd5e1',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '12px',
-                    transition: 'all 0.2s',
-                    textAlign: 'center'
-                  }}
-                >
-                  <div style={{ 
-                    width: '48px', height: '48px', borderRadius: '12px', 
-                    background: !anyStory ? '#ef4444' : 'transparent', 
-                    color: !anyStory ? 'white' : '#cbd5e1', 
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    border: !anyStory ? 'none' : '2px dashed #cbd5e1'
-                  }}>
-                    <ImageIcon size={24} color={!anyStory ? 'white' : '#cbd5e1'} />
-                  </div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: '800', color: !anyStory ? '#991b1b' : '#cbd5e1' }}>
-                    Specific<br/>Content
-                  </div>
-                </div>
-              </div>
-
-              {!anyStory && (
-                <div style={{ marginTop: '20px', padding: '20px', borderRadius: '16px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
-                  {loadingMedia ? (
-                    <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8' }}>
-                      <Loader2 className="animate-spin" style={{ margin: '0 auto 8px' }} />
-                      Fetching your content...
-                    </div>
-                  ) : realMedia.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8', fontSize: '0.85rem' }}>
-                      No posts found.
-                    </div>
-                  ) : (
+              <div style={{ padding: '20px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <span style={{ fontWeight: '700', color: '#475569' }}>Any {template === 'stories' ? 'story' : 'post'}</span>
+                  <div 
+                    onClick={() => setAnyStory(!anyStory)}
+                    style={{ 
+                      width: '44px', height: '24px', borderRadius: '12px', background: anyStory ? '#7c3aed' : '#cbd5e1', 
+                      position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
+                    }}
+                  >
                     <div style={{ 
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(3, 1fr)',
-                      gap: '12px'
-                    }}>
-                      {realMedia.map((item) => (
-                        <div 
-                          key={item.id} 
-                          onClick={() => setSelectedContentId(item.id)}
-                          style={{ 
-                            aspectRatio: template === 'stories' ? '9/16' : '1/1',
-                            background: '#e2e8f0',
-                            borderRadius: '12px',
-                            border: selectedContentId === item.id ? '3px solid #ef4444' : '2px solid transparent',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            overflow: 'hidden',
-                            position: 'relative'
-                          }}
-                        >
-                          <img 
-                            src={item.thumbnail_url || item.media_url} 
-                            alt="IG Media" 
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                          />
-                          {selectedContentId === item.id && (
-                            <div style={{ 
-                              position: 'absolute', top: '4px', right: '4px', 
-                              background: '#ef4444', borderRadius: '50%', padding: '2px' 
-                            }}>
-                              <CheckCircle2 size={12} color="white" />
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                      width: '18px', height: '18px', borderRadius: '50%', background: 'white', 
+                      position: 'absolute', top: '3px', left: anyStory ? '23px' : '3px', transition: 'all 0.3s' 
+                    }}></div>
+                  </div>
                 </div>
-              )}
+                {!anyStory && (
+                  <div style={{ marginTop: '20px' }}>
+                    {loadingMedia ? (
+                      <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8' }}>
+                        <Loader2 className="animate-spin" style={{ margin: '0 auto 8px' }} />
+                        Fetching your {template === 'stories' ? 'stories' : 'posts'}...
+                      </div>
+                    ) : realMedia.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8', fontSize: '0.85rem' }}>
+                        No {template === 'stories' ? 'stories' : 'posts'} found.
+                      </div>
+                    ) : (
+                      <div style={{ 
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '12px'
+                      }}>
+                        {realMedia.map((item) => (
+                          <div 
+                            key={item.id} 
+                            onClick={() => setSelectedContentId(item.id)}
+                            style={{ 
+                              aspectRatio: template === 'stories' ? '9/16' : '1/1',
+                              background: '#e2e8f0',
+                              borderRadius: '12px',
+                              border: selectedContentId === item.id ? '3px solid #7c3aed' : '2px solid transparent',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s',
+                              overflow: 'hidden',
+                              position: 'relative'
+                            }}
+                          >
+                            <img 
+                              src={item.thumbnail_url || item.media_url} 
+                              alt="IG Media" 
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                            />
+                            {selectedContentId === item.id && (
+                              <div style={{ 
+                                position: 'absolute', top: '4px', right: '4px', 
+                                background: '#7c3aed', borderRadius: '50%', padding: '2px' 
+                              }}>
+                                <CheckCircle2 size={12} color="white" />
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
+          )}
 
             {/* Trigger Sources Selection */}
-            <div style={{ marginBottom: '32px' }}>
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>2</div>
+                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Trigger on:</h3>
+              </div>
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 <div 
                   onClick={() => setTriggerOnDms(!triggerOnDms)}
                   style={{ 
-                    padding: '10px 16px', borderRadius: '10px', border: triggerOnDms ? '2px solid #ef4444' : '1.5px solid #e2e8f0',
-                    background: triggerOnDms ? '#fef2f2' : 'white', color: triggerOnDms ? '#ef4444' : '#64748b',
+                    padding: '10px 16px', borderRadius: '10px', border: triggerOnDms ? '2px solid #7c3aed' : '1.5px solid #e2e8f0',
+                    background: triggerOnDms ? '#f5f3ff' : 'white', color: triggerOnDms ? '#7c3aed' : '#64748b',
                     cursor: 'pointer', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px'
                   }}
                 >
@@ -677,8 +647,8 @@ export default function AutomationEditor() {
                 <div 
                   onClick={() => setTriggerOnComments(!triggerOnComments)}
                   style={{ 
-                    padding: '10px 16px', borderRadius: '10px', border: triggerOnComments ? '2px solid #ef4444' : '1.5px solid #e2e8f0',
-                    background: triggerOnComments ? '#fef2f2' : 'white', color: triggerOnComments ? '#ef4444' : '#64748b',
+                    padding: '10px 16px', borderRadius: '10px', border: triggerOnComments ? '2px solid #7c3aed' : '1.5px solid #e2e8f0',
+                    background: triggerOnComments ? '#f5f3ff' : 'white', color: triggerOnComments ? '#7c3aed' : '#64748b',
                     cursor: 'pointer', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px'
                   }}
                 >
@@ -687,8 +657,8 @@ export default function AutomationEditor() {
                 <div 
                   onClick={() => setTriggerOnStories(!triggerOnStories)}
                   style={{ 
-                    padding: '10px 16px', borderRadius: '10px', border: triggerOnStories ? '2px solid #ef4444' : '1.5px solid #e2e8f0',
-                    background: triggerOnStories ? '#fef2f2' : 'white', color: triggerOnStories ? '#ef4444' : '#64748b',
+                    padding: '10px 16px', borderRadius: '10px', border: triggerOnStories ? '2px solid #7c3aed' : '1.5px solid #e2e8f0',
+                    background: triggerOnStories ? '#f5f3ff' : 'white', color: triggerOnStories ? '#7c3aed' : '#64748b',
                     cursor: 'pointer', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px'
                   }}
                 >
@@ -697,70 +667,57 @@ export default function AutomationEditor() {
               </div>
             </div>
 
-            {/* Step 2: Keywords */}
-            <div style={{ marginBottom: '32px' }}>
+            {/* Step 3 */}
+            <div style={{ marginBottom: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>2</div>
+                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>3</div>
                 <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Setup Keywords</h3>
               </div>
-              
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <span style={{ fontWeight: '700', color: '#475569', fontSize: '0.9rem' }}>Any keyword</span>
-                <div 
-                  onClick={() => setAnyKeyword(!anyKeyword)}
-                  style={{ 
-                    width: '40px', height: '22px', borderRadius: '11px', background: anyKeyword ? '#ef4444' : '#cbd5e1', 
-                    position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
-                  }}
-                >
-                  <div style={{ 
-                    width: '16px', height: '16px', borderRadius: '50%', background: 'white', 
-                    position: 'absolute', top: '3px', left: anyKeyword ? '21px' : '3px', transition: 'all 0.3s' 
-                  }}></div>
+              <div style={{ padding: '20px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <span style={{ fontWeight: '700', color: '#475569' }}>Any keyword</span>
+                  <div 
+                    onClick={() => setAnyKeyword(!anyKeyword)}
+                    style={{ 
+                      width: '44px', height: '24px', borderRadius: '12px', background: anyKeyword ? '#7c3aed' : '#cbd5e1', 
+                      position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
+                    }}
+                  >
+                    <div style={{ 
+                      width: '18px', height: '18px', borderRadius: '50%', background: 'white', 
+                      position: 'absolute', top: '3px', left: anyKeyword ? '23px' : '3px', transition: 'all 0.3s' 
+                    }}></div>
+                  </div>
                 </div>
-              </div>
-
-              {!anyKeyword && (
-                <div>
-                  <div style={{ position: 'relative', marginBottom: '12px' }}>
+                {!anyKeyword && (
+                  <div>
                     <input 
                       type="text" 
-                      placeholder="Type & Hit ↵ Enter to add Keyword"
+                      placeholder="Type & Hit Enter"
                       value={keywordInput}
                       onChange={(e) => setKeywordInput(e.target.value)}
                       onKeyDown={handleAddKeyword}
                       style={{ 
-                        width: '100%', padding: '14px 45px 14px 16px', borderRadius: '12px', border: '1.5px solid #cbd5e1', 
-                        outline: 'none', fontSize: '0.9rem', fontWeight: '500'
+                        width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', 
+                        outline: 'none', fontSize: '0.85rem', marginBottom: '12px' 
                       }}
                     />
-                    <div style={{ 
-                      position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
-                      width: '28px', height: '28px', borderRadius: '8px', background: '#f1f5f9',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b'
-                    }}>
-                      <Plus size={16} />
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {keywords.map(kw => (
+                        <span key={kw} style={{ background: '#7c3aed', color: 'white', padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          {kw} <X size={12} onClick={() => removeKeyword(kw)} style={{ cursor: 'pointer' }} />
+                        </span>
+                      ))}
                     </div>
                   </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {keywords.map(kw => (
-                      <span key={kw} style={{ 
-                        background: '#f1f5f9', color: '#475569', padding: '6px 12px', 
-                        borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700', 
-                        display: 'flex', alignItems: 'center', gap: '8px' 
-                      }}>
-                        {kw} <X size={14} onClick={() => removeKeyword(kw)} style={{ cursor: 'pointer', color: '#94a3b8' }} />
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
-            {/* Step 3: Send a DM */}
+            {/* Step 4: Send a DM (Modern Design) */}
             <div style={{ marginBottom: '40px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>3</div>
+                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>4</div>
                 <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Send a DM</h3>
               </div>
               
