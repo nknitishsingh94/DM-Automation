@@ -331,22 +331,50 @@ export default function AutomationEditor() {
               {/* CONDITION: Switch between Comment View and DM View */}
               {previewMode === 'comment' && triggerOnComments ? (
                 <div style={{ height: '100%', background: '#000', display: 'flex', flexDirection: 'column' }}>
-                  {/* Header */}
+                  {/* Post Header */}
                   <div style={{ padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1a1a1a' }}>
                     <ChevronLeft size={18} color="white" />
-                    <span style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>Post Detail</span>
+                    <span style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>Posts</span>
                     <div style={{ width: '18px' }}></div>
                   </div>
 
-                  <div style={{ flex: 1, position: 'relative', background: '#000', overflow: 'hidden' }}>
-                    {/* Comments Overlay (Bottom Sheet) - ONLY show if keywords exist */}
+                  {/* Post Content Area */}
+                  <div style={{ flex: 1, position: 'relative', background: '#1a1a1a', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflow: 'hidden', paddingTop: '40px' }}>
                     <div style={{ 
-                      position: 'absolute', bottom: 0, left: 0, right: 0, 
-                      height: '85%', background: '#121212', 
-                      borderRadius: '24px 24px 0 0', padding: '16px 20px',
-                      boxShadow: '0 -10px 30px rgba(0,0,0,0.5)',
-                      zIndex: 5
+                      width: '100%', 
+                      aspectRatio: '1/1', 
+                      background: '#262626', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      position: 'relative'
                     }}>
+                      {(!anyStory && selectedMedia) ? (
+                        <img 
+                          src={selectedMedia.thumbnail_url || selectedMedia.media_url} 
+                          alt="Selected Post" 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                        />
+                      ) : (
+                        <div style={{ 
+                          width: '60px', height: '60px', borderRadius: '15px', 
+                          background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
+                          display: 'flex', alignItems: 'center', justifyContent: 'center' 
+                        }}>
+                          <Zap size={30} fill="white" color="white" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Comments Overlay (Bottom Sheet) - ONLY show if keywords exist */}
+                    {keywords.length > 0 && (
+                      <div style={{ 
+                        position: 'absolute', bottom: 0, left: 0, right: 0, 
+                        height: '65%', background: '#121212', 
+                        borderRadius: '24px 24px 0 0', padding: '16px 20px',
+                        boxShadow: '0 -10px 30px rgba(0,0,0,0.5)',
+                        zIndex: 5
+                      }}>
                       <div style={{ width: '36px', height: '4px', background: '#333', borderRadius: '2px', margin: '0 auto 16px' }}></div>
                       <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '800', textAlign: 'center', marginBottom: '24px' }}>Comments</div>
                       
@@ -534,6 +562,84 @@ export default function AutomationEditor() {
               </div>
             </div>
 
+            {/* Step 2: Select a Post (Restored) */}
+            {template !== 'dms' && (
+              <div style={{ marginBottom: '32px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>2</div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>{template === 'stories' ? 'Select a Story' : 'Select a Post'}</h3>
+                </div>
+              <div style={{ padding: '20px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <span style={{ fontWeight: '700', color: '#475569' }}>Any {template === 'stories' ? 'story' : 'post'}</span>
+                  <div 
+                    onClick={() => setAnyStory(!anyStory)}
+                    style={{ 
+                      width: '44px', height: '24px', borderRadius: '12px', background: anyStory ? '#7c3aed' : '#cbd5e1', 
+                      position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
+                    }}
+                  >
+                    <div style={{ 
+                      width: '18px', height: '18px', borderRadius: '50%', background: 'white', 
+                      position: 'absolute', top: '3px', left: anyStory ? '23px' : '3px', transition: 'all 0.3s' 
+                    }}></div>
+                  </div>
+                </div>
+                {!anyStory && (
+                  <div style={{ marginTop: '20px' }}>
+                    {loadingMedia ? (
+                      <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8' }}>
+                        <Loader2 className="animate-spin" style={{ margin: '0 auto 8px' }} />
+                        Fetching your {template === 'stories' ? 'stories' : 'posts'}...
+                      </div>
+                    ) : realMedia.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8', fontSize: '0.85rem' }}>
+                        No {template === 'stories' ? 'stories' : 'posts'} found.
+                      </div>
+                    ) : (
+                      <div style={{ 
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '12px'
+                      }}>
+                        {realMedia.map((item) => (
+                          <div 
+                            key={item.id} 
+                            onClick={() => setSelectedContentId(item.id)}
+                            style={{ 
+                              aspectRatio: template === 'stories' ? '9/16' : '1/1',
+                              background: '#e2e8f0',
+                              borderRadius: '12px',
+                              border: selectedContentId === item.id ? '3px solid #7c3aed' : '2px solid transparent',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s',
+                              overflow: 'hidden',
+                              position: 'relative'
+                            }}
+                          >
+                            <img 
+                              src={item.thumbnail_url || item.media_url} 
+                              alt="IG Media" 
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                            />
+                            {selectedContentId === item.id && (
+                              <div style={{ 
+                                position: 'absolute', top: '4px', right: '4px', 
+                                background: '#7c3aed', borderRadius: '50%', padding: '2px' 
+                              }}>
+                                <CheckCircle2 size={12} color="white" />
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
 
 
             <div 
@@ -541,7 +647,7 @@ export default function AutomationEditor() {
               style={{ marginBottom: '32px', cursor: 'pointer' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>2</div>
+                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>3</div>
                 <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Setup Keywords</h3>
               </div>
               
@@ -604,7 +710,7 @@ export default function AutomationEditor() {
               style={{ marginBottom: '40px', cursor: 'pointer' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>3</div>
+                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>4</div>
                 <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Send a DM</h3>
               </div>
               
