@@ -83,63 +83,49 @@ export const generateAIResponse = async (userId, userMessage) => {
       try {
         const diagUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${geminiKey}`;
         const diagResp = await axios.get(diagUrl);
-        const availableModels = diagResp.data?.models?.map(m => m.name) || [];
-        console.log("📋 [DIAGNOSTIC] Available Models for your Key:", availableModels.join(', '));
-      } catch (diagErr) {
-        console.error("❌ Diagnostic Failed:", diagErr.message);
-      }
-      
       throw new Error(`GEMINI_DEBUG: ${lastError}`);
     };
 
-    let reply;
+    // --- Provider Selection (Prioritizing Working Gemini) ---
+    let reply = null;
 
-    // 1. Try GROQ FIRST (Most reliable free-ish option right now)
+    // 1. Try Gemini (Diagnostic-approved working models)
+    if (geminiKey) {
+      console.log(`🚀 Trying Gemini for user ${userId}...`);
+      try {
+        reply = await callGemini();
+        if (reply) {
+          console.log(`✅ Success with Gemini!`);
+          return reply;
+        }
+      } catch (err) {
+        console.error("Gemini Primary Failed:", err.message);
+      }
+    }
+
+    // 2. Try Groq (High-speed Llama backup)
     if (groqKey) {
       const groqModels = ['llama-3.3-70b-versatile', 'llama-3.1-70b-versatile', 'llama-3.1-8b-instant'];
       const cleanGroqKey = groqKey.trim();
       
       for (const groqModel of groqModels) {
-        console.log(`🚀 Trying Groq (${groqModel}) for user ${userId}...`);
+        console.log(`🚀 Trying Groq (${groqModel}) as backup...`);
         try {
           const groq = new OpenAI({ apiKey: cleanGroqKey, baseURL: "https://api.groq.com/openai/v1" });
           reply = await callOpenAI(groq, groqModel);
           if (reply) {
-            console.log(`✅ Success with Groq model: ${groqModel}`);
+            console.log(`✅ Success with Groq fallback: ${groqModel}`);
             return reply;
           }
         } catch (err) {
           console.error(`Groq (${groqModel}) Failed:`, err.message);
-          // If it's a 401, the key itself is wrong, no need to try other models
           if (err.status === 401) break;
         }
       }
     }
 
-    // 2. Try OpenAI
-    if (openaiKey) {
-      console.log(`🚀 Trying OpenAI (gpt-4o-mini) for user ${userId}...`);
-      try {
-        const openai = new OpenAI({ apiKey: openaiKey });
-        reply = await callOpenAI(openai, "gpt-4o-mini");
-        if (reply) return reply;
-      } catch (err) {
-        console.error("OpenAI Call Failed:", err.message);
-      }
-    }
-
-    // 3. Try Gemini as a Fallback
-    if (geminiKey) {
-      console.log(`🚀 Trying Google Gemini API for user ${userId}...`);
-      try {
-        reply = await callGemini();
-        if (reply) return reply;
-      } catch (gemErr) {
-        console.error("Gemini Fallback Failed:", gemErr.message);
-      }
-    }
-
-    throw new Error("No valid API Key found or all AI services failed.");
+    console.error("❌ AI API Error: All active services failed.");
+    return userSettings?.aiFallbackMessage || "I'm currently in limited mode, please contact support.";
 
   } catch (err) {
     console.error("❌ AI API Error:", err.message);
