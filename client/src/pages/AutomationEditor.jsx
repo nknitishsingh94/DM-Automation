@@ -335,7 +335,7 @@ export default function AutomationEditor() {
                   </div>
 
                   {/* Post Content Area */}
-                  <div style={{ flex: 1, position: 'relative', background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  <div style={{ flex: 1, position: 'relative', background: '#1a1a1a', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflow: 'hidden', paddingTop: '40px' }}>
                     <div style={{ 
                       width: '100%', 
                       aspectRatio: '1/1', 
