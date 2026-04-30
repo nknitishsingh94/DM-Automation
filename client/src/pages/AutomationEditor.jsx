@@ -331,70 +331,41 @@ export default function AutomationEditor() {
               {/* CONDITION: Switch between Comment View and DM View */}
               {previewMode === 'comment' && triggerOnComments ? (
                 <div style={{ height: '100%', background: '#000', display: 'flex', flexDirection: 'column' }}>
-                  {/* Post Header */}
+                  {/* Header */}
                   <div style={{ padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1a1a1a' }}>
                     <ChevronLeft size={18} color="white" />
-                    <span style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>Posts</span>
+                    <span style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>Post Detail</span>
                     <div style={{ width: '18px' }}></div>
                   </div>
 
-                  {/* Post Content Area */}
-                  <div style={{ flex: 1, position: 'relative', background: '#1a1a1a', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflow: 'hidden', paddingTop: '40px' }}>
-                    <div style={{ 
-                      width: '100%', 
-                      aspectRatio: '1/1', 
-                      background: '#262626', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center',
-                      position: 'relative'
-                    }}>
-                      {(!anyStory && selectedMedia) ? (
-                        <img 
-                          src={selectedMedia.thumbnail_url || selectedMedia.media_url} 
-                          alt="Selected Post" 
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                        />
-                      ) : (
-                        <div style={{ 
-                          width: '60px', height: '60px', borderRadius: '15px', 
-                          background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
-                          display: 'flex', alignItems: 'center', justifyContent: 'center' 
-                        }}>
-                          <Zap size={30} fill="white" color="white" />
-                        </div>
-                      )}
-                    </div>
-
+                  <div style={{ flex: 1, position: 'relative', background: '#000', overflow: 'hidden' }}>
                     {/* Comments Overlay (Bottom Sheet) - ONLY show if keywords exist */}
-                    {keywords.length > 0 && (
-                      <div style={{ 
-                        position: 'absolute', bottom: 0, left: 0, right: 0, 
-                        height: '65%', background: '#121212', 
-                        borderRadius: '24px 24px 0 0', padding: '16px 20px',
-                        boxShadow: '0 -10px 30px rgba(0,0,0,0.5)',
-                        zIndex: 5
-                      }}>
-                        <div style={{ width: '36px', height: '4px', background: '#333', borderRadius: '2px', margin: '0 auto 16px' }}></div>
-                        <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '800', textAlign: 'center', marginBottom: '24px' }}>Comments</div>
-                        
-                        <div style={{ display: 'flex', gap: '12px' }}>
-                          <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#262626', border: '1px solid #333' }}></div>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              <span style={{ color: 'white', fontSize: '0.75rem', fontWeight: '800' }}>User</span>
-                              <span style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>2m</span>
-                            </div>
-                            <div style={{ color: 'white', fontSize: '0.75rem', marginTop: '3px', fontWeight: '500' }}>
-                              {keywords[0]}
-                            </div>
-                            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                              <span style={{ color: '#a8a8a8', fontSize: '0.65rem', fontWeight: '700' }}>Reply</span>
-                            </div>
+                    <div style={{ 
+                      position: 'absolute', bottom: 0, left: 0, right: 0, 
+                      height: '85%', background: '#121212', 
+                      borderRadius: '24px 24px 0 0', padding: '16px 20px',
+                      boxShadow: '0 -10px 30px rgba(0,0,0,0.5)',
+                      zIndex: 5
+                    }}>
+                      <div style={{ width: '36px', height: '4px', background: '#333', borderRadius: '2px', margin: '0 auto 16px' }}></div>
+                      <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '800', textAlign: 'center', marginBottom: '24px' }}>Comments</div>
+                      
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#262626', border: '1px solid #333' }}></div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ color: 'white', fontSize: '0.75rem', fontWeight: '800' }}>User</span>
+                            <span style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>2m</span>
+                          </div>
+                          <div style={{ color: 'white', fontSize: '0.75rem', marginTop: '3px', fontWeight: '500' }}>
+                            {keywords.length > 0 ? keywords[0] : "Keyword"}
+                          </div>
+                          <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                            <span style={{ color: '#a8a8a8', fontSize: '0.65rem', fontWeight: '700' }}>Reply</span>
                           </div>
                         </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               ) : (
