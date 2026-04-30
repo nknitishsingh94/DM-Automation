@@ -119,8 +119,8 @@ const checkFollowerStatus = async (platform, chatId, userId) => {
     return !!(res.data && res.data.is_user_follow_business === true);
   } catch (err) {
     // FALLBACK: If we can't verify (e.g. permission missing or private), 
-    // we return 'true' to ensure the user's automation isn't blocked.
-    return true;
+    // we return 'false' to ensure we prioritize follower growth.
+    return false;
   }
 };
 
@@ -205,16 +205,18 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       
       if (!isFollowing) {
         console.log(`🚫 GATED: User ${chatId} is not following. Sending follow-request DM.`);
+        
+        // 1. Send Private DM Request
         const followText = match.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊";
         await sendMessageToInstagram(platform, chatId, followText, '', userId, '', activeToken);
         
-        // Even if gated, send a "Check DM" public reply to build trust on the post
+        // 2. Send PUBLIC Comment Reply (Crucial for Comments)
         if (source === 'comment' && commentId) {
-          setTimeout(async () => {
-            const publicReplyGated = "I've sent you a DM! 🚀 (Be sure to follow us to see the link!)";
-            await sendPublicComment(platform, commentId, match.publicGatedReply || publicReplyGated, userId, activeToken);
-          }, 2000);
+          console.log(`💬 Sending GATED public reply to comment ${commentId}`);
+          const publicGated = "I've sent you a DM! 🚀 Please follow our account first to receive your exclusive link! 😊";
+          await sendPublicComment(platform, commentId, publicGated, userId, activeToken);
         }
+        
         return { gated: true };
       }
       console.log(`✅ UNGATED: User ${chatId} is a follower.`);
