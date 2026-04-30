@@ -57,6 +57,7 @@ export default function AutomationEditor() {
   const [triggerOnDms, setTriggerOnDms] = useState(template === 'dms' || template === 'stories');
   const [triggerOnComments, setTriggerOnComments] = useState(template === 'comments');
   const [triggerOnStories, setTriggerOnStories] = useState(template === 'stories');
+  const [previewMode, setPreviewMode] = useState(template === 'comments' ? 'comment' : 'dm');
 
   const isValidUrl = (url) => {
     try {
@@ -327,8 +328,8 @@ export default function AutomationEditor() {
             {/* Chat Area / Comment Area Wrapper */}
             <div style={{ position: 'relative', height: '480px', overflow: 'hidden' }}>
               
-              {/* CONDITION: If Trigger on Comments is active, show the Comment View from the pic */}
-              {triggerOnComments ? (
+              {/* CONDITION: Switch between Comment View and DM View */}
+              {previewMode === 'comment' && triggerOnComments ? (
                 <div style={{ height: '100%', background: '#000', display: 'flex', flexDirection: 'column' }}>
                   {/* Post Header */}
                   <div style={{ padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1a1a1a' }}>
@@ -490,22 +491,39 @@ export default function AutomationEditor() {
             )}
           </div>
 
-            {/* Bottom Bar */}
+            {/* Bottom Navigation / Preview Switcher */}
             <div style={{ position: 'absolute', bottom: '20px', left: 0, right: 0, padding: '0 20px' }}>
               <div style={{ 
                 background: '#1a1a1a', 
                 borderRadius: '25px', 
-                padding: '10px 16px',
+                padding: '4px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '12px',
+                gap: '4px',
                 border: '1px solid #333'
               }}>
-                <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '1.5px solid #666', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <ImageIcon size={12} color="#666" />
+                <div 
+                  onClick={() => setPreviewMode('comment')}
+                  style={{ 
+                    flex: 1, padding: '8px', borderRadius: '20px', textAlign: 'center', fontSize: '0.75rem', fontWeight: '700',
+                    background: previewMode === 'comment' ? '#333' : 'transparent',
+                    color: previewMode === 'comment' ? 'white' : '#8e8e8e',
+                    cursor: 'pointer', transition: 'all 0.2s'
+                  }}
+                >
+                  Post View
                 </div>
-                <div style={{ flex: 1, color: '#666', fontSize: '0.8rem' }}>Message...</div>
-                <Send size={16} color="#666" />
+                <div 
+                  onClick={() => setPreviewMode('dm')}
+                  style={{ 
+                    flex: 1, padding: '8px', borderRadius: '20px', textAlign: 'center', fontSize: '0.75rem', fontWeight: '700',
+                    background: previewMode === 'dm' ? '#333' : 'transparent',
+                    color: previewMode === 'dm' ? 'white' : '#8e8e8e',
+                    cursor: 'pointer', transition: 'all 0.2s'
+                  }}
+                >
+                  DM View
+                </div>
               </div>
             </div>
           </div>
@@ -674,7 +692,10 @@ export default function AutomationEditor() {
           )}
 
             {/* Step 2: Setup Keywords (Restored from Pic) */}
-            <div style={{ marginBottom: '32px' }}>
+            <div 
+              onClick={() => setPreviewMode('comment')}
+              style={{ marginBottom: '32px', cursor: 'pointer' }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                 <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>2</div>
                 <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Setup Keywords</h3>
@@ -734,7 +755,10 @@ export default function AutomationEditor() {
             </div>
 
             {/* Step 3: Send a DM (Modern Design) */}
-            <div style={{ marginBottom: '40px' }}>
+            <div 
+              onClick={() => setPreviewMode('dm')}
+              style={{ marginBottom: '40px', cursor: 'pointer' }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                 <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>3</div>
                 <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Send a DM</h3>
