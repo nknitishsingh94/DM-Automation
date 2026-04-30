@@ -363,6 +363,13 @@ app.post('/api/webhook', async (req, res) => {
   console.log('🚀 [SUPER LOG] Webhook Received! Object:', body.object);
   console.log('📦 Full Payload:', JSON.stringify(body, null, 2));
 
+  // --- WEBHOOK HIT DETECTOR ---
+  console.log('---------------------------------------------------------');
+  console.log('📡 [WEBHOOK HIT] Incoming Request from Meta!');
+  console.log('📅 Time:', new Date().toISOString());
+  console.log('📦 Body Keys:', Object.keys(req.body));
+  console.log('---------------------------------------------------------');
+
   if (body.object === 'instagram' || body.object === 'page') {
     if (!body.entry || !Array.isArray(body.entry)) {
       console.warn('⚠️ Webhook received but "entry" is missing or not an array.');
@@ -452,22 +459,32 @@ app.post('/api/webhook', async (req, res) => {
             continue;
           }
 
-          console.log(`💬 COMMENT DETECTED: "${text}" from ${senderId}`);
+          console.log(`💬 COMMENT DETECTED: "${text}" from ${senderId} (on Page: ${pageId})`);
 
-          if (text && senderId && commentId && senderId !== pageId) {
+          if (text && senderId && commentId) {
             const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
+              
+            // Identity Search
             let userSettings = await Settings.findOne({
-              $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }, { facebookPageId: pageId }]
+              $or: [
+                { instagramPageId: pageId }, 
+                { businessAccountId: pageId }, 
+                { facebookPageId: pageId },
+                { instagramPageId: { $exists: true } } // Catch-all for single-user setups
+              ]
             });
 
             let targetUserId = userSettings?.userId;
+            
             if (!targetUserId) {
+              console.warn(`🚨 [ID MISMATCH]: No user settings found for ID ${pageId}. Trying fallback...`);
               const fallback = await User.findOne();
               targetUserId = fallback?._id;
-              console.warn(`⚠️ User not found for Page ${pageId}, falling back to ${targetUserId}`);
+              if (targetUserId) console.log(`🩹 [FALLBACK]: Using User ID ${targetUserId} as catch-all.`);
             }
 
             if (targetUserId) {
+              console.log(`✅ [MATCH FOUND]: Processing comment for User ${targetUserId}`);
               const accessToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
               
               const incoming = new Message({
