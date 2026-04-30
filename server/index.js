@@ -206,9 +206,12 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       if (!isFollowing) {
         console.log(`🚫 GATED: User ${chatId} is not following. Sending follow-request DM.`);
         
-        // 1. Send Private DM Request
+        // 1. Send Private DM Request with a "Check Follow" button
         const followText = match.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊";
-        await sendMessageToInstagram(platform, chatId, followText, '', userId, '', activeToken);
+        const checkFollowPayload = `CHECK_FOLLOW_${match._id}`;
+        
+        // Use a generic template with a postback button for reliability
+        await sendMessageToInstagram(platform, chatId, followText, '', userId, "I've Followed! ✅", activeToken, [], checkFollowPayload);
         
         // 2. Send PUBLIC Comment Reply (Crucial for Comments)
         if (source === 'comment' && commentId) {
@@ -458,24 +461,44 @@ app.post('/api/webhook', async (req, res) => {
           const payload = messaging.postback.payload;
           console.log(`🔘 POSTBACK DETECTED from ${senderId}: ${payload}`);
 
+          const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
+
+          // A. Opening Message Button Click
           if (payload.startsWith('CAMP_')) {
             const campaignId = payload.split('_')[1];
             const match = await Campaign.findById(campaignId);
             
             if (match && match.status === 'Active') {
               console.log(`🚀 TRIGGERING MAIN RESPONSE for Campaign: ${match.name}`);
-              const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
+              const userSettings = await Settings.findOne({ userId: match.userId });
+              const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+              await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
+              await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
+            }
+          }
+
+          // B. "I've Followed" Button Click
+          if (payload.startsWith('CHECK_FOLLOW_')) {
+            const campaignId = payload.split('_')[2];
+            const match = await Campaign.findById(campaignId);
+            
+            if (match && match.status === 'Active') {
+              console.log(`🛡️ VERIFYING FOLLOW on button click for ${senderId}...`);
+              const isFollowing = await checkFollowerStatus(platform, senderId, match.userId);
               
-              // Get fresh token
               const userSettings = await Settings.findOne({ userId: match.userId });
               const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
-              const sent = await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
-              
-              if (sent) {
-                // Record analytics
-                await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
-                console.log(`✅ Postback response sent to ${senderId}`);
+              if (isFollowing) {
+                console.log(`✅ VERIFIED! Sending automation now.`);
+                // Trigger the main flow (including opening message if enabled)
+                processAutoReply(match.userId.toString(), platform, senderId, "[VERIFIED_TRIGGER]", 'dm', null, activeToken).catch(err => {
+                  console.error("🔥 Follow Verify Trigger error:", err);
+                });
+              } else {
+                console.log(`🚫 STILL NOT FOLLOWING: ${senderId}`);
+                const retryText = "It looks like you haven't followed yet! Please follow @us and then click the button again. 😊";
+                await sendMessageToInstagram(platform, senderId, retryText, '', match.userId, "Try Again! ✅", activeToken, [], payload);
               }
             }
           }
