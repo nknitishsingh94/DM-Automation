@@ -394,9 +394,10 @@ export default function AutomationEditor() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
-              ) : (
+              </div>
+            ) : (
                 <>
                   {/* DM View (Original - Upgraded to match pic) */}
                   <div style={{ 
