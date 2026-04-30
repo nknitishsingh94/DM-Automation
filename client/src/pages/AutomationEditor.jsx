@@ -425,20 +425,6 @@ export default function AutomationEditor() {
                   gap: '16px',
                   overflowY: 'auto'
                 }}>
-                  {/* User Trigger Bubble */}
-                  <div style={{ 
-                    alignSelf: 'flex-end', 
-                    background: '#3797f0', 
-                    color: 'white', 
-                    padding: '10px 16px', 
-                    borderRadius: '18px 18px 4px 18px',
-                    fontSize: '0.85rem',
-                    fontWeight: '500',
-                    maxWidth: '85%'
-                  }}>
-                    {keywords.length > 0 ? keywords[0] : 'Set a keyword'}
-                  </div>
-
                   {/* AI Response Card (Generic Template) */}
                   {message && (
                     <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
