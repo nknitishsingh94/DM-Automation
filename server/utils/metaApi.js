@@ -4,7 +4,7 @@ import Settings from '../models/Settings.js';
 /**
  * Meta Graph API Helper: Send Message (Instagram / Facebook)
  */
-export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null, buttonText = '', manualToken = null, buttons = []) => {
+export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null, buttonText = '', manualToken = null, buttons = [], buttonPayload = '') => {
   try {
     let accessToken = manualToken || process.env.META_PAGE_ACCESS_TOKEN;
     let pageId = null;
@@ -54,14 +54,34 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
         }
       };
     } else if (buttonText) {
-      // Legacy Single Button (Quick Reply)
-      finalMessageBody.quick_replies = [
-        {
-          content_type: "text",
-          title: buttonText,
-          payload: buttonText
-        }
-      ];
+      // ✅ Opening Message Flow: Use a POSTBACK button if payload is provided
+      if (buttonPayload) {
+        finalMessageBody = {
+          attachment: {
+            type: "template",
+            payload: {
+              template_type: "generic",
+              elements: [{
+                title: text.substring(0, 80),
+                buttons: [{
+                  type: "postback",
+                  title: buttonText,
+                  payload: buttonPayload
+                }]
+              }]
+            }
+          }
+        };
+      } else {
+        // Legacy Single Button (Quick Reply)
+        finalMessageBody.quick_replies = [
+          {
+            content_type: "text",
+            title: buttonText,
+            payload: buttonText
+          }
+        ];
+      }
     }
 
     if (mediaUrl && !finalMessageBody.attachment) {

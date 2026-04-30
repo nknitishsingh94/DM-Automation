@@ -224,9 +224,12 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
     if (match.openingMessage && match.openingMessageText) {
       console.log(`👋 Sending OPENING message for campaign "${campaignName}"`);
-      await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, match.openingMessageButton);
-      // Small delay for better UX
-      await new Promise(r => setTimeout(r, 1200));
+      // Use the campaign ID as postback payload to trigger the main response on click
+      const payload = `CAMP_${match._id}`;
+      await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, match.openingMessageButton, activeToken, [], payload);
+      
+      console.log(`⏳ Flow paused. Waiting for user to click button with payload: ${payload}`);
+      return { opening_message_sent: true };
     }
 
     console.log(`✅ EXECUTING: Dispatching response for "${campaignName}"`);
@@ -405,9 +408,10 @@ app.post('/api/webhook', async (req, res) => {
 
         console.log(`📩 Messaging detected from ${senderId}`);
 
-        if (text || messaging.message?.story) {
+        // 1.1 Handle Messages (Text/Story)
+        if (messaging.message?.text || messaging.message?.story) {
           const isStoryMention = !!messaging.message?.story;
-          const messageText = text || (isStoryMention ? "[Story Mention]" : "");
+          const messageText = messaging.message?.text || (isStoryMention ? "[Story Mention]" : "");
 
           console.log(`📬 INCOMING DM: ${isStoryMention ? 'Story' : 'DM'} | Sender: ${senderId} | Msg: ${messageText}`);
 
@@ -433,6 +437,34 @@ app.post('/api/webhook', async (req, res) => {
             processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm").catch(err => {
               console.error("🔥 AutoReply error:", err);
             });
+          }
+        }
+
+        // 1.2 Handle Postbacks (Button Clicks)
+        if (messaging.postback) {
+          const payload = messaging.postback.payload;
+          console.log(`🔘 POSTBACK DETECTED from ${senderId}: ${payload}`);
+
+          if (payload.startsWith('CAMP_')) {
+            const campaignId = payload.split('_')[1];
+            const match = await Campaign.findById(campaignId);
+            
+            if (match && match.status === 'Active') {
+              console.log(`🚀 TRIGGERING MAIN RESPONSE for Campaign: ${match.name}`);
+              const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
+              
+              // Get fresh token
+              const userSettings = await Settings.findOne({ userId: match.userId });
+              const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+
+              const sent = await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
+              
+              if (sent) {
+                // Record analytics
+                await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
+                console.log(`✅ Postback response sent to ${senderId}`);
+              }
+            }
           }
         }
       }
