@@ -663,84 +663,81 @@ export default function AutomationEditor() {
               </div>
             </div>
 
-            {/* Step 4 */}
-            <div style={{ marginBottom: '32px' }}>
+            {/* Step 4: Final DM Message */}
+            <div style={{ marginBottom: '40px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>4</div>
-                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Send a DM</h3>
+                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>4</div>
+                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Final Message & Link</h3>
               </div>
-              <div style={{ padding: '20px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
+              
+              <div style={{ 
+                padding: '24px', 
+                borderRadius: '16px', 
+                background: 'white', 
+                border: '1px solid #7c3aed',
+                boxShadow: '0 4px 20px rgba(124, 58, 237, 0.08)',
+                marginBottom: '16px'
+              }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: '800', color: '#4338ca', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                   <Send size={14} /> DM Response Text
+                </div>
                 <textarea 
-                  placeholder="Enter message..."
+                  placeholder="Enter your final message here... (e.g. Here is your link!)"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   style={{ 
-                    width: '100%', height: '100px', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', 
-                    outline: 'none', fontSize: '0.9rem', resize: 'none', marginBottom: '12px' 
+                    width: '100%', height: '110px', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', 
+                    outline: 'none', fontSize: '0.9rem', resize: 'none', marginBottom: '8px', lineHeight: '1.5',
+                    background: '#fcfaff'
                   }}
                 ></textarea>
+                <div style={{ fontSize: '0.7rem', color: '#94a3b8', textAlign: 'right', marginBottom: '20px' }}>{message.length}/1000 characters</div>
 
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{message.length}/1000</div>
-                    <button 
-                      onClick={() => setShowLinkInput(!showLinkInput)}
-                      style={{ 
-                        background: showLinkInput ? '#f5f3ff' : 'white', 
-                        border: showLinkInput ? '1px solid #7c3aed' : '1px solid #e2e8f0', 
-                        padding: '6px 12px', borderRadius: '8px',
-                        fontSize: '0.8rem', fontWeight: '700', color: showLinkInput ? '#7c3aed' : '#475569', 
-                        display: 'flex', alignItems: 'center', gap: '6px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <LinkIcon size={14} /> Link
-                    </button>
-                 </div>
-                 {showLinkInput && (
-                   <div style={{ marginTop: '16px', animation: 'fadeIn 0.2s' }}>
-                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-                       <div>
-                         <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#475569', marginBottom: '8px' }}>
-                           Target URL
-                         </label>
-                         <div style={{ position: 'relative' }}>
-                           <input 
-                             type="text" 
-                             value={linkUrl}
-                             onChange={(e) => setLinkUrl(e.target.value)}
-                             placeholder="https://yourlink.com"
-                             style={{ 
-                               width: '100%', padding: '12px 12px 12px 40px', borderRadius: '10px', 
-                               border: linkUrl && !isValidUrl(linkUrl) ? '1px solid #ef4444' : '1px solid #e2e8f0', 
-                               outline: 'none', fontSize: '0.85rem' 
-                             }}
-                           />
-                           <LinkIcon size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                         </div>
-                       </div>
-                       <div>
-                         <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#475569', marginBottom: '8px' }}>
-                           Button Label
-                         </label>
-                         <input 
-                           type="text" 
-                           value={buttonText}
-                           onChange={(e) => setButtonText(e.target.value)}
-                           placeholder="e.g. Send me the link"
-                           style={{ 
-                             width: '100%', padding: '12px', borderRadius: '10px', 
-                             border: '1px solid #e2e8f0', 
-                             outline: 'none', fontSize: '0.85rem', fontWeight: '700'
-                           }}
-                         />
-                       </div>
-                     </div>
-                     {linkUrl && !isValidUrl(linkUrl) && (
-                       <p style={{ color: '#ef4444', fontSize: '0.7rem', marginTop: '0px', marginBottom: '12px' }}>Please enter a valid URL including http:// or https://</p>
-                     )}
-                   </div>
-                 )}
-               </div>
+                {/* Link Section Inside Box */}
+                <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '20px' }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: '800', color: '#4338ca', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <LinkIcon size={14} /> Link & Call to Action
+                  </div>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    <div>
+                      <div style={{ position: 'relative' }}>
+                        <input 
+                          type="text" 
+                          value={linkUrl}
+                          onChange={(e) => setLinkUrl(e.target.value)}
+                          placeholder="https://yourlink.com"
+                          style={{ 
+                            width: '100%', padding: '12px 12px 12px 40px', borderRadius: '10px', 
+                            border: linkUrl && !isValidUrl(linkUrl) ? '1px solid #ef4444' : '1px solid #cbd5e1', 
+                            outline: 'none', fontSize: '0.85rem', fontWeight: '600'
+                          }}
+                        />
+                        <LinkIcon size={16} color="#7c3aed" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ position: 'relative' }}>
+                        <input 
+                          type="text" 
+                          value={buttonText}
+                          onChange={(e) => setButtonText(e.target.value)}
+                          placeholder="Button Label"
+                          style={{ 
+                            width: '100%', padding: '12px 12px 12px 40px', borderRadius: '10px', 
+                            border: '1px solid #cbd5e1', 
+                            outline: 'none', fontSize: '0.85rem', fontWeight: '800'
+                          }}
+                        />
+                        <CheckCircle2 size={16} color="#7c3aed" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                      </div>
+                    </div>
+                  </div>
+                  {linkUrl && !isValidUrl(linkUrl) && (
+                    <p style={{ color: '#ef4444', fontSize: '0.7rem', marginTop: '8px' }}>⚠️ Please enter a valid URL (include https://)</p>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Advanced Automations (Matching Photo) */}
