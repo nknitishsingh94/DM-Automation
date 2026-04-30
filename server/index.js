@@ -217,6 +217,13 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
           await sendPublicComment(platform, commentId, publicGated, userId, activeToken);
         }
         
+        // Store this campaign as 'pending' for when they follow
+        await Contact.findOneAndUpdate(
+          { userId, chatId },
+          { pendingCampaignId: match._id, lastActive: new Date() },
+          { upsert: true }
+        );
+        
         return { gated: true };
       }
       console.log(`✅ UNGATED: User ${chatId} is a follower.`);
@@ -224,12 +231,18 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
     if (match.openingMessage && match.openingMessageText) {
       console.log(`👋 Sending OPENING message for campaign "${campaignName}"`);
-      // Use the campaign ID as postback payload to trigger the main response on click
+      // Ensure there's a button text, otherwise the postback flow won't work
+      const btnText = match.openingMessageButton || "Click to Continue 🚀";
       const payload = `CAMP_${match._id}`;
-      await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, match.openingMessageButton, activeToken, [], payload);
       
-      console.log(`⏳ Flow paused. Waiting for user to click button with payload: ${payload}`);
-      return { opening_message_sent: true };
+      const openingSent = await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, btnText, activeToken, [], payload);
+      
+      if (openingSent) {
+        console.log(`⏳ Flow paused. Waiting for user to click "${btnText}" with payload: ${payload}`);
+        return { opening_message_sent: true };
+      } else {
+        console.warn(`⚠️ Opening message failed. Falling back to immediate response.`);
+      }
     }
 
     console.log(`✅ EXECUTING: Dispatching response for "${campaignName}"`);
@@ -539,6 +552,41 @@ app.post('/api/webhook', async (req, res) => {
             }
           } else {
             console.log(`⏭️ Skipping comment: text missing or sender is the page itself.`);
+          }
+        }
+        
+        // 3. Handle Relationships (Follows)
+        if (change.field === 'relationships') {
+          const val = change.value;
+          console.log(`👤 RELATIONSHIP CHANGE: ${val.action} from ${val.from_id || val.id}`);
+          
+          if (val.action === 'follow') {
+            const senderId = val.from_id || val.id;
+            const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
+
+            // Find if this user has a pending automation
+            const contact = await Contact.findOne({ chatId: senderId });
+            
+            if (contact && contact.pendingCampaignId) {
+              console.log(`🎯 AUTO-TRIGGER: User ${senderId} followed! Sending pending campaign ${contact.pendingCampaignId}`);
+              
+              const targetUserId = contact.userId;
+              const campaignId = contact.pendingCampaignId;
+              
+              // Clear pending status so it doesn't repeat
+              await Contact.findByIdAndUpdate(contact._id, { $unset: { pendingCampaignId: 1 } });
+
+              const match = await Campaign.findById(campaignId);
+              if (match && match.status === 'Active') {
+                const userSettings = await Settings.findOne({ userId: targetUserId });
+                const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+
+                // Execute! (Opening message flow if enabled)
+                processAutoReply(targetUserId.toString(), platform, senderId, "[FOLLOW_TRIGGER]", 'dm', null, activeToken).catch(err => {
+                  console.error("🔥 Follow Auto-Trigger error:", err);
+                });
+              }
+            }
           }
         }
       }

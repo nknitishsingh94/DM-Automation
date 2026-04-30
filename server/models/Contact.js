@@ -10,6 +10,7 @@ const contactSchema = new mongoose.Schema({
   isBotMuted: { type: Boolean, default: false },
   lastActive: { type: Date, default: Date.now },
   totalMessages: { type: Number, default: 0 },
+  pendingCampaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'Campaign' },
   createdAt: { type: Date, default: Date.now }
 });
 
