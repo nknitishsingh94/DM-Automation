@@ -354,33 +354,35 @@ export default function AutomationEditor() {
                       </div>
                     </div>
 
-                    {/* Comments Overlay (Bottom Sheet) */}
-                    <div style={{ 
-                      position: 'absolute', bottom: 0, left: 0, right: 0, 
-                      height: '65%', background: '#121212', 
-                      borderRadius: '24px 24px 0 0', padding: '16px 20px',
-                      boxShadow: '0 -10px 30px rgba(0,0,0,0.5)',
-                      zIndex: 5
-                    }}>
-                      <div style={{ width: '36px', height: '4px', background: '#333', borderRadius: '2px', margin: '0 auto 16px' }}></div>
-                      <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '800', textAlign: 'center', marginBottom: '24px' }}>Comments</div>
-                      
-                      <div style={{ display: 'flex', gap: '12px' }}>
-                        <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#262626', border: '1px solid #333' }}></div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ color: 'white', fontSize: '0.75rem', fontWeight: '800' }}>User</span>
-                            <span style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>2m</span>
-                          </div>
-                          <div style={{ color: 'white', fontSize: '0.75rem', marginTop: '3px', fontWeight: '500' }}>
-                            {keywords.length > 0 ? keywords[0] : 'Hint'}
-                          </div>
-                          <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                            <span style={{ color: '#a8a8a8', fontSize: '0.65rem', fontWeight: '700' }}>Reply</span>
+                    {/* Comments Overlay (Bottom Sheet) - ONLY show if keywords exist */}
+                    {keywords.length > 0 && (
+                      <div style={{ 
+                        position: 'absolute', bottom: 0, left: 0, right: 0, 
+                        height: '65%', background: '#121212', 
+                        borderRadius: '24px 24px 0 0', padding: '16px 20px',
+                        boxShadow: '0 -10px 30px rgba(0,0,0,0.5)',
+                        zIndex: 5
+                      }}>
+                        <div style={{ width: '36px', height: '4px', background: '#333', borderRadius: '2px', margin: '0 auto 16px' }}></div>
+                        <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '800', textAlign: 'center', marginBottom: '24px' }}>Comments</div>
+                        
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                          <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#262626', border: '1px solid #333' }}></div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span style={{ color: 'white', fontSize: '0.75rem', fontWeight: '800' }}>User</span>
+                              <span style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>2m</span>
+                            </div>
+                            <div style={{ color: 'white', fontSize: '0.75rem', marginTop: '3px', fontWeight: '500' }}>
+                              {keywords[0]}
+                            </div>
+                            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                              <span style={{ color: '#a8a8a8', fontSize: '0.65rem', fontWeight: '700' }}>Reply</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               ) : (
