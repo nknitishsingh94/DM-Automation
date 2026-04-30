@@ -50,7 +50,7 @@ export const generateAIResponse = async (userId, userMessage) => {
     // Helper for Gemini Free API (Raw Axios - No SDK needed)
     const callGemini = async () => {
       const versions = ['v1beta', 'v1'];
-      const models = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro'];
+      const models = ['gemini-2.0-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-1.5-flash', 'gemini-pro'];
       const axios = (await import('axios')).default;
       let lastError;
 
