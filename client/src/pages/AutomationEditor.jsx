@@ -13,7 +13,10 @@ import {
   Send,
   Loader2,
   Pencil,
-  Trash2
+  Trash2,
+  Camera,
+  Mic,
+  PlusCircle
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
@@ -394,50 +397,48 @@ export default function AutomationEditor() {
                   </div>
                 </div>
               ) : (
-                /* DM View (Original) */
+                <>
+                  {/* DM View (Original - Upgraded to match pic) */}
+                  <div style={{ 
+                    height: '100%', 
+                    background: 'linear-gradient(to bottom, #000000, #1a1a1a)', 
+                    display: 'flex', 
+                    flexDirection: 'column' 
+                  }}>
+                {/* DM Header */}
+                <div style={{ padding: '40px 20px 10px', display: 'flex', alignItems: 'center', gap: '15px', borderBottom: '1px solid #1a1a1a' }}>
+                  <ChevronLeft size={20} color="white" />
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#333' }}></div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '800' }}>User</div>
+                    <div style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>Active now</div>
+                  </div>
+                </div>
+
+                {/* Chat Messages */}
                 <div style={{ 
+                  flex: 1, 
                   padding: '20px', 
                   display: 'flex', 
                   flexDirection: 'column', 
-                  gap: '12px',
-                  height: '100%',
+                  gap: '16px',
                   overflowY: 'auto'
                 }}>
-                  {/* Selected Media Preview */}
-                  {selectedMedia && (
-                    <div style={{ 
-                      width: '100%', 
-                      aspectRatio: template === 'stories' ? '9/16' : '1/1',
-                      borderRadius: '15px',
-                      overflow: 'hidden',
-                      marginBottom: '10px',
-                      border: '1.5px solid #262626',
-                      position: 'relative',
-                      flexShrink: 0
-                    }}>
-                      <img 
-                        src={selectedMedia.thumbnail_url || selectedMedia.media_url} 
-                        alt="Selected Post" 
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                      />
-                    </div>
-                  )}
-
                   {/* User Trigger Bubble */}
                   <div style={{ 
                     alignSelf: 'flex-end', 
-                    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
+                    background: '#3797f0', 
                     color: 'white', 
                     padding: '10px 16px', 
                     borderRadius: '18px 18px 4px 18px',
-                    fontSize: '0.8rem',
+                    fontSize: '0.85rem',
                     fontWeight: '500',
                     maxWidth: '85%'
                   }}>
                     {keywords.length > 0 ? keywords[0] : 'Set a keyword'}
                   </div>
 
-                  {/* AI Response Card */}
+                  {/* AI Response Card (Generic Template) */}
                   {message && (
                     <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
                       <div style={{ 
@@ -449,7 +450,7 @@ export default function AutomationEditor() {
                       }}>
                         <div style={{ padding: '12px 16px', borderBottom: buttons.length > 0 ? '1px solid #f1f5f9' : 'none' }}>
                           <div style={{ color: '#1e1b4b', fontSize: '0.85rem', fontWeight: '800', marginBottom: '4px' }}>
-                            Message
+                            {openingMessageText || "Message"}
                           </div>
                           <div style={{ color: '#475569', fontSize: '0.8rem', lineHeight: '1.4' }}>
                             {message}
@@ -464,8 +465,30 @@ export default function AutomationEditor() {
                     </div>
                   )}
                 </div>
-              )}
-            </div>
+
+                {/* DM Bottom Bar (From Pic) */}
+                <div style={{ 
+                  padding: '12px 16px 30px', 
+                  background: '#000', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '12px',
+                  borderTop: '1px solid #1a1a1a'
+                }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#0095f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Camera size={18} color="white" />
+                  </div>
+                  <div style={{ flex: 1, background: '#121212', border: '1px solid #333', borderRadius: '20px', padding: '8px 16px', color: '#8e8e8e', fontSize: '0.85rem' }}>
+                    Message...
+                  </div>
+                  <ImageIcon size={20} color="white" />
+                  <Mic size={20} color="white" />
+                  <PlusCircle size={20} color="white" />
+                </div>
+              </div>
+              </>
+            )}
+          </div>
 
             {/* Bottom Bar */}
             <div style={{ position: 'absolute', bottom: '20px', left: 0, right: 0, padding: '0 20px' }}>
