@@ -230,7 +230,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
 
     console.log(`✅ EXECUTING: Dispatching response for "${campaignName}"`);
-    const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken);
+    const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
 
     // NEW: If it's a comment, also send a public reply to the comment
     if (source === 'comment' && commentId) {

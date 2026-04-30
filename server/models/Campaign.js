@@ -21,6 +21,10 @@ const campaignSchema = new mongoose.Schema({
   publicReplyText: { type: String, default: "Check your DMs! 🚀 I've sent you the info." },
   isAnyPost: { type: Boolean, default: true },
   postId: { type: String, default: "" },
+  buttons: [{
+    text: { type: String, default: '' },
+    url: { type: String, default: '' }
+  }],
   createdAt: { type: Date, default: Date.now }
 });
 
