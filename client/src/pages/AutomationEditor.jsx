@@ -642,42 +642,6 @@ export default function AutomationEditor() {
             </div>
           )}
 
-            {/* Trigger Sources Selection (Merged from Pic style) */}
-            <div style={{ marginBottom: '32px' }}>
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                <div 
-                  onClick={() => setTriggerOnDms(!triggerOnDms)}
-                  style={{ 
-                    padding: '10px 16px', borderRadius: '10px', border: triggerOnDms ? '2px solid #ef4444' : '1.5px solid #e2e8f0',
-                    background: triggerOnDms ? '#fef2f2' : 'white', color: triggerOnDms ? '#ef4444' : '#64748b',
-                    cursor: 'pointer', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px'
-                  }}
-                >
-                  <Send size={14} /> DMs
-                </div>
-                <div 
-                  onClick={() => setTriggerOnComments(!triggerOnComments)}
-                  style={{ 
-                    padding: '10px 16px', borderRadius: '10px', border: triggerOnComments ? '2px solid #ef4444' : '1.5px solid #e2e8f0',
-                    background: triggerOnComments ? '#fef2f2' : 'white', color: triggerOnComments ? '#ef4444' : '#64748b',
-                    cursor: 'pointer', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px'
-                  }}
-                >
-                  <ImageIcon size={14} /> Comments
-                </div>
-                <div 
-                  onClick={() => setTriggerOnStories(!triggerOnStories)}
-                  style={{ 
-                    padding: '10px 16px', borderRadius: '10px', border: triggerOnStories ? '2px solid #ef4444' : '1.5px solid #e2e8f0',
-                    background: triggerOnStories ? '#fef2f2' : 'white', color: triggerOnStories ? '#ef4444' : '#64748b',
-                    cursor: 'pointer', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px'
-                  }}
-                >
-                  <Zap size={14} /> Story Mentions
-                </div>
-              </div>
-            </div>
-
             {/* Step 2: Setup Keywords (Restored from Pic) */}
             <div style={{ marginBottom: '32px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
