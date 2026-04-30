@@ -96,7 +96,7 @@ export const generateAIResponse = async (userId, userMessage) => {
 
     // 1. Try GROQ FIRST (Most reliable free-ish option right now)
     if (groqKey) {
-      const groqModels = ['llama-3.1-70b-versatile', 'llama3-70b-8192', 'llama3-8b-8192'];
+      const groqModels = ['llama-3.3-70b-versatile', 'llama-3.1-70b-versatile', 'llama-3.1-8b-instant'];
       const cleanGroqKey = groqKey.trim();
       
       for (const groqModel of groqModels) {
