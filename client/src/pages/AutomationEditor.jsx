@@ -437,7 +437,7 @@ export default function AutomationEditor() {
                       }}>
                         <div style={{ padding: '12px 16px', borderBottom: buttons.length > 0 ? '1px solid #f1f5f9' : 'none' }}>
                           <div style={{ color: '#1e1b4b', fontSize: '0.85rem', fontWeight: '800', marginBottom: '4px' }}>
-                            {openingMessageText || "Message"}
+                            Message
                           </div>
                           <div style={{ color: '#475569', fontSize: '0.8rem', lineHeight: '1.4' }}>
                             {message}
