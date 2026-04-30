@@ -83,6 +83,10 @@ export const generateAIResponse = async (userId, userMessage) => {
       try {
         const diagUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${geminiKey}`;
         const diagResp = await axios.get(diagUrl);
+      } catch (diagErr) {
+        // Silent diagnostic fail
+      }
+      
       throw new Error(`GEMINI_DEBUG: ${lastError}`);
     };
 
