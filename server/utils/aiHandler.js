@@ -96,13 +96,23 @@ export const generateAIResponse = async (userId, userMessage) => {
 
     // 1. Try GROQ FIRST (Most reliable free-ish option right now)
     if (groqKey) {
-      console.log(`🚀 Trying Groq (llama-3.1-70b) for user ${userId}...`);
-      try {
-        const groq = new OpenAI({ apiKey: groqKey, baseURL: "https://api.groq.com/openai/v1" });
-        reply = await callOpenAI(groq, "llama-3.1-70b-versatile");
-        if (reply) return reply;
-      } catch (err) {
-        console.error("Groq Call Failed:", err.message);
+      const groqModels = ['llama-3.1-70b-versatile', 'llama3-70b-8192', 'llama3-8b-8192'];
+      const cleanGroqKey = groqKey.trim();
+      
+      for (const groqModel of groqModels) {
+        console.log(`🚀 Trying Groq (${groqModel}) for user ${userId}...`);
+        try {
+          const groq = new OpenAI({ apiKey: cleanGroqKey, baseURL: "https://api.groq.com/openai/v1" });
+          reply = await callOpenAI(groq, groqModel);
+          if (reply) {
+            console.log(`✅ Success with Groq model: ${groqModel}`);
+            return reply;
+          }
+        } catch (err) {
+          console.error(`Groq (${groqModel}) Failed:`, err.message);
+          // If it's a 401, the key itself is wrong, no need to try other models
+          if (err.status === 401) break;
+        }
       }
     }
 
