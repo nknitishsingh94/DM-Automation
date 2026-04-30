@@ -490,11 +490,20 @@ app.post('/api/webhook', async (req, res) => {
               const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
               if (isFollowing) {
-                console.log(`✅ VERIFIED! Sending automation now.`);
-                // Trigger the main flow (including opening message if enabled)
-                processAutoReply(match.userId.toString(), platform, senderId, "[VERIFIED_TRIGGER]", 'dm', null, activeToken).catch(err => {
-                  console.error("🔥 Follow Verify Trigger error:", err);
-                });
+                console.log(`✅ VERIFIED! Triggering automation for ${match.name}`);
+                
+                // 1. Clear pending status
+                await Contact.findOneAndUpdate({ chatId: senderId }, { $unset: { pendingCampaignId: 1 } });
+
+                // 2. Decide: Opening Message or Main Response?
+                if (match.openingMessage && match.openingMessageText) {
+                  const btnText = match.openingMessageButton || "Click to Continue 🚀";
+                  const payload = `CAMP_${match._id}`;
+                  await sendMessageToInstagram(platform, senderId, match.openingMessageText, '', match.userId, btnText, activeToken, [], payload);
+                } else {
+                  await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
+                  await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
+                }
               } else {
                 console.log(`🚫 STILL NOT FOLLOWING: ${senderId}`);
                 const retryText = "It looks like you haven't followed yet! Please follow @us and then click the button again. 😊";
