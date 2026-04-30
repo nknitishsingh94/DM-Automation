@@ -125,7 +125,7 @@ const checkFollowerStatus = async (platform, chatId, userId) => {
 };
 
 // Reusable Auto-Reply Logic
-const processAutoReply = async (userId, platform, chatId, text, source = 'dm', commentId = null, passedToken = null) => {
+const processAutoReply = async (userId, platform, chatId, text, source = 'dm', commentId = null, passedToken = null, mediaId = null) => {
   // Human Handover Check
   const contact = await Contact.findOne({ userId, chatId });
   if (contact && contact.isBotMuted) {
@@ -185,7 +185,8 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       return cleanUserMsg.includes(k);
     });
 
-    return platformMatch && sourceMatch && keywordMatch;
+    const postMatch = c.isAnyPost || (mediaId && c.postId === mediaId);
+    return platformMatch && sourceMatch && keywordMatch && postMatch;
   });
 
   if (match) {
@@ -449,6 +450,7 @@ app.post('/api/webhook', async (req, res) => {
           const text = val.text || val.message;
           const senderId = val.from?.id;
           const commentId = val.id || val.comment_id;
+          const mediaId = val.media?.id || val.post_id || val.video_id;
           
           // Handle all interaction types (Comment, Post, Video, etc.)
           console.log(`🎯 [REEL DEBUG] Processing interaction from ${change.field}. Item: ${val.item || 'N/A'}`);
@@ -494,8 +496,8 @@ app.post('/api/webhook', async (req, res) => {
               await incoming.save();
               io.to(targetUserId.toString()).emit('new_message', incoming);
 
-              // Pass the fresh token to processAutoReply
-              processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId, accessToken).catch(err => {
+              // Pass the fresh token and mediaId to processAutoReply
+              processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId, accessToken, mediaId).catch(err => {
                 console.error("🔥 Comment Reply error:", err);
               });
             }

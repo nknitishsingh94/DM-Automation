@@ -129,6 +129,11 @@ export default function AutomationEditor() {
       return;
     }
 
+    if (!anyStory && !selectedContentId) {
+      notify(`Please select a specific ${template === 'stories' ? 'story' : 'post'} to continue`, 'error');
+      return;
+    }
+
     setSubmitting(true);
     const token = localStorage.getItem('insta_agent_token');
     
@@ -142,11 +147,11 @@ export default function AutomationEditor() {
         body: JSON.stringify({
           name: name,
           trigger: anyKeyword ? '*' : keywords.join(', '),
-          triggerSource: template === 'stories' ? 'story_mention' : (template === 'dms' ? 'dm' : 'comment'),
           response: message,
           linkUrl: linkUrl,
           buttonText: buttonText,
           postId: selectedContentId || '',
+          isAnyPost: anyStory,
           platform: channel || 'instagram',
           requireFollow: requireFollow,
           unfollowedResponse: unfollowedMessage,

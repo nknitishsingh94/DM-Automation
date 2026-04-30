@@ -19,6 +19,8 @@ const campaignSchema = new mongoose.Schema({
   openingMessageText: { type: String, default: "" },
   openingMessageButton: { type: String, default: "" },
   publicReplyText: { type: String, default: "Check your DMs! 🚀 I've sent you the info." },
+  isAnyPost: { type: Boolean, default: true },
+  postId: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now }
 });
 
