@@ -335,7 +335,7 @@ export default function AutomationEditor() {
                   </div>
 
                   {/* Post Content Area */}
-                  <div style={{ flex: 1, position: 'relative', background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ flex: 1, position: 'relative', background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                     <div style={{ 
                       width: '100%', 
                       aspectRatio: '1/1', 
@@ -345,13 +345,21 @@ export default function AutomationEditor() {
                       justifyContent: 'center',
                       position: 'relative'
                     }}>
-                      <div style={{ 
-                        width: '60px', height: '60px', borderRadius: '15px', 
-                        background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
-                        display: 'flex', alignItems: 'center', justifyContent: 'center' 
-                      }}>
-                        <Zap size={30} fill="white" color="white" />
-                      </div>
+                      {(!anyStory && selectedMedia) ? (
+                        <img 
+                          src={selectedMedia.thumbnail_url || selectedMedia.media_url} 
+                          alt="Selected Post" 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                        />
+                      ) : (
+                        <div style={{ 
+                          width: '60px', height: '60px', borderRadius: '15px', 
+                          background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
+                          display: 'flex', alignItems: 'center', justifyContent: 'center' 
+                        }}>
+                          <Zap size={30} fill="white" color="white" />
+                        </div>
+                      )}
                     </div>
 
                     {/* Comments Overlay (Bottom Sheet) - ONLY show if keywords exist */}
