@@ -32,7 +32,11 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     const endpoint = pageId ? pageId : 'me';
     const url = `https://graph.facebook.com/v19.0/${endpoint}/messages?access_token=${accessToken}`;
 
-    let finalMessageBody = { text };
+    // Ensure bare 'www.' links in text get 'https://' prefix for Desktop compatibility
+    let safeText = text || '';
+    safeText = safeText.replace(/(^|\s)(www\.[^\s]+)/g, '$1https://$2');
+
+    let finalMessageBody = { text: safeText };
     
     // --- MULTI-BUTTON SUPPORT (Generic Template) ---
     if (buttons && buttons.length > 0) {
@@ -42,13 +46,19 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
           payload: {
             template_type: "generic",
             elements: [{
-              title: text.substring(0, 80), // Title has 80 char limit
-              subtitle: text.length > 80 ? text.substring(80, 160) : "", // Optional subtitle
-              buttons: buttons.map(btn => ({
-                type: "web_url",
-                url: btn.url,
-                title: btn.text
-              }))
+              title: safeText.substring(0, 80), // Title has 80 char limit
+              subtitle: safeText.length > 80 ? safeText.substring(80, 160) : "", // Optional subtitle
+              buttons: buttons.map(btn => {
+                let safeUrl = btn.url || '';
+                if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
+                  safeUrl = 'https://' + safeUrl;
+                }
+                return {
+                  type: "web_url",
+                  url: safeUrl,
+                  title: btn.text
+                };
+              })
             }]
           }
         }

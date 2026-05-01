@@ -466,50 +466,66 @@ app.post('/api/webhook', async (req, res) => {
           // A. Opening Message Button Click
           if (payload.startsWith('CAMP_')) {
             const campaignId = payload.split('_')[1];
-            const match = await Campaign.findById(campaignId);
             
-            if (match && match.status === 'Active') {
-              console.log(`🚀 TRIGGERING MAIN RESPONSE for Campaign: ${match.name}`);
-              const userSettings = await Settings.findOne({ userId: match.userId });
-              const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
-              await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
-              await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
-            }
+            // Run asynchronously to prevent webhook timeouts
+            (async () => {
+              try {
+                const match = await Campaign.findById(campaignId);
+                
+                if (match && match.status === 'Active') {
+                  console.log(`🚀 TRIGGERING MAIN RESPONSE for Campaign: ${match.name}`);
+                  const userSettings = await Settings.findOne({ userId: match.userId });
+                  const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+                  await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
+                  await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
+                }
+              } catch (err) {
+                console.error("Error processing CAMP_ postback:", err);
+              }
+            })();
           }
 
           // B. "I've Followed" Button Click
           if (payload.startsWith('CHECK_FOLLOW_')) {
             const campaignId = payload.split('_')[2];
-            const match = await Campaign.findById(campaignId);
             
-            if (match && match.status === 'Active') {
-              console.log(`🛡️ VERIFYING FOLLOW on button click for ${senderId}...`);
-              const isFollowing = await checkFollowerStatus(platform, senderId, match.userId);
-              
-              const userSettings = await Settings.findOne({ userId: match.userId });
-              const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
-
-              if (isFollowing) {
-                console.log(`✅ VERIFIED! Triggering automation for ${match.name}`);
+            // Run asynchronously to prevent webhook timeouts
+            (async () => {
+              try {
+                const match = await Campaign.findById(campaignId);
                 
-                // 1. Clear pending status
-                await Contact.findOneAndUpdate({ chatId: senderId }, { $unset: { pendingCampaignId: 1 } });
+                if (match && match.status === 'Active') {
+                  console.log(`🛡️ VERIFYING FOLLOW on button click for ${senderId}...`);
+                  const isFollowing = await checkFollowerStatus(platform, senderId, match.userId);
+                  
+                  const userSettings = await Settings.findOne({ userId: match.userId });
+                  const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
-                // 2. Decide: Opening Message or Main Response?
-                if (match.openingMessage && match.openingMessageText) {
-                  const btnText = match.openingMessageButton || "Click to Continue 🚀";
-                  const payload = `CAMP_${match._id}`;
-                  await sendMessageToInstagram(platform, senderId, match.openingMessageText, '', match.userId, btnText, activeToken, [], payload);
-                } else {
-                  await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
-                  await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
+                  if (isFollowing) {
+                    console.log(`✅ VERIFIED! Triggering automation for ${match.name}`);
+                    
+                    // 1. Clear pending status
+                    await Contact.findOneAndUpdate({ chatId: senderId }, { $unset: { pendingCampaignId: 1 } });
+
+                    // 2. Decide: Opening Message or Main Response?
+                    if (match.openingMessage && match.openingMessageText) {
+                      const btnText = match.openingMessageButton || "Click to Continue 🚀";
+                      const nextPayload = `CAMP_${match._id}`;
+                      await sendMessageToInstagram(platform, senderId, match.openingMessageText, '', match.userId, btnText, activeToken, [], nextPayload);
+                    } else {
+                      await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
+                      await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
+                    }
+                  } else {
+                    console.log(`🚫 STILL NOT FOLLOWING: ${senderId}`);
+                    const retryText = "It looks like you haven't followed yet! Please follow @us and then click the button again. 😊";
+                    await sendMessageToInstagram(platform, senderId, retryText, '', match.userId, "Try Again! ✅", activeToken, [], payload);
+                  }
                 }
-              } else {
-                console.log(`🚫 STILL NOT FOLLOWING: ${senderId}`);
-                const retryText = "It looks like you haven't followed yet! Please follow @us and then click the button again. 😊";
-                await sendMessageToInstagram(platform, senderId, retryText, '', match.userId, "Try Again! ✅", activeToken, [], payload);
+              } catch (err) {
+                console.error("Error processing CHECK_FOLLOW_ postback:", err);
               }
-            }
+            })();
           }
         }
       }
