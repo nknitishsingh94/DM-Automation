@@ -110,6 +110,31 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
 
     const response = await axios.post(url, payload);
     console.log(`✅ SEND SUCCESS: Message delivered to ${recipientId} via ${platform}`);
+    
+    // --- DESKTOP FALLBACK FIX ---
+    // Instagram Desktop does not render buttons in Generic Templates. 
+    // We send a follow-up plain text message containing the URL so desktop users can click it.
+    if (buttons && buttons.length > 0) {
+      const firstWebBtn = buttons.find(b => b.url);
+      if (firstWebBtn) {
+        let fallbackUrl = firstWebBtn.url;
+        if (fallbackUrl && !fallbackUrl.startsWith('http://') && !fallbackUrl.startsWith('https://')) {
+          fallbackUrl = 'https://' + fallbackUrl;
+        }
+        
+        const fallbackPayload = {
+          recipient: { id: recipientId },
+          messaging_type: "RESPONSE",
+          message: { text: `🔗 Link: ${fallbackUrl}` }
+        };
+        
+        // Ensure proper sequencing
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await axios.post(url, fallbackPayload);
+        console.log(`✅ DESKTOP FALLBACK SENT to ${recipientId}`);
+      }
+    }
+
     return true;
   } catch (err) {
     const errorData = err.response?.data || err.message;
