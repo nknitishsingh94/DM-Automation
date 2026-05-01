@@ -234,21 +234,9 @@ export default function AutomationEditor() {
       flexDirection: 'column'
     }}>
 
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div className="editor-layout">
         {/* Left Side: Preview (Fixed) */}
-        <div style={{ 
-          width: '450px', 
-          background: '#f1f5f9', 
-          display: 'flex', 
-          flexDirection: 'column',
-          alignItems: 'center', 
-          justifyContent: 'center',
-          padding: '20px',
-          borderRight: '1px solid #e2e8f0',
-          position: 'sticky',
-          top: '0',
-          height: '100vh'
-        }}>
+        <div className="editor-preview">
           <div style={{ color: '#64748b', fontWeight: '700', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
             <Smartphone size={18} /> Preview Automation
           </div>
@@ -523,17 +511,7 @@ export default function AutomationEditor() {
         </div>
       </div>
 
-        {/* Right Side: Configuration (Scrollable) */}
-        <div 
-          className="config-panel"
-          style={{ 
-            flex: 1, 
-            background: 'white', 
-            padding: '40px 60px', 
-            overflowY: 'auto',
-            maxHeight: '100vh'
-          }}
-        >
+        <div className="editor-config">
           <div style={{ maxWidth: '500px', margin: '0 0' }}>
             
             {/* Automation Name */}

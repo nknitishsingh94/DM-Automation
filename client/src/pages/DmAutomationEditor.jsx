@@ -192,21 +192,9 @@ export default function DmAutomationEditor() {
       flexDirection: 'column'
     }}>
 
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div className="editor-layout">
         {/* Left Side: Preview (Fixed) */}
-        <div style={{ 
-          width: '450px', 
-          background: '#f1f5f9', 
-          display: 'flex', 
-          flexDirection: 'column',
-          alignItems: 'center', 
-          justifyContent: 'center',
-          padding: '20px',
-          borderRight: '1px solid #e2e8f0',
-          position: 'sticky',
-          top: '0',
-          height: '100vh'
-        }}>
+        <div className="editor-preview">
           <div style={{ color: '#64748b', fontWeight: '700', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
             <Smartphone size={18} /> {template === 'stories' ? 'Preview Story Reply' : 'Preview DM Automation'}
           </div>
@@ -388,8 +376,8 @@ export default function DmAutomationEditor() {
           </div>
         </div>
 
-        {/* Right Side: Configuration */}
-        <div className="config-panel" style={{ flex: 1, background: 'white', padding: '40px 60px', overflowY: 'auto', maxHeight: '100vh' }}>
+        {/* Right Side: Configuration Builder (Scrollable) */}
+        <div className="editor-config">
           <div style={{ maxWidth: '500px' }}>
             <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '24px', fontWeight: '600' }}>
               <ArrowLeft size={18} /> Back
