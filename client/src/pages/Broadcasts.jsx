@@ -25,7 +25,12 @@ export default function Broadcasts() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
-      setContacts(data);
+      if (Array.isArray(data)) {
+        setContacts(data);
+      } else {
+        console.error("API returned non-array for contacts:", data);
+        setContacts([]);
+      }
     } catch (err) {
       console.error("Error fetching contacts:", err);
     } finally {
@@ -38,8 +43,11 @@ export default function Broadcasts() {
   };
 
   const filteredContacts = contacts.filter(c => {
-    const matchesSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          (c.chatId && c.chatId.toLowerCase().includes(searchTerm.toLowerCase()));
+    if (!c) return false;
+    const name = String(c.name || '');
+    const chatId = String(c.chatId || '');
+    const matchesSearch = name.toLowerCase().includes(String(searchTerm || '').toLowerCase()) || 
+                          chatId.toLowerCase().includes(String(searchTerm || '').toLowerCase());
     const matchesActive = filterActiveOnly ? isWithin24h(c.lastActive) : true;
     return matchesSearch && matchesActive;
   });
@@ -162,9 +170,9 @@ export default function Broadcasts() {
                 const isSelected = selectedContacts.includes(contact._id);
                 return (
                   <div 
-                    key={contact._id} 
+                    key={contact?._id || Math.random()} 
                     className={`contact-item ${isSelected ? 'selected' : ''}`}
-                    onClick={() => toggleSelectContact(contact._id)}
+                    onClick={() => contact?._id && toggleSelectContact(contact._id)}
                   >
                     <input 
                       type="checkbox" 
@@ -173,16 +181,16 @@ export default function Broadcasts() {
                       onChange={() => {}} 
                     />
                     <div className={`contact-avatar ${active ? 'active' : 'inactive'}`}>
-                      {contact.name.charAt(0)}
+                      {String(contact?.name || contact?.chatId || '?').charAt(0).toUpperCase()}
                     </div>
                     <div className="contact-info">
-                      <div className="contact-name">{contact.name}</div>
+                      <div className="contact-name">{contact?.name || contact?.chatId || 'Unknown'}</div>
                       <div className="contact-status">
-                         {active ? '🟢 Active now' : `Last seen ${new Date(contact.lastActive).toLocaleDateString()}`}
+                         {active ? '🟢 Active now' : `Last seen ${contact?.lastActive ? new Date(contact.lastActive).toLocaleDateString() : 'Unknown'}`}
                       </div>
                     </div>
                     <div className="platform-badge">
-                      {contact.platform?.toUpperCase() || 'INSTAGRAM'}
+                      {String(contact?.platform || 'INSTAGRAM').toUpperCase()}
                     </div>
                   </div>
                 );

@@ -23,12 +23,16 @@ export default function Audiences() {
         headers: { 'Authorization': `Bearer ${token}` } 
       });
       const contactsData = await res.json();
-      setContacts(contactsData);
-      
-      // If a contact was selected, update its local state too
-      if (selectedContact) {
-        const updated = contactsData.find(c => c._id === selectedContact._id);
-        if (updated) setSelectedContact(updated);
+      if (Array.isArray(contactsData)) {
+        setContacts(contactsData);
+        // If a contact was selected, update its local state too
+        if (selectedContact) {
+          const updated = contactsData.find(c => c._id === selectedContact._id);
+          if (updated) setSelectedContact(updated);
+        }
+      } else {
+        console.error("API returned non-array for contacts:", contactsData);
+        setContacts([]);
       }
     } catch (err) {
       console.error("Error fetching audience data:", err);
@@ -114,9 +118,12 @@ export default function Audiences() {
   }, [selectedContact?._id]);
 
   const filteredContacts = contacts.filter(c => {
-    const matchesSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          c.chatId.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesTag = selectedTagFilter === 'All' || c.tags.includes(selectedTagFilter);
+    if (!c) return false;
+    const name = String(c.name || '');
+    const chatId = String(c.chatId || '');
+    const matchesSearch = name.toLowerCase().includes(String(searchTerm || '').toLowerCase()) || 
+                          chatId.toLowerCase().includes(String(searchTerm || '').toLowerCase());
+    const matchesTag = selectedTagFilter === 'All' || (c.tags && c.tags.includes(selectedTagFilter));
     return matchesSearch && matchesTag;
   });
 
@@ -165,16 +172,16 @@ export default function Audiences() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center', 
                 color: 'white', fontSize: '2rem', fontWeight: '700', flexShrink: 0 
               }}>
-                {selectedContact.name.charAt(0).toUpperCase()}
+                {String(selectedContact?.name || selectedContact?.chatId || '?').charAt(0).toUpperCase()}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
-                  <h2 style={{ fontSize: '1.6rem', fontWeight: '700', margin: 0 }}>{selectedContact.name}</h2>
+                  <h2 style={{ fontSize: '1.6rem', fontWeight: '700', margin: 0 }}>{selectedContact?.name || selectedContact?.chatId || 'Unknown'}</h2>
                   {getPlatformIcon(selectedContact.platform)}
                 </div>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '12px' }}>ID: {selectedContact.chatId}</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {selectedContact.tags.map(tag => (
+                  {(selectedContact?.tags || []).map(tag => (
                     <span 
                       key={tag} 
                       style={{ 
@@ -422,10 +429,10 @@ export default function Audiences() {
                         display: 'flex', alignItems: 'center', justifyContent: 'center', 
                         color: 'white', fontWeight: '800', fontSize: '1.2rem', boxShadow: '0 4px 14px rgba(168, 85, 247, 0.3)'
                       }}>
-                       {contact.name.charAt(0).toUpperCase()}
+                       {String(contact?.name || contact?.chatId || '?').charAt(0).toUpperCase()}
                      </div>
                      <div>
-                       <div style={{ fontWeight: '800', color: '#1e293b', fontSize: '1.05rem', marginBottom: '4px' }}>{contact.name}</div>
+                       <div style={{ fontWeight: '800', color: '#1e293b', fontSize: '1.05rem', marginBottom: '4px' }}>{contact?.name || contact?.chatId || 'Unknown'}</div>
                        <div style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
                          {getPlatformIcon(contact.platform)} <span style={{ textTransform: 'capitalize' }}>{contact.platform}</span>
                        </div>
