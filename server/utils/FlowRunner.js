@@ -14,6 +14,13 @@ export const runFlow = async (userId, flowId, contactId, platform, initialText =
     const flow = await Flow.findOne({ _id: flowId, userId });
     if (!flow || flow.status !== 'Active') return;
 
+    // Premium Check: Visual Flows only work for PRO subscribers
+    const user = await mongoose.model('User').findById(userId);
+    if (!user || user.plan !== 'pro') {
+      console.log(`❌ Flow Execution Blocked: User ${userId} is not on a PRO plan.`);
+      return;
+    }
+
     const contact = await Contact.findOne({ chatId: contactId, userId });
     if (contact && contact.isBotMuted) return;
 
