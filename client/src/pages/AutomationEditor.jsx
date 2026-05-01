@@ -429,26 +429,72 @@ export default function AutomationEditor() {
                   gap: '16px',
                   overflowY: 'auto'
                 }}>
+                  {/* User Keyword Message */}
+                  {(keywords.length > 0 || anyKeyword) && (
+                    <div style={{ 
+                      alignSelf: 'flex-end', 
+                      maxWidth: '75%', 
+                      background: '#0095f6', 
+                      color: 'white', 
+                      padding: '10px 16px', 
+                      borderRadius: '18px 18px 4px 18px', 
+                      fontSize: '0.85rem', 
+                      lineHeight: '1.4' 
+                    }}>
+                      {template === 'stories' 
+                        ? (anyKeyword ? 'Replied to your story' : `Replied to your story: ${keywords[0]}`) 
+                        : (anyKeyword ? "Hey, I saw your post!" : keywords[0])}
+                    </div>
+                  )}
+
+                  {/* Opening Message Flow */}
+                  {openingMessage && (
+                    <>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignSelf: 'flex-start', maxWidth: '85%' }}>
+                        <div style={{ background: '#262626', borderRadius: '18px 18px 18px 4px', padding: '12px 16px', color: 'white', fontSize: '0.8rem', lineHeight: '1.4' }}>
+                          <span style={{ whiteSpace: 'pre-line' }}>{openingMessageText}</span>
+                        </div>
+                        <div style={{ background: '#333', borderRadius: '18px', padding: '10px 16px', color: 'white', fontSize: '0.8rem', fontWeight: '700', textAlign: 'center', alignSelf: 'flex-start' }}>
+                          {openingMessageButton}
+                        </div>
+                      </div>
+                      <div style={{ 
+                        alignSelf: 'flex-end', 
+                        maxWidth: '75%', 
+                        background: '#0095f6', 
+                        color: 'white', 
+                        padding: '10px 16px', 
+                        borderRadius: '18px 18px 4px 18px', 
+                        fontSize: '0.85rem', 
+                        lineHeight: '1.4' 
+                      }}>
+                        {openingMessageButton}
+                      </div>
+                    </>
+                  )}
+
                   {/* AI Response Card (Generic Template) */}
                   {message && (
                     <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
                       <div style={{ 
-                        background: 'white', 
+                        background: '#262626', 
                         borderRadius: '18px 18px 18px 4px',
-                        border: '1px solid #e2e8f0',
-                        overflow: 'hidden',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                        overflow: 'hidden'
                       }}>
-                        <div style={{ padding: '12px 16px', borderBottom: buttons.length > 0 ? '1px solid #f1f5f9' : 'none' }}>
-                          <div style={{ color: '#1e1b4b', fontSize: '0.85rem', fontWeight: '800', marginBottom: '4px' }}>
-                            Message
-                          </div>
-                          <div style={{ color: '#475569', fontSize: '0.8rem', lineHeight: '1.4' }}>
+                        <div style={{ padding: '12px 16px', borderBottom: buttons.length > 0 ? '1px solid #333' : 'none' }}>
+                          <div style={{ color: 'white', fontSize: '0.8rem', lineHeight: '1.4' }}>
                             {message}
                           </div>
                         </div>
                         {buttons.map((btn, idx) => (
-                          <div key={idx} style={{ padding: '12px', textAlign: 'center', borderBottom: idx === buttons.length - 1 ? 'none' : '1px solid #f1f5f9', color: '#7c3aed', fontSize: '0.8rem', fontWeight: '800' }}>
+                          <div key={idx} style={{ 
+                            padding: '12px', 
+                            textAlign: 'center', 
+                            borderBottom: idx === buttons.length - 1 ? 'none' : '1px solid #333', 
+                            color: '#3b82f6', 
+                            fontSize: '0.8rem', 
+                            fontWeight: '800' 
+                          }}>
                             {btn.text || "Visit Link"}
                           </div>
                         ))}
