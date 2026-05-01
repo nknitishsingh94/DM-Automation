@@ -443,6 +443,99 @@ export default function Campaigns() {
         </div>
       )}
 
+      {/* Visual Flows Grid */}
+      {flows.length > 0 && (
+        <div style={{ marginTop: '64px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <Zap size={28} color="#d946ef" />
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Visual Flows</h3>
+              <span className="sidebar-badge badge-new">PRO</span>
+            </div>
+            <span style={{ padding: '6px 16px', background: '#fdf4ff', color: '#d946ef', borderRadius: '50px', fontSize: '0.85rem', fontWeight: '700' }}>
+              {flows.length} Total
+            </span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
+            {flows.map((flow) => (
+              <div key={flow._id} style={{ 
+                background: 'white', 
+                borderRadius: '24px', 
+                padding: '24px', 
+                border: '1px solid #fce7f3',
+                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)',
+                transition: 'all 0.3s',
+                position: 'relative',
+                overflow: 'hidden'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(217,70,239,0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)';
+              }}
+              >
+                {/* Advanced Badge */}
+                <div style={{ 
+                  position: 'absolute', top: '24px', right: '24px',
+                  padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800',
+                  background: '#fdf4ff',
+                  color: '#d946ef',
+                  textTransform: 'uppercase',
+                  display: 'flex', alignItems: 'center', gap: '4px'
+                }}>
+                  <Crown size={12} /> Advanced
+                </div>
+
+                <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px', paddingRight: '100px' }}>
+                  {flow.name || 'Untitled Flow'}
+                </h4>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', marginBottom: '24px' }}>
+                  <MessageCircle size={16} />
+                  <span>Keyword: <strong style={{ color: '#1e1b4b' }}>{flow.triggerKeyword || 'None'}</strong></span>
+                </div>
+
+                {/* Stats Row */}
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', padding: '16px', background: '#faf5ff', borderRadius: '16px' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#a855f7', textTransform: 'uppercase', marginBottom: '4px' }}>Nodes</div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b' }}>{flow.nodes ? flow.nodes.length : 0}</div>
+                  </div>
+                  <div style={{ width: '1px', background: '#e9d5ff' }}></div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#a855f7', textTransform: 'uppercase', marginBottom: '4px' }}>Status</div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: '800', color: flow.status === 'Active' ? '#10b981' : '#a855f7', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: flow.status === 'Active' ? '#10b981' : '#a855f7' }}></div>
+                      {flow.status || 'Active'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <button 
+                    onClick={() => navigate(`/flow-builder/${flow._id}`)}
+                    style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 100%)', color: 'white', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                  >
+                    Edit Flow
+                  </button>
+                  <button 
+                    onClick={(e) => deleteFlow(flow._id, e)}
+                    style={{ padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', background: 'white', color: '#ef4444', cursor: 'pointer' }}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <style>{`
         .premium-btn:active {
           transform: scale(0.98);
