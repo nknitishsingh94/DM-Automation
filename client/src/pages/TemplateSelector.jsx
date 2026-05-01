@@ -75,7 +75,7 @@ export default function TemplateSelector() {
               onClick={() => {
                 if (template.id === 'faqs') {
                   navigate('/ai-studio');
-                } else if (template.id === 'all_dms') {
+                } else if (template.id === 'all_dms' || template.id === 'stories') {
                   navigate(`/dm-automation-editor?channel=${channel}&template=${template.id}`);
                 } else {
                   navigate(`/automation-editor?channel=${channel}&template=${template.id}`);

@@ -28,6 +28,7 @@ export default function DmAutomationEditor() {
   const { user } = useAuth();
   const params = new URLSearchParams(location.search);
   const channel = params.get('channel') || 'instagram';
+  const template = params.get('template') || 'all_dms';
 
   // State
   const [anyKeyword, setAnyKeyword] = useState(false);
@@ -40,7 +41,7 @@ export default function DmAutomationEditor() {
   const [requireFollow, setRequireFollow] = useState(true);
   const [unfollowedMessage, setUnfollowedMessage] = useState("Hey! Please follow our account first to get the link! 😊");
   const [submitting, setSubmitting] = useState(false);
-  const [name, setName] = useState(`DM Automation #${Math.floor(Math.random() * 1000)}`);
+  const [name, setName] = useState(`${template === 'stories' ? 'Story' : 'DM'} Automation #${Math.floor(Math.random() * 1000)}`);
   const [connectedSettings, setConnectedSettings] = useState(null);
   const [buttons, setButtons] = useState([]);
   const [showLinkModal, setShowLinkModal] = useState(false);
@@ -161,9 +162,9 @@ export default function DmAutomationEditor() {
           openingMessage: openingMessage,
           openingMessageText: openingMessageText,
           openingMessageButton: openingMessageButton,
-          triggerOnDms: true,
+          triggerOnDms: template !== 'stories',
           triggerOnComments: false,
-          triggerOnStories: false,
+          triggerOnStories: template === 'stories',
           status: 'Active'
         })
       });
@@ -207,7 +208,7 @@ export default function DmAutomationEditor() {
           height: '100vh'
         }}>
           <div style={{ color: '#64748b', fontWeight: '700', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
-            <Smartphone size={18} /> Preview DM Automation
+            <Smartphone size={18} /> {template === 'stories' ? 'Preview Story Reply' : 'Preview DM Automation'}
           </div>
           
           <div style={{ 
@@ -320,7 +321,9 @@ export default function DmAutomationEditor() {
                       fontSize: '0.85rem', 
                       lineHeight: '1.4' 
                     }}>
-                      {anyKeyword ? "Hey, I saw your post!" : keywords[0]}
+                      {template === 'stories' 
+                        ? (anyKeyword ? 'Replied to your story' : `Replied to your story: ${keywords[0]}`) 
+                        : (anyKeyword ? "Hey, I saw your post!" : keywords[0])}
                     </div>
                   )}
 
@@ -375,7 +378,7 @@ export default function DmAutomationEditor() {
 
             <div style={{ marginBottom: '32px' }}>
               <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name your automation..." style={{ fontSize: '1.8rem', fontWeight: '800', color: '#1e1b4b', border: 'none', outline: 'none', width: '100%', padding: 0 }} />
-              <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>Response to all DMs Template</p>
+              <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>{template === 'stories' ? 'Story Reply Template' : 'Response to all DMs Template'}</p>
             </div>
 
             {/* Step 1: Follower Gating */}
@@ -464,7 +467,7 @@ export default function DmAutomationEditor() {
             </div>
 
             <button onClick={handleCreate} disabled={submitting} style={{ width: '100%', padding: '18px', borderRadius: '16px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: '800', marginTop: '30px', cursor: 'pointer' }}>
-              {submitting ? 'Creating...' : 'Create DM Automation'}
+              {submitting ? 'Creating...' : (template === 'stories' ? 'Create Story Automation' : 'Create DM Automation')}
             </button>
           </div>
         </div>
