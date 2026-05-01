@@ -450,12 +450,14 @@ export default function AutomationEditor() {
                   {/* Opening Message Flow */}
                   {openingMessage && (
                     <>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignSelf: 'flex-start', maxWidth: '85%' }}>
-                        <div style={{ background: '#262626', borderRadius: '18px 18px 18px 4px', padding: '12px 16px', color: 'white', fontSize: '0.8rem', lineHeight: '1.4' }}>
-                          <span style={{ whiteSpace: 'pre-line' }}>{openingMessageText}</span>
-                        </div>
-                        <div style={{ background: '#333', borderRadius: '18px', padding: '10px 16px', color: 'white', fontSize: '0.8rem', fontWeight: '700', textAlign: 'center', alignSelf: 'flex-start' }}>
-                          {openingMessageButton}
+                      <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
+                        <div style={{ background: '#262626', borderRadius: '18px 18px 18px 4px', overflow: 'hidden' }}>
+                          <div style={{ padding: '12px 16px', borderBottom: '1px solid #333' }}>
+                            <span style={{ whiteSpace: 'pre-line', color: 'white', fontSize: '0.8rem', lineHeight: '1.4' }}>{openingMessageText}</span>
+                          </div>
+                          <div style={{ padding: '12px', textAlign: 'center', color: '#3b82f6', fontSize: '0.8rem', fontWeight: '800' }}>
+                            {openingMessageButton}
+                          </div>
                         </div>
                       </div>
                       <div style={{ 
