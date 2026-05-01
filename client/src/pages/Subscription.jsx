@@ -142,7 +142,7 @@ export default function Subscription() {
               <div className="pro-badge">Most Popular</div>
               <div className="card-header">
                 <h3>Pro</h3>
-                <div className="price"><span>$</span>19<span>/mo</span></div>
+                <div className="price"><span>$</span>29<span>/mo</span></div>
                 <p>For growing creators and businesses.</p>
               </div>
               <div className="card-features">
@@ -323,7 +323,7 @@ export default function Subscription() {
                     background: 'linear-gradient(135deg, #a855f7, #d946ef)', 
                     color: 'white', padding: '14px', borderRadius: '12px', border: 'none', fontWeight: '700', cursor: 'pointer' 
                   }}>
-                    Pay Now ($19)
+                    Pay Now ($29)
                   </button>
                   <a href={`https://api.whatsapp.com/send?phone=918795919866&text=${getWhatsappMessage('Card')}`} target="_blank" rel="noopener noreferrer" style={{...whatsappButtonStyle, background: '#f3f4f6', color: '#111'}}>
                     <MessageCircle size={18} /> Inform via WhatsApp
