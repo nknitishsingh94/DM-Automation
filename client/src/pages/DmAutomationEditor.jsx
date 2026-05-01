@@ -14,7 +14,8 @@ import {
   Trash2,
   Camera,
   Mic,
-  PlusCircle
+  PlusCircle,
+  Zap
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
@@ -220,28 +221,110 @@ export default function DmAutomationEditor() {
             boxShadow: '0 30px 60px -12px rgba(0,0,0,0.25)',
             transform: 'scale(0.95)'
           }}>
-            <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translateX(-50%)', width: '80px', height: '18px', background: '#000', borderRadius: '20px', zIndex: 10 }}></div>
+            {/* Realistic Notch (Dynamic Island) */}
+            <div style={{
+              position: 'absolute',
+              top: '8px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '80px',
+              height: '18px',
+              background: '#000',
+              borderRadius: '20px',
+              zIndex: 10
+            }}></div>
 
             {/* Status Bar */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 24px 0', fontSize: '0.65rem', color: 'white', fontWeight: '600' }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '12px 24px 0',
+              fontSize: '0.65rem',
+              color: 'white',
+              fontWeight: '600'
+            }}>
               <span>9:41</span>
               <div style={{ display: 'flex', gap: '4px' }}>
+                <Zap size={10} fill="white" />
                 <div style={{ width: '12px', height: '6px', border: '1px solid white', borderRadius: '2px' }}></div>
               </div>
             </div>
 
-            {/* DM Header */}
-            <div style={{ padding: '20px 20px 10px', display: 'flex', alignItems: 'center', gap: '15px', borderBottom: '1px solid #1a1a1a' }}>
-              <ChevronLeft size={20} color="white" />
-              <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#333' }}></div>
-              <div style={{ flex: 1 }}>
-                <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '800' }}>User</div>
-                <div style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>Active now</div>
+            {/* Instagram Header */}
+            <div style={{ padding: '20px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #1a1a1a' }}>
+              <ArrowLeft size={18} color="white" />
+              <div style={{ 
+                width: '30px', 
+                height: '30px', 
+                borderRadius: '50%', 
+                background: user?.profilePhoto 
+                  ? (user.profilePhoto.startsWith('http') ? `url(${user.profilePhoto})` : `url(${API_BASE_URL}/${user.profilePhoto})`)
+                  : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                border: '1px solid #1a1a1a',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.7rem',
+                fontWeight: '800',
+                color: 'white',
+                flexShrink: 0
+              }}>
+                {!user?.profilePhoto && user?.username?.charAt(0).toUpperCase()}
+              </div>
+              <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '700' }}>
+                {channel === 'facebook' 
+                  ? (connectedSettings?.connectedFacebookName || 'Facebook Page')
+                  : (connectedSettings?.connectedInstagramName || user?.username || 'Instagram Account')
+                }
               </div>
             </div>
 
-            {/* Chat Messages */}
-            <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', height: '400px' }}>
+            {/* Chat Area Wrapper */}
+            <div style={{ position: 'relative', height: '480px', overflow: 'hidden' }}>
+              <div style={{ 
+                height: '100%', 
+                background: 'linear-gradient(to bottom, #000000, #1a1a1a)', 
+                display: 'flex', 
+                flexDirection: 'column' 
+              }}>
+                {/* DM Header */}
+                <div style={{ padding: '40px 20px 10px', display: 'flex', alignItems: 'center', gap: '15px', borderBottom: '1px solid #1a1a1a' }}>
+                  <ChevronLeft size={20} color="white" />
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#333' }}></div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '800' }}>User</div>
+                    <div style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>Active now</div>
+                  </div>
+                </div>
+
+                {/* Chat Messages */}
+                <div style={{ 
+                  flex: 1, 
+                  padding: '20px', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: '16px',
+                  overflowY: 'auto'
+                }}>
+                  {/* User Keyword Message */}
+                  {(keywords.length > 0 || anyKeyword) && (
+                    <div style={{ 
+                      alignSelf: 'flex-end', 
+                      maxWidth: '75%', 
+                      background: '#7c3aed', 
+                      color: 'white', 
+                      padding: '10px 16px', 
+                      borderRadius: '18px 18px 4px 18px', 
+                      fontSize: '0.85rem', 
+                      lineHeight: '1.4' 
+                    }}>
+                      {anyKeyword ? "Hey, I saw your post!" : keywords[0]}
+                    </div>
+                  )}
+
+                  {/* AI Response Card (Generic Template) */}
               {message && (
                 <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
                   <div style={{ background: 'white', borderRadius: '18px 18px 18px 4px', border: '1px solid #e2e8f0', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
@@ -259,15 +342,26 @@ export default function DmAutomationEditor() {
               )}
             </div>
 
-            {/* DM Bottom Bar */}
-            <div style={{ padding: '12px 16px 30px', background: '#000', display: 'flex', alignItems: 'center', gap: '12px', borderTop: '1px solid #1a1a1a', position: 'absolute', bottom: 0, width: '100%' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#0095f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Camera size={18} color="white" />
+                {/* DM Bottom Bar */}
+                <div style={{ 
+                  padding: '12px 16px 30px', 
+                  background: '#000', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '12px',
+                  borderTop: '1px solid #1a1a1a'
+                }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#0095f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Camera size={18} color="white" />
+                  </div>
+                  <div style={{ flex: 1, background: '#121212', border: '1px solid #333', borderRadius: '20px', padding: '8px 16px', color: '#8e8e8e', fontSize: '0.85rem' }}>
+                    Message...
+                  </div>
+                  <ImageIcon size={20} color="white" />
+                  <Mic size={20} color="white" />
+                  <PlusCircle size={20} color="white" />
+                </div>
               </div>
-              <div style={{ flex: 1, background: '#121212', border: '1px solid #333', borderRadius: '20px', padding: '8px 16px', color: '#8e8e8e', fontSize: '0.85rem' }}>Message...</div>
-              <ImageIcon size={20} color="white" />
-              <Mic size={20} color="white" />
-              <PlusCircle size={20} color="white" />
             </div>
           </div>
         </div>
