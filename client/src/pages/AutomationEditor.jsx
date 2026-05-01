@@ -410,15 +410,7 @@ export default function AutomationEditor() {
                     display: 'flex', 
                     flexDirection: 'column' 
                   }}>
-                {/* DM Header */}
-                <div style={{ padding: '40px 20px 10px', display: 'flex', alignItems: 'center', gap: '15px', borderBottom: '1px solid #1a1a1a' }}>
-                  <ChevronLeft size={20} color="white" />
-                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#333' }}></div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '800' }}>User</div>
-                    <div style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>Active now</div>
-                  </div>
-                </div>
+
 
                 {/* Chat Messages */}
                 <div style={{ 
