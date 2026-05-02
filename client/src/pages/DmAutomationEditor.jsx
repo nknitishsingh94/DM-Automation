@@ -31,7 +31,6 @@ export default function DmAutomationEditor() {
   const template = params.get('template') || 'all_dms';
 
   // State
-  const [anyKeyword, setAnyKeyword] = useState(false);
   const [keywords, setKeywords] = useState([]);
   const [keywordInput, setKeywordInput] = useState('');
   const [message, setMessage] = useState('');
@@ -130,8 +129,8 @@ export default function DmAutomationEditor() {
   };
 
   const handleCreate = async () => {
-    if (!anyKeyword && keywords.length === 0) {
-      notify('Please add at least one keyword or select "Any keyword"', 'error');
+    if (keywords.length === 0) {
+      notify('Please add at least one keyword', 'error');
       return;
     }
     if (!message.trim()) {
@@ -151,7 +150,7 @@ export default function DmAutomationEditor() {
         },
         body: JSON.stringify({
           name: name,
-          trigger: anyKeyword ? '*' : keywords.join(', '),
+          trigger: keywords.join(', '),
           response: message,
           buttons: buttons,
           postId: '',
@@ -162,9 +161,9 @@ export default function DmAutomationEditor() {
           openingMessage: openingMessage,
           openingMessageText: openingMessageText,
           openingMessageButton: openingMessageButton,
-          triggerOnDms: anyKeyword ? true : (template !== 'stories'),
-          triggerOnComments: anyKeyword ? true : false,
-          triggerOnStories: anyKeyword ? true : (template === 'stories'),
+          triggerOnDms: template !== 'stories',
+          triggerOnComments: false,
+          triggerOnStories: template === 'stories',
           status: 'Active'
         })
       });
@@ -290,7 +289,7 @@ export default function DmAutomationEditor() {
                   overflowY: 'auto'
                 }}>
                   {/* User Keyword Message */}
-                  {(keywords.length > 0 || anyKeyword) && (
+                  {keywords.length > 0 && (
                     <div style={{ 
                       alignSelf: 'flex-end', 
                       maxWidth: '75%', 
@@ -302,8 +301,8 @@ export default function DmAutomationEditor() {
                       lineHeight: '1.4' 
                     }}>
                       {template === 'stories' 
-                        ? (anyKeyword ? 'Replied to your story' : `Replied to your story: ${keywords[0]}`) 
-                        : (anyKeyword ? "Hey, I saw your post!" : keywords[0])}
+                        ? `Replied to your story: ${keywords[0]}` 
+                        : keywords[0]}
                     </div>
                   )}
 
@@ -413,24 +412,16 @@ export default function DmAutomationEditor() {
                 <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>2</div>
                 <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Setup Keywords</h3>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <span style={{ fontWeight: '700', color: '#475569' }}>Any keyword</span>
-                <div onClick={() => setAnyKeyword(!anyKeyword)} style={{ width: '40px', height: '22px', borderRadius: '11px', background: anyKeyword ? '#ef4444' : '#cbd5e1', position: 'relative', cursor: 'pointer' }}>
-                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: anyKeyword ? '21px' : '3px', transition: '0.3s' }}></div>
+              <div>
+                <input type="text" placeholder="Add Keyword & Press Enter" value={keywordInput} onChange={(e) => setKeywordInput(e.target.value)} onKeyDown={handleAddKeyword} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #cbd5e1', outline: 'none', marginBottom: '12px' }} />
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {keywords.map(kw => (
+                    <span key={kw} style={{ background: '#f1f5f9', padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {kw} <X size={14} onClick={() => removeKeyword(kw)} style={{ cursor: 'pointer' }} />
+                    </span>
+                  ))}
                 </div>
               </div>
-              {!anyKeyword && (
-                <div>
-                  <input type="text" placeholder="Add Keyword & Press Enter" value={keywordInput} onChange={(e) => setKeywordInput(e.target.value)} onKeyDown={handleAddKeyword} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #cbd5e1', outline: 'none', marginBottom: '12px' }} />
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {keywords.map(kw => (
-                      <span key={kw} style={{ background: '#f1f5f9', padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {kw} <X size={14} onClick={() => removeKeyword(kw)} style={{ cursor: 'pointer' }} />
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Step 3: Response */}
