@@ -73,7 +73,14 @@ const Toast = ({ message, type, onClose }) => {
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
+  const location = useLocation();
   if (!user) return <Navigate to="/login" />;
+
+  const isConnected = localStorage.getItem('insta_agent_connected') === 'true';
+  if (!isConnected && location.pathname !== '/onboarding' && location.pathname !== '/upgrade') {
+    return <Navigate to="/onboarding" />;
+  }
+
   return children;
 }
 

@@ -21,6 +21,20 @@ export function AuthProvider({ children }) {
     if (!token && user) {
       setUser(null);
     }
+    if (token) {
+      fetch(`${API_BASE_URL}/api/settings`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data && (data.isAccountConnected || data.isFacebookConnected)) {
+          localStorage.setItem('insta_agent_connected', 'true');
+        } else {
+          localStorage.removeItem('insta_agent_connected');
+        }
+      })
+      .catch(err => console.error("Settings load failed:", err));
+    }
   }, [user]);
 
   const login = (userData, token) => {
