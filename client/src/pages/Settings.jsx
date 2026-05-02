@@ -253,14 +253,14 @@ export default function Settings() {
                     type="button"
                     onClick={() => {
                       const token = localStorage.getItem('insta_agent_token');
-                      window.location.href = `${API_BASE_URL}/api/oauth/facebook?token=${token}`;
+                      window.location.href = `${API_BASE_URL}/api/oauth/facebook?connectType=instagram&token=${token}`;
                     }}
                     style={{ 
                       width: '100%', maxWidth: '300px', background: '#1877F2', color: 'white', border: 'none', borderRadius: '8px', 
                       padding: '14px', fontSize: '1rem', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
                       cursor: 'pointer', margin: '0 auto', boxShadow: '0 4px 14px rgba(24, 119, 242, 0.3)'
                     }}>
-                    <Facebook size={20} /> Continue with Facebook
+                    <Facebook size={20} /> Connect Instagram via Meta
                   </button>
                   <div style={{ marginTop: '16px', fontSize: '0.75rem', color: '#94a3b8' }}>
                     Requires Developer App ID & Secret inside .env
@@ -395,31 +395,61 @@ export default function Settings() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div className="input-group">
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                    <Key size={14} style={{ marginRight: '6px' }} /> Facebook Page Access Token
-                  </label>
-                  <input 
-                    type="password" placeholder="EAA..."
-                    value={settings.facebookAccessToken || ''}
-                    onChange={(e) => setSettings({...settings, facebookAccessToken: e.target.value})}
-                    style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                  />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                {/* 1-Click Connect Box */}
+                <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px', textAlign: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.02)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '8px', color: '#1e293b' }}>Fast Connection</h3>
+                  <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '20px' }}>Securely connect your Meta accounts in one click.</p>
+                  
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      const token = localStorage.getItem('insta_agent_token');
+                      window.location.href = `${API_BASE_URL}/api/oauth/facebook?connectType=facebook&token=${token}`;
+                    }}
+                    style={{ 
+                      width: '100%', maxWidth: '300px', background: '#1877F2', color: 'white', border: 'none', borderRadius: '8px', 
+                      padding: '14px', fontSize: '1rem', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                      cursor: 'pointer', margin: '0 auto', boxShadow: '0 4px 14px rgba(24, 119, 242, 0.3)'
+                    }}>
+                    <Facebook size={20} /> Connect Facebook via Meta
+                  </button>
+                  <div style={{ marginTop: '16px', fontSize: '0.75rem', color: '#94a3b8' }}>
+                    Requires Developer App ID & Secret inside .env
+                  </div>
                 </div>
-                <div className="input-group">
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
-                    <MapPin size={14} style={{ marginRight: '6px' }} /> Facebook Page ID
-                  </label>
-                  <input 
-                    type="text" placeholder="123456789..."
-                    value={settings.facebookPageId || ''}
-                    onChange={(e) => setSettings({...settings, facebookPageId: e.target.value})}
-                    style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                  />
+
+                <div style={{ position: 'relative', textAlign: 'center' }}>
+                  <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', height: '1px', background: '#e2e8f0', zIndex: 0 }}></div>
+                  <span style={{ position: 'relative', background: '#ffffff', padding: '0 16px', color: '#94a3b8', fontSize: '0.85rem', fontWeight: '600', zIndex: 1 }}>OR ENTER MANUALLY</span>
                 </div>
-                <SaveButton savingSettings={savingSettings} message={message} />
-              </form>
+
+                <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
+                      <Key size={14} style={{ marginRight: '6px' }} /> Facebook Page Access Token
+                    </label>
+                    <input 
+                      type="password" placeholder="EAA..."
+                      value={settings.facebookAccessToken || ''}
+                      onChange={(e) => setSettings({...settings, facebookAccessToken: e.target.value})}
+                      style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.9rem' }}>
+                      <MapPin size={14} style={{ marginRight: '6px' }} /> Facebook Page ID
+                    </label>
+                    <input 
+                      type="text" placeholder="123456789..."
+                      value={settings.facebookPageId || ''}
+                      onChange={(e) => setSettings({...settings, facebookPageId: e.target.value})}
+                      style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                    />
+                  </div>
+                  <SaveButton savingSettings={savingSettings} message={message} />
+                </form>
+              </div>
             )}
           </>
         )}

@@ -201,9 +201,13 @@ export default function Onboarding() {
     setStep(prev => Math.min(prev + 1, 3));
   };
 
-  const handleConnectMeta = () => {
+  const handleConnectMeta = (connectType = '') => {
     const token = localStorage.getItem('insta_agent_token');
-    window.location.href = `${API_BASE_URL}/api/oauth/facebook?onboarding=true&token=${token}`;
+    let url = `${API_BASE_URL}/api/oauth/facebook?onboarding=true&token=${token}`;
+    if (connectType) {
+      url += `&connectType=${connectType}`;
+    }
+    window.location.href = url;
   };
 
   const handleCompleteSetup = () => {
@@ -301,8 +305,11 @@ export default function Onboarding() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <button className="onboarding-btn meta" onClick={handleConnectMeta}>
-                  <Sparkles size={18} /> Link Account via Meta
+                <button className="onboarding-btn meta" style={{ background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)' }} onClick={() => handleConnectMeta('instagram')}>
+                  <Sparkles size={18} /> Connect Instagram via Meta
+                </button>
+                <button className="onboarding-btn meta" style={{ background: '#1877f2' }} onClick={() => handleConnectMeta('facebook')}>
+                  <Sparkles size={18} /> Connect Facebook via Meta
                 </button>
                 <button 
                   onClick={handleNextStep}

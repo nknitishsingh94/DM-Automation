@@ -22,7 +22,7 @@ router.get('/facebook', verifyToken, (req, res) => {
 
   const redirectUri = encodeURIComponent(`${baseUrl}/api/oauth/facebook/callback`);
   const scope = 'instagram_basic,instagram_manage_messages,pages_show_list,pages_manage_metadata,pages_messaging,whatsapp_business_management,whatsapp_business_messaging,business_management';
-  const state = req.user.userId + (req.query.onboarding === 'true' ? '_onboarding' : '');
+  const state = req.user.userId + (req.query.onboarding === 'true' ? '_onboarding' : '') + (req.query.connectType ? `_${req.query.connectType}` : '');
 
   if (!appId) {
     return res.status(500).json({ error: "Missing META_APP_ID in environment variables" });
@@ -37,8 +37,10 @@ router.get('/facebook/callback', async (req, res) => {
   const { code, state, error } = req.query;
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
 
-  const isFromOnboarding = state && state.endsWith('_onboarding');
-  const userId = isFromOnboarding ? state.replace('_onboarding', '') : state;
+  const isFromOnboarding = state && state.includes('_onboarding');
+  const isInstagram = state && state.includes('_instagram');
+  const isFacebook = state && state.includes('_facebook');
+  let userId = state ? state.replace('_onboarding', '').replace('_instagram', '').replace('_facebook', '') : '';
 
   if (error) {
     console.error("OAuth Error:", error);
@@ -185,25 +187,47 @@ router.get('/facebook/callback', async (req, res) => {
     }
 
     // 5. Save to Database
+    const updateData = { lastTestedAt: new Date() };
+
+    if (!isInstagram && !isFacebook) {
+      updateData.instagramAccessToken = pageAccessToken;
+      updateData.facebookAccessToken = pageAccessToken;
+      updateData.instagramPageId = pageId;
+      updateData.businessAccountId = businessAccountId;
+      updateData.facebookPageId = pageId;
+      updateData.isAccountConnected = !!businessAccountId;
+      updateData.isFacebookConnected = !!pageId;
+      updateData.connectedInstagramName = accountName;
+      updateData.connectedFacebookName = accountName;
+    } else {
+      if (isInstagram) {
+        updateData.instagramAccessToken = pageAccessToken;
+        updateData.instagramPageId = pageId;
+        updateData.businessAccountId = businessAccountId;
+        updateData.isAccountConnected = !!businessAccountId;
+        updateData.connectedInstagramName = accountName;
+      }
+      if (isFacebook) {
+        updateData.facebookAccessToken = pageAccessToken;
+        updateData.facebookPageId = pageId;
+        updateData.isFacebookConnected = !!pageId;
+        updateData.connectedFacebookName = accountName;
+      }
+    }
+
+    if (whatsappPhoneId) {
+      updateData.whatsappToken = longToken;
+      updateData.whatsappPhoneNumberId = whatsappPhoneId;
+      updateData.isWhatsAppConnected = !!whatsappPhoneId;
+      updateData.connectedWhatsAppName = whatsappName;
+    }
+    if (whatsappDiscoveryError) {
+      updateData.whatsappError = whatsappDiscoveryError;
+    }
+
     const updatedSettings = await Settings.findOneAndUpdate(
       { userId: userId },
-      {
-        instagramAccessToken: pageAccessToken, // ✅ Page token for Instagram Messaging API
-        facebookAccessToken: pageAccessToken,  // ✅ Page token for Facebook Messaging API
-        whatsappToken: whatsappPhoneId ? longToken : "",
-        instagramPageId: pageId,
-        businessAccountId: businessAccountId,
-        facebookPageId: pageId,
-        whatsappPhoneNumberId: whatsappPhoneId,
-        isAccountConnected: !!businessAccountId,
-        isFacebookConnected: !!pageId,
-        isWhatsAppConnected: !!whatsappPhoneId,
-        connectedInstagramName: accountName,
-        connectedFacebookName: accountName,
-        connectedWhatsAppName: whatsappName,
-        whatsappError: whatsappDiscoveryError,
-        lastTestedAt: new Date()
-      },
+      updateData,
       { upsert: true, new: true }
     );
 
