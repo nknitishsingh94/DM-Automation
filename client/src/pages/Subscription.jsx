@@ -176,7 +176,7 @@ export default function Subscription() {
               <button className="pricing-btn outline-btn" onClick={() => handleSelectPlan('Pro')}>
                 Contact Sales
               </button>
-            </div>
+            </div> 
           </div>
         </div>
       </section>
