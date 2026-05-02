@@ -1179,6 +1179,21 @@ app.post('/api/settings', verifyToken, async (req, res) => {
       data,
       { upsert: true, new: true }
     );
+});
+
+app.post('/api/settings/whatsapp/connect-qr', verifyToken, async (req, res) => {
+  try {
+    const settings = await Settings.findOneAndUpdate(
+      { userId: req.user.userId },
+      { 
+        isWhatsAppConnected: true,
+        connectedWhatsAppName: 'WhatsApp QR Connected',
+        whatsappToken: 'mock_qr_token',
+        whatsappPhoneNumberId: 'mock_qr_id',
+        lastTestedAt: new Date()
+      },
+      { upsert: true, new: true }
+    );
     res.json(settings);
   } catch (err) {
     res.status(500).json({ error: err.message });

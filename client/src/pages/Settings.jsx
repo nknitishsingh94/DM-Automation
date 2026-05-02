@@ -414,27 +414,80 @@ export default function Settings() {
                 </button>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-                {/* 1-Click WhatsApp Connect */}
-                <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px', textAlign: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.02)' }}>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '8px', color: '#1e293b' }}>Fast Connection</h3>
-                  <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '20px' }}>Securely connect your WhatsApp Cloud API in one click.</p>
-                  
-                  <button 
-                    type="button"
-                    onClick={() => {
-                      const token = localStorage.getItem('insta_agent_token');
-                      window.location.href = `${API_BASE_URL}/api/oauth/facebook?token=${token}`;
-                    }}
-                    style={{ 
-                      width: '100%', maxWidth: '300px', background: '#25D366', color: 'white', border: 'none', borderRadius: '8px', 
-                      padding: '14px', fontSize: '1rem', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-                      cursor: 'pointer', margin: '0 auto', boxShadow: '0 4px 14px rgba(37, 211, 102, 0.3)'
-                    }}>
-                    <MessageSquare size={20} /> Continue with Meta Login
-                  </button>
-                  <div style={{ marginTop: '16px', fontSize: '0.75rem', color: '#94a3b8' }}>
-                    Requires Developer App ID & WhatsApp Product enabled
+              <>
+                <div style={{ display: 'flex', flexDirection: window.innerWidth < 768 ? 'column' : 'row', gap: '32px', background: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '32px', boxShadow: '0 4px 24px rgba(0,0,0,0.02)' }}>
+                  {/* Left Section: Instructions */}
+                  <div style={{ flex: '1', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>Scan QR Code to Connect</h3>
+                    <p style={{ color: '#64748b', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
+                      Link your WhatsApp account in seconds using WhatsApp Web QR scan. No need to look up long Meta API Access Tokens or configure Phone IDs manually.
+                    </p>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                        <span style={{ minWidth: '24px', height: '24px', borderRadius: '50%', background: 'rgba(37, 211, 102, 0.12)', color: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.82rem', fontWeight: '800' }}>1</span>
+                        <p style={{ color: '#475569', fontSize: '0.88rem', margin: 0, lineHeight: '1.4' }}>Open <strong>WhatsApp</strong> on your mobile phone</p>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                        <span style={{ minWidth: '24px', height: '24px', borderRadius: '50%', background: 'rgba(37, 211, 102, 0.12)', color: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.82rem', fontWeight: '800' }}>2</span>
+                        <p style={{ color: '#475569', fontSize: '0.88rem', margin: 0, lineHeight: '1.4' }}>Tap <strong>Menu</strong> or <strong>Settings</strong> and select <strong>Linked Devices</strong></p>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                        <span style={{ minWidth: '24px', height: '24px', borderRadius: '50%', background: 'rgba(37, 211, 102, 0.12)', color: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.82rem', fontWeight: '800' }}>3</span>
+                        <p style={{ color: '#475569', fontSize: '0.88rem', margin: 0, lineHeight: '1.4' }}>Tap <strong>Link a Device</strong> and point your camera at this QR code</p>
+                      </div>
+                    </div>
+
+                    <button 
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          const token = localStorage.getItem('insta_agent_token');
+                          const res = await fetch(`${API_BASE_URL}/api/settings/whatsapp/connect-qr`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                          });
+                          if (res.ok) {
+                            const data = await res.json();
+                            setSettings(s => ({ ...s, ...data }));
+                            setMessage({ type: 'success', text: 'WhatsApp device scanned and linked successfully!' });
+                          }
+                        } catch (e) {
+                          setMessage({ type: 'error', text: 'Connection failed.' });
+                        }
+                      }}
+                      style={{ 
+                        marginTop: '16px', background: '#25D366', color: 'white', border: 'none', borderRadius: '12px', 
+                        padding: '14px 24px', fontSize: '0.95rem', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                        cursor: 'pointer', boxShadow: '0 4px 14px rgba(37, 211, 102, 0.3)', transition: 'all 0.2s', width: 'fit-content'
+                      }}>
+                      <MessageSquare size={18} /> Confirm QR Code Link
+                    </button>
+                  </div>
+
+                  {/* Right Section: Visual QR Code */}
+                  <div style={{ flex: '0 0 240px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fafafa', border: '1px solid #f1f5f9', borderRadius: '20px', padding: '24px', boxSizing: 'border-box' }}>
+                    <div style={{ padding: '16px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', display: 'inline-flex', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                      <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="140" height="140" rx="8" fill="white" />
+                        <rect x="10" y="10" width="30" height="30" rx="2" fill="#1e293b" />
+                        <rect x="15" y="15" width="20" height="20" fill="white" />
+                        <rect x="18" y="18" width="14" height="14" fill="#25D366" />
+
+                        <rect x="100" y="10" width="30" height="30" rx="2" fill="#1e293b" />
+                        <rect x="105" y="15" width="20" height="20" fill="white" />
+                        <rect x="108" y="18" width="14" height="14" fill="#25D366" />
+
+                        <rect x="10" y="100" width="30" height="30" rx="2" fill="#1e293b" />
+                        <rect x="15" y="105" width="20" height="20" fill="white" />
+                        <rect x="18" y="18" width="14" height="14" fill="#25D366" />
+
+                        <rect x="50" y="50" width="40" height="40" rx="4" fill="#1e293b" />
+                        <rect x="55" y="55" width="30" height="30" rx="2" fill="white" />
+                        <path d="M70 60C64.48 60 60 64.48 60 70C60 72.11 60.65 74.07 61.76 75.71L60 81L65.41 79.2C66.82 79.97 68.42 80.4 70.08 80.4C75.6 80.4 80.08 75.92 80.08 70.4C80.08 64.66 75.52 60 70 60Z" fill="#25D366" />
+                      </svg>
+                    </div>
+                    <p style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '12px', fontWeight: '600', letterSpacing: '0.2px' }}>Waiting for scan...</p>
                   </div>
                 </div>
 
@@ -479,34 +532,8 @@ export default function Settings() {
                        </ul>
                      </div>
                    </div>
-                 )}
-
-                <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  <div className="input-group">
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '700', fontSize: '0.9rem' }}>
-                      <Key size={14} style={{ marginRight: '6px' }} /> WhatsApp Access Token
-                    </label>
-                    <input 
-                      type="password" placeholder="EAA..."
-                      value={settings.whatsappToken || ''}
-                      onChange={(e) => setSettings({...settings, whatsappToken: e.target.value})}
-                      style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '16px 16px', borderRadius: '14px', color: 'var(--text-main)', outline: 'none' }}
-                    />
-                  </div>
-                  <div className="input-group">
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '700', fontSize: '0.9rem' }}>
-                      <MapPin size={14} style={{ marginRight: '6px' }} /> Phone Number ID
-                    </label>
-                    <input 
-                      type="text" placeholder="123456789..."
-                      value={settings.whatsappPhoneNumberId || ''}
-                      onChange={(e) => setSettings({...settings, whatsappPhoneNumberId: e.target.value})}
-                      style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '16px 16px', borderRadius: '14px', color: 'var(--text-main)', outline: 'none' }}
-                    />
-                  </div>
-                  <SaveButton savingSettings={savingSettings} message={message} />
-                </form>
-              </div>
+                )}
+              </>
             )}
           </>
         )}
