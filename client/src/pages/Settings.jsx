@@ -30,8 +30,24 @@ export default function Settings() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [whatsappQrUrl, setWhatsappQrUrl] = useState('');
 
   const { notify } = useNotification();
+
+  useEffect(() => {
+    if (activeTab === 'whatsapp' && !settings.isWhatsAppConnected) {
+      const token = localStorage.getItem('insta_agent_token');
+      fetch(`${API_BASE_URL}/api/config/api-base-url`).then(r => r.json()).catch(() => {}); // optional
+      fetch(`${API_BASE_URL}/api/settings/whatsapp/qr`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.qrUrl) setWhatsappQrUrl(data.qrUrl);
+      })
+      .catch(err => console.error("Error loading QR:", err));
+    }
+  }, [activeTab, settings.isWhatsAppConnected]);
 
   useEffect(() => {
     const token = localStorage.getItem('insta_agent_token');
@@ -467,25 +483,29 @@ export default function Settings() {
 
                   {/* Right Section: Visual QR Code */}
                   <div style={{ flex: '0 0 240px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fafafa', border: '1px solid #f1f5f9', borderRadius: '20px', padding: '24px', boxSizing: 'border-box' }}>
-                    <div style={{ padding: '16px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', display: 'inline-flex', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-                      <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="140" height="140" rx="8" fill="white" />
-                        <rect x="10" y="10" width="30" height="30" rx="2" fill="#1e293b" />
-                        <rect x="15" y="15" width="20" height="20" fill="white" />
-                        <rect x="18" y="18" width="14" height="14" fill="#25D366" />
+                    <div style={{ padding: '16px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', display: 'inline-flex', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', minHeight: '172px', minWidth: '172px', alignItems: 'center', justifyContent: 'center' }}>
+                      {whatsappQrUrl ? (
+                        <img src={whatsappQrUrl} alt="WhatsApp QR Code" style={{ width: '140px', height: '140px', display: 'block' }} />
+                      ) : (
+                        <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect width="140" height="140" rx="8" fill="white" />
+                          <rect x="10" y="10" width="30" height="30" rx="2" fill="#1e293b" />
+                          <rect x="15" y="15" width="20" height="20" fill="white" />
+                          <rect x="18" y="18" width="14" height="14" fill="#25D366" />
 
-                        <rect x="100" y="10" width="30" height="30" rx="2" fill="#1e293b" />
-                        <rect x="105" y="15" width="20" height="20" fill="white" />
-                        <rect x="108" y="18" width="14" height="14" fill="#25D366" />
+                          <rect x="100" y="10" width="30" height="30" rx="2" fill="#1e293b" />
+                          <rect x="105" y="15" width="20" height="20" fill="white" />
+                          <rect x="108" y="18" width="14" height="14" fill="#25D366" />
 
-                        <rect x="10" y="100" width="30" height="30" rx="2" fill="#1e293b" />
-                        <rect x="15" y="105" width="20" height="20" fill="white" />
-                        <rect x="18" y="18" width="14" height="14" fill="#25D366" />
+                          <rect x="10" y="100" width="30" height="30" rx="2" fill="#1e293b" />
+                          <rect x="15" y="105" width="20" height="20" fill="white" />
+                          <rect x="18" y="18" width="14" height="14" fill="#25D366" />
 
-                        <rect x="50" y="50" width="40" height="40" rx="4" fill="#1e293b" />
-                        <rect x="55" y="55" width="30" height="30" rx="2" fill="white" />
-                        <path d="M70 60C64.48 60 60 64.48 60 70C60 72.11 60.65 74.07 61.76 75.71L60 81L65.41 79.2C66.82 79.97 68.42 80.4 70.08 80.4C75.6 80.4 80.08 75.92 80.08 70.4C80.08 64.66 75.52 60 70 60Z" fill="#25D366" />
-                      </svg>
+                          <rect x="50" y="50" width="40" height="40" rx="4" fill="#1e293b" />
+                          <rect x="55" y="55" width="30" height="30" rx="2" fill="white" />
+                          <path d="M70 60C64.48 60 60 64.48 60 70C60 72.11 60.65 74.07 61.76 75.71L60 81L65.41 79.2C66.82 79.97 68.42 80.4 70.08 80.4C75.6 80.4 80.08 75.92 80.08 70.4C80.08 64.66 75.52 60 70 60Z" fill="#25D366" />
+                        </svg>
+                      )}
                     </div>
                     <p style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '12px', fontWeight: '600', letterSpacing: '0.2px' }}>Waiting for scan...</p>
                   </div>
