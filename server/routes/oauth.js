@@ -22,7 +22,7 @@ router.get('/facebook', verifyToken, (req, res) => {
 
   const redirectUri = encodeURIComponent(`${baseUrl}/api/oauth/facebook/callback`);
   const scope = 'instagram_basic,instagram_manage_messages,pages_show_list,pages_manage_metadata,pages_messaging,whatsapp_business_management,whatsapp_business_messaging,business_management';
-  const state = req.user.userId;
+  const state = req.user.userId + (req.query.onboarding === 'true' ? '_onboarding' : '');
 
   if (!appId) {
     return res.status(500).json({ error: "Missing META_APP_ID in environment variables" });
@@ -37,16 +37,17 @@ router.get('/facebook/callback', async (req, res) => {
   const { code, state, error } = req.query;
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
 
+  const isFromOnboarding = state && state.endsWith('_onboarding');
+  const userId = isFromOnboarding ? state.replace('_onboarding', '') : state;
+
   if (error) {
     console.error("OAuth Error:", error);
-    return res.redirect(`${frontendUrl}/settings?oauth_error=declined`);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=declined`);
   }
 
   if (!code || !state) {
-    return res.redirect(`${frontendUrl}/settings?oauth_error=missing_parameters`);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=missing_parameters`);
   }
-
-  const userId = state;
 
   try {
     const appId = process.env.META_APP_ID;
@@ -207,11 +208,19 @@ router.get('/facebook/callback', async (req, res) => {
     );
 
     console.log(`✅ OAuth Success: Linked Pages for user ${userId}. Page Token prefix: ${pageAccessToken.substring(0, 10)}...`);
-    res.redirect(`${frontendUrl}/settings?oauth_success=true`);
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_success=true`);
+    } else {
+      res.redirect(`${frontendUrl}/settings?oauth_success=true`);
+    }
 
   } catch (err) {
     console.error("OAuth Exchange Failed:", err.response?.data || err.message);
-    res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
+    } else {
+      res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
+    }
   }
 });
 

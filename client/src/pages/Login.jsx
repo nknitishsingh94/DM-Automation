@@ -407,7 +407,7 @@ export default function Login() {
       const data = await res.json();
       if (res.ok) {
         login(data.user, data.token);
-        navigate('/dashboard');
+        navigate('/onboarding');
       } else {
         setError(data.message || 'Login failed');
       }
@@ -428,7 +428,7 @@ export default function Login() {
       try {
         const user = JSON.parse(decodeURIComponent(userData));
         login(user, magicToken);
-        navigate('/dashboard');
+        navigate('/onboarding');
       } catch (err) {
         console.error("Magic Login Failed:", err);
       }
@@ -479,7 +479,7 @@ export default function Login() {
         body: JSON.stringify({ token: response.credential, mode: 'login' })
       });
       const data = await res.json();
-      if (res.ok) { login(data.user, data.token); navigate('/dashboard'); }
+      if (res.ok) { login(data.user, data.token); navigate('/onboarding'); }
       else { setError(data.message || 'Google login failed'); }
     } catch (err) {
       console.error("Google Auth Error:", err);
@@ -508,7 +508,7 @@ export default function Login() {
         body: JSON.stringify({ accessToken: authResponse.accessToken, userId: authResponse.userID, mode: 'login' })
       });
       const data = await res.json();
-      if (res.ok) { login(data.user, data.token); navigate('/dashboard'); }
+      if (res.ok) { login(data.user, data.token); navigate('/onboarding'); }
       else { setError(data.message || 'Facebook login failed'); }
     } catch (err) {
       console.error("Facebook Auth Error:", err);

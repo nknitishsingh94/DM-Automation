@@ -53,6 +53,7 @@ const ChannelSelector = lazyRetry(() => import('./pages/ChannelSelector'));
 const TemplateSelector = lazyRetry(() => import('./pages/TemplateSelector'));
 const AutomationEditor = lazyRetry(() => import('./pages/AutomationEditor'));
 const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'));
+const Onboarding = lazyRetry(() => import('./pages/Onboarding'));
 
 const NotificationContext = createContext();
 export const useNotification = () => useContext(NotificationContext);
@@ -336,12 +337,13 @@ function MainLayout() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isPublic = ['/', '/login', '/signup', '/help', '/about', '/resources', '/blog'].includes(location.pathname) || location.pathname.startsWith('/blog/');
+  const hideSidebar = isPublic || location.pathname === '/onboarding';
 
   return (
     <div className="app-container" style={{ height: '100%', width: '100%', position: 'fixed', top: 0, left: 0 }}>
-      {user && !isPublic && <Sidebar isMobileOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />}
+      {user && !hideSidebar && <Sidebar isMobileOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />}
       <main className="main-content">
-        {!isPublic && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
+        {!hideSidebar && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
         <div className="page-container" style={{ 
           padding: (isPublic || location.pathname === '/inbox') ? '0' : undefined,
           overflow: (location.pathname === '/inbox') ? 'hidden' : 'auto',
@@ -356,6 +358,7 @@ function MainLayout() {
             <Routes>
               <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
               <Route path="/campaign-builder/new" element={<ProtectedRoute><CampaignBuilder /></ProtectedRoute>} />
