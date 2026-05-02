@@ -241,6 +241,11 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       const openingSent = await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, btnText, activeToken, [], payload);
       
       if (openingSent) {
+        if (source === 'comment' && commentId) {
+          console.log(`💬 Sending CUSTOM public comment reply to ${commentId} (Opening Message)`);
+          const replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
+          await sendPublicComment(platform, commentId, replyText, userId, activeToken);
+        }
         console.log(`⏳ Flow paused. Waiting for user to click "${btnText}" with payload: ${payload}`);
         return { opening_message_sent: true };
       } else {
