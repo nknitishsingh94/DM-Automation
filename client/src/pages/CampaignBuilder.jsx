@@ -186,7 +186,7 @@ export default function CampaignBuilder() {
                       required
                       value={newCamp.trigger}
                       onChange={(e) => setNewCamp({...newCamp, trigger: e.target.value})}
-                      placeholder="e.g. SEND LINK"
+                      placeholder="e.g. SEND LINK (or type * for Any Message)"
                       style={{ width: '100%', padding: '14px', background: '#f8fafc', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '10px', outline: 'none', fontSize: '1rem', textTransform: 'uppercase' }}
                     />
                   </div>

@@ -162,9 +162,9 @@ export default function DmAutomationEditor() {
           openingMessage: openingMessage,
           openingMessageText: openingMessageText,
           openingMessageButton: openingMessageButton,
-          triggerOnDms: template !== 'stories',
-          triggerOnComments: false,
-          triggerOnStories: template === 'stories',
+          triggerOnDms: anyKeyword ? true : (template !== 'stories'),
+          triggerOnComments: anyKeyword ? true : false,
+          triggerOnStories: anyKeyword ? true : (template === 'stories'),
           status: 'Active'
         })
       });
