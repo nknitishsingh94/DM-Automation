@@ -885,10 +885,10 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
 
 app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
-    const { status } = req.body;
+    const updateData = { ...req.body };
     const campaign = await Campaign.findOneAndUpdate(
       { _id: req.params.id, userId: new mongoose.Types.ObjectId(req.user.userId) },
-      { status },
+      { $set: updateData },
       { new: true }
     );
     res.json(campaign);

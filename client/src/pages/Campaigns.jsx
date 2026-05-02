@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, Plus, Trash2, Power, MessageCircle, AlertCircle, CheckCircle, Video, Link as LinkIcon, History, X, Crown } from 'lucide-react';
+import { Zap, Plus, Trash2, Power, MessageCircle, AlertCircle, CheckCircle, Video, Link as LinkIcon, History, X, Crown, Edit2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
@@ -24,6 +24,11 @@ export default function Campaigns() {
     requireFollow: false,
     unfollowedResponse: 'Please follow our account first to get a reply!'
   });
+  
+  // Edit State
+  const [editingCampaign, setEditingCampaign] = useState(null);
+  const [editForm, setEditForm] = useState({ name: '', trigger: '', response: '', linkUrl: '', buttonText: '' });
+
   const [message, setMessage] = useState({ type: '', text: '' });
   const [submitting, setSubmitting] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
@@ -198,6 +203,30 @@ export default function Campaigns() {
     } catch (err) {
       console.error("Error toggling status:", err);
       fetchCampaigns(); // Reset to server state
+    }
+  };
+
+  const handleEditSave = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('insta_agent_token');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/campaigns/${editingCampaign._id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(editForm)
+      });
+      if (res.ok) {
+        notify("Campaign updated successfully!", "success");
+        setEditingCampaign(null);
+        fetchCampaigns();
+      } else {
+        notify("Failed to update campaign", "error");
+      }
+    } catch (err) {
+      notify("Connection error during update", "error");
     }
   };
 
@@ -425,6 +454,21 @@ export default function Campaigns() {
                     {campaign.status === 'Active' ? 'Pause' : 'Activate'}
                   </button>
                   <button 
+                    onClick={() => {
+                      setEditingCampaign(campaign);
+                      setEditForm({
+                        name: campaign.name || '',
+                        trigger: campaign.trigger || '',
+                        response: campaign.response || '',
+                        linkUrl: campaign.linkUrl || '',
+                        buttonText: campaign.buttonText || ''
+                      });
+                    }}
+                    style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6', cursor: 'pointer' }}
+                  >
+                    <Edit2 size={18} />
+                  </button>
+                  <button 
                     onClick={() => viewLogs(campaign)}
                     style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', cursor: 'pointer' }}
                   >
@@ -596,6 +640,64 @@ export default function Campaigns() {
           </div>
         </div>
       )}
+
+      {/* Quick Edit Modal */}
+      {editingCampaign && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
+          <div style={{ background: 'white', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, color: '#1e1b4b' }}>Edit Campaign</h3>
+              <button onClick={() => setEditingCampaign(null)} style={{ background: '#f1f5f9', border: 'none', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
+                <X size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleEditSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Campaign Name</label>
+                <input 
+                  type="text" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})}
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Trigger Keyword</label>
+                <input 
+                  type="text" value={editForm.trigger} onChange={e => setEditForm({...editForm, trigger: e.target.value})}
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Bot Response Message</label>
+                <textarea 
+                  value={editForm.response} onChange={e => setEditForm({...editForm, response: e.target.value})}
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', minHeight: '100px', resize: 'vertical' }} required
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Button Text (Optional)</label>
+                  <input 
+                    type="text" value={editForm.buttonText} onChange={e => setEditForm({...editForm, buttonText: e.target.value})}
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Link URL (Optional)</label>
+                  <input 
+                    type="url" value={editForm.linkUrl} onChange={e => setEditForm({...editForm, linkUrl: e.target.value})}
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}
+                  />
+                </div>
+              </div>
+              <button type="submit" style={{ marginTop: '16px', padding: '14px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>
+                Save Changes
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
