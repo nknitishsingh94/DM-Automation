@@ -20,8 +20,8 @@ export default function Landing() {
         <div className="header-content">
           <div className="header-left">
             <div className="header-logo">
-              <img src="/zenxchat-logo.png" alt="ZenXchat Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
-              <span className="logo-text">ZenXchat</span>
+              <img src="/zenxchat-logo.png" alt="smart10X Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
+              <span className="logo-text">smart10X</span>
             </div>
             <div className="header-divider"></div>
             <nav className="header-nav">
@@ -83,7 +83,7 @@ export default function Landing() {
             <span className="feature-focus-label">Core Capabilities</span>
             <h2>Turn Engagement Into Revenue</h2>
             <p className="feature-focus-description">
-              Stop losing leads to slow response times. Let ZenXchat handle every interaction seamlessly, converting your audience while you sleep.
+              Stop losing leads to slow response times. Let smart10X handle every interaction seamlessly, converting your audience while you sleep.
             </p>
           </div>
 

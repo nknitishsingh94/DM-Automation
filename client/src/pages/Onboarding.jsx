@@ -333,7 +333,7 @@ export default function Onboarding() {
                 </svg>
                 <div>
                   <p style={{ fontWeight: '700', color: '#1e293b', margin: 0, fontSize: '0.9rem' }}>Meta Tech Provider</p>
-                  <p style={{ fontSize: '0.78rem', color: '#64748b', margin: 0 }}>ZenXchat has been certified by Meta as an AI partner</p>
+                  <p style={{ fontSize: '0.78rem', color: '#64748b', margin: 0 }}>smart10X has been certified by Meta as an AI partner</p>
                 </div>
               </div>
             </div>
