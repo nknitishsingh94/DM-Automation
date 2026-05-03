@@ -232,7 +232,7 @@ export default function Onboarding() {
 
             {/* Footer Disclaimer */}
             <p style={{ fontSize: '0.74rem', color: '#64748b', lineHeight: '1.45', textAlign: 'center', marginBottom: '24px', padding: '0 8px' }}>
-              By allowing, Zorcha-IG will receive ongoing access to your information and Instagram will record when Zorcha-IG accesses it. <span style={{ color: '#0066cc', cursor: 'pointer' }}>Learn More</span> about this sharing and the settings you have. Zorcha-IG <span style={{ color: '#0066cc', cursor: 'pointer' }}>Privacy Policy</span> and <span style={{ color: '#0066cc', cursor: 'pointer' }}>Terms</span>.
+              By allowing, ZenXchat-IG will receive ongoing access to your information and Instagram will record when ZenXchat-IG accesses it. <span style={{ color: '#0066cc', cursor: 'pointer' }}>Learn More</span> about this sharing and the settings you have. ZenXchat-IG <span style={{ color: '#0066cc', cursor: 'pointer' }}>Privacy Policy</span> and <span style={{ color: '#0066cc', cursor: 'pointer' }}>Terms</span>.
             </p>
 
             {/* Footer Buttons */}
