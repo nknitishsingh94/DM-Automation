@@ -316,6 +316,13 @@ export default function Onboarding() {
                   </div>
                 </div>
               </div>
+
+              {/* Mobile Tip */}
+              <div style={{ marginTop: '20px', background: 'rgba(59, 130, 246, 0.08)', padding: '16px', borderRadius: '14px', border: '1px solid rgba(59, 130, 246, 0.15)' }}>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: '#1d4ed8', fontWeight: '600', lineHeight: '1.4' }}>
+                  💡 Mobile Tip: If you're using an in-app browser (e.g. inside Instagram or WhatsApp DMs), please copy the link and open it in <strong>Google Chrome</strong> or <strong>Safari</strong> for a seamless login experience.
+                </p>
+              </div>
             </div>
 
             {/* Meta Certification & Certification Badge */}

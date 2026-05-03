@@ -28,7 +28,7 @@ router.get('/facebook', verifyToken, (req, res) => {
     return res.status(500).json({ error: "Missing META_APP_ID in environment variables" });
   }
 
-  const authUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}&response_type=code`;
+  const authUrl = `https://facebook.com/v19.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}&response_type=code`;
   res.redirect(authUrl);
 });
 
