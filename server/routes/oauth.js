@@ -248,4 +248,84 @@ router.get('/facebook/callback', async (req, res) => {
   }
 });
 
+// Zorcha Exact Flow: Get available Facebook Pages & their linked Instagram accounts
+router.get('/facebook/pages', verifyToken, async (req, res) => {
+  try {
+    const settings = await Settings.findOne({ userId: req.user.userId });
+    if (!settings || (!settings.facebookAccessToken && !settings.instagramAccessToken)) {
+      return res.status(400).json({ error: 'Please connect your Meta account first.' });
+    }
+    const token = settings.facebookAccessToken || settings.instagramAccessToken;
+
+    const pagesUrl = `https://graph.facebook.com/v19.0/me/accounts?fields=id,name,access_token,instagram_business_account&access_token=${token}`;
+    const pagesRes = await axios.get(pagesUrl);
+    const rawPages = pagesRes.data.data || [];
+
+    const pages = [];
+    for (const p of rawPages) {
+      let linkedInstagram = null;
+      if (p.instagram_business_account) {
+        try {
+          const igRes = await axios.get(`https://graph.facebook.com/v19.0/${p.instagram_business_account.id}?fields=username,name,profile_picture_url&access_token=${p.access_token || token}`);
+          linkedInstagram = {
+            id: p.instagram_business_account.id,
+            username: igRes.data.username,
+            name: igRes.data.name,
+            profilePicture: igRes.data.profile_picture_url
+          };
+        } catch (igErr) {
+          linkedInstagram = {
+            id: p.instagram_business_account.id,
+            username: 'instagram_account'
+          };
+        }
+      }
+
+      pages.push({
+        id: p.id,
+        name: p.name,
+        accessToken: p.access_token,
+        linkedInstagram
+      });
+    }
+
+    res.json(pages);
+  } catch (err) {
+    console.error("Error fetching pages:", err.message);
+    res.status(500).json({ error: 'Failed to fetch Facebook pages' });
+  }
+});
+
+// Zorcha Exact Flow: Select & connect a specific Facebook page & Instagram
+router.post('/facebook/select-page', verifyToken, async (req, res) => {
+  try {
+    const { pageId, pageAccessToken, businessAccountId, instagramUsername } = req.body;
+    
+    const updateData = {
+      instagramAccessToken: pageAccessToken,
+      facebookAccessToken: pageAccessToken,
+      instagramPageId: pageId,
+      facebookPageId: pageId,
+      isAccountConnected: !!businessAccountId,
+      isFacebookConnected: !!pageId,
+      connectedInstagramName: instagramUsername || 'Connected Instagram',
+      connectedFacebookName: 'Connected Facebook'
+    };
+
+    if (businessAccountId) {
+      updateData.businessAccountId = businessAccountId;
+    }
+
+    const settings = await Settings.findOneAndUpdate(
+      { userId: req.user.userId },
+      updateData,
+      { upsert: true, new: true }
+    );
+
+    res.json({ success: true, settings });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
