@@ -196,7 +196,8 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     console.log(`🎯 MATCH FOUND! Campaign: "${campaignName}" | Trigger: "${match.trigger}" | Platform: ${platform} | Source: ${source}`);
     
     // Determine the best token to use
-    const activeToken = passedToken || process.env.META_PAGE_ACCESS_TOKEN;
+    const userSettings = await Settings.findOne({ userId });
+    const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
     // GATING: Follower Check
     if (match.requireFollow) {

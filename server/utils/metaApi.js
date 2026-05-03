@@ -28,9 +28,8 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
       return false;
     }
 
-    // ✅ Use pageId endpoint — /me/messages does NOT work for page-owned Instagram accounts
-    const endpoint = pageId ? pageId : 'me';
-    const url = `https://graph.facebook.com/v19.0/${endpoint}/messages?access_token=${accessToken}`;
+    // ✅ Use 'me/messages' endpoint for all platforms
+    const url = `https://graph.facebook.com/v19.0/me/messages?access_token=${accessToken}`;
 
     // Ensure bare 'www.' links in text get 'https://' prefix for Desktop compatibility
     let safeText = text || '';
