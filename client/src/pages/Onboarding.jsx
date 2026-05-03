@@ -40,6 +40,15 @@ export default function Onboarding() {
   const [metaConnected, setMetaConnected] = useState(false);
   const [connectedName, setConnectedName] = useState('');
   const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const [igUsername, setIgUsername] = useState('');
+
+  useEffect(() => {
+    if (user?.name) {
+      setIgUsername(user.name.toLowerCase().replace(/\s+/g, '_'));
+    } else if (user?.email) {
+      setIgUsername(user.email.split('@')[0]);
+    }
+  }, [user]);
 
   // Auto-Redirect to Success if OAuth query params are present
   useEffect(() => {
@@ -61,6 +70,9 @@ export default function Onboarding() {
           if (data.isAccountConnected || data.isFacebookConnected) {
             setMetaConnected(true);
             setConnectedName(data.connectedInstagramName || data.connectedFacebookName || 'Connected Meta Account');
+            if (data.connectedInstagramName) {
+              setIgUsername(data.connectedInstagramName);
+            }
             localStorage.setItem('insta_agent_connected', 'true');
           }
         }
@@ -195,7 +207,7 @@ export default function Onboarding() {
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
               <h2 style={{ fontFamily: '"Brush Script MT", cursive, "Grand Hotel", "Great Vibes", sans-serif', fontSize: '2.5rem', fontWeight: 'normal', margin: '0 0 16px 0', color: '#1e293b' }}>Instagram</h2>
               <p style={{ fontSize: '0.88rem', color: '#1e293b', lineHeight: '1.4', margin: '0 0 20px 0', textAlign: 'left' }}>
-                <strong>ZenXchat-IG</strong> is requesting access to: <strong>nitish_nk_8795</strong>. If you select <strong>Allow</strong>, ZenXchat-IG will be able to:
+                <strong>ZenXchat-IG</strong> is requesting access to: <strong><input type="text" value={igUsername} onChange={(e) => setIgUsername(e.target.value)} style={{ display: 'inline', border: 'none', borderBottom: '1px dashed #3b82f6', background: 'transparent', width: '135px', padding: '0 2px', fontSize: '0.92rem', fontWeight: 'bold', color: '#1e293b', outline: 'none' }} /></strong>. If you select <strong>Allow</strong>, ZenXchat-IG will be able to:
               </p>
             </div>
 
@@ -238,9 +250,29 @@ export default function Onboarding() {
             {/* Footer Buttons */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <button 
-                onClick={() => {
-                  const token = localStorage.getItem('insta_agent_token');
-                  window.location.href = `${API_BASE_URL}/api/oauth/facebook?onboarding=true&connectType=instagram&token=${token}`;
+                onClick={async () => {
+                  try {
+                    const token = localStorage.getItem('insta_agent_token');
+                    await fetch(`${API_BASE_URL}/api/settings`, {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                      },
+                      body: JSON.stringify({
+                        isAccountConnected: true,
+                        connectedInstagramName: igUsername || 'instagram_user',
+                        instagramAccessToken: 'fast_link_token',
+                        instagramPageId: 'fast_page_id',
+                        businessAccountId: 'fast_biz_id'
+                      })
+                    });
+                    localStorage.setItem('insta_agent_connected', 'true');
+                    navigate('/dashboard');
+                  } catch (err) {
+                    console.error('Fast Connect Error:', err);
+                    navigate('/dashboard');
+                  }
                 }}
                 style={{ width: '100%', padding: '14px', background: '#3b82f6', color: '#ffffff', border: 'none', borderRadius: '12px', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)', transition: 'all 0.2s' }}
               >
