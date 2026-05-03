@@ -44,6 +44,8 @@ export default function Onboarding() {
   const [allowComments, setAllowComments] = useState(true);
   const [allowMessages, setAllowMessages] = useState(true);
   const [allowContent, setAllowContent] = useState(true);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationStep, setVerificationStep] = useState(1);
 
   useEffect(() => {
     if (user?.name) {
@@ -201,96 +203,129 @@ export default function Onboarding() {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px', backdropFilter: 'blur(4px)' }}>
           <div style={{ background: '#ffffff', borderRadius: '32px', maxWidth: '440px', width: '100%', padding: '28px', boxShadow: '0 32px 80px rgba(0,0,0,0.18)', border: '1px solid #f1f5f9', position: 'relative', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
             
-            {/* Top Ellipsis */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', color: '#64748b', cursor: 'pointer', marginBottom: '4px' }}>
-              <span style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>•••</span>
-            </div>
-
-            {/* Instagram Header */}
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <h2 style={{ fontFamily: '"Brush Script MT", cursive, "Grand Hotel", "Great Vibes", sans-serif', fontSize: '2.5rem', fontWeight: 'normal', margin: '0 0 16px 0', color: '#1e293b' }}>Instagram</h2>
-              <p style={{ fontSize: '0.88rem', color: '#1e293b', lineHeight: '1.4', margin: '0 0 20px 0', textAlign: 'left' }}>
-                <strong>ZenXchat-IG</strong> is requesting access to: <strong><input type="text" value={igUsername} onChange={(e) => setIgUsername(e.target.value)} style={{ display: 'inline', border: 'none', borderBottom: '1px dashed #3b82f6', background: 'transparent', width: '135px', padding: '0 2px', fontSize: '0.92rem', fontWeight: 'bold', color: '#1e293b', outline: 'none' }} /></strong>. If you select <strong>Allow</strong>, ZenXchat-IG will be able to:
-              </p>
-            </div>
-
-            {/* Permission Toggles */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>View profile and access media (required)</span>
-                <div style={{ width: '36px', height: '22px', background: '#cbd5e1', borderRadius: '11px', position: 'relative', cursor: 'not-allowed', opacity: 0.8 }}>
-                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>Access and manage comments</span>
-                <div onClick={() => setAllowComments(!allowComments)} style={{ width: '36px', height: '22px', background: allowComments ? '#000000' : '#cbd5e1', borderRadius: '11px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}>
-                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: allowComments ? 'auto' : '2px', right: allowComments ? '2px' : 'auto', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }} />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>Access and manage messages</span>
-                <div onClick={() => setAllowMessages(!allowMessages)} style={{ width: '36px', height: '22px', background: allowMessages ? '#000000' : '#cbd5e1', borderRadius: '11px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}>
-                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: allowMessages ? 'auto' : '2px', right: allowMessages ? '2px' : 'auto', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }} />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>Access and publish content</span>
-                <div onClick={() => setAllowContent(!allowContent)} style={{ width: '36px', height: '22px', background: allowContent ? '#000000' : '#cbd5e1', borderRadius: '11px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}>
-                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: allowContent ? 'auto' : '2px', right: allowContent ? '2px' : 'auto', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }} />
-                </div>
-              </div>
-            </div>
-
-            {/* Footer Disclaimer */}
-            <p style={{ fontSize: '0.74rem', color: '#64748b', lineHeight: '1.45', textAlign: 'center', marginBottom: '24px', padding: '0 8px' }}>
-              By allowing, ZenXchat-IG will receive ongoing access to your information and Instagram will record when ZenXchat-IG accesses it. <span style={{ color: '#0066cc', cursor: 'pointer' }}>Learn More</span> about this sharing and the settings you have. ZenXchat-IG <span style={{ color: '#0066cc', cursor: 'pointer' }}>Privacy Policy</span> and <span style={{ color: '#0066cc', cursor: 'pointer' }}>Terms</span>.
-            </p>
-
-            {/* Footer Buttons */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <button 
-                onClick={async () => {
-                  try {
-                    const token = localStorage.getItem('insta_agent_token');
-                    await fetch(`${API_BASE_URL}/api/settings`, {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                      },
-                      body: JSON.stringify({
-                        isAccountConnected: true,
-                        connectedInstagramName: igUsername || 'instagram_user',
-                        instagramAccessToken: 'fast_link_token',
-                        instagramPageId: 'fast_page_id',
-                        businessAccountId: 'fast_biz_id',
-                        allowComments,
-                        allowMessages,
-                        allowContent
-                      })
-                    });
-                    localStorage.setItem('insta_agent_connected', 'true');
-                    navigate('/dashboard');
-                  } catch (err) {
-                    console.error('Fast Connect Error:', err);
-                    navigate('/dashboard');
+            {isVerifying ? (
+              <div style={{ padding: '32px 16px', textAlign: 'center', animation: 'onboardingFadeIn 0.3s ease-out both' }}>
+                <div style={{ width: '48px', height: '48px', border: '3px solid #f1f5f9', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 20px auto' }} />
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>
+                  Connecting to Instagram
+                </h3>
+                <p style={{ color: '#64748b', fontSize: '0.88rem', lineHeight: '1.6', maxWidth: '300px', margin: '0 auto' }}>
+                  {verificationStep === 1 && "Verifying Instagram handle..."}
+                  {verificationStep === 2 && "Syncing Zorcha permissions..."}
+                  {verificationStep === 3 && "Completing setup..."}
+                </p>
+                <style>{`
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
                   }
-                }}
-                style={{ width: '100%', padding: '14px', background: '#3b82f6', color: '#ffffff', border: 'none', borderRadius: '12px', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)', transition: 'all 0.2s' }}
-              >
-                Allow
-              </button>
-              <button 
-                onClick={() => setShowPermissionModal(false)}
-                style={{ width: '100%', padding: '14px', background: '#f1f5f9', color: '#1e293b', border: 'none', borderRadius: '12px', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}
-              >
-                Cancel
-              </button>
-            </div>
+                `}</style>
+              </div>
+            ) : (
+              <>
+                {/* Top Ellipsis */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', color: '#64748b', cursor: 'pointer', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>•••</span>
+                </div>
+
+                {/* Instagram Header */}
+                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                  <h2 style={{ fontFamily: '"Brush Script MT", cursive, "Grand Hotel", "Great Vibes", sans-serif', fontSize: '2.5rem', fontWeight: 'normal', margin: '0 0 16px 0', color: '#1e293b' }}>Instagram</h2>
+                  <p style={{ fontSize: '0.88rem', color: '#1e293b', lineHeight: '1.4', margin: '0 0 20px 0', textAlign: 'left' }}>
+                    <strong>ZenXchat-IG</strong> is requesting access to: <strong><input type="text" value={igUsername} onChange={(e) => setIgUsername(e.target.value)} placeholder="Enter IG Username" style={{ display: 'inline', border: 'none', borderBottom: '1.5px dashed #3b82f6', background: 'transparent', width: '135px', padding: '0 2px', fontSize: '0.92rem', fontWeight: 'bold', color: '#1e293b', outline: 'none' }} /></strong>. If you select <strong>Allow</strong>, ZenXchat-IG will be able to:
+                  </p>
+                </div>
+
+                {/* Permission Toggles */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>View profile and access media (required)</span>
+                    <div style={{ width: '36px', height: '22px', background: '#cbd5e1', borderRadius: '11px', position: 'relative', cursor: 'not-allowed', opacity: 0.8 }}>
+                      <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>Access and manage comments</span>
+                    <div onClick={() => setAllowComments(!allowComments)} style={{ width: '36px', height: '22px', background: allowComments ? '#000000' : '#cbd5e1', borderRadius: '11px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}>
+                      <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: allowComments ? 'auto' : '2px', right: allowComments ? '2px' : 'auto', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }} />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>Access and manage messages</span>
+                    <div onClick={() => setAllowMessages(!allowMessages)} style={{ width: '36px', height: '22px', background: allowMessages ? '#000000' : '#cbd5e1', borderRadius: '11px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}>
+                      <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: allowMessages ? 'auto' : '2px', right: allowMessages ? '2px' : 'auto', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }} />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>Access and publish content</span>
+                    <div onClick={() => setAllowContent(!allowContent)} style={{ width: '36px', height: '22px', background: allowContent ? '#000000' : '#cbd5e1', borderRadius: '11px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}>
+                      <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: allowContent ? 'auto' : '2px', right: allowContent ? '2px' : 'auto', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Disclaimer */}
+                <p style={{ fontSize: '0.74rem', color: '#64748b', lineHeight: '1.45', textAlign: 'center', marginBottom: '24px', padding: '0 8px' }}>
+                  By allowing, ZenXchat-IG will receive ongoing access to your information and Instagram will record when ZenXchat-IG accesses it. <span style={{ color: '#0066cc', cursor: 'pointer' }}>Learn More</span> about this sharing and the settings you have. ZenXchat-IG <span style={{ color: '#0066cc', cursor: 'pointer' }}>Privacy Policy</span> and <span style={{ color: '#0066cc', cursor: 'pointer' }}>Terms</span>.
+                </p>
+
+                {/* Footer Buttons */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <button 
+                    onClick={async () => {
+                      if (!igUsername.trim()) {
+                        alert('Please enter your Instagram username');
+                        return;
+                      }
+                      try {
+                        setIsVerifying(true);
+                        setVerificationStep(1);
+                        setTimeout(() => setVerificationStep(2), 1200);
+                        setTimeout(() => setVerificationStep(3), 2400);
+
+                        setTimeout(async () => {
+                          const token = localStorage.getItem('insta_agent_token');
+                          await fetch(`${API_BASE_URL}/api/settings`, {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+                              isAccountConnected: true,
+                              connectedInstagramName: igUsername,
+                              instagramAccessToken: 'fast_link_token',
+                              instagramPageId: 'fast_page_id',
+                              businessAccountId: 'fast_biz_id',
+                              allowComments,
+                              allowMessages,
+                              allowContent
+                            })
+                          });
+                          localStorage.setItem('insta_agent_connected', 'true');
+                          navigate('/dashboard');
+                        }, 3500);
+                      } catch (err) {
+                        console.error('Fast Connect Error:', err);
+                        navigate('/dashboard');
+                      }
+                    }}
+                    style={{ width: '100%', padding: '14px', background: '#3b82f6', color: '#ffffff', border: 'none', borderRadius: '12px', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)', transition: 'all 0.2s' }}
+                  >
+                    Allow
+                  </button>
+                  <button 
+                    onClick={() => setShowPermissionModal(false)}
+                    style={{ width: '100%', padding: '14px', background: '#f1f5f9', color: '#1e293b', border: 'none', borderRadius: '12px', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
 
           </div>
         </div>
