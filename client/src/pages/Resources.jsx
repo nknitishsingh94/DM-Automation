@@ -50,7 +50,7 @@ export default function Resources() {
             </div>
           </Link>
 
-          <a href="https://www.instagram.com/smart10x/" target="_blank" rel="noopener noreferrer" className="resource-card glass-morphism">
+          <a href="https://www.instagram.com/smart10Xchat/" target="_blank" rel="noopener noreferrer" className="resource-card glass-morphism">
             <div className="resource-icon pink">
               <Users size={28} />
             </div>
@@ -99,7 +99,7 @@ export default function Resources() {
           </div>
           <h2>Can't find what you're looking for?</h2>
           <p>Our support team is always here to help you get the most out of smart10X.</p>
-          <a href="https://www.instagram.com/smart10x/" target="_blank" rel="noopener noreferrer" className="cta-contact-btn">
+          <a href="https://www.instagram.com/smart10Xchat/" target="_blank" rel="noopener noreferrer" className="cta-contact-btn">
             Contact Support
           </a>
         </div>
