@@ -432,56 +432,76 @@ export default function Settings() {
             ) : (
               <>
                 <div style={{ display: 'flex', flexDirection: window.innerWidth < 768 ? 'column' : 'row', gap: '32px', background: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '32px', boxShadow: '0 4px 24px rgba(0,0,0,0.02)' }}>
-                  {/* Left Section: Instructions */}
+                  {/* Left Section: Instructions & Real Fields */}
                   <div style={{ flex: '1', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>Scan QR Code to Connect</h3>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>Connect WhatsApp Account</h3>
                     <p style={{ color: '#64748b', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
-                      Link your WhatsApp account in seconds using WhatsApp Web QR scan. No need to look up long Meta API Access Tokens or configure Phone IDs manually.
+                      Choose either the fast simulation mode or enter your real <strong>Meta WhatsApp Cloud API</strong> credentials below.
                     </p>
-                    
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                        <span style={{ minWidth: '24px', height: '24px', borderRadius: '50%', background: 'rgba(37, 211, 102, 0.12)', color: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.82rem', fontWeight: '800' }}>1</span>
-                        <p style={{ color: '#475569', fontSize: '0.88rem', margin: 0, lineHeight: '1.4' }}>Open <strong>WhatsApp</strong> on your mobile phone</p>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                        <span style={{ minWidth: '24px', height: '24px', borderRadius: '50%', background: 'rgba(37, 211, 102, 0.12)', color: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.82rem', fontWeight: '800' }}>2</span>
-                        <p style={{ color: '#475569', fontSize: '0.88rem', margin: 0, lineHeight: '1.4' }}>Tap <strong>Menu</strong> or <strong>Settings</strong> and select <strong>Linked Devices</strong></p>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                        <span style={{ minWidth: '24px', height: '24px', borderRadius: '50%', background: 'rgba(37, 211, 102, 0.12)', color: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.82rem', fontWeight: '800' }}>3</span>
-                        <p style={{ color: '#475569', fontSize: '0.88rem', margin: 0, lineHeight: '1.4' }}>Tap <strong>Link a Device</strong> and point your camera at this QR code</p>
-                      </div>
-                    </div>
 
-                    <button 
-                      type="button"
-                      onClick={async () => {
-                        try {
-                          const token = localStorage.getItem('insta_agent_token');
-                          const res = await fetch(`${API_BASE_URL}/api/settings/whatsapp/connect-qr`, {
-                            method: 'POST',
-                            headers: { 'Authorization': `Bearer ${token}` }
-                          });
-                          if (res.ok) {
-                            const data = await res.json();
-                            setSettings(s => ({ ...s, ...data }));
-                            setMessage({ type: 'success', text: 'WhatsApp device scanned and linked successfully!' });
+                    {/* Manual Settings Entry */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: '#f8fafc', padding: '16px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                      <p style={{ margin: 0, fontSize: '0.88rem', fontWeight: '700', color: '#1e293b' }}>Connect via Real Cloud API Credentials</p>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.78rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>WhatsApp Access Token</label>
+                        <input 
+                          type="text" 
+                          placeholder="E.g. EAAB..." 
+                          value={settings.whatsappToken || ''} 
+                          onChange={(e) => setSettings({ ...settings, whatsappToken: e.target.value })}
+                          style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem', outline: 'none', boxSizing: 'border-box' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.78rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>WhatsApp Phone Number ID</label>
+                        <input 
+                          type="text" 
+                          placeholder="E.g. 10452391238410" 
+                          value={settings.whatsappPhoneNumberId || ''} 
+                          onChange={(e) => setSettings({ ...settings, whatsappPhoneNumberId: e.target.value })}
+                          style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem', outline: 'none', boxSizing: 'border-box' }}
+                        />
+                      </div>
+                      <button 
+                        type="button" 
+                        onClick={handleSaveSettings}
+                        style={{ marginTop: '4px', background: '#0f172a', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 18px', fontWeight: '700', fontSize: '0.88rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                      >
+                        <Save size={16} /> Save Real Credentials
+                      </button>
+                    </div>
+                    
+                    <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
+                      <p style={{ margin: 0, fontSize: '0.88rem', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>Or Link instantly via Simulation Mode</p>
+                      <button 
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            const token = localStorage.getItem('insta_agent_token');
+                            const res = await fetch(`${API_BASE_URL}/api/settings/whatsapp/connect-qr`, {
+                              method: 'POST',
+                              headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            if (res.ok) {
+                              const data = await res.json();
+                              setSettings(s => ({ ...s, ...data }));
+                              setMessage({ type: 'success', text: 'WhatsApp device scanned and linked successfully via simulation!' });
+                            }
+                          } catch (e) {
+                            setMessage({ type: 'error', text: 'Connection failed.' });
                           }
-                        } catch (e) {
-                          setMessage({ type: 'error', text: 'Connection failed.' });
-                        }
-                      }}
-                      style={{ 
-                        marginTop: '16px', background: '#25D366', color: 'white', border: 'none', borderRadius: '12px', 
-                        padding: '14px 24px', fontSize: '0.95rem', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-                        cursor: 'pointer', boxShadow: '0 4px 14px rgba(37, 211, 102, 0.3)', transition: 'all 0.2s', width: 'fit-content'
-                      }}>
-                      <MessageSquare size={18} /> Confirm QR Code Link
-                    </button>
+                        }}
+                        style={{ 
+                          background: '#25D366', color: 'white', border: 'none', borderRadius: '12px', 
+                          padding: '14px 24px', fontSize: '0.95rem', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                          cursor: 'pointer', boxShadow: '0 4px 14px rgba(37, 211, 102, 0.3)', transition: 'all 0.2s', width: '100%'
+                        }}>
+                        <MessageSquare size={18} /> Instant Connect (Simulation)
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Right Section: Visual QR Code */}
+                  {/* Right Section: Visual QR Code Simulation */}
                   <div style={{ flex: '0 0 240px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#fafafa', border: '1px solid #f1f5f9', borderRadius: '20px', padding: '24px', boxSizing: 'border-box' }}>
                     <div style={{ padding: '16px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', display: 'inline-flex', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', minHeight: '172px', minWidth: '172px', alignItems: 'center', justifyContent: 'center' }}>
                       {whatsappQrUrl ? (
