@@ -20,7 +20,7 @@ export default function Landing() {
         <div className="header-content">
           <div className="header-left">
             <div className="header-logo">
-              <img src="/zenxchat-logo.png" alt="Zorcha Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
+              <img src="/zenxchat-logo.png" alt="ZenXchat Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
               <span className="logo-text">ZenXchat</span>
             </div>
             <div className="header-divider"></div>

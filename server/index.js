@@ -1206,7 +1206,7 @@ app.post('/api/settings/whatsapp/connect-qr', verifyToken, async (req, res) => {
 
 app.get('/api/settings/whatsapp/qr', verifyToken, async (req, res) => {
   try {
-    const uniqueData = `zorcha_wa_connect_${req.user.userId}_${Date.now()}`;
+    const uniqueData = `zenxchat_wa_connect_${req.user.userId}_${Date.now()}`;
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(uniqueData)}`;
     res.json({ qrUrl });
   } catch (err) {

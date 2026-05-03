@@ -164,7 +164,7 @@ export default function Onboarding() {
                 </svg>
                 <div>
                   <p style={{ fontWeight: '700', color: '#1e293b', margin: 0, fontSize: '0.9rem' }}>Meta Tech Provider</p>
-                  <p style={{ fontSize: '0.78rem', color: '#64748b', margin: 0 }}>Zorcha has been certified by Meta as an AI partner</p>
+                  <p style={{ fontSize: '0.78rem', color: '#64748b', margin: 0 }}>ZenXchat has been certified by Meta as an AI partner</p>
                 </div>
               </div>
             </div>
@@ -195,7 +195,7 @@ export default function Onboarding() {
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
               <h2 style={{ fontFamily: '"Brush Script MT", cursive, "Grand Hotel", "Great Vibes", sans-serif', fontSize: '2.5rem', fontWeight: 'normal', margin: '0 0 16px 0', color: '#1e293b' }}>Instagram</h2>
               <p style={{ fontSize: '0.88rem', color: '#1e293b', lineHeight: '1.4', margin: '0 0 20px 0', textAlign: 'left' }}>
-                <strong>Zorcha-IG</strong> is requesting access to: <strong>nitish_nk_8795</strong>. If you select <strong>Allow</strong>, Zorcha-IG will be able to:
+                <strong>ZenXchat-IG</strong> is requesting access to: <strong>nitish_nk_8795</strong>. If you select <strong>Allow</strong>, ZenXchat-IG will be able to:
               </p>
             </div>
 
