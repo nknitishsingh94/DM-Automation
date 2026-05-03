@@ -583,8 +583,7 @@ app.post('/api/webhook', async (req, res) => {
               $or: [
                 { instagramPageId: pageId }, 
                 { businessAccountId: pageId }, 
-                { facebookPageId: pageId },
-                { instagramPageId: { $exists: true } } // Catch-all for single-user setups
+                { facebookPageId: pageId }
               ]
             });
 
