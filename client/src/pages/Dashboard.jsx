@@ -51,9 +51,15 @@ export default function Dashboard() {
         setStats(statsData);
         
         // Check setup progress
+        const isConnected = settingsData.isAccountConnected || settingsData.isFacebookConnected || settingsData.isWhatsAppConnected;
+        if (!isConnected) {
+          navigate('/onboarding');
+          return;
+        }
+
         setSetupStatus({
           profileDone: true, 
-          metaDone: settingsData.isAccountConnected || settingsData.isFacebookConnected || settingsData.isWhatsAppConnected,
+          metaDone: isConnected,
           flowDone: Array.isArray(flowsData) && flowsData.length > 0
         });
 
