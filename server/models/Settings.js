@@ -31,6 +31,10 @@ const settingsSchema = new mongoose.Schema({
   aiHumanEscalation: { type: Boolean, default: false },
   isAiEnabled: { type: Boolean, default: false },
 
+  allowComments: { type: Boolean, default: true },
+  allowMessages: { type: Boolean, default: true },
+  allowContent: { type: Boolean, default: true },
+
   updatedAt: { type: Date, default: Date.now }
 });
 

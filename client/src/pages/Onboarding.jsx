@@ -41,6 +41,9 @@ export default function Onboarding() {
   const [connectedName, setConnectedName] = useState('');
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [igUsername, setIgUsername] = useState('');
+  const [allowComments, setAllowComments] = useState(true);
+  const [allowMessages, setAllowMessages] = useState(true);
+  const [allowContent, setAllowContent] = useState(true);
 
   useEffect(() => {
     if (user?.name) {
@@ -222,22 +225,22 @@ export default function Onboarding() {
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>Access and manage comments</span>
-                <div style={{ width: '36px', height: '22px', background: '#000000', borderRadius: '11px', position: 'relative', cursor: 'pointer' }}>
-                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', right: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+                <div onClick={() => setAllowComments(!allowComments)} style={{ width: '36px', height: '22px', background: allowComments ? '#000000' : '#cbd5e1', borderRadius: '11px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}>
+                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: allowComments ? 'auto' : '2px', right: allowComments ? '2px' : 'auto', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }} />
                 </div>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>Access and manage messages</span>
-                <div style={{ width: '36px', height: '22px', background: '#000000', borderRadius: '11px', position: 'relative', cursor: 'pointer' }}>
-                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', right: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+                <div onClick={() => setAllowMessages(!allowMessages)} style={{ width: '36px', height: '22px', background: allowMessages ? '#000000' : '#cbd5e1', borderRadius: '11px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}>
+                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: allowMessages ? 'auto' : '2px', right: allowMessages ? '2px' : 'auto', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }} />
                 </div>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>Access and publish content</span>
-                <div style={{ width: '36px', height: '22px', background: '#000000', borderRadius: '11px', position: 'relative', cursor: 'pointer' }}>
-                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', right: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+                <div onClick={() => setAllowContent(!allowContent)} style={{ width: '36px', height: '22px', background: allowContent ? '#000000' : '#cbd5e1', borderRadius: '11px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}>
+                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: allowContent ? 'auto' : '2px', right: allowContent ? '2px' : 'auto', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }} />
                 </div>
               </div>
             </div>
@@ -264,7 +267,10 @@ export default function Onboarding() {
                         connectedInstagramName: igUsername || 'instagram_user',
                         instagramAccessToken: 'fast_link_token',
                         instagramPageId: 'fast_page_id',
-                        businessAccountId: 'fast_biz_id'
+                        businessAccountId: 'fast_biz_id',
+                        allowComments,
+                        allowMessages,
+                        allowContent
                       })
                     });
                     localStorage.setItem('insta_agent_connected', 'true');
