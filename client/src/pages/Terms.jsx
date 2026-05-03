@@ -21,7 +21,7 @@ export default function Terms() {
         <section style={{ marginBottom: '32px' }}>
           <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', marginBottom: '16px' }}>1. Use of Service</h2>
           <p style={{ color: '#475569', lineHeight: '1.6', marginBottom: '12px' }}>
-            By using ZenXchat, you agree to comply with Meta's official policies for Instagram, Facebook, and WhatsApp. You are responsible for ensuring your automations do not violate anti-spam laws or platform-specific community guidelines.
+            By using smart10X, you agree to comply with Meta's official policies for Instagram, Facebook, and WhatsApp. You are responsible for ensuring your automations do not violate anti-spam laws or platform-specific community guidelines.
           </p>
         </section>
 
@@ -30,7 +30,7 @@ export default function Terms() {
             <CheckCircle2 size={20} color="#10b981" /> 2. Account Responsibility
           </h2>
           <p style={{ color: '#475569', lineHeight: '1.6' }}>
-            You are responsible for maintaining the security of your account and access tokens. ZenXchat is not liable for any account restrictions or bans caused by misuse of automation tools that violate Meta's terms of service.
+            You are responsible for maintaining the security of your account and access tokens. smart10X is not liable for any account restrictions or bans caused by misuse of automation tools that violate Meta's terms of service.
           </p>
         </section>
 
@@ -52,7 +52,7 @@ export default function Terms() {
 
         <div style={{ marginTop: '48px', padding: '24px', textAlign: 'center', borderTop: '1px solid #f1f5f9' }}>
           <p style={{ color: '#64748b', fontSize: '14px' }}>
-            © 2026 ZenXchat. All rights reserved.
+            © 2026 smart10X. All rights reserved.
           </p>
         </div>
       </div>

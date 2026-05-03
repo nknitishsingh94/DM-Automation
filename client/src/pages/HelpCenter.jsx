@@ -10,7 +10,7 @@ export default function HelpCenter() {
         <header className="help-header">
           <div className="help-logo">
             {/* <img src="/zenxchat-logo.png" alt="ZenXchat Logo" style={{ filter: 'brightness(0) invert(1)' }} onError={(e) => { e.target.style.display = 'none'; }} /> */}
-            <span>ZenXchat</span>
+            <span>smart10X</span>
           </div>
           <nav className="help-nav">
             <Link to="/#pricing">Pricing</Link>
@@ -42,7 +42,7 @@ export default function HelpCenter() {
               <ChevronRight size={18} color="#7c3aed" />
             </Link>
             <Link to="#" className="help-start-link">
-              <span>ZenXchat — Official Meta Partner onboarding roadmap</span>
+              <span>smart10X — Official Meta Partner onboarding roadmap</span>
               <ChevronRight size={18} color="#7c3aed" />
             </Link>
           </div>

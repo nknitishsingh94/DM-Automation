@@ -2,7 +2,7 @@ export const blogPosts = [
   {
     id: 1,
     title: "Transforming Customer Engagement with AI in 2026",
-    excerpt: "Learn how ZenXchat is redefining how brands interact with their audience through human-like AI automation.",
+    excerpt: "Learn how smart10X is redefining how brands interact with their audience through human-like AI automation.",
     category: "AI Technology",
     author: "Alex Rivera",
     date: "May 12, 2026",
@@ -10,10 +10,10 @@ export const blogPosts = [
     image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1200",
     color: "purple",
     content: `
-      <p>In the rapidly evolving landscape of 2026, the bridge between businesses and consumers is no longer built solely on manual effort. At ZenXchat, we've witnessed a paradigm shift: the move from reactive support to proactive, intelligent engagement.</p>
+      <p>In the rapidly evolving landscape of 2026, the bridge between businesses and consumers is no longer built solely on manual effort. At smart10X, we've witnessed a paradigm shift: the move from reactive support to proactive, intelligent engagement.</p>
       
       <h2>The Shift to Context-Aware AI</h2>
-      <p>Old-school chatbots relied on rigid decision trees. If a user strayed from the "script," the system broke. ZenXchat's latest AI agents utilize multi-modal context windows, meaning they don't just see the last message—they understand the entire history of the brand and the specific nuances of the customer's journey.</p>
+      <p>Old-school chatbots relied on rigid decision trees. If a user strayed from the "script," the system broke. smart10X's latest AI agents utilize multi-modal context windows, meaning they don't just see the last message—they understand the entire history of the brand and the specific nuances of the customer's journey.</p>
       
       <div class="highlight-box">
         "The goal isn't just to reply; it's to build a relationship that feels as natural as a conversation with a human expert."
@@ -30,7 +30,7 @@ export const blogPosts = [
       </ul>
       
       <h2>Looking Ahead</h2>
-      <p>As we move further into the decade, ZenXchat will remain at the forefront of this revolution. We are committed to making sophisticated AI accessible to every creator and business owner, turning every direct message into a high-value opportunity.</p>
+      <p>As we move further into the decade, smart10X will remain at the forefront of this revolution. We are committed to making sophisticated AI accessible to every creator and business owner, turning every direct message into a high-value opportunity.</p>
     `
   },
   {
@@ -54,7 +54,7 @@ export const blogPosts = [
       </div>
 
       <h2>The Comment-to-DM Revolution</h2>
-      <p>The most successful brands in 2026 are using "Comment Triggers." When a user comments a specific keyword, ZenXchat instantly sends a personalized DM with the link or information they requested. This isn't just efficient—it significantly boosts post engagement metrics, triggering the Instagram algorithm to show your content to even more people.</p>
+      <p>The most successful brands in 2026 are using "Comment Triggers." When a user comments a specific keyword, smart10X instantly sends a personalized DM with the link or information they requested. This isn't just efficient—it significantly boosts post engagement metrics, triggering the Instagram algorithm to show your content to even more people.</p>
 
       <h3>3 Pillars of Modern Automation:</h3>
       <ol>
@@ -64,7 +64,7 @@ export const blogPosts = [
       </ol>
 
       <h2>Conclusion</h2>
-      <p>The era of manual grinding is over. To compete in today's digital economy, you need leverage. ZenXchat provides that leverage, allowing you to build a multi-million dollar brand while spending more time on what you actually love: creating content.</p>
+      <p>The era of manual grinding is over. To compete in today's digital economy, you need leverage. smart10X provides that leverage, allowing you to build a multi-million dollar brand while spending more time on what you actually love: creating content.</p>
     `
   },
   {
@@ -84,7 +84,7 @@ export const blogPosts = [
       <p>Automate a warm, personalized greeting for new followers that asks them what they're looking for. This immediately transforms a passive "Follow" into an active conversation.</p>
 
       <h2>Strategy 2: Tiered Engagement</h2>
-      <p>Use ZenXchat to identify your most active commenters and offer them exclusive "Insider" content or early access. Rewarding engagement through automation creates a powerful loop of loyalty.</p>
+      <p>Use smart10X to identify your most active commenters and offer them exclusive "Insider" content or early access. Rewarding engagement through automation creates a powerful loop of loyalty.</p>
 
       <div class="highlight-box">
         "A follower follows a page. A community member follows a mission. Use AI to communicate that mission at every touchpoint."
@@ -94,7 +94,7 @@ export const blogPosts = [
       <p>Instead of just selling, use automation to deliver value. Set up a "Resource Trigger" where users can get free guides, templates, or advice just by messaging a certain word. This builds trust before you ever ask for a sale.</p>
 
       <h2>Strategy 4: Consistent Voice cross Platforms</h2>
-      <p>Whether a customer messages you on Instagram, WhatsApp, or Facebook, they should get the same brand experience. ZenXchat's unified AI ensures your brand personality remains consistent everywhere.</p>
+      <p>Whether a customer messages you on Instagram, WhatsApp, or Facebook, they should get the same brand experience. smart10X's unified AI ensures your brand personality remains consistent everywhere.</p>
 
       <h2>Strategy 5: Data-Driven Pivots</h2>
       <p>Analyze the questions your AI is answering most often. This data is pure gold for content creation—if everyone is asking the same question, make your next Reel about it!</p>

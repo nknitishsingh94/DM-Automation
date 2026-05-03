@@ -95,7 +95,7 @@ export default function Dashboard() {
     },
     {
       title: 'Refer & Earn',
-      desc: 'Invite friends to ZenXchat and earn rewards for every referral',
+      desc: 'Invite friends to smart10X and earn rewards for every referral',
       cta: 'Start Referring',
       link: '/refer',
       icon: <Users size={18} color="#f59e0b" />

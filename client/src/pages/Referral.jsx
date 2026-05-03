@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 export default function Referral() {
   const [copied, setCopied] = useState(false);
-  const referralLink = 'https://zenxchat.com/ref/user123';
+  const referralLink = 'https://smart10x.com/ref/user123';
 
   const handleCopy = () => {
     navigator.clipboard.writeText(referralLink);
@@ -27,7 +27,7 @@ export default function Referral() {
           </div>
           <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#1e293b' }}>Refer & Earn</h2>
         </div>
-        <p style={{ color: '#64748b', fontSize: '15px' }}>Invite friends to ZenXchat and earn amazing rewards for every successful referral.</p>
+        <p style={{ color: '#64748b', fontSize: '15px' }}>Invite friends to smart10X and earn amazing rewards for every successful referral.</p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '32px' }}>
@@ -70,7 +70,7 @@ export default function Referral() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {[
                 { step: '1', title: 'Share your link', desc: 'Send your referral link to friends or post on social media.' },
-                { step: '2', title: 'Friend signs up', desc: 'Your friend creates a ZenXchat account using your link.' },
+                { step: '2', title: 'Friend signs up', desc: 'Your friend creates a smart10X account using your link.' },
                 { step: '3', title: 'Earn rewards', desc: 'Get exclusive rewards when they become an active user.' },
               ].map((s, i) => (
                 <div key={i} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>

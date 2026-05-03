@@ -389,7 +389,7 @@ export default function CampaignBuilder() {
                    </div>
                    <div>
                      <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#0f172a' }}>{user?.businessName || user?.username}</h4>
-                     <span style={{ fontSize: '0.7rem', color: '#64748b' }}>ZenXchat AI Agent</span>
+                     <span style={{ fontSize: '0.7rem', color: '#64748b' }}>smart10X AI Agent</span>
                    </div>
                  </div>
                </div>

@@ -459,7 +459,7 @@ export default function Onboarding() {
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                   <h2 style={{ fontFamily: '"Brush Script MT", cursive, "Grand Hotel", "Great Vibes", sans-serif', fontSize: '2.5rem', fontWeight: 'normal', margin: '0 0 16px 0', color: '#1e293b' }}>Instagram</h2>
                   <p style={{ fontSize: '0.88rem', color: '#1e293b', lineHeight: '1.4', margin: '0 0 20px 0', textAlign: 'left' }}>
-                    <strong>ZenXchat-IG</strong> is requesting access to: <strong>{igUsername}</strong>. If you select <strong>Allow</strong>, ZenXchat-IG will be able to:
+                    <strong>smart10X-IG</strong> is requesting access to: <strong>{igUsername}</strong>. If you select <strong>Allow</strong>, smart10X-IG will be able to:
                   </p>
                 </div>
 
@@ -494,7 +494,7 @@ export default function Onboarding() {
                 </div>
 
                 <p style={{ fontSize: '0.74rem', color: '#64748b', lineHeight: '1.45', textAlign: 'center', marginBottom: '24px', padding: '0 8px' }}>
-                  By allowing, ZenXchat-IG will receive ongoing access to your information and Instagram will record when ZenXchat-IG accesses it. <span style={{ color: '#0066cc', cursor: 'pointer' }}>Learn More</span> about this sharing and the settings you have. ZenXchat-IG <span style={{ color: '#0066cc', cursor: 'pointer' }}>Privacy Policy</span> and <span style={{ color: '#0066cc', cursor: 'pointer' }}>Terms</span>.
+                  By allowing, smart10X-IG will receive ongoing access to your information and Instagram will record when smart10X-IG accesses it. <span style={{ color: '#0066cc', cursor: 'pointer' }}>Learn More</span> about this sharing and the settings you have. smart10X-IG <span style={{ color: '#0066cc', cursor: 'pointer' }}>Privacy Policy</span> and <span style={{ color: '#0066cc', cursor: 'pointer' }}>Terms</span>.
                 </p>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

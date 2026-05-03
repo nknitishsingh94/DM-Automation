@@ -30,8 +30,8 @@ export default function BlogPost() {
         <div className="header-content" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div className="header-logo">
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
-              <img src="/zenxchat-logo.png" alt="ZenXchat Logo" style={{ width: '32px', height: '32px' }} />
-              <span className="logo-text" style={{ color: '#0f172a' }}>ZenXchat</span>
+              <img src="/zenxchat-logo.png" alt="smart10X Logo" style={{ width: '32px', height: '32px' }} />
+              <span className="logo-text" style={{ color: '#0f172a' }}>smart10X</span>
             </Link>
           </div>
           <nav className="header-nav">
@@ -119,11 +119,11 @@ export default function BlogPost() {
       <section className="article-cta">
         <div className="cta-content glass-morphism">
           <div className="cta-logo">
-            <img src="/zenxchat-logo.png" alt="ZenXchat" />
-            <span>ZenXchat</span>
+            <img src="/zenxchat-logo.png" alt="smart10X" />
+            <span>smart10X</span>
           </div>
           <h2>Ready to transform your social presence?</h2>
-          <p>Join thousands of creators using ZenXchat to automate their engagement and grow their business.</p>
+          <p>Join thousands of creators using smart10X to automate their engagement and grow their business.</p>
           <Link to="/signup" className="cta-button pulse-animation">
             Get Started Now
           </Link>
