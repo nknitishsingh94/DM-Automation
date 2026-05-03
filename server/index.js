@@ -134,7 +134,11 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   }
 
   // 1. Check for Active Flows first (Advanced Automation)
-  const activeFlows = await Flow.find({ userId, status: 'Active' });
+  const queryUserId = mongoose.Types.ObjectId.isValid(userId) ? new mongoose.Types.ObjectId(userId) : userId;
+  const activeFlows = await Flow.find({
+    $or: [{ userId }, { userId: queryUserId }],
+    status: 'Active'
+  });
 
   const matchedFlow = activeFlows.find(f => {
     if (!f.triggerKeyword) return false;
@@ -152,7 +156,10 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   const userMessage = text.toLowerCase();
 
   // 2. Keyword Campaign Checking
-  let activeCampaigns = await Campaign.find({ userId, status: 'Active' });
+  let activeCampaigns = await Campaign.find({
+    $or: [{ userId }, { userId: queryUserId }],
+    status: 'Active'
+  });
   
   // SORT: Specific keywords first, Wildcards (*) last
   activeCampaigns = activeCampaigns.sort((a, b) => {
@@ -281,7 +288,9 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   }
 
   // 3. AI Studio Fallback (Only if enabled)
-  const settings = await Settings.findOne({ userId });
+  const settings = await Settings.findOne({
+    $or: [{ userId }, { userId: queryUserId }]
+  });
   if (settings?.isAiEnabled) {
     console.log(`😴 NO KEYWORD MATCH: Falling back to AI Studio...`);
     try {
