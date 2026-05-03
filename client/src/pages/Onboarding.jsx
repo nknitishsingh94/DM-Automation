@@ -39,6 +39,7 @@ export default function Onboarding() {
   const [loading, setLoading] = useState(true);
   const [metaConnected, setMetaConnected] = useState(false);
   const [connectedName, setConnectedName] = useState('');
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
 
   // Auto-Redirect to Success if OAuth query params are present
   useEffect(() => {
@@ -129,7 +130,7 @@ export default function Onboarding() {
             </button>
           </div>
         </div>
-      ) : (
+       ) : (
         <div style={{ display: 'flex', minHeight: '100vh', background: '#ffffff', fontFamily: "'Inter', sans-serif" }}>
           {/* Left Column */}
           <div style={{ flex: '1 1 50%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '64px', boxSizing: 'border-box' }}>
@@ -143,23 +144,13 @@ export default function Onboarding() {
 
               {/* Channel Pills */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                <div onClick={() => handleConnectMeta('instagram')} className="channel-pill">
+                <div onClick={() => setShowPermissionModal(true)} className="channel-pill">
                   <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
                     <Instagram size={24} />
                   </div>
                   <div>
                     <h4 style={{ fontSize: '1.15rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>Instagram</h4>
                     <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '4px 0 0 0' }}>Click to connect Instagram Business account</p>
-                  </div>
-                </div>
-
-                <div onClick={() => handleConnectMeta('facebook')} className="channel-pill">
-                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#1877f2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                    <Facebook size={24} />
-                  </div>
-                  <div>
-                    <h4 style={{ fontSize: '1.15rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>Facebook</h4>
-                    <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '4px 0 0 0' }}>Click to connect Facebook Pages</p>
                   </div>
                 </div>
               </div>
@@ -186,6 +177,83 @@ export default function Onboarding() {
               alt="Onboarding" 
               style={{ maxWidth: '85%', maxHeight: '90%', objectFit: 'contain', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', boxShadow: '0 -24px 80px rgba(0,0,0,0.08)', animation: 'onboardingFadeIn 0.6s ease-out' }} 
             />
+          </div>
+        </div>
+      )}
+
+      {/* INSTAGRAM PERMISSION MODAL */}
+      {showPermissionModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px', backdropFilter: 'blur(4px)' }}>
+          <div style={{ background: '#ffffff', borderRadius: '32px', maxWidth: '440px', width: '100%', padding: '28px', boxShadow: '0 32px 80px rgba(0,0,0,0.18)', border: '1px solid #f1f5f9', position: 'relative', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+            
+            {/* Top Ellipsis */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', color: '#64748b', cursor: 'pointer', marginBottom: '4px' }}>
+              <span style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>•••</span>
+            </div>
+
+            {/* Instagram Header */}
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <h2 style={{ fontFamily: '"Brush Script MT", cursive, "Grand Hotel", "Great Vibes", sans-serif', fontSize: '2.5rem', fontWeight: 'normal', margin: '0 0 16px 0', color: '#1e293b' }}>Instagram</h2>
+              <p style={{ fontSize: '0.88rem', color: '#1e293b', lineHeight: '1.4', margin: '0 0 20px 0', textAlign: 'left' }}>
+                <strong>Zorcha-IG</strong> is requesting access to: <strong>nitish_nk_8795</strong>. If you select <strong>Allow</strong>, Zorcha-IG will be able to:
+              </p>
+            </div>
+
+            {/* Permission Toggles */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>View profile and access media (required)</span>
+                <div style={{ width: '36px', height: '22px', background: '#cbd5e1', borderRadius: '11px', position: 'relative', cursor: 'not-allowed', opacity: 0.8 }}>
+                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>Access and manage comments</span>
+                <div style={{ width: '36px', height: '22px', background: '#000000', borderRadius: '11px', position: 'relative', cursor: 'pointer' }}>
+                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', right: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>Access and manage messages</span>
+                <div style={{ width: '36px', height: '22px', background: '#000000', borderRadius: '11px', position: 'relative', cursor: 'pointer' }}>
+                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', right: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>Access and publish content</span>
+                <div style={{ width: '36px', height: '22px', background: '#000000', borderRadius: '11px', position: 'relative', cursor: 'pointer' }}>
+                  <div style={{ width: '18px', height: '18px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', right: '2px', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Disclaimer */}
+            <p style={{ fontSize: '0.74rem', color: '#64748b', lineHeight: '1.45', textAlign: 'center', marginBottom: '24px', padding: '0 8px' }}>
+              By allowing, Zorcha-IG will receive ongoing access to your information and Instagram will record when Zorcha-IG accesses it. <span style={{ color: '#0066cc', cursor: 'pointer' }}>Learn More</span> about this sharing and the settings you have. Zorcha-IG <span style={{ color: '#0066cc', cursor: 'pointer' }}>Privacy Policy</span> and <span style={{ color: '#0066cc', cursor: 'pointer' }}>Terms</span>.
+            </p>
+
+            {/* Footer Buttons */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button 
+                onClick={() => {
+                  const token = localStorage.getItem('insta_agent_token');
+                  window.location.href = `${API_BASE_URL}/api/oauth/facebook?onboarding=true&connectType=instagram&token=${token}`;
+                }}
+                style={{ width: '100%', padding: '14px', background: '#3b82f6', color: '#ffffff', border: 'none', borderRadius: '12px', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)', transition: 'all 0.2s' }}
+              >
+                Allow
+              </button>
+              <button 
+                onClick={() => setShowPermissionModal(false)}
+                style={{ width: '100%', padding: '14px', background: '#f1f5f9', color: '#1e293b', border: 'none', borderRadius: '12px', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}
+              >
+                Cancel
+              </button>
+            </div>
+
           </div>
         </div>
       )}
