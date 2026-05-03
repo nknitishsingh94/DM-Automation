@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight, CheckCircle, Plus, Info, MessageSquare, Zap, Globe, Layout, RefreshCw, Instagram, Facebook } from 'lucide-react';
+import { Sparkles, ArrowRight, CheckCircle, Plus, Info, MessageSquare, Zap, Globe, Layout, RefreshCw, Instagram, Facebook, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 
@@ -46,6 +46,8 @@ export default function Onboarding() {
   const [allowContent, setAllowContent] = useState(true);
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationStep, setVerificationStep] = useState(1);
+  const [modalStep, setModalStep] = useState('login'); // login, business_check, permissions, loading
+  const [igPassword, setIgPassword] = useState('');
 
   useEffect(() => {
     if (user?.name) {
@@ -161,7 +163,7 @@ export default function Onboarding() {
 
               {/* Channel Pills */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                <div onClick={() => setShowPermissionModal(true)} className="channel-pill">
+                <div onClick={() => { setModalStep('login'); setShowPermissionModal(true); }} className="channel-pill">
                   <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
                     <Instagram size={24} />
                   </div>
@@ -203,40 +205,114 @@ export default function Onboarding() {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px', backdropFilter: 'blur(4px)' }}>
           <div style={{ background: '#ffffff', borderRadius: '32px', maxWidth: '440px', width: '100%', padding: '28px', boxShadow: '0 32px 80px rgba(0,0,0,0.18)', border: '1px solid #f1f5f9', position: 'relative', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
             
-            {isVerifying ? (
-              <div style={{ padding: '32px 16px', textAlign: 'center', animation: 'onboardingFadeIn 0.3s ease-out both' }}>
-                <div style={{ width: '48px', height: '48px', border: '3px solid #f1f5f9', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 20px auto' }} />
-                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>
-                  Connecting to Instagram
-                </h3>
-                <p style={{ color: '#64748b', fontSize: '0.88rem', lineHeight: '1.6', maxWidth: '300px', margin: '0 auto' }}>
-                  {verificationStep === 1 && "Verifying Instagram handle..."}
-                  {verificationStep === 2 && "Syncing Zorcha permissions..."}
-                  {verificationStep === 3 && "Completing setup..."}
-                </p>
-                <style>{`
-                  @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                  }
-                `}</style>
+            {modalStep === 'login' && (
+              <div style={{ padding: '8px 4px', animation: 'onboardingFadeIn 0.4s ease-out both' }}>
+                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                  <div style={{ width: '60px', height: '60px', borderRadius: '18px', background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', margin: '0 auto 16px auto', boxShadow: '0 8px 24px rgba(236,72,153,0.3)' }}>
+                    <Instagram size={30} />
+                  </div>
+                  <h3 style={{ fontSize: '1.45rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0', letterSpacing: '-0.5px' }}>Instagram Login</h3>
+                  <p style={{ fontSize: '0.86rem', color: '#64748b', margin: 0 }}>Login to connect your Zorcha account</p>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#475569', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Username</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. nitish_nk_8795" 
+                      value={igUsername} 
+                      onChange={(e) => setIgUsername(e.target.value)}
+                      style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#f8fafc', color: '#0f172a', fontSize: '0.92rem', outline: 'none', transition: 'all 0.2s', boxSizing: 'border-box' }} 
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#475569', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Password</label>
+                    <input 
+                      type="password" 
+                      placeholder="••••••••" 
+                      value={igPassword} 
+                      onChange={(e) => setIgPassword(e.target.value)}
+                      style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#f8fafc', color: '#0f172a', fontSize: '0.92rem', outline: 'none', transition: 'all 0.2s', boxSizing: 'border-box' }} 
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <button 
+                    onClick={() => {
+                      if (!igUsername.trim() || !igPassword.trim()) {
+                        alert('Please enter your Instagram credentials.');
+                        return;
+                      }
+                      setModalStep('business_check');
+                    }}
+                    style={{ width: '100%', padding: '15px', background: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)', color: '#ffffff', border: 'none', borderRadius: '14px', fontSize: '0.98rem', fontWeight: '700', cursor: 'pointer', boxShadow: '0 6px 18px rgba(236,72,153,0.3)', transition: 'all 0.2s' }}
+                  >
+                    Log In
+                  </button>
+                  <button 
+                    onClick={() => setShowPermissionModal(false)}
+                    style={{ width: '100%', padding: '14px', background: '#f1f5f9', color: '#1e293b', border: 'none', borderRadius: '12px', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-            ) : (
-              <>
-                {/* Top Ellipsis */}
+            )}
+
+            {modalStep === 'business_check' && (
+              <div style={{ padding: '8px 4px', animation: 'onboardingFadeIn 0.4s ease-out both' }}>
+                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                  <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #f59e0b', color: '#d97706', margin: '0 auto 16px auto' }}>
+                    <AlertTriangle size={28} />
+                  </div>
+                  <h3 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0f172a', margin: '0 0 10px 0', letterSpacing: '-0.5px' }}>
+                    Account Type Detected
+                  </h3>
+                  <p style={{ fontSize: '0.9rem', color: '#64748b', margin: 0, lineHeight: '1.5' }}>
+                    We noticed that <strong style={{ color: '#0f172a' }}>{igUsername}</strong> is currently a <strong style={{ color: '#ef4444' }}>Personal</strong> profile.
+                  </p>
+                </div>
+
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '16px 20px', marginBottom: '24px', textAlign: 'left' }}>
+                  <h4 style={{ fontSize: '0.88rem', fontWeight: '700', color: '#334155', margin: '0 0 6px 0' }}>Why convert to Business?</h4>
+                  <p style={{ fontSize: '0.82rem', color: '#64748b', lineHeight: '1.5', margin: 0 }}>
+                    Instagram requires a Professional or Business account for Meta AI automation, post analytics, and automatic comments.
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <button 
+                    onClick={() => setModalStep('permissions')}
+                    style={{ width: '100%', padding: '15px', background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '14px', fontSize: '0.96rem', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 14px rgba(37,99,235,0.3)', transition: 'all 0.2s' }}
+                  >
+                    Convert to Business Account
+                  </button>
+                  <button 
+                    onClick={() => setModalStep('login')}
+                    style={{ width: '100%', padding: '14px', background: '#f1f5f9', color: '#1e293b', border: 'none', borderRadius: '12px', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}
+                  >
+                    Back
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {modalStep === 'permissions' && (
+              <div style={{ animation: 'onboardingFadeIn 0.4s ease-out both' }}>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', color: '#64748b', cursor: 'pointer', marginBottom: '4px' }}>
                   <span style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>•••</span>
                 </div>
 
-                {/* Instagram Header */}
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                   <h2 style={{ fontFamily: '"Brush Script MT", cursive, "Grand Hotel", "Great Vibes", sans-serif', fontSize: '2.5rem', fontWeight: 'normal', margin: '0 0 16px 0', color: '#1e293b' }}>Instagram</h2>
                   <p style={{ fontSize: '0.88rem', color: '#1e293b', lineHeight: '1.4', margin: '0 0 20px 0', textAlign: 'left' }}>
-                    <strong>ZenXchat-IG</strong> is requesting access to: <strong><input type="text" value={igUsername} onChange={(e) => setIgUsername(e.target.value)} placeholder="Enter IG Username" style={{ display: 'inline', border: 'none', borderBottom: '1.5px dashed #3b82f6', background: 'transparent', width: '135px', padding: '0 2px', fontSize: '0.92rem', fontWeight: 'bold', color: '#1e293b', outline: 'none' }} /></strong>. If you select <strong>Allow</strong>, ZenXchat-IG will be able to:
+                    <strong>ZenXchat-IG</strong> is requesting access to: <strong>{igUsername}</strong>. If you select <strong>Allow</strong>, ZenXchat-IG will be able to:
                   </p>
                 </div>
 
-                {/* Permission Toggles */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '24px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ fontSize: '0.86rem', color: '#1e293b', fontWeight: '500' }}>View profile and access media (required)</span>
@@ -267,21 +343,15 @@ export default function Onboarding() {
                   </div>
                 </div>
 
-                {/* Footer Disclaimer */}
                 <p style={{ fontSize: '0.74rem', color: '#64748b', lineHeight: '1.45', textAlign: 'center', marginBottom: '24px', padding: '0 8px' }}>
                   By allowing, ZenXchat-IG will receive ongoing access to your information and Instagram will record when ZenXchat-IG accesses it. <span style={{ color: '#0066cc', cursor: 'pointer' }}>Learn More</span> about this sharing and the settings you have. ZenXchat-IG <span style={{ color: '#0066cc', cursor: 'pointer' }}>Privacy Policy</span> and <span style={{ color: '#0066cc', cursor: 'pointer' }}>Terms</span>.
                 </p>
 
-                {/* Footer Buttons */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <button 
                     onClick={async () => {
-                      if (!igUsername.trim()) {
-                        alert('Please enter your Instagram username');
-                        return;
-                      }
                       try {
-                        setIsVerifying(true);
+                        setModalStep('loading');
                         setVerificationStep(1);
                         setTimeout(() => setVerificationStep(2), 1200);
                         setTimeout(() => setVerificationStep(3), 2400);
@@ -318,13 +388,33 @@ export default function Onboarding() {
                     Allow
                   </button>
                   <button 
-                    onClick={() => setShowPermissionModal(false)}
+                    onClick={() => setModalStep('business_check')}
                     style={{ width: '100%', padding: '14px', background: '#f1f5f9', color: '#1e293b', border: 'none', borderRadius: '12px', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}
                   >
-                    Cancel
+                    Back
                   </button>
                 </div>
-              </>
+              </div>
+            )}
+
+            {modalStep === 'loading' && (
+              <div style={{ padding: '32px 16px', textAlign: 'center', animation: 'onboardingFadeIn 0.3s ease-out both' }}>
+                <div style={{ width: '48px', height: '48px', border: '3px solid #f1f5f9', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 20px auto' }} />
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>
+                  Connecting to Instagram
+                </h3>
+                <p style={{ color: '#64748b', fontSize: '0.88rem', lineHeight: '1.6', maxWidth: '300px', margin: '0 auto' }}>
+                  {verificationStep === 1 && "Verifying Instagram handle..."}
+                  {verificationStep === 2 && "Syncing Zorcha permissions..."}
+                  {verificationStep === 3 && "Completing setup..."}
+                </p>
+                <style>{`
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                `}</style>
+              </div>
             )}
 
           </div>
