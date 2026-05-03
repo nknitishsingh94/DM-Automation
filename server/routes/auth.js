@@ -25,7 +25,18 @@ router.post('/signup', async (req, res) => {
     
     // Check if user already exists
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: 'User already exists' });
+    if (existingUser) {
+      if (!existingUser.password) {
+        // OAuth user doesn't have a password set yet - allow them to set a password
+        existingUser.password = password;
+        if (username) existingUser.username = username;
+        await existingUser.save();
+        
+        const token = jwt.sign({ userId: existingUser._id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: '30d' });
+        return res.status(200).json({ token, user: { id: existingUser._id, username: existingUser.username, email: existingUser.email, profilePhoto: existingUser.profilePhoto } });
+      }
+      return res.status(400).json({ message: 'User already exists' });
+    }
     
     const newUser = new User({ username, email, password });
     await newUser.save();
