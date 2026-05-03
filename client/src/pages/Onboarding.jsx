@@ -139,7 +139,7 @@ export default function Onboarding() {
     );
   }
 
-  // Zorcha Selection UI
+  // ZenXchat Selection UI
   if (availablePages) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '24px', fontFamily: "'Inter', sans-serif" }}>
@@ -363,7 +363,7 @@ export default function Onboarding() {
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#475569', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Username</label>
                     <input 
                       type="text" 
-                      placeholder="e.g. nitish_nk_8795" 
+                      placeholder="e.g. username" 
                       value={igUsername} 
                       onChange={(e) => setIgUsername(e.target.value)}
                       style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#f8fafc', color: '#0f172a', fontSize: '0.92rem', outline: 'none', transition: 'all 0.2s', boxSizing: 'border-box' }} 
