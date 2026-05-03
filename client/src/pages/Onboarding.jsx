@@ -163,7 +163,7 @@ export default function Onboarding() {
 
               {/* Channel Pills */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                <div onClick={() => { setModalStep('login'); setShowPermissionModal(true); }} className="channel-pill">
+                <div onClick={() => handleConnectMeta('instagram')} className="channel-pill">
                   <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
                     <Instagram size={24} />
                   </div>
