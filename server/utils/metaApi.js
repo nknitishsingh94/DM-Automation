@@ -35,113 +35,81 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     let safeText = text || '';
     safeText = safeText.replace(/(^|\s)(www\.[^\s]+)/g, '$1https://$2');
 
-    // 1. Send the first plain text message with fallback links
-    let fallbackText = safeText;
+    let finalMessageBody = { text: safeText };
+    
+    // --- MULTI-BUTTON SUPPORT (Generic Template) ---
     if (buttons && buttons.length > 0) {
-      buttons.forEach(btn => {
-        if (btn.url) {
-          let safeUrl = btn.url || '';
-          if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
-            safeUrl = 'https://' + safeUrl;
+      finalMessageBody = {
+        attachment: {
+          type: "template",
+          payload: {
+            template_type: "generic",
+            elements: [{
+              title: safeText.substring(0, 80), // Title has 80 char limit
+              subtitle: safeText.length > 80 ? safeText.substring(80, 160) : "", // Optional subtitle
+              buttons: buttons.map(btn => {
+                let safeUrl = btn.url || '';
+                if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
+                  safeUrl = 'https://' + safeUrl;
+                }
+                return {
+                  type: "web_url",
+                  url: safeUrl,
+                  title: btn.text
+                };
+              })
+            }]
           }
-          fallbackText += `\n\n👉 ${btn.text}: ${safeUrl}`;
         }
-      });
-    }
-    if (mediaUrl) {
-      let safeUrl = mediaUrl || '';
-      if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
-        safeUrl = 'https://' + safeUrl;
-      }
-      fallbackText += `\n\n🔗 Link: ${safeUrl}`;
-    }
-
-    const firstPayload = {
-      recipient: { id: recipientId },
-      messaging_type: "RESPONSE",
-      message: { text: fallbackText }
-    };
-
-    console.log("📦 Sending First Payload:", JSON.stringify(firstPayload, null, 2));
-    await axios.post(url, firstPayload);
-
-    // 2. If there are buttons or quick replies, send the second payload with the Meta-specific template
-    let secondPayload = null;
-    if (buttons && buttons.length > 0) {
-      secondPayload = {
-        recipient: { id: recipientId },
-        messaging_type: "RESPONSE",
-        message: {
+      };
+    } else if (buttonText) {
+      // ✅ Opening Message Flow: Use a POSTBACK button if payload is provided
+      if (buttonPayload) {
+        finalMessageBody = {
           attachment: {
             type: "template",
             payload: {
               template_type: "generic",
               elements: [{
-                title: safeText.substring(0, 80),
-                buttons: buttons.map(btn => {
-                  let safeUrl = btn.url || '';
-                  if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
-                    safeUrl = 'https://' + safeUrl;
-                  }
-                  return btn.url ? {
-                    type: "web_url",
-                    url: safeUrl,
-                    title: btn.text
-                  } : {
-                    type: "postback",
-                    title: btn.text,
-                    payload: btn.payload || btn.text
-                  };
-                })
-              }]
-            }
-          }
-        }
-      };
-    } else if (buttonText) {
-      if (buttonPayload) {
-        secondPayload = {
-          recipient: { id: recipientId },
-          messaging_type: "RESPONSE",
-          message: {
-            attachment: {
-              type: "template",
-              payload: {
-                template_type: "generic",
-                elements: [{
-                  title: text.substring(0, 80),
-                  buttons: [{
-                    type: "postback",
-                    title: buttonText,
-                    payload: buttonPayload
-                  }]
+                title: text.substring(0, 80),
+                buttons: [{
+                  type: "postback",
+                  title: buttonText,
+                  payload: buttonPayload
                 }]
-              }
+              }]
             }
           }
         };
       } else {
-        secondPayload = {
-          recipient: { id: recipientId },
-          messaging_type: "RESPONSE",
-          message: {
-            text: "Options:",
-            quick_replies: [{
-              content_type: "text",
-              title: buttonText,
-              payload: buttonText
-            }]
+        // Legacy Single Button (Quick Reply)
+        finalMessageBody.quick_replies = [
+          {
+            content_type: "text",
+            title: buttonText,
+            payload: buttonText
           }
-        };
+        ];
       }
     }
 
-    if (secondPayload) {
-      console.log("📦 Sending Second Payload:", JSON.stringify(secondPayload, null, 2));
-      await axios.post(url, secondPayload);
+    if (mediaUrl && !finalMessageBody.attachment) {
+      if (finalMessageBody.text) {
+        finalMessageBody.text += `\n\nCheck this out: ${mediaUrl}`;
+      }
     }
 
+    const payload = {
+      recipient: { id: recipientId },
+      messaging_type: "RESPONSE",
+      message: finalMessageBody
+    };
+
+    console.log("📦 Sending Payload:", JSON.stringify(payload, null, 2));
+
+    const response = await axios.post(url, payload);
     console.log(`✅ SEND SUCCESS: Message delivered to ${recipientId} via ${platform}`);
+    
     return true;
   } catch (err) {
     const errorData = err.response?.data || err.message;
