@@ -212,11 +212,15 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
   ModelInstance.findByIdAndUpdate = async function (id, updateData, options = {}) {
     if (!supabase || !id) return null;
     let finalUpdate = { ...updateData };
-    if (tableName === 'campaigns') {
-      const existing = await ModelInstance.findById(id);
-      if (existing) {
-        finalUpdate = { ...existing, ...updateData };
+    const existing = await ModelInstance.findById(id);
+    if (existing) {
+      if (updateData.$inc) {
+        for (const [key, val] of Object.entries(updateData.$inc)) {
+          finalUpdate[key] = (existing[key] || 0) + val;
+        }
+        delete finalUpdate.$inc;
       }
+      finalUpdate = { ...existing, ...finalUpdate };
     }
     const cleanUpdate = convertOutgoing(finalUpdate);
     const { data, error } = await supabase
@@ -236,8 +240,14 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     const existing = data && data.length > 0 ? data[0] : null;
 
     let finalUpdate = { ...updateData };
-    if (tableName === 'campaigns' && existing) {
-      finalUpdate = { ...convertIncoming(existing), ...updateData };
+    if (existing) {
+      if (updateData.$inc) {
+        for (const [key, val] of Object.entries(updateData.$inc)) {
+          finalUpdate[key] = (existing[key] || 0) + val;
+        }
+        delete finalUpdate.$inc;
+      }
+      finalUpdate = { ...convertIncoming(existing), ...finalUpdate };
     }
     const cleanUpdate = convertOutgoing(finalUpdate);
 
@@ -373,10 +383,15 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     const { data, error } = await q.limit(1);
     if (error) throw error;
     if (data && data.length > 0) {
+      const existing = data[0];
       let finalUpdate = { ...updateData };
-      if (tableName === 'campaigns') {
-        finalUpdate = { ...convertIncoming(data[0]), ...updateData };
+      if (updateData.$inc) {
+        for (const [key, val] of Object.entries(updateData.$inc)) {
+          finalUpdate[key] = (existing[key] || 0) + val;
+        }
+        delete finalUpdate.$inc;
       }
+      finalUpdate = { ...convertIncoming(existing), ...finalUpdate };
       const cleanUpdate = convertOutgoing(finalUpdate);
       const { error: upErr } = await supabase.from(tableName).update(cleanUpdate).eq('id', data[0].id);
       if (upErr) throw upErr;
