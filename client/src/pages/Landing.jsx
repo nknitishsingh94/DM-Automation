@@ -26,6 +26,7 @@ export default function Landing() {
             <div className="header-divider"></div>
             <nav className="header-nav">
               <Link to="/about">About</Link>
+              <a href="#features">Features</a>
               <Link to="/resources">Resources</Link>
               <a href="#pricing">Pricing</a>
             </nav>
@@ -55,7 +56,7 @@ export default function Landing() {
         </div>
       </div>
 
-      <section className="features-section">
+      <section id="features" className="features-section">
         <div className="landing-features">
           <div className="feature-card">
             <div className="feature-icon feature-icon-purple">
