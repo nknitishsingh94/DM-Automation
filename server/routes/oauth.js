@@ -9,7 +9,7 @@ const router = express.Router();
 // Step 1: Redirect to Facebook OAuth
 router.get('/facebook', verifyToken, (req, res) => {
   const appId = process.env.META_APP_ID;
-  let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+  let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5001');
 
   // Clean trailing slash to prevent double-slash issues
   if (baseUrl.endsWith('/')) {
@@ -54,7 +54,7 @@ router.get('/facebook/callback', async (req, res) => {
   try {
     const appId = process.env.META_APP_ID;
     const appSecret = process.env.META_APP_SECRET;
-    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5001');
     if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
     const redirectUri = `${baseUrl}/api/oauth/facebook/callback`;
 
