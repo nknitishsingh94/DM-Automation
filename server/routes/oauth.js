@@ -252,10 +252,10 @@ router.get('/facebook/callback', async (req, res) => {
 router.get('/facebook/pages', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.userId });
-    if (!settings || (!settings.facebookAccessToken && !settings.instagramAccessToken)) {
+    const token = settings?.facebookAccessToken || settings?.instagramAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+    if (!token) {
       return res.status(400).json({ error: 'Please connect your Meta account first.' });
     }
-    const token = settings.facebookAccessToken || settings.instagramAccessToken;
 
     const pagesUrl = `https://graph.facebook.com/v19.0/me/accounts?fields=id,name,access_token,instagram_business_account&access_token=${token}`;
     const pagesRes = await axios.get(pagesUrl);
