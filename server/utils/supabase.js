@@ -34,6 +34,7 @@ function parseFilter(q, queryObj) {
         else if (op === '$lte') q = q.lte(parsedKey, subVal);
         else if (op === '$gt') q = q.gt(parsedKey, subVal);
         else if (op === '$lt') q = q.lt(parsedKey, subVal);
+        else if (op === '$ne') q = q.neq(parsedKey, subVal);
         else q = q.eq(parsedKey, subVal);
       }
     } else {
