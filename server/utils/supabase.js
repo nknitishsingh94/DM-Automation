@@ -194,9 +194,24 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     let q = supabase.from(tableName).select('*');
     q = parseFilter(q, query);
     const { data: existing, error: getErr } = await q.maybeSingle();
-    if (getErr || !existing) return null;
 
     const cleanUpdate = convertOutgoing(updateData);
+
+    if (getErr || !existing) {
+      if (options.upsert) {
+        // Build insert data including query fields
+        const insertData = { ...convertOutgoing(query), ...cleanUpdate };
+        const { data, error } = await supabase
+          .from(tableName)
+          .insert(insertData)
+          .select()
+          .maybeSingle();
+        if (error) throw error;
+        return convertIncoming(data);
+      }
+      return null;
+    }
+
     const { data, error } = await supabase
       .from(tableName)
       .update(cleanUpdate)
