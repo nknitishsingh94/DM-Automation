@@ -54,7 +54,7 @@ export default function Landing() {
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0' }}>
                       {/* Core Features Column */}
-                      <div style={{ paddingRight: '24px', borderRight: '1px solid #f1f5f9' }}>
+                      <div style={{ paddingRight: '24px' }}>
                         <p style={{ fontSize: '11px', fontWeight: '800', color: '#8b5cf6', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Core Features</p>
                         {[
                           { icon: <MessageCircle size={18} color="#64748b" />, title: 'Comment Automation', desc: 'Auto-reply to comments with DMs' },
@@ -64,10 +64,10 @@ export default function Landing() {
                         ].map((item, i) => (
                           <a key={i} href="#features" onClick={(e) => { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }}
                             style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'background 0.15s', marginBottom: '4px', cursor: 'pointer' }}
-                            onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
-                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                            onMouseEnter={e => e.currentTarget.style.color = '#7c3aed'}
+                            onMouseLeave={e => e.currentTarget.style.color = 'inherit'}
                           >
-                            <div style={{ padding: '8px', background: '#f8fafc', borderRadius: '8px', flexShrink: 0 }}>{item.icon}</div>
+                            <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
                             <div>
                               <p style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 2px 0' }}>{item.title}</p>
                               <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{item.desc}</p>
@@ -87,10 +87,10 @@ export default function Landing() {
                         ].map((item, i) => (
                           <a key={i} href="#features" onClick={(e) => { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }}
                             style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'background 0.15s', marginBottom: '4px', cursor: 'pointer' }}
-                            onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
-                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                            onMouseEnter={e => e.currentTarget.style.color = '#7c3aed'}
+                            onMouseLeave={e => e.currentTarget.style.color = 'inherit'}
                           >
-                            <div style={{ padding: '8px', background: '#f8fafc', borderRadius: '8px', flexShrink: 0 }}>{item.icon}</div>
+                            <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
                             <div>
                               <p style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 2px 0' }}>{item.title}</p>
                               <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{item.desc}</p>
