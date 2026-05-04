@@ -175,7 +175,7 @@ router.get('/facebook/callback', async (req, res) => {
     if (pageId && pageAccessToken) {
       try {
         console.log(`🔌 Attempting to subscribe App to Page Webhooks for page ${pageId}...`);
-        const subscribeUrl = `https://graph.facebook.com/v19.0/${pageId}/subscribed_apps?subscribed_fields=messages,messaging_postbacks,comments&access_token=${pageAccessToken}`;
+        const subscribeUrl = `https://graph.facebook.com/v19.0/${pageId}/subscribed_apps?subscribed_fields=messages,messaging_postbacks,feed&access_token=${pageAccessToken}`;
         const subRes = await axios.post(subscribeUrl);
         if (subRes.data && subRes.data.success) {
           console.log(`✅ Webhook Subscription Successful for Page ${pageId}!`);
@@ -221,9 +221,8 @@ router.get('/facebook/callback', async (req, res) => {
       updateData.isWhatsAppConnected = !!whatsappPhoneId;
       updateData.connectedWhatsAppName = whatsappName;
     }
-    if (whatsappDiscoveryError) {
-      updateData.whatsappError = whatsappDiscoveryError;
-    }
+    delete updateData.whatsappError;
+    delete updateData.whatsappDiscoveryError;
 
     const updatedSettings = await Settings.findOneAndUpdate(
       { userId: userId },
