@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Bot, Zap, Facebook, Instagram, Youtube, Linkedin, MessageCircle, Infinity, Heart, Check } from 'lucide-react';
+import { ArrowRight, Bot, Zap, Facebook, Instagram, Youtube, Linkedin, MessageCircle, Infinity, Heart, Check, MessageSquare, Clock, Calendar, Globe, Image, Radio } from 'lucide-react';
 import Footer from '../components/Footer';
 
 export default function Landing() {
+  const [featuresOpen, setFeaturesOpen] = useState(false);
   useEffect(() => {
     if (window.location.hash) {
       const id = window.location.hash.replace('#', '');
@@ -26,7 +27,90 @@ export default function Landing() {
             <div className="header-divider"></div>
             <nav className="header-nav">
               <Link to="/about">About</Link>
-              <a href="#features">Features</a>
+
+              {/* Features Dropdown */}
+              <div
+                style={{ position: 'relative' }}
+                onMouseEnter={() => setFeaturesOpen(true)}
+                onMouseLeave={() => setFeaturesOpen(false)}
+              >
+                <a href="#features" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
+                  onClick={(e) => { e.preventDefault(); setFeaturesOpen(!featuresOpen); }}>
+                  Features
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ transition: 'transform 0.2s', transform: featuresOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                    <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </a>
+
+                {featuresOpen && (
+                  <div style={{
+                    position: 'absolute', top: 'calc(100% + 12px)', left: '50%', transform: 'translateX(-50%)',
+                    background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+                    border: '1px solid #e2e8f0', padding: '24px', width: '560px', zIndex: 1000,
+                    animation: 'fadeIn 0.2s ease'
+                  }}>
+                    {/* Arrow */}
+                    <div style={{ position: 'absolute', top: '-7px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'white', border: '1px solid #e2e8f0', borderBottom: 'none', borderRight: 'none', rotate: '45deg' }} />
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0' }}>
+                      {/* Core Features Column */}
+                      <div style={{ paddingRight: '24px', borderRight: '1px solid #f1f5f9' }}>
+                        <p style={{ fontSize: '11px', fontWeight: '800', color: '#8b5cf6', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Core Features</p>
+                        {[
+                          { icon: <MessageCircle size={18} color="#64748b" />, title: 'Comment Automation', desc: 'Auto-reply to comments with DMs' },
+                          { icon: <Zap size={18} color="#64748b" />, title: 'DM Automation', desc: 'Visual flow builder for conversations' },
+                          { icon: <Clock size={18} color="#64748b" />, title: 'Follow-up Messages', desc: 'Automated nurture sequences' },
+                          { icon: <Calendar size={18} color="#64748b" />, title: 'Schedule with AutoDM', desc: 'Post + automation together' },
+                        ].map((item, i) => (
+                          <a key={i} href="#features" onClick={(e) => { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }}
+                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'background 0.15s', marginBottom: '4px', cursor: 'pointer' }}
+                            onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                          >
+                            <div style={{ padding: '8px', background: '#f8fafc', borderRadius: '8px', flexShrink: 0 }}>{item.icon}</div>
+                            <div>
+                              <p style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 2px 0' }}>{item.title}</p>
+                              <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{item.desc}</p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+
+                      {/* Advanced Column */}
+                      <div style={{ paddingLeft: '24px' }}>
+                        <p style={{ fontSize: '11px', fontWeight: '800', color: '#0ea5e9', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Advanced</p>
+                        {[
+                          { icon: <Globe size={18} color="#64748b" />, title: 'Universal Triggers', desc: 'One keyword, all channels' },
+                          { icon: <Bot size={18} color="#64748b" />, title: 'Facebook Automation', desc: 'Sync to Facebook instantly' },
+                          { icon: <Image size={18} color="#64748b" />, title: 'Story Replies', desc: 'Automate story interactions' },
+                          { icon: <Radio size={18} color="#64748b" />, title: 'Live Comment Auto DM', desc: 'DM viewers during lives' },
+                        ].map((item, i) => (
+                          <a key={i} href="#features" onClick={(e) => { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }}
+                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'background 0.15s', marginBottom: '4px', cursor: 'pointer' }}
+                            onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                          >
+                            <div style={{ padding: '8px', background: '#f8fafc', borderRadius: '8px', flexShrink: 0 }}>{item.icon}</div>
+                            <div>
+                              <p style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 2px 0' }}>{item.title}</p>
+                              <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{item.desc}</p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* View All Features CTA */}
+                    <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #f1f5f9', textAlign: 'right' }}>
+                      <a href="#features" onClick={(e) => { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '700', color: '#8b5cf6', textDecoration: 'none' }}>
+                        View All Features <ArrowRight size={14} />
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <Link to="/resources">Resources</Link>
               <a href="#pricing">Pricing</a>
             </nav>
