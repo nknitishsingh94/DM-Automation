@@ -44,7 +44,7 @@ function parseFilter(q, queryObj) {
   return q;
 }
 
-function convertIncoming(doc) {
+function convertIncoming(doc, tableName) {
   if (!doc) return null;
   const newDoc = { ...doc };
   if (doc.id) {
@@ -59,7 +59,7 @@ function convertIncoming(doc) {
       }
     }
   });
-  if (newDoc.response && newDoc.response.includes('__CAMP_NAME__:')) {
+  if (tableName === 'campaigns' && newDoc.response && newDoc.response.includes('__CAMP_NAME__:')) {
     const startIdx = newDoc.response.indexOf('__CAMP_NAME__:');
     const endIdx = newDoc.response.indexOf('__END_CAMP_NAME__');
     if (startIdx !== -1 && endIdx !== -1) {
@@ -72,17 +72,19 @@ function convertIncoming(doc) {
   return newDoc;
 }
 
-function convertOutgoing(doc) {
+function convertOutgoing(doc, tableName) {
   if (!doc) return null;
   const newDoc = { ...doc };
   if (newDoc._id) {
     newDoc.id = newDoc._id;
     delete newDoc._id;
   }
-  if (newDoc.name && newDoc.response) {
-    newDoc.response = `__CAMP_NAME__:${newDoc.name}__END_CAMP_NAME__${newDoc.response}`;
+  if (tableName === 'campaigns') {
+    if (newDoc.name && newDoc.response) {
+      newDoc.response = `__CAMP_NAME__:${newDoc.name}__END_CAMP_NAME__${newDoc.response}`;
+    }
+    delete newDoc.name;
   }
-  delete newDoc.name;
   delete newDoc.toObject;
   delete newDoc.save;
   delete newDoc.comparePassword;
@@ -126,7 +128,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
           finalDoc = { ...existing, ...doc };
         }
       }
-      const cleanData = convertOutgoing(finalDoc);
+      const cleanData = convertOutgoing(finalDoc, tableName);
 
       if (doc._id || doc.id) {
         const idToUse = doc.id || doc._id;
@@ -137,7 +139,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
           .select();
         if (error) throw error;
         if (updated && updated.length > 0) {
-          Object.assign(doc, convertIncoming(updated[0]));
+          Object.assign(doc, convertIncoming(updated[0], tableName));
         }
       } else {
         const { data: inserted, error } = await supabase
@@ -146,7 +148,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
           .select();
         if (error) throw error;
         if (inserted && inserted.length > 0) {
-          Object.assign(doc, convertIncoming(inserted[0]));
+          Object.assign(doc, convertIncoming(inserted[0], tableName));
         }
       }
       return doc;
@@ -170,7 +172,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     const promise = (async () => {
       const { data, error } = await q;
       if (error) throw error;
-      return (data || []).map(convertIncoming);
+      return (data || []).map(d => convertIncoming(d, tableName));
     })();
 
     promise.sort = function (sortObj) {
@@ -200,14 +202,14 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     q = parseFilter(q, query);
     const { data, error } = await q.limit(1);
     if (error) throw error;
-    return data && data.length > 0 ? convertIncoming(data[0]) : null;
+    return data && data.length > 0 ? convertIncoming(data[0], tableName) : null;
   };
 
   ModelInstance.findById = async function (id) {
     if (!supabase || !id) return null;
     const { data, error } = await supabase.from(tableName).select('*').eq('id', id).limit(1);
     if (error) throw error;
-    return data && data.length > 0 ? convertIncoming(data[0]) : null;
+    return data && data.length > 0 ? convertIncoming(data[0], tableName) : null;
   };
 
   ModelInstance.findByIdAndUpdate = async function (id, updateData, options = {}) {
@@ -223,14 +225,14 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
       }
       finalUpdate = { ...existing, ...finalUpdate };
     }
-    const cleanUpdate = convertOutgoing(finalUpdate);
+    const cleanUpdate = convertOutgoing(finalUpdate, tableName);
     const { data, error } = await supabase
       .from(tableName)
       .update(cleanUpdate)
       .eq('id', id)
       .select();
     if (error) throw error;
-    return data && data.length > 0 ? convertIncoming(data[0]) : null;
+    return data && data.length > 0 ? convertIncoming(data[0], tableName) : null;
   };
 
   ModelInstance.findOneAndUpdate = async function (query, updateData, options = {}) {
@@ -248,20 +250,20 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
         }
         delete finalUpdate.$inc;
       }
-      finalUpdate = { ...convertIncoming(existing), ...finalUpdate };
+      finalUpdate = { ...convertIncoming(existing, tableName), ...finalUpdate };
     }
-    const cleanUpdate = convertOutgoing(finalUpdate);
+    const cleanUpdate = convertOutgoing(finalUpdate, tableName);
 
     if (getErr || !existing) {
       if (options.upsert) {
         // Build insert data including query fields
-        const insertData = { ...convertOutgoing(query), ...cleanUpdate };
+        const insertData = { ...convertOutgoing(query, tableName), ...cleanUpdate };
         const { data: inserted, error } = await supabase
           .from(tableName)
           .insert(insertData)
           .select();
         if (error) throw error;
-        return inserted && inserted.length > 0 ? convertIncoming(inserted[0]) : null;
+        return inserted && inserted.length > 0 ? convertIncoming(inserted[0], tableName) : null;
       }
       return null;
     }
@@ -272,7 +274,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
       .eq('id', existing.id)
       .select();
     if (error) throw error;
-    return updated && updated.length > 0 ? convertIncoming(updated[0]) : null;
+    return updated && updated.length > 0 ? convertIncoming(updated[0], tableName) : null;
   };
 
   ModelInstance.findOneAndDelete = async function (query) {
@@ -285,7 +287,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
 
     const { error } = await supabase.from(tableName).delete().eq('id', existing.id);
     if (error) throw error;
-    return convertIncoming(existing);
+    return convertIncoming(existing, tableName);
   };
 
   ModelInstance.deleteMany = async function (query) {
@@ -339,7 +341,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
       }
     }
 
-    return (data || []).map(convertIncoming);
+    return (data || []).map(d => convertIncoming(d, tableName));
   };
 
   ModelInstance.create = async function (docs) {
@@ -350,14 +352,14 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     const insertedDocs = [];
     for (const doc of toInsert) {
       let finalDoc = { ...doc };
-      const cleanData = convertOutgoing(finalDoc);
+      const cleanData = convertOutgoing(finalDoc, tableName);
       const { data, error } = await supabase
         .from(tableName)
         .insert(cleanData)
         .select();
       if (error) throw error;
       if (data && data.length > 0) {
-        insertedDocs.push(convertIncoming(data[0]));
+        insertedDocs.push(convertIncoming(data[0], tableName));
       }
     }
     return isArr ? insertedDocs : insertedDocs[0];
@@ -392,8 +394,8 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
         }
         delete finalUpdate.$inc;
       }
-      finalUpdate = { ...convertIncoming(existing), ...finalUpdate };
-      const cleanUpdate = convertOutgoing(finalUpdate);
+      finalUpdate = { ...convertIncoming(existing, tableName), ...finalUpdate };
+      const cleanUpdate = convertOutgoing(finalUpdate, tableName);
       const { error: upErr } = await supabase.from(tableName).update(cleanUpdate).eq('id', data[0].id);
       if (upErr) throw upErr;
       return { acknowledged: true, modifiedCount: 1 };
@@ -408,7 +410,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     if (data && data.length > 0) {
       const { error: delErr } = await supabase.from(tableName).delete().eq('id', id);
       if (delErr) throw delErr;
-      return convertIncoming(data[0]);
+      return convertIncoming(data[0], tableName);
     }
     return null;
   };

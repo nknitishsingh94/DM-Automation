@@ -19,6 +19,7 @@ export default function Forms() {
   const [activeTab, setActiveTab] = useState('all');
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [wizardStep, setWizardStep] = useState(1);
   
@@ -79,6 +80,7 @@ export default function Forms() {
   const handleCreateForm = async () => {
     if (!newForm.name) return toast.error('Please enter a form name');
     
+    setIsSubmitting(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/forms`, {
         method: 'POST',
@@ -95,10 +97,14 @@ export default function Forms() {
         fetchForms();
         setWizardStep(1);
       } else {
-        toast.error('Failed to create form');
+        const errData = await res.json();
+        toast.error(errData.error || 'Failed to create form');
       }
     } catch (err) {
+      console.error("Form creation error:", err);
       toast.error('Connection error');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -430,9 +436,13 @@ export default function Forms() {
                 </>
               ) : (
                 <>
-                  <button className="btn-secondary" style={{ flex: 1, padding: '14px', borderRadius: '16px' }} onClick={() => setWizardStep(1)}>Back</button>
-                  <button className="btn-premium" style={{ flex: 1 }} onClick={handleCreateForm}>
-                    <Send size={18} /> Submit & Launch Form
+                  <button className="btn-secondary" style={{ flex: 1, padding: '14px', borderRadius: '16px' }} onClick={() => setWizardStep(1)} disabled={isSubmitting}>Back</button>
+                  <button className="btn-premium" style={{ flex: 1 }} onClick={handleCreateForm} disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <><Loader2 className="animate-spin" size={18} /> Launching...</>
+                    ) : (
+                      <><Send size={18} /> Submit & Launch Form</>
+                    )}
                   </button>
                 </>
               )}
