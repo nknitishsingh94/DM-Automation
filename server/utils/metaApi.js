@@ -35,77 +35,63 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     let safeText = text || '';
     safeText = safeText.replace(/(^|\s)(www\.[^\s]+)/g, '$1https://$2');
 
-    // 1. Send the full text as a plain text message first
-    const firstPayload = {
-      recipient: { id: recipientId },
-      messaging_type: "RESPONSE",
-      message: { text: safeText }
-    };
+    let payload = null;
 
-    console.log("📦 Sending First Payload:", JSON.stringify(firstPayload, null, 2));
-    await axios.post(url, firstPayload);
-
-    // 2. If there are buttons or quick replies, send the rich template/buttons with title "Options:"
-    let secondPayload = null;
     if (buttons && buttons.length > 0) {
-      secondPayload = {
+      payload = {
         recipient: { id: recipientId },
         messaging_type: "RESPONSE",
         message: {
           attachment: {
             type: "template",
             payload: {
-              template_type: "generic",
-              elements: [{
-                title: "Options:",
-                buttons: buttons.map(btn => {
-                  let safeUrl = btn.url || '';
-                  if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
-                    safeUrl = 'https://' + safeUrl;
-                  }
-                  return btn.url ? {
-                    type: "web_url",
-                    url: safeUrl,
-                    title: btn.text
-                  } : {
-                    type: "postback",
-                    title: btn.text,
-                    payload: btn.payload || btn.text
-                  };
-                })
-              }]
+              template_type: "button",
+              text: safeText || "Options:",
+              buttons: buttons.map(btn => {
+                let safeUrl = btn.url || '';
+                if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
+                  safeUrl = 'https://' + safeUrl;
+                }
+                return btn.url ? {
+                  type: "web_url",
+                  url: safeUrl,
+                  title: btn.text
+                } : {
+                  type: "postback",
+                  title: btn.text,
+                  payload: btn.payload || btn.text
+                };
+              })
             }
           }
         }
       };
     } else if (buttonText) {
       if (buttonPayload) {
-        secondPayload = {
+        payload = {
           recipient: { id: recipientId },
           messaging_type: "RESPONSE",
           message: {
             attachment: {
               type: "template",
               payload: {
-                template_type: "generic",
-                elements: [{
-                  title: "Options:",
-                  buttons: [{
-                    type: "postback",
-                    title: buttonText,
-                    payload: buttonPayload
-                  }]
+                template_type: "button",
+                text: safeText || "Options:",
+                buttons: [{
+                  type: "postback",
+                  title: buttonText,
+                  payload: buttonPayload
                 }]
               }
             }
           }
         };
       } else {
-        secondPayload = {
+        payload = {
           recipient: { id: recipientId },
           messaging_type: "RESPONSE",
           message: {
-            text: "Options:",
+            text: safeText || "Options:",
             quick_replies: [{
               content_type: "text",
               title: buttonText,
@@ -114,11 +100,17 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
           }
         };
       }
+    } else {
+      payload = {
+        recipient: { id: recipientId },
+        messaging_type: "RESPONSE",
+        message: { text: safeText }
+      };
     }
 
-    if (secondPayload) {
-      console.log("📦 Sending Second Payload:", JSON.stringify(secondPayload, null, 2));
-      await axios.post(url, secondPayload);
+    if (payload) {
+      console.log("📦 Sending Payload:", JSON.stringify(payload, null, 2));
+      await axios.post(url, payload);
     }
 
     console.log(`✅ SEND SUCCESS: Message delivered to ${recipientId} via ${platform}`);
