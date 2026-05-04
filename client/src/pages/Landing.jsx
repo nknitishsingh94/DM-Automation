@@ -44,13 +44,15 @@ export default function Landing() {
 
                 {featuresOpen && (
                   <div style={{
-                    position: 'absolute', top: 'calc(100% + 12px)', left: '50%', transform: 'translateX(-50%)',
-                    background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-                    border: '1px solid #e2e8f0', padding: '24px', width: '560px', zIndex: 1000,
-                    animation: 'fadeIn 0.2s ease'
+                    position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+                    paddingTop: '12px', zIndex: 1000, animation: 'fadeIn 0.2s ease'
                   }}>
-                    {/* Arrow */}
-                    <div style={{ position: 'absolute', top: '-7px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'white', border: '1px solid #e2e8f0', borderBottom: 'none', borderRight: 'none', rotate: '45deg' }} />
+                    <div style={{
+                      background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+                      border: '1px solid #e2e8f0', padding: '24px', width: '560px'
+                    }}>
+                      {/* Arrow */}
+                      <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'white', border: '1px solid #e2e8f0', borderBottom: 'none', borderRight: 'none', rotate: '45deg', zIndex: 1 }} />
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0' }}>
                       {/* Core Features Column */}
@@ -108,6 +110,7 @@ export default function Landing() {
                       </a>
                     </div>
                   </div>
+                </div>
                 )}
               </div>
 
