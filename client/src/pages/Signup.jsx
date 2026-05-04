@@ -108,20 +108,35 @@ export default function Signup() {
   };
 
   useEffect(() => {
-    /* Initialize Google Login */
-    if (window.google) {
-      if (!window.google_initialized) {
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: handleGoogleResponse
-        });
-        window.google_initialized = true;
+    const initGoogle = () => {
+      if (window.google && document.getElementById("googleBtn")) {
+        try {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGoogleResponse,
+            auto_select: false,
+            itp_support: true
+          });
+          
+          window.google.accounts.id.renderButton(
+            document.getElementById("googleBtn"),
+            { theme: "outline", size: "large", width: "320", shape: "rectangular" }
+          );
+        } catch (err) {
+          console.error("Google Init Error:", err);
+        }
       }
-      
-      window.google.accounts.id.renderButton(
-        document.getElementById("googleBtn"),
-        { theme: "outline", size: "large", width: "320", shape: "rectangular" }
-      );
+    };
+
+    if (!document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) {
+      const script = document.createElement('script');
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      script.onload = initGoogle;
+      document.head.appendChild(script);
+    } else if (window.google) {
+      initGoogle();
     }
   }, []);
 

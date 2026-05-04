@@ -110,17 +110,13 @@ router.post('/google', async (req, res) => {
     let user = await User.findOne({ email });
     
     if (!user) {
-      if (mode === 'signup') {
-        user = new User({
-          username: name,
-          email,
-          googleId: sub,
-          profilePhoto: picture
-        });
-        await user.save();
-      } else {
-        return res.status(404).json({ message: "Account not found. Please sign up first." });
-      }
+      user = new User({
+        username: name,
+        email,
+        googleId: sub,
+        profilePhoto: picture
+      });
+      await user.save();
     }
 
     // Ensure welcome message exists for the user
