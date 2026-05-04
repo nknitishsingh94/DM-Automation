@@ -49,6 +49,15 @@ function convertIncoming(doc) {
   if (doc.id) {
     newDoc._id = doc.id;
   }
+  if (newDoc.response && newDoc.response.includes('__CAMP_NAME__:')) {
+    const startIdx = newDoc.response.indexOf('__CAMP_NAME__:');
+    const endIdx = newDoc.response.indexOf('__END_CAMP_NAME__');
+    if (startIdx !== -1 && endIdx !== -1) {
+      const name = newDoc.response.slice(startIdx + '__CAMP_NAME__:'.length, endIdx);
+      newDoc.name = name;
+      newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_CAMP_NAME__'.length);
+    }
+  }
   newDoc.toObject = () => newDoc;
   return newDoc;
 }
@@ -60,11 +69,16 @@ function convertOutgoing(doc) {
     newDoc.id = newDoc._id;
     delete newDoc._id;
   }
+  if (newDoc.name && newDoc.response) {
+    newDoc.response = `__CAMP_NAME__:${newDoc.name}__END_CAMP_NAME__${newDoc.response}`;
+  }
+  delete newDoc.name;
   delete newDoc.toObject;
   delete newDoc.save;
   delete newDoc.comparePassword;
   return newDoc;
 }
+
 
 export function createSupabaseModel(tableName, comparePasswordFunc, hashPasswordFunc) {
   function ModelInstance(data) {
@@ -94,7 +108,15 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
         doc.password = await hashPasswordFunc(doc.password);
       }
 
-      const cleanData = convertOutgoing(doc);
+      let finalDoc = { ...doc };
+      if (tableName === 'campaigns' && (doc._id || doc.id)) {
+        const idToUse = doc.id || doc._id;
+        const existing = await ModelInstance.findById(idToUse);
+        if (existing) {
+          finalDoc = { ...existing, ...doc };
+        }
+      }
+      const cleanData = convertOutgoing(finalDoc);
 
       if (doc._id || doc.id) {
         const idToUse = doc.id || doc._id;
@@ -178,7 +200,14 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
 
   ModelInstance.findByIdAndUpdate = async function (id, updateData, options = {}) {
     if (!supabase || !id) return null;
-    const cleanUpdate = convertOutgoing(updateData);
+    let finalUpdate = { ...updateData };
+    if (tableName === 'campaigns') {
+      const existing = await ModelInstance.findById(id);
+      if (existing) {
+        finalUpdate = { ...existing, ...updateData };
+      }
+    }
+    const cleanUpdate = convertOutgoing(finalUpdate);
     const { data, error } = await supabase
       .from(tableName)
       .update(cleanUpdate)
@@ -195,7 +224,11 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     q = parseFilter(q, query);
     const { data: existing, error: getErr } = await q.maybeSingle();
 
-    const cleanUpdate = convertOutgoing(updateData);
+    let finalUpdate = { ...updateData };
+    if (tableName === 'campaigns' && existing) {
+      finalUpdate = { ...convertIncoming(existing), ...updateData };
+    }
+    const cleanUpdate = convertOutgoing(finalUpdate);
 
     if (getErr || !existing) {
       if (options.upsert) {
