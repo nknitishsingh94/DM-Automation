@@ -447,13 +447,22 @@ app.post('/api/webhook', async (req, res) => {
           console.log(`📬 INCOMING DM: ${isStoryMention ? 'Story' : 'DM'} | Sender: ${senderId} | Msg: ${messageText}`);
 
           const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
-          let userSettings = await Settings.findOne({
+          let allMatchingSettings = await Settings.find({
             $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }, { facebookPageId: pageId }]
           });
 
-          if (!userSettings) {
+          if (!allMatchingSettings || allMatchingSettings.length === 0) {
             console.warn(`🛑 UNKNOWN PAGE: ID ${pageId} is not linked to any user.`);
             continue;
+          }
+
+          let userSettings = allMatchingSettings[0];
+          for (const setting of allMatchingSettings) {
+            const campaigns = await Campaign.find({ userId: setting.userId, status: 'Active' });
+            if (campaigns && campaigns.length > 0) {
+              userSettings = setting;
+              break;
+            }
           }
 
           const targetUserId = userSettings.userId;
@@ -579,13 +588,22 @@ app.post('/api/webhook', async (req, res) => {
             const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
               
             // Identity Search
-            let userSettings = await Settings.findOne({
+            let allMatchingSettings = await Settings.find({
               $or: [
                 { instagramPageId: pageId }, 
                 { businessAccountId: pageId }, 
                 { facebookPageId: pageId }
               ]
             });
+
+            let userSettings = allMatchingSettings[0];
+            for (const setting of allMatchingSettings) {
+              const campaigns = await Campaign.find({ userId: setting.userId, status: 'Active' });
+              if (campaigns && campaigns.length > 0) {
+                userSettings = setting;
+                break;
+              }
+            }
 
             let targetUserId = userSettings?.userId;
             
