@@ -49,6 +49,15 @@ function convertIncoming(doc) {
   if (doc.id) {
     newDoc._id = doc.id;
   }
+  ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost'].forEach(field => {
+    if (newDoc[field] !== undefined && newDoc[field] !== null) {
+      if (typeof newDoc[field] === 'string') {
+        newDoc[field] = newDoc[field] === 'true' || newDoc[field] === 't';
+      } else {
+        newDoc[field] = Boolean(newDoc[field]);
+      }
+    }
+  });
   if (newDoc.response && newDoc.response.includes('__CAMP_NAME__:')) {
     const startIdx = newDoc.response.indexOf('__CAMP_NAME__:');
     const endIdx = newDoc.response.indexOf('__END_CAMP_NAME__');
@@ -124,18 +133,20 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
           .from(tableName)
           .update(cleanData)
           .eq('id', idToUse)
-          .select()
-          .single();
+          .select();
         if (error) throw error;
-        Object.assign(doc, convertIncoming(updated));
+        if (updated && updated.length > 0) {
+          Object.assign(doc, convertIncoming(updated[0]));
+        }
       } else {
         const { data: inserted, error } = await supabase
           .from(tableName)
           .insert(cleanData)
-          .select()
-          .single();
+          .select();
         if (error) throw error;
-        Object.assign(doc, convertIncoming(inserted));
+        if (inserted && inserted.length > 0) {
+          Object.assign(doc, convertIncoming(inserted[0]));
+        }
       }
       return doc;
     };
@@ -186,16 +197,16 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     }
     let q = supabase.from(tableName).select('*');
     q = parseFilter(q, query);
-    const { data, error } = await q.maybeSingle();
+    const { data, error } = await q.limit(1);
     if (error) throw error;
-    return convertIncoming(data);
+    return data && data.length > 0 ? convertIncoming(data[0]) : null;
   };
 
   ModelInstance.findById = async function (id) {
     if (!supabase || !id) return null;
-    const { data, error } = await supabase.from(tableName).select('*').eq('id', id).maybeSingle();
+    const { data, error } = await supabase.from(tableName).select('*').eq('id', id).limit(1);
     if (error) throw error;
-    return convertIncoming(data);
+    return data && data.length > 0 ? convertIncoming(data[0]) : null;
   };
 
   ModelInstance.findByIdAndUpdate = async function (id, updateData, options = {}) {
@@ -212,17 +223,17 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
       .from(tableName)
       .update(cleanUpdate)
       .eq('id', id)
-      .select()
-      .maybeSingle();
+      .select();
     if (error) throw error;
-    return convertIncoming(data);
+    return data && data.length > 0 ? convertIncoming(data[0]) : null;
   };
 
   ModelInstance.findOneAndUpdate = async function (query, updateData, options = {}) {
     if (!supabase) return null;
     let q = supabase.from(tableName).select('*');
     q = parseFilter(q, query);
-    const { data: existing, error: getErr } = await q.maybeSingle();
+    const { data, error: getErr } = await q.limit(1);
+    const existing = data && data.length > 0 ? data[0] : null;
 
     let finalUpdate = { ...updateData };
     if (tableName === 'campaigns' && existing) {
@@ -234,32 +245,31 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
       if (options.upsert) {
         // Build insert data including query fields
         const insertData = { ...convertOutgoing(query), ...cleanUpdate };
-        const { data, error } = await supabase
+        const { data: inserted, error } = await supabase
           .from(tableName)
           .insert(insertData)
-          .select()
-          .maybeSingle();
+          .select();
         if (error) throw error;
-        return convertIncoming(data);
+        return inserted && inserted.length > 0 ? convertIncoming(inserted[0]) : null;
       }
       return null;
     }
 
-    const { data, error } = await supabase
+    const { data: updated, error } = await supabase
       .from(tableName)
       .update(cleanUpdate)
       .eq('id', existing.id)
-      .select()
-      .maybeSingle();
+      .select();
     if (error) throw error;
-    return convertIncoming(data);
+    return updated && updated.length > 0 ? convertIncoming(updated[0]) : null;
   };
 
   ModelInstance.findOneAndDelete = async function (query) {
     if (!supabase) return null;
     let q = supabase.from(tableName).select('*');
     q = parseFilter(q, query);
-    const { data: existing, error: getErr } = await q.maybeSingle();
+    const { data, error: getErr } = await q.limit(1);
+    const existing = data && data.length > 0 ? data[0] : null;
     if (getErr || !existing) return null;
 
     const { error } = await supabase.from(tableName).delete().eq('id', existing.id);
@@ -319,6 +329,72 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     }
 
     return (data || []).map(convertIncoming);
+  };
+
+  ModelInstance.create = async function (docs) {
+    if (!supabase) return Array.isArray(docs) ? [] : null;
+    const isArr = Array.isArray(docs);
+    const toInsert = isArr ? docs : [docs];
+
+    const insertedDocs = [];
+    for (const doc of toInsert) {
+      let finalDoc = { ...doc };
+      const cleanData = convertOutgoing(finalDoc);
+      const { data, error } = await supabase
+        .from(tableName)
+        .insert(cleanData)
+        .select();
+      if (error) throw error;
+      if (data && data.length > 0) {
+        insertedDocs.push(convertIncoming(data[0]));
+      }
+    }
+    return isArr ? insertedDocs : insertedDocs[0];
+  };
+
+  ModelInstance.deleteOne = async function (query) {
+    if (!supabase) return { acknowledged: true, deletedCount: 0 };
+    let q = supabase.from(tableName).select('*');
+    q = parseFilter(q, query);
+    const { data, error } = await q.limit(1);
+    if (error) throw error;
+    if (data && data.length > 0) {
+      const { error: delErr } = await supabase.from(tableName).delete().eq('id', data[0].id);
+      if (delErr) throw delErr;
+      return { acknowledged: true, deletedCount: 1 };
+    }
+    return { acknowledged: true, deletedCount: 0 };
+  };
+
+  ModelInstance.updateOne = async function (query, updateData, options = {}) {
+    if (!supabase) return { acknowledged: true, modifiedCount: 0 };
+    let q = supabase.from(tableName).select('*');
+    q = parseFilter(q, query);
+    const { data, error } = await q.limit(1);
+    if (error) throw error;
+    if (data && data.length > 0) {
+      let finalUpdate = { ...updateData };
+      if (tableName === 'campaigns') {
+        finalUpdate = { ...convertIncoming(data[0]), ...updateData };
+      }
+      const cleanUpdate = convertOutgoing(finalUpdate);
+      const { error: upErr } = await supabase.from(tableName).update(cleanUpdate).eq('id', data[0].id);
+      if (upErr) throw upErr;
+      return { acknowledged: true, modifiedCount: 1 };
+    }
+    return { acknowledged: true, modifiedCount: 0 };
+  };
+
+  ModelInstance.findByIdAndDelete = async function (id) {
+    if (!supabase || !id) return null;
+    const { data, error } = await supabase.from(tableName).select('*').eq('id', id).limit(1);
+    if (error) throw error;
+    if (data && data.length > 0) {
+      const { error: delErr } = await supabase.from(tableName).delete().eq('id', id);
+      if (delErr) throw delErr;
+      return convertIncoming(data[0]);
+    }
+    return null;
   };
 
   return ModelInstance;
