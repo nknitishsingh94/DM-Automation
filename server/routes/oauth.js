@@ -35,7 +35,7 @@ router.get('/facebook', verifyToken, (req, res) => {
 // Step 2: Handle OAuth Callback
 router.get('/facebook/callback', async (req, res) => {
   const { code, state, error } = req.query;
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
   const isFromOnboarding = state && state.includes('_onboarding');
   const isInstagram = state && state.includes('_instagram');
