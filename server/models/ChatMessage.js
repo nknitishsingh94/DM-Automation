@@ -1,11 +1,5 @@
-// server/models/ChatMessage.js
-import mongoose from 'mongoose';
+import { createSupabaseModel } from '../utils/supabase.js';
 
-const ChatMessageSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  role: { type: String, enum: ['user', 'ai'], required: true },
-  text: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
+const ChatMessage = createSupabaseModel('chat_messages');
 
-export default mongoose.model('ChatMessage', ChatMessageSchema);
+export default ChatMessage;

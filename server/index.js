@@ -25,7 +25,6 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import OpenAI from 'openai';
 
-import mongoose from 'mongoose';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -134,7 +133,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   }
 
   // 1. Check for Active Flows first (Advanced Automation)
-  const queryUserId = mongoose.Types.ObjectId.isValid(userId) ? new mongoose.Types.ObjectId(userId) : userId;
+  const queryUserId = userId;
   const activeFlows = await Flow.find({
     $or: [{ userId }, { userId: queryUserId }],
     status: 'Active'
@@ -273,7 +272,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
     if (sent) {
       const autoReply = new Message({
-        userId: new mongoose.Types.ObjectId(userId),
+        userId: userId,
         chatId: chatId || 'default', sender: 'AI Agent', text: match.response, type: 'sent', platform, isAI: true, campaignId: match._id, timestamp: new Date()
       });
       await autoReply.save();
@@ -301,7 +300,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
         if (sent) {
           const autoReply = new Message({
-            userId: new mongoose.Types.ObjectId(userId),
+            userId: userId,
             chatId: chatId || 'default',
             sender: 'AI Agent',
             text: aiResponse,
@@ -326,17 +325,21 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   return { skipped: true, reason: 'no keywords matched and AI failed' };
 };
 
+import { supabase } from './utils/supabase.js';
+
 let lastDbError = null;
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000, // Fail after 5 seconds if no connection
-    });
-    console.log('✅ Connected to MongoDB');
+    // Ping Supabase to check connectivity
+    const { error } = await supabase.from('users').select('id').limit(1);
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
+    console.log('✅ Connected to Supabase');
     lastDbError = null;
   } catch (err) {
-    console.error('❌ MongoDB Connection Error:', err.message);
+    console.warn('⚠️ Supabase Connection Error (Checking):', err.message);
     lastDbError = err.message;
   }
 };
@@ -346,14 +349,11 @@ connectDB();
 
 // Health Check Endpoint
 app.get('/health', (req, res) => {
-  const readyState = mongoose.connection.readyState;
-  const states = { 0: 'Disconnected', 1: 'Connected', 2: 'Connecting', 3: 'Disconnecting' };
-
   res.status(200).json({
     status: 'OK',
-    database: states[readyState] || 'Unknown',
+    database: lastDbError ? 'Error' : 'Connected to Supabase',
     db_error: lastDbError,
-    mongodb_uri_exists: !!process.env.MONGODB_URI,
+    supabase_url_exists: !!process.env.SUPABASE_URL,
     timestamp: new Date()
   });
 });
@@ -815,8 +815,8 @@ app.get('/api/stats', verifyToken, async (req, res) => {
       dateQuery = { $gte: d };
     }
 
-    const campaignMatch = { userId: new mongoose.Types.ObjectId(req.user.userId) };
-    const messageMatch = { userId: new mongoose.Types.ObjectId(req.user.userId) };
+    const campaignMatch = { userId: req.user.userId };
+    const messageMatch = { userId: req.user.userId };
 
     if (Object.keys(dateQuery).length > 0) {
       campaignMatch.createdAt = dateQuery;
@@ -863,7 +863,7 @@ app.get('/api/stats', verifyToken, async (req, res) => {
 app.get('/api/campaigns', verifyToken, async (req, res) => {
   try {
     const campaigns = await Campaign.find({
-      userId: new mongoose.Types.ObjectId(req.user.userId)
+      userId: req.user.userId
     }).sort({ createdAt: -1 });
     res.json(campaigns);
   } catch (err) {
@@ -887,7 +887,7 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
 
     const newCampaign = new Campaign({
       ...req.body,
-      userId: new mongoose.Types.ObjectId(req.user.userId)
+      userId: req.user.userId
     });
     await newCampaign.save();
     res.json(newCampaign);
@@ -901,7 +901,7 @@ app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
     const updateData = { ...req.body };
     const campaign = await Campaign.findOneAndUpdate(
-      { _id: req.params.id, userId: new mongoose.Types.ObjectId(req.user.userId) },
+      { _id: req.params.id, userId: req.user.userId },
       { $set: updateData },
       { new: true }
     );
@@ -916,7 +916,7 @@ app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
     const result = await Campaign.findOneAndDelete({
       _id: req.params.id,
-      userId: new mongoose.Types.ObjectId(req.user.userId)
+      userId: req.user.userId
     });
 
     if (!result) {
@@ -987,7 +987,7 @@ app.post('/api/messages', verifyToken, async (req, res) => {
 
     // Explicitly casting userId to ObjectId to ensure it saves correctly
     const newMessage = new Message({
-      userId: new mongoose.Types.ObjectId(req.user.userId),
+      userId: req.user.userId,
       sender,
       text,
       type: type || 'sent', // Default to sent if missing

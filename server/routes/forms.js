@@ -3,7 +3,6 @@ import express from 'express';
 import Form from '../models/Form.js';
 import FormSubmission from '../models/FormSubmission.js';
 import verifyToken from '../middleware/auth.js';
-import mongoose from 'mongoose';
 
 const router = express.Router();
 

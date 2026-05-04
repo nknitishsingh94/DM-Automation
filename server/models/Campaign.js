@@ -1,31 +1,5 @@
-import mongoose from 'mongoose';
+import { createSupabaseModel } from '../utils/supabase.js';
 
-const campaignSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  trigger: { type: String, required: true },
-  triggerOnDms: { type: Boolean, default: true },
-  triggerOnComments: { type: Boolean, default: false },
-  triggerOnStories: { type: Boolean, default: false },
-  response: { type: String, required: true },
-  status: { type: String, enum: ['Active', 'Paused'], default: 'Active' },
-  dmsSent: { type: Number, default: 0 },
-  platform: { type: String, enum: ['instagram', 'facebook', 'whatsapp', 'all'], default: 'all' },
-  videoUrl: { type: String, default: '' },
-  linkUrl: { type: String, default: '' },
-  buttonText: { type: String, default: '' },
-  requireFollow: { type: Boolean, default: false },
-  unfollowedResponse: { type: String, default: 'Please follow our account first to get a reply!' },
-  openingMessage: { type: Boolean, default: false },
-  openingMessageText: { type: String, default: "" },
-  openingMessageButton: { type: String, default: "" },
-  publicReplyText: { type: String, default: "Check your DMs! 🚀 I've sent you the info." },
-  isAnyPost: { type: Boolean, default: true },
-  postId: { type: String, default: "" },
-  buttons: [{
-    text: { type: String, default: '' },
-    url: { type: String, default: '' }
-  }],
-  createdAt: { type: Date, default: Date.now }
-});
+const Campaign = createSupabaseModel('campaigns');
 
-export default mongoose.model('Campaign', campaignSchema);
+export default Campaign;

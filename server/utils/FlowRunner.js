@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
 import { generateAIResponse } from './aiHandler.js';
 import Flow from '../models/Flow.js';
 import Contact from '../models/Contact.js';
 import Message from '../models/Message.js';
+import User from '../models/User.js';
 import { sendMessageToInstagram, sendPrivateReply } from './metaApi.js';
 
 /**
@@ -15,7 +15,7 @@ export const runFlow = async (userId, flowId, contactId, platform, initialText =
     if (!flow || flow.status !== 'Active') return;
 
     // Premium Check: Visual Flows only work for PRO subscribers
-    const user = await mongoose.model('User').findById(userId);
+    const user = await User.findById(userId);
     if (!user || user.plan !== 'pro') {
       console.log(`❌ Flow Execution Blocked: User ${userId} is not on a PRO plan.`);
       return;
@@ -57,7 +57,7 @@ export const runFlow = async (userId, flowId, contactId, platform, initialText =
 
         // Save AI response to DB
         const aiMsg = new Message({
-          userId: new mongoose.Types.ObjectId(userId),
+          userId: userId,
           chatId: contactId, sender: 'AI Agent', text, type: 'sent', platform, isAI: true, timestamp: new Date()
         });
         await aiMsg.save();
@@ -74,7 +74,7 @@ export const runFlow = async (userId, flowId, contactId, platform, initialText =
         }
 
         const aiMsg = new Message({
-          userId: new mongoose.Types.ObjectId(userId),
+          userId: userId,
           chatId: contactId, sender: 'AI Agent', text: responseText, type: 'sent', platform, isAI: true, timestamp: new Date()
         });
         await aiMsg.save();
