@@ -31,6 +31,7 @@ export default function Settings() {
   const [deletePassword, setDeletePassword] = useState('');
   const [deleting, setDeleting] = useState(false);
   const [whatsappQrUrl, setWhatsappQrUrl] = useState('');
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const { notify } = useNotification();
 
@@ -268,8 +269,11 @@ export default function Settings() {
                   <button 
                     type="button"
                     onClick={() => {
-                      const token = localStorage.getItem('insta_agent_token');
-                      window.location.href = `${API_BASE_URL}/api/oauth/facebook?connectType=instagram&token=${token}`;
+                      setIsRedirecting(true);
+                      setTimeout(() => {
+                        const token = localStorage.getItem('insta_agent_token');
+                        window.location.href = `${API_BASE_URL}/api/oauth/facebook?connectType=instagram&token=${token}`;
+                      }, 2500);
                     }}
                     style={{ 
                       width: '100%', maxWidth: '300px', background: '#1877F2', color: 'white', border: 'none', borderRadius: '8px', 
@@ -278,6 +282,23 @@ export default function Settings() {
                     }}>
                     <Facebook size={20} /> Connect Instagram via Meta
                   </button>
+                  {isRedirecting && (
+                    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255, 255, 255, 0.9)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 9999, animation: 'fadeIn 0.3s ease-out both' }}>
+                      <div style={{ width: '56px', height: '56px', border: '3px solid #f1f5f9', borderTopColor: '#7c3aed', borderRadius: '50%', animation: 'spin 0.8s linear infinite', marginBottom: '24px' }} />
+                      <h3 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px', letterSpacing: '-0.5px' }}>
+                        Connecting to Instagram
+                      </h3>
+                      <p style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: '500' }}>
+                        Please wait, redirecting you to Meta safely.
+                      </p>
+                    </div>
+                  )}
+                  <style>{`
+                    @keyframes spin {
+                      0% { transform: rotate(0deg); }
+                      100% { transform: rotate(360deg); }
+                    }
+                  `}</style>
                   <div style={{ marginTop: '16px', fontSize: '0.75rem', color: '#94a3b8' }}>
                     Requires Developer App ID & Secret inside .env
                   </div>

@@ -53,6 +53,8 @@ export default function Onboarding() {
   const [availablePages, setAvailablePages] = useState(null);
   const [isLinking, setIsLinking] = useState(false);
   const [linkingError, setLinkingError] = useState('');
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   useEffect(() => {
     if (user?.name) {
@@ -84,8 +86,10 @@ export default function Onboarding() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('oauth_success')) {
+      setShowSuccessToast(true);
       fetchPages();
       window.history.replaceState({}, document.title, window.location.pathname);
+      setTimeout(() => setShowSuccessToast(false), 5000);
     }
 
     const fetchSettings = async () => {
@@ -119,12 +123,15 @@ export default function Onboarding() {
   }, []);
 
   const handleConnectMeta = (connectType = '') => {
-    const token = localStorage.getItem('insta_agent_token');
-    let url = `${API_BASE_URL}/api/oauth/facebook?onboarding=true&token=${token}`;
-    if (connectType) {
-      url += `&connectType=${connectType}`;
-    }
-    window.location.href = url;
+    setIsRedirecting(true);
+    setTimeout(() => {
+      const token = localStorage.getItem('insta_agent_token');
+      let url = `${API_BASE_URL}/api/oauth/facebook?onboarding=true&token=${token}`;
+      if (connectType) {
+        url += `&connectType=${connectType}`;
+      }
+      window.location.href = url;
+    }, 2500);
   };
 
   const handleCompleteSetup = () => {
@@ -260,6 +267,24 @@ export default function Onboarding() {
   return (
     <>
       <style>{styles}</style>
+      {isRedirecting && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255, 255, 255, 0.9)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 9999, animation: 'onboardingFadeIn 0.3s ease-out both' }}>
+          <div style={{ width: '56px', height: '56px', border: '3px solid #f1f5f9', borderTopColor: '#7c3aed', borderRadius: '50%', animation: 'spin 0.8s linear infinite', marginBottom: '24px' }} />
+          <h3 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px', letterSpacing: '-0.5px' }}>
+            Connecting to Instagram
+          </h3>
+          <p style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: '500' }}>
+            Please wait, redirecting you to Meta safely.
+          </p>
+        </div>
+      )}
+
+      {showSuccessToast && (
+        <div style={{ position: 'fixed', top: '24px', left: '50%', transform: 'translateX(-50%)', background: '#10b981', color: 'white', padding: '14px 28px', borderRadius: '30px', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 12px 32px rgba(16, 185, 129, 0.25)', display: 'flex', alignItems: 'center', gap: '10px', zIndex: 9999, animation: 'onboardingFadeIn 0.4s cubic-bezier(0, 0, 0.2, 1) both' }}>
+          <CheckCircle size={20} /> Connected Successfully
+        </div>
+      )}
+
       {metaConnected ? (
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '24px', fontFamily: "'Inter', sans-serif" }}>
           <div style={{ maxWidth: '480px', width: '100%', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '28px', padding: '40px', boxShadow: '0 24px 64px rgba(0,0,0,0.06)', animation: 'onboardingFadeIn 0.5s ease-out both', textAlign: 'center' }}>
