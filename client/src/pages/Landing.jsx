@@ -57,13 +57,13 @@ export default function Landing() {
                       <div style={{ paddingRight: '24px' }}>
                         <p style={{ fontSize: '11px', fontWeight: '800', color: '#8b5cf6', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Core Features</p>
                         {[
-                          { icon: <MessageCircle size={18} color="#64748b" />, title: 'Comment Automation', desc: 'Auto-reply to comments with DMs' },
-                          { icon: <Zap size={18} color="#64748b" />, title: 'DM Automation', desc: 'Visual flow builder for conversations' },
-                          { icon: <Clock size={18} color="#64748b" />, title: 'Follow-up Messages', desc: 'Automated nurture sequences' },
-                          { icon: <Calendar size={18} color="#64748b" />, title: 'Schedule with AutoDM', desc: 'Post + automation together' },
+                          { icon: <MessageCircle size={18} color="#64748b" />, title: 'Comment Automation', desc: 'Auto-reply to comments with DMs', link: '/campaigns' },
+                          { icon: <Zap size={18} color="#64748b" />, title: 'DM Automation', desc: 'Visual flow builder for conversations', link: '/campaigns' },
+                          { icon: <Clock size={18} color="#64748b" />, title: 'Follow-up Messages', desc: 'Automated nurture sequences', link: '/campaigns' },
+                          { icon: <Calendar size={18} color="#64748b" />, title: 'Schedule with AutoDM', desc: 'Post + automation together', link: '#features' },
                         ].map((item, i) => (
-                          <a key={i} href="#features" onClick={(e) => { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }}
-                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'background 0.15s', marginBottom: '4px', cursor: 'pointer' }}
+                          <Link key={i} to={item.link} onClick={(e) => { if(item.link === '#features') { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); } else { setFeaturesOpen(false); } }}
+                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: 'inherit' }}
                             onMouseEnter={e => e.currentTarget.style.color = '#7c3aed'}
                             onMouseLeave={e => e.currentTarget.style.color = 'inherit'}
                           >
@@ -72,7 +72,7 @@ export default function Landing() {
                               <p style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 2px 0' }}>{item.title}</p>
                               <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{item.desc}</p>
                             </div>
-                          </a>
+                          </Link>
                         ))}
                       </div>
 
@@ -80,13 +80,13 @@ export default function Landing() {
                       <div style={{ paddingLeft: '24px' }}>
                         <p style={{ fontSize: '11px', fontWeight: '800', color: '#0ea5e9', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Advanced</p>
                         {[
-                          { icon: <Globe size={18} color="#64748b" />, title: 'Universal Triggers', desc: 'One keyword, all channels' },
-                          { icon: <Bot size={18} color="#64748b" />, title: 'Facebook Automation', desc: 'Sync to Facebook instantly' },
-                          { icon: <Image size={18} color="#64748b" />, title: 'Story Replies', desc: 'Automate story interactions' },
-                          { icon: <Radio size={18} color="#64748b" />, title: 'Live Comment Auto DM', desc: 'DM viewers during lives' },
+                          { icon: <Globe size={18} color="#64748b" />, title: 'Universal Triggers', desc: 'One keyword, all channels', link: '#features' },
+                          { icon: <Bot size={18} color="#64748b" />, title: 'Facebook Automation', desc: 'Sync to Facebook instantly', link: '/settings' },
+                          { icon: <Image size={18} color="#64748b" />, title: 'Story Replies', desc: 'Automate story interactions', link: '/campaigns' },
+                          { icon: <Radio size={18} color="#64748b" />, title: 'Live Comment Auto DM', desc: 'DM viewers during lives', link: '/campaigns' },
                         ].map((item, i) => (
-                          <a key={i} href="#features" onClick={(e) => { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }}
-                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'background 0.15s', marginBottom: '4px', cursor: 'pointer' }}
+                          <Link key={i} to={item.link} onClick={(e) => { if(item.link === '#features') { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); } else { setFeaturesOpen(false); } }}
+                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: 'inherit' }}
                             onMouseEnter={e => e.currentTarget.style.color = '#7c3aed'}
                             onMouseLeave={e => e.currentTarget.style.color = 'inherit'}
                           >
@@ -95,7 +95,7 @@ export default function Landing() {
                               <p style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 2px 0' }}>{item.title}</p>
                               <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{item.desc}</p>
                             </div>
-                          </a>
+                          </Link>
                         ))}
                       </div>
                     </div>
