@@ -187,27 +187,6 @@ router.get('/facebook/callback', async (req, res) => {
     }
 
     // 5. Save to Database
-    if (pageId || businessAccountId) {
-      const conflict = await Settings.findOne({
-        userId: { $ne: userId },
-        $or: [
-          { instagramPageId: pageId },
-          { businessAccountId: pageId },
-          { facebookPageId: pageId },
-          { businessAccountId: businessAccountId }
-        ]
-      });
-
-      if (conflict) {
-        console.warn(`🛑 OAuth Conflict: Page ID ${pageId} or Business Account ID ${businessAccountId} is already connected to another account.`);
-        if (isFromOnboarding) {
-          return res.redirect(`${frontendUrl}/onboarding?oauth_error=already_connected`);
-        } else {
-          return res.redirect(`${frontendUrl}/settings?oauth_error=already_connected`);
-        }
-      }
-    }
-
     const updateData = { lastTestedAt: new Date() };
 
     if (!isInstagram && !isFacebook) {
@@ -320,23 +299,6 @@ router.get('/facebook/pages', verifyToken, async (req, res) => {
 router.post('/facebook/select-page', verifyToken, async (req, res) => {
   try {
     const { pageId, pageAccessToken, businessAccountId, instagramUsername } = req.body;
-
-    if (pageId || businessAccountId) {
-      const conflict = await Settings.findOne({
-        userId: { $ne: req.user.userId },
-        $or: [
-          { instagramPageId: pageId },
-          { businessAccountId: pageId },
-          { facebookPageId: pageId },
-          { businessAccountId: businessAccountId }
-        ]
-      });
-
-      if (conflict) {
-        console.warn(`🛑 OAuth Conflict: Page ID ${pageId} or Business Account ID ${businessAccountId} is already connected to another account.`);
-        return res.status(400).json({ error: 'This page/account is already connected to another user.' });
-      }
-    }
     
     const updateData = {
       instagramAccessToken: pageAccessToken,
