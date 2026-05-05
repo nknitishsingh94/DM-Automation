@@ -6,7 +6,7 @@ import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
 
 export default function Settings() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('instagram');
   const [settings, setSettings] = useState({
@@ -152,11 +152,9 @@ export default function Settings() {
       const data = await res.json();
       
       if (res.ok) {
-        notify("Account deleted successfully. We're sorry to see you go.", "success");
-        // Clear storage and redirect
-        localStorage.removeItem('insta_agent_token');
-        localStorage.removeItem('insta_agent_user');
-        window.location.href = '/';
+        // Clear all auth state and redirect to landing page
+        logout();
+        navigate('/');
       } else {
         notify(data.message || "Failed to delete account. Check your password.", "error");
       }

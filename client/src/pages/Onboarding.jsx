@@ -97,12 +97,10 @@ export default function Onboarding() {
         if (res.ok) {
           const data = await res.json();
           if (data.isAccountConnected || data.isFacebookConnected) {
-            setMetaConnected(true);
-            setConnectedName(data.connectedInstagramName || data.connectedFacebookName || 'Connected Meta Account');
-            if (data.connectedInstagramName) {
-              setIgUsername(data.connectedInstagramName);
-            }
+            // Already connected — skip onboarding, go straight to dashboard
             localStorage.setItem('insta_agent_connected', 'true');
+            navigate('/dashboard');
+            return;
           } else if (data.facebookAccessToken || data.instagramAccessToken) {
             // User linked Meta but hasn't completed page selection
             fetchPages();

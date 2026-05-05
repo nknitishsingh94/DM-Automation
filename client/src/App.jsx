@@ -371,7 +371,7 @@ function MainLayout() {
             </div>
           }>
             <Routes>
-              <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
+              <Route path="/" element={user ? <Navigate to={localStorage.getItem('insta_agent_connected') === 'true' ? '/dashboard' : '/onboarding'} /> : <Landing />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
@@ -391,8 +391,8 @@ function MainLayout() {
               <Route path="/broadcasts" element={<ProtectedRoute><Broadcasts /></ProtectedRoute>} />
               <Route path="/flow-builder/:id" element={<ProtectedRoute><FlowBuilder /></ProtectedRoute>} />
               <Route path="/refer" element={<ProtectedRoute><Referral /></ProtectedRoute>} />
-              <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
-              <Route path="/signup" element={user ? <Navigate to="/dashboard" /> : <Signup />} />
+              <Route path="/login" element={user ? <Navigate to={localStorage.getItem('insta_agent_connected') === 'true' ? '/dashboard' : '/onboarding'} /> : <Login />} />
+              <Route path="/signup" element={user ? <Navigate to={localStorage.getItem('insta_agent_connected') === 'true' ? '/dashboard' : '/onboarding'} /> : <Signup />} />
               <Route path="/help" element={<HelpCenter />} />
               <Route path="/about" element={<About />} />
               <Route path="/resources" element={<Resources />} />

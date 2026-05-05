@@ -47,6 +47,7 @@ export function AuthProvider({ children }) {
     setUser(null);
     localStorage.removeItem('insta_agent_user');
     localStorage.removeItem('insta_agent_token');
+    localStorage.removeItem('insta_agent_connected');
   };
 
   const syncPlan = async () => {
