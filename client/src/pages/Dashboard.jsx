@@ -82,6 +82,13 @@ export default function Dashboard() {
 
   const exploreItems = [
     {
+      title: 'Create Instagram Automation',
+      desc: 'Set up auto-replies for comments, DMs, and story mentions instantly',
+      cta: 'Build Automation',
+      link: '/campaigns',
+      icon: <Zap size={18} color="#7c3aed" fill="#7c3aed" />
+    },
+    {
       title: 'Answer all your FAQs',
       desc: 'Set up AI-powered responses to handle common questions automatically',
       cta: 'Create FAQ Bot',
@@ -98,7 +105,7 @@ export default function Dashboard() {
     {
       title: 'Refer & Earn',
       desc: 'Invite friends to smart10X and earn rewards for every referral',
-      cta: 'Start Referring',
+      cta: 'Refer Now',
       link: '/refer',
       icon: <Users size={18} color="#f59e0b" />
     }
