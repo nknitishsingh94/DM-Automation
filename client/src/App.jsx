@@ -74,11 +74,19 @@ const Toast = ({ message, type, onClose }) => {
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
   const location = useLocation();
-  if (!user) return <Navigate to="/login" />;
+  const token = localStorage.getItem('insta_agent_token');
+  
+  if (!user && !token) return <Navigate to="/login" />;
 
+  // More robust connection check
   const isConnected = localStorage.getItem('insta_agent_connected') === 'true';
-  if (!isConnected && location.pathname !== '/onboarding' && location.pathname !== '/upgrade') {
-    return <Navigate to="/onboarding" />;
+  const isBypassPage = ['/onboarding', '/upgrade', '/settings', '/campaigns', '/dashboard'].includes(location.pathname);
+  
+  if (!isConnected && !isBypassPage) {
+    // Only force onboarding if they are trying to access deep automation features without connection
+    if (location.pathname.startsWith('/automation-editor') || location.pathname.startsWith('/flow-builder')) {
+      return <Navigate to="/onboarding" />;
+    }
   }
 
   return children;

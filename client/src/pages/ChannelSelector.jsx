@@ -5,6 +5,44 @@ import promoImg from '../assets/promo.png';
 
 export default function ChannelSelector() {
   const navigate = useNavigate();
+  const [settings, setSettings] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const token = localStorage.getItem('insta_agent_token');
+        const res = await fetch(`${API_BASE_URL}/api/settings`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        setSettings(data);
+      } catch (err) {
+        console.error("Error fetching settings:", err);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const handleChannelClick = (channelId) => {
+    const isInstagramConnected = settings?.isAccountConnected || settings?.instagramAccessToken;
+    const isFacebookConnected = settings?.isFacebookConnected || settings?.facebookAccessToken;
+    const isWhatsAppConnected = settings?.isWhatsAppConnected || settings?.whatsappToken;
+
+    if (channelId === 'instagram' && isInstagramConnected) {
+      navigate('/campaigns');
+      return;
+    }
+    if (channelId === 'facebook' && isFacebookConnected) {
+      navigate('/campaigns');
+      return;
+    }
+    if (channelId === 'whatsapp' && isWhatsAppConnected) {
+      navigate('/campaigns');
+      return;
+    }
+
+    navigate(`/select-template?channel=${channelId}`);
+  };
 
   const channels = [
     { 
@@ -70,7 +108,7 @@ export default function ChannelSelector() {
             {channels.map((channel) => (
               <button
                 key={channel.id}
-                onClick={() => navigate(`/select-template?channel=${channel.id}`)}
+                onClick={() => handleChannelClick(channel.id)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
