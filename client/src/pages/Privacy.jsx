@@ -1,8 +1,4 @@
 import React from 'react';
-import { Shield, Lock, Eye, Mail, ArrowLeft, CheckCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
-import React from 'react';
 import { Shield, Lock, Eye, Mail, ArrowLeft, CheckCircle, FileText, Info, Globe, ShieldAlert, Users, Database } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
