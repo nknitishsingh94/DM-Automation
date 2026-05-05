@@ -15,7 +15,7 @@ export default function Dashboard() {
     contactCount: 0
   });
   const [loading, setLoading] = useState(true);
-  const [openItem, setOpenItem] = useState(0); // which checklist item is open
+  const [openItem, setOpenItem] = useState(10); // which checklist item is open (10 is the first explore item)
   const [timeFilter, setTimeFilter] = useState('7d');
   const [activeDropdown, setActiveDropdown] = useState(null);
 

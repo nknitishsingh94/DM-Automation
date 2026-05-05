@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Sparkles, Calendar, Zap, CheckCircle2, MessageCircle, Clock, MoreHorizontal, Image as ImageIcon, Link as LinkIcon, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -13,9 +14,9 @@ export default function ScheduleFeature() {
   const handleCTAClick = (e) => {
     e.preventDefault();
     if (!user) {
-      navigate('/signup?redirect=/select-channel');
+      navigate('/signup?redirect=/campaigns');
     } else {
-      navigate('/select-channel');
+      navigate('/campaigns');
     }
   };
 

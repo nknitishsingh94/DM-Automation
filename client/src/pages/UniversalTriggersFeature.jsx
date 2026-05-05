@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Sparkles, Globe, Zap, CheckCircle2, MessageSquare, Share2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -19,9 +20,9 @@ export default function UniversalTriggersFeature() {
   const handleCTAClick = (e) => {
     e.preventDefault();
     if (!user) {
-      navigate('/signup?redirect=/select-channel');
+      navigate('/signup?redirect=/campaigns');
     } else {
-      navigate('/select-channel');
+      navigate('/campaigns');
     }
   };
 
