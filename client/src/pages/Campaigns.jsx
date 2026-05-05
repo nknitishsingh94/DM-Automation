@@ -155,13 +155,7 @@ export default function Campaigns() {
   const [connectedSettings, setConnectedSettings] = useState(null);
 
   const handleBuildClick = () => {
-    const isConnected = !!(connectedSettings?.isAccountConnected || connectedSettings?.isFacebookConnected || connectedSettings?.isWhatsAppConnected || connectedSettings?.instagramAccessToken);
-    if (isConnected) {
-      // If already connected, go to templates or builder
-      navigate('/select-template?channel=instagram'); 
-    } else {
-      navigate('/select-channel');
-    }
+    navigate('/select-channel');
   };
 
   const handleAddSubmit = async (e) => {

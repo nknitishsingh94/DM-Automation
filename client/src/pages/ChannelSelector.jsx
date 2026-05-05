@@ -24,23 +24,6 @@ export default function ChannelSelector() {
   }, []);
 
   const handleChannelClick = (channelId) => {
-    const isInstagramConnected = settings?.isAccountConnected || settings?.instagramAccessToken;
-    const isFacebookConnected = settings?.isFacebookConnected || settings?.facebookAccessToken;
-    const isWhatsAppConnected = settings?.isWhatsAppConnected || settings?.whatsappToken;
-
-    if (channelId === 'instagram' && isInstagramConnected) {
-      navigate('/campaigns');
-      return;
-    }
-    if (channelId === 'facebook' && isFacebookConnected) {
-      navigate('/campaigns');
-      return;
-    }
-    if (channelId === 'whatsapp' && isWhatsAppConnected) {
-      navigate('/campaigns');
-      return;
-    }
-
     navigate(`/select-template?channel=${channelId}`);
   };
 
