@@ -28,7 +28,7 @@ export default function Settings() {
   const [savingSettings, setSavingSettings] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deletePassword, setDeletePassword] = useState('');
+
   const [deleting, setDeleting] = useState(false);
   const [whatsappQrUrl, setWhatsappQrUrl] = useState('');
   const [redirectingInsta, setRedirectingInsta] = useState(false);
@@ -146,7 +146,7 @@ export default function Settings() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ password: deletePassword })
+        body: JSON.stringify({})
       });
       
       const data = await res.json();
@@ -633,26 +633,7 @@ export default function Settings() {
             <p style={{ fontWeight: '800', color: '#1e293b', marginBottom: '8px', fontSize: '1.1rem' }}>Are you absolutely sure?</p>
             <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '20px' }}>This action is irreversible. All your data will be wiped.</p>
             
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', fontWeight: '700', color: '#1e293b' }}>
-                Confirm with Password
-              </label>
-              <input 
-                type="password"
-                placeholder="Enter your account password"
-                value={deletePassword}
-                onChange={(e) => setDeletePassword(e.target.value)}
-                style={{ 
-                  width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid #cbd5e1', outline: 'none',
-                  fontSize: '1rem', transition: 'border 0.2s'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#e11d48'}
-                onBlur={(e) => e.target.style.borderColor = '#cbd5e1'}
-              />
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '6px' }}>
-                *If you use Google/Facebook login, you can leave this blank.
-              </p>
-            </div>
+
 
             <div style={{ display: 'flex', gap: '12px' }}>
               <button 

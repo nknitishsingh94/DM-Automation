@@ -291,16 +291,8 @@ router.delete('/account', verifyToken, async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Verify password if the user has one (Email/Password login)
-    if (user.password) {
-      if (!password) {
-        return res.status(400).json({ message: 'Password is required to delete account' });
-      }
-      const isMatch = await user.comparePassword(password);
-      if (!isMatch) {
-        return res.status(401).json({ message: 'Incorrect password' });
-      }
-    }
+    // No password verification needed as per user request
+
 
     // Delete all user-related data from all collections
     await Promise.all([

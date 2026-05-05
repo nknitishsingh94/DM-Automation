@@ -203,7 +203,7 @@ router.get('/facebook/callback', async (req, res) => {
       updateData.facebookPageId = pageId;
       updateData.connectedInstagramName = accountName;
       updateData.connectedFacebookName = accountName;
-      
+
       // If we found a page at all, consider it at least partially connected
       if (pageId) updateData.isFacebookConnected = true;
       if (businessAccountId) updateData.isAccountConnected = true;
@@ -233,7 +233,7 @@ router.get('/facebook/callback', async (req, res) => {
     // CRITICAL: Ensure the overall connection flag is true if ANYTHING is connected
     // This prevents the Dashboard from redirecting back to onboarding
     if (updateData.isAccountConnected || updateData.isFacebookConnected || updateData.isWhatsAppConnected) {
-       console.log("💎 Connection established. Overriding error states.");
+      console.log("💎 Connection established. Overriding error states.");
     }
     delete updateData.whatsappError;
     delete updateData.whatsappDiscoveryError;
@@ -313,7 +313,7 @@ router.get('/facebook/pages', verifyToken, async (req, res) => {
 router.post('/facebook/select-page', verifyToken, async (req, res) => {
   try {
     const { pageId, pageAccessToken, businessAccountId, instagramUsername } = req.body;
-    
+
     const updateData = {
       instagramAccessToken: pageAccessToken,
       facebookAccessToken: pageAccessToken,
