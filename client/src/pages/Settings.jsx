@@ -59,7 +59,13 @@ export default function Settings() {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
-        setSettings(s => ({ ...s, ...data }));
+        // Ensure connection flags are derived correctly if missing
+        const derivedData = {
+          ...data,
+          isAccountConnected: data.isAccountConnected || !!data.instagramAccessToken,
+          isFacebookConnected: data.isFacebookConnected || !!data.facebookPageId
+        };
+        setSettings(s => ({ ...s, ...derivedData }));
         setLoading(false);
       } catch (err) {
         console.error("Error loading settings:", err);

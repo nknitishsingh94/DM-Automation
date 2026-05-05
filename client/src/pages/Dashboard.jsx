@@ -51,8 +51,10 @@ export default function Dashboard() {
         setStats(statsData);
         
         // Check setup progress
-        const isConnected = settingsData.isAccountConnected || settingsData.isFacebookConnected || settingsData.isWhatsAppConnected;
-        if (!isConnected) {
+        const isConnected = !!(settingsData.isAccountConnected || settingsData.isFacebookConnected || settingsData.isWhatsAppConnected || settingsData.instagramAccessToken);
+        
+        if (!isConnected && !loading) {
+          console.log("🚩 User not connected, redirecting to onboarding...");
           navigate('/onboarding');
           return;
         }

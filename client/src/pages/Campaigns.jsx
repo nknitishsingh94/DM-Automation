@@ -128,6 +128,21 @@ export default function Campaigns() {
     fetchCampaigns();
     fetchFlows();
 
+    // Check connection status to redirect 'Build' button if needed
+    const fetchSettings = async () => {
+      try {
+        const token = localStorage.getItem('insta_agent_token');
+        const res = await fetch(`${API_BASE_URL}/api/settings`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        setConnectedSettings(data);
+      } catch (err) {
+        console.error("Failed to fetch settings:", err);
+      }
+    };
+    fetchSettings();
+
     // --- AUTO-OPEN SETUP FLOW ---
     const params = new URLSearchParams(window.location.search);
     if (params.get('setup')) {
@@ -136,6 +151,18 @@ export default function Campaigns() {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
+
+  const [connectedSettings, setConnectedSettings] = useState(null);
+
+  const handleBuildClick = () => {
+    const isConnected = !!(connectedSettings?.isAccountConnected || connectedSettings?.isFacebookConnected || connectedSettings?.isWhatsAppConnected || connectedSettings?.instagramAccessToken);
+    if (isConnected) {
+      // If already connected, go to templates or builder
+      navigate('/select-template?channel=instagram'); 
+    } else {
+      navigate('/select-channel');
+    }
+  };
 
   const handleAddSubmit = async (e) => {
     e.preventDefault();
@@ -347,7 +374,7 @@ export default function Campaigns() {
         </p>
         
         <button 
-          onClick={() => navigate('/select-channel')}
+          onClick={handleBuildClick}
           className="premium-btn"
           style={{ 
             background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', 

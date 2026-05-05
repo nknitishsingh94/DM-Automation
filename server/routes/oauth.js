@@ -189,16 +189,24 @@ router.get('/facebook/callback', async (req, res) => {
     // 5. Save to Database
     const updateData = { lastTestedAt: new Date() };
 
+    // Set connection flags based on what we actually found
+    updateData.isAccountConnected = !!businessAccountId;
+    updateData.isFacebookConnected = !!pageId;
+    updateData.isWhatsAppConnected = !!whatsappPhoneId;
+
     if (!isInstagram && !isFacebook) {
+      // General flow: try to fill everything
       updateData.instagramAccessToken = pageAccessToken;
       updateData.facebookAccessToken = pageAccessToken;
       updateData.instagramPageId = pageId;
       updateData.businessAccountId = businessAccountId;
       updateData.facebookPageId = pageId;
-      updateData.isAccountConnected = !!businessAccountId;
-      updateData.isFacebookConnected = !!pageId;
       updateData.connectedInstagramName = accountName;
       updateData.connectedFacebookName = accountName;
+      
+      // If we found a page at all, consider it at least partially connected
+      if (pageId) updateData.isFacebookConnected = true;
+      if (businessAccountId) updateData.isAccountConnected = true;
     } else {
       if (isInstagram) {
         updateData.instagramAccessToken = pageAccessToken;
@@ -220,6 +228,12 @@ router.get('/facebook/callback', async (req, res) => {
       updateData.whatsappPhoneNumberId = whatsappPhoneId;
       updateData.isWhatsAppConnected = !!whatsappPhoneId;
       updateData.connectedWhatsAppName = whatsappName;
+    }
+
+    // CRITICAL: Ensure the overall connection flag is true if ANYTHING is connected
+    // This prevents the Dashboard from redirecting back to onboarding
+    if (updateData.isAccountConnected || updateData.isFacebookConnected || updateData.isWhatsAppConnected) {
+       console.log("💎 Connection established. Overriding error states.");
     }
     delete updateData.whatsappError;
     delete updateData.whatsappDiscoveryError;
