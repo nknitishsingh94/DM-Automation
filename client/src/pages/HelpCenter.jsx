@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, BookOpen, GitBranch, AlertCircle, Sparkles, ChevronRight, MessageCircle, Send, X, Loader2 } from 'lucide-react';
-import axios from 'axios';
 
 export default function HelpCenter() {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,13 +28,18 @@ export default function HelpCenter() {
     setIsLoading(true);
 
     try {
-      // Backend call
-      const res = await axios.post('/api/support/chat', {
-        message: userMsg.content,
-        history: messages.slice(-5) // Send last 5 messages for context
+      // Native fetch use kar rahe hain axios ki jagah
+      const response = await fetch('/api/support/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userMsg.content,
+          history: messages.slice(-5)
+        })
       });
 
-      setMessages(prev => [...prev, { role: 'assistant', content: res.data.response }]);
+      const data = await response.json();
+      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
     } catch (error) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again or email smart10x.support@gmail.com' }]);
     } finally {
