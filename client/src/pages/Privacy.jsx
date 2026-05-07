@@ -1,181 +1,237 @@
-import React from 'react';
-import { Shield, Lock, Eye, Mail, ArrowLeft, CheckCircle, FileText, Info, Globe, ShieldAlert, Users, Database } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, Lock, Eye, Mail, ArrowLeft, CheckCircle, FileText, Info, Globe, ShieldAlert, Users, Database, ChevronDown, Bot, Megaphone, CreditCard, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-export default function Privacy() {
-  const sections = [
-    { id: 'collect', title: '1. How We Collect Personal Data', icon: <Database size={20} color="#3b82f6" /> },
-    { id: 'types', title: '2. What Types of Personal Data We Process', icon: <FileText size={20} color="#3b82f6" /> },
-    { id: 'purposes', title: '3. For Which Purposes We Use Personal Data', icon: <CheckCircle size={20} color="#3b82f6" /> },
-    { id: 'share', title: '4. How We Share Personal Data', icon: <Users size={20} color="#3b82f6" /> },
-    { id: 'rights', title: '5. Your Data Protection Rights & Choices', icon: <Shield size={20} color="#3b82f6" /> },
-    { id: 'retain', title: '6. For How Long We Retain Personal Data', icon: <Lock size={20} color="#3b82f6" /> },
-    { id: 'international', title: '7. International Data Transfers', icon: <Globe size={20} color="#3b82f6" /> },
-    { id: 'children', title: '8. Children\'s Information', icon: <Users size={20} color="#3b82f6" /> },
-    { id: 'security', title: '9. Security', icon: <Shield size={20} color="#3b82f6" /> }
-  ];
+const sections = [
+  {
+    id: 'collect', num: '1', icon: <Database size={20} color="#0ea5e9" />, bg: '#f0f9ff',
+    title: 'How We Collect Personal Data',
+    content: [
+      { head: 'Account Registration', text: 'When you create a smart10X account, we collect your name, email address, and password. If you sign up via Google or Meta OAuth, we receive your profile information from those providers.' },
+      { head: 'Meta / Instagram / Facebook Connection', text: 'When you connect your Meta account via OAuth, we receive and securely store your Meta access token, Facebook Page ID, Instagram Business Account ID, page name, and profile picture. This is required to operate automations on your behalf.' },
+      { head: 'WhatsApp & Telegram Integration', text: 'When you connect WhatsApp or Telegram accounts, we receive account identifiers and access credentials necessary to send and receive messages through those platforms.' },
+      { head: 'Instagram Inbox & DMs', text: 'To power the Inbox feature, we read incoming Direct Messages and comments from your connected Instagram account via the Meta API. Message content is processed to enable automation and AI-generated replies.' },
+      { head: 'Forms & Lead Capture', text: 'When your visitors submit our embeddable Forms, we collect the data fields you configure (name, email, phone, custom fields) on behalf of your business. You are the data controller for this information.' },
+      { head: 'Audiences & Contacts', text: 'When subscribers interact with your automations or are imported by you, we store contact records including Instagram usernames, phone numbers, email addresses, tags, and conversation history in our Audiences database.' },
+      { head: 'Broadcasts', text: 'When you send Broadcast messages to your subscriber list, we log the send activity, delivery status, open rates, and click-through data associated with each broadcast campaign.' },
+      { head: 'Payments & Billing', text: 'When you purchase a subscription plan, billing information (card last 4 digits, billing address, payment history) is processed by our payment processor (Stripe). smart10X does not store your full card details.' },
+      { head: 'Usage & Analytics', text: 'We automatically collect IP address, browser type, device type, pages visited, features used, session duration, and error logs to improve performance and security.' },
+      { head: 'Communications', text: 'When you contact our support team via email or the Help Center, we store your messages and contact details to resolve your inquiry.' },
+    ]
+  },
+  {
+    id: 'types', num: '2', icon: <FileText size={20} color="#8b5cf6" />, bg: '#f5f3ff',
+    title: 'What Types of Personal Data We Process',
+    content: [
+      { head: 'Identity & Account Data', text: 'Name, email address, profile photo, account ID, subscription plan, account status, and registration date.' },
+      { head: 'Meta Platform Data', text: 'Facebook Page IDs, Instagram Business Account IDs, Meta OAuth access tokens, page names, follower counts, and connected account details.' },
+      { head: 'Messaging Platform Data', text: 'WhatsApp account identifiers, Telegram bot tokens and chat IDs, and associated messaging credentials when those integrations are enabled.' },
+      { head: 'Automation & Flow Data', text: 'Campaign configurations, automation triggers, keyword rules, DM flow templates, AI Studio prompts, and Flow Builder node layouts created by you.' },
+      { head: 'Contact / Audience Data', text: 'Instagram usernames, phone numbers, email addresses, custom field values, tags, subscription status, and conversation history of your subscribers.' },
+      { head: 'Broadcast & Campaign Data', text: 'Message content, scheduled send times, target audience segments, delivery reports, open rates, and link click data.' },
+      { head: 'Form Submission Data', text: 'Responses submitted by your website visitors through smart10X embeddable Forms — fields, values, submission timestamps, and source page URLs.' },
+      { head: 'Financial Data', text: 'Subscription plan, billing cycle, payment history, invoice records, and last 4 digits of payment card (processed by Stripe).' },
+      { head: 'Usage & Technical Data', text: 'IP address, browser type, operating system, feature usage frequency, error logs, and session data.' },
+      { head: 'Advertising & Analytics Data', text: 'Ad campaign performance data, hashed identifiers for ad measurement, referral tracking IDs, and conversion event data used to measure effectiveness of our own marketing.' },
+    ]
+  },
+  {
+    id: 'purposes', num: '3', icon: <CheckCircle size={20} color="#10b981" />, bg: '#ecfdf5',
+    title: 'For Which Purposes We Use Personal Data',
+    content: [
+      { head: 'Providing Core Services', text: 'To authenticate your account, connect your Meta/Instagram/WhatsApp/Telegram accounts, run your automation campaigns, operate the Inbox, deliver Broadcasts, and store your Audiences and Forms data.' },
+      { head: 'AI Studio Processing', text: 'Message content from your Instagram Inbox may be processed by our AI engine to generate automated reply suggestions. This processing is done on your behalf and under your instructions.' },
+      { head: 'Campaign & Automation Execution', text: 'To trigger automations based on keywords, comments, or DM events, execute your configured Flow Builder sequences, and deliver responses via Meta API.' },
+      { head: 'Billing & Payments', text: 'To process subscription payments, issue invoices, manage plan upgrades/downgrades, and handle refund requests through Stripe.' },
+      { head: 'Analytics & Improvement', text: 'To measure platform usage, identify bugs, improve features, and understand which automations and templates are most effective.' },
+      { head: 'Advertising Measurement', text: 'To measure the effectiveness of our own advertising campaigns using anonymized and hashed identifiers. We do not use your subscriber data for advertising.' },
+      { head: 'Security & Fraud Prevention', text: 'To detect unauthorized access, prevent abuse of automation features, monitor for policy violations, and protect the integrity of the platform.' },
+      { head: 'Legal Compliance', text: 'To comply with applicable laws, respond to lawful requests from authorities, and enforce our Terms of Service.' },
+      { head: 'Communications', text: 'To send service notifications, product updates, security alerts, and (where you have opted in) marketing emails about new features.' },
+      { head: 'Referral Program', text: 'To track referral links, attribute successful referrals, and credit rewards to your account under our Referral Program.' },
+    ]
+  },
+  {
+    id: 'share', num: '4', icon: <Users size={20} color="#f59e0b" />, bg: '#fffbeb',
+    title: 'How We Share Personal Data',
+    content: [
+      { head: 'We Do Not Sell Your Data', text: 'smart10X does not sell, rent, or trade your personal data or your subscribers\' data to third parties for their commercial or advertising purposes.' },
+      { head: 'Meta Platforms', text: 'To execute automations, we send data to the Meta API (Facebook/Instagram). This includes message content, automation responses, and account actions performed on your behalf.' },
+      { head: 'WhatsApp & Telegram', text: 'When these integrations are enabled, relevant message data is transmitted to/from WhatsApp Business API and Telegram Bot API to deliver your automations.' },
+      { head: 'Payment Processor (Stripe)', text: 'Billing information is shared with Stripe to process subscription payments. Stripe is PCI-DSS compliant. We do not receive or store your full card number.' },
+      { head: 'Cloud Infrastructure', text: 'Our platform is hosted on secure cloud infrastructure (e.g., AWS, Render, Supabase). Your data is stored on encrypted servers in secure data centers.' },
+      { head: 'AI Processing', text: 'When you use AI Studio, message content may be processed by our AI provider to generate reply suggestions. This is done under strict data processing agreements.' },
+      { head: 'Analytics Providers', text: 'We use analytics tools (e.g., Google Analytics) to understand platform usage. These tools receive anonymized usage data and do not receive your personal account details.' },
+      { head: 'Advertising Measurement Partners', text: 'We may share hashed identifiers (not personal data) with advertising platforms to measure the effectiveness of our own marketing campaigns.' },
+      { head: 'Legal Authorities', text: 'We may disclose data when required by applicable law, court order, or government authority, or to protect the rights and safety of our users and platform.' },
+      { head: 'Business Transfers', text: 'If smart10X is acquired, merged, or undergoes a corporate restructuring, your data may be transferred to the acquiring entity subject to equivalent privacy protections.' },
+    ]
+  },
+  {
+    id: 'rights', num: '5', icon: <Shield size={20} color="#3b82f6" />, bg: '#eff6ff',
+    title: 'Your Data Protection Rights & Choices',
+    content: [
+      { head: 'Access', text: 'You have the right to request a copy of the personal data we hold about you. Contact us at privacy@smart10x.com to make a data access request.' },
+      { head: 'Rectification', text: 'You can update your account information directly from your Profile and Settings pages. If you need help correcting specific data, contact us.' },
+      { head: 'Erasure (Right to be Forgotten)', text: 'You can permanently delete your account from Settings → Danger Zone. This will delete your account, all campaigns, audiences, contacts, flows, and associated data from our systems.' },
+      { head: 'Data Portability', text: 'You may request an export of your data in a structured, machine-readable format. Contact privacy@smart10x.com to submit a portability request.' },
+      { head: 'Withdraw Consent / Disconnect Meta', text: 'You can disconnect your Meta/Instagram account at any time from Settings. This will revoke our access to your Meta data. Existing automation campaigns will be paused.' },
+      { head: 'Opt Out of Marketing Emails', text: 'You can unsubscribe from marketing emails at any time using the unsubscribe link in any email or by contacting us.' },
+      { head: 'Subscriber Rights (Your Contacts)', text: 'If your subscribers wish to exercise their data rights (access, deletion, opt-out), they should contact you directly as you are the data controller for your audience data.' },
+      { head: 'EEA / UK / Brazil Users', text: 'If you are located in the European Economic Area, United Kingdom, Switzerland, or Brazil, you have additional rights under GDPR, UK GDPR, or LGPD. Contact us to exercise these rights.' },
+    ]
+  },
+  {
+    id: 'retain', num: '6', icon: <Lock size={20} color="#64748b" />, bg: '#f8fafc',
+    title: 'For How Long We Retain Personal Data',
+    content: [
+      { head: 'Active Account Data', text: 'We retain your account data, campaigns, audiences, flows, and settings for as long as your account is active.' },
+      { head: 'After Account Deletion', text: 'When you permanently delete your account, we delete all associated data (campaigns, contacts, flows, inbox history, broadcast logs) within 30 days. Backups are purged within 90 days.' },
+      { head: 'Billing Records', text: 'Payment and invoice records are retained for 7 years as required by financial regulations.' },
+      { head: 'Meta Access Tokens', text: 'OAuth access tokens are deleted immediately upon account deletion or Meta account disconnection.' },
+      { head: 'Usage Logs & Analytics', text: 'Anonymized usage logs are retained for up to 2 years for performance analysis and security monitoring.' },
+      { head: 'Inactive Accounts', text: 'If your account has no activity (login, campaign activity, payment) for 18 consecutive months, we will notify you and may close the account and delete all data.' },
+    ]
+  },
+  {
+    id: 'international', num: '7', icon: <Globe size={20} color="#06b6d4" />, bg: '#ecfeff',
+    title: 'International Data Transfers',
+    content: [
+      { head: 'Where We Process Data', text: 'smart10X is operated primarily from the United States. Your data may be transferred to and processed in the US and other countries where our cloud infrastructure providers operate.' },
+      { head: 'Safeguards for EEA/UK Users', text: 'If you are located in the EEA or UK, we ensure that international transfers of your personal data are protected by appropriate safeguards such as Standard Contractual Clauses (SCCs) approved by the European Commission.' },
+      { head: 'Meta API Data Flows', text: 'Data exchanged with Meta (Facebook/Instagram) platforms is subject to Meta\'s own data transfer mechanisms and privacy policies.' },
+      { head: 'Your Consent', text: 'By using smart10X and connecting your social media accounts, you acknowledge that your data will be transferred to and processed in these jurisdictions.' },
+    ]
+  },
+  {
+    id: 'children', num: '8', icon: <Users size={20} color="#ec4899" />, bg: '#fdf2f8',
+    title: "Children's Information",
+    content: [
+      { head: 'Minimum Age', text: 'smart10X is not directed to children under the age of 13 (or 16 in the EEA). We do not knowingly collect personal data from children.' },
+      { head: 'If We Discover Child Data', text: 'If we become aware that a child under 13 has provided us with personal data without parental consent, we will delete such information from our systems promptly.' },
+      { head: 'Parental Concerns', text: 'If you are a parent or guardian and believe your child has provided us with personal data, please contact us at privacy@smart10x.com.' },
+    ]
+  },
+  {
+    id: 'security', num: '9', icon: <ShieldAlert size={20} color="#ef4444" />, bg: '#fef2f2',
+    title: 'Security',
+    content: [
+      { head: 'Encryption', text: 'All data is transmitted over HTTPS/TLS. Sensitive data including Meta access tokens are encrypted at rest using industry-standard AES-256 encryption.' },
+      { head: 'Access Controls', text: 'Access to your data is restricted to authorized personnel only. We implement role-based access controls and audit logs for all data access.' },
+      { head: 'Meta Token Security', text: 'OAuth access tokens from Meta are stored encrypted and are never exposed in client-side code or logs.' },
+      { head: 'Breach Notification', text: 'In the event of a data breach affecting your personal data, we will notify you and relevant authorities as required by applicable law without undue delay.' },
+      { head: 'Your Responsibility', text: 'You are responsible for maintaining the security of your smart10X account credentials. We recommend using a strong, unique password and enabling any available 2-factor authentication.' },
+    ]
+  },
+];
 
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+export default function Privacy() {
+  const [open, setOpen] = useState(null);
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', padding: '60px 20px', fontFamily: "'Inter', sans-serif" }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto', background: 'white', padding: '60px', borderRadius: '40px', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.1)', position: 'relative', overflow: 'hidden' }}>
-        
-        {/* Background Gradient Orbs */}
-        <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)', zIndex: 0 }}></div>
-        <div style={{ position: 'absolute', bottom: '-100px', left: '-100px', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, transparent 70%)', zIndex: 0 }}></div>
+      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
 
-        <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#64748b', textDecoration: 'none', marginBottom: '40px', fontWeight: '700', fontSize: '15px', transition: 'color 0.2s', position: 'relative', zIndex: 1 }}>
-          <ArrowLeft size={18} /> Back to Dashboard
-        </Link>
-
-        <div style={{ textAlign: 'center', marginBottom: '64px', position: 'relative', zIndex: 1 }}>
-          <div style={{ width: '80px', height: '80px', background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', boxShadow: '0 10px 25px rgba(37, 99, 235, 0.2)' }}>
-            <Shield size={40} color="white" />
-          </div>
-          <h1 style={{ fontSize: '48px', fontWeight: '900', color: '#0f172a', marginBottom: '16px', letterSpacing: '-1.5px' }}>Privacy Policy</h1>
-          <p style={{ fontSize: '1.1rem', color: '#64748b', maxWidth: '700px', margin: '0 auto 24px', lineHeight: '1.6' }}>
-            At <strong>smart10X</strong>, we consider the privacy and the security of personal data to be extremely important.
-          </p>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#64748b', fontWeight: '700', background: '#f8fafc', padding: '8px 20px', borderRadius: '100px', width: 'fit-content', margin: '0 auto' }}>
-            <span style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%' }}></span>
-            Effective Date: May 5, 2026
+        {/* Header */}
+        <div style={{ background: 'white', borderRadius: '40px', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.1)', padding: '60px', marginBottom: '28px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '280px', height: '280px', background: 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 70%)', zIndex: 0 }} />
+          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#64748b', textDecoration: 'none', marginBottom: '40px', fontWeight: '700', fontSize: '15px', position: 'relative', zIndex: 1 }}>
+            <ArrowLeft size={18} /> Back to Dashboard
+          </Link>
+          <div style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+            <div style={{ width: '88px', height: '88px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', borderRadius: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 28px', boxShadow: '0 12px 28px rgba(37,99,235,0.25)' }}>
+              <Shield size={44} color="white" />
+            </div>
+            <h1 style={{ fontSize: '48px', fontWeight: '900', color: '#0f172a', marginBottom: '12px', letterSpacing: '-2px' }}>Privacy Policy</h1>
+            <p style={{ color: '#64748b', fontSize: '1rem', marginBottom: '16px', lineHeight: '1.6' }}>
+              At <strong>smart10X</strong>, we consider the privacy and security of personal data to be extremely important.
+            </p>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#f8fafc', padding: '8px 20px', borderRadius: '100px', color: '#64748b', fontWeight: '700', fontSize: '14px', border: '1px solid #e2e8f0' }}>
+              <span style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', display: 'inline-block' }} />
+              Effective Date: May 5, 2026
+            </div>
           </div>
         </div>
 
+        {/* Intro */}
+        <div style={{ background: '#0f172a', color: 'white', borderRadius: '24px', padding: '32px 40px', marginBottom: '28px', lineHeight: '1.75', fontSize: '0.95rem' }}>
+          <p style={{ color: 'rgba(255,255,255,0.8)', margin: 0 }}>
+            We process personal data to provide smart10X services including Instagram DM Automation, AI Studio, Broadcasts, Audiences, Forms, Flow Builder, WhatsApp & Telegram integrations, and Billing. This Privacy Policy explains what data we collect, why, and how we protect it in accordance with applicable data protection laws including <strong style={{ color: '#60a5fa' }}>GDPR, UK GDPR, and LGPD</strong>.
+          </p>
+        </div>
+
         {/* Table of Contents */}
-        <div style={{ background: '#f8fafc', padding: '32px', borderRadius: '24px', marginBottom: '64px', border: '1px solid #e2e8f0', position: 'relative', zIndex: 1 }}>
-          <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#1e293b', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Info size={20} color="#3b82f6" /> Table of Contents
+        <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '32px', marginBottom: '28px' }}>
+          <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#1e293b', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Info size={18} color="#3b82f6" /> Table of Contents
           </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '8px' }}>
             {sections.map(s => (
-              <div 
-                key={s.id} 
-                onClick={() => scrollToSection(s.id)}
-                style={{ cursor: 'pointer', fontSize: '14px', color: '#475569', fontWeight: '600', padding: '8px 12px', borderRadius: '8px', transition: 'all 0.2s' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#3b82f6'; e.currentTarget.style.transform = 'translateX(4px)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569'; e.currentTarget.style.transform = 'translateX(0)'; }}
-              >
+              <button key={s.id} onClick={() => { setOpen(s.id); setTimeout(() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); }}
+                style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: '8px 12px', borderRadius: '10px', fontSize: '13.5px', fontWeight: '600', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#eff6ff'; e.currentTarget.style.color = '#2563eb'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#475569'; }}>
+                <span style={{ width: '22px', height: '22px', borderRadius: '6px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '800', color: '#64748b', flexShrink: 0 }}>{s.num}</span>
                 {s.title}
-              </div>
+              </button>
             ))}
           </div>
         </div>
 
-        <div style={{ position: 'relative', zIndex: 1, color: '#334155', lineHeight: '1.8', fontSize: '1.05rem' }}>
-          <p style={{ marginBottom: '32px' }}>
-            We process personal data for (1) our own purposes and (2) under instructions of our customers who use <strong>smart10X</strong> service (the “Service”, any product or service provided by smart10X), upload and keep certain information in it in accordance with the applicable data protection laws and regulations.
-          </p>
-
-          <section id="collect" style={{ marginBottom: '56px' }}>
-            <h2 style={{ fontSize: '26px', fontWeight: '800', color: '#0f172a', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ padding: '10px', background: '#f0f9ff', borderRadius: '14px' }}><Database size={24} color="#0ea5e9" /></div>
-              1. How We Collect Personal Data
-            </h2>
-            <p style={{ marginBottom: '16px' }}>What personal data we collect depends largely on the interaction that takes place between you and smart10X:</p>
-            <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <li><strong>Usage of Service:</strong> When you use smart10X Service, we store all the content you provide. We gather this from you directly or from linked integrations (Facebook, Instagram, etc.).</li>
-              <li><strong>Communications:</strong> When you send us emails or message us, we store the content and your contact details.</li>
-              <li><strong>Website Forms:</strong> When you submit forms on <a href="https://www.smart10x.com" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: '600' }}>www.smart10x.com</a>, we collect your details.</li>
-              <li><strong>Social Communities:</strong> When you join our groups on Facebook or Instagram, we process data from your profile and comments.</li>
-            </ul>
-          </section>
-
-          <section id="types" style={{ marginBottom: '56px' }}>
-            <h2 style={{ fontSize: '26px', fontWeight: '800', color: '#0f172a', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ padding: '10px', background: '#f5f3ff', borderRadius: '14px' }}><FileText size={24} color="#8b5cf6" /></div>
-              2. What Types of Personal Data We Process
-            </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-              {[
-                { title: 'Account Details', desc: 'ID, name, email, status, linked pages, location, and gender.' },
-                { title: 'Financial Info', desc: 'Credit card details (last 4 digits), account details, and payment history.' },
-                { title: 'Usage Data', desc: 'IP address, browser type, settings, and frequency of feature use.' },
-                { title: 'Customer Content', desc: 'Personal data imported from your users or contacts for automation.' }
-              ].map((item, i) => (
-                <div key={i} style={{ padding: '24px', background: '#f8fafc', borderRadius: '24px', border: '1px solid #f1f5f9' }}>
-                  <h4 style={{ fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>{item.title}</h4>
-                  <p style={{ fontSize: '0.95rem', color: '#64748b' }}>{item.desc}</p>
+        {/* Accordion Sections */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
+          {sections.map(s => (
+            <div key={s.id} id={s.id} style={{ background: 'white', borderRadius: '20px', border: `1px solid ${open === s.id ? '#bfdbfe' : '#e2e8f0'}`, boxShadow: open === s.id ? '0 8px 24px rgba(59,130,246,0.07)' : 'none', overflow: 'hidden', transition: 'all 0.3s' }}>
+              <button onClick={() => setOpen(open === s.id ? null : s.id)}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', background: open === s.id ? s.bg : 'white', border: 'none', cursor: 'pointer', textAlign: 'left', transition: 'background 0.3s' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: open === s.id ? 'white' : s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    {s.icon}
+                  </div>
+                  <span style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b' }}>{s.num}. {s.title}</span>
                 </div>
-              ))}
-            </div>
-          </section>
-
-          <section id="purposes" style={{ marginBottom: '56px' }}>
-            <h2 style={{ fontSize: '26px', fontWeight: '800', color: '#0f172a', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ padding: '10px', background: '#ecfdf5', borderRadius: '14px' }}><CheckCircle size={24} color="#10b981" /></div>
-              3. For Which Purposes We Use Personal Data
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {[
-                'To operate and maintain your account in the Service.',
-                'To communicate regarding technical notices, updates, and security alerts.',
-                'To provide automation services on your behalf (Customer Content).',
-                'To comply with legal obligations, including tax and accounting.',
-                'To protect against fraudulent or illegal activity.'
-              ].map((text, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', background: 'rgba(16, 185, 129, 0.05)', borderRadius: '12px' }}>
-                  <CheckCircle size={16} color="#10b981" />
-                  <span style={{ fontWeight: '500' }}>{text}</span>
+                <ChevronDown size={18} color="#94a3b8" style={{ transform: open === s.id ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.3s', flexShrink: 0 }} />
+              </button>
+              {open === s.id && (
+                <div style={{ padding: '0 24px 24px', borderTop: '1px solid #f1f5f9', background: s.bg }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', paddingTop: '20px' }}>
+                    {s.content.map((item, i) => (
+                      <div key={i} style={{ background: 'white', borderRadius: '14px', padding: '16px 20px', border: '1px solid rgba(0,0,0,0.04)' }}>
+                        <div style={{ fontWeight: '700', color: '#1e293b', fontSize: '14px', marginBottom: '6px' }}>{item.head}</div>
+                        <div style={{ color: '#64748b', fontSize: '13.5px', lineHeight: '1.7' }}>{item.text}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
-          </section>
+          ))}
+        </div>
 
-          <section id="share" style={{ marginBottom: '56px' }}>
-            <h2 style={{ fontSize: '26px', fontWeight: '800', color: '#0f172a', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ padding: '10px', background: '#fffbeb', borderRadius: '14px' }}><Users size={24} color="#f59e0b" /></div>
-              4. How We Share Personal Data
-            </h2>
-            <p style={{ marginBottom: '20px' }}>We do not sell your data to third parties for commercial or advertising purposes. We share it only with:</p>
-            <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <li><strong>Service Providers:</strong> For payments, CRM, and cloud storage.</li>
-              <li><strong>Advertising Partners:</strong> To measure ad effectiveness (hashed identifiers only).</li>
-              <li><strong>Legal Authorities:</strong> When required by law or binding subpoenas.</li>
-              <li><strong>Corporate Affiliates:</strong> To streamline operations within our group.</li>
-            </ul>
-          </section>
-
-          <section id="security" style={{ marginBottom: '64px' }}>
-            <h2 style={{ fontSize: '26px', fontWeight: '800', color: '#0f172a', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ padding: '10px', background: '#fef2f2', borderRadius: '14px' }}><ShieldAlert size={24} color="#ef4444" /></div>
-              9. Security
-            </h2>
-            <div style={{ padding: '32px', background: '#0f172a', borderRadius: '32px', color: 'white', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 0, right: 0, padding: '20px', opacity: 0.1 }}><Lock size={120} color="white" /></div>
-              <h3 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '16px' }}>Safeguarding Your Information</h3>
-              <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '0' }}>
-                We use industry-standard AES-256 encryption and secure access controls. While we strive to protect your data, no internet transmission is 100% secure. We will notify you without delay in the event of any security breach.
-              </p>
-            </div>
-          </section>
-
-          <div style={{ marginTop: '80px', padding: '40px', background: '#f1f5f9', borderRadius: '32px', textAlign: 'center' }}>
-            <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#1e293b', marginBottom: '16px' }}>Questions or Suggestions?</h3>
-            <p style={{ color: '#64748b', marginBottom: '32px' }}>If you have any questions concerning our privacy practices, please reach out to our dedicated team.</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '16px' }}>
-              <a href="mailto:privacy@smart10x.com" style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#3b82f6', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', boxShadow: '0 10px 20px rgba(59, 130, 246, 0.2)' }}>
-                <Mail size={20} /> privacy@smart10x.com
-              </a>
-              <Link to="/help" style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'white', color: '#1e293b', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #e2e8f0' }}>
-                Support Center
-              </Link>
-            </div>
+        {/* Contact */}
+        <div style={{ background: 'white', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+          <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>Questions About Your Privacy?</h3>
+          <p style={{ color: '#64748b', marginBottom: '28px', fontSize: '0.95rem' }}>Our dedicated privacy team is happy to help you with any data-related requests.</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
+            <a href="mailto:privacy@smart10x.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
+              <Mail size={18} /> privacy@smart10x.com
+            </a>
+            <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#f8fafc', color: '#1e293b', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #e2e8f0' }}>
+              Help Center
+            </Link>
+            <Link to="/cookies" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#f8fafc', color: '#1e293b', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #e2e8f0' }}>
+              Cookie Statement
+            </Link>
           </div>
         </div>
-      </div>
 
-      <footer style={{ textAlign: 'center', marginTop: '40px', color: '#94a3b8', fontSize: '14px', fontWeight: '600' }}>
-        &copy; 2026 smart10X AI. All rights reserved.
-      </footer>
+        <footer style={{ textAlign: 'center', marginTop: '40px', color: '#94a3b8', fontSize: '14px', fontWeight: '600' }}>
+          © 2026 smart10X AI. All rights reserved. ·{' '}
+          <Link to="/terms" style={{ color: '#94a3b8', textDecoration: 'none' }}>Terms of Service</Link>
+          {' · '}
+          <Link to="/cookies" style={{ color: '#94a3b8', textDecoration: 'none' }}>Cookie Statement</Link>
+        </footer>
+      </div>
     </div>
   );
 }
-
-
