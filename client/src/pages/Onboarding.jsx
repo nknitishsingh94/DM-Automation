@@ -141,24 +141,54 @@ export default function Onboarding() {
   }
 
   // ZenXchat Selection UI
-  if (availablePages) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '24px', fontFamily: "'Inter', sans-serif" }}>
-        <div style={{ maxWidth: '600px', width: '100%', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '28px', padding: '40px', boxShadow: '0 24px 64px rgba(0,0,0,0.06)', animation: 'onboardingFadeIn 0.5s ease-out both' }}>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px', letterSpacing: '-0.5px' }}>
-            Choose Your Facebook Page
-          </h2>
-          <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '32px' }}>
-            Select the Facebook Page you want to link. Ensure your Instagram Professional account is linked to this page.
-          </p>
-
+          {/* Detailed Error Display (Visible even if availablePages is null) */}
           {linkingError && (
-            <div style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', borderRadius: '12px', fontSize: '0.85rem', marginBottom: '24px', fontWeight: '500' }}>
-              {linkingError}
+            <div style={{ padding: '16px', background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: '16px', marginBottom: '24px', color: '#dc2626', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <AlertTriangle size={18} /> 
+              <div style={{ flex: 1 }}>
+                <strong>Linking Issue:</strong> {linkingError}
+              </div>
+              <button onClick={fetchPages} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600' }}>Try Sync Again</button>
             </div>
           )}
 
-          {availablePages.length === 0 ? (
+          {availablePages === null ? (
+            <div style={{ textAlign: 'center', animation: 'onboardingFadeIn 0.5s ease-out' }}>
+              <div style={{ width: '80px', height: '80px', background: 'linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', color: 'white', boxShadow: '0 8px 24px rgba(220, 39, 67, 0.2)' }}>
+                <Instagram size={40} />
+              </div>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#1e293b', marginBottom: '12px' }}>Connect Instagram</h2>
+              <p style={{ color: '#64748b', marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px', lineHeight: '1.6' }}>
+                Link your Instagram Professional account to enable AI automations for DMs and comments.
+              </p>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '320px', margin: '0 auto' }}>
+                <button 
+                  onClick={() => handleConnectMeta('instagram')}
+                  disabled={loading}
+                  style={{ width: '100%', padding: '16px', borderRadius: '16px', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', color: 'white', fontWeight: '700', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', boxShadow: '0 10px 25px rgba(59, 130, 246, 0.25)' }}
+                >
+                  {loading ? 'Processing...' : <><Zap size={20} /> Connect Instagram</>}
+                </button>
+                
+                <button 
+                  onClick={fetchPages}
+                  style={{ width: '100%', padding: '12px', borderRadius: '16px', background: '#f8fafc', color: '#64748b', fontWeight: '600', border: '1px solid #e2e8f0', cursor: 'pointer' }}
+                >
+                  Already linked? Sync Pages
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px', letterSpacing: '-0.5px' }}>
+                Choose Your Facebook Page
+              </h2>
+              <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '32px' }}>
+                Select the Facebook Page you want to link. Ensure your Instagram Professional account is linked to this page.
+              </p>
+
+              {availablePages.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '24px', background: '#fffbeb', border: '1px solid #f59e0b', borderRadius: '16px', marginBottom: '32px' }}>
               <h4 style={{ color: '#b45309', fontWeight: '700', fontSize: '1rem', margin: '0 0 8px 0' }}>No Facebook Pages Found</h4>
               <p style={{ color: '#b45309', fontSize: '0.85rem', margin: 0 }}>
