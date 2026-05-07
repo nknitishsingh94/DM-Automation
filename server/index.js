@@ -28,6 +28,7 @@ import OpenAI from 'openai';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import hpp from 'hpp';
 import xss from 'xss';
