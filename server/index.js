@@ -30,6 +30,9 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize';
+import hpp from 'hpp';
+import xss from 'xss';
 import Campaign from './models/Campaign.js';
 import Message from './models/Message.js';
 import Settings from './models/Settings.js';
@@ -57,7 +60,23 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } }); // 50MB limit
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit (reduced from 50MB)
+  fileFilter: (req, file, cb) => {
+    // SECURITY: Only allow safe file types
+    const ALLOWED_MIME = [
+      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'video/mp4', 'video/quicktime', 'video/webm',
+      'audio/mpeg', 'audio/ogg',
+    ];
+    if (ALLOWED_MIME.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`File type '${file.mimetype}' is not allowed.`), false);
+    }
+  }
+});
 import verifyToken from './middleware/auth.js';
 
 const app = express();
@@ -158,9 +177,36 @@ app.use((req, res, next) => {
 });
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // ── SECURITY: Body size limits (prevent payload bombs) ────────────────────────
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+
+// ── SECURITY: NoSQL Injection Prevention ──────────────────────────────────────
+// Strips $ and . from query/body params to block MongoDB operator injection
+app.use(mongoSanitize({ replaceWith: '_' }));
+
+// ── SECURITY: XSS Input Sanitization ──────────────────────────────────────────
+// Sanitize string fields in req.body to prevent stored XSS attacks
+app.use((req, res, next) => {
+  if (req.body && typeof req.body === 'object') {
+    const sanitize = (obj) => {
+      for (const key of Object.keys(obj)) {
+        if (typeof obj[key] === 'string') {
+          obj[key] = xss(obj[key]);
+        } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+          sanitize(obj[key]);
+        }
+      }
+    };
+    sanitize(req.body);
+  }
+  next();
+});
+
+// ── SECURITY: HTTP Parameter Pollution Prevention ─────────────────────────────
+app.use(hpp());
+
 app.get('/api/health', (req, res) => res.json({ status: 'ok', domain: req.hostname, timestamp: new Date() }));
 app.get('/api/ping', (req, res) => res.send('pong'));
 
@@ -1455,6 +1501,19 @@ app.get('/api/debug/settings', verifyToken, async (req, res) => {
 
 // Start the server
 
+// ── SECURITY: Global Error Handler ────────────────────────────────────────────
+// Must be LAST middleware. Prevents stack trace leakage in production.
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const isProd = process.env.NODE_ENV === 'production';
+  console.error(`❌ [Error] ${req.method} ${req.url}:`, err.message);
+  res.status(err.status || 500).json({
+    message: isProd ? 'An unexpected error occurred.' : err.message,
+    ...(isProd ? {} : { stack: err.stack }),
+  });
+});
+
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🔒 Security: Rate limiting, Helmet CSP, CORS whitelist, NoSQL sanitization, XSS protection active`);
 });
