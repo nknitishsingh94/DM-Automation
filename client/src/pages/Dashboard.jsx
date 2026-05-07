@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MessageCircle, Zap, Users, ChevronRight, Activity, Calendar, Sparkles, Bot, ChevronDown, Crown, Star, BookOpen } from 'lucide-react';
+import { MessageCircle, Zap, Users, ChevronRight, Activity, Calendar, Sparkles, Bot, ChevronDown, Crown, Star, BookOpen, MessageSquare, Instagram } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
@@ -138,11 +138,98 @@ export default function Dashboard() {
   };
 
   return (
-    <div style={{ 
-      display: 'grid', 
-      gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', 
-      gap: '32px'
-    }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      {/* Quick Start Templates Section */}
+      <div style={{ marginBottom: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+          <Sparkles size={20} color="#7c3aed" />
+          <h2 style={{ fontSize: '1.25rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Quick Start Templates</h2>
+        </div>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
+          <div 
+            onClick={() => navigate('/campaign-builder/new')}
+            className="stat-card" 
+            style={{ 
+              padding: '24px', background: 'white', borderRadius: '24px', cursor: 'pointer', border: '1px solid #f1f5f9', 
+              transition: 'all 0.3s', display: 'flex', flexDirection: 'column', gap: '16px' 
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.05)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+          >
+            <div style={{ width: '44px', height: '44px', background: '#f5f3ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7c3aed' }}>
+              <Zap size={20} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '4px' }}>DM Automation</h3>
+              <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>Trigger DMs from Keywords</p>
+            </div>
+          </div>
+
+          <div 
+            onClick={() => navigate('/campaign-builder/new')}
+            className="stat-card" 
+            style={{ 
+              padding: '24px', background: 'white', borderRadius: '24px', cursor: 'pointer', border: '1px solid #f1f5f9', 
+              transition: 'all 0.3s', display: 'flex', flexDirection: 'column', gap: '16px' 
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.05)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+          >
+            <div style={{ width: '44px', height: '44px', background: '#ecfdf5', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981' }}>
+              <MessageSquare size={20} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '4px' }}>Comment Reply</h3>
+              <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>Auto-DM on Comments</p>
+            </div>
+          </div>
+
+          <div 
+            onClick={() => navigate('/campaign-builder/new')}
+            className="stat-card" 
+            style={{ 
+              padding: '24px', background: 'white', borderRadius: '24px', cursor: 'pointer', border: '1px solid #f1f5f9', 
+              transition: 'all 0.3s', display: 'flex', flexDirection: 'column', gap: '16px' 
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.05)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+          >
+            <div style={{ width: '44px', height: '44px', background: '#fff1f2', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f43f5e' }}>
+              <Instagram size={20} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '4px' }}>Story Trigger</h3>
+              <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>Reply to Story Mentions</p>
+            </div>
+          </div>
+
+          <div 
+            onClick={() => navigate('/ai-studio')}
+            className="stat-card" 
+            style={{ 
+              padding: '24px', background: 'white', borderRadius: '24px', cursor: 'pointer', border: '1px solid #f1f5f9', 
+              transition: 'all 0.3s', display: 'flex', flexDirection: 'column', gap: '16px' 
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.05)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+          >
+            <div style={{ width: '44px', height: '44px', background: '#f5f3ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a855f7' }}>
+              <Bot size={20} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '4px' }}>AI Neural Studio</h3>
+              <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>Train your custom AI</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', 
+        gap: '32px'
+      }}>
       {/* Left Column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
         {/* PEHLE WALA PART (RESTORED TO TOP) */}
