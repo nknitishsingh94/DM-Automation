@@ -140,157 +140,10 @@ export default function Onboarding() {
     );
   }
 
-  // ZenXchat Selection UI
-          {/* Detailed Error Display (Visible even if availablePages is null) */}
-          {linkingError && (
-            <div style={{ padding: '16px', background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: '16px', marginBottom: '24px', color: '#dc2626', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <AlertTriangle size={18} /> 
-              <div style={{ flex: 1 }}>
-                <strong>Linking Issue:</strong> {linkingError}
-              </div>
-              <button onClick={fetchPages} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600' }}>Try Sync Again</button>
-            </div>
-          )}
-
-          {availablePages === null ? (
-            <div style={{ textAlign: 'center', animation: 'onboardingFadeIn 0.5s ease-out' }}>
-              <div style={{ width: '80px', height: '80px', background: 'linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', color: 'white', boxShadow: '0 8px 24px rgba(220, 39, 67, 0.2)' }}>
-                <Instagram size={40} />
-              </div>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#1e293b', marginBottom: '12px' }}>Connect Instagram</h2>
-              <p style={{ color: '#64748b', marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px', lineHeight: '1.6' }}>
-                Link your Instagram Professional account to enable AI automations for DMs and comments.
-              </p>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '320px', margin: '0 auto' }}>
-                <button 
-                  onClick={() => handleConnectMeta('instagram')}
-                  disabled={loading}
-                  style={{ width: '100%', padding: '16px', borderRadius: '16px', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', color: 'white', fontWeight: '700', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', boxShadow: '0 10px 25px rgba(59, 130, 246, 0.25)' }}
-                >
-                  {loading ? 'Processing...' : <><Zap size={20} /> Connect Instagram</>}
-                </button>
-                
-                <button 
-                  onClick={fetchPages}
-                  style={{ width: '100%', padding: '12px', borderRadius: '16px', background: '#f8fafc', color: '#64748b', fontWeight: '600', border: '1px solid #e2e8f0', cursor: 'pointer' }}
-                >
-                  Already linked? Sync Pages
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px', letterSpacing: '-0.5px' }}>
-                Choose Your Facebook Page
-              </h2>
-              <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '32px' }}>
-                Select the Facebook Page you want to link. Ensure your Instagram Professional account is linked to this page.
-              </p>
-
-              {availablePages.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '24px', background: '#fffbeb', border: '1px solid #f59e0b', borderRadius: '16px', marginBottom: '32px' }}>
-              <h4 style={{ color: '#b45309', fontWeight: '700', fontSize: '1rem', margin: '0 0 8px 0' }}>No Facebook Pages Found</h4>
-              <p style={{ color: '#b45309', fontSize: '0.85rem', margin: 0 }}>
-                Please create a Facebook Page first or link your Instagram Professional account to a Facebook page.
-              </p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
-              {availablePages.map((page) => (
-                <div key={page.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px' }}>
-                  <div>
-                    <h4 style={{ fontSize: '1.05rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>
-                      {page.name}
-                    </h4>
-                    {page.linkedInstagram ? (
-                      <p style={{ fontSize: '0.85rem', color: '#10b981', margin: '6px 0 0 0', fontWeight: '600' }}>
-                        Instagram: @{page.linkedInstagram.username} linked
-                      </p>
-                    ) : (
-                      <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '6px 0 0 0' }}>
-                        No linked Instagram. <a href="https://www.facebook.com/pages" target="_blank" rel="noreferrer" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: '600' }}>Link Instagram on Facebook</a>
-                      </p>
-                    )}
-                  </div>
-                  <button 
-                    disabled={isLinking}
-                    onClick={async () => {
-                      if (!page.linkedInstagram) {
-                        alert('This Facebook Page has no linked Instagram account. Please link it first.');
-                        return;
-                      }
-                      try {
-                        setIsLinking(true);
-                        const token = localStorage.getItem('insta_agent_token');
-                        const res = await fetch(`${API_BASE_URL}/api/oauth/facebook/select-page`, {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                          },
-                          body: JSON.stringify({
-                            pageId: page.id,
-                            pageAccessToken: page.accessToken,
-                            businessAccountId: page.linkedInstagram.id,
-                            instagramUsername: page.linkedInstagram.username
-                          })
-                        });
-
-                        if (res.ok) {
-                          localStorage.setItem('insta_agent_connected', 'true');
-                          setMetaConnected(true);
-                          setConnectedName(page.linkedInstagram.username);
-                        } else {
-                          const errData = await res.json();
-                          setLinkingError(errData.error || 'Failed to select page');
-                        }
-                      } catch (err) {
-                        setLinkingError(err.message);
-                      } finally {
-                        setIsLinking(false);
-                      }
-                    }}
-                    style={{ 
-                      padding: '12px 20px', 
-                      background: page.linkedInstagram ? 'linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%)' : '#cbd5e1', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '12px', 
-                      fontWeight: '700', 
-                      cursor: page.linkedInstagram ? 'pointer' : 'not-allowed', 
-                      boxShadow: page.linkedInstagram ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none' 
-                    }}
-                  >
-                    {isLinking ? 'Linking...' : page.linkedInstagram ? 'Connect' : 'Not Available'}
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <button 
-              onClick={fetchPages}
-              style={{ width: '100%', padding: '16px', borderRadius: '14px', fontSize: '1rem', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', border: 'none', cursor: 'pointer', background: '#f1f5f9', color: '#1e293b', transition: 'all 0.3s' }}
-            >
-              <RefreshCw size={18} /> Refresh Account List
-            </button>
-            <button 
-              onClick={() => setAvailablePages(null)}
-              style={{ width: '100%', padding: '16px', borderRadius: '14px', fontSize: '1rem', fontWeight: '700', border: 'none', cursor: 'pointer', background: 'transparent', color: '#64748b' }}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <style>{styles}</style>
+      
       {metaConnected ? (
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '24px', fontFamily: "'Inter', sans-serif" }}>
           <div style={{ maxWidth: '480px', width: '100%', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '28px', padding: '40px', boxShadow: '0 24px 64px rgba(0,0,0,0.06)', animation: 'onboardingFadeIn 0.5s ease-out both', textAlign: 'center' }}>
@@ -323,30 +176,124 @@ export default function Onboarding() {
             </button>
           </div>
         </div>
-       ) : (
-        <div style={{ display: 'flex', minHeight: '100vh', background: '#ffffff', fontFamily: "'Inter', sans-serif" }}>
-          {/* Left Column */}
-          <div style={{ flex: '1 1 50%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '64px', boxSizing: 'border-box' }}>
-            <div style={{ maxWidth: '520px', marginTop: 'auto', marginBottom: 'auto', animation: 'onboardingFadeIn 0.5s ease-out both' }}>
-              <h1 style={{ fontSize: '3.4rem', fontWeight: '800', color: '#1e293b', marginBottom: '16px', lineHeight: '1.15', letterSpacing: '-1.5px' }}>
-                Let's <span style={{ color: '#7c3aed' }}>Kick Things Off!</span>
-              </h1>
-              <p style={{ fontSize: '1.2rem', color: '#64748b', marginBottom: '40px', fontWeight: '500', lineHeight: '1.5' }}>
-                Start with any channel you like — you can connect more later.
-              </p>
+      ) : (
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '24px', fontFamily: "'Inter', sans-serif" }}>
+          <div style={{ maxWidth: '600px', width: '100%', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '28px', padding: '40px', boxShadow: '0 24px 64px rgba(0,0,0,0.06)', animation: 'onboardingFadeIn 0.5s ease-out both' }}>
+            
+            {/* Error Message */}
+            {linkingError && (
+              <div style={{ padding: '16px', background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: '16px', marginBottom: '24px', color: '#dc2626', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <AlertTriangle size={18} />
+                <div style={{ flex: 1 }}>{linkingError}</div>
+                <button onClick={fetchPages} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '8px', cursor: 'pointer' }}>Retry Sync</button>
+              </div>
+            )}
 
-              {/* Channel Pills */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                <div onClick={() => handleConnectMeta('instagram')} className="channel-pill">
-                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                    <Instagram size={24} />
-                  </div>
-                  <div>
-                    <h4 style={{ fontSize: '1.15rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>Instagram</h4>
-                    <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '4px 0 0 0' }}>Click to connect Instagram Business account</p>
+            {availablePages === null ? (
+              <div style={{ display: 'flex', minHeight: '100vh', background: '#ffffff', fontFamily: "'Inter', sans-serif" }}>
+                {/* Left Column */}
+                <div style={{ flex: '1 1 50%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '64px', boxSizing: 'border-box' }}>
+                  <div style={{ maxWidth: '520px', marginTop: 'auto', marginBottom: 'auto' }}>
+                    <h1 style={{ fontSize: '3.4rem', fontWeight: '800', color: '#1e293b', marginBottom: '16px', lineHeight: '1.15', letterSpacing: '-1.5px' }}>
+                      Let's <span style={{ color: '#7c3aed' }}>Kick Things Off!</span>
+                    </h1>
+                    <p style={{ fontSize: '1.2rem', color: '#64748b', marginBottom: '40px', fontWeight: '500', lineHeight: '1.5' }}>
+                      Start with any channel you like — you can connect more later.
+                    </p>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                      <div onClick={() => handleConnectMeta('instagram')} className="channel-pill">
+                        <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+                          <Instagram size={24} />
+                        </div>
+                        <div>
+                          <h4 style={{ fontSize: '1.15rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>Instagram</h4>
+                          <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '4px 0 0 0' }}>Click to connect Instagram Business account</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
+            ) : (
+              <>
+                <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px', letterSpacing: '-0.5px' }}>
+                  Choose Your Facebook Page
+                </h2>
+                <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '32px' }}>
+                  Select the Facebook Page you want to link. Ensure your Instagram Professional account is linked to this page.
+                </p>
+
+                {availablePages.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '24px', background: '#fffbeb', border: '1px solid #f59e0b', borderRadius: '16px', marginBottom: '32px' }}>
+                    <h4 style={{ color: '#b45309', fontWeight: '700', fontSize: '1rem', margin: '0 0 8px 0' }}>No Facebook Pages Found</h4>
+                    <p style={{ color: '#b45309', fontSize: '0.85rem', margin: 0 }}>
+                      Please create a Facebook Page first or link your Instagram Professional account.
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+                    {availablePages.map((page) => (
+                      <div key={page.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px' }}>
+                        <div>
+                          <h4 style={{ fontSize: '1.05rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>{page.name}</h4>
+                          {page.linkedInstagram ? (
+                            <p style={{ fontSize: '0.85rem', color: '#10b981', margin: '6px 0 0 0', fontWeight: '600' }}>@{page.linkedInstagram.username} linked</p>
+                          ) : (
+                            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '6px 0 0 0' }}>No Instagram linked</p>
+                          )}
+                        </div>
+                        <button 
+                          onClick={async () => {
+                            if (!page.linkedInstagram) {
+                              alert('Link Instagram to this page first!');
+                              return;
+                            }
+                            try {
+                              setIsLinking(true);
+                              const token = localStorage.getItem('insta_agent_token');
+                              const res = await fetch(`${API_BASE_URL}/api/oauth/facebook/select-page`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                                body: JSON.stringify({
+                                  pageId: page.id,
+                                  pageAccessToken: page.accessToken,
+                                  businessAccountId: page.linkedInstagram.id,
+                                  instagramUsername: page.linkedInstagram.username
+                                })
+                              });
+                              if (res.ok) {
+                                localStorage.setItem('insta_agent_connected', 'true');
+                                setMetaConnected(true);
+                                setConnectedName(page.linkedInstagram.username);
+                              }
+                            } catch (err) { setLinkingError(err.message); } finally { setIsLinking(false); }
+                          }}
+                          style={{ padding: '10px 20px', background: 'linear-gradient(135deg, #7c3aed, #3b82f6)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '700', cursor: 'pointer' }}
+                        >
+                          {isLinking ? 'Linking...' : 'Connect'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <button onClick={fetchPages} style={{ width: '100%', padding: '16px', borderRadius: '14px', background: '#f1f5f9', border: 'none', cursor: 'pointer', fontWeight: '700' }}>
+                    <RefreshCw size={18} /> Refresh Account List
+                  </button>
+                  <button onClick={() => setAvailablePages(null)} style={{ width: '100%', padding: '16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
 
               {/* Mobile Tip */}
               <div style={{ marginTop: '20px', background: 'rgba(59, 130, 246, 0.08)', padding: '16px', borderRadius: '14px', border: '1px solid rgba(59, 130, 246, 0.15)' }}>
