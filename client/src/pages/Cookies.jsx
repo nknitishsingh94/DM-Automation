@@ -264,8 +264,8 @@ export default function Cookies() {
             If you have any questions about how smart10X uses cookies or this Cookie Statement, please contact our Privacy team.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
-            <a href="mailto:privacy@smart10x.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(217,119,6,0.25)' }}>
-              <Mail size={18} /> privacy@smart10x.com
+            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(217,119,6,0.25)' }}>
+              <Mail size={18} /> smart10x.support@gmail.com
             </a>
             <Link to="/privacy" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#f8fafc', color: '#1e293b', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid #e2e8f0' }}>
               Privacy Policy

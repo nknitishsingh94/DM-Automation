@@ -71,14 +71,23 @@ const sections = [
     id: 'rights', num: '5', icon: <Shield size={20} color="#3b82f6" />, bg: '#eff6ff',
     title: 'Your Data Protection Rights & Choices',
     content: [
-      { head: 'Access', text: 'You have the right to request a copy of the personal data we hold about you. Contact us at privacy@smart10x.com to make a data access request.' },
+      { head: 'Access', text: 'You have the right to request a copy of the personal data we hold about you. Contact us at smart10x.support@gmail.com to make a data access request.' },
       { head: 'Rectification', text: 'You can update your account information directly from your Profile and Settings pages. If you need help correcting specific data, contact us.' },
       { head: 'Erasure (Right to be Forgotten)', text: 'You can permanently delete your account from Settings → Danger Zone. This will delete your account, all campaigns, audiences, contacts, flows, and associated data from our systems.' },
-      { head: 'Data Portability', text: 'You may request an export of your data in a structured, machine-readable format. Contact privacy@smart10x.com to submit a portability request.' },
+      { head: 'Data Portability', text: 'You may request an export of your data in a structured, machine-readable format. Contact smart10x.support@gmail.com to submit a portability request.' },
       { head: 'Withdraw Consent / Disconnect Meta', text: 'You can disconnect your Meta/Instagram account at any time from Settings. This will revoke our access to your Meta data. Existing automation campaigns will be paused.' },
       { head: 'Opt Out of Marketing Emails', text: 'You can unsubscribe from marketing emails at any time using the unsubscribe link in any email or by contacting us.' },
       { head: 'Subscriber Rights (Your Contacts)', text: 'If your subscribers wish to exercise their data rights (access, deletion, opt-out), they should contact you directly as you are the data controller for your audience data.' },
       { head: 'EEA / UK / Brazil Users', text: 'If you are located in the European Economic Area, United Kingdom, Switzerland, or Brazil, you have additional rights under GDPR, UK GDPR, or LGPD. Contact us to exercise these rights.' },
+    ]
+  },
+  {
+    id: 'meta-deletion', num: '5A', icon: <Trash2 size={20} color="#ef4444" />, bg: '#fef2f2',
+    title: 'Facebook/Instagram Data Deletion Instructions',
+    content: [
+      { head: 'How to Delete Your Data', text: 'smart10X provides multiple ways to delete your data. You can disconnect your Facebook/Instagram accounts from our platform at any time. To delete your specific Meta-related data, you can (1) Disconnect your Meta account from our Settings page, or (2) Permanently delete your entire smart10X account from the "Danger Zone" in Settings.' },
+      { head: 'Automatic Deletion', text: 'Upon account deletion or Meta account disconnection, we immediately revoke and delete your OAuth access tokens and stop receiving any data from the Meta API. All associated Instagram DM history, campaign logs, and contact data are permanently removed from our active databases within 30 days.' },
+      { head: 'Meta Platform Tool', text: 'Alternatively, you can remove the smart10X App via your Facebook/Instagram Profile by going to "Settings & Privacy" > "Apps and Websites" and clicking "Remove" on smart10X. This will trigger our data deletion callback.' },
     ]
   },
   {
@@ -109,7 +118,7 @@ const sections = [
     content: [
       { head: 'Minimum Age', text: 'smart10X is not directed to children under the age of 13 (or 16 in the EEA). We do not knowingly collect personal data from children.' },
       { head: 'If We Discover Child Data', text: 'If we become aware that a child under 13 has provided us with personal data without parental consent, we will delete such information from our systems promptly.' },
-      { head: 'Parental Concerns', text: 'If you are a parent or guardian and believe your child has provided us with personal data, please contact us at privacy@smart10x.com.' },
+      { head: 'Parental Concerns', text: 'If you are a parent or guardian and believe your child has provided us with personal data, please contact us at smart10x.support@gmail.com.' },
     ]
   },
   {
@@ -131,7 +140,7 @@ const sections = [
       { head: '🚨 Safe Error Handling', text: 'In production, server errors return generic messages — never internal code, stack traces, or database details. Login failure messages use identical wording for wrong email or wrong password, preventing attackers from discovering which accounts exist on our platform (user enumeration protection).' },
       { head: '🔍 Strict Access Controls', text: 'Every API endpoint verifies your JWT before processing any request. User IDs are always taken from the verified token — never from request body parameters — preventing account impersonation attacks where one user modifies another users data.' },
       { head: '🔔 Breach Notification Policy', text: 'In the unlikely event of a data breach affecting your personal data, we will notify you and relevant data protection authorities as required by applicable law without undue delay and within the legally required timeframe (72 hours under GDPR).' },
-      { head: '👤 Your Account Security Responsibility', text: 'You are responsible for keeping your smart10X credentials confidential. We recommend a strong, unique password (minimum 12 characters, mixed case, numbers, symbols). Never share your account credentials. If you suspect unauthorized access, change your password immediately and contact us at security@smart10x.com.' },
+      { head: '👤 Your Account Security Responsibility', text: 'You are responsible for keeping your smart10X credentials confidential. We recommend a strong, unique password (minimum 12 characters, mixed case, numbers, symbols). Never share your account credentials. If you suspect unauthorized access, change your password immediately and contact us at smart10x.support@gmail.com.' },
     ]
   },
 ];
@@ -262,8 +271,8 @@ export default function Privacy() {
           <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>Questions About Your Privacy?</h3>
           <p style={{ color: '#64748b', marginBottom: '28px', fontSize: '0.95rem' }}>Our dedicated privacy team is happy to help you with any data-related requests.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
-            <a href="mailto:privacy@smart10x.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
-              <Mail size={18} /> privacy@smart10x.com
+            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
+              <Mail size={18} /> smart10x.support@gmail.com
             </a>
             <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#f8fafc', color: '#1e293b', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #e2e8f0' }}>
               Help Center
@@ -271,6 +280,11 @@ export default function Privacy() {
             <Link to="/cookies" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#f8fafc', color: '#1e293b', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #e2e8f0' }}>
               Cookie Statement
             </Link>
+            <button 
+              onClick={() => { setOpen('meta-deletion'); setTimeout(() => document.getElementById('meta-deletion')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#fff1f2', color: '#e11d48', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #fecdd3', cursor: 'pointer' }}>
+              <Trash2 size={18} /> Request Data Deletion
+            </button>
           </div>
         </div>
 
