@@ -446,7 +446,7 @@ export default function Login() {
             callback: handleGoogleResponse,
             auto_select: false,
             itp_support: true,
-            use_fedcm_for_prompt: true
+            use_fedcm_for_prompt: false
           });
           
           window.google.accounts.id.renderButton(
