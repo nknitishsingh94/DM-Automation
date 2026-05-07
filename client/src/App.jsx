@@ -85,8 +85,8 @@ function ProtectedRoute({ children }) {
   const isBypassPage = ['/onboarding', '/upgrade', '/settings', '/campaigns', '/dashboard'].includes(location.pathname);
   
   if (!isConnected && !isBypassPage) {
-    // If NOT connected, and NOT on a bypass page (like onboarding), force them back to onboarding
-    return <Navigate to="/onboarding" />;
+    // We'll allow them to see the dashboard for now to help debug
+    // return <Navigate to="/onboarding" />;
   }
 
   return children;

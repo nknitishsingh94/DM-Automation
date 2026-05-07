@@ -65,16 +65,22 @@ export default function Onboarding() {
   const fetchPages = async () => {
     try {
       setLoading(true);
+      setLinkingError(''); // Clear previous errors
       const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/oauth/facebook/pages`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      
       if (res.ok) {
         const pagesData = await res.json();
         setAvailablePages(pagesData);
+      } else {
+        const errData = await res.json();
+        setLinkingError(errData.error || 'Failed to fetch your Facebook pages. Please try reconnecting.');
       }
     } catch (err) {
       console.error('Fetch pages error:', err);
+      setLinkingError('Connection error. Please check your internet and try again.');
     } finally {
       setLoading(false);
     }

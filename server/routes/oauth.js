@@ -9,15 +9,11 @@ const router = express.Router();
 // Step 1: Redirect to Facebook OAuth
 router.get('/facebook', verifyToken, (req, res) => {
   const appId = process.env.META_APP_ID;
-  let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5001');
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-lu44.onrender.com';
 
   // Clean trailing slash to prevent double-slash issues
   if (baseUrl.endsWith('/')) {
     baseUrl = baseUrl.slice(0, -1);
-  }
-
-  if (!process.env.API_BASE_URL && process.env.NODE_ENV === 'production') {
-    return res.status(500).json({ error: "Missing API_BASE_URL in production. Set it in Render/Vercel settings." });
   }
 
   const redirectUri = encodeURIComponent(`${baseUrl}/api/oauth/facebook/callback`);
@@ -59,8 +55,20 @@ router.get('/facebook/callback', async (req, res) => {
     const redirectUri = `${baseUrl}/api/oauth/facebook/callback`;
 
     // 1. Exchange the auth 'code' for a short-lived access token
+    console.log(`📡 OAuth Exchange: Starting for User ${userId}`);
+    console.log(`🔑 App ID: ${appId}, Secret: ${appSecret ? appSecret.substring(0, 4) + '****' : 'MISSING'}`);
+    console.log(`🔗 Redirect URI: ${redirectUri}`);
+
     const tokenUrl = `https://graph.facebook.com/v19.0/oauth/access_token?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&client_secret=${appSecret}&code=${code}`;
-    const tokenRes = await axios.get(tokenUrl);
+    
+    let tokenRes;
+    try {
+      tokenRes = await axios.get(tokenUrl);
+    } catch (tokenErr) {
+      console.error("❌ Meta Token Exchange Error Details:", tokenErr.response?.data || tokenErr.message);
+      throw new Error("exchange_failed_at_meta");
+    }
+
     const shortLivedToken = tokenRes.data.access_token;
 
     // 2. Exchange short-lived token for a Long-Lived Access Token (60 days)
