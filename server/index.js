@@ -1524,7 +1524,7 @@ setInterval(async () => {
   try {
     const now = new Date();
     const duePosts = await ScheduledPost.find({ 
-      scheduledFor: { $lte: now }, 
+      scheduledFor: { $lte: now.toISOString() }, 
       status: 'Scheduled' 
     });
 
