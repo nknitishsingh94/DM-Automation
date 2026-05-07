@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, Instagram, Facebook, MessageSquare, Key, MapPin, Save, Info, CheckCircle, XCircle, Rocket, Trash2, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, Instagram, Facebook, MessageSquare, Key, MapPin, Save, Info, CheckCircle, XCircle, Rocket, Trash2, AlertTriangle, Send, Twitter, Youtube, Linkedin } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
@@ -23,10 +23,26 @@ export default function Settings() {
     whatsappPhoneNumberId: '',
     isWhatsAppConnected: false,
 
+    telegramToken: '',
+    isTelegramConnected: false,
+    
+    twitterApiKey: '',
+    isTwitterConnected: false,
+    
+    youtubeApiKey: '',
+    isYouTubeConnected: false,
+    
+    linkedinAccessToken: '',
+    isLinkedInConnected: false,
+
     // Automation Toggle States
     instagramAutomationEnabled: true,
     facebookAutomationEnabled: true,
-    whatsappAutomationEnabled: true
+    whatsappAutomationEnabled: true,
+    telegramAutomationEnabled: true,
+    twitterAutomationEnabled: true,
+    youtubeAutomationEnabled: true,
+    linkedinAutomationEnabled: true
   });
   
   const [loading, setLoading] = useState(true);
@@ -211,6 +227,54 @@ export default function Settings() {
             }}
           >
             <MessageSquare size={20} /> WhatsApp
+          </button>
+          <button 
+            onClick={() => { setActiveTab('telegram'); setMessage({type:'',text:''}); }}
+            style={{ 
+               display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 28px', borderRadius: '14px', fontWeight: '700', fontSize: '0.95rem',
+               background: activeTab === 'telegram' ? '#ffffff' : 'transparent',
+               color: activeTab === 'telegram' ? '#0088cc' : '#64748b',
+               border: 'none', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+               boxShadow: activeTab === 'telegram' ? '0 4px 12px rgba(0, 136, 204, 0.15)' : 'none'
+            }}
+          >
+            <Send size={20} /> Telegram
+          </button>
+          <button 
+            onClick={() => { setActiveTab('twitter'); setMessage({type:'',text:''}); }}
+            style={{ 
+               display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 28px', borderRadius: '14px', fontWeight: '700', fontSize: '0.95rem',
+               background: activeTab === 'twitter' ? '#ffffff' : 'transparent',
+               color: activeTab === 'twitter' ? '#1da1f2' : '#64748b',
+               border: 'none', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+               boxShadow: activeTab === 'twitter' ? '0 4px 12px rgba(29, 161, 242, 0.15)' : 'none'
+            }}
+          >
+            <Twitter size={20} /> X (Twitter)
+          </button>
+          <button 
+            onClick={() => { setActiveTab('youtube'); setMessage({type:'',text:''}); }}
+            style={{ 
+               display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 28px', borderRadius: '14px', fontWeight: '700', fontSize: '0.95rem',
+               background: activeTab === 'youtube' ? '#ffffff' : 'transparent',
+               color: activeTab === 'youtube' ? '#ff0000' : '#64748b',
+               border: 'none', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+               boxShadow: activeTab === 'youtube' ? '0 4px 12px rgba(255, 0, 0, 0.15)' : 'none'
+            }}
+          >
+            <Youtube size={20} /> YouTube
+          </button>
+          <button 
+            onClick={() => { setActiveTab('linkedin'); setMessage({type:'',text:''}); }}
+            style={{ 
+               display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 28px', borderRadius: '14px', fontWeight: '700', fontSize: '0.95rem',
+               background: activeTab === 'linkedin' ? '#ffffff' : 'transparent',
+               color: activeTab === 'linkedin' ? '#0077b5' : '#64748b',
+               border: 'none', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+               boxShadow: activeTab === 'linkedin' ? '0 4px 12px rgba(0, 119, 181, 0.15)' : 'none'
+            }}
+          >
+            <Linkedin size={20} /> LinkedIn
           </button>
         </div>
       </div>
@@ -660,17 +724,201 @@ export default function Settings() {
 
       </div>
 
-      <div style={{ background: 'rgba(139, 92, 246, 0.05)', border: '1px dashed var(--accent-color)', borderRadius: '12px', padding: '24px' }}>
-        <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: 'var(--accent-color)' }}>
-          <Info size={18} /> How to get your API keys?
-        </h3>
-        <ul style={{ color: 'var(--text-muted)', fontSize: '0.85rem', paddingLeft: '20px', lineHeight: '1.8' }}>
-          <li>Go to <strong>developers.facebook.com</strong> and create a new App.</li>
-          <li>For Facebook/Instagram: Add "Instagram Graph API" and "Messenger API".</li>
-          <li>For WhatsApp: Add "WhatsApp Cloud API" to your product list.</li>
-          <li>Ensure you generate the respective access tokens with correct permissions.</li>
-        </ul>
-      </div>
+        {/* TELEGRAM CONFIG */}
+        {activeTab === 'telegram' && (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+              <div style={{ padding: '12px', background: '#0088cc', borderRadius: '12px', color: 'white' }}>
+                <Send size={32} />
+              </div>
+              <div>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: '700' }}>Telegram Bot Link</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Connect your Telegram Bot for AI auto-replies.</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Bot Token</label>
+                <input 
+                  type="text" 
+                  placeholder="Enter your BotFather token..." 
+                  value={settings.telegramToken || ''}
+                  onChange={(e) => setSettings({...settings, telegramToken: e.target.value})}
+                  style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} 
+                />
+              </div>
+
+              <div style={{ padding: '20px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: '700' }}>Enable Telegram AI</h4>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.82rem', color: '#64748b' }}>Allow AI to respond to bot messages.</p>
+                </div>
+                <label className="switch">
+                  <input 
+                    type="checkbox" 
+                    checked={settings.telegramAutomationEnabled}
+                    onChange={(e) => {
+                      const newVal = e.target.checked;
+                      setSettings(s => ({ ...s, telegramAutomationEnabled: newVal }));
+                      handleSaveSettings(null, { ...settings, telegramAutomationEnabled: newVal });
+                    }}
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+              
+              <SaveButton savingSettings={savingSettings} message={message} onClick={handleSaveSettings} />
+            </div>
+          </>
+        )}
+
+        {/* TWITTER CONFIG */}
+        {activeTab === 'twitter' && (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+              <div style={{ padding: '12px', background: '#1da1f2', borderRadius: '12px', color: 'white' }}>
+                <Twitter size={32} />
+              </div>
+              <div>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: '700' }}>X (Twitter) Automation</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Manage your X account automation using API v2.</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>API Key / Access Token</label>
+                <input 
+                  type="password" 
+                  placeholder="Enter your X API token..." 
+                  value={settings.twitterApiKey || ''}
+                  onChange={(e) => setSettings({...settings, twitterApiKey: e.target.value})}
+                  style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} 
+                />
+              </div>
+
+              <div style={{ padding: '20px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: '700' }}>Enable X Automation</h4>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.82rem', color: '#64748b' }}>Automate tweets or DM replies.</p>
+                </div>
+                <label className="switch">
+                  <input 
+                    type="checkbox" 
+                    checked={settings.twitterAutomationEnabled}
+                    onChange={(e) => {
+                      const newVal = e.target.checked;
+                      setSettings(s => ({ ...s, twitterAutomationEnabled: newVal }));
+                      handleSaveSettings(null, { ...settings, twitterAutomationEnabled: newVal });
+                    }}
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+              
+              <SaveButton savingSettings={savingSettings} message={message} onClick={handleSaveSettings} />
+            </div>
+          </>
+        )}
+
+        {/* YOUTUBE CONFIG */}
+        {activeTab === 'youtube' && (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+              <div style={{ padding: '12px', background: '#ff0000', borderRadius: '12px', color: 'white' }}>
+                <Youtube size={32} />
+              </div>
+              <div>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: '700' }}>YouTube Comment Guard</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Auto-reply to comments on your YouTube videos.</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Google/YouTube API Key</label>
+                <input 
+                  type="password" 
+                  placeholder="Enter your Google Cloud Console Key..." 
+                  value={settings.youtubeApiKey || ''}
+                  onChange={(e) => setSettings({...settings, youtubeApiKey: e.target.value})}
+                  style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} 
+                />
+              </div>
+
+              <div style={{ padding: '20px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: '700' }}>Enable Comment Guard</h4>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.82rem', color: '#64748b' }}>AI will reply to new comments automatically.</p>
+                </div>
+                <label className="switch">
+                  <input 
+                    type="checkbox" 
+                    checked={settings.youtubeAutomationEnabled}
+                    onChange={(e) => {
+                      const newVal = e.target.checked;
+                      setSettings(s => ({ ...s, youtubeAutomationEnabled: newVal }));
+                      handleSaveSettings(null, { ...settings, youtubeAutomationEnabled: newVal });
+                    }}
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+              
+              <SaveButton savingSettings={savingSettings} message={message} onClick={handleSaveSettings} />
+            </div>
+          </>
+        )}
+
+        {/* LINKEDIN CONFIG */}
+        {activeTab === 'linkedin' && (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+              <div style={{ padding: '12px', background: '#0077b5', borderRadius: '12px', color: 'white' }}>
+                <Linkedin size={32} />
+              </div>
+              <div>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: '700' }}>LinkedIn Profile Sync</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Automate engagement and messages on LinkedIn.</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>LinkedIn Access Token</label>
+                <input 
+                  type="password" 
+                  placeholder="Enter your LinkedIn Developer Token..." 
+                  value={settings.linkedinAccessToken || ''}
+                  onChange={(e) => setSettings({...settings, linkedinAccessToken: e.target.value})}
+                  style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} 
+                />
+              </div>
+
+              <div style={{ padding: '20px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: '700' }}>Enable LinkedIn AI</h4>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.82rem', color: '#64748b' }}>Automate responses on LinkedIn posts.</p>
+                </div>
+                <label className="switch">
+                  <input 
+                    type="checkbox" 
+                    checked={settings.linkedinAutomationEnabled}
+                    onChange={(e) => {
+                      const newVal = e.target.checked;
+                      setSettings(s => ({ ...s, linkedinAutomationEnabled: newVal }));
+                      handleSaveSettings(null, { ...settings, linkedinAutomationEnabled: newVal });
+                    }}
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+              
+              <SaveButton savingSettings={savingSettings} message={message} onClick={handleSaveSettings} />
+            </div>
+          </>
+        )}
 
       {/* DANGER ZONE - Permanent Account Deletion */}
       <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '24px', padding: '32px', marginTop: '16px' }}>
