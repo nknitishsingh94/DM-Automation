@@ -46,6 +46,7 @@ import ChatMessage from './models/ChatMessage.js';
 import paymentRoutes from './routes/payment.js';
 import formRoutes from './routes/forms.js';
 import oauthRoutes from './routes/oauth.js';
+import supportRoutes from './routes/support.js';
 import { generateAIResponse } from './utils/aiHandler.js';
 // --- MULTER SETUP (Media Uploads) ---
 const storage = multer.diskStorage({
@@ -164,6 +165,7 @@ const webhookLimiter = rateLimit({
 app.use('/api/auth', authLimiter);
 app.use('/api', apiLimiter);
 app.use('/api/webhook', webhookLimiter);
+app.use('/api/support', supportRoutes);
 
 app.use(compression());
 app.use(morgan('combined'));
