@@ -869,7 +869,7 @@ app.put('/api/contacts/:id', verifyToken, async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // --- AI Studio Studio / Test Playground routes ---
 app.get('/api/chats', verifyToken, async (req, res) => {
