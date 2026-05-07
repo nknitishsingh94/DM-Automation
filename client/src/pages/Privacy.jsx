@@ -114,16 +114,28 @@ const sections = [
   },
   {
     id: 'security', num: '9', icon: <ShieldAlert size={20} color="#ef4444" />, bg: '#fef2f2',
-    title: 'Security',
+    title: 'How We Protect Your Data (Security)',
     content: [
-      { head: 'Encryption', text: 'All data is transmitted over HTTPS/TLS. Sensitive data including Meta access tokens are encrypted at rest using industry-standard AES-256 encryption.' },
-      { head: 'Access Controls', text: 'Access to your data is restricted to authorized personnel only. We implement role-based access controls and audit logs for all data access.' },
-      { head: 'Meta Token Security', text: 'OAuth access tokens from Meta are stored encrypted and are never exposed in client-side code or logs.' },
-      { head: 'Breach Notification', text: 'In the event of a data breach affecting your personal data, we will notify you and relevant authorities as required by applicable law without undue delay.' },
-      { head: 'Your Responsibility', text: 'You are responsible for maintaining the security of your smart10X account credentials. We recommend using a strong, unique password and enabling any available 2-factor authentication.' },
+      { head: '🔐 AES-256 Encryption at Rest', text: 'All sensitive data stored on our servers — including Meta OAuth access tokens, Instagram credentials, and user account data — is encrypted using industry-standard AES-256 encryption. Even if someone gained unauthorized physical access to our servers, the data would be completely unreadable without the decryption keys.' },
+      { head: '🔒 HTTPS / TLS Encryption in Transit', text: 'Every communication between your browser and smart10X servers is encrypted using HTTPS with TLS (Transport Layer Security). Your data cannot be intercepted, modified, or read while being transmitted over the internet.' },
+      { head: '🛡️ Brute-Force & Rate Limiting Protection', text: 'Our API enforces strict rate limits on login and signup attempts. After 20 failed login attempts in 15 minutes, the IP address is temporarily blocked. General API usage is capped at 120 requests per minute per user to prevent automated abuse and denial-of-service attacks.' },
+      { head: '💉 NoSQL Injection Prevention', text: 'All incoming request data is automatically sanitized using server-side middleware that strips malicious database operators (such as MongoDB "$gt", "$where" operators). This prevents attackers from manipulating database queries to access or destroy other users data.' },
+      { head: '🧹 XSS (Cross-Site Scripting) Protection', text: 'Every text input submitted through the platform is sanitized to strip malicious HTML and JavaScript before it is stored or displayed. This prevents cross-site scripting attacks where an attacker injects scripts to steal your session token or personal data.' },
+      { head: '🔑 Secure JWT Authentication', text: 'Your login session is protected by a JSON Web Token (JWT) signed with a strong cryptographic secret. Tokens expire after 30 days. The server refuses to start without a properly configured secret — there is no weak default fallback.' },
+      { head: '🚫 CORS Whitelist (Origin Protection)', text: 'Our API only accepts requests from authorized, whitelisted origins (smart10X official domains). Requests originating from unknown or malicious websites are automatically rejected, preventing cross-origin attacks.' },
+      { head: '📤 File Upload Safety', text: 'The file upload system only accepts safe file types (JPEG, PNG, GIF, WebP images; MP4, WebM videos; MP3, OGG audio). Files are limited to 10MB. Executable files, scripts, and all potentially dangerous file types are rejected immediately.' },
+      { head: '🕵️ HTTP Parameter Pollution Prevention', text: 'Our server detects and rejects duplicate or conflicting query parameters that attackers use to confuse validation logic and bypass security checks. Every request is parsed and normalized before processing.' },
+      { head: '📦 Payload Size Limits (Anti-DDoS)', text: 'All API requests are limited to a maximum body size of 2MB. This protects against payload bomb and denial-of-service attacks that attempt to overwhelm our servers with extremely large requests.' },
+      { head: '🔏 Meta OAuth Token Security', text: 'Instagram and Facebook OAuth tokens are stored encrypted and are never exposed in browser-side code, API responses, or logs. Tokens are immediately and permanently deleted when you disconnect your account or delete your smart10X account.' },
+      { head: '🧱 HTTP Security Headers', text: 'Our server sends strict security headers on every response: Content-Security-Policy (blocks unauthorized scripts and frames), X-Frame-Options (prevents clickjacking), X-Content-Type-Options (prevents MIME sniffing), and Referrer-Policy (controls referrer information sharing).' },
+      { head: '🚨 Safe Error Handling', text: 'In production, server errors return generic messages — never internal code, stack traces, or database details. Login failure messages use identical wording for wrong email or wrong password, preventing attackers from discovering which accounts exist on our platform (user enumeration protection).' },
+      { head: '🔍 Strict Access Controls', text: 'Every API endpoint verifies your JWT before processing any request. User IDs are always taken from the verified token — never from request body parameters — preventing account impersonation attacks where one user modifies another users data.' },
+      { head: '🔔 Breach Notification Policy', text: 'In the unlikely event of a data breach affecting your personal data, we will notify you and relevant data protection authorities as required by applicable law without undue delay and within the legally required timeframe (72 hours under GDPR).' },
+      { head: '👤 Your Account Security Responsibility', text: 'You are responsible for keeping your smart10X credentials confidential. We recommend a strong, unique password (minimum 12 characters, mixed case, numbers, symbols). Never share your account credentials. If you suspect unauthorized access, change your password immediately and contact us at security@smart10x.com.' },
     ]
   },
 ];
+
 
 export default function Privacy() {
   const [open, setOpen] = useState(null);
@@ -158,6 +170,43 @@ export default function Privacy() {
           <p style={{ color: 'rgba(255,255,255,0.8)', margin: 0 }}>
             We process personal data to provide smart10X services including Instagram DM Automation, AI Studio, Broadcasts, Audiences, Forms, Flow Builder, WhatsApp & Telegram integrations, and Billing. This Privacy Policy explains what data we collect, why, and how we protect it in accordance with applicable data protection laws including <strong style={{ color: '#60a5fa' }}>GDPR, UK GDPR, and LGPD</strong>.
           </p>
+        </div>
+
+        {/* Security Trust Badges */}
+        <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '28px 32px', marginBottom: '28px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg,#10b981,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Shield size={18} color="white" />
+            </div>
+            <div>
+              <div style={{ fontSize: '15px', fontWeight: '800', color: '#0f172a' }}>Platform Security — Built Into Every Layer</div>
+              <div style={{ fontSize: '12.5px', color: '#64748b' }}>Your data is protected by multiple independent security systems</div>
+            </div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: '10px' }}>
+            {[
+              { icon: '🔐', label: 'AES-256 Encryption', sub: 'Data encrypted at rest' },
+              { icon: '🔒', label: 'HTTPS / TLS', sub: 'Encrypted in transit' },
+              { icon: '🛡️', label: 'Rate Limiting', sub: 'Brute-force blocked' },
+              { icon: '💉', label: 'Injection Safe', sub: 'NoSQL attacks blocked' },
+              { icon: '🧹', label: 'XSS Protected', sub: 'Script injection blocked' },
+              { icon: '🔑', label: 'Secure JWT Auth', sub: 'Session token protected' },
+              { icon: '🚫', label: 'CORS Whitelist', sub: 'Unauthorized origins blocked' },
+              { icon: '📤', label: 'Safe File Uploads', sub: 'Only safe file types allowed' },
+              { icon: '📦', label: 'Payload Limits', sub: 'DDoS attacks mitigated' },
+              { icon: '🧱', label: 'Security Headers', sub: 'Clickjacking prevented' },
+              { icon: '🚨', label: 'Error Hiding', sub: 'No data leaked in errors' },
+              { icon: '🔔', label: 'GDPR Breach Notice', sub: '72hr notification policy' },
+            ].map((b, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
+                <span style={{ fontSize: '20px', flexShrink: 0 }}>{b.icon}</span>
+                <div>
+                  <div style={{ fontSize: '12.5px', fontWeight: '700', color: '#1e293b' }}>{b.label}</div>
+                  <div style={{ fontSize: '11px', color: '#94a3b8' }}>{b.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Table of Contents */}
