@@ -164,6 +164,26 @@ export default function Landing() {
               <p>IG, FB & WhatsApp</p>
             </div>
           </div>
+
+          <Link to="/features/universal-triggers" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
+            <div className="feature-icon" style={{ background: 'rgba(14, 165, 233, 0.1)', color: '#0ea5e9' }}>
+              <Globe size={24} />
+            </div>
+            <div className="feature-text">
+              <h3>Universal Triggers</h3>
+              <p>One keyword, all channels</p>
+            </div>
+          </Link>
+
+          <Link to="/features/scheduling" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
+            <div className="feature-icon" style={{ background: 'rgba(124, 58, 237, 0.1)', color: '#7c3aed' }}>
+              <Clock size={24} />
+            </div>
+            <div className="feature-text">
+              <h3>AI Scheduling</h3>
+              <p>Post + Auto DM</p>
+            </div>
+          </Link>
         </div>
 
         <div className="feature-breakdown-section">
