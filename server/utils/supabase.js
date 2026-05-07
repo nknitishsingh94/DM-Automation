@@ -61,7 +61,7 @@ function convertIncoming(doc, tableName) {
   if (doc.id) {
     newDoc._id = doc.id;
   }
-  ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost'].forEach(field => {
+  ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost', 'isUniversal'].forEach(field => {
     if (newDoc[field] !== undefined && newDoc[field] !== null) {
       if (typeof newDoc[field] === 'string') {
         newDoc[field] = newDoc[field] === 'true' || newDoc[field] === 't';

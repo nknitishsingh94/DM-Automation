@@ -38,6 +38,7 @@ import Settings from './models/Settings.js';
 import User from './models/User.js';
 import Contact from './models/Contact.js';
 import Flow from './models/Flow.js';
+import ScheduledPost from './models/ScheduledPost.js';
 import { runFlow } from './utils/FlowRunner.js';
 import { sendMessageToInstagram, sendWhatsAppMessage, sendPrivateReply, sendPublicComment } from './utils/metaApi.js';
 import authRoutes from './routes/auth.js';
@@ -1053,6 +1054,39 @@ app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
   }
 });
 
+// Scheduling API
+app.get('/api/scheduling', verifyToken, async (req, res) => {
+  try {
+    const posts = await ScheduledPost.find({ userId: req.user.userId }).sort({ scheduledFor: 1 });
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/scheduling', verifyToken, async (req, res) => {
+  try {
+    const newPost = new ScheduledPost({
+      ...req.body,
+      userId: req.user.userId,
+      status: 'Scheduled'
+    });
+    await newPost.save();
+    res.json(newPost);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
+  try {
+    await ScheduledPost.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Messages API (Inbox)
 app.get('/api/messages', verifyToken, async (req, res) => {
   const messages = await Message.find({ userId: req.user.userId }).sort({ timestamp: 1 });
@@ -1480,6 +1514,48 @@ app.get('/api/debug/settings', verifyToken, async (req, res) => {
 
 
 // Start the server
+
+// --- BACKGROUND WORKER (Scheduling) ---
+setInterval(async () => {
+  try {
+    const now = new Date();
+    const duePosts = await ScheduledPost.find({ 
+      scheduledFor: { $lte: now }, 
+      status: 'Scheduled' 
+    });
+
+    for (const post of duePosts) {
+      console.log(`⏰ Processing Scheduled Post: ${post._id}`);
+      await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Processing' });
+
+      try {
+        // Mocking real Instagram Media Post API call here
+        // Requires specific 'instagram_content_publish' permission
+        console.log(`📸 Posting media to Instagram for User: ${post.userId}`);
+        
+        if (post.triggerKeyword && post.autoResponse) {
+          const campaign = new Campaign({
+            userId: post.userId,
+            name: `Auto: ${post.caption.substring(0, 20)}...`,
+            trigger: post.triggerKeyword,
+            response: post.autoResponse,
+            status: 'Active',
+            isAnyPost: true 
+          });
+          await campaign.save();
+          console.log(`✅ Automation Campaign created for scheduled post.`);
+        }
+
+        await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted' });
+      } catch (postErr) {
+        console.error(`❌ Failed to process scheduled post ${post._id}:`, postErr.message);
+        await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed' });
+      }
+    }
+  } catch (err) {
+    console.error("Worker Error:", err);
+  }
+}, 60000);
 
 // ── SECURITY: Global Error Handler ────────────────────────────────────────────
 // Must be LAST middleware. Prevents stack trace leakage in production.

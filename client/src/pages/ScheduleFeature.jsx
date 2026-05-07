@@ -15,7 +15,7 @@ export default function ScheduleFeature() {
     e.preventDefault();
     const token = localStorage.getItem('insta_agent_token');
     if (user || token) {
-      navigate('/campaigns');
+      navigate('/scheduling');
     } else {
       navigate('/signup?redirect=/campaigns');
     }

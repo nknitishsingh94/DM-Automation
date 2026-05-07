@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, Plus, Trash2, Power, MessageCircle, AlertCircle, CheckCircle, Video, Link as LinkIcon, History, X, Crown, Edit2, Globe, Share2, Sparkles } from 'lucide-react';
+import { Zap, Plus, Trash2, Power, MessageCircle, AlertCircle, CheckCircle, Video, Link as LinkIcon, History, X, Crown, Edit2, Globe, Share2, Sparkles, Brain } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
@@ -358,34 +358,38 @@ export default function Campaigns() {
         </div>
       </div>
 
-      {activeTab === 'all' && campaigns.filter(c => c.isUniversal).length === 0 && (
-        <div style={{ 
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', 
-          borderRadius: '24px', padding: '32px', marginBottom: '32px', color: 'white',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.1)', position: 'relative', overflow: 'hidden'
-        }}>
-          <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '200px', height: '200px', background: 'rgba(14, 165, 233, 0.1)', borderRadius: '50%', filter: 'blur(40px)' }}></div>
-          <div style={{ position: 'relative', zIndex: 1, maxWidth: '60%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0ea5e9', fontWeight: '800', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '12px' }}>
-              <Sparkles size={14} /> New Feature
-            </div>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '12px', letterSpacing: '-0.5px' }}>Universal Triggers</h2>
-            <p style={{ color: '#94a3b8', lineHeight: '1.6', marginBottom: '20px' }}>
-              Tired of linking every post? Create <strong>Account-Wide</strong> keywords that trigger across all your Reels, Posts, and DMs instantly.
-            </p>
-            <button 
-              onClick={() => {
-                setNewCamp({...newCamp, isUniversal: true});
-                setShowAdd(true);
-              }}
-              style={{ background: '#0ea5e9', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '800', cursor: 'pointer' }}
-            >
-              Get Started
-            </button>
-          </div>
-          <div style={{ display: isMobile ? 'none' : 'block' }}>
-            <Globe size={120} color="rgba(14, 165, 233, 0.2)" />
+      {activeTab === 'all' && (
+        <div style={{ marginBottom: '40px' }}>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+             <Sparkles size={18} color="#7c3aed" /> Quick Start Templates
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
+            {[
+              { id: 'dm', title: 'DM Automation', desc: 'Trigger DMs from Keywords', icon: <Zap size={24} />, color: '#4f46e5', bg: 'rgba(79, 70, 229, 0.1)', path: '/select-channel' },
+              { id: 'comment', title: 'Comment Reply', desc: 'Auto-DM on Comments', icon: <MessageSquare size={24} />, color: '#0ea5e9', bg: 'rgba(14, 165, 233, 0.1)', path: '/select-channel' },
+              { id: 'story', title: 'Story Trigger', desc: 'Reply to Story Mentions', icon: <Instagram size={24} />, color: '#ec4899', bg: 'rgba(236, 72, 153, 0.1)', path: '/select-channel' },
+              { id: 'ai', title: 'AI Neural Studio', desc: 'Train your custom AI', icon: <Brain size={24} />, color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)', path: '/ai-studio' }
+            ].map(item => (
+              <div 
+                key={item.id}
+                onClick={() => navigate(item.path)}
+                style={{ 
+                  background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #f1f5f9', 
+                  cursor: 'pointer', transition: 'all 0.3s', display: 'flex', flexDirection: 'column', gap: '16px',
+                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)'
+                }}
+                onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 20px -5px rgba(0,0,0,0.08)'; e.currentTarget.style.borderColor = item.color; }}
+                onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)'; e.currentTarget.style.borderColor = '#f1f5f9'; }}
+              >
+                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: item.bg, color: item.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {item.icon}
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '4px' }}>{item.title}</h3>
+                  <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>{item.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -563,6 +567,91 @@ export default function Campaigns() {
       {editingCampaign && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
           <div style={{ background: 'white', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}><h3 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, color: '#1e1b4b' }}>Edit Campaign</h3><button onClick={() => setEditingCampaign(null)} style={{ background: '#f1f5f9', border: 'none', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}><X size={20} /></button></div><form onSubmit={handleEditSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}><div><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Campaign Name</label><input type="text" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required /></div><div><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Trigger Keyword</label><input type="text" value={editForm.trigger} onChange={e => setEditForm({...editForm, trigger: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required /></div><div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}><input type="checkbox" id="editIsUniversal" checked={editForm.isUniversal} onChange={e => setEditForm({...editForm, isUniversal: e.target.checked})} /><label htmlFor="editIsUniversal" style={{ fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}><Globe size={16} color="#0ea5e9" /> Make this a Universal Trigger</label></div><div><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Bot Response Message</label><textarea value={editForm.response} onChange={e => setEditForm({...editForm, response: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', minHeight: '100px', resize: 'vertical' }} required /></div><div style={{ display: 'flex', gap: '12px' }}><div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Button Text (Optional)</label><input type="text" value={editForm.buttonText} onChange={e => setEditForm({...editForm, buttonText: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} /></div><div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Link URL (Optional)</label><input type="url" value={editForm.linkUrl} onChange={e => setEditForm({...editForm, linkUrl: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} /></div></div><button type="submit" style={{ marginTop: '16px', padding: '14px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Save Changes</button></form></div></div>
+      )}
+
+      {showAdd && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
+          <div style={{ background: 'white', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, color: '#1e1b4b' }}>
+                {newCamp.isUniversal ? 'New Universal Trigger' : 'New Automation'}
+              </h3>
+              <button onClick={() => setShowAdd(false)} style={{ background: '#f1f5f9', border: 'none', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
+                <X size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleAddSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Campaign Name</label>
+                <input 
+                  type="text" value={newCamp.name} onChange={e => setNewCamp({...newCamp, name: e.target.value})}
+                  placeholder="e.g. Summer Sale 2024"
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Trigger Keyword</label>
+                <input 
+                  type="text" value={newCamp.trigger} onChange={e => setNewCamp({...newCamp, trigger: e.target.value})}
+                  placeholder="e.g. PRICE, DISCOUNT"
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required
+                />
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: newCamp.isUniversal ? 'rgba(14, 165, 233, 0.05)' : '#f8fafc', borderRadius: '10px', border: newCamp.isUniversal ? '1px solid #0ea5e9' : '1px solid #e2e8f0' }}>
+                <input 
+                  type="checkbox" 
+                  id="isUniversal"
+                  checked={newCamp.isUniversal} 
+                  onChange={e => setNewCamp({...newCamp, isUniversal: e.target.checked})}
+                />
+                <label htmlFor="isUniversal" style={{ fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                   <Globe size={16} color="#0ea5e9" /> Make this a Universal Trigger
+                </label>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Bot Response Message</label>
+                <textarea 
+                  value={newCamp.response} onChange={e => setNewCamp({...newCamp, response: e.target.value})}
+                  placeholder="What should the bot say?"
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', minHeight: '100px', resize: 'vertical' }} required
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Button Text</label>
+                  <input 
+                    type="text" value={newCamp.buttonText} onChange={e => setNewCamp({...newCamp, buttonText: e.target.value})}
+                    placeholder="e.g. Shop Now"
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Link URL</label>
+                  <input 
+                    type="url" value={newCamp.linkUrl} onChange={e => setNewCamp({...newCamp, linkUrl: e.target.value})}
+                    placeholder="https://..."
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}
+                  />
+                </div>
+              </div>
+              <button 
+                type="submit" 
+                disabled={submitting}
+                style={{ 
+                  marginTop: '16px', padding: '14px', 
+                  background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)', 
+                  color: 'white', border: 'none', borderRadius: '12px', 
+                  fontWeight: '800', cursor: 'pointer', opacity: submitting ? 0.7 : 1 
+                }}
+              >
+                {submitting ? 'Creating...' : 'Create Automation'}
+              </button>
+            </form>
+          </div>
+        </div>
       )}
 
     </div>

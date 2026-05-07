@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate } from 'react-router-dom';
-import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone } from 'lucide-react';
+import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Landing from './pages/Landing';
@@ -58,6 +58,7 @@ const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'))
 const Onboarding = lazyRetry(() => import('./pages/Onboarding'));
 const UniversalTriggersFeature = lazyRetry(() => import('./pages/UniversalTriggersFeature'));
 const ScheduleFeature = lazyRetry(() => import('./pages/ScheduleFeature'));
+const Scheduling = lazyRetry(() => import('./pages/Scheduling'));
 
 const NotificationContext = createContext();
 export const useNotification = () => useContext(NotificationContext);
@@ -199,6 +200,11 @@ function Sidebar({ isMobileOpen, onClose }) {
             <NavLink to="/campaigns" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Zap size={18} />
               <span>Automations</span>
+            </NavLink>
+            <NavLink to="/scheduling" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Calendar size={18} />
+              <span>Scheduling</span>
+              <span className="sidebar-badge badge-new">HOT</span>
             </NavLink>
             <NavLink to="/forms" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <MessageSquare size={18} />
@@ -405,6 +411,7 @@ function MainLayout() {
               <Route path="/cookies" element={<Cookies />} />
               <Route path="/features/universal-triggers" element={<UniversalTriggersFeature />} />
               <Route path="/features/scheduling" element={<ScheduleFeature />} />
+              <Route path="/scheduling" element={<ProtectedRoute><Scheduling /></ProtectedRoute>} />
               <Route path="*" element={<div style={{textAlign:'center', marginTop:'50px', color:'var(--text-muted)'}}>Page Under Construction</div>} />
             </Routes>
           </Suspense>
