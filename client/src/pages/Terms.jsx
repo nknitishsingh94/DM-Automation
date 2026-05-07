@@ -60,7 +60,7 @@ export default function Terms() {
               <Scale size={44} color="white" />
             </div>
             <h1 style={{ fontSize: '48px', fontWeight: '900', color: '#0f172a', marginBottom: '12px', letterSpacing: '-2px', lineHeight: 1.1 }}>Terms of Service</h1>
-            <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: '600', marginBottom: '8px' }}>smart10X, Inc. — Effective Date: April 1, 2026</p>
+            <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: '600', marginBottom: '8px' }}>smart10X, Inc. — Effective Date: May 5, 2026</p>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#fef9c3', color: '#854d0e', padding: '8px 20px', borderRadius: '100px', fontSize: '13px', fontWeight: '700', border: '1px solid #fde68a' }}>
               ⚠️ This agreement contains a binding arbitration provision — please read carefully
             </div>
