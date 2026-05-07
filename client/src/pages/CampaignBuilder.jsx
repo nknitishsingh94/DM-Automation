@@ -200,6 +200,9 @@ export default function CampaignBuilder() {
                       onChange={(e) => setNewCamp({...newCamp, requireFollow: e.target.checked})}
                       style={{ width: '22px', height: '22px', accentColor: 'var(--accent-color)', cursor: 'pointer', marginTop: '2px' }}
                     />
+                    <div>
+                      <label htmlFor="requireFollow" style={{ fontSize: '1.05rem', fontWeight: '800', cursor: 'pointer', display: 'block', color: newCamp.requireFollow ? 'var(--accent-main)' : 'var(--text-main)', marginBottom: '4px' }}>Follower Gate (Lock Content)</label>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.5', display: 'block' }}>If toggled, the bot will verify if the user is following your page. If they are not, it sends the gating message instead of the real content.</span>
                     </div>
                   </div>
 
