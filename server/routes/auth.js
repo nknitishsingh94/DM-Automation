@@ -141,7 +141,11 @@ router.post('/google', async (req, res) => {
     res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
   } catch (err) {
     console.error('Google Auth Error:', err.message);
-    res.status(500).json({ message: 'Google authentication failed.' });
+    res.status(500).json({ 
+      message: 'Google authentication failed.',
+      error: err.message,
+      hint: "Check if 'users' table has 'googleId' and 'profilePhoto' columns."
+    });
   }
 });
 
@@ -188,7 +192,11 @@ router.post('/google_custom', async (req, res) => {
     res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
   } catch (err) {
     console.error('Custom Google Auth Error:', err.message);
-    res.status(500).json({ message: 'Google authentication failed.' });
+    res.status(500).json({ 
+      message: 'Google authentication failed.',
+      error: err.message,
+      hint: "Check if 'users' table has 'googleId' and 'profilePhoto' columns."
+    });
   }
 });
 
