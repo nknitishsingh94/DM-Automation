@@ -310,20 +310,26 @@ router.get('/facebook/pages', verifyToken, async (req, res) => {
     const rawPages = pagesRes.data.data || [];
     const pages = [];
 
+    console.log(`📄 Meta returned ${rawPages.length} pages/accounts.`);
+
     for (const p of rawPages) {
       let linkedInstagram = null;
-      if (p.instagram_business_account) {
+
+      // Try to find Instagram account ID
+      const igId = p.instagram_business_account?.id || p.instagram_business_account;
+
+      if (igId) {
         try {
-          const igRes = await axios.get(`https://graph.facebook.com/v19.0/${p.instagram_business_account.id}?fields=username,name,profile_picture_url&access_token=${p.access_token || token}`);
+          const igRes = await axios.get(`https://graph.facebook.com/v19.0/${igId}?fields=username,name,profile_picture_url&access_token=${p.access_token || token}`);
           linkedInstagram = {
-            id: p.instagram_business_account.id,
+            id: igId,
             username: igRes.data.username,
             name: igRes.data.name,
             profilePicture: igRes.data.profile_picture_url
           };
         } catch (igErr) {
-          console.warn(`⚠️ IG fetch failed for page ${p.name}:`, igErr.message);
-          linkedInstagram = { id: p.instagram_business_account.id, username: 'instagram_account' };
+          console.warn(`⚠️ IG fetch failed for page ${p.name} (${igId}):`, igErr.message);
+          linkedInstagram = { id: igId, username: 'instagram_account' };
         }
       }
 
