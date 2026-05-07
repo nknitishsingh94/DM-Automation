@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import CookieBanner from './components/CookieBanner';
 
 // Helper to handle lazy loading retries (Fixes 'Failed to fetch dynamically imported module')
 const lazyRetry = (componentImport) => {
@@ -435,6 +436,7 @@ function App() {
           <Toast key={t.id} {...t} onClose={() => removeToast(t.id)} />
         ))}
       </div>
+      <CookieBanner />
     </NotificationContext.Provider>
   );
 }
