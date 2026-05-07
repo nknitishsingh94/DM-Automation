@@ -385,8 +385,7 @@ function MainLayout() {
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
               <Route path="/campaign-builder/new" element={<ProtectedRoute><CampaignBuilder /></ProtectedRoute>} />
-              <Route path="/select-channel" element={<ProtectedRoute><ChannelSelector /></ProtectedRoute>} />
-              <Route path="/select-template" element={<ProtectedRoute><TemplateSelector /></ProtectedRoute>} />
+              <Route path="/campaign-builder/new" element={<ProtectedRoute><CampaignBuilder /></ProtectedRoute>} />
               <Route path="/automation-editor" element={<ProtectedRoute><AutomationEditor /></ProtectedRoute>} />
               <Route path="/dm-automation-editor" element={<ProtectedRoute><DmAutomationEditor /></ProtectedRoute>} />
               <Route path="/audiences" element={<ProtectedRoute><Audiences /></ProtectedRoute>} />
