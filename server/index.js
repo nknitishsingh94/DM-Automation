@@ -97,11 +97,11 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", "https://graph.facebook.com", "https://api.openai.com"],
-      frameSrc: ["'none'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://connect.facebook.net", "https://www.facebook.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      imgSrc: ["'self'", "data:", "https:", "https://*.googleusercontent.com", "https://*.facebook.com"],
+      connectSrc: ["'self'", "https://graph.facebook.com", "https://api.openai.com", "https://accounts.google.com"],
+      frameSrc: ["'self'", "https://accounts.google.com", "https://www.facebook.com", "https://web.facebook.com"],
       objectSrc: ["'none'"],
     },
   },
