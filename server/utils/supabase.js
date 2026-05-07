@@ -23,23 +23,29 @@ function parseFilter(q, queryObj) {
   if (!queryObj) return q;
 
   for (const [key, val] of Object.entries(queryObj)) {
+    let val = v;
+    if (val instanceof Date) {
+      val = val.toISOString();
+    }
+
     if (key === '_id' || key === 'id' || key === 'userId') {
       if (!isUUID(val)) {
         console.warn(`🛑 Skipping filter for non-UUID: ${key}=${val}`);
-        // We add a dummy filter that won't match anything to prevent returning everything
         q = q.eq('id', '00000000-0000-0000-0000-000000000000');
       } else {
         q = q.eq(key === '_id' ? 'id' : key, val);
       }
     } else if (key === '$or' && Array.isArray(val)) {
       const orConditions = val.map(cond => {
-        const [subKey, subVal] = Object.entries(cond)[0];
+        const [subKey, subValRaw] = Object.entries(cond)[0];
+        const subVal = subValRaw instanceof Date ? subValRaw.toISOString() : subValRaw;
         const parsedKey = subKey === '_id' || subKey === 'id' ? 'id' : subKey;
         return `${parsedKey}.eq.${subVal}`;
       }).join(',');
       q = q.or(orConditions);
     } else if (val && typeof val === 'object' && !Array.isArray(val)) {
-      for (const [op, subVal] of Object.entries(val)) {
+      for (const [op, subValRaw] of Object.entries(val)) {
+        const subVal = subValRaw instanceof Date ? subValRaw.toISOString() : subValRaw;
         const parsedKey = key === '_id' || key === 'id' ? 'id' : key;
         if (op === '$gte') q = q.gte(parsedKey, subVal);
         else if (op === '$lte') q = q.lte(parsedKey, subVal);
