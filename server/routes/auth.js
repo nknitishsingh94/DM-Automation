@@ -128,17 +128,22 @@ router.post('/google', async (req, res) => {
       }
     }
 
-    const messageCount = await Message.countDocuments({ userId: user._id });
-    if (messageCount === 0) {
-      await new Message({
-        userId: user._id, sender: 'AI Agent',
-        text: `Welcome, ${user.username}! How can I help you today?`,
-        type: 'received', chatId: 'ai_bot_support', isAI: true, timestamp: new Date()
-      }).save();
+    try {
+      const messageCount = await Message.countDocuments({ userId: user._id || user.id });
+      if (messageCount === 0) {
+        await new Message({
+          userId: user._id || user.id, sender: 'AI Agent',
+          text: `Welcome, ${user.username}! How can I help you today?`,
+          type: 'received', chatId: 'ai_bot_support', isAI: true, timestamp: new Date()
+        }).save();
+      }
+    } catch (msgErr) {
+      console.warn('⚠️ Welcome message failed but login will continue:', msgErr.message);
     }
 
-    const jwtToken = signToken(user._id);
-    res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
+    const userId = user._id || user.id;
+    const jwtToken = signToken(userId);
+    res.json({ token: jwtToken, user: { id: userId, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
   } catch (err) {
     console.error('Google Auth Error:', err.message);
     res.status(500).json({ 
@@ -164,7 +169,6 @@ router.post('/google_custom', async (req, res) => {
         user = new User({ username: (name || '').slice(0, 50), email, googleId: sub, profilePhoto: picture });
         await user.save();
       } catch (saveErr) {
-        // If save fails due to race condition (duplicate email), try to fetch the user again
         if (saveErr.message?.includes('unique constraint') || saveErr.code === '23505') {
           user = await User.findOne({ email });
         } else {
@@ -179,17 +183,22 @@ router.post('/google_custom', async (req, res) => {
       await user.save();
     }
 
-    const messageCount = await Message.countDocuments({ userId: user._id });
-    if (messageCount === 0) {
-      await new Message({
-        userId: user._id, sender: 'AI Agent',
-        text: `Welcome, ${user.username}! How can I help you today?`,
-        type: 'received', chatId: 'ai_bot_support', isAI: true, timestamp: new Date()
-      }).save();
+    try {
+      const messageCount = await Message.countDocuments({ userId: user._id || user.id });
+      if (messageCount === 0) {
+        await new Message({
+          userId: user._id || user.id, sender: 'AI Agent',
+          text: `Welcome, ${user.username}! How can I help you today?`,
+          type: 'received', chatId: 'ai_bot_support', isAI: true, timestamp: new Date()
+        }).save();
+      }
+    } catch (msgErr) {
+      console.warn('⚠️ Welcome message failed but login will continue:', msgErr.message);
     }
 
-    const jwtToken = signToken(user._id);
-    res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
+    const userId = user._id || user.id;
+    const jwtToken = signToken(userId);
+    res.json({ token: jwtToken, user: { id: userId, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
   } catch (err) {
     console.error('Custom Google Auth Error:', err.message);
     res.status(500).json({ 
