@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
-import { ArrowLeft, CheckCircle, Video, Link as LinkIcon, Zap, ChevronLeft, MoreHorizontal, Info } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Video, Link as LinkIcon, Zap, ChevronLeft, MoreHorizontal, Info, Globe } from 'lucide-react';
 
 export default function CampaignBuilder() {
   const navigate = useNavigate();
