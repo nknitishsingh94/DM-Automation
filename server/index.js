@@ -1074,7 +1074,8 @@ app.post('/api/scheduling', verifyToken, async (req, res) => {
     await newPost.save();
     res.json(newPost);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('❌ SCHEDULING ERROR:', err.message);
+    res.status(500).json({ error: 'Failed to schedule: ' + err.message });
   }
 });
 
