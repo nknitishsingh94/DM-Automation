@@ -1217,7 +1217,11 @@ app.get('/api/settings', verifyToken, async (req, res) => {
     }
     res.json(settings);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ SETTINGS ERROR:", err.message);
+    res.status(500).json({ 
+      error: err.message, 
+      hint: "Check if 'settings' table has 'userId' column and RLS is configured correctly."
+    });
   }
 });
 
