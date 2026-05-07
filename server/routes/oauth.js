@@ -274,15 +274,30 @@ router.get('/facebook/pages', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.userId });
     const token = settings?.facebookAccessToken || settings?.instagramAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+    
     if (!token) {
+      console.error(`❌ No token found for user ${req.user.userId}`);
       return res.status(400).json({ error: 'Please connect your Meta account first.' });
     }
 
-    const pagesUrl = `https://graph.facebook.com/v19.0/me/accounts?fields=id,name,access_token,instagram_business_account&access_token=${token}`;
-    const pagesRes = await axios.get(pagesUrl);
-    const rawPages = pagesRes.data.data || [];
+    console.log(`📡 Fetching pages for user ${req.user.userId} using token prefix: ${token.substring(0, 10)}...`);
 
+    const pagesUrl = `https://graph.facebook.com/v19.0/me/accounts?fields=id,name,access_token,instagram_business_account&access_token=${token}`;
+    
+    let pagesRes;
+    try {
+      pagesRes = await axios.get(pagesUrl);
+    } catch (axErr) {
+      console.error("❌ Meta Graph API Error:", axErr.response?.data || axErr.message);
+      return res.status(axErr.response?.status || 500).json({ 
+        error: 'Meta session expired. Please logout and connect Instagram again.',
+        details: axErr.response?.data?.error?.message 
+      });
+    }
+
+    const rawPages = pagesRes.data.data || [];
     const pages = [];
+    
     for (const p of rawPages) {
       let linkedInstagram = null;
       if (p.instagram_business_account) {
@@ -295,25 +310,18 @@ router.get('/facebook/pages', verifyToken, async (req, res) => {
             profilePicture: igRes.data.profile_picture_url
           };
         } catch (igErr) {
-          linkedInstagram = {
-            id: p.instagram_business_account.id,
-            username: 'instagram_account'
-          };
+          console.warn(`⚠️ IG fetch failed for page ${p.name}:`, igErr.message);
+          linkedInstagram = { id: p.instagram_business_account.id, username: 'instagram_account' };
         }
       }
 
-      pages.push({
-        id: p.id,
-        name: p.name,
-        accessToken: p.access_token,
-        linkedInstagram
-      });
+      pages.push({ id: p.id, name: p.name, accessToken: p.access_token, linkedInstagram });
     }
 
     res.json(pages);
   } catch (err) {
-    console.error("Error fetching pages:", err.message);
-    res.status(500).json({ error: 'Failed to fetch Facebook pages' });
+    console.error("🔥 Critical 500 Error in facebook/pages:", err.message);
+    res.status(500).json({ error: 'Internal server error while fetching pages' });
   }
 });
 
