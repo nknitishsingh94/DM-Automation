@@ -23,8 +23,13 @@ export default function Scheduling() {
   }, []);
 
   const fetchPosts = async () => {
+    const token = localStorage.getItem('insta_agent_token');
+    if (!token) {
+      console.error("❌ Auth Token Missing: Please log in again.");
+      setLoading(false);
+      return;
+    }
     try {
-      const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/scheduling`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -44,9 +49,13 @@ export default function Scheduling() {
 
   const handleAddSubmit = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem('insta_agent_token');
+    if (!token) {
+      notify("Session expired. Please log in again.", "error");
+      return;
+    }
     setSubmitting(true);
     try {
-      const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/scheduling`, {
         method: 'POST',
         headers: { 
