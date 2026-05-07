@@ -119,65 +119,10 @@ router.get('/facebook/callback', async (req, res) => {
       }
     }
 
-    // 4. GET WHATSAPP BUSINESS ACCOUNTS AND PHONE NUMBERS
+    // 4. (WhatsApp Discovery Removed - Instagram Only Flow)
     let whatsappPhoneId = '';
     let whatsappName = '';
     let whatsappDiscoveryError = '';
-
-    try {
-      console.log("🔍 WhatsApp Discovery: Starting robust scan...");
-
-      const fieldUrl = `https://graph.facebook.com/v19.0/me?fields=whatsapp_business_accounts{id,name,phone_numbers}&access_token=${longToken}`;
-      const fieldRes = await axios.get(fieldUrl);
-      const wabaData = fieldRes.data.whatsapp_business_accounts?.data || [];
-
-      if (wabaData && wabaData.length > 0) {
-        console.log(`💬 WhatsApp Discovery: Found ${wabaData.length} WABAs via Field Access.`);
-        for (const waba of wabaData) {
-          const phones = waba.phone_numbers?.data || [];
-          if (phones && phones.length > 0) {
-            whatsappPhoneId = phones[0].id;
-            whatsappName = phones[0].display_phone_number || phones[0].verified_name || "WhatsApp Business";
-            console.log(`✅ WhatsApp Found (Path A): ${whatsappName}`);
-            break;
-          }
-        }
-      }
-
-      if (!whatsappPhoneId) {
-        const edgeUrl = `https://graph.facebook.com/v19.0/me/whatsapp_business_accounts?access_token=${longToken}`;
-        const edgeRes = await axios.get(edgeUrl);
-        const edgeData = edgeRes.data.data || [];
-
-        if (edgeData.length > 0) {
-          console.log(`📡 WhatsApp Discovery: Scanning ${edgeData.length} WABAs via Edge Access...`);
-          for (const waba of edgeData) {
-            const phoneRes = await axios.get(`https://graph.facebook.com/v19.0/${waba.id}/phone_numbers?access_token=${longToken}`);
-            const phones = phoneRes.data.data;
-            if (phones && phones.length > 0) {
-              whatsappPhoneId = phones[0].id;
-              whatsappName = phones[0].display_phone_number || phones[0].verified_name || "WhatsApp Business";
-              console.log(`✅ WhatsApp Found (Path B): ${whatsappName}`);
-              break;
-            }
-          }
-        }
-      }
-
-      if (!whatsappPhoneId && !whatsappDiscoveryError) {
-        whatsappDiscoveryError = 'No verified WhatsApp phone numbers were found.';
-      }
-
-    } catch (wErr) {
-      const errorMsg = wErr.response?.data?.error?.message || wErr.message;
-      const errorCode = wErr.response?.data?.error?.code;
-      if (errorMsg.includes("whatsapp_business_accounts") && (errorCode === 100 || errorMsg.includes("nonexisting field"))) {
-        whatsappDiscoveryError = 'ACTION REQUIRED: The "WhatsApp" product is missing from your Meta App.';
-      } else {
-        whatsappDiscoveryError = errorMsg;
-      }
-      console.error("❌ WhatsApp Discovery Error:", whatsappDiscoveryError);
-    }
 
     // 4.5. AUTOMATICALLY SUBSCRIBE APP TO PAGE WEBHOOKS (CRITICAL FOR RECEIVING MESSAGES)
     if (pageId && pageAccessToken) {
