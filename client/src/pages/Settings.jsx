@@ -179,7 +179,7 @@ export default function Settings() {
         logout();
         navigate('/');
       } else {
-        notify(data.message || "Failed to delete account. Check your password.", "error");
+        notify(data.message || "Failed to delete account. Please contact support.", "error");
       }
     } catch (err) {
       notify("Network error occurred.", "error");

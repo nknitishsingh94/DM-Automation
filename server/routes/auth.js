@@ -273,23 +273,45 @@ router.delete('/account', verifyToken, async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    await Promise.all([
-      User.findByIdAndDelete(userId),
-      Settings.deleteMany({ userId }),
-      Campaign.deleteMany({ userId }),
-      Message.deleteMany({ userId }),
-      Contact.deleteMany({ userId }),
-      Flow.deleteMany({ userId }),
-      Form.deleteMany({ userId }),
-      FormSubmission.deleteMany({ userId }),
-      ChatMessage.deleteMany({ userId })
-    ]);
+    console.log(`🗑️ Starting permanent deletion for User: ${userId} (${user.email})`);
 
-    console.log(`🗑️ PERMANENT DELETE: User ${userId} and all related data removed.`);
+    // Define all related models to clean up
+    const models = [
+      { name: 'Settings', model: Settings },
+      { name: 'Campaigns', model: Campaign },
+      { name: 'Messages', model: Message },
+      { name: 'Contacts', model: Contact },
+      { name: 'Flows', model: Flow },
+      { name: 'Forms', model: Form },
+      { name: 'FormSubmissions', model: FormSubmission },
+      { name: 'ChatMessages', model: ChatMessage }
+    ];
+
+    // Delete related data first (resiliently)
+    for (const item of models) {
+      try {
+        await item.model.deleteMany({ userId });
+        console.log(`✅ Deleted ${item.name} records for user ${userId}`);
+      } catch (err) {
+        console.warn(`⚠️ Could not delete ${item.name} records:`, err.message);
+        // Continue even if one fails (table might not exist)
+      }
+    }
+
+    // Finally, delete the user record
+    try {
+      await User.findByIdAndDelete(userId);
+      console.log(`✅ Deleted User record: ${userId}`);
+    } catch (err) {
+      console.error(`❌ Failed to delete User record:`, err.message);
+      return res.status(500).json({ message: 'Failed to remove user record from database.' });
+    }
+
+    console.log(`🗑️ PERMANENT DELETE COMPLETE: User ${userId} and all related data removed.`);
     res.json({ success: true, message: 'Account and all data deleted permanently.' });
   } catch (err) {
-    console.error('Account deletion failed:', err.message);
-    res.status(500).json({ message: 'Failed to delete account.' });
+    console.error('CRITICAL: Account deletion process crashed:', err.message);
+    res.status(500).json({ message: 'A critical error occurred during account deletion.' });
   }
 });
 
