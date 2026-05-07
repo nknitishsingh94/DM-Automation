@@ -97,15 +97,15 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://*.facebook.com", "https://*.facebook.net", "https://*.instagram.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://*.facebook.com", "https://*.facebook.net", "https://*.instagram.com", "https://dm-automation-roan.vercel.app"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https:", "https://*.googleusercontent.com", "https://*.facebook.com", "https://*.instagram.com", "https://*.fbcdn.net"],
-      connectSrc: ["'self'", "https://*.facebook.com", "https://*.facebook.net", "https://*.instagram.com", "https://api.openai.com", "https://accounts.google.com"],
-      frameSrc: ["'self'", "https://accounts.google.com", "https://*.facebook.com", "https://*.instagram.com"],
+      connectSrc: ["'self'", "https://*.facebook.com", "https://*.facebook.net", "https://*.instagram.com", "https://api.openai.com", "https://accounts.google.com", "https://dm-automation-lu44.onrender.com", "https://dm-automation-roan.vercel.app"],
+      frameSrc: ["'self'", "https://accounts.google.com", "https://*.facebook.com", "https://*.instagram.com", "https://dm-automation-roan.vercel.app"],
       objectSrc: ["'none'"],
     },
   },
-  crossOriginEmbedderPolicy: false, // Required for Meta OAuth redirect
+  crossOriginEmbedderPolicy: false,
 }));
 
 // ── SECURITY: CORS (Whitelist Only) ──────────────────────────────────────────
