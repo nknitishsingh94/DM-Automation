@@ -47,6 +47,7 @@ import formRoutes from './routes/forms.js';
 import oauthRoutes from './routes/oauth.js';
 import supportRoutes from './routes/support.js';
 import { generateAIResponse } from './utils/aiHandler.js';
+import { supabase } from './utils/supabase.js';
 // --- MULTER SETUP (Media Uploads) ---
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, path.join(__dirname, 'uploads')),
@@ -80,6 +81,7 @@ const upload = multer({
 import verifyToken from './middleware/auth.js';
 
 const app = express();
+app.set('trust proxy', 1); // Trust Render/Vercel proxies for rate limiting
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
@@ -434,8 +436,6 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
   return { skipped: true, reason: 'no keywords matched and AI failed' };
 };
-
-import { supabase } from './utils/supabase.js';
 
 // Server is ready
 

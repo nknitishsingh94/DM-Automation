@@ -151,11 +151,25 @@ router.post('/google_custom', async (req, res) => {
     const { email, name, sub, picture } = req.body;
     if (!email || !sub) return res.status(400).json({ message: 'Invalid Google data.' });
 
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ 
+      $or: [{ email }, { googleId: sub }] 
+    });
+
     if (!user) {
-      user = new User({ username: (name || '').slice(0, 50), email, googleId: sub, profilePhoto: picture });
-      await user.save();
-    } else if (!user.googleId) {
+      try {
+        user = new User({ username: (name || '').slice(0, 50), email, googleId: sub, profilePhoto: picture });
+        await user.save();
+      } catch (saveErr) {
+        // If save fails due to race condition (duplicate email), try to fetch the user again
+        if (saveErr.message?.includes('unique constraint') || saveErr.code === '23505') {
+          user = await User.findOne({ email });
+        } else {
+          throw saveErr;
+        }
+      }
+    } 
+
+    if (user && !user.googleId) {
       user.googleId = sub;
       if (!user.profilePhoto) user.profilePhoto = picture;
       await user.save();
@@ -193,19 +207,28 @@ router.post('/facebook', async (req, res) => {
     }
 
     const email = fbData.email || `${fbData.id}@facebook.com`;
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ 
+      $or: [{ email }, { facebookId: fbData.id }] 
+    });
 
     if (!user) {
-      if (mode === 'signup') {
+      try {
         user = new User({
           username: (fbData.name || '').slice(0, 50), email,
           facebookId: fbData.id, profilePhoto: fbData.picture?.data?.url
         });
         await user.save();
-      } else {
-        return res.status(404).json({ message: 'Account not found. Please sign up first.' });
+      } catch (saveErr) {
+        // Handle race condition for duplicate email
+        if (saveErr.message?.includes('unique constraint') || saveErr.code === '23505') {
+          user = await User.findOne({ email });
+        } else {
+          throw saveErr;
+        }
       }
-    } else if (!user.facebookId) {
+    }
+
+    if (user && !user.facebookId) {
       user.facebookId = fbData.id;
       if (!user.profilePhoto) user.profilePhoto = fbData.picture?.data?.url;
       await user.save();
