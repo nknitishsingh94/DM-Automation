@@ -29,6 +29,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
+import rateLimit from 'express-rate-limit';
 import Campaign from './models/Campaign.js';
 import Message from './models/Message.js';
 import Settings from './models/Settings.js';
@@ -71,30 +72,95 @@ const io = new Server(httpServer, {
   }
 });
 
-app.use(helmet());
-app.use(compression());
-app.use(morgan('combined'));
-// Request Logging for debugging CORS
-app.use((req, res, next) => {
-  console.log(`📡 [${new Date().toISOString()}] ${req.method} ${req.url} - Origin: ${req.headers.origin || 'No Origin'}`);
-  next();
-});
+// ── SECURITY: Helmet (HTTP Headers) ──────────────────────────────────────────
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", "https://graph.facebook.com", "https://api.openai.com"],
+      frameSrc: ["'none'"],
+      objectSrc: ["'none'"],
+    },
+  },
+  crossOriginEmbedderPolicy: false, // Required for Meta OAuth redirect
+}));
+
+// ── SECURITY: CORS (Whitelist Only) ──────────────────────────────────────────
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  process.env.CLIENT_URL,          // e.g. https://smart10x.vercel.app
+  process.env.API_BASE_URL,
+].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Permit all local origins and all Vercel subdomains dynamically to resolve CORS Blocked:Origin
-    if (!origin) return callback(null, true);
-    if (origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('vercel.app')) {
-      return callback(null, origin);
-    }
-    callback(new Error('Not allowed by CORS'));
+    if (!origin) return callback(null, true); // Server-to-server / curl
+    const isAllowed = ALLOWED_ORIGINS.some(o => origin.startsWith(o))
+      || origin.includes('localhost')
+      || origin.includes('127.0.0.1')
+      || origin.includes('vercel.app')
+      || origin.includes('render.com');
+    if (isAllowed) return callback(null, origin);
+    callback(new Error(`CORS blocked for origin: ${origin}`));
   },
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 
+// ── SECURITY: Rate Limiters ───────────────────────────────────────────────────
+// Auth routes (login/signup) — very strict to prevent brute-force
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,   // 15 minutes
+  max: 20,                     // max 20 attempts per 15 min
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many login attempts. Please try again in 15 minutes.' },
+  skip: (req) => req.path.includes('/api/webhook'), // webhooks bypass
+});
+
+// General API — prevent abuse
+const apiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,    // 1 minute
+  max: 120,                    // 120 requests per minute per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many requests. Please slow down.' },
+  skip: (req) => req.path.includes('/api/webhook'),
+});
+
+// Webhook — Meta sends many events; don't rate limit
+const webhookLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 500,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api/auth', authLimiter);
+app.use('/api', apiLimiter);
+app.use('/api/webhook', webhookLimiter);
+
+app.use(compression());
+app.use(morgan('combined'));
+
+// ── Request Logging ───────────────────────────────────────────────────────────
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`📡 [${new Date().toISOString()}] ${req.method} ${req.url} - Origin: ${req.headers.origin || 'No Origin'}`);
+  }
+  next();
+});
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use(express.json());
+// ── SECURITY: Body size limits (prevent payload bombs) ────────────────────────
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.get('/api/health', (req, res) => res.json({ status: 'ok', domain: req.hostname, timestamp: new Date() }));
 app.get('/api/ping', (req, res) => res.send('pong'));
 

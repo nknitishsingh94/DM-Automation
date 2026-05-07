@@ -1,5 +1,9 @@
 import jwt from 'jsonwebtoken';
 
+if (!process.env.JWT_SECRET) {
+  throw new Error('❌ FATAL: JWT_SECRET is not set in environment variables. Server cannot start securely.');
+}
+
 const verifyToken = (req, res, next) => {
   let token = req.headers.authorization?.split(' ')[1];
   
@@ -13,14 +17,15 @@ const verifyToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (err) {
-    console.error("JWT Verification Failed. Token:", token, "Error:", err.message);
-    return res.status(401).json({ message: 'Invalid or expired token', error: err.message });
+    if (process.env.NODE_ENV !== 'production') {
+      console.error("JWT Verification Failed:", err.message);
+    }
+    return res.status(401).json({ message: 'Invalid or expired token' });
   }
 };
 
 export default verifyToken;
-
