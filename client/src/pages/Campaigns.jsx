@@ -12,6 +12,7 @@ export default function Campaigns() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'universal', 'linked'
   const [formStep, setFormStep] = useState(1);
   const [newCamp, setNewCamp] = useState({ 
     name: '', 
@@ -39,6 +40,7 @@ export default function Campaigns() {
   const [loadingFlows, setLoadingFlows] = useState(true);
   const [mediaMode, setMediaMode] = useState('link'); // 'link' or 'upload'
   const [uploading, setUploading] = useState(false);
+  const [isMobile] = useState(window.innerWidth < 768);
 
   const fetchCampaigns = async () => {
     const token = localStorage.getItem('insta_agent_token');
@@ -322,13 +324,101 @@ export default function Campaigns() {
 
   return (
     <div style={{ maxWidth: '1200px' }}>
-      <div style={{ marginBottom: '48px' }}>
-        <h2 style={{ fontSize: '2.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px' }}>Automations</h2>
-        <p style={{ color: '#64748b', fontSize: '1.1rem' }}>Design and deploy intelligent chat agents across your social channels.</p>
+      
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '20px' }}>
+        <div>
+          <h1 style={{ fontSize: '2.2rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '8px', letterSpacing: '-1px' }}>Automations</h1>
+          <p style={{ color: '#64748b', fontWeight: '500' }}>Manage your AI-powered social media triggers</p>
+        </div>
+        <div style={{ display: 'flex', gap: '12px' }}>
+           <button 
+            onClick={() => {
+              setNewCamp({...newCamp, isUniversal: true});
+              setShowAdd(true);
+            }} 
+            style={{ 
+              display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', 
+              borderRadius: '14px', background: 'rgba(14, 165, 233, 0.1)', color: '#0ea5e9', 
+              border: '1px solid rgba(14, 165, 233, 0.2)', fontWeight: '800', cursor: 'pointer', transition: 'all 0.3s' 
+            }}
+            onMouseOver={e => e.currentTarget.style.background = 'rgba(14, 165, 233, 0.15)'}
+            onMouseOut={e => e.currentTarget.style.background = 'rgba(14, 165, 233, 0.1)'}
+          >
+            <Globe size={18} /> New Universal Trigger
+          </button>
+          <button 
+            onClick={() => {
+              setNewCamp({...newCamp, isUniversal: false});
+              setShowAdd(true);
+            }} 
+            style={{ 
+              display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', 
+              borderRadius: '14px', background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)', 
+              color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(59, 130, 246, 0.4)', transition: 'all 0.3s' 
+            }}
+            onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+            onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <Plus size={20} /> Create New
+          </button>
+        </div>
       </div>
 
+      {/* Feature Promo for Universal Triggers */}
+      {activeTab === 'all' && campaigns.filter(c => c.isUniversal).length === 0 && (
+        <div style={{ 
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', 
+          borderRadius: '24px', padding: '32px', marginBottom: '32px', color: 'white',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.1)', position: 'relative', overflow: 'hidden'
+        }}>
+          <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '200px', height: '200px', background: 'rgba(14, 165, 233, 0.1)', borderRadius: '50%', filter: 'blur(40px)' }}></div>
+          <div style={{ position: 'relative', zIndex: 1, maxWidth: '60%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0ea5e9', fontWeight: '800', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '12px' }}>
+              <Sparkles size={14} /> New Feature
+            </div>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '12px', letterSpacing: '-0.5px' }}>Universal Triggers</h2>
+            <p style={{ color: '#94a3b8', lineHeight: '1.6', marginBottom: '20px' }}>
+              Tired of linking every post? Create <strong>Account-Wide</strong> keywords that trigger across all your Reels, Posts, and DMs instantly.
+            </p>
+            <button 
+              onClick={() => {
+                setNewCamp({...newCamp, isUniversal: true});
+                setShowAdd(true);
+              }}
+              style={{ background: '#0ea5e9', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '800', cursor: 'pointer' }}
+            >
+              Get Started
+            </button>
+          </div>
+          <div style={{ display: isMobile ? 'none' : 'block' }}>
+            <Globe size={120} color="rgba(14, 165, 233, 0.2)" />
+          </div>
+        </div>
+      )}
 
-      {/* Inline Form Removed: Moved to CampaignBuilder.jsx */}
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', padding: '6px', background: '#f1f5f9', borderRadius: '16px', width: 'fit-content' }}>
+        {[
+          { id: 'all', label: 'All Automations', icon: <Zap size={16} /> },
+          { id: 'universal', label: 'Universal Triggers', icon: <Globe size={16} /> },
+          { id: 'linked', label: 'Linked Posts', icon: <Share2 size={16} /> }
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '12px',
+              border: 'none', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s',
+              background: activeTab === tab.id ? 'white' : 'transparent',
+              color: activeTab === tab.id ? '#1e1b4b' : '#64748b',
+              boxShadow: activeTab === tab.id ? '0 4px 6px -1px rgba(0,0,0,0.1)' : 'none'
+            }}
+          >
+            {tab.icon} {tab.label}
+          </button>
+        ))}
+      </div>
 
       {message.text && (
         <div style={{ padding: '12px', background: message.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: message.type === 'success' ? '#34d399' : '#f87171', borderRadius: '8px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -337,80 +427,32 @@ export default function Campaigns() {
         </div>
       )}
 
-      <div style={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        padding: '80px 20px',
-        background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%)',
-        borderRadius: '32px',
-        border: '1px dashed rgba(124, 58, 237, 0.2)',
-        textAlign: 'center'
-      }}>
-        <div style={{
-          width: '80px',
-          height: '80px',
-          borderRadius: '24px',
-          background: 'white',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-          marginBottom: '24px'
-        }}>
-          <Zap size={40} color="#7c3aed" fill="#7c3aed" />
-        </div>
-        <h2 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '12px' }}>
-          Ready to Scale?
-        </h2>
-        <p style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '40px', maxWidth: '400px' }}>
-          Create high-converting automation campaigns and turn every interaction into a growth opportunity.
-        </p>
-        
-        <button 
-          onClick={handleBuildClick}
-          className="premium-btn"
-          style={{ 
-            background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', 
-            color: 'white', 
-            padding: '18px 40px', 
-            borderRadius: '16px', 
-            fontWeight: '800',
-            fontSize: '1.1rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            border: 'none',
-            cursor: 'pointer',
-            boxShadow: '0 10px 15px -3px rgba(124, 58, 237, 0.4)',
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-            e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(124, 58, 237, 0.5)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0) scale(1)';
-            e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(124, 58, 237, 0.4)';
-          }}
-        >
-          <Plus size={24} strokeWidth={3} /> Build New Campaign
-        </button>
-      </div>
-
       {/* Active Automations Grid */}
-      {campaigns.length > 0 && (
+      {campaigns.filter(c => {
+          if (activeTab === 'universal') return c.isUniversal;
+          if (activeTab === 'linked') return !c.isUniversal;
+          return true;
+        }).length > 0 ? (
         <div style={{ marginTop: '64px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
             <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e1b4b' }}>Active Automations</h3>
             <span style={{ padding: '6px 16px', background: '#f5f3ff', color: '#7c3aed', borderRadius: '50px', fontSize: '0.85rem', fontWeight: '700' }}>
-              {campaigns.length} Total
+              {campaigns.filter(c => {
+                  if (activeTab === 'universal') return c.isUniversal;
+                  if (activeTab === 'linked') return !c.isUniversal;
+                  return true;
+                }).length} Total
             </span>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
-            {campaigns.map((campaign) => (
+            {campaigns
+              .filter(c => {
+                if (activeTab === 'universal') return c.isUniversal;
+                if (activeTab === 'linked') return !c.isUniversal;
+                return true;
+              })
+              .map((campaign) => (
               <div key={campaign._id} style={{ 
                 background: 'white', 
                 borderRadius: '24px', 
