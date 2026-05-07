@@ -59,7 +59,7 @@ router.get('/facebook/callback', async (req, res) => {
     const redirectUri = `${baseUrl}/api/oauth/facebook/callback`;
 
     // 1. Exchange the auth 'code' for a short-lived access token
-    const tokenUrl = `https://graph.facebook.com/v19.0/oauth/access_token?client_id=${appId}&redirect_uri=${redirectUri}&client_secret=${appSecret}&code=${code}`;
+    const tokenUrl = `https://graph.facebook.com/v19.0/oauth/access_token?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&client_secret=${appSecret}&code=${code}`;
     const tokenRes = await axios.get(tokenUrl);
     const shortLivedToken = tokenRes.data.access_token;
 
