@@ -147,7 +147,7 @@ router.post('/google', async (req, res) => {
   } catch (err) {
     console.error('Google Auth Error:', err.message);
     res.status(500).json({ 
-      message: 'Google authentication failed.',
+      message: `Google authentication failed: ${err.message}`,
       error: err.message,
       hint: "Check if 'users' table has 'googleId' and 'profilePhoto' columns."
     });
@@ -202,7 +202,7 @@ router.post('/google_custom', async (req, res) => {
   } catch (err) {
     console.error('Custom Google Auth Error:', err.message);
     res.status(500).json({ 
-      message: 'Google authentication failed.',
+      message: `Google authentication failed: ${err.message}`,
       error: err.message,
       hint: "Check if 'users' table has 'googleId' and 'profilePhoto' columns."
     });
