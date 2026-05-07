@@ -96,12 +96,9 @@ export default function Onboarding() {
         });
         if (res.ok) {
           const data = await res.json();
-          if (data.isAccountConnected || data.isFacebookConnected) {
-            // Already connected — skip onboarding, go straight to dashboard
-            localStorage.setItem('insta_agent_connected', 'true');
-            navigate('/dashboard');
-            return;
-          } else if (data.facebookAccessToken || data.instagramAccessToken) {
+          // We removed the auto-redirect to /dashboard here
+          // so users can always see the connection options if they manually go to /onboarding
+          if (data.facebookAccessToken || data.instagramAccessToken) {
             // User linked Meta but hasn't completed page selection
             fetchPages();
           }
