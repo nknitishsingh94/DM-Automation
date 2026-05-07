@@ -21,7 +21,12 @@ export default function Settings() {
     
     whatsappToken: '',
     whatsappPhoneNumberId: '',
-    isWhatsAppConnected: false
+    isWhatsAppConnected: false,
+
+    // Automation Toggle States
+    instagramAutomationEnabled: true,
+    facebookAutomationEnabled: true,
+    whatsappAutomationEnabled: true
   });
   
   const [loading, setLoading] = useState(true);
@@ -99,38 +104,35 @@ export default function Settings() {
     }
   }, []);
 
-  const handleSaveSettings = async (e) => {
-    e.preventDefault();
+  const handleSaveSettings = async (e, overrideSettings = null) => {
+    if (e) e.preventDefault();
     setSavingSettings(true);
     setMessage({ type: '', text: '' });
 
     try {
       const token = localStorage.getItem('insta_agent_token');
+      const payload = overrideSettings || settings;
       const res = await fetch(`${API_BASE_URL}/api/settings`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ ...settings, _platform: activeTab })
+        body: JSON.stringify({ ...payload, _platform: activeTab })
       });
       const data = await res.json();
       
       if (!res.ok) {
-        // Backend returned an error (token validation failed)
-        setMessage({ type: 'error', text: data.error || 'Connection failed. Please check your credentials.' });
-        // Update connection status to disconnected
-        if (activeTab === 'instagram') setSettings(s => ({ ...s, isAccountConnected: false }));
-        if (activeTab === 'facebook') setSettings(s => ({ ...s, isFacebookConnected: false }));
-        if (activeTab === 'whatsapp') setSettings(s => ({ ...s, isWhatsAppConnected: false }));
+        setMessage({ type: 'error', text: data.error || 'Connection failed.' });
       } else {
-        // Success — token is valid and connection is verified
         setSettings(s => ({ ...s, ...data }));
-        setMessage({ type: 'success', text: '✅ Connection verified and saved successfully!' });
-        setTimeout(() => setMessage({ type: '', text: '' }), 5000);
+        if (e) {
+          setMessage({ type: 'success', text: '✅ Settings saved successfully!' });
+          setTimeout(() => setMessage({ type: '', text: '' }), 5000);
+        }
       }
     } catch (err) {
-      setMessage({ type: 'error', text: 'Network error. Could not reach the server.' });
+      setMessage({ type: 'error', text: 'Network error.' });
     } finally {
       setSavingSettings(false);
     }
@@ -252,6 +254,28 @@ export default function Settings() {
                     ✅ Your Instagram account is linked. Auto-replies and DM campaigns will now work with real messages.
                   </p>
                 </div>
+
+                {/* Instagram Automation Toggle */}
+                <div style={{ padding: '20px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: '700', color: '#1e293b' }}>Enable AI Automation</h4>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '0.82rem', color: '#64748b' }}>If turned off, AI will not respond to Instagram DMs or comments.</p>
+                  </div>
+                  <label className="switch">
+                    <input 
+                      type="checkbox" 
+                      checked={settings.instagramAutomationEnabled}
+                      onChange={(e) => {
+                        const newVal = e.target.checked;
+                        setSettings(s => ({ ...s, instagramAutomationEnabled: newVal }));
+                        // Auto-save on toggle
+                        handleSaveSettings(null, { ...settings, instagramAutomationEnabled: newVal });
+                      }}
+                    />
+                    <span className="slider round"></span>
+                  </label>
+                </div>
+
                 <button 
                   type="button"
                   onClick={() => {
@@ -351,6 +375,27 @@ export default function Settings() {
                     ✅ Your Facebook Page is linked. Messenger auto-replies are now active.
                   </p>
                 </div>
+
+                {/* Facebook Automation Toggle */}
+                <div style={{ padding: '20px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: '700', color: '#1e293b' }}>Enable AI Automation</h4>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '0.82rem', color: '#64748b' }}>If turned off, AI will not respond to Facebook Messenger messages.</p>
+                  </div>
+                  <label className="switch">
+                    <input 
+                      type="checkbox" 
+                      checked={settings.facebookAutomationEnabled}
+                      onChange={(e) => {
+                        const newVal = e.target.checked;
+                        setSettings(s => ({ ...s, facebookAutomationEnabled: newVal }));
+                        handleSaveSettings(null, { ...settings, facebookAutomationEnabled: newVal });
+                      }}
+                    />
+                    <span className="slider round"></span>
+                  </label>
+                </div>
+
                 <button 
                   type="button"
                   onClick={() => {
@@ -432,6 +477,27 @@ export default function Settings() {
                     ✅ Your WhatsApp Business account is linked and ready for automation.
                   </p>
                 </div>
+
+                {/* WhatsApp Automation Toggle */}
+                <div style={{ padding: '20px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: '700', color: '#1e293b' }}>Enable AI Automation</h4>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '0.82rem', color: '#64748b' }}>If turned off, AI will not respond to WhatsApp messages.</p>
+                  </div>
+                  <label className="switch">
+                    <input 
+                      type="checkbox" 
+                      checked={settings.whatsappAutomationEnabled}
+                      onChange={(e) => {
+                        const newVal = e.target.checked;
+                        setSettings(s => ({ ...s, whatsappAutomationEnabled: newVal }));
+                        handleSaveSettings(null, { ...settings, whatsappAutomationEnabled: newVal });
+                      }}
+                    />
+                    <span className="slider round"></span>
+                  </label>
+                </div>
+
                 <button 
                   type="button"
                   onClick={() => {
@@ -663,6 +729,33 @@ export default function Settings() {
           25% { transform: translateX(-5px); }
           75% { transform: translateX(5px); }
         }
+        
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 50px;
+          height: 26px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background-color: #e2e8f0;
+          transition: .4s;
+          border-radius: 34px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 18px; width: 18px;
+          left: 4px; bottom: 4px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #7c3aed; }
+        input:checked + .slider:before { transform: translateX(24px); }
       `}</style>
     </div>
   );
