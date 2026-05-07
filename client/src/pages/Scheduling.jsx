@@ -29,7 +29,12 @@ export default function Scheduling() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
-      setPosts(data);
+      if (Array.isArray(data)) {
+        setPosts(data);
+      } else {
+        console.warn("Expected array for scheduling, got:", data);
+        setPosts([]);
+      }
     } catch (err) {
       console.error("Error fetching scheduled posts:", err);
     } finally {

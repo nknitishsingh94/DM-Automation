@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Instagram, Facebook, MessageCircle, ArrowRight } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 import promoImg from '../assets/promo.png';
 
 export default function ChannelSelector() {

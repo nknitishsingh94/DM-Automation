@@ -180,28 +180,34 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     let q = supabase.from(tableName).select('*');
     q = parseFilter(q, query);
 
-    const promise = (async () => {
-      const { data, error } = await q;
-      if (error) throw error;
-      return (data || []).map(d => convertIncoming(d, tableName));
-    })();
-
-    promise.sort = function (sortObj) {
-      if (sortObj) {
-        const [field, dir] = Object.entries(sortObj)[0];
-        q = q.order(field, { ascending: dir === 1 });
+    const queryObj = {
+      sort: function (sortObj) {
+        if (sortObj) {
+          const [field, dir] = Object.entries(sortObj)[0];
+          q = q.order(field, { ascending: dir === 1 });
+        }
+        return this;
+      },
+      limit: function (num) {
+        if (num) {
+          q = q.limit(num);
+        }
+        return this;
+      },
+      // Make it awaitable
+      then: async function (resolve, reject) {
+        try {
+          const { data, error } = await q;
+          if (error) throw error;
+          const results = (data || []).map(d => convertIncoming(d, tableName));
+          resolve(results);
+        } catch (err) {
+          reject(err);
+        }
       }
-      return promise;
     };
 
-    promise.limit = function (num) {
-      if (num) {
-        q = q.limit(num);
-      }
-      return promise;
-    };
-
-    return promise;
+    return queryObj;
   };
 
   ModelInstance.findOne = async function (query) {
