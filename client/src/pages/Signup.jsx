@@ -109,19 +109,43 @@ export default function Signup() {
 
   useEffect(() => {
     /* Initialize Google Login */
-    if (window.google) {
-      if (!window.google_initialized) {
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: handleGoogleResponse
-        });
-        window.google_initialized = true;
+    const initGoogle = () => {
+      if (window.google && document.getElementById("googleBtn")) {
+        console.log("🛠️ Initializing Google GSI for Signup with ID:", GOOGLE_CLIENT_ID);
+        try {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGoogleResponse,
+            use_fedcm_for_prompt: true
+          });
+          
+          window.google.accounts.id.renderButton(
+            document.getElementById("googleBtn"),
+            { 
+              theme: "outline", 
+              size: "large", 
+              width: "320", 
+              shape: "rectangular",
+              on_error: () => {
+                console.error("❌ Google Button Render Error on Signup.");
+                setError("Google Signup is currently blocked. Please fill out the form above.");
+              }
+            }
+          );
+        } catch (err) {
+          console.error("Google Signup Init Error:", err);
+        }
       }
-      
-      window.google.accounts.id.renderButton(
-        document.getElementById("googleBtn"),
-        { theme: "outline", size: "large", width: "320", shape: "rectangular" }
-      );
+    };
+
+    if (!document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) {
+      const script = document.createElement('script');
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true; script.defer = true;
+      script.onload = initGoogle;
+      document.head.appendChild(script);
+    } else {
+      initGoogle();
     }
   }, []);
 

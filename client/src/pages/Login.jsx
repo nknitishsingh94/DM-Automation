@@ -445,15 +445,27 @@ export default function Login() {
             client_id: GOOGLE_CLIENT_ID,
             callback: handleGoogleResponse,
             auto_select: false,
-            itp_support: true
+            itp_support: true,
+            use_fedcm_for_prompt: true
           });
           
           window.google.accounts.id.renderButton(
             document.getElementById("googleBtn"),
-            { theme: "outline", size: "large", width: "340", text: "continue_with", shape: "rectangular" }
+            { 
+              theme: "outline", 
+              size: "large", 
+              width: "340", 
+              text: "continue_with", 
+              shape: "rectangular",
+              on_error: () => {
+                console.error("❌ Google Button Render Error. Check if your domain is whitelisted in Google Cloud Console.");
+                setError("Google Login is blocked. Please use your Email and Password to sign in.");
+              }
+            }
           );
         } catch (err) {
           console.error("Google Init Error:", err);
+          setError("Google Login configuration error. Please use email/password login.");
         }
       }
     };
