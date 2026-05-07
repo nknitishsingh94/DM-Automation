@@ -1,56 +1,113 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowRight, ChevronDown, MessageCircle, Zap, Clock, Calendar, Globe, Bot, Image, Radio } from 'lucide-react';
 
 export default function LandingHeader() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [featuresOpen, setFeaturesOpen] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
-    <header style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
-      padding: isScrolled ? '12px 0' : '20px 0',
-      background: isScrolled ? 'rgba(255, 255, 255, 0.8)' : 'transparent',
-      backdropFilter: isScrolled ? 'blur(20px)' : 'none',
-      borderBottom: isScrolled ? '1px solid rgba(0,0,0,0.05)' : 'none',
-      transition: 'all 0.3s ease'
-    }}>
-      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
-          <img src="/zenxchat-logo.png" alt="Logo" style={{ height: '32px' }} onError={(e) => { e.target.style.display = 'none'; }} />
-          <span style={{ fontSize: '1.4rem', fontWeight: '900', color: '#0f172a', letterSpacing: '-0.5px' }}>smart10X</span>
-        </Link>
+    <header className="landing-header">
+      <div className="header-content">
+        <div className="header-left">
+          <Link to="/" className="header-logo" style={{ textDecoration: 'none' }}>
+            <img src="/zenxchat-logo.png" alt="smart10X Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
+            <span className="logo-text">smart10X</span>
+          </Link>
+          
+          <div className="header-divider"></div>
+          
+          <nav className="header-nav">
+            <Link to="/about">About</Link>
+            
+            {/* Features Dropdown */}
+            <div
+              style={{ position: 'relative' }}
+              onMouseEnter={() => setFeaturesOpen(true)}
+              onMouseLeave={() => setFeaturesOpen(false)}
+            >
+              <a href="/#features" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
+                onClick={(e) => { e.preventDefault(); setFeaturesOpen(!featuresOpen); }}>
+                Features
+                <ChevronDown size={14} style={{ transition: 'transform 0.2s', transform: featuresOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+              </a>
 
-        {/* Desktop Nav */}
-        <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-          <Link to="/about" style={{ fontSize: '0.9rem', fontWeight: '600', color: '#64748b', textDecoration: 'none' }}>About</Link>
-          <a href="/#features" style={{ fontSize: '0.9rem', fontWeight: '600', color: '#64748b', textDecoration: 'none' }}>Features</a>
-          <Link to="/resources" style={{ fontSize: '0.9rem', fontWeight: '600', color: '#64748b', textDecoration: 'none' }}>Resources</Link>
-        </nav>
+              {featuresOpen && (
+                <div style={{
+                  position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+                  paddingTop: '12px', zIndex: 1000, animation: 'fadeIn 0.2s ease'
+                }}>
+                  <div style={{
+                    background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+                    border: '1px solid #e2e8f0', padding: '24px', width: '560px'
+                  }}>
+                    <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'white', border: '1px solid #e2e8f0', borderBottom: 'none', borderRight: 'none', rotate: '45deg', zIndex: 1 }} />
 
-        <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0' }}>
+                      <div style={{ paddingRight: '24px' }}>
+                        <p style={{ fontSize: '11px', fontWeight: '800', color: '#8b5cf6', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Core Features</p>
+                        {[
+                          { icon: <MessageCircle size={18} color="#64748b" />, title: 'Comment Automation', desc: 'Auto-reply to comments with DMs', link: '/campaigns' },
+                          { icon: <Zap size={18} color="#64748b" />, title: 'DM Automation', desc: 'Visual flow builder for conversations', link: '/campaigns' },
+                          { icon: <Clock size={18} color="#64748b" />, title: 'Follow-up Messages', desc: 'Automated nurture sequences', link: '/campaigns' },
+                          { icon: <Calendar size={18} color="#64748b" />, title: 'Schedule with AutoDM', desc: 'Post + automation together', link: '/features/scheduling' },
+                        ].map((item, i) => (
+                          <Link key={i} to={item.link} onClick={() => setFeaturesOpen(false)}
+                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: '#1e293b' }}
+                          >
+                            <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
+                            <div>
+                              <p style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 2px 0' }}>{item.title}</p>
+                              <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{item.desc}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+
+                      <div style={{ paddingLeft: '24px' }}>
+                        <p style={{ fontSize: '11px', fontWeight: '800', color: '#0ea5e9', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Advanced</p>
+                        {[
+                          { icon: <Globe size={18} color="#64748b" />, title: 'Universal Triggers', desc: 'One keyword, all channels', link: '/features/universal-triggers' },
+                          { icon: <Bot size={18} color="#64748b" />, title: 'Facebook Automation', desc: 'Sync to Facebook instantly', link: '/settings' },
+                          { icon: <Image size={18} color="#64748b" />, title: 'Story Replies', desc: 'Automate story interactions', link: '/campaigns' },
+                          { icon: <Radio size={18} color="#64748b" />, title: 'Live Comment Auto DM', desc: 'DM viewers during lives', link: '/campaigns' },
+                        ].map((item, i) => (
+                          <Link key={i} to={item.link} onClick={() => setFeaturesOpen(false)}
+                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: '#1e293b' }}
+                          >
+                            <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
+                            <div>
+                              <p style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 2px 0' }}>{item.title}</p>
+                              <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{item.desc}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </nav>
+        </div>
+
+        <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {user ? (
             <Link to="/dashboard" style={{
-              background: '#0f172a', color: 'white', padding: '8px 20px', borderRadius: '10px',
-              fontSize: '0.9rem', fontWeight: '700', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px'
+              background: '#0f172a', color: 'white', padding: '10px 24px', borderRadius: '50px',
+              fontSize: '0.9rem', fontWeight: '700', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px',
+              boxShadow: '0 10px 20px rgba(15, 23, 42, 0.1)'
             }}>
               Dashboard <ArrowRight size={16} />
             </Link>
           ) : (
             <>
-              <Link to="/login" style={{ fontSize: '0.9rem', fontWeight: '700', color: '#0f172a', textDecoration: 'none', padding: '0 12px' }}>Sign In</Link>
+              <Link to="/login" style={{ fontSize: '0.95rem', fontWeight: '700', color: '#475569', textDecoration: 'none', padding: '0 12px' }}>Sign In</Link>
               <Link to="/signup" style={{
-                background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', color: 'white', padding: '10px 24px', borderRadius: '12px',
-                fontSize: '0.9rem', fontWeight: '800', textDecoration: 'none', boxShadow: '0 10px 20px rgba(124, 58, 237, 0.2)'
+                background: '#7c3aed', color: 'white', padding: '10px 24px', borderRadius: '50px',
+                fontSize: '0.95rem', fontWeight: '800', textDecoration: 'none', boxShadow: '0 10px 20px rgba(124, 58, 237, 0.2)'
               }}>
                 Get Started
               </Link>
