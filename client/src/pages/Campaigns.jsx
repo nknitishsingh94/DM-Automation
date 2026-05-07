@@ -97,7 +97,6 @@ export default function Campaigns() {
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    // Client‑side size check (50 MB)
     if (file.size > 50 * 1024 * 1024) {
       setUploadError('❌ File is too large (max 50MB). Please choose a smaller file.');
       return;
@@ -131,7 +130,6 @@ export default function Campaigns() {
     fetchCampaigns();
     fetchFlows();
 
-    // Check connection status to redirect 'Build' button if needed
     const fetchSettings = async () => {
       try {
         const token = localStorage.getItem('insta_agent_token');
@@ -146,11 +144,9 @@ export default function Campaigns() {
     };
     fetchSettings();
 
-    // --- AUTO-OPEN SETUP FLOW ---
     const params = new URLSearchParams(window.location.search);
     if (params.get('setup')) {
       setShowAdd(true);
-      // Clean URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
@@ -187,7 +183,8 @@ export default function Campaigns() {
           videoUrl: '', 
           linkUrl: '',
           requireFollow: false,
-          unfollowedResponse: 'Please follow our account first to get a reply!'
+          unfollowedResponse: 'Please follow our account first to get a reply!',
+          isUniversal: false
         });
         setFormStep(1);
         setShowAdd(false);
@@ -204,12 +201,9 @@ export default function Campaigns() {
 
   const toggleStatus = async (id, currentStatus) => {
     const newStatus = currentStatus === 'Active' ? 'Paused' : 'Active';
-    
-    // Optimistic Update: Update UI immediately
     setCampaigns(prev => prev.map(c => 
       c._id === id ? { ...c, status: newStatus } : c
     ));
-
     const token = localStorage.getItem('insta_agent_token');
     try {
       const res = await fetch(`${API_BASE_URL}/api/campaigns/${id}`, {
@@ -221,12 +215,11 @@ export default function Campaigns() {
         body: JSON.stringify({ status: newStatus })
       });
       if (!res.ok) {
-        // Rollback on error if needed or fetch fresh
         fetchCampaigns();
       }
     } catch (err) {
       console.error("Error toggling status:", err);
-      fetchCampaigns(); // Reset to server state
+      fetchCampaigns();
     }
   };
 
@@ -255,10 +248,8 @@ export default function Campaigns() {
   };
 
   const deleteCampaign = async (id) => {
-    // Optimistic Update: Remove from UI immediately
     const previousCampaigns = [...campaigns];
     setCampaigns(prev => prev.filter(c => c._id !== id));
-    
     const token = localStorage.getItem('insta_agent_token');
     try {
       const res = await fetch(`${API_BASE_URL}/api/campaigns/${id}`, {
@@ -270,21 +261,18 @@ export default function Campaigns() {
       } else {
         const data = await res.json();
         setMessage({ type: 'error', text: data.message || 'Failed to delete campaign' });
-        setCampaigns(previousCampaigns); // Rollback
+        setCampaigns(previousCampaigns);
       }
     } catch (err) {
       console.error("Error deleting campaign:", err);
       setMessage({ type: 'error', text: 'Connection error' });
-      setCampaigns(previousCampaigns); // Rollback
+      setCampaigns(previousCampaigns);
     }
   };
   const deleteFlow = async (id, e) => {
-    e.stopPropagation(); // Prevent navigating to builder
-    
-    // Optimistic Update
+    e.stopPropagation();
     const previousFlows = [...flows];
     setFlows(prev => prev.filter(f => f._id !== id));
-    
     const token = localStorage.getItem('insta_agent_token');
     try {
       const res = await fetch(`${API_BASE_URL}/api/flows/${id}`, {
@@ -321,6 +309,12 @@ export default function Campaigns() {
   };
 
   if (loading || loadingFlows) return <div style={{ color: 'var(--text-muted)', padding: '40px', textAlign: 'center' }}>Loading automations...</div>;
+
+  const filteredCampaigns = campaigns.filter(c => {
+    if (activeTab === 'universal') return c.isUniversal;
+    if (activeTab === 'linked') return !c.isUniversal;
+    return true;
+  });
 
   return (
     <div style={{ maxWidth: '1200px' }}>
@@ -364,7 +358,6 @@ export default function Campaigns() {
         </div>
       </div>
 
-      {/* Feature Promo for Universal Triggers */}
       {activeTab === 'all' && campaigns.filter(c => c.isUniversal).length === 0 && (
         <div style={{ 
           background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', 
@@ -397,7 +390,6 @@ export default function Campaigns() {
         </div>
       )}
 
-      {/* Tabs */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', padding: '6px', background: '#f1f5f9', borderRadius: '16px', width: 'fit-content' }}>
         {[
           { id: 'all', label: 'All Automations', icon: <Zap size={16} /> },
@@ -427,32 +419,17 @@ export default function Campaigns() {
         </div>
       )}
 
-      {/* Active Automations Grid */}
-      {campaigns.filter(c => {
-          if (activeTab === 'universal') return c.isUniversal;
-          if (activeTab === 'linked') return !c.isUniversal;
-          return true;
-        }).length > 0 ? (
-        <div style={{ marginTop: '64px' }}>
+      {filteredCampaigns.length > 0 ? (
+        <div style={{ marginTop: '32px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
             <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e1b4b' }}>Active Automations</h3>
             <span style={{ padding: '6px 16px', background: '#f5f3ff', color: '#7c3aed', borderRadius: '50px', fontSize: '0.85rem', fontWeight: '700' }}>
-              {campaigns.filter(c => {
-                  if (activeTab === 'universal') return c.isUniversal;
-                  if (activeTab === 'linked') return !c.isUniversal;
-                  return true;
-                }).length} Total
+              {filteredCampaigns.length} Total
             </span>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
-            {campaigns
-              .filter(c => {
-                if (activeTab === 'universal') return c.isUniversal;
-                if (activeTab === 'linked') return !c.isUniversal;
-                return true;
-              })
-              .map((campaign) => (
+            {filteredCampaigns.map((campaign) => (
               <div key={campaign._id} style={{ 
                 background: 'white', 
                 borderRadius: '24px', 
@@ -472,7 +449,6 @@ export default function Campaigns() {
                 e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)';
               }}
               >
-                {/* Type Badge */}
                 <div style={{ 
                   position: 'absolute', top: '24px', right: '24px',
                   padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800',
@@ -505,7 +481,6 @@ export default function Campaigns() {
                   <span>Trigger: <strong style={{ color: '#1e1b4b' }}>{campaign.trigger === '*' ? 'Any' : campaign.trigger}</strong></span>
                 </div>
 
-                {/* Stats Row */}
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', padding: '16px', background: '#f8fafc', borderRadius: '16px' }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '4px' }}>DMs Sent</div>
@@ -521,41 +496,18 @@ export default function Campaigns() {
                   </div>
                 </div>
 
-                {/* Actions */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <button 
-                    onClick={() => toggleStatus(campaign._id, campaign.status)}
-                    style={{ flex: 1, padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#1e1b4b', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                  >
+                  <button onClick={() => toggleStatus(campaign._id, campaign.status)} style={{ flex: 1, padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#1e1b4b', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     <Power size={14} color={campaign.status === 'Active' ? '#10b981' : '#94a3b8'} />
                     {campaign.status === 'Active' ? 'Pause' : 'Activate'}
                   </button>
-                  <button 
-                    onClick={() => {
-                      setEditingCampaign(campaign);
-                      setEditForm({
-                        name: campaign.name || '',
-                        trigger: campaign.trigger || '',
-                        response: campaign.response || '',
-                        linkUrl: campaign.linkUrl || '',
-                        buttonText: campaign.buttonText || '',
-                        isUniversal: campaign.isUniversal || false
-                      });
-                    }}
-                    style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6', cursor: 'pointer' }}
-                  >
+                  <button onClick={() => { setEditingCampaign(campaign); setEditForm({ name: campaign.name || '', trigger: campaign.trigger || '', response: campaign.response || '', linkUrl: campaign.linkUrl || '', buttonText: campaign.buttonText || '', isUniversal: campaign.isUniversal || false }); }} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6', cursor: 'pointer' }}>
                     <Edit2 size={18} />
                   </button>
-                  <button 
-                    onClick={() => viewLogs(campaign)}
-                    style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', cursor: 'pointer' }}
-                  >
+                  <button onClick={() => viewLogs(campaign)} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', cursor: 'pointer' }}>
                     <History size={18} />
                   </button>
-                  <button 
-                    onClick={() => deleteCampaign(campaign._id)}
-                    style={{ padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', background: 'white', color: '#ef4444', cursor: 'pointer' }}
-                  >
+                  <button onClick={() => deleteCampaign(campaign._id)} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', background: 'white', color: '#ef4444', cursor: 'pointer' }}>
                     <Trash2 size={18} />
                   </button>
                 </div>
@@ -563,9 +515,15 @@ export default function Campaigns() {
             ))}
           </div>
         </div>
+      ) : (
+        <div style={{ textAlign: 'center', padding: '60px', background: '#f8fafc', borderRadius: '24px', border: '1px dashed #e2e8f0', marginTop: '32px' }}>
+          <Zap size={48} color="#94a3b8" style={{ marginBottom: '16px' }} />
+          <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px' }}>No automations found</h3>
+          <p style={{ color: '#64748b', marginBottom: '24px' }}>{activeTab === 'universal' ? "No universal triggers created yet." : "No linked post automations found."}</p>
+          <button onClick={() => { setNewCamp({...newCamp, isUniversal: activeTab === 'universal'}); setShowAdd(true); }} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Create One Now</button>
+        </div>
       )}
 
-      {/* Visual Flows Grid */}
       {flows.length > 0 && (
         <div style={{ marginTop: '64px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
@@ -581,210 +539,30 @@ export default function Campaigns() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
             {flows.map((flow) => (
-              <div key={flow._id} style={{ 
-                background: 'white', 
-                borderRadius: '24px', 
-                padding: '24px', 
-                border: '1px solid #fce7f3',
-                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)',
-                transition: 'all 0.3s',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(217,70,239,0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)';
-              }}
-              >
-                {/* Advanced Badge */}
-                <div style={{ 
-                  position: 'absolute', top: '24px', right: '24px',
-                  padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800',
-                  background: '#fdf4ff',
-                  color: '#d946ef',
-                  textTransform: 'uppercase',
-                  display: 'flex', alignItems: 'center', gap: '4px'
-                }}>
-                  <Crown size={12} /> Advanced
-                </div>
-
-                <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px', paddingRight: '100px' }}>
-                  {flow.name || 'Untitled Flow'}
-                </h4>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', marginBottom: '24px' }}>
-                  <MessageCircle size={16} />
-                  <span>Keyword: <strong style={{ color: '#1e1b4b' }}>{flow.triggerKeyword || 'None'}</strong></span>
-                </div>
-
-                {/* Stats Row */}
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', padding: '16px', background: '#faf5ff', borderRadius: '16px' }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#a855f7', textTransform: 'uppercase', marginBottom: '4px' }}>Nodes</div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b' }}>{flow.nodes ? flow.nodes.length : 0}</div>
-                  </div>
-                  <div style={{ width: '1px', background: '#e9d5ff' }}></div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#a855f7', textTransform: 'uppercase', marginBottom: '4px' }}>Status</div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: '800', color: flow.status === 'Active' ? '#10b981' : '#a855f7', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: flow.status === 'Active' ? '#10b981' : '#a855f7' }}></div>
-                      {flow.status || 'Active'}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <button 
-                    onClick={() => navigate(`/flow-builder/${flow._id}`)}
-                    style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 100%)', color: 'white', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                  >
-                    Edit Flow
-                  </button>
-                  <button 
-                    onClick={(e) => deleteFlow(flow._id, e)}
-                    style={{ padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', background: 'white', color: '#ef4444', cursor: 'pointer' }}
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
+              <div key={flow._id} style={{ background: 'white', borderRadius: '24px', padding: '24px', border: '1px solid #fce7f3', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', transition: 'all 0.3s', position: 'relative', overflow: 'hidden' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(217,70,239,0.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)'; }}>
+                <div style={{ position: 'absolute', top: '24px', right: '24px', padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800', background: '#fdf4ff', color: '#d946ef', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}><Crown size={12} /> Advanced</div>
+                <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px', paddingRight: '100px' }}>{flow.name || 'Untitled Flow'}</h4>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', marginBottom: '24px' }}><MessageCircle size={16} /><span>Keyword: <strong style={{ color: '#1e1b4b' }}>{flow.triggerKeyword || 'None'}</strong></span></div>
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', padding: '16px', background: '#faf5ff', borderRadius: '16px' }}><div style={{ flex: 1 }}><div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#a855f7', textTransform: 'uppercase', marginBottom: '4px' }}>Nodes</div><div style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b' }}>{flow.nodes ? flow.nodes.length : 0}</div></div><div style={{ width: '1px', background: '#e9d5ff' }}></div><div style={{ flex: 1 }}><div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#a855f7', textTransform: 'uppercase', marginBottom: '4px' }}>Status</div><div style={{ fontSize: '0.9rem', fontWeight: '800', color: flow.status === 'Active' ? '#10b981' : '#a855f7', display: 'flex', alignItems: 'center', gap: '4px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: flow.status === 'Active' ? '#10b981' : '#a855f7' }}></div>{flow.status || 'Active'}</div></div></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><button onClick={() => navigate(`/flow-builder/${flow._id}`)} style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 100%)', color: 'white', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>Edit Flow</button><button onClick={(e) => deleteFlow(flow._id, e)} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', background: 'white', color: '#ef4444', cursor: 'pointer' }}><Trash2 size={18} /></button></div>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      <style>{`
-        .premium-btn:active {
-          transform: scale(0.98);
-        }
-      `}</style>
-
-      {/* Logs Modal */}
       {selectedCampaign && (
-        <div className="modal-overlay" style={{
-          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-          background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-        }} onClick={() => setSelectedCampaign(null)}>
-          <div className="table-card" style={{ 
-            width: '90%', maxWidth: '700px', maxHeight: '85vh', overflow: 'hidden',
-            display: 'flex', flexDirection: 'column'
-          }} onClick={e => e.stopPropagation()}>
-            <div style={{ padding: '24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: '700' }}>Process History: {selectedCampaign.name}</h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Real-time logs for keyword: "{selectedCampaign.trigger}"</p>
-              </div>
-              <button onClick={() => setSelectedCampaign(null)} style={{ color: 'var(--text-muted)' }}><X size={24} /></button>
-            </div>
-            
-            <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
-              {loadingLogs ? (
-                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Fetching latest logs...</div>
-              ) : logs.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No messages processed yet for this campaign.</div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {logs.map((log) => (
-                    <div key={log._id} style={{ 
-                      padding: '16px', borderRadius: '12px', border: '1px solid var(--border-subtle)',
-                      background: 'rgba(255,255,255,0.3)', position: 'relative'
-                    }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--accent-color)' }}>{log.platform || 'instagram'}</span>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(log.timestamp).toLocaleString()}</span>
-                      </div>
-                      <div style={{ fontSize: '0.9rem', marginBottom: '4px' }}>
-                        <span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>Recipient:</span> {log.chatId}
-                      </div>
-                      <div style={{ fontSize: '0.9rem' }}>
-                        <span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>AI Sent:</span> "{log.text}"
-                      </div>
-                      {log.linkUrl && (
-                        <div style={{ marginTop: '8px', fontSize: '0.8rem', color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <LinkIcon size={14} /> Attached Link: {log.linkUrl}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setSelectedCampaign(null)}>
+          <div className="table-card" style={{ width: '90%', maxWidth: '700px', maxHeight: '85vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
+            <div style={{ padding: '24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><div><h3 style={{ fontSize: '1.2rem', fontWeight: '700' }}>Process History: {selectedCampaign.name}</h3><p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Real-time logs for keyword: "{selectedCampaign.trigger}"</p></div><button onClick={() => setSelectedCampaign(null)} style={{ color: 'var(--text-muted)' }}><X size={24} /></button></div>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>{loadingLogs ? (<div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Fetching latest logs...</div>) : logs.length === 0 ? (<div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No messages processed yet for this campaign.</div>) : (<div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>{logs.map((log) => (<div key={log._id} style={{ padding: '16px', borderRadius: '12px', border: '1px solid var(--border-subtle)', background: 'rgba(255,255,255,0.3)', position: 'relative' }}><div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--accent-color)' }}>{log.platform || 'instagram'}</span><span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(log.timestamp).toLocaleString()}</span></div><div style={{ fontSize: '0.9rem', marginBottom: '4px' }}><span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>Recipient:</span> {log.chatId}</div><div style={{ fontSize: '0.9rem' }}><span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>AI Sent:</span> "{log.text}"</div>{log.linkUrl && (<div style={{ marginTop: '8px', fontSize: '0.8rem', color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '4px' }}><LinkIcon size={14} /> Attached Link: {log.linkUrl}</div>)}</div>))}</div>)}</div>
           </div>
         </div>
       )}
 
-      {/* Quick Edit Modal */}
       {editingCampaign && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, color: '#1e1b4b' }}>Edit Campaign</h3>
-              <button onClick={() => setEditingCampaign(null)} style={{ background: '#f1f5f9', border: 'none', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
-                <X size={20} />
-              </button>
-            </div>
-            
-            <form onSubmit={handleEditSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Campaign Name</label>
-                <input 
-                  type="text" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})}
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Trigger Keyword</label>
-                <input 
-                  type="text" value={editForm.trigger} onChange={e => setEditForm({...editForm, trigger: e.target.value})}
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required
-                />
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
-                <input 
-                  type="checkbox" 
-                  id="editIsUniversal"
-                  checked={editForm.isUniversal} 
-                  onChange={e => setEditForm({...editForm, isUniversal: e.target.checked})}
-                />
-                <label htmlFor="editIsUniversal" style={{ fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                   <Globe size={16} color="#0ea5e9" /> Make this a Universal Trigger
-                </label>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Bot Response Message</label>
-                <textarea 
-                  value={editForm.response} onChange={e => setEditForm({...editForm, response: e.target.value})}
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', minHeight: '100px', resize: 'vertical' }} required
-                />
-              </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Button Text (Optional)</label>
-                  <input 
-                    type="text" value={editForm.buttonText} onChange={e => setEditForm({...editForm, buttonText: e.target.value})}
-                    style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}
-                  />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Link URL (Optional)</label>
-                  <input 
-                    type="url" value={editForm.linkUrl} onChange={e => setEditForm({...editForm, linkUrl: e.target.value})}
-                    style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}
-                  />
-                </div>
-              </div>
-              <button type="submit" style={{ marginTop: '16px', padding: '14px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>
-                Save Changes
-              </button>
-            </form>
-          </div>
-        </div>
+          <div style={{ background: 'white', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}><h3 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, color: '#1e1b4b' }}>Edit Campaign</h3><button onClick={() => setEditingCampaign(null)} style={{ background: '#f1f5f9', border: 'none', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}><X size={20} /></button></div><form onSubmit={handleEditSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}><div><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Campaign Name</label><input type="text" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required /></div><div><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Trigger Keyword</label><input type="text" value={editForm.trigger} onChange={e => setEditForm({...editForm, trigger: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required /></div><div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}><input type="checkbox" id="editIsUniversal" checked={editForm.isUniversal} onChange={e => setEditForm({...editForm, isUniversal: e.target.checked})} /><label htmlFor="editIsUniversal" style={{ fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}><Globe size={16} color="#0ea5e9" /> Make this a Universal Trigger</label></div><div><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Bot Response Message</label><textarea value={editForm.response} onChange={e => setEditForm({...editForm, response: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', minHeight: '100px', resize: 'vertical' }} required /></div><div style={{ display: 'flex', gap: '12px' }}><div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Button Text (Optional)</label><input type="text" value={editForm.buttonText} onChange={e => setEditForm({...editForm, buttonText: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} /></div><div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Link URL (Optional)</label><input type="url" value={editForm.linkUrl} onChange={e => setEditForm({...editForm, linkUrl: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} /></div></div><button type="submit" style={{ marginTop: '16px', padding: '14px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Save Changes</button></form></div></div>
       )}
 
     </div>
