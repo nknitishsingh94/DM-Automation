@@ -154,7 +154,7 @@ export default function Campaigns() {
   const [connectedSettings, setConnectedSettings] = useState(null);
 
   const handleBuildClick = () => {
-    navigate('/select-channel');
+    navigate('/campaign-builder/new');
   };
 
   const handleAddSubmit = async (e) => {
@@ -524,7 +524,7 @@ export default function Campaigns() {
           <Zap size={48} color="#94a3b8" style={{ marginBottom: '16px' }} />
           <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px' }}>No automations found</h3>
           <p style={{ color: '#64748b', marginBottom: '24px' }}>{activeTab === 'universal' ? "No universal triggers created yet." : "No linked post automations found."}</p>
-          <button onClick={() => { setNewCamp({...newCamp, isUniversal: activeTab === 'universal'}); setShowAdd(true); }} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Create One Now</button>
+          <button onClick={() => navigate('/campaign-builder/new')} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Create One Now</button>
         </div>
       )}
 
