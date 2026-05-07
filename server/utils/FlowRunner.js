@@ -11,7 +11,7 @@ import { sendMessageToInstagram, sendPrivateReply } from './metaApi.js';
  */
 export const runFlow = async (userId, flowId, contactId, platform, initialText = '', commentId = null) => {
   try {
-    const flow = await Flow.findOne({ _id: flowId, userId });
+    const flow = await Flow.findOne({ id: flowId, userId });
     if (!flow || flow.status !== 'Active') return;
 
     // Premium Check: Visual Flows only work for PRO subscribers

@@ -200,6 +200,11 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
         }
         return this;
       },
+      populate: function (field) {
+        // Stub for MongoDB compatibility, could implement basic join logic if needed
+        console.log(`ℹ️ Populate called for field: ${field} (Supabase stub)`);
+        return this;
+      },
       // Make it awaitable
       then: async function (resolve, reject) {
         try {
@@ -283,7 +288,6 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
 
     if (getErr || !existing) {
       if (options.upsert) {
-        // Build insert data including query fields
         const insertData = { ...convertOutgoing(query, tableName), ...cleanUpdate };
         const { data: inserted, error } = await supabase
           .from(tableName)

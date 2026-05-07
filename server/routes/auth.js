@@ -56,7 +56,7 @@ router.post('/signup', async (req, res) => {
     await newUser.save();
 
     const welcomeMessage = new Message({
-      userId: newUser._id, sender: 'AI Agent',
+      userId: newUser.id || newUser._id, sender: 'AI Agent',
       text: `Hello ${username}! I am your AI assistant. Let's get started!`,
       type: 'received', chatId: 'ai_bot_support', isAI: true, timestamp: new Date()
     });
