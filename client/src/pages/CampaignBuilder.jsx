@@ -25,7 +25,8 @@ export default function CampaignBuilder() {
     linkUrl: '',
     buttonText: '',
     requireFollow: false,
-    unfollowedResponse: 'Hi! Please follow our page first to unlock this content! 🙏'
+    unfollowedResponse: 'Hi! Please follow our page first to unlock this content! 🙏',
+    isUniversal: false
   });
 
   const handleFileUpload = async (e) => {
@@ -199,9 +200,24 @@ export default function CampaignBuilder() {
                       onChange={(e) => setNewCamp({...newCamp, requireFollow: e.target.checked})}
                       style={{ width: '22px', height: '22px', accentColor: 'var(--accent-color)', cursor: 'pointer', marginTop: '2px' }}
                     />
+                    </div>
+                  </div>
+
+                  <div className="input-group" style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', padding: '20px', background: newCamp.isUniversal ? 'rgba(14, 165, 233, 0.05)' : '#f8fafc', borderRadius: '10px', border: newCamp.isUniversal ? '1px solid #0ea5e9' : '1px solid var(--border-subtle)', transition: 'all 0.3s' }}>
+                    <input 
+                      type="checkbox" 
+                      id="isUniversal"
+                      checked={newCamp.isUniversal}
+                      onChange={(e) => setNewCamp({...newCamp, isUniversal: e.target.checked})}
+                      style={{ width: '22px', height: '22px', accentColor: '#0ea5e9', cursor: 'pointer', marginTop: '2px' }}
+                    />
                     <div>
-                      <label htmlFor="requireFollow" style={{ fontSize: '1.05rem', fontWeight: '800', cursor: 'pointer', display: 'block', color: newCamp.requireFollow ? 'var(--accent-main)' : 'var(--text-main)', marginBottom: '4px' }}>Follower Gate (Lock Content)</label>
-                      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.5', display: 'block' }}>If toggled, the bot will verify if the user is following your page. If they are not, it sends the gating message instead of the real content.</span>
+                      <label htmlFor="isUniversal" style={{ fontSize: '1.05rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: newCamp.isUniversal ? '#0ea5e9' : 'var(--text-main)', marginBottom: '4px' }}>
+                        <Globe size={18} /> Universal Trigger
+                      </label>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.5', display: 'block' }}>
+                        If enabled, this keyword will work on <strong>every post, reel, and story</strong> across all platforms. No need to link it manually to each piece of content.
+                      </span>
                     </div>
                   </div>
 

@@ -14,12 +14,23 @@ try {
   console.warn('⚠️ Could not initialize Supabase Client:', e.message);
 }
 
+const isUUID = (str) => {
+  if (typeof str !== 'string') return false;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+};
+
 function parseFilter(q, queryObj) {
   if (!queryObj) return q;
 
   for (const [key, val] of Object.entries(queryObj)) {
-    if (key === '_id' || key === 'id') {
-      q = q.eq('id', val);
+    if (key === '_id' || key === 'id' || key === 'userId') {
+      if (!isUUID(val)) {
+        console.warn(`🛑 Skipping filter for non-UUID: ${key}=${val}`);
+        // We add a dummy filter that won't match anything to prevent returning everything
+        q = q.eq('id', '00000000-0000-0000-0000-000000000000');
+      } else {
+        q = q.eq(key === '_id' ? 'id' : key, val);
+      }
     } else if (key === '$or' && Array.isArray(val)) {
       const orConditions = val.map(cond => {
         const [subKey, subVal] = Object.entries(cond)[0];
@@ -207,6 +218,10 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
 
   ModelInstance.findById = async function (id) {
     if (!supabase || !id) return null;
+    if (!isUUID(id)) {
+      console.warn(`🛑 findById skipped: Invalid UUID format "${id}"`);
+      return null;
+    }
     const { data, error } = await supabase.from(tableName).select('*').eq('id', id).limit(1);
     if (error) throw error;
     return data && data.length > 0 ? convertIncoming(data[0], tableName) : null;

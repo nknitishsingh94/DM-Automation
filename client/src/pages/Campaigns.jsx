@@ -22,12 +22,13 @@ export default function Campaigns() {
     videoUrl: '', 
     linkUrl: '',
     requireFollow: false,
-    unfollowedResponse: 'Please follow our account first to get a reply!'
+    unfollowedResponse: 'Please follow our account first to get a reply!',
+    isUniversal: false
   });
   
   // Edit State
   const [editingCampaign, setEditingCampaign] = useState(null);
-  const [editForm, setEditForm] = useState({ name: '', trigger: '', response: '', linkUrl: '', buttonText: '' });
+  const [editForm, setEditForm] = useState({ name: '', trigger: '', response: '', linkUrl: '', buttonText: '', isUniversal: false });
 
   const [message, setMessage] = useState({ type: '', text: '' });
   const [submitting, setSubmitting] = useState(false);
@@ -440,6 +441,19 @@ export default function Campaigns() {
                   {campaign.triggerSource === 'story_mention' ? 'Story' : 'Comment'}
                 </div>
 
+                {campaign.isUniversal && (
+                  <div style={{ 
+                    position: 'absolute', top: '24px', right: '110px',
+                    padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800',
+                    background: 'rgba(14, 165, 233, 0.1)',
+                    color: '#0ea5e9',
+                    textTransform: 'uppercase',
+                    display: 'flex', alignItems: 'center', gap: '4px'
+                  }}>
+                    <Globe size={12} /> Universal
+                  </div>
+                )}
+
                 <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px', paddingRight: '60px' }}>
                   {campaign.name}
                 </h4>
@@ -482,7 +496,8 @@ export default function Campaigns() {
                         trigger: campaign.trigger || '',
                         response: campaign.response || '',
                         linkUrl: campaign.linkUrl || '',
-                        buttonText: campaign.buttonText || ''
+                        buttonText: campaign.buttonText || '',
+                        isUniversal: campaign.isUniversal || false
                       });
                     }}
                     style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6', cursor: 'pointer' }}
@@ -687,6 +702,17 @@ export default function Campaigns() {
                   type="text" value={editForm.trigger} onChange={e => setEditForm({...editForm, trigger: e.target.value})}
                   style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required
                 />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                <input 
+                  type="checkbox" 
+                  id="editIsUniversal"
+                  checked={editForm.isUniversal} 
+                  onChange={e => setEditForm({...editForm, isUniversal: e.target.checked})}
+                />
+                <label htmlFor="editIsUniversal" style={{ fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                   <Globe size={16} color="#0ea5e9" /> Make this a Universal Trigger
+                </label>
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Bot Response Message</label>

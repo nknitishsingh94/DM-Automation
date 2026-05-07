@@ -301,7 +301,8 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     });
 
     // Only apply Post ID filtering for COMMENTS. DMs and Story Mentions stay global.
-    const postMatch = (source !== 'comment') || c.isAnyPost || (mediaId && c.postId === mediaId);
+    // Universal Triggers (c.isUniversal) bypass post-specific filtering.
+    const postMatch = (source !== 'comment') || c.isUniversal || c.isAnyPost || (mediaId && c.postId === mediaId);
     
     return platformMatch && sourceMatch && keywordMatch && postMatch;
   });

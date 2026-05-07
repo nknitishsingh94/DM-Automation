@@ -84,6 +84,13 @@ export default function Settings() {
         const res = await fetch(`${API_BASE_URL}/api/settings`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        
+        if (res.status === 401) {
+          logout();
+          navigate('/login');
+          return;
+        }
+
         const data = await res.json();
         // Ensure connection flags are derived correctly if missing
         const derivedData = {
@@ -175,17 +182,25 @@ export default function Settings() {
       const data = await res.json();
       
       if (res.ok) {
-        // Clear all auth state and redirect to landing page
         logout();
         navigate('/');
+        notify("Account deleted successfully.", "success");
       } else {
-        notify(data.message || "Failed to delete account. Please contact support.", "error");
+        if (res.status === 401) {
+          notify("Session expired. Please log in again.", "error");
+          logout();
+          navigate('/login');
+        } else {
+          notify(data.message || "Failed to delete account.", "error");
+        }
       }
     } catch (err) {
-      notify("Network error occurred.", "error");
-      const res = await fetch(`${API_BASE_URL}/api/auth/account`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-      if (res.ok) { logout(); navigate('/'); }
-    } finally { setDeleting(false); setShowDeleteConfirm(false); }
+      console.error("Deletion error:", err);
+      notify("A network error occurred. Please try again.", "error");
+    } finally { 
+      setDeleting(false); 
+      setShowDeleteConfirm(false); 
+    }
   };
 
   if (loading) return (
