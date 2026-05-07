@@ -298,6 +298,15 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     return updated && updated.length > 0 ? convertIncoming(updated[0], tableName) : null;
   };
 
+  ModelInstance.countDocuments = async function (query) {
+    if (!supabase) return 0;
+    let q = supabase.from(tableName).select('*', { count: 'exact', head: true });
+    q = parseFilter(q, query);
+    const { count, error } = await q;
+    if (error) throw error;
+    return count || 0;
+  };
+
   ModelInstance.findOneAndDelete = async function (query) {
     if (!supabase) return null;
     let q = supabase.from(tableName).select('*');
