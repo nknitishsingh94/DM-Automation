@@ -29,10 +29,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
-import rateLimit from 'express-rate-limit';
-import mongoSanitize from 'express-mongo-sanitize';
-import hpp from 'hpp';
-import xss from 'xss';
 import Campaign from './models/Campaign.js';
 import Message from './models/Message.js';
 import Settings from './models/Settings.js';
@@ -183,10 +179,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // ── SECURITY: Body size limits (prevent payload bombs) ────────────────────────
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
-
-// ── SECURITY: NoSQL Injection Prevention ──────────────────────────────────────
-// Strips $ and . from query/body params to block MongoDB operator injection
-app.use(mongoSanitize({ replaceWith: '_' }));
 
 // ── SECURITY: XSS Input Sanitization ──────────────────────────────────────────
 // Sanitize string fields in req.body to prevent stored XSS attacks
@@ -440,23 +432,6 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 };
 
 import { supabase } from './utils/supabase.js';
-
-let lastDbError = null;
-
-const connectDB = async () => {
-  try {
-    // Ping Supabase to check connectivity
-    const { error } = await supabase.from('users').select('id').limit(1);
-    if (error && error.code !== 'PGRST116') {
-      throw error;
-    }
-    console.log('✅ Connected to Supabase');
-    lastDbError = null;
-  } catch (err) {
-    console.warn('⚠️ Supabase Connection Error (Checking):', err.message);
-    lastDbError = err.message;
-  }
-};
 
 // Start connection
 connectDB();
