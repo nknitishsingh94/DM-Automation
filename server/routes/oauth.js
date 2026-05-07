@@ -60,7 +60,7 @@ router.get('/facebook/callback', async (req, res) => {
     console.log(`🔗 Redirect URI: ${redirectUri}`);
 
     const tokenUrl = `https://graph.facebook.com/v19.0/oauth/access_token?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&client_secret=${appSecret}&code=${code}`;
-    
+
     let tokenRes;
     try {
       tokenRes = await axios.get(tokenUrl);
@@ -274,7 +274,7 @@ router.get('/facebook/pages', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.userId });
     const token = settings?.facebookAccessToken || settings?.instagramAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
-    
+
     if (!token) {
       console.error(`❌ No token found for user ${req.user.userId}`);
       return res.status(400).json({ error: 'Please connect your Meta account first.' });
@@ -283,21 +283,33 @@ router.get('/facebook/pages', verifyToken, async (req, res) => {
     console.log(`📡 Fetching pages for user ${req.user.userId} using token prefix: ${token.substring(0, 10)}...`);
 
     const pagesUrl = `https://graph.facebook.com/v19.0/me/accounts?fields=id,name,access_token,instagram_business_account&access_token=${token}`;
-    
+
     let pagesRes;
     try {
       pagesRes = await axios.get(pagesUrl);
     } catch (axErr) {
-      console.error("❌ Meta Graph API Error:", axErr.response?.data || axErr.message);
-      return res.status(axErr.response?.status || 500).json({ 
-        error: 'Meta session expired. Please logout and connect Instagram again.',
-        details: axErr.response?.data?.error?.message 
-      });
+      // If code 100, it's probably a Page Token (Pages don't have 'accounts')
+      if (axErr.response?.data?.error?.code === 100) {
+        console.log("ℹ️ Token is likely a Page Token, fetching /me instead...");
+        try {
+          const meRes = await axios.get(`https://graph.facebook.com/v19.0/me?fields=id,name,instagram_business_account&access_token=${token}`);
+          pagesRes = { data: { data: [{ ...meRes.data, access_token: token }] } };
+        } catch (meErr) {
+          console.error("❌ Both /me/accounts and /me failed:", meErr.response?.data || meErr.message);
+          return res.status(401).json({ error: 'Meta session expired. Please reconnect.' });
+        }
+      } else {
+        console.error("❌ Meta Graph API Error:", axErr.response?.data || axErr.message);
+        return res.status(axErr.response?.status || 500).json({
+          error: 'Meta session expired. Please reconnect.',
+          details: axErr.response?.data?.error?.message
+        });
+      }
     }
 
     const rawPages = pagesRes.data.data || [];
     const pages = [];
-    
+
     for (const p of rawPages) {
       let linkedInstagram = null;
       if (p.instagram_business_account) {
