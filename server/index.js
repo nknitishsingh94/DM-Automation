@@ -436,8 +436,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
 import { supabase } from './utils/supabase.js';
 
-// Start connection
-connectDB();
+// Server is ready
 
 // Health Check Endpoint
 app.get('/health', (req, res) => {
