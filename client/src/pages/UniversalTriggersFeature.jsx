@@ -19,10 +19,11 @@ export default function UniversalTriggersFeature() {
 
   const handleCTAClick = (e) => {
     e.preventDefault();
-    if (!user) {
-      navigate('/signup?redirect=/campaigns');
-    } else {
+    const token = localStorage.getItem('insta_agent_token');
+    if (user || token) {
       navigate('/campaigns');
+    } else {
+      navigate('/signup?redirect=/campaigns');
     }
   };
 

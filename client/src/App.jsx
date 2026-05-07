@@ -56,6 +56,8 @@ const TemplateSelector = lazyRetry(() => import('./pages/TemplateSelector'));
 const AutomationEditor = lazyRetry(() => import('./pages/AutomationEditor'));
 const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'));
 const Onboarding = lazyRetry(() => import('./pages/Onboarding'));
+const UniversalTriggersFeature = lazyRetry(() => import('./pages/UniversalTriggersFeature'));
+const ScheduleFeature = lazyRetry(() => import('./pages/ScheduleFeature'));
 
 const NotificationContext = createContext();
 export const useNotification = () => useContext(NotificationContext);
@@ -401,6 +403,8 @@ function MainLayout() {
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/cookies" element={<Cookies />} />
+              <Route path="/features/universal-triggers" element={<UniversalTriggersFeature />} />
+              <Route path="/features/scheduling" element={<ScheduleFeature />} />
               <Route path="*" element={<div style={{textAlign:'center', marginTop:'50px', color:'var(--text-muted)'}}>Page Under Construction</div>} />
             </Routes>
           </Suspense>
