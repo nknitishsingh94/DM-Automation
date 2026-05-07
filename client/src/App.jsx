@@ -429,14 +429,14 @@ function App() {
       <AuthProvider>
         <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <MainLayout />
+          <div className="toast-container">
+            {toasts.map(t => (
+              <Toast key={t.id} {...t} onClose={() => removeToast(t.id)} />
+            ))}
+          </div>
+          <CookieBanner />
         </Router>
       </AuthProvider>
-      <div className="toast-container">
-        {toasts.map(t => (
-          <Toast key={t.id} {...t} onClose={() => removeToast(t.id)} />
-        ))}
-      </div>
-      <CookieBanner />
     </NotificationContext.Provider>
   );
 }
