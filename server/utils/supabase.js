@@ -22,7 +22,7 @@ const isUUID = (str) => {
 function parseFilter(q, queryObj) {
   if (!queryObj) return q;
 
-  for (const [key, val] of Object.entries(queryObj)) {
+  for (const [key, v] of Object.entries(queryObj)) {
     let val = v;
     if (val instanceof Date) {
       val = val.toISOString();
