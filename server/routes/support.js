@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import OpenAI from 'openai';
+
 const router = express.Router();
-const { OpenAI } = require('openai');
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -44,4 +45,4 @@ router.post('/chat', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;
