@@ -30,9 +30,9 @@ function parseFilter(q, queryObj, tableName) {
 
     let parsedKey = (key === '_id' || key === 'id') ? 'id' : key;
     
-    // Universal mapping for filters
+    // Exact mapping from Supabase Screenshot
     if (key === 'userId') {
-      parsedKey = (tableName === 'settings' || tableName === 'campaigns') ? 'userId' : 'user_id';
+      parsedKey = 'userId';
     } else if (key === 'createdAt') {
       parsedKey = 'created_at';
     } else if (key === 'updatedAt') {
@@ -114,14 +114,11 @@ function convertOutgoing(doc, tableName) {
     delete newDoc._id;
   }
   
-  // Universal mapping for outgoing data
+  // Exact mapping from Supabase Screenshot
   if (newDoc.userId) {
-    const uid = newDoc.userId;
-    if (tableName === 'settings' || tableName === 'campaigns') {
-      newDoc.userId = uid;
-    } else {
-      newDoc.user_id = uid;
-    }
+    newDoc.userId = newDoc.userId;
+    delete newDoc.user_id;
+    delete newDoc.userid;
   }
 
   if (newDoc.createdAt) {
