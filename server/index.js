@@ -43,6 +43,7 @@ import { runFlow } from './utils/FlowRunner.js';
 import { sendMessageToInstagram, sendWhatsAppMessage, sendPrivateReply, sendPublicComment } from './utils/metaApi.js';
 import authRoutes from './routes/auth.js';
 import ChatMessage from './models/ChatMessage.js';
+import Caption from './models/Caption.js';
 import paymentRoutes from './routes/payment.js';
 import formRoutes from './routes/forms.js';
 import oauthRoutes from './routes/oauth.js';
@@ -1064,11 +1065,17 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
   }
 });
 
-app.post('/api/scheduling', verifyToken, async (req, res) => {
+app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, res) => {
   try {
+    const mediaFiles = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
+    const mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
+    const carouselItems = mediaFiles;
+
     const newPost = new ScheduledPost({
       ...req.body,
       userId: req.user.userId,
+      mediaUrl: mediaUrl,
+      carouselItems: carouselItems,
       status: 'Scheduled'
     });
     await newPost.save();
@@ -1076,6 +1083,35 @@ app.post('/api/scheduling', verifyToken, async (req, res) => {
   } catch (err) {
     console.error('❌ SCHEDULING ERROR:', err.message);
     res.status(500).json({ error: 'Failed to schedule: ' + err.message });
+  }
+});
+
+// Captions API
+app.get('/api/captions', verifyToken, async (req, res) => {
+  try {
+    const captions = await Caption.find({ userId: req.user.userId }).sort({ createdAt: -1 });
+    res.json(captions);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/captions', verifyToken, async (req, res) => {
+  try {
+    const newCaption = new Caption({ ...req.body, userId: req.user.userId });
+    await newCaption.save();
+    res.json(newCaption);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/captions/:id', verifyToken, async (req, res) => {
+  try {
+    await Caption.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

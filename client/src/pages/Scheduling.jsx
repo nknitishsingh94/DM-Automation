@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Calendar, 
   Clock, 
@@ -22,7 +22,9 @@ import {
   Layers,
   UploadCloud,
   Eye,
-  FileText
+  FileText,
+  Loader2,
+  Bookmark
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
@@ -36,8 +38,16 @@ export default function Scheduling() {
   const [submitting, setSubmitting] = useState(false);
   const { notify } = useNotification();
 
+  // Caption State
+  const [savedCaptions, setSavedCaptions] = useState([]);
+  const [showCaptionsModal, setShowCaptionsModal] = useState(false);
+
   // New Post State
-  const [postType, setPostType] = useState('image'); // 'image', 'carousel', 'reel', 'story'
+  const [postType, setPostType] = useState('image'); 
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
+  const fileInputRef = useRef(null);
+
   const [newPost, setNewPost] = useState({
     caption: '',
     scheduledFor: '',
@@ -49,6 +59,7 @@ export default function Scheduling() {
 
   useEffect(() => {
     fetchPosts();
+    fetchCaptions();
   }, []);
 
   const fetchPosts = async () => {
@@ -74,6 +85,52 @@ export default function Scheduling() {
     }
   };
 
+  const fetchCaptions = async () => {
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/captions`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) setSavedCaptions(data);
+    } catch (err) {
+      console.error("Error fetching captions:", err);
+    }
+  };
+
+  const handleSaveCaption = async () => {
+    if (!newPost.caption.trim()) return;
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/captions`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title: newPost.caption.substring(0, 20) + '...',
+          content: newPost.caption
+        })
+      });
+      if (res.ok) {
+        notify("Caption saved!", "success");
+        fetchCaptions();
+      }
+    } catch (err) {
+      notify("Failed to save caption", "error");
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files);
+    
+    // Create previews
+    const newPreviews = files.map(file => URL.createObjectURL(file));
+    setPreviews(newPreviews);
+  };
+
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('insta_agent_token');
@@ -88,21 +145,31 @@ export default function Scheduling() {
     }
 
     setSubmitting(true);
+    
+    const formData = new FormData();
+    formData.append('caption', newPost.caption);
+    formData.append('scheduledFor', newPost.scheduledFor);
+    formData.append('triggerKeyword', newPost.triggerKeyword);
+    formData.append('autoResponse', newPost.autoResponse);
+    formData.append('type', postType);
+    
+    selectedFiles.forEach(file => {
+      formData.append('files', file);
+    });
+
     try {
       const res = await fetch(`${API_BASE_URL}/api/scheduling`, {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          ...newPost,
-          type: postType
-        })
+        body: formData
       });
       if (res.ok) {
         notify("Post scheduled successfully!", "success");
         setNewPost({ caption: '', scheduledFor: '', mediaUrl: '', triggerKeyword: '', autoResponse: '', coverUrl: '' });
+        setSelectedFiles([]);
+        setPreviews([]);
         setView('list');
         fetchPosts();
       } else {
@@ -137,7 +204,7 @@ export default function Scheduling() {
   // --- CREATE VIEW ---
   if (view === 'create') {
     return (
-      <div style={{ maxWidth: '1300px', margin: '0 auto', animation: 'fadeIn 0.4s ease-out' }}>
+      <div style={{ maxWidth: '1300px', margin: '0 auto', animation: 'fadeIn 0.4s ease-out', paddingBottom: '100px' }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -161,9 +228,9 @@ export default function Scheduling() {
              <button 
                onClick={handleAddSubmit}
                disabled={submitting}
-               style={{ padding: '10px 32px', borderRadius: '12px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)' }}
+               style={{ padding: '10px 32px', borderRadius: '12px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)', display: 'flex', alignItems: 'center', gap: '8px' }}
              >
-               {submitting ? 'Processing...' : 'Schedule'}
+               {submitting ? <Loader2 className="animate-spin" size={18} /> : 'Schedule'}
              </button>
           </div>
         </div>
@@ -184,7 +251,11 @@ export default function Scheduling() {
                 ].map(type => (
                   <button
                     key={type.id}
-                    onClick={() => setPostType(type.id)}
+                    onClick={() => {
+                      setPostType(type.id);
+                      setSelectedFiles([]);
+                      setPreviews([]);
+                    }}
                     style={{ 
                       flex: 1, padding: '12px', borderRadius: '12px', border: postType === type.id ? '2px solid #7c3aed' : '1px solid #e2e8f0',
                       background: postType === type.id ? '#f5f3ff' : 'white',
@@ -201,15 +272,13 @@ export default function Scheduling() {
             {/* Schedule Time */}
             <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '12px' }}>* Schedule Time</label>
-               <div style={{ position: 'relative' }}>
-                 <input 
-                   type="datetime-local" 
-                   value={newPost.scheduledFor} 
-                   onChange={e => setNewPost({...newPost, scheduledFor: e.target.value})}
-                   style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', fontWeight: '600' }} 
-                   required
-                 />
-               </div>
+               <input 
+                 type="datetime-local" 
+                 value={newPost.scheduledFor} 
+                 onChange={e => setNewPost({...newPost, scheduledFor: e.target.value})}
+                 style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', fontWeight: '600' }} 
+                 required
+               />
             </div>
 
             {/* Caption Section */}
@@ -217,10 +286,10 @@ export default function Scheduling() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                 <label style={{ fontSize: '0.85rem', fontWeight: '800', color: '#64748b' }}>Caption</label>
                 <div style={{ display: 'flex', gap: '16px' }}>
-                   <button type="button" style={{ fontSize: '0.8rem', color: '#7c3aed', fontWeight: '700', border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                   <button onClick={() => setShowCaptionsModal(true)} type="button" style={{ fontSize: '0.8rem', color: '#7c3aed', fontWeight: '700', border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <FileText size={14} /> Saved Captions
                    </button>
-                   <button type="button" style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '700', border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                   <button onClick={handleSaveCaption} type="button" style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '700', border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Save size={14} /> Save Caption
                    </button>
                 </div>
@@ -238,24 +307,30 @@ export default function Scheduling() {
             <div style={{ 
               background: 'white', padding: '40px', borderRadius: '24px', border: '2px dashed #e2e8f0', 
               textAlign: 'center', cursor: 'pointer', transition: 'border-color 0.2s'
-            }} onMouseEnter={(e) => e.currentTarget.style.borderColor = '#7c3aed'} onMouseLeave={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}>
+            }} 
+            onClick={() => fileInputRef.current.click()}
+            onMouseEnter={(e) => e.currentTarget.style.borderColor = '#7c3aed'} 
+            onMouseLeave={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}>
+              <input 
+                type="file" 
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                multiple={postType === 'carousel'}
+                accept={postType === 'reel' ? 'video/*' : 'image/*,video/*'}
+                onChange={handleFileChange}
+              />
               <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                 <UploadCloud size={24} />
               </div>
-              <p style={{ fontSize: '0.95rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '4px' }}>Click or drag to upload</p>
-              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>JPG, PNG, MP4 supported (Max 10MB)</p>
-              
-              {/* Fallback URL Input (hidden in a more elegant way if needed, but keeping for functionality) */}
-              <input 
-                type="url" 
-                value={newPost.mediaUrl} 
-                onChange={e => setNewPost({...newPost, mediaUrl: e.target.value})}
-                placeholder="Or paste media URL here..."
-                style={{ marginTop: '20px', width: '100%', maxWidth: '400px', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.85rem' }}
-              />
+              <p style={{ fontSize: '0.95rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '4px' }}>
+                {selectedFiles.length > 0 ? `${selectedFiles.length} file(s) selected` : 'Click or drag to upload'}
+              </p>
+              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                {postType === 'reel' ? 'MP4 video supported (Max 10MB)' : 'JPG, PNG, MP4 supported (Max 10MB)'}
+              </p>
             </div>
 
-            {/* Automation Settings (NEW integration into full page) */}
+            {/* Automation Settings */}
             <div style={{ background: '#f8fafc', padding: '32px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
                 <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#ede9fe', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -302,8 +377,14 @@ export default function Scheduling() {
             }}>
               {/* Instagram Style Preview Header */}
               <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '800', fontSize: '0.7rem' }}>
-                  {user?.username?.charAt(0).toUpperCase() || 'U'}
+                <div style={{ 
+                  width: '32px', height: '32px', borderRadius: '50%', 
+                  background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                  color: 'white', fontWeight: '800', fontSize: '0.7rem',
+                  overflow: 'hidden'
+                }}>
+                  {user?.profilePhoto ? <img src={user.profilePhoto} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : user?.username?.charAt(0).toUpperCase()}
                 </div>
                 <div style={{ fontSize: '0.85rem', fontWeight: '700' }}>{user?.username || 'Your Account'}</div>
               </div>
@@ -319,8 +400,12 @@ export default function Scheduling() {
                 color: '#cbd5e1',
                 overflow: 'hidden'
               }}>
-                {newPost.mediaUrl ? (
-                  <img src={newPost.mediaUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                {previews.length > 0 ? (
+                  postType === 'reel' && selectedFiles[0]?.type.startsWith('video') ? (
+                    <video src={previews[0]} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <img src={previews[0]} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  )
                 ) : (
                   <div style={{ textAlign: 'center', padding: '40px' }}>
                     <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
@@ -344,34 +429,37 @@ export default function Scheduling() {
                     <span style={{ fontWeight: '800', marginRight: '8px' }}>{user?.username || 'user'}</span>
                     <span style={{ color: '#1e1b4b', whiteSpace: 'pre-wrap' }}>{newPost.caption || 'Write your caption...'}</span>
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '8px', textTransform: 'uppercase' }}>
-                    Just now
-                  </div>
                 </div>
               )}
             </div>
-
-            {/* Reel Cover Selection (Optional - only for Reels) */}
-            {postType === 'reel' && (
-              <div style={{ marginTop: '24px', background: 'white', padding: '20px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '12px' }}>Cover Photo</label>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <div style={{ width: '80px', height: '110px', background: '#f8fafc', borderRadius: '12px', border: '2px dashed #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.6rem', textAlign: 'center', padding: '4px' }}>
-                    No thumbnail
-                  </div>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <button style={{ width: '100%', padding: '8px', borderRadius: '8px', background: '#f8fafc', border: '1px solid #e2e8f0', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'center' }}>
-                      <UploadCloud size={14} /> Upload Custom
-                    </button>
-                    <button style={{ width: '100%', padding: '8px', borderRadius: '8px', background: 'white', border: '1px solid #e2e8f0', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'center' }}>
-                      <ImageIcon size={14} /> Select from Video
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
+
+        {/* Saved Captions Modal */}
+        {showCaptionsModal && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+            <div style={{ background: 'white', borderRadius: '24px', width: '100%', maxWidth: '500px', padding: '32px' }}>
+               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>Saved Captions</h3>
+                  <button onClick={() => setShowCaptionsModal(false)} style={{ border: 'none', background: 'none', cursor: 'pointer' }}><X size={20} /></button>
+               </div>
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '400px', overflowY: 'auto' }}>
+                  {savedCaptions.length === 0 ? <p style={{ color: '#64748b', textAlign: 'center' }}>No saved captions found.</p> : savedCaptions.map(cap => (
+                    <div 
+                      key={cap._id} 
+                      onClick={() => { setNewPost({...newPost, caption: cap.content}); setShowCaptionsModal(false); }}
+                      style={{ padding: '16px', borderRadius: '12px', border: '1px solid #f1f5f9', cursor: 'pointer', transition: 'all 0.2s' }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#f5f3ff'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'white'}
+                    >
+                      <div style={{ fontWeight: '700', marginBottom: '4px' }}>{cap.title}</div>
+                      <p style={{ fontSize: '0.85rem', color: '#64748b', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{cap.content}</p>
+                    </div>
+                  ))}
+               </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -397,8 +485,6 @@ export default function Scheduling() {
             boxShadow: '0 12px 24px rgba(124, 58, 237, 0.25)',
             transition: 'transform 0.2s'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
         >
           <Plus size={20} /> New Schedule
         </button>
@@ -410,92 +496,31 @@ export default function Scheduling() {
           padding: '100px 40px', 
           background: 'white', 
           borderRadius: '32px', 
-          border: '2px dashed #e2e8f0',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
+          border: '2px dashed #e2e8f0'
         }}>
-          <div style={{ width: '80px', height: '80px', borderRadius: '24px', background: '#f5f3ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7c3aed', marginBottom: '24px' }}>
-            <Calendar size={40} />
-          </div>
-          <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '12px' }}>May 3 - May 9, 2026</h3>
-          <p style={{ color: '#64748b', marginBottom: '32px', maxWidth: '450px', lineHeight: '1.6' }}>
-            Plan and manage all your upcoming Instagram posts. Click on a new schedule to upload post.
-          </p>
-          <button 
-            onClick={() => setView('create')} 
-            style={{ background: '#0f172a', color: 'white', border: 'none', padding: '14px 32px', borderRadius: '14px', fontWeight: '800', cursor: 'pointer' }}
-          >
-            Create Your First Schedule
-          </button>
+          <Calendar size={40} color="#7c3aed" style={{ marginBottom: '24px' }} />
+          <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '12px' }}>Your schedule is empty</h3>
+          <p style={{ color: '#64748b', marginBottom: '32px' }}>Click 'New Schedule' to plan your first post.</p>
+          <button onClick={() => setView('create')} style={{ background: '#0f172a', color: 'white', padding: '12px 32px', borderRadius: '12px', fontWeight: '800', border: 'none', cursor: 'pointer' }}>Create Schedule</button>
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
           {posts.map(post => (
-            <div 
-              key={post._id} 
-              className="scheduling-card"
-              style={{ 
-                background: 'white', 
-                borderRadius: '24px', 
-                overflow: 'hidden', 
-                border: '1px solid #f1f5f9', 
-                boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
-                transition: 'all 0.3s'
-              }}
-            >
-              <div style={{ height: '240px', background: '#f8fafc', position: 'relative', overflow: 'hidden' }}>
-                {post.mediaUrl ? (
-                  <img src={post.mediaUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(45deg, #f8fafc, #f1f5f9)' }}>
-                    <ImageIcon size={48} color="#cbd5e1" />
-                  </div>
-                )}
-                
-                {/* Badge for Type */}
-                <div style={{ 
-                  position: 'absolute', top: '16px', right: '16px', 
-                  background: 'rgba(255,255,255,0.9)',
-                  color: '#1e1b4b',
-                  padding: '6px 12px', borderRadius: '10px', fontSize: '0.7rem', fontWeight: '800',
-                  boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-                  display: 'flex', alignItems: 'center', gap: '6px'
-                }}>
-                  {post.type === 'reel' ? <Film size={12} /> : (post.type === 'story' ? <Zap size={12} /> : <ImageIcon size={12} />)}
-                  {(post.type || 'Image').toUpperCase()}
-                </div>
-
-                <div style={{ position: 'absolute', bottom: '16px', left: '16px', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', color: 'white', padding: '6px 14px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: '700' }}>
-                  {new Date(post.scheduledFor).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+            <div key={post._id} className="scheduling-card" style={{ background: 'white', borderRadius: '24px', overflow: 'hidden', border: '1px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+              <div style={{ height: '240px', background: '#f8fafc', position: 'relative' }}>
+                <img src={post.mediaUrl.startsWith('http') ? post.mediaUrl : `${API_BASE_URL}${post.mediaUrl}`} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255,255,255,0.9)', color: '#1e1b4b', padding: '6px 12px', borderRadius: '10px', fontSize: '0.7rem', fontWeight: '800' }}>
+                   {(post.type || 'Image').toUpperCase()}
                 </div>
               </div>
-
               <div style={{ padding: '24px' }}>
-                <p style={{ fontSize: '0.95rem', color: '#1e293b', marginBottom: '20px', fontWeight: '500', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.5' }}>
-                  {post.caption}
-                </p>
-                
-                <div style={{ padding: '16px', background: '#f5f3ff', borderRadius: '16px', marginBottom: '24px', border: '1px solid #ede9fe' }}>
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#7c3aed', fontWeight: '800', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '8px' }}>
-                     <Sparkles size={14} fill="#7c3aed" /> Auto DM Active
-                   </div>
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Keyword:</span>
-                      <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b', background: 'white', padding: '2px 8px', borderRadius: '6px', border: '1px solid #ddd' }}>{post.triggerKeyword || 'None'}</span>
-                   </div>
+                <p style={{ fontSize: '0.95rem', fontWeight: '500', color: '#1e293b', marginBottom: '16px' }}>{post.caption}</p>
+                <div style={{ padding: '12px', background: '#f5f3ff', borderRadius: '16px', marginBottom: '20px' }}>
+                  <span style={{ fontSize: '0.8rem', color: '#7c3aed', fontWeight: '800' }}>KEYWORD: {post.triggerKeyword || 'NONE'}</span>
                 </div>
-
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <button 
-                    onClick={() => deletePost(post._id)} 
-                    style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #fee2e2', background: 'white', color: '#ef4444', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s' }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#fef2f2'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'white'}
-                  >
-                    <Trash2 size={16} /> Cancel Post
-                  </button>
-                </div>
+                <button onClick={() => deletePost(post._id)} style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #fee2e2', background: 'white', color: '#ef4444', fontWeight: '700', cursor: 'pointer' }}>
+                  <Trash2 size={16} /> Delete
+                </button>
               </div>
             </div>
           ))}
