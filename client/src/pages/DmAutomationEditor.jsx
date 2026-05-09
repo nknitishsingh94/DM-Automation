@@ -208,7 +208,8 @@ export default function DmAutomationEditor() {
             position: 'relative',
             overflow: 'hidden',
             boxShadow: '0 30px 60px -12px rgba(0,0,0,0.25)',
-            transform: 'scale(0.95)'
+            transform: 'scale(1)',
+            margin: '0 auto'
           }}>
             {/* Realistic Notch (Dynamic Island) */}
             <div style={{
@@ -424,7 +425,36 @@ export default function DmAutomationEditor() {
               </div>
               {!anyKeyword && (
                 <div>
-                  <input type="text" placeholder="Add Keyword & Press Enter" value={keywordInput} onChange={(e) => setKeywordInput(e.target.value)} onKeyDown={handleAddKeyword} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #cbd5e1', outline: 'none', marginBottom: '12px' }} />
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                    <input 
+                      type="text" 
+                      placeholder="Add Keyword..." 
+                      value={keywordInput} 
+                      onChange={(e) => setKeywordInput(e.target.value)} 
+                      onKeyDown={handleAddKeyword} 
+                      style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1.5px solid #cbd5e1', outline: 'none' }} 
+                    />
+                    <button 
+                      onClick={() => {
+                        if (keywordInput.trim() && !keywords.includes(keywordInput.trim())) {
+                          setKeywords([...keywords, keywordInput.trim()]);
+                          setKeywordInput('');
+                        }
+                      }}
+                      style={{ 
+                        background: '#7c3aed', 
+                        color: 'white', 
+                        padding: '0 18px', 
+                        borderRadius: '12px', 
+                        fontWeight: '800',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Plus size={20} />
+                    </button>
+                  </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     {keywords.map(kw => (
                       <span key={kw} style={{ background: '#f1f5f9', padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -485,8 +515,8 @@ export default function DmAutomationEditor() {
 
       {/* Link Modal */}
       {showLinkModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: 'white', padding: '30px', borderRadius: '20px', width: '400px' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+          <div style={{ background: 'white', padding: '30px', borderRadius: '24px', width: '100%', maxWidth: '400px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
             <h3>{editingLinkIndex !== null ? 'Edit Link' : 'Add Link'}</h3>
             <input value={tempLinkTitle} onChange={(e) => setTempLinkTitle(e.target.value)} placeholder="Button Title" style={{ width: '100%', padding: '12px', marginBottom: '12px' }} />
             <input value={tempLinkUrl} onChange={(e) => setTempLinkUrl(e.target.value)} placeholder="URL" style={{ width: '100%', padding: '12px', marginBottom: '20px' }} />

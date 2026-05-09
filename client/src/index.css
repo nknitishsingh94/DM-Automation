@@ -20,6 +20,8 @@
     --page-padding: 16px;
     --page-padding-bottom: 150px !important; /* Maximum safety for mobile navigation bars */
   }
+  .mobile-show { display: block !important; }
+  .mobile-hide { display: none !important; }
 }
 
 .mobile-show { display: none; }
@@ -2366,12 +2368,47 @@ tr:hover {
     height: auto;
     position: relative;
     border-right: none;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: none;
+    border-top: 1px solid var(--border-subtle);
     padding: 40px 10px;
+    order: 2; /* Move preview below config on mobile */
+    background: #f8fafc;
   }
   .editor-config {
     height: auto;
     overflow-y: visible;
-    padding: 20px 16px 100px;
+    padding: 24px 16px 40px;
+    order: 1; /* Config first on mobile */
+  }
+  
+  /* Scale down the phone preview on very small screens */
+  @media (max-width: 480px) {
+    .editor-preview > div:nth-child(2) {
+      transform: scale(0.85) !important;
+      margin-top: -40px !important;
+      margin-bottom: -40px !important;
+    }
+  }
+  /* About Page Responsiveness */
+  .mission-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .mission-card {
+    padding: 24px;
+    border-radius: 24px;
+  }
+  .about-mission {
+    padding: 60px 16px;
+  }
+  .values-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .values-header h2 {
+    font-size: 2rem;
+  }
+  .about-values {
+    padding: 60px 16px;
   }
 }

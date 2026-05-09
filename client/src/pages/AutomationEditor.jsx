@@ -251,7 +251,8 @@ export default function AutomationEditor() {
             position: 'relative',
             overflow: 'hidden',
             boxShadow: '0 30px 60px -12px rgba(0,0,0,0.25)',
-            transform: 'scale(0.95)'
+            transform: 'scale(1)',
+            margin: '0 auto'
           }}>
             {/* Realistic Notch (Dynamic Island) */}
             <div style={{
@@ -325,6 +326,7 @@ export default function AutomationEditor() {
                     <span style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>{template === 'stories' ? 'Story' : 'Posts'}</span>
                     <div style={{ width: '18px' }}></div>
                   </div>
+
 
                   {/* Post Content Area */}
                   <div style={{ flex: 1, position: 'relative', background: '#1a1a1a', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflow: 'hidden', paddingTop: '40px' }}>
@@ -628,7 +630,7 @@ export default function AutomationEditor() {
                         ) : (
                           <div style={{ 
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(3, 1fr)',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))',
                             gap: '12px'
                           }}>
                             {realMedia.map((item) => (
@@ -712,12 +714,21 @@ export default function AutomationEditor() {
                         outline: 'none', fontSize: '0.9rem', fontWeight: '500'
                       }}
                     />
-                    <div style={{ 
-                      position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
-                      width: '28px', height: '28px', borderRadius: '8px', background: '#f1f5f9',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b'
-                    }}>
-                      <Plus size={16} />
+                    <div 
+                      onClick={() => {
+                        if (keywordInput.trim() && !keywords.includes(keywordInput.trim())) {
+                          setKeywords([...keywords, keywordInput.trim()]);
+                          setKeywordInput('');
+                        }
+                      }}
+                      style={{ 
+                        position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)',
+                        width: '32px', height: '32px', borderRadius: '8px', background: '#7c3aed',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
+                        cursor: 'pointer', zIndex: 5
+                      }}
+                    >
+                      <Plus size={18} />
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
