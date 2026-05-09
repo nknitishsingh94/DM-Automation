@@ -227,6 +227,7 @@ export default function Scheduling() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [createdPost, setCreatedPost] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
 
   const deletePost = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this scheduled post?")) return;
@@ -618,13 +619,43 @@ export default function Scheduling() {
                         {settings?.connectedInstagramName || settings?.connectedFacebookName || user?.username || 'instagram_user'}
                       </div>
                     </div>
-                    <div style={{ width: '100%', aspectRatio: (postType === 'reel' || postType === 'story') ? '9/16' : '1/1', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: '100%', aspectRatio: (postType === 'reel' || postType === 'story') ? '9/16' : '1/1', background: '#f8fafc', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {previews.length > 0 ? (
-                        selectedFiles[0]?.type.startsWith('video') ? (
-                          <video src={previews[0]} autoPlay loop controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                          <img src={previews[0]} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        )
+                        <>
+                          {/* Main Media Display */}
+                          <div style={{ width: '100%', height: '100%' }}>
+                            {selectedFiles[currentPreviewIndex]?.type.startsWith('video') ? (
+                              <video key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                              <img key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            )}
+                          </div>
+
+                          {/* Arrows for Navigation */}
+                          {previews.length > 1 && (
+                            <>
+                              <button 
+                                onClick={() => setCurrentPreviewIndex(prev => (prev === 0 ? previews.length - 1 : prev - 1))}
+                                style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(255,255,255,0.8)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10, color: '#1e1b4b', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+                              >
+                                <ChevronLeft size={18} />
+                              </button>
+                              <button 
+                                onClick={() => setCurrentPreviewIndex(prev => (prev === previews.length - 1 ? 0 : prev + 1))}
+                                style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(255,255,255,0.8)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10, color: '#1e1b4b', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+                              >
+                                <ChevronRight size={18} />
+                              </button>
+
+                              {/* Indicator Dots */}
+                              <div style={{ position: 'absolute', bottom: '12px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '5px', zIndex: 10 }}>
+                                {previews.map((_, i) => (
+                                  <div key={i} style={{ width: '6px', height: '6px', borderRadius: '50%', background: i === currentPreviewIndex ? '#7c3aed' : 'rgba(255,255,255,0.5)', transition: 'all 0.2s' }} />
+                                ))}
+                              </div>
+                            </>
+                          )}
+                        </>
                       ) : (
                         <ImageIcon size={48} color="#cbd5e1" />
                       )}
