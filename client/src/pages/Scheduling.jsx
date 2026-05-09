@@ -201,6 +201,11 @@ export default function Scheduling() {
       });
       const data = await res.json();
       if (res.ok) {
+        // Clear creation modal
+        setShowCreate(false);
+        fetchPosts();
+
+        // Trigger Success Flow
         setCreatedPost(data);
         setShowSuccess(true);
         
