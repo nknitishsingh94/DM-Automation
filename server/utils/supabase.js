@@ -30,9 +30,13 @@ function parseFilter(q, queryObj, tableName) {
 
     let parsedKey = (key === '_id' || key === 'id') ? 'id' : key;
     
-    // Exact mapping from Supabase Screenshot
+    // Per-table mapping based on verified schema
     if (key === 'userId') {
-      parsedKey = 'userId';
+      if (tableName === 'captions' || tableName === 'messages' || tableName === 'contacts') {
+        parsedKey = 'user_id';
+      } else {
+        parsedKey = 'userId'; // Settings, Campaigns, ScheduledPosts use CamelCase
+      }
     } else if (key === 'createdAt') {
       parsedKey = 'created_at';
     } else if (key === 'updatedAt') {
@@ -114,11 +118,14 @@ function convertOutgoing(doc, tableName) {
     delete newDoc._id;
   }
   
-  // Exact mapping from Supabase Screenshot
+  // Per-table mapping based on verified schema
   if (newDoc.userId) {
-    newDoc.userId = newDoc.userId;
-    delete newDoc.user_id;
-    delete newDoc.userid;
+    if (tableName === 'captions' || tableName === 'messages' || tableName === 'contacts') {
+      newDoc.user_id = newDoc.userId;
+      // Keep userId for code compatibility but database will use user_id
+    } else {
+      newDoc.userId = newDoc.userId;
+    }
   }
 
   if (newDoc.createdAt) {
