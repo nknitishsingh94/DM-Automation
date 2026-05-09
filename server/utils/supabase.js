@@ -30,13 +30,13 @@ function parseFilter(q, queryObj, tableName) {
 
     let parsedKey = (key === '_id' || key === 'id') ? 'id' : key;
     
-    // Table-specific user identification column mapping
+    // Universal mapping for filters
     if (key === 'userId') {
-      if (tableName === 'settings' || tableName === 'campaigns') {
-        parsedKey = 'userId';
-      } else {
-        parsedKey = 'user_id';
-      }
+      parsedKey = (tableName === 'settings' || tableName === 'campaigns') ? 'userId' : 'user_id';
+    } else if (key === 'createdAt') {
+      parsedKey = 'created_at';
+    } else if (key === 'updatedAt') {
+      parsedKey = 'updated_at';
     }
 
     if (parsedKey === 'id' && !isUUID(val)) {
@@ -81,6 +81,8 @@ function convertIncoming(doc, tableName) {
   // Universal mapping for incoming data
   if (doc.user_id) newDoc.userId = doc.user_id;
   if (doc.userid) newDoc.userId = doc.userid;
+  if (doc.created_at) newDoc.createdAt = doc.created_at;
+  if (doc.updated_at) newDoc.updatedAt = doc.updated_at;
 
   ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost', 'isUniversal'].forEach(field => {
     if (newDoc[field] !== undefined && newDoc[field] !== null) {
@@ -116,13 +118,19 @@ function convertOutgoing(doc, tableName) {
   if (newDoc.userId) {
     const uid = newDoc.userId;
     if (tableName === 'settings' || tableName === 'campaigns') {
-      // These tables usually use userId (camelCase)
       newDoc.userId = uid;
     } else {
-      // Other tables might need snake_case
       newDoc.user_id = uid;
-      newDoc.userid = uid;
     }
+  }
+
+  if (newDoc.createdAt) {
+    newDoc.created_at = newDoc.createdAt;
+    delete newDoc.createdAt;
+  }
+  if (newDoc.updatedAt) {
+    newDoc.updated_at = newDoc.updatedAt;
+    delete newDoc.updatedAt;
   }
 
   if (tableName === 'campaigns') {
