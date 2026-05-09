@@ -24,7 +24,9 @@ import {
   Eye,
   FileText,
   Loader2,
-  Bookmark
+  Bookmark,
+  Heart,
+  MessageCircle
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
@@ -442,6 +444,12 @@ export default function Scheduling() {
                       )}
                     </div>
                     <div style={{ padding: '16px' }}>
+                      <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
+                         <Heart size={22} color="#1e1b4b" />
+                         <MessageCircle size={22} color="#1e1b4b" />
+                         <Send size={22} color="#1e1b4b" />
+                      </div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: '800', marginBottom: '6px' }}>1,234 likes</div>
                       <div style={{ fontSize: '0.85rem', lineHeight: '1.4' }}>
                         <span style={{ fontWeight: '800', marginRight: '8px' }}>{user?.username || 'user'}</span>
                         <span style={{ color: '#1e1b4b' }}>{newPost.caption || '...'}</span>
