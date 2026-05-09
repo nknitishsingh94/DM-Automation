@@ -532,7 +532,7 @@ export default function Scheduling() {
                         </div>
                       )}
                       <div style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b' }}>
-                        {settings?.connectedFacebookName || user?.username || 'instagram_user'}
+                        {settings?.connectedInstagramName || settings?.connectedFacebookName || user?.username || 'instagram_user'}
                       </div>
                     </div>
                     <div style={{ width: '100%', aspectRatio: (postType === 'reel' || postType === 'story') ? '9/16' : '1/1', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
