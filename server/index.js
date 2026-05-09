@@ -1355,14 +1355,19 @@ app.delete('/api/messages/:id', verifyToken, async (req, res) => {
 // Settings API
 app.get('/api/settings', verifyToken, async (req, res) => {
   try {
+    console.log(`🔍 SETTINGS LOOKUP: Fetching for userId: ${req.user.userId}`);
     let settings = await Settings.findOne({ userId: req.user.userId });
+    
     if (!settings) {
+      console.warn(`⚠️ SETTINGS NOT FOUND for userId: ${req.user.userId}. Creating default.`);
       settings = new Settings({ userId: req.user.userId });
       await settings.save();
     }
+    
+    console.log(`✅ SETTINGS FOUND for ${req.user.userId}: ${settings.connectedInstagramName || 'No IG Linked'}`);
     res.json(settings);
   } catch (err) {
-    console.error("❌ SETTINGS ERROR:", err.message);
+    console.error(`❌ SETTINGS ERROR for ${req.user.userId}:`, err.message);
     res.status(500).json({
       error: err.message,
       hint: "Check if 'settings' table has 'userId' column and RLS is configured correctly."
