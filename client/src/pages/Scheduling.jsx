@@ -503,10 +503,18 @@ export default function Scheduling() {
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '16px' }}>Live Preview</label>
                   <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.05)' }}>
                     <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid #f8fafc' }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '800', fontSize: '0.7rem' }}>
-                        {user?.username?.charAt(0).toUpperCase()}
-                      </div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: '700' }}>{user?.username || 'user'}</div>
+                      {user?.profilePhoto ? (
+                        <img 
+                          src={user.profilePhoto} 
+                          alt="Profile" 
+                          style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e2e8f0' }} 
+                        />
+                      ) : (
+                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '800', fontSize: '0.7rem' }}>
+                          {user?.username?.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b' }}>{user?.username || 'instagram_user'}</div>
                     </div>
                     <div style={{ width: '100%', aspectRatio: (postType === 'reel' || postType === 'story') ? '9/16' : '1/1', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {previews.length > 0 ? (
