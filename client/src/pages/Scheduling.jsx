@@ -2,27 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { 
   Plus, Calendar, Clock, Video, Image as ImageIcon, Send, X, Check, ChevronLeft, ChevronRight, 
   Trash2, Globe, Lock, AlertCircle, Info, Sparkles, Volume2, VolumeX, Zap,
-  ArrowLeft, Heart, MessageCircle, Home,
-  Layout,
-  Instagram,
-  Target,
-  ArrowRight,
-  Film,
-  Copy,
-  Save,
-  Layers,
-  UploadCloud,
-  Eye,
-  FileText,
-  Loader2,
-  Bookmark,
-  Heart,
-  MessageCircle,
-  MessageSquare,
-  Key,
-  Volume2,
-  VolumeX,
-  Check
+  ArrowLeft, Heart, MessageCircle, Home, Layout, Instagram, Target, ArrowRight, Film, Copy,
+  Save, Layers, UploadCloud, Eye, FileText, Loader2, Bookmark, MessageSquare, Key
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
