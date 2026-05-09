@@ -472,7 +472,11 @@ export default function Scheduling() {
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px', padding: '8px' }}>
                           {previews.map((src, idx) => (
                             <div key={idx} style={{ aspectRatio: '1/1', borderRadius: '12px', overflow: 'hidden', border: '1px solid #f1f5f9', position: 'relative' }}>
-                               <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                               {selectedFiles[idx]?.type.startsWith('video') ? (
+                                 <video src={src} muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                               ) : (
+                                 <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                               )}
                                <button 
                                  onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
                                  style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
