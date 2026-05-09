@@ -1,10 +1,5 @@
-import mongoose from 'mongoose';
+import { createSupabaseModel } from '../utils/supabase.js';
 
-const captionSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  title: { type: String, required: true },
-  content: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
+const Caption = createSupabaseModel('captions');
 
-export default mongoose.model('Caption', captionSchema);
+export default Caption;

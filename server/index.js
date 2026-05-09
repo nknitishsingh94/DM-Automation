@@ -8,13 +8,6 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import mongoose from 'mongoose';
-if (process.env.MONGODB_URL) {
-  mongoose.connect(process.env.MONGODB_URL)
-    .then(() => console.log('🍃 MongoDB Connected (Captions Storage)'))
-    .catch(err => console.error('❌ MongoDB Connection Error:', err));
-}
-
 // --- GLOBAL STABILITY GUARD ---
 // Prevents the server from crashing on unhandled errors
 process.on('unhandledRejection', (reason, promise) => {
@@ -279,7 +272,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     $or: [{ userId }, { userId: queryUserId }],
     status: 'Active'
   });
-  
+
   // SORT: Specific keywords first, Wildcards (*) last
   activeCampaigns = activeCampaigns.sort((a, b) => {
     if (a.trigger === '*' && b.trigger !== '*') return 1;
@@ -314,14 +307,14 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     // Only apply Post ID filtering for COMMENTS. DMs and Story Mentions stay global.
     // Universal Triggers (c.isUniversal) bypass post-specific filtering.
     const postMatch = (source !== 'comment') || c.isUniversal || c.isAnyPost || (mediaId && c.postId === mediaId);
-    
+
     return platformMatch && sourceMatch && keywordMatch && postMatch;
   });
 
   if (match) {
     const campaignName = match.name || `Automation (${match.trigger})`;
     console.log(`🎯 MATCH FOUND! Campaign: "${campaignName}" | Trigger: "${match.trigger}" | Platform: ${platform} | Source: ${source}`);
-    
+
     // Determine the best token to use
     const userSettings = await Settings.findOne({ userId });
     const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
@@ -330,31 +323,31 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     if (match.requireFollow) {
       console.log(`🛡️ GATING: Checking follower status for ${chatId}...`);
       const isFollowing = await checkFollowerStatus(platform, chatId, userId);
-      
+
       if (!isFollowing) {
         console.log(`🚫 GATED: User ${chatId} is not following. Sending follow-request DM.`);
-        
+
         // 1. Send Private DM Request with a "Check Follow" button
         const followText = match.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊";
         const checkFollowPayload = `CHECK_FOLLOW_${match._id}`;
-        
+
         // Use a generic template with a postback button for reliability
         await sendMessageToInstagram(platform, chatId, followText, '', userId, "I've Followed! ✅", activeToken, [], checkFollowPayload);
-        
+
         // 2. Send PUBLIC Comment Reply (Crucial for Comments)
         if (source === 'comment' && commentId) {
           console.log(`💬 Sending GATED public reply to comment ${commentId}`);
           const publicGated = "I've sent you a DM! 🚀 Please follow our account first to receive your exclusive link! 😊";
           await sendPublicComment(platform, commentId, publicGated, userId, activeToken);
         }
-        
+
         // Store this campaign as 'pending' for when they follow
         await Contact.findOneAndUpdate(
           { userId, chatId },
           { pendingCampaignId: match._id, lastActive: new Date() },
           { upsert: true }
         );
-        
+
         return { gated: true };
       }
       console.log(`✅ UNGATED: User ${chatId} is a follower.`);
@@ -365,9 +358,9 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       // Ensure there's a button text, otherwise the postback flow won't work
       const btnText = match.openingMessageButton || "Click to Continue 🚀";
       const payload = `CAMP_${match._id}`;
-      
+
       const openingSent = await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, btnText, activeToken, [], payload);
-      
+
       if (openingSent) {
         if (source === 'comment' && commentId) {
           console.log(`💬 Sending CUSTOM public comment reply to ${commentId} (Opening Message)`);
@@ -591,12 +584,12 @@ app.post('/api/webhook', async (req, res) => {
           // A. Opening Message Button Click
           if (payload.startsWith('CAMP_')) {
             const campaignId = payload.split('_')[1];
-            
+
             // Run asynchronously to prevent webhook timeouts
             (async () => {
               try {
                 const match = await Campaign.findById(campaignId);
-                
+
                 if (match && match.status === 'Active') {
                   console.log(`🚀 TRIGGERING MAIN RESPONSE for Campaign: ${match.name}`);
                   const userSettings = await Settings.findOne({ userId: match.userId });
@@ -613,22 +606,22 @@ app.post('/api/webhook', async (req, res) => {
           // B. "I've Followed" Button Click
           if (payload.startsWith('CHECK_FOLLOW_')) {
             const campaignId = payload.split('_')[2];
-            
+
             // Run asynchronously to prevent webhook timeouts
             (async () => {
               try {
                 const match = await Campaign.findById(campaignId);
-                
+
                 if (match && match.status === 'Active') {
                   console.log(`🛡️ VERIFYING FOLLOW on button click for ${senderId}...`);
                   const isFollowing = await checkFollowerStatus(platform, senderId, match.userId);
-                  
+
                   const userSettings = await Settings.findOne({ userId: match.userId });
                   const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
                   if (isFollowing) {
                     console.log(`✅ VERIFIED! Triggering automation for ${match.name}`);
-                    
+
                     // 1. Clear pending status
                     await Contact.findOneAndUpdate({ chatId: senderId }, { $unset: { pendingCampaignId: 1 } });
 
@@ -668,12 +661,12 @@ app.post('/api/webhook', async (req, res) => {
           const val = change.value;
           console.log('💎 [DEEP DATA] Interaction Detected! Field:', change.field);
           console.log('📦 Value:', JSON.stringify(val, null, 2));
-          
+
           const text = val.text || val.message;
           const senderId = val.from?.id;
           const commentId = val.id || val.comment_id;
           const mediaId = val.media?.id || val.post_id || val.video_id;
-          
+
           // Handle all interaction types (Comment, Post, Video, etc.)
           console.log(`🎯 [REEL DEBUG] Processing interaction from ${change.field}. Item: ${val.item || 'N/A'}`);
 
@@ -687,12 +680,12 @@ app.post('/api/webhook', async (req, res) => {
 
           if (text && senderId && commentId) {
             const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
-              
+
             // Identity Search
             let allMatchingSettings = await Settings.find({
               $or: [
-                { instagramPageId: pageId }, 
-                { businessAccountId: pageId }, 
+                { instagramPageId: pageId },
+                { businessAccountId: pageId },
                 { facebookPageId: pageId }
               ]
             });
@@ -707,7 +700,7 @@ app.post('/api/webhook', async (req, res) => {
             }
 
             let targetUserId = userSettings?.userId;
-            
+
             if (!targetUserId) {
               console.warn(`🚨 [ID MISMATCH]: No user settings found for ID ${pageId}. Trying fallback...`);
               const fallback = await User.findOne();
@@ -718,7 +711,7 @@ app.post('/api/webhook', async (req, res) => {
             if (targetUserId) {
               console.log(`✅ [MATCH FOUND]: Processing comment for User ${targetUserId}`);
               const accessToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
-              
+
               const incoming = new Message({
                 userId: targetUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
                 type: 'received', platform, timestamp: new Date()
@@ -735,25 +728,25 @@ app.post('/api/webhook', async (req, res) => {
             console.log(`⏭️ Skipping comment: text missing or sender is the page itself.`);
           }
         }
-        
+
         // 3. Handle Relationships (Follows)
         if (change.field === 'relationships') {
           const val = change.value;
           console.log(`👤 RELATIONSHIP CHANGE: ${val.action} from ${val.from_id || val.id}`);
-          
+
           if (val.action === 'follow') {
             const senderId = val.from_id || val.id;
             const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
 
             // Find if this user has a pending automation
             const contact = await Contact.findOne({ chatId: senderId });
-            
+
             if (contact && contact.pendingCampaignId) {
               console.log(`🎯 AUTO-TRIGGER: User ${senderId} followed! Sending pending campaign ${contact.pendingCampaignId}`);
-              
+
               const targetUserId = contact.userId;
               const campaignId = contact.pendingCampaignId;
-              
+
               // Clear pending status so it doesn't repeat
               await Contact.findByIdAndUpdate(contact._id, { $unset: { pendingCampaignId: 1 } });
 
@@ -1277,8 +1270,8 @@ app.get('/api/settings', verifyToken, async (req, res) => {
     res.json(settings);
   } catch (err) {
     console.error("❌ SETTINGS ERROR:", err.message);
-    res.status(500).json({ 
-      error: err.message, 
+    res.status(500).json({
+      error: err.message,
       hint: "Check if 'settings' table has 'userId' column and RLS is configured correctly."
     });
   }
@@ -1405,7 +1398,7 @@ app.post('/api/settings/whatsapp/connect-qr', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOneAndUpdate(
       { userId: req.user.userId },
-      { 
+      {
         isWhatsAppConnected: true,
         connectedWhatsAppName: 'WhatsApp QR Connected',
         whatsappToken: 'mock_qr_token',
@@ -1582,14 +1575,14 @@ app.get('/api/debug/settings', verifyToken, async (req, res) => {
 setInterval(async () => {
   try {
     const now = new Date();
-    const duePosts = await ScheduledPost.find({ 
-      scheduledFor: { $lte: now.toISOString() }, 
-      status: 'Scheduled' 
+    const duePosts = await ScheduledPost.find({
+      scheduledFor: { $lte: now.toISOString() },
+      status: 'Scheduled'
     });
 
     for (const post of duePosts) {
       console.log(`⏰ Processing Scheduled Post: ${post._id || post.id}`);
-      
+
       // Deserialize mediaUrl if it's a JSON array
       let finalMedia = post.mediaUrl;
       let finalCarousel = [];
@@ -1597,7 +1590,7 @@ setInterval(async () => {
         try {
           finalCarousel = JSON.parse(post.mediaUrl);
           finalMedia = finalCarousel[0];
-        } catch (e) {}
+        } catch (e) { }
       }
 
       await ScheduledPost.findByIdAndUpdate(post._id || post.id, { status: 'Processing' });
@@ -1606,7 +1599,7 @@ setInterval(async () => {
         // Mocking real Instagram Media Post API call here
         // Requires specific 'instagram_content_publish' permission
         console.log(`📸 Posting media to Instagram for User: ${post.userId}`);
-        
+
         if (post.triggerKeyword && post.autoResponse) {
           const campaign = new Campaign({
             userId: post.userId,
@@ -1614,7 +1607,7 @@ setInterval(async () => {
             trigger: post.triggerKeyword,
             response: post.autoResponse,
             status: 'Active',
-            isAnyPost: true 
+            isAnyPost: true
           });
           await campaign.save();
           console.log(`✅ Automation Campaign created for scheduled post.`);
