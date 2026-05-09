@@ -635,28 +635,32 @@ export default function Scheduling() {
                           <>
                             <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                               {previews[currentPreviewIndex] ? (
-                                selectedFiles[currentPreviewIndex]?.type?.startsWith('video') ? (
+                                (selectedFiles[currentPreviewIndex]?.type?.startsWith('video') || (typeof previews[currentPreviewIndex] === 'string' && (previews[currentPreviewIndex].includes('.mp4') || previews[currentPreviewIndex].includes('.mov') || previews[currentPreviewIndex].includes('.webm')))) ? (
                                   <>
                                     <video 
                                       key={previews[currentPreviewIndex]} 
                                       src={previews[currentPreviewIndex]} 
                                       autoPlay 
+                                      muted={isPreviewMuted}
                                       loop 
                                       playsInline
-                                      style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'contain' : 'cover', background: '#000' }} 
+                                      style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'cover' : 'cover', background: '#000' }} 
                                     />
                                     <button 
-                                      onClick={() => setIsPreviewMuted(!isPreviewMuted)}
+                                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsPreviewMuted(!isPreviewMuted); }}
                                       style={{ position: 'absolute', bottom: '12px', right: '12px', width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 20, color: 'white' }}
                                     >
                                       {isPreviewMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
                                     </button>
                                   </>
                                 ) : (
-                                  <img key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'contain' : 'cover', background: '#000' }} />
+                                  <img key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'cover' : 'cover', background: '#000' }} />
                                 )
                               ) : (
-                                <ImageIcon size={48} color="#333" />
+                                <div style={{ textAlign: 'center', color: '#333' }}>
+                                   <ImageIcon size={48} />
+                                   <p style={{ fontSize: '0.7rem', marginTop: '8px', fontWeight: '700' }}>Select {postType} to preview</p>
+                                </div>
                               )}
                             </div>
 
