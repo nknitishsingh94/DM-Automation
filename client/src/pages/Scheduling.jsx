@@ -382,20 +382,7 @@ export default function Scheduling() {
                   {post.caption || 'No caption provided.'}
                 </p>
 
-                {post.triggerKeyword && (
-                   <div style={{ 
-                     padding: '12px 16px', background: '#f5f3ff', borderRadius: '16px', marginBottom: '24px',
-                     display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #ddd6fe'
-                   }}>
-                     <Zap size={16} color="#7c3aed" fill="#7c3aed" />
-                     <div style={{ overflow: 'hidden' }}>
-                        <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#7c3aed', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Auto-Responder Active</div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          "{post.triggerKeyword}" → "{post.autoResponse}"
-                        </div>
-                     </div>
-                   </div>
-                )}
+                {/* Automation Preview Removed for clean UI */}
 
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <button 
@@ -495,62 +482,7 @@ export default function Scheduling() {
                     </div>
                   </div>
 
-                  {/* Automation Section (Hidden for Story) */}
-                  {postType !== 'story' && (
-                    <div style={{ background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', padding: '32px', borderRadius: '32px', border: '1px solid #ddd6fe', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.5)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <div style={{ width: '40px', height: '40px', borderRadius: '14px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px rgba(124, 58, 237, 0.2)' }}>
-                            <Zap size={20} fill="white" />
-                          </div>
-                          <div>
-                            <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '900', color: '#1e1b4b' }}>Automation Builder</h4>
-                            <p style={{ margin: 0, fontSize: '0.75rem', color: '#7c3aed', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' }}>AI-Powered Direct Replies</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-                        {/* Trigger Card */}
-                        <div style={{ background: 'white', padding: '20px', borderRadius: '20px', border: '1.5px solid #f1f5f9', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                            <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#fef3c7', color: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                              <Key size={14} />
-                            </div>
-                            <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#1e1b4b' }}>TRIGGER KEYWORD</span>
-                          </div>
-                          <input 
-                            type="text" 
-                            value={newPost.triggerKeyword} 
-                            onChange={e => setNewPost({...newPost, triggerKeyword: e.target.value})}
-                            placeholder="e.g. INFO"
-                            style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', fontWeight: '700', color: '#7c3aed', background: '#f8fafc' }}
-                          />
-                          <p style={{ margin: '8px 0 0 0', fontSize: '0.7rem', color: '#94a3b8', fontWeight: '500' }}>
-                            {newPost.type === 'story' ? 'When someone replies to this story...' : (newPost.type === 'reel' ? 'When someone comments on this reel...' : 'When someone comments this...')}
-                          </p>
-                        </div>
-
-                        {/* Response Card */}
-                        <div style={{ background: 'white', padding: '20px', borderRadius: '20px', border: '1.5px solid #f1f5f9', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                            <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                              <MessageSquare size={14} />
-                            </div>
-                            <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#1e1b4b' }}>SEND THIS MESSAGE</span>
-                          </div>
-                          <input 
-                            type="text" 
-                            value={newPost.autoResponse} 
-                            onChange={e => setNewPost({...newPost, autoResponse: e.target.value})}
-                            placeholder="Type your response..."
-                            style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', fontWeight: '600' }}
-                          />
-                          <p style={{ margin: '8px 0 0 0', fontSize: '0.7rem', color: '#94a3b8', fontWeight: '500' }}>They will receive this in DM.</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  {/* Automation Builder Removed as per request */}
 
                   {/* Story Info Box */}
                   {postType === 'story' && (
