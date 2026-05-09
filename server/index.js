@@ -1015,19 +1015,22 @@ app.get('/api/stats', verifyToken, async (req, res) => {
       messageMatch.timestamp = dateQuery;
     }
 
-    const totalDMs = await Campaign.aggregate([
+    console.log(`📊 Fetching stats for user: ${req.user.userId}, filter: ${filter}`);
+
+    const totalDMsData = await Campaign.aggregate([
       { $match: campaignMatch },
       { $group: { _id: null, total: { $sum: "$dmsSent" } } }
     ]);
+    
     const campaignsCount = await Campaign.countDocuments(campaignMatch);
     const messagesCount = await Message.countDocuments(messageMatch);
 
     const sentMessages = await Message.countDocuments({ ...messageMatch, type: 'sent' });
     const receivedMessages = await Message.countDocuments({ ...messageMatch, type: 'received' });
+    
+    // Check if 'isAI' exists in schema or use a safer check
     const aiSentMessages = await Message.countDocuments({ ...messageMatch, type: 'sent', isAI: true });
 
-
-    // Fetch unique contacts and user plan
     const uniqueContacts = await Message.distinct('chatId', messageMatch);
     const userProfile = await User.findById(req.user.userId);
 
@@ -1038,7 +1041,7 @@ app.get('/api/stats', verifyToken, async (req, res) => {
     }
 
     res.json({
-      totalDMs: totalDMs[0]?.total || 0,
+      totalDMs: totalDMsData[0]?.total || 0,
       sentMessages,
       receivedMessages,
       campaigns: campaignsCount,
@@ -1048,7 +1051,8 @@ app.get('/api/stats', verifyToken, async (req, res) => {
       contactCount: uniqueContacts.length
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ DASHBOARD STATS ERROR:", err);
+    res.status(500).json({ error: "Stats calculation failed: " + err.message });
   }
 });
 
