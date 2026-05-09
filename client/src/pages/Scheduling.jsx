@@ -31,7 +31,8 @@ import {
   MessageSquare,
   Key,
   Volume2,
-  VolumeX
+  VolumeX,
+  Check
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
