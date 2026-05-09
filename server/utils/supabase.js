@@ -67,9 +67,6 @@ function convertIncoming(doc, tableName) {
   if (doc.id) {
     newDoc._id = doc.id;
   }
-  if (doc.user_id) {
-    newDoc.userId = doc.user_id;
-  }
 
   ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost', 'isUniversal'].forEach(field => {
     if (newDoc[field] !== undefined && newDoc[field] !== null) {
@@ -100,10 +97,9 @@ function convertOutgoing(doc, tableName) {
     newDoc.id = newDoc._id;
     delete newDoc._id;
   }
-  if (newDoc.userId) {
-    newDoc.user_id = newDoc.userId;
-    delete newDoc.userId;
-  }
+  
+  // Mapping was causing 'column not found', so we revert to original behavior
+  // until the user confirms the exact column name in Supabase.
 
   if (tableName === 'campaigns') {
     if (newDoc.name && newDoc.response) {
