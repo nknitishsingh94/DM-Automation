@@ -124,10 +124,25 @@ export default function Scheduling() {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    setSelectedFiles(files);
+    const newFiles = [...selectedFiles, ...files];
+    setSelectedFiles(newFiles);
     
     // Create previews
-    const newPreviews = files.map(file => URL.createObjectURL(file));
+    const newPreviews = newFiles.map(file => URL.createObjectURL(file));
+    setPreviews(newPreviews);
+  };
+
+  const removeFile = (index) => {
+    const newFiles = [...selectedFiles];
+    const newPreviews = [...previews];
+    
+    // Revoke the URL to avoid memory leaks
+    URL.revokeObjectURL(newPreviews[index]);
+    
+    newFiles.splice(index, 1);
+    newPreviews.splice(index, 1);
+    
+    setSelectedFiles(newFiles);
     setPreviews(newPreviews);
   };
 
@@ -388,14 +403,17 @@ export default function Scheduling() {
                       <div style={{ width: '100%' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px', padding: '8px' }}>
                           {previews.map((src, idx) => (
-                            <div key={idx} style={{ aspectRatio: '1/1', borderRadius: '12px', overflow: 'hidden', border: '1px solid #f1f5f9' }}>
+                            <div key={idx} style={{ aspectRatio: '1/1', borderRadius: '12px', overflow: 'hidden', border: '1px solid #f1f5f9', position: 'relative' }}>
                                <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                               <button 
+                                 onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
+                                 style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                               >
+                                 <X size={12} />
+                               </button>
                             </div>
                           ))}
                         </div>
-                        <button onClick={(e) => { e.stopPropagation(); setSelectedFiles([]); setPreviews([]); }} style={{ marginTop: '12px', background: 'none', border: 'none', color: '#ef4444', fontSize: '0.8rem', fontWeight: '700', cursor: 'pointer' }}>
-                          Clear All
-                        </button>
                       </div>
                     ) : (
                       <>
