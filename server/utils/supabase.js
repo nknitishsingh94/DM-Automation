@@ -28,25 +28,24 @@ function parseFilter(q, queryObj) {
       val = val.toISOString();
     }
 
-    if (key === '_id' || key === 'id' || key === 'userId') {
-      if (!isUUID(val)) {
+    const parsedKey = (key === '_id' || key === 'id') ? 'id' : (key === 'userId' ? 'userid' : key);
+
+    if (parsedKey === 'id' && !isUUID(val)) {
         console.warn(`🛑 Skipping filter for non-UUID: ${key}=${val}`);
         q = q.eq('id', '00000000-0000-0000-0000-000000000000');
-      } else {
-        q = q.eq(key === '_id' ? 'id' : key, val);
-      }
-    } else if (key === '$or' && Array.isArray(val)) {
+        continue;
+    }
+
+    if (key === '$or' && Array.isArray(val)) {
       const orConditions = val.map(cond => {
         const [subKey, subValRaw] = Object.entries(cond)[0];
         const subVal = subValRaw instanceof Date ? subValRaw.toISOString() : subValRaw;
-        const parsedKey = subKey === '_id' || subKey === 'id' ? 'id' : subKey;
-        return `${parsedKey}.eq.${subVal}`;
+        const subParsedKey = subKey === '_id' || subKey === 'id' ? 'id' : (subKey === 'userId' ? 'userid' : subKey);
+        return `${subParsedKey}.eq.${subVal}`;
       }).join(',');
       q = q.or(orConditions);
-    } else if (val && typeof val === 'object' && !Array.isArray(val)) {
-      for (const [op, subValRaw] of Object.entries(val)) {
-        const subVal = subValRaw instanceof Date ? subValRaw.toISOString() : subValRaw;
-        const parsedKey = key === '_id' || key === 'id' ? 'id' : key;
+    } else if (val !== null && typeof val === 'object' && !(val instanceof Date) && !Array.isArray(val)) {
+      for (const [op, subVal] of Object.entries(val)) {
         if (op === '$gte') q = q.gte(parsedKey, subVal);
         else if (op === '$lte') q = q.lte(parsedKey, subVal);
         else if (op === '$gt') q = q.gt(parsedKey, subVal);
@@ -55,7 +54,7 @@ function parseFilter(q, queryObj) {
         else q = q.eq(parsedKey, subVal);
       }
     } else {
-      q = q.eq(key, val);
+      q = q.eq(parsedKey, val);
     }
   }
   return q;
@@ -98,8 +97,17 @@ function convertOutgoing(doc, tableName) {
     delete newDoc._id;
   }
   
-  // Mapping was causing 'column not found', so we revert to original behavior
-  // until the user confirms the exact column name in Supabase.
+  // Smart user_id normalization
+  if (newDoc.userId) {
+    if (tableName === 'scheduled_posts') {
+       // Based on FK error, this table likely needs userid or user_id
+       newDoc.userid = newDoc.userId;
+    } else {
+       newDoc.user_id = newDoc.userId;
+       newDoc.userid = newDoc.userId;
+    }
+    // We keep original userId too just in case
+  }
 
   if (tableName === 'campaigns') {
     if (newDoc.name && newDoc.response) {
