@@ -43,9 +43,9 @@ function parseFilter(q, queryObj, tableName) {
       }
       console.log(`   └─ Mapping userId -> ${parsedKey} for table ${tableName}`);
     } else if (key === 'createdAt') {
-      parsedKey = 'created_at';
+      parsedKey = (tableName === 'settings' || tableName === 'campaigns') ? 'createdAt' : 'created_at';
     } else if (key === 'updatedAt') {
-      parsedKey = 'updated_at';
+      parsedKey = (tableName === 'settings' || tableName === 'campaigns') ? 'updatedAt' : 'updated_at';
     }
 
     if (parsedKey === 'id' && !isUUID(val)) {
@@ -134,12 +134,14 @@ function convertOutgoing(doc, tableName) {
   }
 
   if (newDoc.createdAt) {
-    newDoc.created_at = newDoc.createdAt;
-    delete newDoc.createdAt;
+    const fieldName = (tableName === 'settings' || tableName === 'campaigns') ? 'createdAt' : 'created_at';
+    newDoc[fieldName] = newDoc.createdAt;
+    if (fieldName !== 'createdAt') delete newDoc.createdAt;
   }
   if (newDoc.updatedAt) {
-    newDoc.updated_at = newDoc.updatedAt;
-    delete newDoc.updatedAt;
+    const fieldName = (tableName === 'settings' || tableName === 'campaigns') ? 'updatedAt' : 'updated_at';
+    newDoc[fieldName] = newDoc.updatedAt;
+    if (fieldName !== 'updatedAt') delete newDoc.updatedAt;
   }
 
   if (tableName === 'campaigns') {
@@ -237,8 +239,8 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
         if (sortObj) {
           const [field, dir] = Object.entries(sortObj)[0];
           let parsedField = field;
-          if (field === 'createdAt') parsedField = 'created_at';
-          if (field === 'updatedAt') parsedField = 'updated_at';
+          if (field === 'createdAt') parsedField = (tableName === 'settings' || tableName === 'campaigns') ? 'createdAt' : 'created_at';
+          if (field === 'updatedAt') parsedField = (tableName === 'settings' || tableName === 'campaigns') ? 'updatedAt' : 'updated_at';
           if (field === 'userId') parsedField = (tableName === 'settings' || tableName === 'campaigns') ? 'userId' : 'user_id';
           
           console.log(`   └─ Sorting by: ${parsedField} (${dir === 1 ? 'asc' : 'desc'}) for table ${tableName}`);

@@ -267,31 +267,126 @@ export default function Scheduling() {
           padding: '100px 40px', 
           background: 'white', 
           borderRadius: '32px', 
-          border: '2px dashed #e2e8f0'
+          border: '2px dashed #e2e8f0',
+          animation: 'slideUp 0.6s ease-out'
         }}>
-          <Calendar size={40} color="#7c3aed" style={{ marginBottom: '24px' }} />
-          <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '12px' }}>Your schedule is empty</h3>
-          <p style={{ color: '#64748b', marginBottom: '32px' }}>Click 'New Schedule' to plan your first post.</p>
-          <button onClick={() => setShowCreate(true)} style={{ background: '#0f172a', color: 'white', padding: '12px 32px', borderRadius: '12px', fontWeight: '800', border: 'none', cursor: 'pointer' }}>Create Schedule</button>
+          <div style={{ width: '80px', height: '80px', background: '#f5f3ff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto' }}>
+            <Calendar size={40} color="#7c3aed" />
+          </div>
+          <h3 style={{ fontSize: '1.6rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '12px' }}>No content in the queue</h3>
+          <p style={{ color: '#64748b', marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px auto' }}>Plan your marketing strategy ahead of time. Schedule your first post now!</p>
+          <button 
+            onClick={() => setShowCreate(true)} 
+            style={{ 
+              background: '#0f172a', color: 'white', padding: '16px 40px', borderRadius: '16px', 
+              fontWeight: '800', border: 'none', cursor: 'pointer', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' 
+            }}
+          >
+            Start Scheduling
+          </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
           {posts.map(post => (
-            <div key={post._id} className="scheduling-card" style={{ background: 'white', borderRadius: '24px', overflow: 'hidden', border: '1px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-              <div style={{ height: '240px', background: '#f8fafc', position: 'relative' }}>
-                <img src={post.mediaUrl.startsWith('http') ? post.mediaUrl : `${API_BASE_URL}${post.mediaUrl}`} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                <div style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255,255,255,0.9)', color: '#1e1b4b', padding: '6px 12px', borderRadius: '10px', fontSize: '0.7rem', fontWeight: '800' }}>
-                   {(post.type || 'Image').toUpperCase()}
+            <div 
+              key={post._id} 
+              className="scheduling-card" 
+              style={{ 
+                background: 'white', borderRadius: '28px', overflow: 'hidden', 
+                border: '1px solid #f1f5f9', boxShadow: '0 10px 30px rgba(0,0,0,0.04)',
+                transition: 'all 0.3s ease',
+                position: 'relative'
+              }}
+            >
+              {/* Image Preview */}
+              <div style={{ height: '220px', background: '#f8fafc', position: 'relative' }}>
+                <img 
+                  src={post.mediaUrl && post.mediaUrl.startsWith('http') ? post.mediaUrl : (post.mediaUrl ? `${API_BASE_URL}${post.mediaUrl}` : '/placeholder-ig.png')} 
+                  alt="Preview" 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                />
+                
+                {/* Status Badge */}
+                <div style={{ 
+                  position: 'absolute', top: '16px', left: '16px', 
+                  background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(4px)',
+                  padding: '6px 14px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '6px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: post.status === 'Posted' ? '#10b981' : '#7c3aed' }}></div>
+                  <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#1e1b4b' }}>
+                    {post.status || 'SCHEDULED'}
+                  </span>
+                </div>
+
+                <div style={{ 
+                  position: 'absolute', top: '16px', right: '16px', 
+                  background: 'rgba(30, 27, 75, 0.7)', backdropFilter: 'blur(4px)',
+                  color: 'white', padding: '6px 12px', borderRadius: '10px', fontSize: '0.7rem', fontWeight: '800' 
+                }}>
+                   {(post.type || 'IMAGE').toUpperCase()}
                 </div>
               </div>
+
+              {/* Card Details */}
               <div style={{ padding: '24px' }}>
-                <p style={{ fontSize: '0.95rem', fontWeight: '500', color: '#1e293b', marginBottom: '16px' }}>{post.caption}</p>
-                <div style={{ padding: '12px', background: '#f5f3ff', borderRadius: '16px', marginBottom: '20px' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#7c3aed', fontWeight: '800' }}>KEYWORD: {post.triggerKeyword || 'NONE'}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', color: '#64748b' }}>
+                  <Calendar size={14} />
+                  <span style={{ fontSize: '0.85rem', fontWeight: '700' }}>
+                    {new Date(post.scheduledFor).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                  <span style={{ color: '#cbd5e1' }}>•</span>
+                  <Clock size={14} />
+                  <span style={{ fontSize: '0.85rem', fontWeight: '700' }}>
+                    {new Date(post.scheduledFor).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
                 </div>
-                <button onClick={() => deletePost(post._id)} style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #fee2e2', background: 'white', color: '#ef4444', fontWeight: '700', cursor: 'pointer' }}>
-                  <Trash2 size={16} /> Delete
-                </button>
+
+                <p style={{ 
+                  fontSize: '0.95rem', fontWeight: '600', color: '#1e293b', marginBottom: '20px',
+                  display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '2.8rem'
+                }}>
+                  {post.caption || 'No caption provided.'}
+                </p>
+
+                {post.triggerKeyword && (
+                   <div style={{ 
+                     padding: '12px 16px', background: '#f5f3ff', borderRadius: '16px', marginBottom: '24px',
+                     display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #ddd6fe'
+                   }}>
+                     <Zap size={16} color="#7c3aed" fill="#7c3aed" />
+                     <div style={{ overflow: 'hidden' }}>
+                        <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#7c3aed', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Auto-Responder Active</div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          "{post.triggerKeyword}" → "{post.autoResponse}"
+                        </div>
+                     </div>
+                   </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button 
+                    onClick={() => deletePost(post._id)} 
+                    style={{ 
+                      flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                      padding: '12px', borderRadius: '14px', border: '1.5px solid #fee2e2', 
+                      background: 'white', color: '#ef4444', fontWeight: '800', cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.target.style.background = '#fef2f2'}
+                    onMouseOut={(e) => e.target.style.background = 'white'}
+                  >
+                    <Trash2 size={16} /> Cancel
+                  </button>
+                  <button 
+                    style={{ 
+                      padding: '12px', borderRadius: '14px', border: '1.5px solid #e2e8f0', 
+                      background: 'white', color: '#64748b', cursor: 'pointer'
+                    }}
+                  >
+                    <Eye size={18} />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
