@@ -199,13 +199,17 @@ export default function Scheduling() {
         },
         body: formData
       });
+      const data = await res.json();
       if (res.ok) {
-        notify("Post scheduled successfully!", "success");
         setNewPost({ caption: '', scheduledFor: '', mediaUrl: '', triggerKeyword: '', autoResponse: '', coverUrl: '' });
         setSelectedFiles([]);
         setPreviews([]);
         setShowCreate(false);
         fetchPosts();
+
+        // New Success Flow
+        setCreatedPost(data);
+        setShowSuccess(true);
       } else {
         notify("Failed to schedule post", "error");
       }
@@ -215,6 +219,10 @@ export default function Scheduling() {
       setSubmitting(false);
     }
   };
+
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [createdPost, setCreatedPost] = useState(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const deletePost = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this scheduled post?")) return;
@@ -710,6 +718,157 @@ export default function Scheduling() {
           </div>
         </div>
       )}
+
+      {/* --- SUCCESS MODAL WITH ADVANCED AUTOMATION LINK --- */}
+      {showSuccess && createdPost && (
+        <div style={{ 
+          position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(12px)', 
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3000, padding: '20px' 
+        }}>
+          <div style={{ 
+            background: 'white', borderRadius: '32px', width: '100%', maxWidth: '450px', 
+            padding: '40px', textAlign: 'center', boxShadow: '0 50px 100px rgba(0,0,0,0.2)',
+            animation: 'scaleIn 0.3s ease-out'
+          }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+              <Check size={40} />
+            </div>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '12px' }}>Post Scheduled!</h2>
+            <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: '500', marginBottom: '32px' }}>
+              Your content is ready to go live on Instagram at the set time.
+            </p>
+
+            {/* Visual Preview Box */}
+            <div style={{ 
+              width: '100%', aspectRatio: '1/1', borderRadius: '24px', overflow: 'hidden', 
+              background: '#f8fafc', marginBottom: '32px', border: '1px solid #e2e8f0' 
+            }}>
+               <img 
+                 src={previews[0] || '/placeholder-ig.png'} 
+                 alt="Scheduled" 
+                 style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+               />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button 
+                onClick={() => setShowSuccess(false)}
+                style={{ width: '100%', padding: '16px', borderRadius: '16px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)' }}
+              >
+                Done
+              </button>
+              
+              <button 
+                onClick={() => { setShowSuccess(false); setShowAdvanced(true); }}
+                style={{ 
+                  width: '100%', padding: '16px', borderRadius: '16px', background: '#f5f3ff', 
+                  color: '#7c3aed', border: 'none', fontWeight: '800', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                }}
+              >
+                <Zap size={18} /> Advanced Automation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- ADVANCED AUTOMATION EDITOR (SIDE DRAWER/MODAL) --- */}
+      {showAdvanced && createdPost && (
+        <div style={{ 
+          position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(10px)', 
+          display: 'flex', alignItems: 'center', justifyContent: 'flex-end', zIndex: 4000 
+        }}>
+          <div style={{ 
+            background: 'white', width: '100%', maxWidth: '600px', height: '100vh', 
+            padding: '40px', boxShadow: '-20px 0 60px rgba(0,0,0,0.1)', overflowY: 'auto',
+            animation: 'slideInRight 0.4s ease-out'
+          }}>
+             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+                <h3 style={{ fontSize: '1.6rem', fontWeight: '900', color: '#1e1b4b' }}>
+                  Advanced <span style={{ color: '#7c3aed' }}>Automation</span>
+                </h3>
+                <button onClick={() => setShowAdvanced(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+                  <X size={24} />
+                </button>
+             </div>
+
+             <div style={{ 
+                padding: '24px', background: '#f8fafc', borderRadius: '24px', border: '1.5px solid #e2e8f0',
+                display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '40px'
+             }}>
+                <div style={{ width: '80px', height: '80px', borderRadius: '16px', overflow: 'hidden', background: '#e2e8f0', flexShrink: 0 }}>
+                   <img src={previews[0] || '/placeholder-ig.png'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div>
+                   <div style={{ fontSize: '0.7rem', fontWeight: '800', color: '#7c3aed', textTransform: 'uppercase', marginBottom: '4px' }}>Targeting This Post</div>
+                   <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#1e1b4b', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {createdPost.caption || 'Scheduled Content'}
+                   </div>
+                </div>
+             </div>
+
+             <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+                <div>
+                   <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '800', color: '#475569', marginBottom: '12px' }}>Trigger Keywords</label>
+                   <input 
+                     type="text" 
+                     placeholder="e.g. READY, PRICE, LINK (Separate with commas)"
+                     value={createdPost.triggerKeyword || ''}
+                     onChange={(e) => setCreatedPost({...createdPost, triggerKeyword: e.target.value})}
+                     style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem' }}
+                   />
+                </div>
+
+                <div>
+                   <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '800', color: '#475569', marginBottom: '12px' }}>Auto Response Message</label>
+                   <textarea 
+                     placeholder="What should the bot say when the keyword is detected?"
+                     value={createdPost.autoResponse || ''}
+                     onChange={(e) => setCreatedPost({...createdPost, autoResponse: e.target.value})}
+                     style={{ width: '100%', height: '120px', padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem', resize: 'none' }}
+                   />
+                </div>
+
+                <div style={{ padding: '24px', background: '#f1f5f9', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                   <div>
+                      <div style={{ fontWeight: '800', color: '#1e1b4b', marginBottom: '4px' }}>Follower Check</div>
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Only reply if they follow you</div>
+                   </div>
+                   <div 
+                    onClick={() => setCreatedPost({...createdPost, requireFollow: !createdPost.requireFollow})}
+                    style={{ 
+                      width: '50px', height: '26px', borderRadius: '13px', background: createdPost.requireFollow ? '#7c3aed' : '#cbd5e1', 
+                      position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
+                    }}>
+                      <div style={{ 
+                        position: 'absolute', top: '3px', left: createdPost.requireFollow ? '27px' : '3px', 
+                        width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'all 0.3s' 
+                      }} />
+                   </div>
+                </div>
+
+                <button 
+                  onClick={async () => {
+                    // Update the scheduled post with advanced settings
+                    const token = localStorage.getItem('insta_agent_token');
+                    await fetch(`${API_BASE_URL}/api/scheduling/${createdPost._id || createdPost.id}`, {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                      body: JSON.stringify(createdPost)
+                    });
+                    setShowAdvanced(false);
+                    notify("Advanced Automation Saved!", "success");
+                    fetchPosts();
+                  }}
+                  style={{ width: '100%', padding: '18px', borderRadius: '18px', background: '#1e1b4b', color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', marginTop: '20px' }}
+                >
+                  Save Advanced Settings
+                </button>
+             </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
