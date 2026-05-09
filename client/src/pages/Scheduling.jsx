@@ -41,6 +41,7 @@ export default function Scheduling() {
   const [showCreate, setShowCreate] = useState(false); // Modal state
   const [submitting, setSubmitting] = useState(false);
   const { notify } = useNotification();
+  const [settings, setSettings] = useState(null);
 
   // Caption State
   const [savedCaptions, setSavedCaptions] = useState([]);
@@ -64,7 +65,21 @@ export default function Scheduling() {
   useEffect(() => {
     fetchPosts();
     fetchCaptions();
+    fetchSettings();
   }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/settings`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data) setSettings(data);
+    } catch (err) {
+      console.error("Error fetching settings:", err);
+    }
+  };
 
   const fetchPosts = async () => {
     const token = localStorage.getItem('insta_agent_token');
@@ -514,7 +529,9 @@ export default function Scheduling() {
                           {user?.username?.charAt(0).toUpperCase()}
                         </div>
                       )}
-                      <div style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b' }}>{user?.username || 'instagram_user'}</div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b' }}>
+                        {settings?.connectedFacebookName || user?.username || 'instagram_user'}
+                      </div>
                     </div>
                     <div style={{ width: '100%', aspectRatio: (postType === 'reel' || postType === 'story') ? '9/16' : '1/1', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {previews.length > 0 ? (
