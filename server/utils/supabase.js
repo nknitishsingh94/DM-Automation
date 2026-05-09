@@ -66,6 +66,9 @@ function convertIncoming(doc, tableName) {
   if (doc.id) {
     newDoc._id = doc.id;
   }
+  // Universal mapping for incoming data
+  if (doc.user_id) newDoc.userId = doc.user_id;
+  if (doc.userid) newDoc.userId = doc.userid;
 
   ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost', 'isUniversal'].forEach(field => {
     if (newDoc[field] !== undefined && newDoc[field] !== null) {
@@ -97,11 +100,16 @@ function convertOutgoing(doc, tableName) {
     delete newDoc._id;
   }
   
-  // Clean mapping: only use userId if it exists in the table.
-  // We will handle specific table mismatches here if they arise.
-  if (tableName === 'captions' || tableName === 'scheduled_posts') {
-    if (newDoc.userId) {
-      newDoc.userId = newDoc.userId;
+  // Universal mapping for outgoing data
+  if (newDoc.userId) {
+    const uid = newDoc.userId;
+    if (tableName === 'settings' || tableName === 'campaigns') {
+      // These tables usually use userId (camelCase)
+      newDoc.userId = uid;
+    } else {
+      // Other tables might need snake_case
+      newDoc.user_id = uid;
+      newDoc.userid = uid;
     }
   }
 
