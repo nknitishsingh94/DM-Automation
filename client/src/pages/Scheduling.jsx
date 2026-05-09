@@ -349,35 +349,55 @@ export default function Scheduling() {
                     </div>
                   </div>
 
-                  {/* Automation Section */}
-                  <div style={{ background: '#f5f3ff', padding: '24px', borderRadius: '24px', border: '1px solid #ddd6fe' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', color: '#7c3aed' }}>
-                      <Sparkles size={18} fill="#7c3aed" />
-                      <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Configure Auto DM</h4>
+                  {/* Automation Section (Hidden for Story) */}
+                  {postType !== 'story' && (
+                    <div style={{ background: '#f5f3ff', padding: '24px', borderRadius: '24px', border: '1px solid #ddd6fe' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', color: '#7c3aed' }}>
+                        <Sparkles size={18} fill="#7c3aed" />
+                        <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Configure Auto DM</h4>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>Trigger Keyword</label>
+                          <input 
+                            type="text" 
+                            value={newPost.triggerKeyword} 
+                            onChange={e => setNewPost({...newPost, triggerKeyword: e.target.value})}
+                            placeholder="e.g. PRICE"
+                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>DM Response</label>
+                          <input 
+                            type="text" 
+                            value={newPost.autoResponse} 
+                            onChange={e => setNewPost({...newPost, autoResponse: e.target.value})}
+                            placeholder="Hey, check your DM!"
+                            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none' }}
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>Trigger Keyword</label>
-                        <input 
-                          type="text" 
-                          value={newPost.triggerKeyword} 
-                          onChange={e => setNewPost({...newPost, triggerKeyword: e.target.value})}
-                          placeholder="e.g. PRICE"
-                          style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none' }}
-                        />
+                  )}
+
+                  {/* Story Info Box */}
+                  {postType === 'story' && (
+                    <div style={{ background: '#ecf9ff', padding: '20px', borderRadius: '20px', border: '1px solid #bae6fd', display: 'flex', gap: '16px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#0ea5e9', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <AlertCircle size={16} />
                       </div>
                       <div>
-                        <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>DM Response</label>
-                        <input 
-                          type="text" 
-                          value={newPost.autoResponse} 
-                          onChange={e => setNewPost({...newPost, autoResponse: e.target.value})}
-                          placeholder="Hey, check your DM!"
-                          style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none' }}
-                        />
+                        <h4 style={{ margin: '0 0 4px 0', fontSize: '0.9rem', fontWeight: '800', color: '#0369a1' }}>Story Upload</h4>
+                        <p style={{ margin: 0, fontSize: '0.8rem', color: '#0369a1', lineHeight: '1.5' }}>
+                          Upload an image or video for your story. No caption needed. Stickers and links are not supported via scheduling platforms.
+                        </p>
+                        <p style={{ margin: '8px 0 0 0', fontSize: '0.8rem', fontWeight: '700', color: '#0369a1' }}>
+                          💡 Quick Tip: Use Canva to add music, stickers, and text to your stories before uploading!
+                        </p>
                       </div>
                     </div>
-                  </div>
+                  )}
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
                     {/* Schedule Time */}
@@ -393,24 +413,26 @@ export default function Scheduling() {
                     </div>
                   </div>
 
-                  {/* Caption Section */}
-                  <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                      <label style={{ fontSize: '0.85rem', fontWeight: '800', color: '#64748b' }}>Caption</label>
-                      <div style={{ display: 'flex', gap: '16px' }}>
-                        <button onClick={() => setShowCaptionsModal(true)} type="button" style={{ fontSize: '0.8rem', color: '#7c3aed', fontWeight: '700', border: 'none', background: 'none', cursor: 'pointer' }}>
-                          Saved Captions
-                        </button>
+                  {/* Caption Section (Hidden for Story) */}
+                  {postType !== 'story' && (
+                    <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                        <label style={{ fontSize: '0.85rem', fontWeight: '800', color: '#64748b' }}>Caption</label>
+                        <div style={{ display: 'flex', gap: '16px' }}>
+                          <button onClick={() => setShowCaptionsModal(true)} type="button" style={{ fontSize: '0.8rem', color: '#7c3aed', fontWeight: '700', border: 'none', background: 'none', cursor: 'pointer' }}>
+                            Saved Captions
+                          </button>
+                        </div>
                       </div>
+                      <textarea 
+                        value={newPost.caption} 
+                        onChange={e => setNewPost({...newPost, caption: e.target.value})}
+                        placeholder="Write your caption..."
+                        style={{ width: '100%', height: '100px', padding: '16px', borderRadius: '14px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', resize: 'none' }}
+                        required
+                      />
                     </div>
-                    <textarea 
-                      value={newPost.caption} 
-                      onChange={e => setNewPost({...newPost, caption: e.target.value})}
-                      placeholder="Write your caption..."
-                      style={{ width: '100%', height: '100px', padding: '16px', borderRadius: '14px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', resize: 'none' }}
-                      required
-                    />
-                  </div>
+                  )}
 
                   {/* Upload Area */}
                   <div style={{ 
@@ -439,7 +461,9 @@ export default function Scheduling() {
                     ) : (
                       <>
                         <UploadCloud size={32} color="#7c3aed" style={{ marginBottom: '12px' }} />
-                        <p style={{ fontSize: '0.9rem', fontWeight: '700' }}>Click to upload media</p>
+                        <p style={{ fontSize: '0.9rem', fontWeight: '700' }}>
+                          {postType === 'story' ? 'Click or drag to upload image or video for story' : 'Click to upload media'}
+                        </p>
                       </>
                     )}
                   </div>
