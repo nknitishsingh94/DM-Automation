@@ -251,6 +251,20 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
   ModelInstance.findByIdAndUpdate = async function (id, updateData, options = {}) {
     if (!supabase || !id) return null;
     let finalUpdate = { ...updateData };
+    
+    // Handle MongoDB operators
+    if (updateData.$set) {
+      finalUpdate = { ...finalUpdate, ...updateData.$set };
+      delete finalUpdate.$set;
+    }
+    
+    if (updateData.$unset) {
+      for (const key of Object.keys(updateData.$unset)) {
+        finalUpdate[key] = null;
+      }
+      delete finalUpdate.$unset;
+    }
+    
     const existing = await ModelInstance.findById(id);
     if (existing) {
       if (updateData.$inc) {
@@ -279,6 +293,20 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     const existing = data && data.length > 0 ? data[0] : null;
 
     let finalUpdate = { ...updateData };
+    
+    // Handle MongoDB operators
+    if (updateData.$set) {
+      finalUpdate = { ...finalUpdate, ...updateData.$set };
+      delete finalUpdate.$set;
+    }
+    
+    if (updateData.$unset) {
+      for (const key of Object.keys(updateData.$unset)) {
+        finalUpdate[key] = null;
+      }
+      delete finalUpdate.$unset;
+    }
+
     if (existing) {
       if (updateData.$inc) {
         for (const [key, val] of Object.entries(updateData.$inc)) {
