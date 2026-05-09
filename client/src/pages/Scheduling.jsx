@@ -305,12 +305,13 @@ export default function Scheduling() {
 
             {/* Upload Area */}
             <div style={{ 
-              background: 'white', padding: '40px', borderRadius: '24px', border: '2px dashed #e2e8f0', 
-              textAlign: 'center', cursor: 'pointer', transition: 'border-color 0.2s'
+              background: 'white', padding: previews.length > 0 ? '12px' : '40px', borderRadius: '24px', border: '2px dashed #e2e8f0', 
+              textAlign: 'center', cursor: previews.length > 0 ? 'default' : 'pointer', transition: 'border-color 0.2s',
+              minHeight: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
             }} 
-            onClick={() => fileInputRef.current.click()}
-            onMouseEnter={(e) => e.currentTarget.style.borderColor = '#7c3aed'} 
-            onMouseLeave={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}>
+            onClick={() => previews.length === 0 && fileInputRef.current.click()}
+            onMouseEnter={(e) => previews.length === 0 && (e.currentTarget.style.borderColor = '#7c3aed')} 
+            onMouseLeave={(e) => previews.length === 0 && (e.currentTarget.style.borderColor = '#e2e8f0')}>
               <input 
                 type="file" 
                 ref={fileInputRef}
@@ -319,15 +320,47 @@ export default function Scheduling() {
                 accept={postType === 'reel' ? 'video/*' : 'image/*,video/*'}
                 onChange={handleFileChange}
               />
-              <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                <UploadCloud size={24} />
-              </div>
-              <p style={{ fontSize: '0.95rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '4px' }}>
-                {selectedFiles.length > 0 ? `${selectedFiles.length} file(s) selected` : 'Click or drag to upload'}
-              </p>
-              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                {postType === 'reel' ? 'MP4 video supported (Max 10MB)' : 'JPG, PNG, MP4 supported (Max 10MB)'}
-              </p>
+              
+              {previews.length > 0 ? (
+                <div style={{ width: '100%', position: 'relative' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '12px', padding: '12px' }}>
+                    {previews.map((src, idx) => (
+                      <div key={idx} style={{ aspectRatio: '1/1', borderRadius: '12px', overflow: 'hidden', position: 'relative', border: '1px solid #f1f5f9' }}>
+                         {selectedFiles[idx]?.type.startsWith('video') ? (
+                           <video src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                         ) : (
+                           <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                         )}
+                      </div>
+                    ))}
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); fileInputRef.current.click(); }}
+                      style={{ aspectRatio: '1/1', borderRadius: '12px', border: '2px dashed #e2e8f0', background: '#f8fafc', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#64748b', cursor: 'pointer', gap: '4px' }}
+                    >
+                      <Plus size={20} />
+                      <span style={{ fontSize: '0.7rem', fontWeight: '700' }}>Add More</span>
+                    </button>
+                  </div>
+                  <div style={{ padding: '12px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'center', gap: '12px' }}>
+                     <button 
+                       onClick={(e) => { e.stopPropagation(); setSelectedFiles([]); setPreviews([]); }}
+                       style={{ padding: '8px 16px', borderRadius: '8px', background: '#fee2e2', color: '#ef4444', border: 'none', fontSize: '0.8rem', fontWeight: '700', cursor: 'pointer' }}
+                     >
+                       Remove All
+                     </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                    <UploadCloud size={24} />
+                  </div>
+                  <p style={{ fontSize: '0.95rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '4px' }}>Click or drag to upload</p>
+                  <p style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                    {postType === 'reel' ? 'MP4 video supported (Max 10MB)' : 'JPG, PNG, MP4 supported (Max 10MB)'}
+                  </p>
+                </>
+              )}
             </div>
 
             {/* Automation Settings */}
