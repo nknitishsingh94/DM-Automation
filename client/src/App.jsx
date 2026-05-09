@@ -197,10 +197,6 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>AI Studio</span>
               <span className="sidebar-badge badge-new">NEW</span>
             </NavLink>
-            <NavLink to="/campaigns" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Zap size={18} />
-              <span>Automations</span>
-            </NavLink>
             <NavLink to="/scheduling" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Calendar size={18} />
               <span>Scheduling</span>
@@ -213,15 +209,6 @@ function Sidebar({ isMobileOpen, onClose }) {
             <NavLink to="/audiences" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Users size={18} />
               <span>Contacts</span>
-            </NavLink>
-            <NavLink to="/broadcasts" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Megaphone size={18} />
-              <span>Broadcasts</span>
-            </NavLink>
-            <NavLink to="/flow-builder/new" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Zap size={18} />
-              <span>Visual Flows</span>
-              <span className="sidebar-badge badge-new">PRO</span>
             </NavLink>
             <NavLink to="/upgrade" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <CreditCard size={18} />

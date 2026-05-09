@@ -201,15 +201,12 @@ export default function Scheduling() {
       });
       const data = await res.json();
       if (res.ok) {
-        setNewPost({ caption: '', scheduledFor: '', mediaUrl: '', triggerKeyword: '', autoResponse: '', coverUrl: '' });
-        setSelectedFiles([]);
-        setPreviews([]);
-        setShowCreate(false);
-        fetchPosts();
-
-        // New Success Flow
         setCreatedPost(data);
         setShowSuccess(true);
+        
+        // Reset form but DO NOT clear previews yet so the Success Modal can show them
+        setNewPost({ caption: '', scheduledFor: '', mediaUrl: '', triggerKeyword: '', autoResponse: '', coverUrl: '' });
+        setSelectedFiles([]);
       } else {
         notify("Failed to schedule post", "error");
       }
@@ -684,7 +681,7 @@ export default function Scheduling() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <button 
-                onClick={() => setShowSuccess(false)}
+                onClick={() => { setShowSuccess(false); setPreviews([]); }}
                 style={{ width: '100%', padding: '16px', borderRadius: '16px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)' }}
               >
                 Done
