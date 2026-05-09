@@ -413,8 +413,9 @@ export default function Scheduling() {
                   </button>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          );
+        })}
         </div>
       )}
 
