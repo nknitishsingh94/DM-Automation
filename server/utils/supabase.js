@@ -67,6 +67,9 @@ function convertIncoming(doc, tableName) {
   if (doc.id) {
     newDoc._id = doc.id;
   }
+  if (doc.user_id) {
+    newDoc.userId = doc.user_id;
+  }
   ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost', 'isUniversal'].forEach(field => {
     if (newDoc[field] !== undefined && newDoc[field] !== null) {
       if (typeof newDoc[field] === 'string') {
@@ -95,6 +98,10 @@ function convertOutgoing(doc, tableName) {
   if (newDoc._id) {
     newDoc.id = newDoc._id;
     delete newDoc._id;
+  }
+  if (newDoc.userId) {
+    newDoc.user_id = newDoc.userId;
+    delete newDoc.userId;
   }
   if (tableName === 'campaigns') {
     if (newDoc.name && newDoc.response) {
