@@ -236,7 +236,12 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
       sort: function (sortObj) {
         if (sortObj) {
           const [field, dir] = Object.entries(sortObj)[0];
-          q = q.order(field, { ascending: dir === 1 });
+          let parsedField = field;
+          if (field === 'createdAt') parsedField = 'created_at';
+          if (field === 'updatedAt') parsedField = 'updated_at';
+          if (field === 'userId') parsedField = (tableName === 'settings' || tableName === 'campaigns') ? 'userId' : 'user_id';
+          
+          q = q.order(parsedField, { ascending: dir === 1 });
         }
         return this;
       },
