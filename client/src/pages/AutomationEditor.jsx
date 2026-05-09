@@ -596,9 +596,25 @@ export default function AutomationEditor() {
                 </div>
               <div style={{ padding: '20px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
                 {template === 'stories' ? (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100px', background: '#e2e8f0', borderRadius: '12px', fontWeight: '800', color: '#475569', fontSize: '1.2rem', border: '2px dashed #cbd5e1' }}>
-                    Story
-                  </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100px', background: '#e2e8f0', borderRadius: '12px', fontWeight: '800', color: '#475569', fontSize: '1.2rem', border: '2px dashed #cbd5e1' }}>
+                        Story Mode Active
+                      </div>
+                      <a 
+                        href="https://www.canva.com/templates/?query=instagram%20story" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ 
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', 
+                          padding: '12px', borderRadius: '12px', background: '#00c4cc', color: 'white', 
+                          fontWeight: '800', textDecoration: 'none', transition: 'all 0.3s', boxShadow: '0 4px 12px rgba(0, 196, 204, 0.2)'
+                        }}
+                        onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                        onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
+                      >
+                        🎨 Open Canva Story Templates
+                      </a>
+                    </div>
                 ) : (
                   <>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
