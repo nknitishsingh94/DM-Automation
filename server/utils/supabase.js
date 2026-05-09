@@ -67,7 +67,9 @@ function convertIncoming(doc, tableName) {
   if (doc.id) {
     newDoc._id = doc.id;
   }
-  // Remove user_id mapping as it caused 'column not found'
+  if (doc.user_id) {
+    newDoc.userId = doc.user_id;
+  }
 
   ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost', 'isUniversal'].forEach(field => {
     if (newDoc[field] !== undefined && newDoc[field] !== null) {
@@ -98,7 +100,10 @@ function convertOutgoing(doc, tableName) {
     newDoc.id = newDoc._id;
     delete newDoc._id;
   }
-  // Remove user_id mapping as it caused 'column not found'
+  if (newDoc.userId) {
+    newDoc.user_id = newDoc.userId;
+    delete newDoc.userId;
+  }
 
   if (tableName === 'campaigns') {
     if (newDoc.name && newDoc.response) {
