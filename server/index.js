@@ -1188,8 +1188,14 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
     delete postData.carouselItems;
 
     const newPost = new ScheduledPost(postData);
-    await newPost.save();
-    res.json(newPost);
+    try {
+      await newPost.save();
+      res.json(newPost);
+    } catch (saveErr) {
+      console.error('❌ SUPABASE SAVE ERROR (ScheduledPost):', JSON.stringify(saveErr, null, 2));
+      console.error('📦 Payload sent:', JSON.stringify(postData, null, 2));
+      throw saveErr;
+    }
   } catch (err) {
     console.error('❌ SCHEDULING ERROR:', err.message);
     res.status(500).json({ error: 'Failed to schedule: ' + err.message });
