@@ -760,24 +760,8 @@ export default function Scheduling() {
             </div>
             <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '8px' }}>Post Scheduled!</h2>
             <p style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: '500', marginBottom: '24px' }}>
-              Content is ready to go live on Instagram.
+              Your content is ready to go live on Instagram. Now, set up your marketing automation!
             </p>
-
-            {/* Visual Preview Box (Smaller) */}
-            <div style={{ 
-              width: '100%', aspectRatio: '1/1', borderRadius: '20px', overflow: 'hidden', 
-              background: '#f8fafc', marginBottom: '24px', border: '1px solid #e2e8f0' 
-            }}>
-               {selectedFiles[0]?.type?.startsWith('video') ? (
-                 <video src={previews[0]} muted autoPlay loop style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-               ) : (
-                 <img 
-                   src={previews[0] || '/placeholder-ig.png'} 
-                   alt="Scheduled" 
-                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                 />
-               )}
-            </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button 
