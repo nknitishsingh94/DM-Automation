@@ -511,7 +511,7 @@ export default function Scheduling() {
                     <div style={{ width: '100%', aspectRatio: (postType === 'reel' || postType === 'story') ? '9/16' : '1/1', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {previews.length > 0 ? (
                         selectedFiles[0]?.type.startsWith('video') ? (
-                          <video src={previews[0]} autoPlay muted loop style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <video src={previews[0]} autoPlay loop controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
                           <img src={previews[0]} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         )
