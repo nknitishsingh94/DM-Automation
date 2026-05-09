@@ -21,6 +21,10 @@ const isUUID = (str) => {
 
 function parseFilter(q, queryObj, tableName) {
   if (!queryObj) return q;
+  
+  if (tableName) {
+    console.log(`🔍 [Supabase Query] Table: ${tableName}, Filter Keys: ${Object.keys(queryObj).join(', ')}`);
+  }
 
   for (const [key, v] of Object.entries(queryObj)) {
     let val = v;
@@ -32,11 +36,12 @@ function parseFilter(q, queryObj, tableName) {
     
     // Per-table mapping based on verified schema
     if (key === 'userId') {
-      if (tableName === 'captions' || tableName === 'messages' || tableName === 'contacts') {
-        parsedKey = 'user_id';
+      if (tableName === 'settings' || tableName === 'campaigns') {
+        parsedKey = 'userId';
       } else {
-        parsedKey = 'userId'; // Settings, Campaigns, ScheduledPosts use CamelCase
+        parsedKey = 'user_id';
       }
+      console.log(`   └─ Mapping userId -> ${parsedKey} for table ${tableName}`);
     } else if (key === 'createdAt') {
       parsedKey = 'created_at';
     } else if (key === 'updatedAt') {
@@ -411,7 +416,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
   ModelInstance.countDocuments = async function (query) {
     if (!supabase) return 0;
     let q = supabase.from(tableName).select('*', { count: 'exact', head: true });
-    q = parseFilter(q, query);
+    q = parseFilter(q, query, tableName);
     const { count, error } = await q;
     if (error) throw error;
     return count || 0;
@@ -420,7 +425,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
   ModelInstance.distinct = async function (field, query) {
     if (!supabase) return [];
     let q = supabase.from(tableName).select(field);
-    q = parseFilter(q, query);
+    q = parseFilter(q, query, tableName);
     const { data, error } = await q;
     if (error) throw error;
     return [...new Set((data || []).map(item => item[field]))];
@@ -431,7 +436,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     let q = supabase.from(tableName).select('*');
     const matchStage = pipeline.find(p => p.$match);
     if (matchStage) {
-      q = parseFilter(q, matchStage.$match);
+      q = parseFilter(q, matchStage.$match, tableName);
     }
     const { data, error } = await q;
     if (error) throw error;
