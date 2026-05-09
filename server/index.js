@@ -1179,7 +1179,6 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
     const postData = {
       ...req.body,
       userId: req.user.userId,
-      user_id: req.user.userId, // Fallback for snake_case constraints
       mediaUrl: finalMediaUrl,
       status: 'Scheduled'
     };
@@ -1188,7 +1187,13 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
     delete postData.type;
     delete postData.carouselItems;
 
-    console.log(`📡 Attempting to schedule post for user: ${req.user.userId}`);
+    console.log(`📡 Checking user existence for: ${req.user.userId}`);
+    const userExists = await User.findById(req.user.userId);
+    if (!userExists) {
+      console.error(`❌ USER NOT FOUND IN DATABASE: ${req.user.userId}. This will cause a foreign key error.`);
+    } else {
+      console.log(`✅ User verified in database: ${userExists.username || userExists.email}`);
+    }
 
     const newPost = new ScheduledPost(postData);
     try {

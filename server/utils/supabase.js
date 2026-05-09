@@ -97,16 +97,12 @@ function convertOutgoing(doc, tableName) {
     delete newDoc._id;
   }
   
-  // Smart user_id normalization
-  if (newDoc.userId) {
-    if (tableName === 'scheduled_posts') {
-       // Based on FK error, this table likely needs userid or user_id
-       newDoc.userid = newDoc.userId;
-    } else {
-       newDoc.user_id = newDoc.userId;
-       newDoc.userid = newDoc.userId;
+  // Clean mapping: only use userId if it exists in the table.
+  // We will handle specific table mismatches here if they arise.
+  if (tableName === 'captions' || tableName === 'scheduled_posts') {
+    if (newDoc.userId) {
+      newDoc.userId = newDoc.userId;
     }
-    // We keep original userId too just in case
   }
 
   if (tableName === 'campaigns') {
