@@ -645,7 +645,6 @@ export default function Scheduling() {
                                     src={previews[currentPreviewIndex]} 
                                     autoPlay 
                                     loop 
-                                    muted={isPreviewMuted} 
                                     playsInline
                                     style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'contain' : 'cover', background: '#000' }} 
                                   />
