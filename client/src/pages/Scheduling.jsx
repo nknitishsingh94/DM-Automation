@@ -418,7 +418,7 @@ export default function Scheduling() {
                           Upload an image or video for your story. No caption needed. Stickers and links are not supported via scheduling platforms.
                         </p>
                         <p style={{ margin: '8px 0 0 0', fontSize: '0.8rem', fontWeight: '700', color: '#0369a1' }}>
-                          💡 Quick Tip: Use <a href="https://www.canva.com/instagram-stories/templates/" target="_blank" rel="noopener noreferrer" style={{ color: '#0ea5e9', textDecoration: 'underline' }}>Canva</a> to add music, stickers, and text to your stories before uploading!
+                          💡 Quick Tip: Use <a href="https://www.canva.com/templates/" target="_blank" rel="noopener noreferrer" style={{ color: '#0ea5e9', textDecoration: 'underline' }}>Canva</a> to add music, stickers, and text to your stories before uploading!
                         </p>
                       </div>
                     </div>
