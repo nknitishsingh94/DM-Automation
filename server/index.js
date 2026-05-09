@@ -1208,6 +1208,7 @@ app.get('/api/captions', verifyToken, async (req, res) => {
     const captions = await Caption.find({ userId: req.user.userId }).sort({ createdAt: -1 });
     res.json(captions);
   } catch (err) {
+    console.error('❌ CAPTIONS FETCH ERROR:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
