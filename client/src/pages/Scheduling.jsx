@@ -633,13 +633,23 @@ export default function Scheduling() {
                       {previews.length > 0 ? (
                         <>
                           {/* Main Media Display */}
-                          <div style={{ width: '100%', height: '100%' }}>
-                            {previews[currentPreviewIndex] && (
+                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {previews[currentPreviewIndex] ? (
                               selectedFiles[currentPreviewIndex]?.type?.startsWith('video') ? (
-                                <video key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <video 
+                                  key={previews[currentPreviewIndex]} 
+                                  src={previews[currentPreviewIndex]} 
+                                  autoPlay 
+                                  loop 
+                                  muted 
+                                  playsInline
+                                  style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'contain' : 'cover', background: '#000' }} 
+                                />
                               ) : (
-                                <img key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <img key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'contain' : 'cover', background: '#f8fafc' }} />
                               )
+                            ) : (
+                               <ImageIcon size={48} color="#cbd5e1" />
                             )}
                           </div>
 
