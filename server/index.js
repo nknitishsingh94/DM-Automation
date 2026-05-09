@@ -8,6 +8,13 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+import mongoose from 'mongoose';
+if (process.env.MONGODB_URL) {
+  mongoose.connect(process.env.MONGODB_URL)
+    .then(() => console.log('🍃 MongoDB Connected (Captions Storage)'))
+    .catch(err => console.error('❌ MongoDB Connection Error:', err));
+}
+
 // --- GLOBAL STABILITY GUARD ---
 // Prevents the server from crashing on unhandled errors
 process.on('unhandledRejection', (reason, promise) => {
@@ -1059,25 +1066,38 @@ app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
 app.get('/api/scheduling', verifyToken, async (req, res) => {
   try {
     const posts = await ScheduledPost.find({ userId: req.user.userId }).sort({ scheduledFor: 1 });
-    res.json(posts);
+    // Handle serialized carousel items
+    const processedPosts = posts.map(post => {
+      const p = post.toObject ? post.toObject() : { ...post };
+      if (p.mediaUrl && p.mediaUrl.startsWith('[')) {
+        try {
+          p.carouselItems = JSON.parse(p.mediaUrl);
+          p.mediaUrl = p.carouselItems[0];
+        } catch (e) {
+          p.carouselItems = [];
+        }
+      }
+      return p;
+    });
+    res.json(processedPosts);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-});
-
 app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, res) => {
   try {
     const mediaFiles = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
-    const mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
-    const carouselItems = mediaFiles;
-
-    const newPost = new ScheduledPost({
+    let mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
+    if (mediaFiles.length > 1) {
+      mediaUrl = JSON.stringify(mediaFiles);
+    }
+    const postData = {
       ...req.body,
       userId: req.user.userId,
       mediaUrl: mediaUrl,
-      carouselItems: carouselItems,
       status: 'Scheduled'
-    });
+    };
+    delete postData.carouselItems;
+    const newPost = new ScheduledPost(postData);
     await newPost.save();
     res.json(newPost);
   } catch (err) {
@@ -1566,8 +1586,19 @@ setInterval(async () => {
     });
 
     for (const post of duePosts) {
-      console.log(`⏰ Processing Scheduled Post: ${post._id}`);
-      await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Processing' });
+      console.log(`⏰ Processing Scheduled Post: ${post._id || post.id}`);
+      
+      // Deserialize mediaUrl if it's a JSON array
+      let finalMedia = post.mediaUrl;
+      let finalCarousel = [];
+      if (post.mediaUrl && post.mediaUrl.startsWith('[')) {
+        try {
+          finalCarousel = JSON.parse(post.mediaUrl);
+          finalMedia = finalCarousel[0];
+        } catch (e) {}
+      }
+
+      await ScheduledPost.findByIdAndUpdate(post._id || post.id, { status: 'Processing' });
 
       try {
         // Mocking real Instagram Media Post API call here
