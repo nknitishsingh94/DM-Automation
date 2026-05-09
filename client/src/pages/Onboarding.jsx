@@ -13,11 +13,11 @@ const styles = `
   .channel-pill {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 18px 28px;
+    gap: 12px;
+    padding: 14px 20px;
     background: #ffffff;
     border: 1px solid #f1f5f9;
-    border-radius: 20px;
+    border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -27,9 +27,23 @@ const styles = `
   }
 
   .channel-pill:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
     border-color: #e2e8f0;
+  }
+
+  @media (max-width: 640px) {
+    .onboarding-title {
+      font-size: 2.2rem !important;
+      letter-spacing: -1px !important;
+    }
+    .onboarding-container {
+      padding: 16px !important;
+    }
+    .onboarding-card {
+      padding: 24px !important;
+      border-radius: 20px !important;
+    }
   }
 `;
 
@@ -145,8 +159,8 @@ export default function Onboarding() {
       <style>{styles}</style>
       
       {metaConnected ? (
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '24px', fontFamily: "'Inter', sans-serif" }}>
-          <div style={{ maxWidth: '480px', width: '100%', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '28px', padding: '40px', boxShadow: '0 24px 64px rgba(0,0,0,0.06)', animation: 'onboardingFadeIn 0.5s ease-out both', textAlign: 'center' }}>
+        <div className="onboarding-container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '24px', fontFamily: "'Inter', sans-serif" }}>
+          <div className="onboarding-card" style={{ maxWidth: '480px', width: '100%', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '28px', padding: '40px', boxShadow: '0 24px 64px rgba(0,0,0,0.06)', animation: 'onboardingFadeIn 0.5s ease-out both', textAlign: 'center' }}>
             <div style={{ display: 'inline-flex', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '8px 16px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '700', marginBottom: '24px', gap: '6px', alignItems: 'center' }}>
               <CheckCircle size={16} /> Connection Successful
             </div>
@@ -177,8 +191,8 @@ export default function Onboarding() {
           </div>
         </div>
       ) : (
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '24px', fontFamily: "'Inter', sans-serif" }}>
-          <div style={{ maxWidth: '600px', width: '100%', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '28px', padding: '40px', boxShadow: '0 24px 64px rgba(0,0,0,0.06)', animation: 'onboardingFadeIn 0.5s ease-out both' }}>
+        <div className="onboarding-container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '24px', fontFamily: "'Inter', sans-serif" }}>
+          <div className="onboarding-card" style={{ maxWidth: '600px', width: '100%', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '28px', padding: '40px', boxShadow: '0 24px 64px rgba(0,0,0,0.06)', animation: 'onboardingFadeIn 0.5s ease-out both' }}>
             
             {/* Error Message */}
             {linkingError && (
@@ -194,7 +208,7 @@ export default function Onboarding() {
                 {/* Left Column */}
                 <div style={{ flex: '1 1 50%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '64px', boxSizing: 'border-box' }}>
                   <div style={{ maxWidth: '520px', marginTop: 'auto', marginBottom: 'auto' }}>
-                    <h1 style={{ fontSize: '3.4rem', fontWeight: '800', color: '#1e293b', marginBottom: '16px', lineHeight: '1.15', letterSpacing: '-1.5px' }}>
+                    <h1 className="onboarding-title" style={{ fontSize: '3.4rem', fontWeight: '800', color: '#1e293b', marginBottom: '16px', lineHeight: '1.15', letterSpacing: '-1.5px' }}>
                       Let's <span style={{ color: '#7c3aed' }}>Kick Things Off!</span>
                     </h1>
                     <p style={{ fontSize: '1.2rem', color: '#64748b', marginBottom: '40px', fontWeight: '500', lineHeight: '1.5' }}>
