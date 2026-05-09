@@ -287,7 +287,20 @@ export default function Scheduling() {
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
-          {posts.map(post => (
+          {posts.map(post => {
+            // Smart Media Parser
+            let mediaData = { type: 'image', mediaUrl: post.mediaUrl };
+            try {
+               if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
+                 mediaData = JSON.parse(post.mediaUrl);
+               }
+            } catch (e) {}
+
+            const finalMediaUrl = mediaData.mediaUrl && mediaData.mediaUrl.startsWith('http') 
+              ? mediaData.mediaUrl 
+              : (mediaData.mediaUrl ? `${API_BASE_URL}${mediaData.mediaUrl}` : '/placeholder-ig.png');
+
+            return (
             <div 
               key={post._id} 
               className="scheduling-card" 
@@ -300,11 +313,23 @@ export default function Scheduling() {
             >
               {/* Image Preview */}
               <div style={{ height: '220px', background: '#f8fafc', position: 'relative' }}>
-                <img 
-                  src={post.mediaUrl && post.mediaUrl.startsWith('http') ? post.mediaUrl : (post.mediaUrl ? `${API_BASE_URL}${post.mediaUrl}` : '/placeholder-ig.png')} 
-                  alt="Preview" 
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                />
+                {mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i)) ? (
+                  <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                    <video 
+                      src={finalMediaUrl} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    />
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)' }}>
+                       <Film size={40} color="white" />
+                    </div>
+                  </div>
+                ) : (
+                  <img 
+                    src={finalMediaUrl} 
+                    alt="Preview" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  />
+                )}
                 
                 {/* Status Badge */}
                 <div style={{ 
