@@ -397,7 +397,9 @@ export default function Scheduling() {
                             placeholder="e.g. INFO"
                             style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', fontWeight: '700', color: '#7c3aed', background: '#f8fafc' }}
                           />
-                          <p style={{ margin: '8px 0 0 0', fontSize: '0.7rem', color: '#94a3b8', fontWeight: '500' }}>When someone comments this...</p>
+                          <p style={{ margin: '8px 0 0 0', fontSize: '0.7rem', color: '#94a3b8', fontWeight: '500' }}>
+                            {newPost.type === 'story' ? 'When someone replies to this story...' : (newPost.type === 'reel' ? 'When someone comments on this reel...' : 'When someone comments this...')}
+                          </p>
                         </div>
 
                         {/* Response Card */}

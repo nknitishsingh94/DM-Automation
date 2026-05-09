@@ -417,7 +417,9 @@ export default function DmAutomationEditor() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <div>
                   <span style={{ fontWeight: '700', color: '#475569', display: 'block' }}>Any Message / Keyword</span>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Trigger on ANY interaction (DMs, Comments, Stories)</span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Trigger on ANY {template === 'stories' ? 'Story interaction' : (template === 'comments' ? 'Comment' : 'DM message')}
+                  </span>
                 </div>
                 <div onClick={() => setAnyKeyword(!anyKeyword)} style={{ width: '40px', height: '22px', borderRadius: '11px', background: anyKeyword ? '#ef4444' : '#cbd5e1', position: 'relative', cursor: 'pointer', flexShrink: 0 }}>
                   <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: anyKeyword ? '21px' : '3px', transition: '0.3s' }}></div>

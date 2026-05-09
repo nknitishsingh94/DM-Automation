@@ -379,6 +379,9 @@ export default function AutomationEditor() {
                             <span style={{ color: 'white', fontSize: '0.75rem', fontWeight: '800' }}>User</span>
                             <span style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>2m</span>
                           </div>
+                          <p style={{ margin: '8px 0 0 0', fontSize: '0.7rem', color: '#94a3b8', fontWeight: '500' }}>
+                            {template === 'stories' ? 'When someone replies to this story...' : (template === 'comments' ? 'When someone comments on this post...' : 'When someone comments this...')}
+                          </p>
                           <div style={{ color: 'white', fontSize: '0.75rem', marginTop: '3px', fontWeight: '500' }}>
                             {keywords.length > 0 ? keywords[0] : "Keyword"}
                           </div>
@@ -697,7 +700,9 @@ export default function AutomationEditor() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                 <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>3</div>
-                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Setup Keywords</h3>
+                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>
+                  {template === 'stories' ? 'Reply Trigger' : (template === 'comments' ? 'Comment Trigger' : 'Keyword Trigger')}
+                </h3>
               </div>
               
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -915,13 +920,16 @@ export default function AutomationEditor() {
                     <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b' }}>Public Comment Reply</h4>
                     <span style={{ background: '#f5f3ff', color: '#7c3aed', padding: '2px 8px', borderRadius: '4px', fontSize: '0.65rem', fontWeight: '800' }}>RECOMMENDED</span>
                   </div>
-                  <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '16px' }}>This message will be posted publicly on the user's comment.</p>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Trigger on ANY {template === 'stories' ? 'Story interaction' : (template === 'comments' ? 'Comment' : 'DM message')}
+                  </span>
                   
                   <div style={{ 
                     padding: '16px', 
                     borderRadius: '12px', 
                     background: '#f8fafc', 
-                    border: '1px solid #e2e8f0'
+                    border: '1px solid #e2e8f0',
+                    marginTop: '8px'
                   }}>
                     <input 
                       type="text" 

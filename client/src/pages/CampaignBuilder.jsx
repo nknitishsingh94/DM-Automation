@@ -181,13 +181,18 @@ export default function CampaignBuilder() {
               {formStep === 2 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fadeIn 0.3s' }}>
                   <div className="input-group">
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', fontWeight: '700' }}>Trigger Keyword <span style={{ color: 'var(--text-muted)', fontWeight: '400', fontSize: '0.8rem' }}>(What should they send?)</span></label>
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', fontWeight: '700' }}>
+                      {newCamp.triggerSource === 'comment' ? 'Comment Keyword' : (newCamp.triggerSource === 'story_mention' ? 'Story Keyword' : 'DM Keyword')}
+                      <span style={{ color: 'var(--text-muted)', fontWeight: '400', fontSize: '0.8rem', marginLeft: '6px' }}>
+                        ({newCamp.triggerSource === 'comment' ? 'What should they comment?' : 'What should they send?'})
+                      </span>
+                    </label>
                     <input 
                       type="text" 
                       required
                       value={newCamp.trigger}
                       onChange={(e) => setNewCamp({...newCamp, trigger: e.target.value})}
-                      placeholder="e.g. SEND LINK (or type * for Any Message)"
+                      placeholder={newCamp.triggerSource === 'comment' ? "e.g. INFO (Trigger on Comment)" : (newCamp.triggerSource === 'story_mention' ? "e.g. NICE (Trigger on Story)" : "e.g. SEND LINK (Trigger on DM)")}
                       style={{ width: '100%', padding: '14px', background: '#f8fafc', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '10px', outline: 'none', fontSize: '1rem', textTransform: 'uppercase' }}
                     />
                   </div>
@@ -424,7 +429,7 @@ export default function CampaignBuilder() {
                 {/* User Trigger Message (Right aligned like Instagram sent msg) */}
                 <div style={{ display: 'flex', justifyContent: 'flex-end', animation: 'slideInRight 0.3s' }}>
                   <div style={{ background: '#e2e8f0', color: '#0f172a', padding: '10px 14px', borderRadius: '18px 18px 4px 18px', maxWidth: '80%', fontSize: '0.9rem', fontWeight: '500' }}>
-                    {newCamp.trigger || 'Type your trigger keyword...'}
+                    {newCamp.trigger || (newCamp.triggerSource === 'comment' ? 'User comments: KEYWORD' : (newCamp.triggerSource === 'story_mention' ? 'User replies to Story: KEYWORD' : 'User sends DM: KEYWORD'))}
                   </div>
                 </div>
 
