@@ -143,11 +143,20 @@ export default function Scheduling() {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    const newFiles = [...selectedFiles, ...files];
-    setSelectedFiles(newFiles);
+    if (files.length === 0) return;
+
+    // Limit to 10 files for carousel
+    const totalFiles = [...selectedFiles, ...files].slice(0, 10);
     
-    // Create previews
-    const newPreviews = newFiles.map(file => URL.createObjectURL(file));
+    // Create previews ONLY for the NEW files to avoid re-generating existing ones
+    const newPreviews = [...previews];
+    files.forEach(file => {
+      if (newPreviews.length < 10) {
+        newPreviews.push(URL.createObjectURL(file));
+      }
+    });
+
+    setSelectedFiles(totalFiles);
     setPreviews(newPreviews);
   };
 
@@ -624,10 +633,12 @@ export default function Scheduling() {
                         <>
                           {/* Main Media Display */}
                           <div style={{ width: '100%', height: '100%' }}>
-                            {selectedFiles[currentPreviewIndex]?.type.startsWith('video') ? (
-                              <video key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                            ) : (
-                              <img key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            {previews[currentPreviewIndex] && (
+                              selectedFiles[currentPreviewIndex]?.type?.startsWith('video') ? (
+                                <video key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              ) : (
+                                <img key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              )
                             )}
                           </div>
 
