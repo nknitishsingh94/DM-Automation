@@ -276,6 +276,27 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
   }
 
+  // --- DESKTOP FALLBACK: Opening Message Re-check ---
+  // If the user was sent an "Opening Message" (Double opt-in), and they reply with text,
+  // we treat it as if they clicked the button.
+  if (contact && contact.pendingOpeningCampaignId) {
+    console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied to Opening Message. Triggering final response.`);
+    const pendingId = contact.pendingOpeningCampaignId;
+    
+    // Clear pending status
+    await Contact.findOneAndUpdate({ userId, chatId }, { $unset: { pendingOpeningCampaignId: 1 } });
+    
+    const match = await Campaign.findById(pendingId);
+    if (match && match.status === 'Active') {
+      const userSettings = await Settings.findOne({ userId });
+      const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+      
+      await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
+      await Campaign.findByIdAndUpdate(pendingId, { $inc: { dmsSent: 1 } });
+      return { opening_triggered: true };
+    }
+  }
+
   // 1. Check for Active Flows first (Advanced Automation)
   const queryUserId = userId;
   const activeFlows = await Flow.find({
@@ -359,8 +380,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         console.log(`🚫 GATED: User ${chatId} is not following. Sending follow-request DM.`);
 
         // 1. Send Private DM Request with a "Check Follow" button
-        const followText = (match.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊") + 
-                          "\n\n(After following, click the button below or just type 'DONE' here if you're on Desktop) 💻";
+        const followText = match.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊";
         const checkFollowPayload = `CHECK_FOLLOW_${match._id}`;
 
         // Use a generic template with a postback button for reliability
@@ -394,12 +414,19 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       const openingSent = await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, btnText, activeToken, [], payload);
 
       if (openingSent) {
+        // Track that this user is waiting for an opening message confirmation
+        await Contact.findOneAndUpdate(
+          { userId, chatId },
+          { pendingOpeningCampaignId: match._id, lastActive: new Date() },
+          { upsert: true }
+        );
+
         if (source === 'comment' && commentId) {
           console.log(`💬 Sending CUSTOM public comment reply to ${commentId} (Opening Message)`);
           const replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
           await sendPublicComment(platform, commentId, replyText, userId, activeToken);
         }
-        console.log(`⏳ Flow paused. Waiting for user to click "${btnText}" with payload: ${payload}`);
+        console.log(`⏳ Flow paused. Waiting for user to click "${btnText}" or reply. Payload: ${payload}`);
         return { opening_message_sent: true };
       } else {
         console.warn(`⚠️ Opening message failed. Falling back to immediate response.`);
