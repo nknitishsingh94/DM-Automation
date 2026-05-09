@@ -213,17 +213,22 @@ export default function Scheduling() {
       });
       const data = await res.json();
       if (res.ok) {
-        // Clear creation modal
+        // 1. Close creation modal first
         setShowCreate(false);
         
-        // MANUALLY PREPEND TO LIST (Fixes the need for refresh)
+        // 2. Update list immediately (Manual Prepend)
         setPosts(prev => [data, ...prev]);
 
-        // Trigger Success Flow
+        // 3. Set created post for the success modal
         setCreatedPost(data);
-        setShowSuccess(true);
+
+        // 4. Trigger Success Flow with a tiny delay to ensure UI has settled
+        setTimeout(() => {
+          setShowSuccess(true);
+          fetchPosts(); // Background sync to be 100% sure
+        }, 100);
         
-        // Reset form but DO NOT clear previews yet so the Success Modal can show them
+        // 5. Clear form (keeping previews for modal)
         setNewPost({ caption: '', scheduledFor: '', mediaUrl: '', triggerKeyword: '', autoResponse: '', coverUrl: '' });
         setSelectedFiles([]);
       } else {
