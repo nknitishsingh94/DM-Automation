@@ -14,6 +14,29 @@ try {
   console.warn('⚠️ Could not initialize Supabase Client:', e.message);
 }
 
+export const uploadToSupabase = async (fileBuffer, fileName, contentType) => {
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase.storage
+      .from('media') // Make sure this bucket exists in Supabase
+      .upload(fileName, fileBuffer, {
+        contentType,
+        upsert: true
+      });
+    
+    if (error) throw error;
+    
+    const { data: { publicUrl } } = supabase.storage
+      .from('media')
+      .getPublicUrl(fileName);
+      
+    return publicUrl;
+  } catch (err) {
+    console.error('❌ Supabase Upload Error:', err.message);
+    return null;
+  }
+};
+
 const isUUID = (str) => {
   if (typeof str !== 'string') return false;
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);

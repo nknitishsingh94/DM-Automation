@@ -1165,7 +1165,23 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
 
 app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, res) => {
   try {
-    const mediaFiles = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
+    const { uploadToSupabase } = await import('./utils/supabase.js');
+    
+    // Process and upload files to Supabase Storage for persistence
+    const mediaFiles = [];
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const fileContent = fs.readFileSync(file.path);
+        const fileName = `${Date.now()}-${file.filename}`;
+        const publicUrl = await uploadToSupabase(fileContent, fileName, file.mimetype);
+        if (publicUrl) {
+          mediaFiles.push(publicUrl);
+        }
+        // Cleanup local file after cloud upload
+        try { fs.unlinkSync(file.path); } catch (e) {}
+      }
+    }
+
     let mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
     
     // Serialize metadata for Supabase/DB compatibility
