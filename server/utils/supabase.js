@@ -241,6 +241,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
           if (field === 'updatedAt') parsedField = 'updated_at';
           if (field === 'userId') parsedField = (tableName === 'settings' || tableName === 'campaigns') ? 'userId' : 'user_id';
           
+          console.log(`   └─ Sorting by: ${parsedField} (${dir === 1 ? 'asc' : 'desc'}) for table ${tableName}`);
           q = q.order(parsedField, { ascending: dir === 1 });
         }
         return this;
