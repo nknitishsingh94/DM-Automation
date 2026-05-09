@@ -1179,6 +1179,7 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
     const postData = {
       ...req.body,
       userId: req.user.userId,
+      user_id: req.user.userId, // Fallback for snake_case constraints
       mediaUrl: finalMediaUrl,
       status: 'Scheduled'
     };
@@ -1187,12 +1188,16 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
     delete postData.type;
     delete postData.carouselItems;
 
+    console.log(`📡 Attempting to schedule post for user: ${req.user.userId}`);
+
     const newPost = new ScheduledPost(postData);
     try {
       await newPost.save();
       res.json(newPost);
     } catch (saveErr) {
-      console.error('❌ SUPABASE SAVE ERROR (ScheduledPost):', JSON.stringify(saveErr, null, 2));
+      console.error('❌ SUPABASE SAVE ERROR (ScheduledPost):', saveErr.message || saveErr);
+      if (saveErr.details) console.error('🔍 Error Details:', saveErr.details);
+      if (saveErr.hint) console.error('💡 Hint:', saveErr.hint);
       console.error('📦 Payload sent:', JSON.stringify(postData, null, 2));
       throw saveErr;
     }
