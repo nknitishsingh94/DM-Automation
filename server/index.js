@@ -246,6 +246,36 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     return { skipped: true, reason: 'muted' };
   }
 
+  // --- DESKTOP FALLBACK: Follower Re-check ---
+  // If the user has a pending campaign (was gated by Follow Check),
+  // we check if they have followed now. This allows desktop users
+  // (who can't see the "I Followed" button) to just follow and send ANY message to continue.
+  if (contact && contact.pendingCampaignId) {
+    console.log(`📡 [DESKTOP FALLBACK] User ${chatId} has pending campaign ${contact.pendingCampaignId}. Checking follow status...`);
+    const isFollowing = await checkFollowerStatus(platform, chatId, userId);
+    
+    if (isFollowing) {
+      console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} has now followed! Triggering pending campaign.`);
+      const pendingId = contact.pendingCampaignId;
+      
+      // Clear pending status first to avoid loops
+      await Contact.findOneAndUpdate({ userId, chatId }, { $unset: { pendingCampaignId: 1 } });
+      
+      // Execute the pending campaign
+      const match = await Campaign.findById(pendingId);
+      if (match && match.status === 'Active') {
+        const userSettings = await Settings.findOne({ userId });
+        const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+        
+        await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
+        await Campaign.findByIdAndUpdate(pendingId, { $inc: { dmsSent: 1 } });
+        return { pending_triggered: true };
+      }
+    } else {
+      console.log(`🚫 [DESKTOP FAIL] User ${chatId} still not following.`);
+    }
+  }
+
   // 1. Check for Active Flows first (Advanced Automation)
   const queryUserId = userId;
   const activeFlows = await Flow.find({
@@ -329,7 +359,8 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         console.log(`🚫 GATED: User ${chatId} is not following. Sending follow-request DM.`);
 
         // 1. Send Private DM Request with a "Check Follow" button
-        const followText = match.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊";
+        const followText = (match.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊") + 
+                          "\n\n(After following, click the button below or just type 'DONE' here if you're on Desktop) 💻";
         const checkFollowPayload = `CHECK_FOLLOW_${match._id}`;
 
         // Use a generic template with a postback button for reliability
