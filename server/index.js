@@ -1026,6 +1026,7 @@ app.get('/api/stats', verifyToken, async (req, res) => {
     const receivedMessages = await Message.countDocuments({ ...messageMatch, type: 'received' });
     const aiSentMessages = await Message.countDocuments({ ...messageMatch, type: 'sent', isAI: true });
 
+
     // Fetch unique contacts and user plan
     const uniqueContacts = await Message.distinct('chatId', messageMatch);
     const userProfile = await User.findById(req.user.userId);
@@ -1048,6 +1049,40 @@ app.get('/api/stats', verifyToken, async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Sync Campaign from Post (Scheduled or Live)
+app.post('/api/campaigns/sync-from-post', verifyToken, async (req, res) => {
+  try {
+    const { postId, triggerKeyword, autoResponse, requireFollow } = req.body;
+    
+    // Find if a campaign already exists for this post
+    // Note: verifyToken sets req.user.userId
+    let campaign = await Campaign.findOne({ userId: req.user.userId, postId });
+
+    if (campaign) {
+      campaign.triggerKeyword = triggerKeyword;
+      campaign.autoResponse = autoResponse;
+      campaign.requireFollow = requireFollow;
+      await campaign.save();
+    } else {
+      campaign = new Campaign({
+        userId: req.user.userId,
+        name: `Auto-Campaign: ${postId}`,
+        triggerKeyword,
+        autoResponse,
+        requireFollow,
+        postId,
+        isAnyPost: false,
+        status: 'active'
+      });
+      await campaign.save();
+    }
+    
+    res.json({ message: 'Automation synced successfully', campaign });
+  } catch (err) {
+    res.status(500).json({ message: 'Error syncing automation' });
   }
 });
 

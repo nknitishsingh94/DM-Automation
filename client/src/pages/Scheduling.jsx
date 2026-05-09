@@ -874,20 +874,44 @@ export default function Scheduling() {
 
                 <button 
                   onClick={async () => {
-                    // Update the scheduled post with advanced settings
-                    const token = localStorage.getItem('insta_agent_token');
-                    await fetch(`${API_BASE_URL}/api/scheduling/${createdPost._id || createdPost.id}`, {
-                      method: 'PUT',
-                      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                      body: JSON.stringify(createdPost)
-                    });
-                    setShowAdvanced(false);
-                    notify("Advanced Automation Saved!", "success");
-                    fetchPosts();
+                    try {
+                      const token = localStorage.getItem('insta_agent_token');
+                      // 1. Update the scheduling record
+                      const schedRes = await fetch(`${API_BASE_URL}/api/scheduling/${createdPost._id || createdPost.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify(createdPost)
+                      });
+
+                      // 2. Also trigger a Campaign update/creation in the backend to ensure it's "Live"
+                      // This ensures that if the post is already live, the automation starts NOW.
+                      await fetch(`${API_BASE_URL}/api/campaigns/sync-from-post`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({
+                          postId: createdPost._id || createdPost.id,
+                          triggerKeyword: createdPost.triggerKeyword,
+                          autoResponse: createdPost.autoResponse,
+                          requireFollow: createdPost.requireFollow
+                        })
+                      });
+
+                      setShowAdvanced(false);
+                      notify("Marketing Automation Activated! 🚀", "success");
+                      fetchPosts();
+                    } catch (err) {
+                      notify("Failed to link automation", "error");
+                    }
                   }}
-                  style={{ width: '100%', padding: '18px', borderRadius: '18px', background: '#1e1b4b', color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', marginTop: '20px' }}
+                  style={{ 
+                    width: '100%', padding: '18px', borderRadius: '18px', 
+                    background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)', 
+                    color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', 
+                    marginTop: '20px', boxShadow: '0 10px 20px rgba(30, 27, 75, 0.2)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px'
+                  }}
                 >
-                  Save Advanced Settings
+                  <Zap size={20} /> Activate Automation
                 </button>
              </div>
           </div>
