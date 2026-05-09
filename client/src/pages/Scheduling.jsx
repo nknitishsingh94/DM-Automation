@@ -621,97 +621,112 @@ export default function Scheduling() {
                 {/* Right Side: Preview */}
                 <div style={{ position: 'sticky', top: 0 }}>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '16px' }}>Live Preview</label>
-                  <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.05)' }}>
-                    <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid #f8fafc' }}>
-                      {user?.profilePhoto ? (
-                        <img 
-                          src={user.profilePhoto} 
-                          alt="Profile" 
-                          style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e2e8f0' }} 
-                        />
-                      ) : (
-                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '800', fontSize: '0.7rem' }}>
-                          {user?.username?.charAt(0).toUpperCase()}
+                    <div style={{ 
+                      width: '100%', 
+                      maxWidth: '300px', 
+                      height: '600px', 
+                      background: '#000', 
+                      borderRadius: '42px', 
+                      border: '10px solid #1e1b4b',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      boxShadow: '0 30px 60px -12px rgba(0,0,0,0.25)',
+                      margin: '0 auto'
+                    }}>
+                      {/* Realistic Notch (Dynamic Island) */}
+                      <div style={{ position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)', width: '90px', height: '22px', background: '#000', borderRadius: '20px', zIndex: 10 }}></div>
+
+                      {/* Status Bar */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 28px 0', fontSize: '0.7rem', color: 'white', fontWeight: '600' }}>
+                        <span>9:41</span>
+                        <div style={{ display: 'flex', gap: '5px' }}>
+                          <Zap size={10} fill="white" />
+                          <div style={{ width: '14px', height: '8px', border: '1px solid white', borderRadius: '2px' }}></div>
                         </div>
-                      )}
-                      <div style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b' }}>
-                        {settings?.connectedInstagramName || settings?.connectedFacebookName || user?.username || 'instagram_user'}
                       </div>
-                    </div>
-                    <div style={{ width: '100%', aspectRatio: (postType === 'reel' || postType === 'story') ? '9/16' : '1/1', background: '#f8fafc', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {previews.length > 0 ? (
-                        <>
-                          {/* Main Media Display */}
-                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                            {previews[currentPreviewIndex] ? (
-                              selectedFiles[currentPreviewIndex]?.type?.startsWith('video') ? (
-                                <>
-                                  <video 
-                                    key={previews[currentPreviewIndex]} 
-                                    src={previews[currentPreviewIndex]} 
-                                    autoPlay 
-                                    loop 
-                                    playsInline
-                                    style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'contain' : 'cover', background: '#000' }} 
-                                  />
-                                  {/* Volume Toggle Icon */}
-                                  <button 
-                                    onClick={() => setIsPreviewMuted(!isPreviewMuted)}
-                                    style={{ position: 'absolute', bottom: '16px', right: '16px', width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 20, color: 'white' }}
-                                  >
-                                    {isPreviewMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-                                  </button>
-                                </>
+
+                      {/* Instagram Header */}
+                      <div style={{ padding: '20px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #1a1a1a', background: '#000' }}>
+                        <ArrowLeft size={18} color="white" />
+                        <div style={{ 
+                          width: '32px', height: '32px', borderRadius: '50%', 
+                          background: user?.profilePhoto ? `url(${user.profilePhoto})` : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+                          backgroundSize: 'cover', border: '1px solid #1a1a1a', flexShrink: 0 
+                        }}></div>
+                        <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '700' }}>
+                          {settings?.connectedInstagramName || user?.username || 'instagram_user'}
+                        </div>
+                      </div>
+
+                      {/* Main Media Display */}
+                      <div style={{ width: '100%', height: '320px', background: '#000', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {previews.length > 0 ? (
+                          <>
+                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                              {previews[currentPreviewIndex] ? (
+                                selectedFiles[currentPreviewIndex]?.type?.startsWith('video') ? (
+                                  <>
+                                    <video 
+                                      key={previews[currentPreviewIndex]} 
+                                      src={previews[currentPreviewIndex]} 
+                                      autoPlay 
+                                      loop 
+                                      playsInline
+                                      style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'contain' : 'cover', background: '#000' }} 
+                                    />
+                                    <button 
+                                      onClick={() => setIsPreviewMuted(!isPreviewMuted)}
+                                      style={{ position: 'absolute', bottom: '12px', right: '12px', width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 20, color: 'white' }}
+                                    >
+                                      {isPreviewMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                                    </button>
+                                  </>
+                                ) : (
+                                  <img key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'contain' : 'cover', background: '#000' }} />
+                                )
                               ) : (
-                                <img key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'contain' : 'cover', background: '#f8fafc' }} />
-                              )
-                            ) : (
-                               <ImageIcon size={48} color="#cbd5e1" />
+                                <ImageIcon size={48} color="#333" />
+                              )}
+                            </div>
+
+                            {previews.length > 1 && (
+                              <>
+                                <button onClick={() => setCurrentPreviewIndex(prev => (prev === 0 ? previews.length - 1 : prev - 1))} style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', width: '26px', height: '26px', borderRadius: '50%', background: 'rgba(255,255,255,0.7)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}><ChevronLeft size={16} /></button>
+                                <button onClick={() => setCurrentPreviewIndex(prev => (prev === previews.length - 1 ? 0 : prev + 1))} style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', width: '26px', height: '26px', borderRadius: '50%', background: 'rgba(255,255,255,0.7)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}><ChevronRight size={16} /></button>
+                                <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '4px' }}>
+                                  {previews.map((_, i) => <div key={i} style={{ width: '5px', height: '5px', borderRadius: '50%', background: i === currentPreviewIndex ? '#7c3aed' : 'rgba(255,255,255,0.5)' }} />)}
+                                </div>
+                              </>
                             )}
-                          </div>
-
-                          {/* Arrows for Navigation */}
-                          {previews.length > 1 && (
-                            <>
-                              <button 
-                                onClick={() => setCurrentPreviewIndex(prev => (prev === 0 ? previews.length - 1 : prev - 1))}
-                                style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(255,255,255,0.8)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10, color: '#1e1b4b', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-                              >
-                                <ChevronLeft size={18} />
-                              </button>
-                              <button 
-                                onClick={() => setCurrentPreviewIndex(prev => (prev === previews.length - 1 ? 0 : prev + 1))}
-                                style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(255,255,255,0.8)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10, color: '#1e1b4b', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-                              >
-                                <ChevronRight size={18} />
-                              </button>
-
-                              {/* Indicator Dots */}
-                              <div style={{ position: 'absolute', bottom: '12px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '5px', zIndex: 10 }}>
-                                {previews.map((_, i) => (
-                                  <div key={i} style={{ width: '6px', height: '6px', borderRadius: '50%', background: i === currentPreviewIndex ? '#7c3aed' : 'rgba(255,255,255,0.5)', transition: 'all 0.2s' }} />
-                                ))}
-                              </div>
-                            </>
-                          )}
-                        </>
-                      ) : (
-                        <ImageIcon size={48} color="#cbd5e1" />
-                      )}
-                    </div>
-                    <div style={{ padding: '16px' }}>
-                      <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
-                         <Heart size={22} color="#1e1b4b" />
-                         <MessageCircle size={22} color="#1e1b4b" />
-                         <Send size={22} color="#1e1b4b" />
+                          </>
+                        ) : (
+                          <ImageIcon size={48} color="#333" />
+                        )}
                       </div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: '800', marginBottom: '6px' }}>1,234 likes</div>
-                      <div style={{ fontSize: '0.85rem', lineHeight: '1.4' }}>
-                        <span style={{ fontWeight: '800', marginRight: '8px' }}>{user?.username || 'user'}</span>
-                        <span style={{ color: '#1e1b4b' }}>{newPost.caption || '...'}</span>
+
+                      {/* Instagram Post Footer */}
+                      <div style={{ padding: '12px 16px', background: '#000' }}>
+                        <div style={{ display: 'flex', gap: '14px', marginBottom: '8px' }}>
+                           <Heart size={20} color="white" />
+                           <MessageCircle size={20} color="white" />
+                           <Send size={20} color="white" />
+                        </div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: '800', color: 'white', marginBottom: '4px' }}>1,234 likes</div>
+                        <div style={{ fontSize: '0.75rem', color: 'white', lineHeight: '1.4', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical' }}>
+                          <span style={{ fontWeight: '800', marginRight: '6px' }}>{user?.username || 'user'}</span>
+                          {newPost.caption || '...'}
+                        </div>
+                      </div>
+
+                      {/* Bottom Tab Bar Mockup */}
+                      <div style={{ position: 'absolute', bottom: '0', left: '0', width: '100%', height: '44px', background: '#000', borderTop: '1px solid #1a1a1a', display: 'flex', justifyContent: 'space-around', alignItems: 'center', paddingBottom: '12px' }}>
+                         <Home size={18} color="white" />
+                         <ImageIcon size={18} color="white" />
+                         <Plus size={18} color="white" />
+                         <Zap size={18} color="white" />
+                         <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#333' }}></div>
                       </div>
                     </div>
-                  </div>
                 </div>
               </div>
             </div>
