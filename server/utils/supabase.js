@@ -19,7 +19,7 @@ const isUUID = (str) => {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 };
 
-function parseFilter(q, queryObj) {
+function parseFilter(q, queryObj, tableName) {
   if (!queryObj) return q;
 
   for (const [key, v] of Object.entries(queryObj)) {
@@ -28,7 +28,16 @@ function parseFilter(q, queryObj) {
       val = val.toISOString();
     }
 
-    const parsedKey = (key === '_id' || key === 'id') ? 'id' : (key === 'userId' ? 'userid' : key);
+    let parsedKey = (key === '_id' || key === 'id') ? 'id' : key;
+    
+    // Table-specific user identification column mapping
+    if (key === 'userId') {
+      if (tableName === 'settings' || tableName === 'campaigns') {
+        parsedKey = 'userId';
+      } else {
+        parsedKey = 'user_id';
+      }
+    }
 
     if (parsedKey === 'id' && !isUUID(val)) {
         console.warn(`🛑 Skipping filter for non-UUID: ${key}=${val}`);
@@ -40,7 +49,10 @@ function parseFilter(q, queryObj) {
       const orConditions = val.map(cond => {
         const [subKey, subValRaw] = Object.entries(cond)[0];
         const subVal = subValRaw instanceof Date ? subValRaw.toISOString() : subValRaw;
-        const subParsedKey = subKey === '_id' || subKey === 'id' ? 'id' : (subKey === 'userId' ? 'userid' : subKey);
+        let subParsedKey = subKey === '_id' || subKey === 'id' ? 'id' : subKey;
+        if (subKey === 'userId') {
+          subParsedKey = (tableName === 'settings' || tableName === 'campaigns') ? 'userId' : 'user_id';
+        }
         return `${subParsedKey}.eq.${subVal}`;
       }).join(',');
       q = q.or(orConditions);
@@ -201,7 +213,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     }
 
     let q = supabase.from(tableName).select('*');
-    q = parseFilter(q, query);
+    q = parseFilter(q, query, tableName);
 
     const queryObj = {
       sort: function (sortObj) {
@@ -244,7 +256,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
       return null;
     }
     let q = supabase.from(tableName).select('*');
-    q = parseFilter(q, query);
+    q = parseFilter(q, query, tableName);
     const { data, error } = await q.limit(1);
     if (error) throw error;
     return data && data.length > 0 ? convertIncoming(data[0], tableName) : null;
@@ -301,7 +313,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
   ModelInstance.findOneAndUpdate = async function (query, updateData, options = {}) {
     if (!supabase) return null;
     let q = supabase.from(tableName).select('*');
-    q = parseFilter(q, query);
+    q = parseFilter(q, query, tableName);
     const { data, error: getErr } = await q.limit(1);
     const existing = data && data.length > 0 ? data[0] : null;
 
@@ -356,7 +368,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
   ModelInstance.countDocuments = async function (query) {
     if (!supabase) return 0;
     let q = supabase.from(tableName).select('*', { count: 'exact', head: true });
-    q = parseFilter(q, query);
+    q = parseFilter(q, query, tableName);
     const { count, error } = await q;
     if (error) throw error;
     return count || 0;
@@ -365,7 +377,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
   ModelInstance.findOneAndDelete = async function (query) {
     if (!supabase) return null;
     let q = supabase.from(tableName).select('*');
-    q = parseFilter(q, query);
+    q = parseFilter(q, query, tableName);
     const { data, error: getErr } = await q.limit(1);
     const existing = data && data.length > 0 ? data[0] : null;
     if (getErr || !existing) return null;
@@ -378,7 +390,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
   ModelInstance.deleteMany = async function (query) {
     if (!supabase) return { acknowledged: true };
     let q = supabase.from(tableName).delete();
-    q = parseFilter(q, query);
+    q = parseFilter(q, query, tableName);
     const { error } = await q;
     if (error) throw error;
     return { acknowledged: true };
