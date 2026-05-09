@@ -29,7 +29,9 @@ import {
   Heart,
   MessageCircle,
   MessageSquare,
-  Key
+  Key,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
@@ -238,6 +240,7 @@ export default function Scheduling() {
   const [createdPost, setCreatedPost] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
+  const [isPreviewMuted, setIsPreviewMuted] = useState(true);
 
   const deletePost = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this scheduled post?")) return;
@@ -633,18 +636,27 @@ export default function Scheduling() {
                       {previews.length > 0 ? (
                         <>
                           {/* Main Media Display */}
-                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                             {previews[currentPreviewIndex] ? (
                               selectedFiles[currentPreviewIndex]?.type?.startsWith('video') ? (
-                                <video 
-                                  key={previews[currentPreviewIndex]} 
-                                  src={previews[currentPreviewIndex]} 
-                                  autoPlay 
-                                  loop 
-                                  muted 
-                                  playsInline
-                                  style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'contain' : 'cover', background: '#000' }} 
-                                />
+                                <>
+                                  <video 
+                                    key={previews[currentPreviewIndex]} 
+                                    src={previews[currentPreviewIndex]} 
+                                    autoPlay 
+                                    loop 
+                                    muted={isPreviewMuted} 
+                                    playsInline
+                                    style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'contain' : 'cover', background: '#000' }} 
+                                  />
+                                  {/* Volume Toggle Icon */}
+                                  <button 
+                                    onClick={() => setIsPreviewMuted(!isPreviewMuted)}
+                                    style={{ position: 'absolute', bottom: '16px', right: '16px', width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 20, color: 'white' }}
+                                  >
+                                    {isPreviewMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                                  </button>
+                                </>
                               ) : (
                                 <img key={previews[currentPreviewIndex]} src={previews[currentPreviewIndex]} style={{ width: '100%', height: '100%', objectFit: (postType === 'reel' || postType === 'story') ? 'contain' : 'cover', background: '#f8fafc' }} />
                               )
