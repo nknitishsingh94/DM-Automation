@@ -1083,6 +1083,8 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
 app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, res) => {
   try {
     const mediaFiles = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
