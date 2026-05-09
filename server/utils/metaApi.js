@@ -190,7 +190,10 @@ export const sendPrivateReply = async (platform, commentId, text, userId = null)
 /**
  * Meta Content Publishing API: Post Image, Reel, or Story
  */
-export const publishInstagramContent = async (userId, type, mediaUrl, caption = '') => {
+/**
+ * Meta Content Publishing API: Post Image, Reel, Story, or Carousel
+ */
+export const publishInstagramContent = async (userId, type, mediaUrl, caption = '', carouselItems = []) => {
   try {
     const settings = await Settings.findOne({ userId });
     if (!settings || !settings.instagramAccessToken || !settings.businessAccountId) {
@@ -202,35 +205,77 @@ export const publishInstagramContent = async (userId, type, mediaUrl, caption = 
     
     console.log(`🎬 Starting Meta Publishing [${type.toUpperCase()}] for user ${userId}`);
 
-    // --- STEP 1: Create Media Container ---
-    let containerUrl = `https://graph.facebook.com/v19.0/${igId}/media?access_token=${accessToken}`;
-    const params = { caption };
+    let finalCreationId = null;
 
-    if (type === 'reel') {
-      params.media_type = 'REELS';
-      params.video_url = mediaUrl;
-    } else if (type === 'story') {
-      params.media_type = 'STORIES';
-      if (mediaUrl.match(/\.(mp4|mov|webm)/i)) {
+    if (type === 'carousel' && carouselItems.length > 0) {
+      // --- CAROUSEL FLOW ---
+      console.log(`🎠 Processing Carousel with ${carouselItems.length} items...`);
+      const childrenIds = [];
+
+      for (const itemUrl of carouselItems) {
+        const isVideo = itemUrl.match(/\.(mp4|mov|webm)/i);
+        const childParams = { 
+          access_token: accessToken,
+          is_carousel_item: true
+        };
+
+        if (isVideo) {
+          childParams.media_type = 'VIDEO';
+          childParams.video_url = itemUrl;
+        } else {
+          childParams.image_url = itemUrl;
+        }
+
+        const childRes = await axios.post(`https://graph.facebook.com/v19.0/${igId}/media`, null, { params: childParams });
+        childrenIds.push(childRes.data.id);
+        console.log(`👶 Carousel Child Created: ${childRes.data.id}`);
+      }
+
+      // Wait for all children to be ready
+      console.log("⏳ Waiting for carousel children to be processed...");
+      await new Promise(r => setTimeout(r, 30000)); // Carousels need more time
+
+      // Create Carousel Container
+      const carouselParams = {
+        access_token: accessToken,
+        media_type: 'CAROUSEL',
+        children: childrenIds.join(','),
+        caption
+      };
+
+      const carouselRes = await axios.post(`https://graph.facebook.com/v19.0/${igId}/media`, null, { params: carouselParams });
+      finalCreationId = carouselRes.data.id;
+    } else {
+      // --- SINGLE ITEM FLOW (Image, Reel, Story) ---
+      let containerUrl = `https://graph.facebook.com/v19.0/${igId}/media?access_token=${accessToken}`;
+      const params = { caption };
+
+      if (type === 'reel') {
+        params.media_type = 'REELS';
         params.video_url = mediaUrl;
+      } else if (type === 'story') {
+        params.media_type = 'STORIES';
+        if (mediaUrl.match(/\.(mp4|mov|webm)/i)) {
+          params.video_url = mediaUrl;
+        } else {
+          params.image_url = mediaUrl;
+        }
       } else {
         params.image_url = mediaUrl;
       }
-    } else {
-      // Default: Image Post
-      params.image_url = mediaUrl;
+
+      const containerRes = await axios.post(containerUrl, params);
+      finalCreationId = containerRes.data.id;
     }
 
-    const containerRes = await axios.post(containerUrl, params);
-    const creationId = containerRes.data.id;
-    console.log(`📦 Media Container created: ${creationId}`);
+    console.log(`📦 Final Media Container created: ${finalCreationId}`);
 
-    // --- STEP 2: Polling for Status (Wait for Meta to process) ---
+    // --- STEP 2: Polling for Status ---
     let isReady = false;
     let attempts = 0;
-    while (!isReady && attempts < 15) {
-      await new Promise(r => setTimeout(r, 10000)); // Wait 10s
-      const statusRes = await axios.get(`https://graph.facebook.com/v19.0/${creationId}?fields=status_code&access_token=${accessToken}`);
+    while (!isReady && attempts < 20) {
+      await new Promise(r => setTimeout(r, 10000));
+      const statusRes = await axios.get(`https://graph.facebook.com/v19.0/${finalCreationId}?fields=status_code&access_token=${accessToken}`);
       console.log(`⏳ Status Check (${attempts + 1}): ${statusRes.data.status_code}`);
       if (statusRes.data.status_code === 'FINISHED') {
         isReady = true;
@@ -243,7 +288,7 @@ export const publishInstagramContent = async (userId, type, mediaUrl, caption = 
     if (!isReady) throw new Error('Meta processing timeout');
 
     // --- STEP 3: Publish Media ---
-    const publishUrl = `https://graph.facebook.com/v19.0/${igId}/media_publish?creation_id=${creationId}&access_token=${accessToken}`;
+    const publishUrl = `https://graph.facebook.com/v19.0/${igId}/media_publish?creation_id=${finalCreationId}&access_token=${accessToken}`;
     const publishRes = await axios.post(publishUrl);
     
     console.log(`✅ PUBLISH SUCCESS: ${publishRes.data.id}`);

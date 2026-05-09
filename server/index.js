@@ -1723,7 +1723,7 @@ setInterval(async () => {
         const { publishInstagramContent } = await import('./utils/metaApi.js');
         
         console.log(`📸 Publishing ${finalType} to Instagram for User: ${post.userId}`);
-        const publishedId = await publishInstagramContent(post.userId, finalType, finalMedia, post.caption);
+        const publishedId = await publishInstagramContent(post.userId, finalType, finalMedia, post.caption, finalCarousel);
 
         if (post.triggerKeyword && post.autoResponse) {
           const campaign = new Campaign({
