@@ -349,7 +349,37 @@ export default function Scheduling() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  {/* Automation Section */}
+                  <div style={{ background: '#f5f3ff', padding: '24px', borderRadius: '24px', border: '1px solid #ddd6fe' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', color: '#7c3aed' }}>
+                      <Sparkles size={18} fill="#7c3aed" />
+                      <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Configure Auto DM</h4>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>Trigger Keyword</label>
+                        <input 
+                          type="text" 
+                          value={newPost.triggerKeyword} 
+                          onChange={e => setNewPost({...newPost, triggerKeyword: e.target.value})}
+                          placeholder="e.g. PRICE"
+                          style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>DM Response</label>
+                        <input 
+                          type="text" 
+                          value={newPost.autoResponse} 
+                          onChange={e => setNewPost({...newPost, autoResponse: e.target.value})}
+                          placeholder="Hey, check your DM!"
+                          style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none' }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
                     {/* Schedule Time */}
                     <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
                       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '12px' }}>* Schedule Time</label>
@@ -359,17 +389,6 @@ export default function Scheduling() {
                         onChange={e => setNewPost({...newPost, scheduledFor: e.target.value})}
                         style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', fontWeight: '600' }} 
                         required
-                      />
-                    </div>
-                    {/* Keyword Section */}
-                    <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '12px' }}>AutoDM Keyword</label>
-                      <input 
-                        type="text" 
-                        value={newPost.triggerKeyword} 
-                        onChange={e => setNewPost({...newPost, triggerKeyword: e.target.value})}
-                        placeholder="e.g. SHOP"
-                        style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem' }}
                       />
                     </div>
                   </div>
