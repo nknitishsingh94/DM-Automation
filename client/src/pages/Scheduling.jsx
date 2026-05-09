@@ -333,13 +333,6 @@ export default function Scheduling() {
                          )}
                       </div>
                     ))}
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); fileInputRef.current.click(); }}
-                      style={{ aspectRatio: '1/1', borderRadius: '12px', border: '2px dashed #e2e8f0', background: '#f8fafc', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#64748b', cursor: 'pointer', gap: '4px' }}
-                    >
-                      <Plus size={20} />
-                      <span style={{ fontSize: '0.7rem', fontWeight: '700' }}>Add More</span>
-                    </button>
                   </div>
                   <div style={{ padding: '12px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'center', gap: '12px' }}>
                      <button 
