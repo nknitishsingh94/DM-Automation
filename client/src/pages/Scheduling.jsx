@@ -11,6 +11,7 @@ import {
   AlertCircle, 
   X, 
   ChevronLeft,
+  ChevronRight,
   Layout,
   Instagram,
   Target,
