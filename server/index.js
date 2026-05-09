@@ -390,7 +390,11 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         userId: userId,
         chatId: chatId || 'default', sender: 'AI Agent', text: match.response, type: 'sent', platform, isAI: true, campaignId: match._id, timestamp: new Date()
       });
-      await autoReply.save();
+      try {
+        await autoReply.save();
+      } catch (dbErr) {
+        console.error("⚠️ Failed to save campaign message to DB:", dbErr.message);
+      }
       await Campaign.findByIdAndUpdate(match._id, { $inc: { dmsSent: 1 } });
       io.to(userId.toString()).emit('new_message', autoReply);
       console.log(`🚀 REPLY DISPATCHED to ${chatId}`);
@@ -414,18 +418,22 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         const sent = await sendMessageToInstagram(platform, chatId, aiResponse, '', userId);
 
         if (sent) {
-          const autoReply = new Message({
-            userId: userId,
-            chatId: chatId || 'default',
-            sender: 'AI Agent',
-            text: aiResponse,
-            type: 'sent',
-            platform,
-            isAI: true,
-            timestamp: new Date()
-          });
-          await autoReply.save();
-          io.to(userId.toString()).emit('new_message', autoReply);
+          try {
+            const autoReply = new Message({
+              userId: userId,
+              chatId: chatId || 'default',
+              sender: 'AI Agent',
+              text: aiResponse,
+              type: 'sent',
+              platform,
+              isAI: true,
+              timestamp: new Date()
+            });
+            await autoReply.save();
+            io.to(userId.toString()).emit('new_message', autoReply);
+          } catch (dbErr) {
+            console.error("⚠️ Failed to save AI response to DB:", dbErr.message);
+          }
           console.log(`🤖 AI FALLBACK SUCCESS: Sent AI response to ${chatId}`);
           return { ai_reply: aiResponse };
         }
@@ -562,12 +570,16 @@ app.post('/api/webhook', async (req, res) => {
 
           const targetUserId = userSettings.userId;
           if (targetUserId) {
-            const incoming = new Message({
-              userId: targetUserId, chatId: senderId, sender: 'user', text: messageText,
-              type: 'received', platform, timestamp: new Date()
-            });
-            await incoming.save();
-            io.to(targetUserId.toString()).emit('new_message', incoming);
+            try {
+              const incoming = new Message({
+                userId: targetUserId, chatId: senderId, sender: 'user', text: messageText,
+                type: 'received', platform, timestamp: new Date()
+              });
+              await incoming.save();
+              io.to(targetUserId.toString()).emit('new_message', incoming);
+            } catch (dbErr) {
+              console.error("⚠️ Failed to save incoming DM to DB:", dbErr.message);
+            }
 
             processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm").catch(err => {
               console.error("🔥 AutoReply error:", err);
@@ -713,12 +725,16 @@ app.post('/api/webhook', async (req, res) => {
               console.log(`✅ [MATCH FOUND]: Processing comment for User ${targetUserId}`);
               const accessToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
-              const incoming = new Message({
-                userId: targetUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
-                type: 'received', platform, timestamp: new Date()
-              });
-              await incoming.save();
-              io.to(targetUserId.toString()).emit('new_message', incoming);
+              try {
+                const incoming = new Message({
+                  userId: targetUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
+                  type: 'received', platform, timestamp: new Date()
+                });
+                await incoming.save();
+                io.to(targetUserId.toString()).emit('new_message', incoming);
+              } catch (dbErr) {
+                console.error("⚠️ Failed to save incoming comment to DB:", dbErr.message);
+              }
 
               // Pass the fresh token and mediaId to processAutoReply
               processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId, accessToken, mediaId).catch(err => {
@@ -797,17 +813,21 @@ app.post('/api/webhook', async (req, res) => {
               }
 
               if (targetUserId) {
-                const incoming = new Message({
-                  userId: targetUserId,
-                  chatId: senderPhone,
-                  sender: 'user',
-                  text: text,
-                  type: 'received',
-                  platform: 'whatsapp',
-                  timestamp: new Date()
-                });
-                await incoming.save();
-                io.to(targetUserId.toString()).emit('new_message', incoming);
+                try {
+                  const incoming = new Message({
+                    userId: targetUserId,
+                    chatId: senderPhone,
+                    sender: 'user',
+                    text: text,
+                    type: 'received',
+                    platform: 'whatsapp',
+                    timestamp: new Date()
+                  });
+                  await incoming.save();
+                  io.to(targetUserId.toString()).emit('new_message', incoming);
+                } catch (dbErr) {
+                  console.error("⚠️ Failed to save incoming WhatsApp message to DB:", dbErr.message);
+                }
 
                 // Auto-reply
                 await processAutoReply(targetUserId.toString(), 'whatsapp', senderPhone, text);
