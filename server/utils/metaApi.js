@@ -188,6 +188,74 @@ export const sendPrivateReply = async (platform, commentId, text, userId = null)
 };
 
 /**
+ * Meta Content Publishing API: Post Image, Reel, or Story
+ */
+export const publishInstagramContent = async (userId, type, mediaUrl, caption = '') => {
+  try {
+    const settings = await Settings.findOne({ userId });
+    if (!settings || !settings.instagramAccessToken || !settings.businessAccountId) {
+      throw new Error('Meta credentials missing for publishing');
+    }
+
+    const accessToken = settings.instagramAccessToken;
+    const igId = settings.businessAccountId;
+    
+    console.log(`🎬 Starting Meta Publishing [${type.toUpperCase()}] for user ${userId}`);
+
+    // --- STEP 1: Create Media Container ---
+    let containerUrl = `https://graph.facebook.com/v19.0/${igId}/media?access_token=${accessToken}`;
+    const params = { caption };
+
+    if (type === 'reel') {
+      params.media_type = 'REELS';
+      params.video_url = mediaUrl;
+    } else if (type === 'story') {
+      params.media_type = 'STORIES';
+      if (mediaUrl.match(/\.(mp4|mov|webm)/i)) {
+        params.video_url = mediaUrl;
+      } else {
+        params.image_url = mediaUrl;
+      }
+    } else {
+      // Default: Image Post
+      params.image_url = mediaUrl;
+    }
+
+    const containerRes = await axios.post(containerUrl, params);
+    const creationId = containerRes.data.id;
+    console.log(`📦 Media Container created: ${creationId}`);
+
+    // --- STEP 2: Polling for Status (Wait for Meta to process) ---
+    let isReady = false;
+    let attempts = 0;
+    while (!isReady && attempts < 15) {
+      await new Promise(r => setTimeout(r, 10000)); // Wait 10s
+      const statusRes = await axios.get(`https://graph.facebook.com/v19.0/${creationId}?fields=status_code&access_token=${accessToken}`);
+      console.log(`⏳ Status Check (${attempts + 1}): ${statusRes.data.status_code}`);
+      if (statusRes.data.status_code === 'FINISHED') {
+        isReady = true;
+      } else if (statusRes.data.status_code === 'ERROR') {
+        throw new Error('Meta processing failed');
+      }
+      attempts++;
+    }
+
+    if (!isReady) throw new Error('Meta processing timeout');
+
+    // --- STEP 3: Publish Media ---
+    const publishUrl = `https://graph.facebook.com/v19.0/${igId}/media_publish?creation_id=${creationId}&access_token=${accessToken}`;
+    const publishRes = await axios.post(publishUrl);
+    
+    console.log(`✅ PUBLISH SUCCESS: ${publishRes.data.id}`);
+    return publishRes.data.id;
+  } catch (err) {
+    const errorData = err.response?.data || err.message;
+    console.error("❌ Meta Publishing Error:", JSON.stringify(errorData, null, 2));
+    throw err;
+  }
+};
+
+/**
  * Meta Public Comment Reply: Respond to a Comment with another Comment
  */
 export const sendPublicComment = async (platform, commentId, text, userId = null, manualToken = null) => {

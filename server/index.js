@@ -1720,9 +1720,10 @@ setInterval(async () => {
       await ScheduledPost.findByIdAndUpdate(post._id || post.id, { status: 'Processing' });
 
       try {
-        // Mocking real Instagram Media Post API call here
-        // Requires specific 'instagram_content_publish' permission
-        console.log(`📸 Posting media to Instagram for User: ${post.userId}`);
+        const { publishInstagramContent } = await import('./utils/metaApi.js');
+        
+        console.log(`📸 Publishing ${finalType} to Instagram for User: ${post.userId}`);
+        const publishedId = await publishInstagramContent(post.userId, finalType, finalMedia, post.caption);
 
         if (post.triggerKeyword && post.autoResponse) {
           const campaign = new Campaign({
@@ -1731,13 +1732,14 @@ setInterval(async () => {
             trigger: post.triggerKeyword,
             response: post.autoResponse,
             status: 'Active',
-            isAnyPost: true
+            isAnyPost: false,
+            postId: publishedId
           });
           await campaign.save();
-          console.log(`✅ Automation Campaign created for scheduled post.`);
+          console.log(`✅ Automation Campaign created for post ${publishedId}`);
         }
 
-        await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted' });
+        await ScheduledPost.findByIdAndUpdate(post._id || post.id, { status: 'Posted' });
       } catch (postErr) {
         console.error(`❌ Failed to process scheduled post ${post._id}:`, postErr.message);
         await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed' });
