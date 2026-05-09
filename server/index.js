@@ -1059,16 +1059,21 @@ app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
 app.get('/api/scheduling', verifyToken, async (req, res) => {
   try {
     const posts = await ScheduledPost.find({ userId: req.user.userId }).sort({ scheduledFor: 1 });
-    // Handle serialized carousel items
+    // Handle serialized metadata
     const processedPosts = posts.map(post => {
       const p = post.toObject ? post.toObject() : { ...post };
-      if (p.mediaUrl && p.mediaUrl.startsWith('[')) {
+      if (p.mediaUrl && p.mediaUrl.startsWith('{')) {
+        try {
+          const meta = JSON.parse(p.mediaUrl);
+          p.type = meta.type || p.type;
+          p.carouselItems = meta.carouselItems || [];
+          p.mediaUrl = meta.mediaUrl || (p.carouselItems.length > 0 ? p.carouselItems[0] : '');
+        } catch (e) {}
+      } else if (p.mediaUrl && p.mediaUrl.startsWith('[')) {
         try {
           p.carouselItems = JSON.parse(p.mediaUrl);
           p.mediaUrl = p.carouselItems[0];
-        } catch (e) {
-          p.carouselItems = [];
-        }
+        } catch (e) {}
       }
       return p;
     });
@@ -1082,16 +1087,27 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
   try {
     const mediaFiles = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
     let mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
-    if (mediaFiles.length > 1) {
-      mediaUrl = JSON.stringify(mediaFiles);
-    }
+    
+    // Serialize metadata for Supabase/DB compatibility
+    const metadata = {
+      type: req.body.type || 'image',
+      carouselItems: mediaFiles.length > 0 ? mediaFiles : (req.body.carouselItems || []),
+      mediaUrl: mediaUrl
+    };
+    
+    const finalMediaUrl = JSON.stringify(metadata);
+
     const postData = {
       ...req.body,
       userId: req.user.userId,
-      mediaUrl: mediaUrl,
+      mediaUrl: finalMediaUrl,
       status: 'Scheduled'
     };
+
+    // Clean up fields that might not exist in schema
+    delete postData.type;
     delete postData.carouselItems;
+
     const newPost = new ScheduledPost(postData);
     await newPost.save();
     res.json(newPost);
@@ -1161,25 +1177,6 @@ app.get('/api/messages/contact/:chatId', verifyToken, async (req, res) => {
 app.post('/api/messages', verifyToken, async (req, res) => {
   try {
     const { sender, text, type, chatId, platform } = req.body;
-
-    // TEMPORARILY DISABLED FOR TESTING
-    /*
-    const userProfile = await User.findById(req.user.userId);
-    if (userProfile && userProfile.plan === 'free') {
-      const existingMessage = await Message.findOne({ userId: req.user.userId, chatId: chatId || 'default' });
-      
-      // If this is a message to a NEW contact
-      if (!existingMessage) {
-        const uniqueContacts = await Message.distinct('chatId', { userId: req.user.userId });
-        if (uniqueContacts.length >= 30) {
-          return res.status(403).json({ 
-            error: 'Contact limit reached.', 
-            message: 'You have reached the 30-contact limit on the Free plan. Please Upgrade to Pro for unlimited contacts.' 
-          });
-        }
-      }
-    }
-    */
 
     // Explicitly casting userId to ObjectId to ensure it saves correctly
     const newMessage = new Message({
@@ -1583,14 +1580,23 @@ setInterval(async () => {
     for (const post of duePosts) {
       console.log(`⏰ Processing Scheduled Post: ${post._id || post.id}`);
 
-      // Deserialize mediaUrl if it's a JSON array
+      // Deserialize metadata if it's a JSON object/array
       let finalMedia = post.mediaUrl;
+      let finalType = post.type || 'image';
       let finalCarousel = [];
-      if (post.mediaUrl && post.mediaUrl.startsWith('[')) {
+      
+      if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
+        try {
+          const meta = JSON.parse(post.mediaUrl);
+          finalType = meta.type || finalType;
+          finalCarousel = meta.carouselItems || [];
+          finalMedia = meta.mediaUrl || (finalCarousel.length > 0 ? finalCarousel[0] : '');
+        } catch (e) {}
+      } else if (post.mediaUrl && post.mediaUrl.startsWith('[')) {
         try {
           finalCarousel = JSON.parse(post.mediaUrl);
           finalMedia = finalCarousel[0];
-        } catch (e) { }
+        } catch (e) {}
       }
 
       await ScheduledPost.findByIdAndUpdate(post._id || post.id, { status: 'Processing' });
