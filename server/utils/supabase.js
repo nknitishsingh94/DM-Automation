@@ -34,14 +34,13 @@ function parseFilter(q, queryObj, tableName) {
 
     let parsedKey = (key === '_id' || key === 'id') ? 'id' : key;
     
-    // Per-table mapping based on verified schema
+    // Defensive mapping for case-sensitive Postgres columns
     if (key === 'userId') {
-      if (tableName === 'settings' || tableName === 'campaigns') {
-        parsedKey = 'userId';
+      if (tableName === 'settings' || tableName === 'campaigns' || tableName === 'scheduled_posts') {
+        parsedKey = 'userId'; 
       } else {
         parsedKey = 'user_id';
       }
-      console.log(`   └─ Mapping userId -> ${parsedKey} for table ${tableName}`);
     } else if (key === 'createdAt') {
       parsedKey = (tableName === 'settings' || tableName === 'campaigns') ? 'createdAt' : 'created_at';
     } else if (key === 'updatedAt') {
@@ -125,11 +124,10 @@ function convertOutgoing(doc, tableName) {
   
   // Per-table mapping based on verified schema
   if (newDoc.userId) {
-    if (tableName === 'captions' || tableName === 'messages' || tableName === 'contacts') {
-      newDoc.user_id = newDoc.userId;
-      // Keep userId for code compatibility but database will use user_id
-    } else {
+    if (tableName === 'settings' || tableName === 'campaigns' || tableName === 'scheduled_posts') {
       newDoc.userId = newDoc.userId;
+    } else {
+      newDoc.user_id = newDoc.userId;
     }
   }
 
