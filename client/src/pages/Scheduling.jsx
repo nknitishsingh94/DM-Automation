@@ -28,8 +28,7 @@ import {
   Heart,
   MessageCircle,
   MessageSquare,
-  Key,
-  Zap
+  Key
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
