@@ -240,7 +240,6 @@ export default function Scheduling() {
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', animation: 'fadeIn 0.4s ease-out' }}>
-      {/* List Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
         <div>
           <h1 style={{ fontSize: '2.4rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '12px', letterSpacing: '-0.5px' }}>
@@ -250,18 +249,6 @@ export default function Scheduling() {
             Plan, Manage and Automate your Instagram content effortlessly.
           </p>
         </div>
-        <button 
-          onClick={() => setShowCreate(true)}
-          style={{ 
-            display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 28px', 
-            borderRadius: '16px', background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', 
-            color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', 
-            boxShadow: '0 12px 24px rgba(124, 58, 237, 0.25)',
-            transition: 'transform 0.2s'
-          }}
-        >
-          <Plus size={20} /> New Schedule
-        </button>
       </div>
 
       {posts.length === 0 ? (
