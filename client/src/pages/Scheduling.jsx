@@ -567,6 +567,24 @@ export default function Scheduling() {
                                </button>
                             </div>
                           ))}
+                          
+                          {/* Add More Button for Carousel */}
+                          {postType === 'carousel' && previews.length < 10 && (
+                            <div 
+                              onClick={() => fileInputRef.current.click()}
+                              style={{ 
+                                aspectRatio: '1/1', borderRadius: '12px', border: '2px dashed #7c3aed', 
+                                background: '#f5f3ff', display: 'flex', flexDirection: 'column', 
+                                alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                                color: '#7c3aed', gap: '4px', transition: 'all 0.2s'
+                              }}
+                              onMouseOver={(e) => e.currentTarget.style.background = '#ede9fe'}
+                              onMouseOut={(e) => e.currentTarget.style.background = '#f5f3ff'}
+                            >
+                              <Plus size={20} strokeWidth={3} />
+                              <span style={{ fontSize: '0.65rem', fontWeight: '800' }}>ADD MORE</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ) : (
