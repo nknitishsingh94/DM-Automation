@@ -747,50 +747,55 @@ export default function Scheduling() {
       {showSuccess && createdPost && (
         <div style={{ 
           position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(12px)', 
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3000, padding: '20px' 
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3000, padding: '16px' 
         }}>
           <div style={{ 
-            background: 'white', borderRadius: '32px', width: '100%', maxWidth: '450px', 
-            padding: '40px', textAlign: 'center', boxShadow: '0 50px 100px rgba(0,0,0,0.2)',
+            background: 'white', borderRadius: '28px', width: '95%', maxWidth: '400px', 
+            maxHeight: '90vh', overflowY: 'auto',
+            padding: '32px 24px', textAlign: 'center', boxShadow: '0 40px 80px rgba(0,0,0,0.2)',
             animation: 'scaleIn 0.3s ease-out'
           }}>
-            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
-              <Check size={40} />
+            <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+              <Check size={32} />
             </div>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '12px' }}>Post Scheduled!</h2>
-            <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: '500', marginBottom: '32px' }}>
-              Your content is ready to go live on Instagram at the set time.
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '8px' }}>Post Scheduled!</h2>
+            <p style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: '500', marginBottom: '24px' }}>
+              Content is ready to go live on Instagram.
             </p>
 
-            {/* Visual Preview Box */}
+            {/* Visual Preview Box (Smaller) */}
             <div style={{ 
-              width: '100%', aspectRatio: '1/1', borderRadius: '24px', overflow: 'hidden', 
-              background: '#f8fafc', marginBottom: '32px', border: '1px solid #e2e8f0' 
+              width: '100%', aspectRatio: '1/1', borderRadius: '20px', overflow: 'hidden', 
+              background: '#f8fafc', marginBottom: '24px', border: '1px solid #e2e8f0' 
             }}>
-               <img 
-                 src={previews[0] || '/placeholder-ig.png'} 
-                 alt="Scheduled" 
-                 style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-               />
+               {selectedFiles[0]?.type?.startsWith('video') ? (
+                 <video src={previews[0]} muted autoPlay loop style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+               ) : (
+                 <img 
+                   src={previews[0] || '/placeholder-ig.png'} 
+                   alt="Scheduled" 
+                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                 />
+               )}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button 
                 onClick={() => { setShowSuccess(false); setPreviews([]); }}
-                style={{ width: '100%', padding: '16px', borderRadius: '16px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)' }}
+                style={{ width: '100%', padding: '14px', borderRadius: '14px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)' }}
               >
-                Done
+                Close
               </button>
               
               <button 
                 onClick={() => { setShowSuccess(false); setShowAdvanced(true); }}
                 style={{ 
-                  width: '100%', padding: '16px', borderRadius: '16px', background: '#f5f3ff', 
+                  width: '100%', padding: '14px', borderRadius: '14px', background: '#f5f3ff', 
                   color: '#7c3aed', border: 'none', fontWeight: '800', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
                 }}
               >
-                <Zap size={18} /> Advanced Automation
+                <Zap size={16} /> Advanced Automation
               </button>
             </div>
           </div>
