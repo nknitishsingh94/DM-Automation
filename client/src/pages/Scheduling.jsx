@@ -203,7 +203,9 @@ export default function Scheduling() {
       if (res.ok) {
         // Clear creation modal
         setShowCreate(false);
-        fetchPosts();
+        
+        // MANUALLY PREPEND TO LIST (Fixes the need for refresh)
+        setPosts(prev => [data, ...prev]);
 
         // Trigger Success Flow
         setCreatedPost(data);
