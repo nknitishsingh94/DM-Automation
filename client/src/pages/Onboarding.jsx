@@ -159,107 +159,125 @@ export default function Onboarding() {
       <style>{styles}</style>
       
       {metaConnected ? (
-        <div className="onboarding-container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '24px', fontFamily: "'Inter', sans-serif" }}>
-          <div className="onboarding-card" style={{ maxWidth: '480px', width: '100%', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '28px', padding: '40px', boxShadow: '0 24px 64px rgba(0,0,0,0.06)', animation: 'onboardingFadeIn 0.5s ease-out both', textAlign: 'center' }}>
-            <div style={{ display: 'inline-flex', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '8px 16px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '700', marginBottom: '24px', gap: '6px', alignItems: 'center' }}>
+        <div className="onboarding-container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', padding: '20px', fontFamily: "'Outfit', sans-serif" }}>
+          <div className="onboarding-card" style={{ maxWidth: '440px', width: '100%', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '32px', padding: '40px', boxShadow: '0 20px 50px rgba(0,0,0,0.05)', animation: 'onboardingFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both', textAlign: 'center' }}>
+            <div style={{ display: 'inline-flex', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '8px 16px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '800', marginBottom: '24px', gap: '6px', alignItems: 'center', textTransform: 'uppercase' }}>
               <CheckCircle size={16} /> Connection Successful
             </div>
-            <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#0f172a', marginBottom: '12px', letterSpacing: '-0.5px' }}>
-              You're all set!
+            <h2 style={{ fontSize: '1.8rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '12px', letterSpacing: '-0.5px' }}>
+              You're Ready!
             </h2>
             <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '32px' }}>
-              Your workspaces and Meta connection are fully customized. You can immediately build AI DM automations or campaign broadcasts.
+              Your Instagram is now connected. You can start creating automations immediately.
             </p>
 
-            <div style={{ padding: '20px', background: 'rgba(16, 185, 129, 0.04)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '16px', marginBottom: '32px', textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <CheckCircle size={28} color="#10b981" />
+            <div style={{ padding: '20px', background: '#f8fafc', border: '1.5px solid #f1f5f9', borderRadius: '20px', marginBottom: '32px', textAlign: 'left' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <CheckCircle size={24} color="#10b981" />
+                </div>
                 <div>
-                  <h4 style={{ fontSize: '1rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>
-                    Workspace Setup Complete
-                  </h4>
-                  <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '4px 0 0 0' }}>
-                    Account connected: <strong>{connectedName || 'Linked Profiles'}</strong>
-                  </p>
+                  <h4 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Account Linked</h4>
+                  <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '2px 0 0 0', fontWeight: '600' }}>@{connectedName}</p>
                 </div>
               </div>
             </div>
 
-            <button onClick={handleCompleteSetup} style={{ width: '100%', padding: '16px', borderRadius: '14px', fontSize: '1rem', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%)', color: 'white', boxShadow: '0 6px 20px rgba(124, 58, 237, 0.3)', transition: 'all 0.3s' }}>
-              Explore Dashboard <ArrowRight size={18} />
+            <button onClick={handleCompleteSetup} style={{ width: '100%', padding: '18px', borderRadius: '18px', fontSize: '1rem', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', color: 'white', boxShadow: '0 10px 25px rgba(124, 58, 237, 0.3)', transition: 'all 0.3s' }}>
+              Go to Dashboard <ArrowRight size={20} />
             </button>
           </div>
         </div>
       ) : (
-        <div className="onboarding-container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '24px', fontFamily: "'Inter', sans-serif" }}>
-          <div className="onboarding-card" style={{ maxWidth: '600px', width: '100%', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '28px', padding: '40px', boxShadow: '0 24px 64px rgba(0,0,0,0.06)', animation: 'onboardingFadeIn 0.5s ease-out both' }}>
+        <div className="onboarding-container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', padding: '20px', fontFamily: "'Outfit', sans-serif" }}>
+          <div className="onboarding-card" style={{ maxWidth: '440px', width: '100%', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '32px', padding: '40px', boxShadow: '0 20px 50px rgba(0,0,0,0.05)', animation: 'onboardingFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both' }}>
             
             {/* Error Message */}
             {linkingError && (
-              <div style={{ padding: '16px', background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: '16px', marginBottom: '24px', color: '#dc2626', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ padding: '16px', background: '#fef2f2', border: '1.5px solid #fee2e2', borderRadius: '16px', marginBottom: '24px', color: '#dc2626', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <AlertTriangle size={18} />
-                <div style={{ flex: 1 }}>{linkingError}</div>
-                <button onClick={fetchPages} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '8px', cursor: 'pointer' }}>Retry Sync</button>
+                <div style={{ flex: 1, fontWeight: '600' }}>{linkingError}</div>
+                <button onClick={fetchPages} style={{ background: '#dc2626', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '10px', cursor: 'pointer', fontWeight: '700', fontSize: '0.75rem' }}>Retry</button>
               </div>
             )}
 
             {availablePages === null ? (
-              <div style={{ textAlign: 'center', padding: '10px' }}>
-                <div style={{ display: 'inline-flex', background: 'rgba(124, 58, 237, 0.1)', color: '#7c3aed', padding: '8px 16px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '800', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                  Step 1: Connect Channel
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ display: 'inline-flex', background: 'rgba(124, 58, 237, 0.1)', color: '#7c3aed', padding: '8px 16px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '800', marginBottom: '24px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  Quick Setup
                 </div>
-                <h1 className="onboarding-title" style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', marginBottom: '16px', lineHeight: '1.1', letterSpacing: '-1px' }}>
-                  Let's <span style={{ color: '#7c3aed' }}>Get Started</span>
+                <h1 style={{ fontSize: '2.2rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '16px', lineHeight: '1.1', letterSpacing: '-1px' }}>
+                  Let's <span style={{ color: '#7c3aed' }}>Grow!</span>
                 </h1>
-                <p style={{ fontSize: '1rem', color: '#64748b', marginBottom: '32px', fontWeight: '500', lineHeight: '1.5', maxWidth: '400px', margin: '0 auto 32px' }}>
-                  Connect your Instagram Business account to start automating your growth.
+                <p style={{ fontSize: '0.95rem', color: '#64748b', marginBottom: '32px', fontWeight: '500', lineHeight: '1.6' }}>
+                  Connect your Instagram Business account to activate your AI agents.
                 </p>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-                  <div onClick={() => handleConnectMeta('instagram')} className="channel-pill" style={{ maxWidth: '380px' }}>
-                    <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0 }}>
-                      <Instagram size={22} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div 
+                    onClick={() => handleConnectMeta('instagram')} 
+                    style={{ 
+                      display: 'flex', alignItems: 'center', gap: '16px', padding: '20px', 
+                      background: '#ffffff', border: '2px solid #f1f5f9', borderRadius: '24px',
+                      cursor: 'pointer', transition: 'all 0.3s', boxShadow: '0 4px 12px rgba(0,0,0,0.02)'
+                    }}
+                    onMouseOver={(e) => { e.currentTarget.style.borderColor = '#7c3aed'; e.currentTarget.style.background = '#f5f3ff'; }}
+                    onMouseOut={(e) => { e.currentTarget.style.borderColor = '#f1f5f9'; e.currentTarget.style.background = '#ffffff'; }}
+                  >
+                    <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0, boxShadow: '0 8px 16px rgba(236, 72, 153, 0.25)' }}>
+                      <Instagram size={28} />
                     </div>
                     <div style={{ textAlign: 'left' }}>
-                      <h4 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>Connect Instagram</h4>
-                      <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: '2px 0 0 0' }}>Sync your professional profile</p>
+                      <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Instagram</h4>
+                      <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '4px 0 0 0', fontWeight: '500' }}>Tap to connect profile</p>
                     </div>
-                    <ArrowRight size={18} style={{ marginLeft: 'auto', color: '#cbd5e1' }} />
+                    <ArrowRight size={20} style={{ marginLeft: 'auto', color: '#cbd5e1' }} />
                   </div>
+                </div>
+                
+                <div style={{ marginTop: '32px', padding: '16px', background: '#f8fafc', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                   <Zap size={16} color="#7c3aed" />
+                   <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '600' }}>Takes less than 30 seconds</span>
                 </div>
               </div>
             ) : (
               <>
-                <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px', letterSpacing: '-0.5px' }}>
-                  Choose Your Facebook Page
-                </h2>
-                <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '32px' }}>
-                  Select the Facebook Page you want to link. Ensure your Instagram Professional account is linked to this page.
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+                   <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Facebook size={18} />
+                   </div>
+                   <h2 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1e1b4b', margin: 0, letterSpacing: '-0.5px' }}>
+                    Select Page
+                  </h2>
+                </div>
+                <p style={{ color: '#64748b', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '24px', fontWeight: '500' }}>
+                  Pick the Facebook Page linked to your Instagram Professional account.
                 </p>
 
                 {availablePages.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '24px', background: '#fffbeb', border: '1px solid #f59e0b', borderRadius: '16px', marginBottom: '32px' }}>
-                    <h4 style={{ color: '#b45309', fontWeight: '700', fontSize: '1rem', margin: '0 0 8px 0' }}>No Facebook Pages Found</h4>
-                    <p style={{ color: '#b45309', fontSize: '0.85rem', margin: 0 }}>
-                      Please create a Facebook Page first or link your Instagram Professional account.
+                  <div style={{ textAlign: 'center', padding: '24px', background: '#fffbeb', border: '1.5px solid #fef3c7', borderRadius: '20px', marginBottom: '24px' }}>
+                    <Info size={32} color="#f59e0b" style={{ marginBottom: '12px' }} />
+                    <h4 style={{ color: '#92400e', fontWeight: '800', fontSize: '1rem', margin: '0 0 4px 0' }}>No Pages Found</h4>
+                    <p style={{ color: '#b45309', fontSize: '0.8rem', margin: 0, fontWeight: '500' }}>
+                      Ensure your IG profile is a Professional account linked to a Page.
                     </p>
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px', maxHeight: '300px', overflowY: 'auto', padding: '4px' }}>
                     {availablePages.map((page) => (
-                      <div key={page.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px' }}>
-                        <div>
-                          <h4 style={{ fontSize: '1.05rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>{page.name}</h4>
+                      <div key={page.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#ffffff', border: '1.5px solid #f1f5f9', borderRadius: '20px', transition: 'all 0.2s' }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <h4 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{page.name}</h4>
                           {page.linkedInstagram ? (
-                            <p style={{ fontSize: '0.85rem', color: '#10b981', margin: '6px 0 0 0', fontWeight: '600' }}>@{page.linkedInstagram.username} linked</p>
+                            <p style={{ fontSize: '0.75rem', color: '#10b981', margin: '4px 0 0 0', fontWeight: '700' }}>@{page.linkedInstagram.username}</p>
                           ) : (
-                            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '6px 0 0 0' }}>No Instagram linked</p>
+                            <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: '4px 0 0 0', fontWeight: '500' }}>Not linked</p>
                           )}
                         </div>
                         <button 
                           onClick={async () => {
                             if (!page.linkedInstagram) {
-                              alert('Link Instagram to this page first!');
+                              notify('Link Instagram to this page first!', 'error');
                               return;
                             }
                             try {
@@ -279,24 +297,26 @@ export default function Onboarding() {
                                 localStorage.setItem('insta_agent_connected', 'true');
                                 setMetaConnected(true);
                                 setConnectedName(page.linkedInstagram.username);
+                                notify('🎉 Connected successfully!', 'success');
                               }
-                            } catch (err) { setLinkingError(err.message); } finally { setIsLinking(false); }
+                            } catch (err) { notify(err.message, 'error'); } finally { setIsLinking(false); }
                           }}
-                          style={{ padding: '10px 20px', background: 'linear-gradient(135deg, #7c3aed, #3b82f6)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '700', cursor: 'pointer' }}
+                          disabled={!page.linkedInstagram || isLinking}
+                          style={{ padding: '8px 16px', background: page.linkedInstagram ? 'linear-gradient(135deg, #7c3aed, #4f46e5)' : '#f1f5f9', color: page.linkedInstagram ? 'white' : '#cbd5e1', border: 'none', borderRadius: '12px', fontWeight: '800', fontSize: '0.8rem', cursor: page.linkedInstagram ? 'pointer' : 'not-allowed', marginLeft: '12px', flexShrink: 0 }}
                         >
-                          {isLinking ? 'Linking...' : 'Connect'}
+                          {isLinking ? '...' : 'Select'}
                         </button>
                       </div>
                     ))}
                   </div>
                 )}
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <button onClick={fetchPages} style={{ width: '100%', padding: '16px', borderRadius: '14px', background: '#f1f5f9', border: 'none', cursor: 'pointer', fontWeight: '700' }}>
-                    <RefreshCw size={18} /> Refresh Account List
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button onClick={fetchPages} style={{ width: '100%', padding: '14px', borderRadius: '14px', background: '#f8fafc', border: '1.5px solid #e2e8f0', cursor: 'pointer', fontWeight: '800', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '0.9rem' }}>
+                    <RefreshCw size={18} /> Sync Pages
                   </button>
-                  <button onClick={() => setAvailablePages(null)} style={{ width: '100%', padding: '16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b' }}>
-                    Cancel
+                  <button onClick={() => setAvailablePages(null)} style={{ width: '100%', padding: '12px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8', fontWeight: '700', fontSize: '0.85rem' }}>
+                    Go Back
                   </button>
                 </div>
               </>
