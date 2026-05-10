@@ -97,7 +97,12 @@ function parseFilter(q, queryObj, tableName) {
       }).join(',');
       q = q.or(orConditions);
     } else if (val !== null && typeof val === 'object' && !(val instanceof Date) && !Array.isArray(val)) {
-      for (const [op, subVal] of Object.entries(val)) {
+      for (const [op, subValRaw] of Object.entries(val)) {
+        let subVal = subValRaw;
+        if (subVal instanceof Date) {
+          subVal = subVal.toISOString();
+        }
+        
         if (op === '$gte') q = q.gte(parsedKey, subVal);
         else if (op === '$lte') q = q.lte(parsedKey, subVal);
         else if (op === '$gt') q = q.gt(parsedKey, subVal);
