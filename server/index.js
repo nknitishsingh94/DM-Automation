@@ -1232,8 +1232,19 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
     
     const finalMediaUrl = JSON.stringify(metadata);
 
+    // Normalize date to ISO string for consistent comparison in background worker
+    let scheduledDate = req.body.scheduledFor;
+    try {
+      if (scheduledDate) {
+        scheduledDate = new Date(scheduledDate).toISOString();
+      }
+    } catch (e) {
+      console.error("⚠️ Date parsing error:", e.message);
+    }
+
     const postData = {
       ...req.body,
+      scheduledFor: scheduledDate,
       userId: req.user.userId,
       mediaUrl: finalMediaUrl,
       status: 'Scheduled'
@@ -1729,13 +1740,22 @@ app.get('/api/debug/settings', verifyToken, async (req, res) => {
 setInterval(async () => {
   try {
     const now = new Date();
+    // Normalize to ISO for consistent DB comparison
+    const nowISO = now.toISOString();
+    
+    console.log(`📡 [Worker] Checking for due posts at: ${nowISO}`);
+    
     const duePosts = await ScheduledPost.find({
-      scheduledFor: { $lte: now.toISOString() },
+      scheduledFor: { $lte: nowISO },
       status: 'Scheduled'
     });
 
+    if (duePosts.length > 0) {
+       console.log(`⏰ Found ${duePosts.length} due posts to process.`);
+    }
+
     for (const post of duePosts) {
-      console.log(`⏰ Processing Scheduled Post: ${post._id || post.id}`);
+      console.log(`🔄 Processing Scheduled Post: ${post._id || post.id} (Scheduled For: ${post.scheduledFor})`);
 
       // Deserialize metadata if it's a JSON object/array
       let finalMedia = post.mediaUrl;
