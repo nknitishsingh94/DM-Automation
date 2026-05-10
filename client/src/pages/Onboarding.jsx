@@ -204,28 +204,27 @@ export default function Onboarding() {
             )}
 
             {availablePages === null ? (
-              <div style={{ display: 'flex', minHeight: '100vh', background: '#ffffff', fontFamily: "'Inter', sans-serif" }}>
-                {/* Left Column */}
-                <div style={{ flex: '1 1 50%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '64px', boxSizing: 'border-box' }}>
-                  <div style={{ maxWidth: '520px', marginTop: 'auto', marginBottom: 'auto' }}>
-                    <h1 className="onboarding-title" style={{ fontSize: '3.4rem', fontWeight: '800', color: '#1e293b', marginBottom: '16px', lineHeight: '1.15', letterSpacing: '-1.5px' }}>
-                      Let's <span style={{ color: '#7c3aed' }}>Kick Things Off!</span>
-                    </h1>
-                    <p style={{ fontSize: '1.2rem', color: '#64748b', marginBottom: '40px', fontWeight: '500', lineHeight: '1.5' }}>
-                      Start with any channel you like — you can connect more later.
-                    </p>
+              <div style={{ textAlign: 'center', padding: '10px' }}>
+                <div style={{ display: 'inline-flex', background: 'rgba(124, 58, 237, 0.1)', color: '#7c3aed', padding: '8px 16px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '800', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  Step 1: Connect Channel
+                </div>
+                <h1 className="onboarding-title" style={{ fontSize: '2.5rem', fontWeight: '900', color: '#1e293b', marginBottom: '16px', lineHeight: '1.1', letterSpacing: '-1px' }}>
+                  Let's <span style={{ color: '#7c3aed' }}>Get Started</span>
+                </h1>
+                <p style={{ fontSize: '1rem', color: '#64748b', marginBottom: '32px', fontWeight: '500', lineHeight: '1.5', maxWidth: '400px', margin: '0 auto 32px' }}>
+                  Connect your Instagram Business account to start automating your growth.
+                </p>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                      <div onClick={() => handleConnectMeta('instagram')} className="channel-pill">
-                        <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                          <Instagram size={24} />
-                        </div>
-                        <div>
-                          <h4 style={{ fontSize: '1.15rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>Instagram</h4>
-                          <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '4px 0 0 0' }}>Click to connect Instagram Business account</p>
-                        </div>
-                      </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
+                  <div onClick={() => handleConnectMeta('instagram')} className="channel-pill" style={{ maxWidth: '380px' }}>
+                    <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0 }}>
+                      <Instagram size={22} />
                     </div>
+                    <div style={{ textAlign: 'left' }}>
+                      <h4 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>Connect Instagram</h4>
+                      <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: '2px 0 0 0' }}>Sync your professional profile</p>
+                    </div>
+                    <ArrowRight size={18} style={{ marginLeft: 'auto', color: '#cbd5e1' }} />
                   </div>
                 </div>
               </div>
