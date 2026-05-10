@@ -28,6 +28,7 @@ export default function Scheduling() {
   const [previews, setPreviews] = useState([]);
   const fileInputRef = useRef(null);
 
+  const [newPost, setNewPost] = useState({
     caption: '',
     scheduledFor: '',
     mediaUrl: '',
