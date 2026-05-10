@@ -28,13 +28,20 @@ export default function Scheduling() {
   const [previews, setPreviews] = useState([]);
   const fileInputRef = useRef(null);
 
-  const [newPost, setNewPost] = useState({
     caption: '',
     scheduledFor: '',
     mediaUrl: '',
     triggerKeyword: '',
     autoResponse: '',
-    coverUrl: ''
+    coverUrl: '',
+    // Advanced Automation Fields
+    requireFollow: true,
+    unfollowedResponse: "Hey! Please follow our account first to get the link! 😊",
+    openingMessage: false,
+    openingMessageText: "Hey there! I'm so happy you're here, thanks so much for your interest 😊\n\nClick below and I'll send you the link in just a sec 🚀",
+    openingMessageButton: "Send me the link",
+    buttons: [],
+    anyKeyword: false
   });
 
   useEffect(() => {
@@ -215,9 +222,44 @@ export default function Scheduling() {
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [createdPost, setCreatedPost] = useState(null);
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
   const [isPreviewMuted, setIsPreviewMuted] = useState(true);
+  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [editingLinkIndex, setEditingLinkIndex] = useState(null);
+  const [tempLinkTitle, setTempLinkTitle] = useState('Open Link');
+  const [tempLinkUrl, setTempLinkUrl] = useState('https://example.com');
+  const [keywordInput, setKeywordInput] = useState('');
+
+  const openAddLinkModal = () => {
+    setEditingLinkIndex(null);
+    setTempLinkTitle('Open Link');
+    setTempLinkUrl('https://example.com');
+    setShowLinkModal(true);
+  };
+
+  const openEditLinkModal = (index) => {
+    setEditingLinkIndex(index);
+    setTempLinkTitle(createdPost.buttons[index].text);
+    setTempLinkUrl(createdPost.buttons[index].url);
+    setShowLinkModal(true);
+  };
+
+  const handleSaveLink = () => {
+    if (!tempLinkTitle.trim() || !tempLinkUrl.trim()) return;
+    const newButtons = [...(createdPost.buttons || [])];
+    if (editingLinkIndex !== null) {
+      newButtons[editingLinkIndex] = { text: tempLinkTitle, url: tempLinkUrl };
+    } else {
+      if (newButtons.length >= 3) return;
+      newButtons.push({ text: tempLinkTitle, url: tempLinkUrl });
+    }
+    setCreatedPost({ ...createdPost, buttons: newButtons });
+    setShowLinkModal(false);
+  };
+
+  const removeLink = (index) => {
+    const newButtons = (createdPost.buttons || []).filter((_, i) => i !== index);
+    setCreatedPost({ ...createdPost, buttons: newButtons });
+  };
 
   const deletePost = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this scheduled post?")) return;
@@ -770,115 +812,213 @@ export default function Scheduling() {
           display: 'flex', alignItems: 'center', justifyContent: 'flex-end', zIndex: 4000 
         }}>
           <div style={{ 
-            background: 'white', width: '100%', maxWidth: '600px', height: '100vh', 
-            padding: '40px', boxShadow: '-20px 0 60px rgba(0,0,0,0.1)', overflowY: 'auto',
+            background: 'white', width: '100%', maxWidth: '900px', height: '100vh', 
+            display: 'grid', gridTemplateColumns: '380px 1fr',
+            boxShadow: '-20px 0 60px rgba(0,0,0,0.1)', overflow: 'hidden',
             animation: 'slideInRight 0.4s ease-out'
           }}>
-             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-                <h3 style={{ fontSize: '1.6rem', fontWeight: '900', color: '#1e1b4b' }}>
-                  Advanced <span style={{ color: '#7c3aed' }}>Automation</span>
-                </h3>
-                <button onClick={() => setShowAdvanced(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
-                  <X size={24} />
-                </button>
-             </div>
-
-             <div style={{ 
-                padding: '24px', background: '#f8fafc', borderRadius: '24px', border: '1.5px solid #e2e8f0',
-                display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '40px'
-             }}>
-                <div style={{ width: '80px', height: '80px', borderRadius: '16px', overflow: 'hidden', background: '#e2e8f0', flexShrink: 0 }}>
-                   <img src={previews[0] || '/placeholder-ig.png'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+             {/* Left side: Chat Preview (Premium) */}
+             <div style={{ background: '#f8fafc', borderRight: '1.5px solid #e2e8f0', padding: '40px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ color: '#64748b', fontWeight: '800', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
+                  <Smartphone size={18} /> Chat Preview
                 </div>
-                <div>
-                   <div style={{ fontSize: '0.7rem', fontWeight: '800', color: '#7c3aed', textTransform: 'uppercase', marginBottom: '4px' }}>Targeting This Post</div>
-                   <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#1e1b4b', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {createdPost.caption || 'Scheduled Content'}
+                
+                {/* iPhone Mockup */}
+                <div style={{ 
+                  width: '280px', height: '580px', background: '#000', borderRadius: '40px', border: '8px solid #1e1b4b',
+                  position: 'relative', overflow: 'hidden', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.25)'
+                }}>
+                   <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translateX(-50%)', width: '80px', height: '18px', background: '#000', borderRadius: '20px', zIndex: 10 }}></div>
+                   
+                   <div style={{ height: '100%', background: 'linear-gradient(to bottom, #000000, #1a1a1a)', display: 'flex', flexDirection: 'column' }}>
+                      {/* IG Header */}
+                      <div style={{ padding: '20px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #1a1a1a' }}>
+                        <ArrowLeft size={16} color="white" />
+                        <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: '800', color: 'white' }}>IG</div>
+                        <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>Instagram Account</div>
+                      </div>
+
+                      {/* Chat Messages */}
+                      <div style={{ flex: 1, padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto' }}>
+                         {/* Trigger Message */}
+                         <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#0095f6', color: 'white', padding: '8px 12px', borderRadius: '14px 14px 2px 14px', fontSize: '0.75rem' }}>
+                            {createdPost.anyKeyword ? 'Saw your post!' : (createdPost.triggerKeyword?.split(',')[0] || 'Ready')}
+                         </div>
+
+                         {/* Response Message */}
+                         <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
+                            <div style={{ background: '#262626', borderRadius: '14px 14px 14px 2px', overflow: 'hidden' }}>
+                               <div style={{ padding: '10px 12px', borderBottom: (createdPost.buttons?.length > 0) ? '1px solid #333' : 'none' }}>
+                                  <div style={{ color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>{createdPost.autoResponse || 'Bot Response...'}</div>
+                               </div>
+                               {(createdPost.buttons || []).map((btn, idx) => (
+                                 <div key={idx} style={{ padding: '10px', textAlign: 'center', borderBottom: idx === createdPost.buttons.length - 1 ? 'none' : '1px solid #333', color: '#3b82f6', fontSize: '0.75rem', fontWeight: '800' }}>
+                                    {btn.text}
+                                 </div>
+                               ))}
+                            </div>
+                         </div>
+                      </div>
                    </div>
                 </div>
              </div>
 
-             <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
-                <div>
-                   <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '800', color: '#475569', marginBottom: '12px' }}>Trigger Keywords</label>
-                   <input 
-                     type="text" 
-                     placeholder="e.g. READY, PRICE, LINK (Separate with commas)"
-                     value={createdPost.triggerKeyword || ''}
-                     onChange={(e) => setCreatedPost({...createdPost, triggerKeyword: e.target.value})}
-                     style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem' }}
-                   />
+             {/* Right side: Config Steps (Premium Builder) */}
+             <div style={{ padding: '40px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                   <div>
+                      <h3 style={{ fontSize: '1.6rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Advanced <span style={{ color: '#7c3aed' }}>Automation</span></h3>
+                      <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>Setup powerful responses for this post</p>
+                   </div>
+                   <button onClick={() => setShowAdvanced(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '8px', cursor: 'pointer', color: '#64748b' }}>
+                      <X size={20} />
+                   </button>
                 </div>
 
-                <div>
-                   <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '800', color: '#475569', marginBottom: '12px' }}>Auto Response Message</label>
+                {/* Step 1: Follower Check */}
+                <div style={{ background: '#ecfdf5', padding: '24px', borderRadius: '24px', border: '1.5px solid #10b981' }}>
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>1</div>
+                      <h4 style={{ margin: 0, fontWeight: '800', color: '#065f46' }}>Follower Growth Gating</h4>
+                   </div>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <div style={{ fontWeight: '800', color: '#065f46', fontSize: '0.95rem' }}>Require Follow to Trigger</div>
+                      <div 
+                        onClick={() => setCreatedPost({...createdPost, requireFollow: !createdPost.requireFollow})}
+                        style={{ width: '44px', height: '24px', borderRadius: '12px', background: createdPost.requireFollow ? '#10b981' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                        <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: createdPost.requireFollow ? '23px' : '3px', transition: '0.3s' }}></div>
+                      </div>
+                   </div>
+                   {createdPost.requireFollow && (
+                      <textarea 
+                        value={createdPost.unfollowedResponse} 
+                        onChange={(e) => setCreatedPost({...createdPost, unfollowedResponse: e.target.value})}
+                        placeholder="Message for non-followers..." 
+                        style={{ width: '100%', height: '70px', padding: '12px', borderRadius: '14px', border: '1px solid #10b981', outline: 'none', fontSize: '0.85rem', resize: 'none' }}
+                      />
+                   )}
+                </div>
+
+                {/* Step 2: Keywords */}
+                <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #e2e8f0' }}>
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>2</div>
+                      <h4 style={{ margin: 0, fontWeight: '800', color: '#1e1b4b' }}>Setup Trigger Keywords</h4>
+                   </div>
+                   
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                      <div>
+                        <span style={{ fontWeight: '800', color: '#475569', display: 'block' }}>Any Message / Keyword</span>
+                        <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Trigger on ANY interaction with this post</span>
+                      </div>
+                      <div 
+                        onClick={() => setCreatedPost({...createdPost, anyKeyword: !createdPost.anyKeyword})}
+                        style={{ width: '44px', height: '24px', borderRadius: '12px', background: createdPost.anyKeyword ? '#ef4444' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                        <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: createdPost.anyKeyword ? '23px' : '3px', transition: '0.3s' }}></div>
+                      </div>
+                   </div>
+
+                   {!createdPost.anyKeyword && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+                         {(createdPost.triggerKeyword || '').split(',').filter(k => k.trim()).map((kw, i) => (
+                           <div key={i} style={{ background: '#f1f5f9', padding: '6px 12px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: '700', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              {kw} <X size={14} style={{ cursor: 'pointer' }} onClick={() => {
+                                const kws = createdPost.triggerKeyword.split(',').filter(k => k.trim() !== kw.trim());
+                                setCreatedPost({...createdPost, triggerKeyword: kws.join(', ')});
+                              }} />
+                           </div>
+                         ))}
+                         <input 
+                           type="text" 
+                           placeholder="Add keyword..." 
+                           value={keywordInput}
+                           onChange={(e) => setKeywordInput(e.target.value)}
+                           onKeyDown={(e) => {
+                             if (e.key === 'Enter' && keywordInput.trim()) {
+                                const kws = (createdPost.triggerKeyword || '').split(',').filter(k => k.trim());
+                                if (!kws.includes(keywordInput.trim())) kws.push(keywordInput.trim());
+                                setCreatedPost({...createdPost, triggerKeyword: kws.join(', ')});
+                                setKeywordInput('');
+                             }
+                           }}
+                           style={{ border: 'none', outline: 'none', fontSize: '0.85rem', fontWeight: '600', padding: '6px' }}
+                         />
+                      </div>
+                   )}
+                </div>
+
+                {/* Step 3: Response & Buttons */}
+                <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #e2e8f0' }}>
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>3</div>
+                      <h4 style={{ margin: 0, fontWeight: '800', color: '#1e1b4b' }}>Configure Response</h4>
+                   </div>
+
+                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '12px' }}>Auto Reply Message</label>
                    <textarea 
-                     placeholder="What should the bot say when the keyword is detected?"
                      value={createdPost.autoResponse || ''}
                      onChange={(e) => setCreatedPost({...createdPost, autoResponse: e.target.value})}
-                     style={{ width: '100%', height: '120px', padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem', resize: 'none' }}
+                     placeholder="Type your bot response..." 
+                     style={{ width: '100%', height: '100px', padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', resize: 'none', marginBottom: '24px' }}
                    />
+
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                      <label style={{ fontSize: '0.85rem', fontWeight: '800', color: '#64748b' }}>Call-to-Action Buttons</label>
+                      <button onClick={openAddLinkModal} style={{ background: '#f5f3ff', color: '#7c3aed', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: '800', fontSize: '0.75rem', cursor: 'pointer' }}>
+                        + Add Link
+                      </button>
+                   </div>
+
+                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {(createdPost.buttons || []).map((btn, idx) => (
+                        <div key={idx} style={{ padding: '14px', borderRadius: '14px', border: '1.5px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <LinkIcon size={16} color="#7c3aed" />
+                              <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#1e1b4b' }}>{btn.text}</span>
+                           </div>
+                           <div style={{ display: 'flex', gap: '12px' }}>
+                              <Pencil size={16} color="#64748b" style={{ cursor: 'pointer' }} onClick={() => openEditLinkModal(idx)} />
+                              <Trash2 size={16} color="#ef4444" style={{ cursor: 'pointer' }} onClick={() => removeLink(idx)} />
+                           </div>
+                        </div>
+                      ))}
+                      {(createdPost.buttons || []).length === 0 && (
+                        <div style={{ textAlign: 'center', padding: '20px', background: '#f8fafc', borderRadius: '14px', color: '#94a3b8', fontSize: '0.85rem', fontWeight: '600', border: '1px dashed #cbd5e1' }}>
+                          No buttons added yet
+                        </div>
+                      )}
+                   </div>
                 </div>
 
-                <div style={{ padding: '24px', background: '#f1f5f9', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                   <div>
-                      <div style={{ fontWeight: '800', color: '#1e1b4b', marginBottom: '4px' }}>Follower Check</div>
-                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Only reply if they follow you</div>
-                   </div>
-                   <div 
-                    onClick={() => setCreatedPost({...createdPost, requireFollow: !createdPost.requireFollow})}
-                    style={{ 
-                      width: '50px', height: '26px', borderRadius: '13px', background: createdPost.requireFollow ? '#7c3aed' : '#cbd5e1', 
-                      position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
-                    }}>
-                      <div style={{ 
-                        position: 'absolute', top: '3px', left: createdPost.requireFollow ? '27px' : '3px', 
-                        width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'all 0.3s' 
-                      }} />
-                   </div>
+                <div style={{ display: 'flex', gap: '16px', marginTop: '20px' }}>
+                   <button 
+                    onClick={() => setShowAdvanced(false)}
+                    style={{ flex: 1, padding: '16px', borderRadius: '16px', background: '#f1f5f9', border: 'none', color: '#64748b', fontWeight: '800', cursor: 'pointer' }}>
+                      Discard
+                   </button>
+                   <button 
+                    onClick={async () => {
+                      try {
+                        const token = localStorage.getItem('insta_agent_token');
+                        const res = await fetch(`${API_BASE_URL}/api/scheduling/${createdPost._id || createdPost.id}`, {
+                          method: 'PUT',
+                          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                          body: JSON.stringify({
+                             ...createdPost,
+                             triggerKeyword: createdPost.anyKeyword ? '*' : createdPost.triggerKeyword
+                          })
+                        });
+                        if (res.ok) {
+                          notify("✅ Automation saved successfully!", "success");
+                          setShowAdvanced(false);
+                          fetchPosts();
+                        }
+                      } catch (err) { notify("Failed to save", "error"); }
+                    }}
+                    style={{ flex: 2, padding: '16px', borderRadius: '16px', background: '#7c3aed', border: 'none', color: 'white', fontWeight: '800', cursor: 'pointer', boxShadow: '0 8px 20px rgba(124, 58, 237, 0.25)' }}>
+                      Save Automation
+                   </button>
                 </div>
-
-                <button 
-                  onClick={async () => {
-                    try {
-                      const token = localStorage.getItem('insta_agent_token');
-                      // 1. Update the scheduling record
-                      const schedRes = await fetch(`${API_BASE_URL}/api/scheduling/${createdPost._id || createdPost.id}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                        body: JSON.stringify(createdPost)
-                      });
-
-                      // 2. Also trigger a Campaign update/creation in the backend to ensure it's "Live"
-                      // This ensures that if the post is already live, the automation starts NOW.
-                      await fetch(`${API_BASE_URL}/api/campaigns/sync-from-post`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                        body: JSON.stringify({
-                          postId: createdPost._id || createdPost.id,
-                          triggerKeyword: createdPost.triggerKeyword,
-                          autoResponse: createdPost.autoResponse,
-                          requireFollow: createdPost.requireFollow
-                        })
-                      });
-
-                      setShowAdvanced(false);
-                      notify("Marketing Automation Activated! 🚀", "success");
-                      fetchPosts();
-                    } catch (err) {
-                      notify("Failed to link automation", "error");
-                    }
-                  }}
-                  style={{ 
-                    width: '100%', padding: '18px', borderRadius: '18px', 
-                    background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)', 
-                    color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', 
-                    marginTop: '20px', boxShadow: '0 10px 20px rgba(30, 27, 75, 0.2)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px'
-                  }}
-                >
-                  <Zap size={20} /> Activate Automation
-                </button>
              </div>
           </div>
         </div>
