@@ -3,7 +3,7 @@ import {
   Plus, Calendar, Clock, Video, Image as ImageIcon, Send, X, Check, ChevronLeft, ChevronRight, 
   Trash2, Globe, Lock, AlertCircle, Info, Sparkles, Volume2, VolumeX, Zap,
   ArrowLeft, Heart, MessageCircle, Home, Layout, Instagram, Target, ArrowRight, Film, Copy,
-  Save, Layers, UploadCloud, Eye, FileText, Loader2, Bookmark, MessageSquare, Key
+  Save, Layers, UploadCloud, Eye, FileText, Loader2, Bookmark, MessageSquare, Key, Smartphone
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';

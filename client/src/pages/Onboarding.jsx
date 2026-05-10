@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Sparkles, ArrowRight, CheckCircle, Plus, Info, MessageSquare, Zap, Globe, Layout, RefreshCw, Instagram, Facebook, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
+import { useNotification } from '../App';
 
 const styles = `
   @keyframes onboardingFadeIn {
@@ -50,6 +51,7 @@ const styles = `
 export default function Onboarding() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { notify } = useNotification();
   const [loading, setLoading] = useState(true);
   const [metaConnected, setMetaConnected] = useState(false);
   const [connectedName, setConnectedName] = useState('');

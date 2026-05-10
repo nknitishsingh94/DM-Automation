@@ -1002,10 +1002,10 @@ app.get('/api/stats', verifyToken, async (req, res) => {
 
     if (filter === '7d') {
       const d = new Date(); d.setDate(d.getDate() - 7);
-      dateQuery = { $gte: d };
+      dateQuery = { $gte: d.toISOString() };
     } else if (filter === '30d') {
       const d = new Date(); d.setDate(d.getDate() - 30);
-      dateQuery = { $gte: d };
+      dateQuery = { $gte: d.toISOString() };
     }
 
     const campaignMatch = { userId: req.user.userId };
@@ -1211,19 +1211,27 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
   try {
     const { uploadToSupabase } = await import('./utils/supabase.js');
     
-    // Process and upload files to Supabase Storage for persistence
-    const mediaFiles = [];
+    // Process and upload files to Supabase Storage in PARALLEL for speed
+    let mediaFiles = [];
     if (req.files && req.files.length > 0) {
-      for (const file of req.files) {
-        const fileContent = fs.readFileSync(file.path);
-        const fileName = `${Date.now()}-${file.filename}`;
-        const publicUrl = await uploadToSupabase(fileContent, fileName, file.mimetype);
-        if (publicUrl) {
-          mediaFiles.push(publicUrl);
+      console.log(`🚀 Parallel Upload: Starting for ${req.files.length} files...`);
+      mediaFiles = await Promise.all(req.files.map(async (file) => {
+        try {
+          const fileContent = fs.readFileSync(file.path);
+          const fileName = `${Date.now()}-${file.filename}`;
+          const publicUrl = await uploadToSupabase(fileContent, fileName, file.mimetype);
+          
+          // Cleanup local file
+          try { fs.unlinkSync(file.path); } catch (e) {}
+          
+          return publicUrl;
+        } catch (err) {
+          console.error(`❌ Upload Failed for file: ${file.filename}`, err.message);
+          return null;
         }
-        // Cleanup local file after cloud upload
-        try { fs.unlinkSync(file.path); } catch (e) {}
-      }
+      }));
+      // Filter out any failed uploads
+      mediaFiles = mediaFiles.filter(url => url !== null);
     }
 
     let mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
