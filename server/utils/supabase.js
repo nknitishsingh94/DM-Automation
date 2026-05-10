@@ -68,7 +68,7 @@ function parseFilter(q, queryObj, tableName) {
     
     // Defensive mapping for case-sensitive Postgres columns
     if (key === 'userId') {
-      if (tableName === 'settings' || tableName === 'campaigns' || tableName === 'scheduled_posts') {
+      if (['settings', 'campaigns', 'scheduled_posts', 'flows'].includes(tableName)) {
         parsedKey = 'userId'; 
       } else {
         parsedKey = 'user_id';

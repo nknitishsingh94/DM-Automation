@@ -627,6 +627,7 @@ app.post('/api/webhook', async (req, res) => {
             }
           }
 
+
           const targetUserId = userSettings.userId;
           if (targetUserId) {
             try {
@@ -1051,8 +1052,12 @@ app.get('/api/stats', verifyToken, async (req, res) => {
       contactCount: uniqueContacts.length
     });
   } catch (err) {
-    console.error("❌ DASHBOARD STATS ERROR:", err);
-    res.status(500).json({ error: "Stats calculation failed: " + err.message });
+    console.error("❌ DASHBOARD STATS ERROR (Full):", JSON.stringify(err, null, 2));
+    res.status(500).json({ 
+      error: "Stats calculation failed", 
+      details: err.message || "Unknown Database Error",
+      hint: "Check if all tables (campaigns, messages, users) exist in Supabase and RLS is disabled for testing."
+    });
   }
 });
 
@@ -1594,7 +1599,12 @@ app.get('/api/flows', verifyToken, async (req, res) => {
     const flows = await Flow.find({ userId: req.user.userId });
     res.json(flows);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ FLOWS FETCH ERROR (Full):", JSON.stringify(err, null, 2));
+    res.status(500).json({ 
+      error: "Failed to fetch flows", 
+      details: err.message || "Unknown DB Error",
+      hint: "Check if the 'flows' table exists in Supabase and has a 'userId' column."
+    });
   }
 });
 
