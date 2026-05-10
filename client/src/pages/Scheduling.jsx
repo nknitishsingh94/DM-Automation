@@ -811,14 +811,16 @@ export default function Scheduling() {
       {/* --- ADVANCED AUTOMATION EDITOR (SIDE DRAWER/MODAL) --- */}
       {showAdvanced && createdPost && (
         <div style={{ 
-          position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(10px)', 
-          display: 'flex', alignItems: 'center', justifyContent: 'flex-end', zIndex: 4000 
+          position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(12px)', 
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 4000,
+          padding: '20px'
         }}>
           <div style={{ 
-            background: 'white', width: '100%', maxWidth: '900px', height: '100vh', 
-            display: 'grid', gridTemplateColumns: '380px 1fr',
-            boxShadow: '-20px 0 60px rgba(0,0,0,0.1)', overflow: 'hidden',
-            animation: 'slideInRight 0.4s ease-out'
+            background: 'white', width: '100%', maxWidth: '1000px', maxHeight: '90vh', 
+            display: 'grid', gridTemplateColumns: 'minmax(320px, 380px) 1fr',
+            boxShadow: '0 30px 70px rgba(0,0,0,0.3)', borderRadius: '32px',
+            overflow: 'hidden', position: 'relative',
+            animation: 'modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
           }}>
              {/* Left side: Chat Preview (Premium) */}
              <div style={{ background: '#f8fafc', borderRight: '1.5px solid #e2e8f0', padding: '40px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
