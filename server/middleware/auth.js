@@ -19,12 +19,9 @@ const verifyToken = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // SECURITY: Validate UUID format to prevent Postgres crash on legacy MongoDB IDs
-    if (decoded.userId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decoded.userId)) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn(`⚠️ Blocking legacy/invalid ID format: ${decoded.userId}`);
-      }
-      return res.status(401).json({ message: 'Session outdated. Please log out and log in again.' });
+    // Validated: Token is structurally sound. Proceed with decoded payload.
+    if (!decoded.userId) {
+       return res.status(401).json({ message: 'Invalid token payload' });
     }
 
     req.user = decoded;
