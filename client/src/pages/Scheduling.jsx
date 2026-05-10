@@ -223,6 +223,8 @@ export default function Scheduling() {
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [createdPost, setCreatedPost] = useState(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
   const [isPreviewMuted, setIsPreviewMuted] = useState(true);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [editingLinkIndex, setEditingLinkIndex] = useState(null);
