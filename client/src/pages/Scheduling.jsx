@@ -236,6 +236,7 @@ export default function Scheduling() {
   const [tempLinkTitle, setTempLinkTitle] = useState('Open Link');
   const [tempLinkUrl, setTempLinkUrl] = useState('https://example.com');
   const [keywordInput, setKeywordInput] = useState('');
+  const [previewMode, setPreviewMode] = useState('dm'); // 'dm' or 'post'
 
   const openAddLinkModal = () => {
     setEditingLinkIndex(null);
@@ -867,9 +868,24 @@ export default function Scheduling() {
           }}>
              {/* Left side: Chat Preview (Premium) */}
              <div style={{ background: '#f8fafc', borderRight: '1.5px solid #e2e8f0', padding: '40px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', overflowY: 'auto' }}>
-                <div style={{ color: '#64748b', fontWeight: '800', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
-                  <Smartphone size={18} /> Chat Preview
-                </div>
+                 <div style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ color: '#64748b', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
+                      <Smartphone size={18} /> Chat Preview
+                    </div>
+                    {/* View Toggle */}
+                    <div style={{ display: 'flex', background: '#e2e8f0', padding: '4px', borderRadius: '12px', gap: '4px' }}>
+                       <button 
+                         onClick={() => setPreviewMode('post')}
+                         style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: previewMode === 'post' ? 'white' : 'transparent', color: previewMode === 'post' ? '#1e1b4b' : '#64748b', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', boxShadow: previewMode === 'post' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}>
+                         Post View
+                       </button>
+                       <button 
+                         onClick={() => setPreviewMode('dm')}
+                         style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: previewMode === 'dm' ? 'white' : 'transparent', color: previewMode === 'dm' ? '#1e1b4b' : '#64748b', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', boxShadow: previewMode === 'dm' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}>
+                         DM View
+                       </button>
+                    </div>
+                 </div>
                 
                 {/* iPhone Mockup */}
                 <div style={{ 
@@ -890,52 +906,79 @@ export default function Scheduling() {
                         </div>
                       </div>
 
-                      {/* Dynamic Chat Simulation View */}
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', padding: '16px', gap: '20px' }}>
-                         {/* User Keyword Message */}
-                         <div style={{ alignSelf: 'flex-end', maxWidth: '80%' }}>
-                            <div style={{ 
-                               background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
-                               color: 'white', padding: '10px 16px', borderRadius: '20px 20px 4px 20px',
-                               fontSize: '0.85rem', fontWeight: '600', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
-                            }}>
-                               {createdPost.triggerKeyword && createdPost.triggerKeyword !== '*' ? createdPost.triggerKeyword.split(',')[0].trim() : 'Fire 🔥'}
-                            </div>
-                         </div>
+                      {/* Dynamic View Content */}
+                      <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                         {previewMode === 'post' ? (
+                            /* SIMULATED POST VIEW */
+                            <div style={{ height: '100%', background: '#000', display: 'flex', flexDirection: 'column' }}>
+                               <div style={{ flex: 1, position: 'relative', background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  {(() => {
+                                      // Reuse media parsing logic
+                                      let mUrl = createdPost?.mediaUrl;
+                                      let mediaData = typeof mUrl === 'string' && mUrl.trim().startsWith('{') ? JSON.parse(mUrl) : (typeof mUrl === 'object' ? mUrl : { mediaUrl: mUrl });
+                                      let rawUrl = mediaData.mediaUrl || mediaData.url || (typeof mUrl === 'string' ? mUrl : '');
+                                      const base = (API_BASE_URL && API_BASE_URL !== '/') ? API_BASE_URL : window.location.origin;
+                                      const finalUrl = rawUrl?.startsWith('http') ? rawUrl : `${base}${rawUrl?.startsWith('/') ? '' : '/'}${rawUrl}`;
+                                      
+                                      return <img src={finalUrl || '/placeholder-ig.png'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+                                  })()}
 
-                         {/* Automation Response Message */}
-                         <div style={{ alignSelf: 'flex-start', maxWidth: '85%', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
-                               <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
-                               <div style={{ 
-                                  background: '#262626', color: 'white', padding: '12px 16px', borderRadius: '20px 20px 20px 4px',
-                                  fontSize: '0.85rem', fontWeight: '500', lineHeight: '1.4', whiteSpace: 'pre-wrap'
-                               }}>
-                                  {createdPost.autoResponse || "Type your message on the right to see it here... 🚀"}
-                               </div>
-                            </div>
-
-                            {/* Dynamic Buttons in Preview */}
-                            {(createdPost.buttons || []).map((btn, idx) => (
-                               <div key={idx} style={{ marginLeft: '32px', width: '100%' }}>
-                                  <div style={{ 
-                                     background: '#262626', color: '#3b82f6', border: '1px solid #333',
-                                     padding: '10px', borderRadius: '12px', textAlign: 'center',
-                                     fontSize: '0.8rem', fontWeight: '700', marginBottom: '4px'
-                                  }}>
-                                     {btn.text || 'Button Text'}
+                                  {/* Comments Overlay */}
+                                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%', background: '#121212', borderRadius: '20px 20px 0 0', padding: '16px', boxShadow: '0 -10px 30px rgba(0,0,0,0.5)', zIndex: 10 }}>
+                                     <div style={{ width: '32px', height: '4px', background: '#333', borderRadius: '2px', margin: '0 auto 12px' }}></div>
+                                     <div style={{ color: 'white', fontSize: '0.75rem', fontWeight: '800', textAlign: 'center', marginBottom: '16px' }}>Comments</div>
+                                     <div style={{ display: 'flex', gap: '10px' }}>
+                                        <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)' }}></div>
+                                        <div>
+                                           <div style={{ color: 'white', fontSize: '0.7rem', fontWeight: '800' }}>instagram_user <span style={{ color: '#64748b', fontWeight: '500' }}>2m</span></div>
+                                           <div style={{ color: '#e2e8f0', fontSize: '0.75rem', marginTop: '4px' }}>
+                                              {createdPost.triggerKeyword && createdPost.triggerKeyword !== '*' ? createdPost.triggerKeyword.split(',')[0].trim() : 'I need the link! 🔥'}
+                                           </div>
+                                           <div style={{ marginTop: '8px', display: 'flex', gap: '12px' }}>
+                                              <span style={{ color: '#64748b', fontSize: '0.65rem', fontWeight: '800' }}>Reply</span>
+                                           </div>
+                                        </div>
+                                     </div>
+                                     {createdPost.publicReply && (
+                                        <div style={{ display: 'flex', gap: '10px', marginTop: '16px', marginLeft: '40px' }}>
+                                           <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)' }}></div>
+                                           <div>
+                                              <div style={{ color: 'white', fontSize: '0.7rem', fontWeight: '800' }}>{user?.username || 'you'} <span style={{ color: '#64748b', fontWeight: '500' }}>just now</span></div>
+                                              <div style={{ color: '#7c3aed', fontSize: '0.75rem', marginTop: '2px', fontWeight: '600' }}>
+                                                 {createdPost.publicReply}
+                                              </div>
+                                           </div>
+                                        </div>
+                                     )}
                                   </div>
                                </div>
-                            ))}
-                         </div>
+                            </div>
+                         ) : (
+                            /* SIMULATED DM VIEW */
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '16px', gap: '16px', overflowY: 'auto' }}>
+                               {/* Incoming Keyword */}
+                               {(createdPost.triggerKeyword || createdPost.anyKeyword) && (
+                                  <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#262626', color: 'white', padding: '10px 14px', borderRadius: '18px 18px 4px 18px', fontSize: '0.8rem', fontWeight: '500' }}>
+                                     {createdPost.anyKeyword ? "Hey, I saw your post!" : createdPost.triggerKeyword.split(',')[0]}
+                                  </div>
+                               )}
 
-                         {/* Public Comment Preview (Small Overlay) */}
-                         {createdPost.publicReply && (
-                            <div style={{ marginTop: 'auto', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', padding: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                               <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: '800', marginBottom: '4px', textTransform: 'uppercase' }}>Public Comment Reply</div>
-                               <div style={{ color: '#e2e8f0', fontSize: '0.75rem', fontStyle: 'italic' }}>
-                                  "@{user?.username || 'user'}: {createdPost.publicReply}"
-                               </div>
+                               {/* Automation Response */}
+                               {createdPost.autoResponse && (
+                                  <div style={{ alignSelf: 'flex-start', maxWidth: '85%', display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
+                                     <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
+                                     <div style={{ background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', padding: '10px 14px', borderRadius: '18px 18px 18px 4px', fontSize: '0.8rem', fontWeight: '500', lineHeight: '1.4' }}>
+                                        {createdPost.autoResponse}
+                                     </div>
+                                  </div>
+                               )}
+
+                               {/* CTA Buttons */}
+                               {(createdPost.buttons || []).map((btn, i) => (
+                                  <div key={i} style={{ marginLeft: '32px', background: '#1a1a1a', border: '1px solid #333', color: '#3b82f6', padding: '10px', borderRadius: '12px', textAlign: 'center', fontSize: '0.75rem', fontWeight: '800' }}>
+                                     {btn.text || 'Button'}
+                                  </div>
+                               ))}
                             </div>
                          )}
                       </div>
