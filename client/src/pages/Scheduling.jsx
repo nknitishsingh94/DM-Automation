@@ -864,21 +864,50 @@ export default function Scheduling() {
                          {(() => {
                             let mediaData = { type: 'image', mediaUrl: createdPost.mediaUrl };
                             try {
-                               if (createdPost.mediaUrl && createdPost.mediaUrl.startsWith('{')) {
+                               if (createdPost.mediaUrl && typeof createdPost.mediaUrl === 'string' && createdPost.mediaUrl.startsWith('{')) {
                                  mediaData = JSON.parse(createdPost.mediaUrl);
                                }
                             } catch (e) {}
 
-                            const finalMediaUrl = mediaData.mediaUrl && mediaData.mediaUrl.startsWith('http') 
-                              ? mediaData.mediaUrl 
-                              : (mediaData.mediaUrl ? `${API_BASE_URL}${mediaData.mediaUrl}` : (previews[0] || '/placeholder-ig.png'));
+                            // Robust URL Construction
+                            let finalMediaUrl = '';
+                            if (mediaData.mediaUrl) {
+                              if (mediaData.mediaUrl.startsWith('http') || mediaData.mediaUrl.startsWith('blob:')) {
+                                finalMediaUrl = mediaData.mediaUrl;
+                              } else {
+                                finalMediaUrl = `${API_BASE_URL}${mediaData.mediaUrl.startsWith('/') ? '' : '/'}${mediaData.mediaUrl}`;
+                              }
+                            } else if (previews && previews.length > 0) {
+                              finalMediaUrl = previews[0];
+                            } else {
+                              finalMediaUrl = '/placeholder-ig.png';
+                            }
+
+                            // Robust Type Detection
+                            const isVideo = mediaData.type === 'reel' || 
+                                            mediaData.type === 'video' || 
+                                            (finalMediaUrl && (
+                                              finalMediaUrl.toLowerCase().match(/\.(mp4|mov|webm|m4v)$/i) || 
+                                              finalMediaUrl.startsWith('blob:') // Blobs are often videos if type is reel
+                                            ));
 
                             return (
-                              <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-                                 {mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i)) ? (
-                                    <video src={finalMediaUrl} autoPlay muted loop style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              <div style={{ width: '100%', height: '100%', position: 'relative', background: '#000' }}>
+                                 {isVideo ? (
+                                    <video 
+                                      src={finalMediaUrl} 
+                                      autoPlay 
+                                      muted 
+                                      loop 
+                                      playsInline 
+                                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                                    />
                                  ) : (
-                                    <img src={finalMediaUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <img 
+                                      src={finalMediaUrl} 
+                                      onError={(e) => { e.target.src = '/placeholder-ig.png'; }}
+                                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                                    />
                                  )}
                                  
                                  {/* Dark Overlay for Chat effect */}
