@@ -1324,13 +1324,37 @@ app.delete('/api/captions/:id', verifyToken, async (req, res) => {
 
 app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
   try {
+    const postToUpdate = await ScheduledPost.findOne({ _id: req.params.id, userId: req.user.userId });
+    if (!postToUpdate) return res.status(404).json({ error: 'Post not found' });
+
+    const updateData = { ...req.body };
+    
+    // 1. Handle Schema-Safe Metadata (Serialize buttons into mediaUrl JSON)
+    let currentMetadata = {};
+    try {
+      if (postToUpdate.mediaUrl && postToUpdate.mediaUrl.startsWith('{')) {
+        currentMetadata = JSON.parse(postToUpdate.mediaUrl);
+      } else {
+        currentMetadata = { mediaUrl: postToUpdate.mediaUrl, type: postToUpdate.type || 'image' };
+      }
+    } catch (e) {
+      currentMetadata = { mediaUrl: postToUpdate.mediaUrl };
+    }
+
+    if (updateData.buttons) {
+      currentMetadata.buttons = updateData.buttons;
+      delete updateData.buttons; // Avoid Supabase schema error
+    }
+
+    updateData.mediaUrl = JSON.stringify(currentMetadata);
+
     const updatedPost = await ScheduledPost.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.userId },
-      { ...req.body },
+      updateData,
       { new: true }
     );
     
-    // If the post is already live (has a postId), update the Campaign too
+    // 2. Sync to Active Campaign if already posted
     if (updatedPost.status === 'Posted' && updatedPost.postId) {
       await Campaign.findOneAndUpdate(
         { userId: req.user.userId, postId: updatedPost.postId },
@@ -1344,6 +1368,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     
     res.json(updatedPost);
   } catch (err) {
+    console.error('❌ UPDATE ERROR:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
