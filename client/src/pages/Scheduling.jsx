@@ -1008,27 +1008,27 @@ export default function Scheduling() {
                         </div>
                       </div>
                     ) : (
-                      /* SIMULATED DM VIEW (Premium Light) */
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px', gap: '20px', overflowY: 'auto', background: '#FFF' }}>
+                      /* SIMULATED DM VIEW (Premium High-Fidelity - Dark as per screenshot) */
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px', gap: '20px', overflowY: 'auto', background: '#000' }}>
                         {/* System Notification */}
-                        <div style={{ color: '#64748b', fontSize: '0.7rem', textAlign: 'center', padding: '0 20px', lineHeight: '1.4', fontWeight: '600' }}>
-                           {(settings?.connectedInstagramName || user?.username || 'IG')} messaged you about a comment you made on their post. <span style={{ color: '#0095f6' }}>See Post</span>
+                        <div style={{ color: '#8e8e8e', fontSize: '0.7rem', textAlign: 'center', padding: '0 20px', lineHeight: '1.4', fontWeight: '500' }}>
+                           <span style={{ color: '#4f95ff', fontWeight: '600' }}>{(settings?.connectedInstagramName || user?.username || 'IG')}</span> messaged you about a comment you made on their post. <span style={{ color: '#4f95ff', fontWeight: '600' }}>See Post</span>
                         </div>
 
-                        {/* Bot Message Card Bubble (Integrated) */}
+                        {/* Bot Message Card Bubble (Integrated - Dark Mode Card) */}
                         {(createdPost.autoResponse) && (
                           <div style={{ alignSelf: 'flex-start', maxWidth: '85%', display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
                              <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
                              <div style={{ 
-                               background: '#F0F0F0', color: '#000', borderRadius: '22px 22px 22px 4px', 
-                               overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #efefef' 
+                               background: '#262626', color: '#FFF', borderRadius: '22px 22px 22px 4px', 
+                               overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333' 
                              }}>
                                 <div style={{ padding: '14px 18px', fontSize: '0.85rem', fontWeight: '500', lineHeight: '1.5' }}>
                                    {createdPost.autoResponse}
                                 </div>
-                                {/* Integrated Buttons */}
+                                {/* Integrated Buttons (List style) */}
                                 {(createdPost.buttons || []).map((btn, i) => (
-                                   <div key={i} style={{ borderTop: '1px solid #e5e7eb', padding: '12px', textAlign: 'center', color: '#0095f6', fontSize: '0.85rem', fontWeight: '800', background: '#F8F8F8' }}>
+                                   <div key={i} style={{ borderTop: '1px solid #363636', padding: '12px', textAlign: 'center', color: '#FFF', fontSize: '0.85rem', fontWeight: '800', background: '#363636' }}>
                                       {btn.text || 'Action Button'}
                                    </div>
                                 ))}
@@ -1036,44 +1036,44 @@ export default function Scheduling() {
                           </div>
                         )}
 
-                        {/* Follow Check Card Bubble (Gated Integrated) */}
+                        {/* Follow Check Card Bubble (Gated Integrated - Dark Mode Card) */}
                         {createdPost.requireFollow && createdPost.unfollowedResponse && (
                           <div style={{ alignSelf: 'flex-start', maxWidth: '85%', display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
                              <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
                              <div style={{ 
-                               background: '#F0F0F0', color: '#000', borderRadius: '22px 22px 22px 4px', 
-                               overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #efefef' 
+                               background: '#262626', color: '#FFF', borderRadius: '22px 22px 22px 4px', 
+                               overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333' 
                              }}>
                                 <div style={{ padding: '14px 18px', fontSize: '0.85rem', fontWeight: '500', lineHeight: '1.5' }}>
                                    {createdPost.unfollowedResponse}
                                 </div>
-                                <div style={{ borderTop: '1px solid #e5e7eb', padding: '12px', textAlign: 'center', color: '#0095f6', fontSize: '0.85rem', fontWeight: '800', background: '#F8F8F8' }}>
+                                <div style={{ borderTop: '1px solid #363636', padding: '12px', textAlign: 'center', color: '#FFF', fontSize: '0.85rem', fontWeight: '800', background: '#363636' }}>
                                    Visit Profile
                                 </div>
-                                <div style={{ borderTop: '1px solid #e5e7eb', padding: '12px', textAlign: 'center', color: '#0095f6', fontSize: '0.85rem', fontWeight: '800', background: '#F8F8F8' }}>
+                                <div style={{ borderTop: '1px solid #363636', padding: '12px', textAlign: 'center', color: '#FFF', fontSize: '0.85rem', fontWeight: '800', background: '#363636' }}>
                                    I'm following ✅
                                 </div>
                              </div>
                           </div>
                         )}
 
-                        {/* User Reply Bubble */}
-                        <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#0095f6', color: '#FFF', padding: '12px 18px', borderRadius: '22px 22px 4px 22px', fontSize: '0.85rem', fontWeight: '600' }}>
+                        {/* User Reply Bubble (Signature Purple Gradient as per screenshot) */}
+                        <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: '#FFF', padding: '12px 18px', borderRadius: '22px 22px 4px 22px', fontSize: '0.85rem', fontWeight: '600' }}>
                            I'm following ✅
                         </div>
                       </div>
                     )}
-                    {/* Bottom Bar Mockup (Premium Icons) */}
-                    <div style={{ padding: '12px 16px 24px', display: 'flex', gap: '16px', borderTop: '1px solid #efefef', background: '#FFF', alignItems: 'center' }}>
+                    {/* Bottom Bar Mockup (High-Fidelity Dark) */}
+                    <div style={{ padding: '12px 16px 24px', display: 'flex', gap: '16px', borderTop: '1px solid #1a1a1a', background: '#000', alignItems: 'center' }}>
                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <Camera size={20} color="white" />
                        </div>
-                       <div style={{ flex: 1, height: '44px', background: '#FAFAFA', borderRadius: '22px', border: '1px solid #efefef', display: 'flex', alignItems: 'center', padding: '0 16px', color: '#94a3b8', fontSize: '0.85rem' }}>
+                       <div style={{ flex: 1, height: '44px', background: '#dfd7d7ff', borderRadius: '22px', border: '1px solid #333', display: 'flex', alignItems: 'center', padding: '0 16px', color: '#8e8e8e', fontSize: '0.85rem' }}>
                           Message...
                        </div>
-                       <Mic size={22} color="#000" />
-                       <ImageIcon size={22} color="#000" />
-                       <PlusCircle size={22} color="#000" />
+                       <Mic size={22} color="#FFF" />
+                       <ImageIcon size={22} color="#FFF" />
+                       <PlusCircle size={22} color="#FFF" />
                     </div>
                   </div>
                 </div>
