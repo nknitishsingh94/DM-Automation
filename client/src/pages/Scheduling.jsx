@@ -847,23 +847,57 @@ export default function Scheduling() {
                 }}>
                    <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translateX(-50%)', width: '80px', height: '18px', background: '#000', borderRadius: '20px', zIndex: 10 }}></div>
                    
-                   <div style={{ height: '100%', background: 'linear-gradient(to bottom, #000000, #1a1a1a)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                   <div style={{ height: '100%', background: 'linear-gradient(to bottom, #000000, #1a1a1a)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
                       {/* IG Header (Small) */}
-                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '20px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ padding: '30px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px', zIndex: 5 }}>
                         <ArrowLeft size={16} color="white" />
                         <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: '800', color: 'white' }}>
-                          {(settings?.connectedInstagramName || 'IG').substring(0, 2).toUpperCase()}
+                          {(settings?.connectedInstagramName || user?.username || 'IG').substring(0, 2).toUpperCase()}
                         </div>
                         <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>
-                          {settings?.connectedInstagramName || 'Instagram Account'}
+                          {settings?.connectedInstagramName || user?.username || 'Instagram Account'}
                         </div>
                       </div>
 
-                      {/* Central Lightning Icon (from screenshot) */}
-                      <div style={{ width: '80px', height: '80px', borderRadius: '24px', background: 'linear-gradient(135deg, #60a5fa, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 40px rgba(59, 130, 246, 0.4)' }}>
-                         <Zap size={40} color="white" fill="white" />
+                      {/* Post Media Preview (INSTEAD of Lightning icon) */}
+                      <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                         {(() => {
+                            let mediaData = { type: 'image', mediaUrl: createdPost.mediaUrl };
+                            try {
+                               if (createdPost.mediaUrl && createdPost.mediaUrl.startsWith('{')) {
+                                 mediaData = JSON.parse(createdPost.mediaUrl);
+                               }
+                            } catch (e) {}
+
+                            const finalMediaUrl = mediaData.mediaUrl && mediaData.mediaUrl.startsWith('http') 
+                              ? mediaData.mediaUrl 
+                              : (mediaData.mediaUrl ? `${API_BASE_URL}${mediaData.mediaUrl}` : (previews[0] || '/placeholder-ig.png'));
+
+                            return (
+                              <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                                 {mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i)) ? (
+                                    <video src={finalMediaUrl} autoPlay muted loop style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                 ) : (
+                                    <img src={finalMediaUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                 )}
+                                 
+                                 {/* Dark Overlay for Chat effect */}
+                                 <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }}></div>
+
+                                 {/* Central Zap Indicator */}
+                                 <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80px', height: '80px', borderRadius: '24px', background: 'linear-gradient(135deg, #60a5fa, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 40px rgba(59, 130, 246, 0.4)', zIndex: 10 }}>
+                                    <Zap size={40} color="white" fill="white" />
+                                 </div>
+                              </div>
+                            );
+                         })()}
                       </div>
-                      <div style={{ color: 'white', marginTop: '20px', fontWeight: '800', fontSize: '0.9rem', opacity: 0.8 }}>Posts</div>
+
+                      {/* Bottom Bar Mockup */}
+                      <div style={{ padding: '12px 16px 20px', display: 'flex', gap: '10px', borderTop: '1px solid #1a1a1a', background: '#000' }}>
+                         <div style={{ flex: 1, height: '34px', background: '#1a1a1a', borderRadius: '17px', border: '1px solid #333' }}></div>
+                         <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#1a1a1a', border: '1px solid #333' }}></div>
+                      </div>
                    </div>
                 </div>
              </div>
@@ -990,6 +1024,27 @@ export default function Scheduling() {
                             + Add Link
                           </button>
                        </div>
+
+                       {/* Added Buttons List */}
+                       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
+                          {(createdPost.buttons || []).map((btn, idx) => (
+                             <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px', background: '#f8fafc', borderRadius: '16px', border: '1.5px solid #e2e8f0' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                   <LinkIcon size={14} color="#3b82f6" />
+                                   <span style={{ fontWeight: '800', fontSize: '0.9rem' }}>{btn.text}</span>
+                                </div>
+                                <div style={{ display: 'flex', gap: '12px' }}>
+                                   <Pencil size={16} onClick={() => openEditLinkModal(idx)} style={{ cursor: 'pointer', color: '#64748b' }} />
+                                   <Trash2 size={16} onClick={() => removeLink(idx)} style={{ cursor: 'pointer', color: '#ef4444' }} />
+                                </div>
+                             </div>
+                          ))}
+                          {(createdPost.buttons || []).length === 0 && (
+                             <div style={{ textAlign: 'center', padding: '16px', color: '#94a3b8', fontSize: '0.85rem', fontStyle: 'italic' }}>
+                                No buttons added yet.
+                             </div>
+                          )}
+                       </div>
                      </div>
                    </div>
                 </div>
@@ -1057,6 +1112,64 @@ export default function Scheduling() {
           </div>
         </div>
       )}
+
+      {/* --- LINK MODAL --- */}
+      {showLinkModal && (
+        <div style={{ 
+          position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(12px)', 
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5000, padding: '20px' 
+        }}>
+          <div style={{ 
+            background: 'white', padding: '40px', borderRadius: '32px', width: '100%', maxWidth: '450px', 
+            boxShadow: '0 30px 70px rgba(0,0,0,0.3)', animation: 'modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)' 
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+               <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>{editingLinkIndex !== null ? 'Edit Button' : 'Add Link Button'}</h3>
+               <button onClick={() => setShowLinkModal(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '10px', padding: '8px', cursor: 'pointer', color: '#64748b' }}>
+                  <X size={20} />
+               </button>
+            </div>
+            
+            <div style={{ marginBottom: '20px' }}>
+               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>BUTTON TEXT</label>
+               <input 
+                 value={tempLinkTitle} 
+                 onChange={(e) => setTempLinkTitle(e.target.value)} 
+                 placeholder="e.g. Visit Website" 
+                 style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem', fontWeight: '600' }} 
+               />
+            </div>
+
+            <div style={{ marginBottom: '32px' }}>
+               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>URL LINK</label>
+               <input 
+                 value={tempLinkUrl} 
+                 onChange={(e) => setTempLinkUrl(e.target.value)} 
+                 placeholder="https://..." 
+                 style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem', fontWeight: '600', color: '#7c3aed' }} 
+               />
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button 
+                onClick={handleSaveLink} 
+                style={{ flex: 1.5, padding: '16px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', boxShadow: '0 8px 20px rgba(124, 58, 237, 0.2)' }}
+              >
+                Save Button
+              </button>
+              <button onClick={() => setShowLinkModal(false)} style={{ flex: 1, padding: '16px', background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer' }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Global CSS for Animations */}
+      <style>{`
+        @keyframes modalSlideUp {
+          from { transform: translateY(30px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 }
