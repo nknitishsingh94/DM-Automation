@@ -1015,9 +1015,19 @@ export default function Scheduling() {
                       onChange={(e) => setCreatedPost({...createdPost, publicReply: e.target.value})}
                       style={{ width: '100%', padding: '14px', borderRadius: '14px', border: '1.5px solid #e2e8f0', background: '#f8fafc', outline: 'none', fontSize: '0.9rem' }}
                    />
-                </div>
-
-                <div style={{ marginTop: '20px', paddingBottom: '40px' }}>
+                
+                {/* Sticky Action Button Container */}
+                <div style={{ 
+                  position: 'sticky', 
+                  bottom: '-40px', 
+                  left: 0, 
+                  right: 0, 
+                  background: 'white', 
+                  padding: '24px 0 0 0', 
+                  borderTop: '1.5px solid #f1f5f9',
+                  marginTop: '20px',
+                  zIndex: 10
+                }}>
                    <button 
                      onClick={async () => {
                        try {
@@ -1041,6 +1051,7 @@ export default function Scheduling() {
                    >
                      <Zap size={24} fill="white" /> Create Automation
                    </button>
+                </div>
                 </div>
              </div>
           </div>

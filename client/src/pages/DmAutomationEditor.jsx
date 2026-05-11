@@ -305,7 +305,18 @@ export default function DmAutomationEditor() {
 
         {/* Right Side: Builder (Premium Configuration) */}
         <div style={{ padding: '40px 60px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '40px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'flex-end',
+            position: 'sticky',
+            top: '-40px',
+            background: 'white',
+            zIndex: 20,
+            padding: '40px 0 20px 0',
+            marginBottom: '20px',
+            borderBottom: '1.5px solid #f1f5f9'
+          }}>
              <div>
                 <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: '#7c3aed', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', marginBottom: '12px', fontWeight: '900', fontSize: '0.9rem' }}>
                   <ArrowLeft size={16} /> BACK TO AI STUDIO
