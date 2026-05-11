@@ -895,12 +895,12 @@ export default function Scheduling() {
                             // 1. Robust Parsing
                             if (mUrl && typeof mUrl === 'object') {
                                mediaData = mUrl;
-                            } else if (typeof mUrl === 'string' && mUrl.startsWith('{')) {
+                            } else if (typeof mUrl === 'string' && mUrl.trim().startsWith('{')) {
                                try { mediaData = JSON.parse(mUrl); } catch (e) {}
                             }
 
                             // 2. Multi-property detection (URL)
-                            const rawUrl = mediaData.mediaUrl || mediaData.url || mediaData.thumbnail_url || (typeof mUrl === 'string' ? mUrl : '');
+                            let rawUrl = mediaData.mediaUrl || mediaData.url || mediaData.thumbnail_url || (typeof mUrl === 'string' ? mUrl : '');
                             
                             // 3. Robust URL Construction
                             let finalMediaUrl = '';
@@ -908,7 +908,9 @@ export default function Scheduling() {
                               if (typeof rawUrl === 'string' && (rawUrl.startsWith('http') || rawUrl.startsWith('blob:'))) {
                                 finalMediaUrl = rawUrl;
                               } else if (typeof rawUrl === 'string' && rawUrl.length > 0) {
-                                finalMediaUrl = `${API_BASE_URL}${rawUrl.startsWith('/') ? '' : '/'}${rawUrl}`;
+                                // Fallback for relative paths
+                                const base = (API_BASE_URL && API_BASE_URL !== '/') ? API_BASE_URL : window.location.origin;
+                                finalMediaUrl = `${base}${rawUrl.startsWith('/') ? '' : '/'}${rawUrl}`;
                               }
                             } 
                             
@@ -933,13 +935,21 @@ export default function Scheduling() {
                                  {isVideo ? (
                                     <video 
                                       src={finalMediaUrl} autoPlay muted loop playsInline 
+                                      key={finalMediaUrl}
                                       style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                                      onError={(e) => { e.target.style.display = 'none'; }}
+                                      onError={(e) => { 
+                                        console.error("Video load error:", finalMediaUrl);
+                                        e.target.style.display = 'none'; 
+                                      }}
                                     />
                                  ) : (
                                     <img 
                                       src={finalMediaUrl} 
-                                      onError={(e) => { e.target.src = '/placeholder-ig.png'; }}
+                                      key={finalMediaUrl}
+                                      onError={(e) => { 
+                                        console.error("Image load error:", finalMediaUrl);
+                                        e.target.src = '/placeholder-ig.png'; 
+                                      }}
                                       style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                                     />
                                  )}
