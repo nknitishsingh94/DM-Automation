@@ -425,6 +425,20 @@ export default function Scheduling() {
                   >
                     <Trash2 size={16} /> Cancel
                   </button>
+                   <button 
+                    onClick={() => {
+                      setCreatedPost(post);
+                      setShowAdvanced(true);
+                    }}
+                    style={{ 
+                      flex: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                      padding: '12px', borderRadius: '14px', border: '1.5px solid #f5f3ff', 
+                      background: '#f5f3ff', color: '#7c3aed', fontWeight: '800', cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <Zap size={16} /> Automation
+                  </button>
                   <button 
                     style={{ 
                       padding: '12px', borderRadius: '14px', border: '1.5px solid #e2e8f0', 
@@ -819,7 +833,7 @@ export default function Scheduling() {
             background: 'white', width: '100%', maxWidth: '1000px', maxHeight: '90vh', 
             display: 'grid', gridTemplateColumns: 'minmax(320px, 380px) 1fr',
             boxShadow: '0 30px 70px rgba(0,0,0,0.3)', borderRadius: '32px',
-            overflow: 'hidden', position: 'relative',
+            overflowY: 'auto', position: 'relative',
             animation: 'modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
           }}>
              {/* Left side: Chat Preview (Premium) */}
