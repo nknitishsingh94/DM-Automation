@@ -862,35 +862,43 @@ export default function Scheduling() {
                       {/* Post Media Preview (INSTEAD of Lightning icon) */}
                       <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
                          {(() => {
-                            let mediaData = { type: 'image', mediaUrl: createdPost.mediaUrl };
-                            if (createdPost.mediaUrl && typeof createdPost.mediaUrl === 'object') {
-                               mediaData = createdPost.mediaUrl;
-                            } else {
-                               try {
-                                  if (createdPost.mediaUrl && typeof createdPost.mediaUrl === 'string' && createdPost.mediaUrl.startsWith('{')) {
-                                    mediaData = JSON.parse(createdPost.mediaUrl);
-                                  }
-                               } catch (e) {}
+                            // Defensive initialization
+                            let mUrl = createdPost?.mediaUrl;
+                            let mType = createdPost?.type || 'image';
+                            let mediaData = { type: mType, mediaUrl: mUrl };
+                            
+                            // 1. Robust Parsing
+                            if (mUrl && typeof mUrl === 'object') {
+                               mediaData = mUrl;
+                            } else if (typeof mUrl === 'string' && mUrl.startsWith('{')) {
+                               try { mediaData = JSON.parse(mUrl); } catch (e) {}
                             }
 
-                            // Robust URL Construction
+                            // 2. Multi-property detection (URL)
+                            const rawUrl = mediaData.mediaUrl || mediaData.url || mediaData.thumbnail_url || (typeof mUrl === 'string' ? mUrl : '');
+                            
+                            // 3. Robust URL Construction
                             let finalMediaUrl = '';
-                            if (mediaData.mediaUrl) {
-                              if (typeof mediaData.mediaUrl === 'string' && (mediaData.mediaUrl.startsWith('http') || mediaData.mediaUrl.startsWith('blob:'))) {
-                                finalMediaUrl = mediaData.mediaUrl;
-                              } else if (typeof mediaData.mediaUrl === 'string') {
-                                finalMediaUrl = `${API_BASE_URL}${mediaData.mediaUrl.startsWith('/') ? '' : '/'}${mediaData.mediaUrl}`;
+                            if (rawUrl) {
+                              if (typeof rawUrl === 'string' && (rawUrl.startsWith('http') || rawUrl.startsWith('blob:'))) {
+                                finalMediaUrl = rawUrl;
+                              } else if (typeof rawUrl === 'string' && rawUrl.length > 0) {
+                                finalMediaUrl = `${API_BASE_URL}${rawUrl.startsWith('/') ? '' : '/'}${rawUrl}`;
                               }
-                            } else if (previews && previews.length > 0) {
+                            } 
+                            
+                            // Fallback to local previews if available
+                            if (!finalMediaUrl && previews && previews.length > 0) {
                               finalMediaUrl = previews[0];
-                            } else {
-                              finalMediaUrl = '/placeholder-ig.png';
                             }
+                            
+                            if (!finalMediaUrl) finalMediaUrl = '/placeholder-ig.png';
 
-                            // Robust Type Detection
-                            const isVideo = mediaData.type === 'reel' || 
-                                            mediaData.type === 'video' || 
-                                            (finalMediaUrl && typeof finalMediaUrl === 'string' && (
+                            // 4. Robust Type Detection
+                            const detectedType = mediaData.type || mType || 'image';
+                            const isVideo = detectedType === 'reel' || 
+                                            detectedType === 'video' || 
+                                            (typeof finalMediaUrl === 'string' && (
                                               finalMediaUrl.toLowerCase().match(/\.(mp4|mov|webm|m4v)$/i) || 
                                               finalMediaUrl.startsWith('blob:')
                                             ));
@@ -899,12 +907,9 @@ export default function Scheduling() {
                               <div style={{ width: '100%', height: '100%', position: 'relative', background: '#000' }}>
                                  {isVideo ? (
                                     <video 
-                                      src={finalMediaUrl} 
-                                      autoPlay 
-                                      muted 
-                                      loop 
-                                      playsInline 
+                                      src={finalMediaUrl} autoPlay muted loop playsInline 
                                       style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                                      onError={(e) => { e.target.style.display = 'none'; }}
                                     />
                                  ) : (
                                     <img 
@@ -914,7 +919,6 @@ export default function Scheduling() {
                                     />
                                  )}
                                  
-                                 {/* Dark Overlay for Chat effect */}
                                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }}></div>
 
                                  {/* Central Zap Indicator */}
