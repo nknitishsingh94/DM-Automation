@@ -1336,32 +1336,8 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
         { userId: req.user.userId, postId: updatedPost.postId },
         { 
           triggerKeyword: updatedPost.triggerKeyword, 
-          autoResponse: updatedPost.autoResponse 
-        }
-      );
-    }
-    
-    res.json(updatedPost);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
-  try {
-    const updatedPost = await ScheduledPost.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user.userId },
-      { ...req.body },
-      { new: true }
-    );
-    
-    // If the post is already live (has a postId), update the Campaign too
-    if (updatedPost.status === 'Posted' && updatedPost.postId) {
-      await Campaign.findOneAndUpdate(
-        { userId: req.user.userId, postId: updatedPost.postId },
-        { 
-          triggerKeyword: updatedPost.triggerKeyword, 
-          autoResponse: updatedPost.autoResponse 
+          autoResponse: updatedPost.autoResponse,
+          publicReply: updatedPost.publicReply
         }
       );
     }
