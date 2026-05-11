@@ -830,10 +830,10 @@ export default function Scheduling() {
           padding: '20px'
         }}>
           <div style={{ 
-            background: 'white', width: '100%', maxWidth: '1000px', maxHeight: '90vh', 
-            display: 'grid', gridTemplateColumns: 'minmax(320px, 380px) 1fr',
+            background: 'white', width: '100%', maxWidth: '1100px', height: '90vh', 
+            display: 'grid', gridTemplateColumns: 'minmax(350px, 400px) 1fr',
             boxShadow: '0 30px 70px rgba(0,0,0,0.3)', borderRadius: '32px',
-            overflow: 'hidden', position: 'relative', // Changed from overflowY: 'auto' to hidden to support inner scroll
+            overflow: 'hidden', position: 'relative',
             animation: 'modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
           }}>
              {/* Left side: Chat Preview (Premium) */}
