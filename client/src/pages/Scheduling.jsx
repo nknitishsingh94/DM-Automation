@@ -890,85 +890,64 @@ export default function Scheduling() {
                         </div>
                       </div>
 
-                      {/* Post Media Preview (INSTEAD of Lightning icon) */}
-                      <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
-                         {(() => {
-                            // Defensive initialization
-                            let mUrl = createdPost?.mediaUrl;
-                            let mType = createdPost?.type || 'image';
-                            let mediaData = { type: mType, mediaUrl: mUrl };
-                            
-                            // 1. Robust Parsing
-                            if (mUrl && typeof mUrl === 'object') {
-                               mediaData = mUrl;
-                            } else if (typeof mUrl === 'string' && mUrl.trim().startsWith('{')) {
-                               try { mediaData = JSON.parse(mUrl); } catch (e) {}
-                            }
+                      {/* Dynamic Chat Simulation View */}
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', padding: '16px', gap: '20px' }}>
+                         {/* User Keyword Message */}
+                         <div style={{ alignSelf: 'flex-end', maxWidth: '80%' }}>
+                            <div style={{ 
+                               background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
+                               color: 'white', padding: '10px 16px', borderRadius: '20px 20px 4px 20px',
+                               fontSize: '0.85rem', fontWeight: '600', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
+                            }}>
+                               {createdPost.triggerKeyword && createdPost.triggerKeyword !== '*' ? createdPost.triggerKeyword.split(',')[0].trim() : 'Fire 🔥'}
+                            </div>
+                         </div>
 
-                            // 2. Multi-property detection (URL)
-                            let rawUrl = mediaData.mediaUrl || mediaData.url || mediaData.thumbnail_url || (typeof mUrl === 'string' ? mUrl : '');
-                            
-                            // 3. Robust URL Construction
-                            let finalMediaUrl = '';
-                            if (rawUrl) {
-                              if (typeof rawUrl === 'string' && (rawUrl.startsWith('http') || rawUrl.startsWith('blob:'))) {
-                                finalMediaUrl = rawUrl;
-                              } else if (typeof rawUrl === 'string' && rawUrl.length > 0) {
-                                // Fallback for relative paths
-                                const base = (API_BASE_URL && API_BASE_URL !== '/') ? API_BASE_URL : window.location.origin;
-                                finalMediaUrl = `${base}${rawUrl.startsWith('/') ? '' : '/'}${rawUrl}`;
-                              }
-                            } 
-                            
-                            // Fallback to local previews if available
-                            if (!finalMediaUrl && previews && previews.length > 0) {
-                              finalMediaUrl = previews[0];
-                            }
-                            
-                            if (!finalMediaUrl) finalMediaUrl = '/placeholder-ig.png';
+                         {/* Automation Response Message */}
+                         <div style={{ alignSelf: 'flex-start', maxWidth: '85%', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
+                               <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
+                               <div style={{ 
+                                  background: '#262626', color: 'white', padding: '12px 16px', borderRadius: '20px 20px 20px 4px',
+                                  fontSize: '0.85rem', fontWeight: '500', lineHeight: '1.4', whiteSpace: 'pre-wrap'
+                               }}>
+                                  {createdPost.autoResponse || "Type your message on the right to see it here... 🚀"}
+                               </div>
+                            </div>
 
-                            // 4. Robust Type Detection
-                            const detectedType = mediaData.type || mType || 'image';
-                            const isVideo = detectedType === 'reel' || 
-                                            detectedType === 'video' || 
-                                            (typeof finalMediaUrl === 'string' && (
-                                              finalMediaUrl.toLowerCase().match(/\.(mp4|mov|webm|m4v)$/i) || 
-                                              finalMediaUrl.startsWith('blob:')
-                                            ));
+                            {/* Dynamic Buttons in Preview */}
+                            {(createdPost.buttons || []).map((btn, idx) => (
+                               <div key={idx} style={{ marginLeft: '32px', width: '100%' }}>
+                                  <div style={{ 
+                                     background: '#262626', color: '#3b82f6', border: '1px solid #333',
+                                     padding: '10px', borderRadius: '12px', textAlign: 'center',
+                                     fontSize: '0.8rem', fontWeight: '700', marginBottom: '4px'
+                                  }}>
+                                     {btn.text || 'Button Text'}
+                                  </div>
+                               </div>
+                            ))}
+                         </div>
 
-                            return (
-                              <div style={{ width: '100%', height: '100%', position: 'relative', background: '#000' }}>
-                                 {isVideo ? (
-                                    <video 
-                                      src={finalMediaUrl} autoPlay muted loop playsInline 
-                                      key={finalMediaUrl}
-                                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                                      onError={(e) => { 
-                                        console.error("Video load error:", finalMediaUrl);
-                                        e.target.style.display = 'none'; 
-                                      }}
-                                    />
-                                 ) : (
-                                    <img 
-                                      src={finalMediaUrl} 
-                                      key={finalMediaUrl}
-                                      onError={(e) => { 
-                                        console.error("Image load error:", finalMediaUrl);
-                                        e.target.src = '/placeholder-ig.png'; 
-                                      }}
-                                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                                    />
-                                 )}
-                                 
-                                 <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }}></div>
+                         {/* Public Comment Preview (Small Overlay) */}
+                         {createdPost.publicReply && (
+                            <div style={{ marginTop: 'auto', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', padding: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                               <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: '800', marginBottom: '4px', textTransform: 'uppercase' }}>Public Comment Reply</div>
+                               <div style={{ color: '#e2e8f0', fontSize: '0.75rem', fontStyle: 'italic' }}>
+                                  "@{user?.username || 'user'}: {createdPost.publicReply}"
+                               </div>
+                            </div>
+                         )}
+                      </div>
 
-                                 {/* Central Zap Indicator */}
-                                 <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80px', height: '80px', borderRadius: '24px', background: 'linear-gradient(135deg, #60a5fa, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 40px rgba(59, 130, 246, 0.4)', zIndex: 10 }}>
-                                    <Zap size={40} color="white" fill="white" />
-                                 </div>
-                              </div>
-                            );
-                         })()}
+                      {/* Bottom Bar Mockup */}
+                      <div style={{ padding: '12px 16px 20px', display: 'flex', gap: '10px', borderTop: '1px solid #1a1a1a', background: '#000' }}>
+                         <div style={{ flex: 1, height: '34px', background: '#1a1a1a', borderRadius: '17px', border: '1px solid #333', display: 'flex', alignItems: 'center', padding: '0 12px', color: '#64748b', fontSize: '0.75rem' }}>
+                            Message...
+                         </div>
+                         <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#1a1a1a', border: '1px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <ImageIcon size={16} color="#64748b" />
+                         </div>
                       </div>
 
                       {/* Bottom Bar Mockup */}
