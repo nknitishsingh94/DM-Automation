@@ -929,12 +929,27 @@ export default function Scheduling() {
                 </div>
               </div>
 
-              {/* iPhone Mockup (Enhanced & Larger) */}
+              {/* iPhone Mockup (Ultra Pro Max Scale) */}
               <div style={{
-                width: '360px', height: '740px', background: '#FFF', borderRadius: '54px', border: '14px solid #1e1b4b',
-                position: 'relative', overflow: 'hidden', boxShadow: '0 50px 120px -30px rgba(0,0,0,0.4)',
+                width: '380px', height: '800px', background: '#FFF', borderRadius: '60px', border: '16px solid #1e1b4b',
+                position: 'relative', overflow: 'hidden', boxShadow: '0 60px 150px -40px rgba(0,0,0,0.5)',
                 display: 'flex', flexDirection: 'column'
               }}>
+                <style>{`
+                  .custom-ig-scroller::-webkit-scrollbar {
+                    width: 4px;
+                  }
+                  .custom-ig-scroller::-webkit-scrollbar-track {
+                    background: #000;
+                  }
+                  .custom-ig-scroller::-webkit-scrollbar-thumb {
+                    background: #333;
+                    border-radius: 10px;
+                  }
+                  .custom-ig-scroller::-webkit-scrollbar-thumb:hover {
+                    background: #555;
+                  }
+                `}</style>
                 {/* Dynamic Island */}
                 <div style={{ position: 'absolute', top: '12px', left: '50%', transform: 'translateX(-50%)', width: '90px', height: '22px', background: '#000', borderRadius: '20px', zIndex: 100 }}></div>
 
@@ -1008,36 +1023,45 @@ export default function Scheduling() {
                         </div>
                       </div>
                     ) : (
-                      /* SIMULATED DM VIEW (Premium High-Fidelity - Enhanced Visibility) */
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px', gap: '24px', overflowY: 'auto', background: '#000', minHeight: 0 }}>
+                      /* SIMULATED DM VIEW (Premium Dynamic High-Fidelity) */
+                      <div 
+                        className="custom-ig-scroller"
+                        style={{ 
+                          flex: 1, display: 'flex', flexDirection: 'column', padding: '28px', gap: '28px', 
+                          overflowY: 'auto', background: '#000', minHeight: 0,
+                          scrollBehavior: 'smooth'
+                        }}
+                      >
                         {/* System Notification */}
                         <div style={{ color: '#8e8e8e', fontSize: '0.75rem', textAlign: 'center', padding: '0 24px', lineHeight: '1.5', fontWeight: '500' }}>
                            <span style={{ color: '#4f95ff', fontWeight: '700' }}>{(settings?.connectedInstagramName || user?.username || 'IG')}</span> messaged you about a comment you made on their post. <span style={{ color: '#4f95ff', fontWeight: '700' }}>See Post</span>
                         </div>
 
                         {/* Bot Message Card Bubble (Integrated - Dark Mode Card) */}
-                        {(createdPost.autoResponse) && (
-                          <div style={{ alignSelf: 'flex-start', maxWidth: '90%', display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
-                             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
-                             <div style={{ 
-                               background: '#262626', color: '#FFF', borderRadius: '24px 24px 24px 6px', 
-                               overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
-                             }}>
-                                <div style={{ padding: '16px 20px', fontSize: '0.95rem', fontWeight: '500', lineHeight: '1.5' }}>
-                                   {createdPost.autoResponse}
-                                </div>
-                                {/* Integrated Buttons (List style) */}
-                                {(createdPost.buttons || []).map((btn, i) => (
-                                   <div key={i} style={{ borderTop: '1px solid #363636', padding: '14px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636' }}>
-                                      {btn.text || 'Action Button'}
-                                   </div>
-                                ))}
-                             </div>
-                          </div>
-                        )}
+                        <div style={{ alignSelf: 'flex-start', maxWidth: '90%', display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
+                           <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
+                           <div style={{ 
+                             background: '#262626', color: '#FFF', borderRadius: '24px 24px 24px 6px', 
+                             overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+                           }}>
+                              <div style={{ padding: '16px 20px', fontSize: '0.95rem', fontWeight: '500', lineHeight: '1.5' }}>
+                                 {createdPost.autoResponse || "Hello! 👋 Your automated response will appear here. Start typing in the 'Response Content' box on the right to see the live effect!"}
+                              </div>
+                              {/* Integrated Buttons (List style) */}
+                              {(createdPost.buttons && createdPost.buttons.length > 0) ? createdPost.buttons.map((btn, i) => (
+                                 <div key={i} style={{ borderTop: '1px solid #363636', padding: '14px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636' }}>
+                                    {btn.text || 'Action Button'}
+                                 </div>
+                              )) : (
+                                 <div style={{ borderTop: '1px solid #363636', padding: '14px', textAlign: 'center', color: '#8e8e8e', fontSize: '0.85rem', fontWeight: '500', background: '#363636', fontStyle: 'italic' }}>
+                                    Buttons will appear here...
+                                 </div>
+                              )}
+                           </div>
+                        </div>
 
                         {/* Follow Check Card Bubble (Gated Integrated - Dark Mode Card) */}
-                        {createdPost.requireFollow && createdPost.unfollowedResponse && (
+                        {createdPost.requireFollow && (
                           <div style={{ alignSelf: 'flex-start', maxWidth: '90%', display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
                              <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
                              <div style={{ 
@@ -1045,7 +1069,7 @@ export default function Scheduling() {
                                overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
                              }}>
                                 <div style={{ padding: '16px 20px', fontSize: '0.95rem', fontWeight: '500', lineHeight: '1.5' }}>
-                                   {createdPost.unfollowedResponse}
+                                   {createdPost.unfollowedResponse || "Wait! You're not following me yet. Please follow to unlock the link! 🔒"}
                                 </div>
                                 <div style={{ borderTop: '1px solid #363636', padding: '14px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636' }}>
                                    Visit Profile
@@ -1058,9 +1082,12 @@ export default function Scheduling() {
                         )}
 
                         {/* User Reply Bubble (Signature Purple Gradient) */}
-                        <div style={{ alignSelf: 'flex-end', maxWidth: '85%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: '#FFF', padding: '14px 20px', borderRadius: '24px 24px 6px 24px', fontSize: '0.95rem', fontWeight: '600', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.2)' }}>
-                           I'm following ✅
+                        <div style={{ alignSelf: 'flex-end', maxWidth: '85%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: '#FFF', padding: '16px 22px', borderRadius: '24px 24px 6px 24px', fontSize: '1rem', fontWeight: '600', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.2)' }}>
+                           {createdPost.requireFollow ? "I'm following ✅" : "Checking it out! 👍"}
                         </div>
+                        
+                        {/* Scroll Anchor */}
+                        <div style={{ height: '10px' }} ref={el => { if (el) el.scrollIntoView({ behavior: 'smooth' }); }}></div>
                       </div>
                     )}
                   </div>
