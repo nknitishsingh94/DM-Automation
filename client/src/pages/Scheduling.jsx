@@ -833,7 +833,7 @@ export default function Scheduling() {
             background: 'white', width: '100%', maxWidth: '1000px', maxHeight: '90vh', 
             display: 'grid', gridTemplateColumns: 'minmax(320px, 380px) 1fr',
             boxShadow: '0 30px 70px rgba(0,0,0,0.3)', borderRadius: '32px',
-            overflowY: 'auto', position: 'relative',
+            overflow: 'hidden', position: 'relative', // Changed from overflowY: 'auto' to hidden to support inner scroll
             animation: 'modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
           }}>
              {/* Left side: Chat Preview (Premium) */}
