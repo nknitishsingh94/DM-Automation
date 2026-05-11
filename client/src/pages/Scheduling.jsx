@@ -931,7 +931,7 @@ export default function Scheduling() {
 
               {/* iPhone Mockup (Ultra Pro Max - Extra Tall) */}
               <div style={{
-                width: '380px', height: '900px', background: '#FFF', borderRadius: '60px', border: '16px solid #1e1b4b',
+                width: '380px', height: '1500px', background: '#FFF', borderRadius: '60px', border: '16px solid #1e1b4b',
                 position: 'relative', overflow: 'hidden', boxShadow: '0 60px 150px -40px rgba(0,0,0,0.5)',
                 display: 'flex', flexDirection: 'column'
               }}>
