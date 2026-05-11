@@ -15,7 +15,13 @@ import {
   Camera,
   Mic,
   PlusCircle,
-  Zap
+  Zap,
+  Globe,
+  Settings,
+  Sparkles,
+  Heart,
+  MessageCircle,
+  Home
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
@@ -186,19 +192,33 @@ export default function DmAutomationEditor() {
   return (
     <div style={{ 
       minHeight: '100vh', 
-      background: '#f8fafc', 
+      background: 'white', 
       fontFamily: "'Outfit', sans-serif",
       display: 'flex',
       flexDirection: 'column'
     }}>
 
-      <div className="editor-layout">
-        {/* Left Side: Preview (Fixed) */}
-        <div className="editor-preview">
-          <div style={{ color: '#64748b', fontWeight: '700', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
-            <Smartphone size={18} /> {template === 'stories' ? 'Preview Story Reply' : 'Preview DM Automation'}
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'minmax(350px, 450px) 1fr',
+        height: 'calc(100vh - 0px)',
+        overflow: 'hidden'
+      }}>
+        {/* Left Side: Chat Preview (Premium Style) */}
+        <div style={{ 
+          background: '#f8fafc', 
+          borderRight: '1.5px solid #e2e8f0', 
+          padding: '40px 20px', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center',
+          overflowY: 'auto'
+        }}>
+          <div style={{ color: '#64748b', fontWeight: '800', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
+            <Smartphone size={18} /> {template === 'stories' ? 'Story Preview' : 'Automation Preview'}
           </div>
           
+          {/* iPhone Mockup */}
           <div style={{ 
             width: '280px', 
             height: '580px', 
@@ -208,327 +228,296 @@ export default function DmAutomationEditor() {
             position: 'relative',
             overflow: 'hidden',
             boxShadow: '0 30px 60px -12px rgba(0,0,0,0.25)',
-            transform: 'scale(1)',
-            margin: '0 auto'
+            flexShrink: 0
           }}>
-            {/* Realistic Notch (Dynamic Island) */}
-            <div style={{
-              position: 'absolute',
-              top: '8px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '80px',
-              height: '18px',
-              background: '#000',
-              borderRadius: '20px',
-              zIndex: 10
-            }}></div>
+             {/* Realistic Notch */}
+             <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translateX(-50%)', width: '80px', height: '18px', background: '#000', borderRadius: '20px', zIndex: 10 }}></div>
+             
+             <div style={{ height: '100%', background: 'linear-gradient(to bottom, #000000, #1a1a1a)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                {/* IG Header (Small) */}
+                <div style={{ padding: '30px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <ArrowLeft size={16} color="white" />
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: '800', color: 'white' }}>
+                    {(connectedSettings?.connectedInstagramName || user?.username || 'IG').substring(0, 2).toUpperCase()}
+                  </div>
+                  <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>
+                    {connectedSettings?.connectedInstagramName || user?.username || 'Instagram Account'}
+                  </div>
+                </div>
 
-            {/* Status Bar */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              padding: '12px 24px 0',
-              fontSize: '0.65rem',
-              color: 'white',
-              fontWeight: '600'
-            }}>
-              <span>9:41</span>
-              <div style={{ display: 'flex', gap: '4px' }}>
-                <Zap size={10} fill="white" />
-                <div style={{ width: '12px', height: '6px', border: '1px solid white', borderRadius: '2px' }}></div>
-              </div>
-            </div>
-
-            {/* Instagram Header */}
-            <div style={{ padding: '20px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #1a1a1a' }}>
-              <ArrowLeft size={18} color="white" />
-              <div style={{ 
-                width: '30px', 
-                height: '30px', 
-                borderRadius: '50%', 
-                background: user?.profilePhoto 
-                  ? (user.profilePhoto.startsWith('http') ? `url(${user.profilePhoto})` : `url(${API_BASE_URL}/${user.profilePhoto})`)
-                  : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                border: '1px solid #1a1a1a',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.7rem',
-                fontWeight: '800',
-                color: 'white',
-                flexShrink: 0
-              }}>
-                {!user?.profilePhoto && user?.username?.charAt(0).toUpperCase()}
-              </div>
-              <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '700' }}>
-                {channel === 'facebook' 
-                  ? (connectedSettings?.connectedFacebookName || 'Facebook Page')
-                  : (connectedSettings?.connectedInstagramName || user?.username || 'Instagram Account')
-                }
-              </div>
-            </div>
-
-            {/* Chat Area Wrapper */}
-            <div style={{ position: 'relative', height: '480px', overflow: 'hidden' }}>
-              <div style={{ 
-                height: '100%', 
-                background: 'linear-gradient(to bottom, #000000, #1a1a1a)', 
-                display: 'flex', 
-                flexDirection: 'column' 
-              }}>
-
-
-                {/* Chat Messages */}
-                <div style={{ 
-                  flex: 1, 
-                  padding: '20px', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: '16px',
-                  overflowY: 'auto'
-                }}>
-                  {/* User Keyword Message */}
-                  {(keywords.length > 0 || anyKeyword) && (
-                    <div style={{ 
-                      alignSelf: 'flex-end', 
-                      maxWidth: '75%', 
-                      background: '#0095f6', 
-                      color: 'white', 
-                      padding: '10px 16px', 
-                      borderRadius: '18px 18px 4px 18px', 
-                      fontSize: '0.85rem', 
-                      lineHeight: '1.4' 
-                    }}>
-                      {template === 'stories' 
-                        ? (anyKeyword ? 'Replied to your story' : `Replied to your story: ${keywords[0]}`) 
-                        : (anyKeyword ? "Hey, I saw your post!" : keywords[0])}
-                    </div>
-                  )}
-
-                  {/* Opening Message Flow */}
-                  {openingMessage && (
-                    <>
-                      <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
-                        <div style={{ background: '#262626', borderRadius: '18px 18px 18px 4px', overflow: 'hidden' }}>
-                          <div style={{ padding: '12px 16px', borderBottom: '1px solid #333' }}>
-                            <span style={{ whiteSpace: 'pre-line', color: 'white', fontSize: '0.8rem', lineHeight: '1.4' }}>{openingMessageText}</span>
-                          </div>
-                          <div style={{ padding: '12px', textAlign: 'center', color: '#3b82f6', fontSize: '0.8rem', fontWeight: '800' }}>
-                            {openingMessageButton}
-                          </div>
+                {/* Central Lightning Icon (if empty) or Chat */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '16px', gap: '12px', overflowY: 'auto' }}>
+                   {(!anyKeyword && keywords.length === 0 && !message) ? (
+                     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: '80px', height: '80px', borderRadius: '24px', background: 'linear-gradient(135deg, #60a5fa, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 40px rgba(59, 130, 246, 0.4)', marginBottom: '20px' }}>
+                           <Zap size={40} color="white" fill="white" />
                         </div>
-                      </div>
-                      <div style={{ 
-                        alignSelf: 'flex-end', 
-                        maxWidth: '75%', 
-                        background: '#0095f6', 
-                        color: 'white', 
-                        padding: '10px 16px', 
-                        borderRadius: '18px 18px 4px 18px', 
-                        fontSize: '0.85rem', 
-                        lineHeight: '1.4' 
-                      }}>
-                        {openingMessageButton}
-                      </div>
-                    </>
-                  )}
+                        <div style={{ color: 'white', fontWeight: '800', fontSize: '0.9rem', opacity: 0.6 }}>Previewing...</div>
+                     </div>
+                   ) : (
+                     <>
+                        {/* Trigger Message */}
+                        <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#0095f6', color: 'white', padding: '8px 12px', borderRadius: '14px 14px 2px 14px', fontSize: '0.75rem' }}>
+                           {anyKeyword ? 'Hey! I saw your post.' : (keywords[0] || 'Trigger Word')}
+                        </div>
 
-                  {/* AI Response Card (Generic Template) */}
-              {message && (
-                <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
-                  <div style={{ background: '#262626', borderRadius: '18px 18px 18px 4px', overflow: 'hidden' }}>
-                    <div style={{ padding: '12px 16px', borderBottom: buttons.length > 0 ? '1px solid #333' : 'none' }}>
-                      <div style={{ color: 'white', fontSize: '0.8rem', lineHeight: '1.4' }}>{message}</div>
-                    </div>
-                    {buttons.map((btn, idx) => (
-                      <div key={idx} style={{ padding: '12px', textAlign: 'center', borderBottom: idx === buttons.length - 1 ? 'none' : '1px solid #333', color: '#3b82f6', fontSize: '0.8rem', fontWeight: '800' }}>
-                        {btn.text || "Visit Link"}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+                        {/* Opening Message if enabled */}
+                        {openingMessage && (
+                           <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
+                              <div style={{ background: '#262626', borderRadius: '14px 14px 14px 2px', overflow: 'hidden' }}>
+                                 <div style={{ padding: '10px 12px', borderBottom: '1px solid #333' }}>
+                                    <div style={{ color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>{openingMessageText}</div>
+                                 </div>
+                                 <div style={{ padding: '10px', textAlign: 'center', color: '#3b82f6', fontSize: '0.75rem', fontWeight: '800' }}>
+                                    {openingMessageButton}
+                                 </div>
+                              </div>
+                           </div>
+                        )}
 
-                {/* DM Bottom Bar */}
-                <div style={{ 
-                  padding: '12px 16px 30px', 
-                  background: '#000', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '12px',
-                  borderTop: '1px solid #1a1a1a'
-                }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#0095f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Camera size={18} color="white" />
-                  </div>
-                  <div style={{ flex: 1, background: '#121212', border: '1px solid #333', borderRadius: '20px', padding: '8px 16px', color: '#8e8e8e', fontSize: '0.85rem' }}>
-                    Message...
-                  </div>
-                  <ImageIcon size={20} color="white" />
-                  <Mic size={20} color="white" />
-                  <PlusCircle size={20} color="white" />
+                        {/* Main Response Message */}
+                        {message && (
+                           <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
+                              <div style={{ background: '#262626', borderRadius: '14px 14px 14px 2px', overflow: 'hidden' }}>
+                                 <div style={{ padding: '10px 12px', borderBottom: buttons.length > 0 ? '1px solid #333' : 'none' }}>
+                                    <div style={{ color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>{message}</div>
+                                 </div>
+                                 {buttons.map((btn, idx) => (
+                                    <div key={idx} style={{ padding: '10px', textAlign: 'center', borderBottom: idx === buttons.length - 1 ? 'none' : '1px solid #333', color: '#3b82f6', fontSize: '0.75rem', fontWeight: '800' }}>
+                                       {btn.text}
+                                    </div>
+                                 ))}
+                              </div>
+                           </div>
+                        )}
+                     </>
+                   )}
                 </div>
-              </div>
-            </div>
+
+                {/* Bottom Bar Mockup */}
+                <div style={{ padding: '12px 16px 20px', display: 'flex', gap: '10px', borderTop: '1px solid #1a1a1a' }}>
+                   <div style={{ flex: 1, height: '34px', background: '#1a1a1a', borderRadius: '17px', border: '1px solid #333' }}></div>
+                   <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#1a1a1a', border: '1px solid #333' }}></div>
+                </div>
+             </div>
           </div>
         </div>
 
-        {/* Right Side: Configuration Builder (Scrollable) */}
-        <div className="editor-config">
-          <div style={{ maxWidth: '500px' }}>
-            <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '24px', fontWeight: '600' }}>
-              <ArrowLeft size={18} /> Back
-            </button>
-
-            <div style={{ marginBottom: '32px' }}>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name your automation..." style={{ fontSize: '1.8rem', fontWeight: '800', color: '#1e1b4b', border: 'none', outline: 'none', width: '100%', padding: 0 }} />
-              <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>{template === 'stories' ? 'Story Reply Template' : 'Response to all DMs Template'}</p>
-            </div>
-
-            {/* Step 1: Follower Gating */}
-            <div style={{ marginBottom: '32px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>1</div>
-                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Follower Growth Gating</h3>
-              </div>
-              <div style={{ padding: '24px', borderRadius: '16px', background: '#ecfdf5', border: '1px solid #10b981', marginBottom: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <div style={{ fontWeight: '800', color: '#065f46', fontSize: '0.95rem' }}>Require Follow to Trigger</div>
-                  <div onClick={() => setRequireFollow(!requireFollow)} style={{ width: '44px', height: '24px', borderRadius: '12px', background: requireFollow ? '#10b981' : '#cbd5e1', position: 'relative', cursor: 'pointer' }}>
-                    <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: requireFollow ? '23px' : '3px', transition: '0.3s' }}></div>
-                  </div>
+        {/* Right Side: Builder (Premium Configuration) */}
+        <div style={{ padding: '40px 60px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '40px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+             <div>
+                <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: '#7c3aed', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', marginBottom: '12px', fontWeight: '900', fontSize: '0.9rem' }}>
+                  <ArrowLeft size={16} /> BACK TO AI STUDIO
+                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                   <input 
+                     type="text" 
+                     value={name} 
+                     onChange={(e) => setName(e.target.value)} 
+                     style={{ fontSize: '2.2rem', fontWeight: '900', color: '#1e1b4b', border: 'none', outline: 'none', background: 'transparent', padding: 0, width: 'auto' }} 
+                   />
+                   <Pencil size={20} color="#cbd5e1" />
                 </div>
-                {requireFollow && (
-                  <textarea value={unfollowedMessage} onChange={(e) => setUnfollowedMessage(e.target.value)} placeholder="Follow request message..." style={{ width: '100%', height: '70px', padding: '12px', borderRadius: '10px', border: '1px solid #10b981', outline: 'none', fontSize: '0.85rem', resize: 'none' }}></textarea>
-                )}
-              </div>
-            </div>
-
-            {/* Step 2: Keywords */}
-            <div style={{ marginBottom: '32px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>2</div>
-                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Setup Keywords</h3>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <div>
-                  <span style={{ fontWeight: '700', color: '#475569', display: 'block' }}>Any Message / Keyword</span>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    Trigger on ANY {template === 'stories' ? 'Story interaction' : (template === 'comments' ? 'Comment' : 'DM message')}
-                  </span>
-                </div>
-                <div onClick={() => setAnyKeyword(!anyKeyword)} style={{ width: '40px', height: '22px', borderRadius: '11px', background: anyKeyword ? '#ef4444' : '#cbd5e1', position: 'relative', cursor: 'pointer', flexShrink: 0 }}>
-                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: anyKeyword ? '21px' : '3px', transition: '0.3s' }}></div>
-                </div>
-              </div>
-              {!anyKeyword && (
-                <div>
-                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-                    <input 
-                      type="text" 
-                      placeholder="Add Keyword..." 
-                      value={keywordInput} 
-                      onChange={(e) => setKeywordInput(e.target.value)} 
-                      onKeyDown={handleAddKeyword} 
-                      style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1.5px solid #cbd5e1', outline: 'none' }} 
-                    />
-                    <button 
-                      onClick={() => {
-                        if (keywordInput.trim() && !keywords.includes(keywordInput.trim())) {
-                          setKeywords([...keywords, keywordInput.trim()]);
-                          setKeywordInput('');
-                        }
-                      }}
-                      style={{ 
-                        background: '#7c3aed', 
-                        color: 'white', 
-                        padding: '0 18px', 
-                        borderRadius: '12px', 
-                        fontWeight: '800',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      <Plus size={20} />
-                    </button>
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {keywords.map(kw => (
-                      <span key={kw} style={{ background: '#f1f5f9', padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {kw} <X size={14} onClick={() => removeKeyword(kw)} style={{ cursor: 'pointer' }} />
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Step 3: Response */}
-            <div style={{ marginBottom: '40px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>3</div>
-                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Send a DM</h3>
-              </div>
-              <div style={{ padding: '24px', borderRadius: '16px', border: '1px solid #7c3aed', background: 'white' }}>
-                <textarea placeholder="Final message..." value={message} onChange={(e) => setMessage(e.target.value)} style={{ width: '100%', height: '110px', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', marginBottom: '20px' }}></textarea>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {buttons.map((btn, idx) => (
-                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: '#f8fafc', borderRadius: '12px' }}>
-                      <span style={{ fontWeight: '700' }}>{btn.text}</span>
-                      <div style={{ display: 'flex', gap: '12px' }}>
-                        <Pencil size={16} onClick={() => openEditLinkModal(idx)} style={{ cursor: 'pointer' }} />
-                        <Trash2 size={16} onClick={() => removeLink(idx)} style={{ cursor: 'pointer' }} />
-                      </div>
-                    </div>
-                  ))}
-                  {buttons.length < 3 && <button onClick={openAddLinkModal} style={{ padding: '12px', background: 'white', border: '1.5px dashed #cbd5e1', borderRadius: '12px', cursor: 'pointer' }}>+ Add Link</button>}
-                </div>
-              </div>
-            </div>
-
-            {/* Advanced: Opening Message */}
-            <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <h4 style={{ fontWeight: '800' }}>Opening Message</h4>
-                <div onClick={() => setOpeningMessage(!openingMessage)} style={{ width: '40px', height: '22px', borderRadius: '11px', background: openingMessage ? '#7c3aed' : '#cbd5e1', position: 'relative', cursor: 'pointer' }}>
-                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: openingMessage ? '21px' : '3px', transition: '0.3s' }}></div>
-                </div>
-              </div>
-              {openingMessage && (
-                <div style={{ padding: '20px', borderRadius: '16px', background: 'white', border: '1px solid #7c3aed' }}>
-                  <textarea value={openingMessageText} onChange={(e) => setOpeningMessageText(e.target.value)} style={{ width: '100%', height: '100px', marginBottom: '12px' }}></textarea>
-                  <input value={openingMessageButton} onChange={(e) => setOpeningMessageButton(e.target.value)} placeholder="Button Label" style={{ width: '100%', padding: '12px' }} />
-                </div>
-              )}
-            </div>
-
-            <button onClick={handleCreate} disabled={submitting} style={{ width: '100%', padding: '18px', borderRadius: '16px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: '800', marginTop: '30px', cursor: 'pointer' }}>
-              {submitting ? 'Creating...' : (template === 'stories' ? 'Create Story Automation' : 'Create DM Automation')}
-            </button>
+                <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '4px', fontWeight: '500' }}>{template === 'stories' ? 'Respond to Story Mentions & Replies' : 'Respond to all Direct Messages'}</p>
+             </div>
+             
+             <div style={{ display: 'flex', gap: '12px' }}>
+                <button style={{ padding: '12px 24px', borderRadius: '12px', background: '#f8fafc', color: '#64748b', border: '1.5px solid #e2e8f0', fontWeight: '800', cursor: 'pointer' }}>Discard</button>
+                <button 
+                  onClick={handleCreate} 
+                  disabled={submitting} 
+                  style={{ padding: '12px 32px', borderRadius: '12px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', fontWeight: '900', cursor: 'pointer', boxShadow: '0 10px 20px rgba(124, 58, 237, 0.2)' }}
+                >
+                  {submitting ? 'Creating...' : 'Launch Automation'}
+                </button>
+             </div>
           </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+             {/* 1. Follower Gating Section */}
+             <div style={{ background: 'white', padding: '32px', borderRadius: '32px', border: '1.5px solid #10b981' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+                   <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900' }}>1</div>
+                   <h3 style={{ fontSize: '1.1rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Follower Growth Gating</h3>
+                </div>
+
+                <div style={{ background: '#f0fdf4', border: '1.5px solid #d1fae5', borderRadius: '24px', padding: '24px' }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <div style={{ fontWeight: '800', color: '#065f46', fontSize: '1rem' }}>Require Follow to Trigger</div>
+                      <div onClick={() => setRequireFollow(!requireFollow)} style={{ width: '48px', height: '26px', borderRadius: '13px', background: requireFollow ? '#10b981' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                        <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: requireFollow ? '25px' : '3px', transition: '0.3s' }}></div>
+                      </div>
+                   </div>
+                   <p style={{ fontSize: '0.85rem', color: '#059669', lineHeight: '1.5', marginBottom: '20px' }}>Only people who follow you will receive your link. Non-followers will get a request to follow you first. 🚀</p>
+                   
+                   <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '900', color: '#059669', marginBottom: '8px', textTransform: 'uppercase' }}>Follow Request Message</label>
+                   <textarea 
+                     value={unfollowedMessage} 
+                     onChange={(e) => setUnfollowedMessage(e.target.value)} 
+                     style={{ width: '100%', height: '80px', padding: '16px', borderRadius: '16px', border: '1.5px solid #10b981', outline: 'none', fontSize: '0.9rem', resize: 'none', background: 'white' }}
+                   />
+                </div>
+             </div>
+
+             {/* 2. Trigger Configuration */}
+             <div style={{ background: 'white', padding: '32px', borderRadius: '32px', border: '1.5px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+                   <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900' }}>2</div>
+                   <h3 style={{ fontSize: '1.1rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Trigger Settings</h3>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', padding: '0 8px' }}>
+                   <div>
+                      <span style={{ fontWeight: '800', color: '#475569', display: 'block', fontSize: '1rem' }}>Any Message / Keyword</span>
+                      <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Trigger on ANY incoming interaction</span>
+                   </div>
+                   <div onClick={() => setAnyKeyword(!anyKeyword)} style={{ width: '48px', height: '26px', borderRadius: '13px', background: anyKeyword ? '#7c3aed' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                      <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: anyKeyword ? '25px' : '3px', transition: '0.3s' }}></div>
+                   </div>
+                </div>
+
+                {!anyKeyword && (
+                   <div style={{ position: 'relative' }}>
+                      <input 
+                        type="text" 
+                        placeholder="Type Keyword & Hit Enter ↵" 
+                        value={keywordInput} 
+                        onChange={(e) => setKeywordInput(e.target.value)} 
+                        onKeyDown={handleAddKeyword} 
+                        style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', fontWeight: '600', marginBottom: '16px' }} 
+                      />
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {keywords.map(kw => (
+                          <span key={kw} style={{ background: '#f1f5f9', padding: '8px 14px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b', display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid #e2e8f0' }}>
+                            {kw} <X size={14} onClick={() => removeKeyword(kw)} style={{ cursor: 'pointer', color: '#ef4444' }} />
+                          </span>
+                        ))}
+                      </div>
+                   </div>
+                )}
+             </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+             {/* 3. Response Builder */}
+             <div style={{ background: 'white', padding: '32px', borderRadius: '32px', border: '1.5px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+                   <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900' }}>3</div>
+                   <h3 style={{ fontSize: '1.1rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Automated Response</h3>
+                </div>
+
+                <div style={{ border: '1.5px solid #e2e8f0', borderRadius: '24px', padding: '24px' }}>
+                   <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: '900', color: '#7c3aed', marginBottom: '12px', textTransform: 'uppercase' }}>
+                      <Send size={14} /> Message Content
+                   </label>
+                   <textarea 
+                     placeholder="Enter the DM content here..." 
+                     value={message} 
+                     onChange={(e) => setMessage(e.target.value)} 
+                     style={{ width: '100%', height: '120px', padding: '16px', borderRadius: '16px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '1rem', resize: 'none', marginBottom: '24px' }}
+                   />
+                   
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderTop: '1.5px solid #f1f5f9', paddingTop: '20px' }}>
+                      <label style={{ fontSize: '0.85rem', fontWeight: '900', color: '#64748b' }}>CTA BUTTONS</label>
+                      <button onClick={openAddLinkModal} style={{ background: '#f5f3ff', color: '#7c3aed', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '800', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Plus size={16} /> ADD LINK
+                      </button>
+                   </div>
+
+                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {buttons.map((btn, idx) => (
+                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'white', borderRadius: '16px', border: '1.5px solid #e2e8f0' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                             <LinkIcon size={16} color="#7c3aed" />
+                             <span style={{ fontWeight: '800', color: '#1e1b4b', fontSize: '0.9rem' }}>{btn.text}</span>
+                          </div>
+                          <div style={{ display: 'flex', gap: '12px' }}>
+                            <Pencil size={16} onClick={() => openEditLinkModal(idx)} style={{ cursor: 'pointer', color: '#64748b' }} />
+                            <Trash2 size={16} onClick={() => removeLink(idx)} style={{ cursor: 'pointer', color: '#ef4444' }} />
+                          </div>
+                        </div>
+                      ))}
+                      {buttons.length === 0 && (
+                        <div style={{ textAlign: 'center', padding: '24px', background: '#f8fafc', borderRadius: '16px', border: '1.5px dashed #cbd5e1', color: '#94a3b8', fontSize: '0.85rem', fontWeight: '600' }}>
+                          No buttons added yet. Click "+ Add Link" to create Call-to-Actions.
+                        </div>
+                      )}
+                   </div>
+                </div>
+             </div>
+
+             {/* 4. Advanced: Opening Message */}
+             <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                <div style={{ background: 'white', padding: '32px', borderRadius: '32px', border: '1.5px solid #e2e8f0' }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                      <h4 style={{ fontWeight: '900', color: '#1e1b4b', margin: 0, fontSize: '1.1rem' }}>Advanced: Opening Message</h4>
+                      <div onClick={() => setOpeningMessage(!openingMessage)} style={{ width: '48px', height: '26px', borderRadius: '13px', background: openingMessage ? '#7c3aed' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                        <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: openingMessage ? '25px' : '3px', transition: '0.3s' }}></div>
+                      </div>
+                   </div>
+                   <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '24px' }}>Send a quick greeting button BEFORE the final link to boost engagement.</p>
+                   
+                   {openingMessage && (
+                     <div style={{ padding: '24px', borderRadius: '24px', background: '#f5f3ff', border: '1.5px solid #ddd6fe' }}>
+                       <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '900', color: '#7c3aed', marginBottom: '8px' }}>GREETING TEXT</label>
+                       <textarea value={openingMessageText} onChange={(e) => setOpeningMessageText(e.target.value)} style={{ width: '100%', height: '100px', padding: '16px', borderRadius: '16px', border: '1.5px solid #ddd6fe', outline: 'none', fontSize: '0.9rem', resize: 'none', marginBottom: '20px', background: 'white' }}></textarea>
+                       <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '900', color: '#7c3aed', marginBottom: '8px' }}>BUTTON LABEL</label>
+                       <input value={openingMessageButton} onChange={(e) => setOpeningMessageButton(e.target.value)} placeholder="Button Label" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #ddd6fe', outline: 'none', fontSize: '0.9rem', fontWeight: '700', background: 'white' }} />
+                     </div>
+                   )}
+                </div>
+
+                <div style={{ background: '#0f172a', padding: '32px', borderRadius: '32px', color: 'white', position: 'relative', overflow: 'hidden' }}>
+                   <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '50%' }}></div>
+                   <Sparkles size={24} color="#3b82f6" style={{ marginBottom: '16px' }} />
+                   <h4 style={{ fontSize: '1rem', fontWeight: '900', marginBottom: '8px' }}>Pro Tip: Keywords</h4>
+                   <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: '1.6' }}>Use shorter, high-intent keywords like "INFO" or "LINK" to increase your conversion rates by up to 40%.</p>
+                </div>
+             </div>
+          </div>
+          
+          {/* Spacer for bottom scroll */}
+          <div style={{ height: '60px' }}></div>
         </div>
       </div>
 
-      {/* Link Modal */}
+      {/* Link Modal (Premium Styling) */}
       {showLinkModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: 'white', padding: '30px', borderRadius: '24px', width: '100%', maxWidth: '400px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
-            <h3>{editingLinkIndex !== null ? 'Edit Link' : 'Add Link'}</h3>
-            <input value={tempLinkTitle} onChange={(e) => setTempLinkTitle(e.target.value)} placeholder="Button Title" style={{ width: '100%', padding: '12px', marginBottom: '12px' }} />
-            <input value={tempLinkUrl} onChange={(e) => setTempLinkUrl(e.target.value)} placeholder="URL" style={{ width: '100%', padding: '12px', marginBottom: '20px' }} />
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+          <div style={{ background: 'white', padding: '40px', borderRadius: '32px', width: '100%', maxWidth: '450px', boxShadow: '0 30px 70px rgba(0,0,0,0.3)', animation: 'modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+               <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>{editingLinkIndex !== null ? 'Edit Button' : 'Add Link Button'}</h3>
+               <button onClick={() => setShowLinkModal(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '10px', padding: '8px', cursor: 'pointer', color: '#64748b' }}>
+                  <X size={20} />
+               </button>
+            </div>
+            
+            <div style={{ marginBottom: '20px' }}>
+               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>BUTTON TEXT</label>
+               <input value={tempLinkTitle} onChange={(e) => setTempLinkTitle(e.target.value)} placeholder="e.g. Visit Website" style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem', fontWeight: '600' }} />
+            </div>
+
+            <div style={{ marginBottom: '32px' }}>
+               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>URL LINK</label>
+               <input value={tempLinkUrl} onChange={(e) => setTempLinkUrl(e.target.value)} placeholder="https://..." style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem', fontWeight: '600', color: '#7c3aed' }} />
+            </div>
+
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={handleSaveLink} style={{ flex: 1, padding: '12px', background: '#7c3aed', color: 'white', border: 'none', borderRadius: '10px' }}>Save</button>
-              <button onClick={() => setShowLinkModal(false)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', border: 'none', borderRadius: '10px' }}>Cancel</button>
+              <button onClick={handleSaveLink} style={{ flex: 1.5, padding: '16px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', boxShadow: '0 8px 20px rgba(124, 58, 237, 0.2)' }}>Save Button</button>
+              <button onClick={() => setShowLinkModal(false)} style={{ flex: 1, padding: '16px', background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer' }}>Cancel</button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Global CSS for Animations */}
+      <style>{`
+        @keyframes modalSlideUp {
+          from { transform: translateY(30px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 }
