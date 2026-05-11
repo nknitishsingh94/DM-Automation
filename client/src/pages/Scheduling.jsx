@@ -929,10 +929,10 @@ export default function Scheduling() {
                 </div>
               </div>
 
-              {/* iPhone Mockup (Enlarged & Whiter) */}
+              {/* iPhone Mockup (Enhanced & Larger) */}
               <div style={{
-                width: '320px', height: '660px', background: '#FFF', borderRadius: '48px', border: '12px solid #1e1b4b',
-                position: 'relative', overflow: 'hidden', boxShadow: '0 40px 100px -20px rgba(0,0,0,0.3)',
+                width: '360px', height: '740px', background: '#FFF', borderRadius: '54px', border: '14px solid #1e1b4b',
+                position: 'relative', overflow: 'hidden', boxShadow: '0 50px 120px -30px rgba(0,0,0,0.4)',
                 display: 'flex', flexDirection: 'column'
               }}>
                 {/* Dynamic Island */}
@@ -1008,27 +1008,27 @@ export default function Scheduling() {
                         </div>
                       </div>
                     ) : (
-                      /* SIMULATED DM VIEW (Premium High-Fidelity - Dark as per screenshot) */
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px', gap: '20px', overflowY: 'auto', background: '#000' }}>
+                      /* SIMULATED DM VIEW (Premium High-Fidelity - Enhanced Visibility) */
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px', gap: '24px', overflowY: 'auto', background: '#000', minHeight: 0 }}>
                         {/* System Notification */}
-                        <div style={{ color: '#8e8e8e', fontSize: '0.7rem', textAlign: 'center', padding: '0 20px', lineHeight: '1.4', fontWeight: '500' }}>
-                           <span style={{ color: '#4f95ff', fontWeight: '600' }}>{(settings?.connectedInstagramName || user?.username || 'IG')}</span> messaged you about a comment you made on their post. <span style={{ color: '#4f95ff', fontWeight: '600' }}>See Post</span>
+                        <div style={{ color: '#8e8e8e', fontSize: '0.75rem', textAlign: 'center', padding: '0 24px', lineHeight: '1.5', fontWeight: '500' }}>
+                           <span style={{ color: '#4f95ff', fontWeight: '700' }}>{(settings?.connectedInstagramName || user?.username || 'IG')}</span> messaged you about a comment you made on their post. <span style={{ color: '#4f95ff', fontWeight: '700' }}>See Post</span>
                         </div>
 
                         {/* Bot Message Card Bubble (Integrated - Dark Mode Card) */}
                         {(createdPost.autoResponse) && (
-                          <div style={{ alignSelf: 'flex-start', maxWidth: '85%', display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-                             <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
+                          <div style={{ alignSelf: 'flex-start', maxWidth: '90%', display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
+                             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
                              <div style={{ 
-                               background: '#262626', color: '#FFF', borderRadius: '22px 22px 22px 4px', 
-                               overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333' 
+                               background: '#262626', color: '#FFF', borderRadius: '24px 24px 24px 6px', 
+                               overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
                              }}>
-                                <div style={{ padding: '14px 18px', fontSize: '0.85rem', fontWeight: '500', lineHeight: '1.5' }}>
+                                <div style={{ padding: '16px 20px', fontSize: '0.95rem', fontWeight: '500', lineHeight: '1.5' }}>
                                    {createdPost.autoResponse}
                                 </div>
                                 {/* Integrated Buttons (List style) */}
                                 {(createdPost.buttons || []).map((btn, i) => (
-                                   <div key={i} style={{ borderTop: '1px solid #363636', padding: '12px', textAlign: 'center', color: '#FFF', fontSize: '0.85rem', fontWeight: '800', background: '#363636' }}>
+                                   <div key={i} style={{ borderTop: '1px solid #363636', padding: '14px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636' }}>
                                       {btn.text || 'Action Button'}
                                    </div>
                                 ))}
@@ -1038,27 +1038,27 @@ export default function Scheduling() {
 
                         {/* Follow Check Card Bubble (Gated Integrated - Dark Mode Card) */}
                         {createdPost.requireFollow && createdPost.unfollowedResponse && (
-                          <div style={{ alignSelf: 'flex-start', maxWidth: '85%', display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-                             <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
+                          <div style={{ alignSelf: 'flex-start', maxWidth: '90%', display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
+                             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
                              <div style={{ 
-                               background: '#262626', color: '#FFF', borderRadius: '22px 22px 22px 4px', 
-                               overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333' 
+                               background: '#262626', color: '#FFF', borderRadius: '24px 24px 24px 6px', 
+                               overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
                              }}>
-                                <div style={{ padding: '14px 18px', fontSize: '0.85rem', fontWeight: '500', lineHeight: '1.5' }}>
+                                <div style={{ padding: '16px 20px', fontSize: '0.95rem', fontWeight: '500', lineHeight: '1.5' }}>
                                    {createdPost.unfollowedResponse}
                                 </div>
-                                <div style={{ borderTop: '1px solid #363636', padding: '12px', textAlign: 'center', color: '#FFF', fontSize: '0.85rem', fontWeight: '800', background: '#363636' }}>
+                                <div style={{ borderTop: '1px solid #363636', padding: '14px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636' }}>
                                    Visit Profile
                                 </div>
-                                <div style={{ borderTop: '1px solid #363636', padding: '12px', textAlign: 'center', color: '#FFF', fontSize: '0.85rem', fontWeight: '800', background: '#363636' }}>
+                                <div style={{ borderTop: '1px solid #363636', padding: '14px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636' }}>
                                    I'm following ✅
                                 </div>
                              </div>
                           </div>
                         )}
 
-                        {/* User Reply Bubble (Signature Purple Gradient as per screenshot) */}
-                        <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: '#FFF', padding: '12px 18px', borderRadius: '22px 22px 4px 22px', fontSize: '0.85rem', fontWeight: '600' }}>
+                        {/* User Reply Bubble (Signature Purple Gradient) */}
+                        <div style={{ alignSelf: 'flex-end', maxWidth: '85%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: '#FFF', padding: '14px 20px', borderRadius: '24px 24px 6px 24px', fontSize: '0.95rem', fontWeight: '600', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.2)' }}>
                            I'm following ✅
                         </div>
                       </div>
