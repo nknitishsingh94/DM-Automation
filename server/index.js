@@ -1380,31 +1380,24 @@ app.post('/api/messages', verifyToken, async (req, res) => {
   try {
     const { sender, text, type, chatId, platform } = req.body;
 
-    // Explicitly casting userId to ObjectId to ensure it saves correctly
     const newMessage = new Message({
       userId: req.user.userId,
       sender,
       text,
-      type: type || 'sent', // Default to sent if missing
+      type: type || 'sent',
       chatId: chatId || 'default',
       platform: platform || 'instagram',
-      videoUrl: req.body.videoUrl || '',
-      linkUrl: req.body.linkUrl || '',
       timestamp: new Date()
     });
 
     await newMessage.save();
-    console.log("✅ Message saved to DB:", newMessage._id);
 
     // Auto-Upsert Contact Metadata
     try {
       await Contact.findOneAndUpdate(
         { userId: req.user.userId, chatId: chatId || 'default' },
         {
-          $set: {
-            lastActive: new Date(),
-            platform: platform || 'instagram'
-          },
+          $set: { lastActive: new Date(), platform: platform || 'instagram' },
           $inc: { totalMessages: 1 },
           $setOnInsert: {
             name: sender !== 'AI Agent' && sender !== 'admin' ? sender : (chatId || 'default'),
@@ -1414,29 +1407,31 @@ app.post('/api/messages', verifyToken, async (req, res) => {
         },
         { upsert: true, new: true }
       );
-    } catch (contactErr) {
-      console.error("⚠️ Failed to update contact metadata:", contactErr.message);
-    }
+    } catch (contactErr) {}
 
-    // Emit new message via Socket.io to the specific user's room
-    const emissionPayload = newMessage.toObject();
-    if (req.body.tempId) {
-      emissionPayload.tempId = req.body.tempId;
-    }
-    io.to(req.user.userId).emit('new_message', emissionPayload);
+    io.to(req.user.userId).emit('new_message', newMessage);
 
-    // AI Auto-Reply Logic (Run asynchronously so it doesn't block the response)
+    // AI Auto-Reply Logic
     if (sender === 'user') {
-      processAutoReply(req.user.userId, newMessage.platform, chatId, text).catch(err => {
-        console.error("AutoReply error:", err);
-      });
+      processAutoReply(req.user.userId, platform || 'instagram', chatId, text).catch(e => console.error(e));
     }
 
     res.json(newMessage);
-
   } catch (err) {
-    console.error("❌ Error saving message:", err.message);
-    res.status(500).json({ error: "DB Save Error: " + err.message });
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// AI Generation Endpoint
+app.post('/api/ai/generate', verifyToken, async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    const { generateAIResponse } = await import('./utils/aiHandler.js');
+    const response = await generateAIResponse(req.user.userId, prompt);
+    res.json({ response });
+  } catch (err) {
+    console.error('❌ AI GENERATION ERROR:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 

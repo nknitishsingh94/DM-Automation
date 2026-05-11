@@ -283,6 +283,33 @@ export default function Scheduling() {
     }
   };
 
+  const handleAIGenerate = async (field, prompt) => {
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const originalValue = createdPost[field];
+      setCreatedPost(prev => ({ ...prev, [field]: "🤖 AI is thinking..." }));
+      
+      const res = await fetch(`${API_BASE_URL}/api/ai/generate`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ prompt })
+      });
+      const data = await res.json();
+      if (data.response) {
+        setCreatedPost(prev => ({ ...prev, [field]: data.response }));
+        notify("AI content generated!", "success");
+      } else {
+        setCreatedPost(prev => ({ ...prev, [field]: originalValue }));
+        notify("AI failed to generate", "error");
+      }
+    } catch (err) {
+      notify("Network error", "error");
+    }
+  };
+
   if (loading) return <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading your schedule...</div>;
 
   return (
@@ -828,10 +855,8 @@ export default function Scheduling() {
           padding: '20px'
         }}>
           <div style={{ 
-            background: 'white', width: '100%', maxWidth: '1100px', height: '90vh', 
-            display: 'grid', gridTemplateColumns: '480px 1fr',
-            boxShadow: '0 30px 70px rgba(0,0,0,0.3)', borderRadius: '32px',
-            overflow: 'hidden', position: 'relative',
+            background: 'white', width: '96%', maxWidth: '1440px', height: '90vh', borderRadius: '40px', 
+            display: 'grid', gridTemplateColumns: '480px 1fr', overflow: 'hidden', position: 'relative',
             animation: 'modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
           }}>
              {/* Left side: Chat Preview (Premium) */}
@@ -971,7 +996,15 @@ export default function Scheduling() {
                        Only people who follow you will receive your link. Non-followers will get a request to follow you first. 🚀
                      </p>
                      
-                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: '#059669', marginBottom: '8px' }}>Follow Request Message</label>
+                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <label style={{ fontSize: '0.75rem', fontWeight: '800', color: '#059669' }}>Follow Request Message</label>
+                        <button 
+                          onClick={() => handleAIGenerate('unfollowedResponse', `Write a polite Instagram DM asking someone to follow me before I can send them the link they requested. Keep it short.`)}
+                          style={{ background: 'none', border: 'none', color: '#059669', fontWeight: '800', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                        >
+                           <Sparkles size={12} /> AI Write
+                        </button>
+                     </div>
                      <textarea 
                        value={createdPost.unfollowedResponse} 
                        onChange={(e) => setCreatedPost({...createdPost, unfollowedResponse: e.target.value})}
@@ -1027,9 +1060,18 @@ export default function Scheduling() {
                          }}
                          style={{ width: '100%', padding: '14px 50px 14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', fontWeight: '600' }}
                        />
-                       <button style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                         <Plus size={18} />
-                       </button>
+                        <button 
+                          onClick={() => {
+                            if (keywordInput.trim()) {
+                               const kws = (createdPost.triggerKeyword || '').split(',').filter(k => k.trim());
+                               if (!kws.includes(keywordInput.trim())) kws.push(keywordInput.trim());
+                               setCreatedPost({...createdPost, triggerKeyword: kws.join(', ')});
+                               setKeywordInput('');
+                            }
+                          }}
+                          style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                          <Plus size={18} />
+                        </button>
                      </div>
                    )}
                 </div>
@@ -1042,15 +1084,23 @@ export default function Scheduling() {
                    </div>
 
                    <div style={{ border: '1.5px solid #e2e8f0', borderRadius: '20px', padding: '20px' }}>
-                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: '#3b82f6' }}>
-                       <Send size={14} /> <span style={{ fontSize: '0.8rem', fontWeight: '800' }}>DM Response Text</span>
-                     </div>
-                     <textarea 
-                       value={createdPost.autoResponse || ''}
-                       onChange={(e) => setCreatedPost({...createdPost, autoResponse: e.target.value})}
-                       placeholder="Enter your final message here... (e.g. Here is your link!)" 
-                       style={{ width: '100%', height: '120px', padding: '16px', borderRadius: '16px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '0.95rem', resize: 'none' }}
-                     />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#3b82f6' }}>
+                           <Send size={14} /> <span style={{ fontSize: '0.8rem', fontWeight: '800' }}>DM Response Text</span>
+                         </div>
+                         <button 
+                           onClick={() => handleAIGenerate('autoResponse', `Write a high-converting Instagram DM response for my automation. It should be exciting and mention that the link is below. Use emojis.`)}
+                           style={{ background: 'none', border: 'none', color: '#3b82f6', fontWeight: '800', fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                         >
+                            <Sparkles size={14} /> AI Write
+                         </button>
+                      </div>
+                      <textarea 
+                        value={createdPost.autoResponse || ''}
+                        onChange={(e) => setCreatedPost({...createdPost, autoResponse: e.target.value})}
+                        placeholder="Enter your final message here... (e.g. Here is your link!)" 
+                        style={{ width: '100%', height: '120px', padding: '16px', borderRadius: '16px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '0.95rem', resize: 'none' }}
+                      />
                      
                      <div style={{ marginTop: '20px', borderTop: '1.5px solid #f1f5f9', paddingTop: '20px' }}>
                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1096,8 +1146,16 @@ export default function Scheduling() {
                    </div>
                    <p style={{ color: '#64748b', fontSize: '0.8rem', marginBottom: '24px' }}>Grow your audience faster — with smart, hands-free engagement.</p>
 
-                    <div style={{ background: '#f5f3ff', border: '1.5px solid #ddd6fe', borderRadius: '20px', padding: '24px', marginTop: '20px' }}>
-                       <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '900', color: '#7c3aed', marginBottom: '12px' }}>PUBLIC COMMENT REPLY (RECOMMENDED)</label>
+                   <div style={{ background: '#f5f3ff', border: '1.5px solid #ddd6fe', borderRadius: '20px', padding: '24px', marginTop: '20px' }}>
+                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                          <label style={{ fontSize: '0.8rem', fontWeight: '900', color: '#7c3aed', textTransform: 'uppercase' }}>PUBLIC COMMENT REPLY (RECOMMENDED)</label>
+                          <button 
+                            onClick={() => handleAIGenerate('publicReply', `Write a short, friendly Instagram comment reply to someone who commented on my post. Mention that I've sent them a DM with the details. Use emojis.`)}
+                            style={{ background: 'none', border: 'none', color: '#7c3aed', fontWeight: '800', fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                          >
+                             <Sparkles size={14} /> AI Write
+                          </button>
+                       </div>
                        <div style={{ position: 'relative' }}>
                           <input 
                             type="text" 
@@ -1106,9 +1164,6 @@ export default function Scheduling() {
                             placeholder="e.g. Check your DMs! 🚀"
                             style={{ width: '100%', padding: '16px 50px 16px 16px', borderRadius: '16px', border: '1.5px solid #ddd6fe', outline: 'none', fontSize: '0.95rem', fontWeight: '600', background: 'white' }}
                           />
-                          <div style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', color: '#7c3aed' }}>
-                             <Sparkles size={20} />
-                          </div>
                        </div>
                     </div>
                 
@@ -1128,7 +1183,13 @@ export default function Scheduling() {
                      onClick={async () => {
                        try {
                          const token = localStorage.getItem('insta_agent_token');
-                         const res = await fetch(`${API_BASE_URL}/api/scheduling/${createdPost._id || createdPost.id}`, {
+                         const targetId = createdPost._id || createdPost.id;
+                         if (!targetId) {
+                           notify("Error: Post ID not found", "error");
+                           return;
+                         }
+                         
+                         const res = await fetch(`${API_BASE_URL}/api/scheduling/${targetId}`, {
                            method: 'PUT',
                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                            body: JSON.stringify({
@@ -1140,8 +1201,11 @@ export default function Scheduling() {
                            notify("✅ Automation created successfully!", "success");
                            setShowAdvanced(false);
                            fetchPosts();
+                         } else {
+                           const errData = await res.json();
+                           notify(errData.error || "Failed to save", "error");
                          }
-                       } catch (err) { notify("Failed to save", "error"); }
+                       } catch (err) { notify("Network error while saving", "error"); }
                      }}
                      style={{ width: '100%', padding: '18px', borderRadius: '20px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', fontWeight: '900', fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 25px rgba(124, 58, 237, 0.3)' }}
                    >
