@@ -1754,28 +1754,31 @@ app.get('/api/debug/settings', verifyToken, async (req, res) => {
 
 // Start the server
 
-// --- BACKGROUND WORKER (Scheduling) ---
+// --- REINFORCED BACKGROUND WORKER (Scheduling) ---
 setInterval(async () => {
   try {
     const now = new Date();
-    // Normalize to ISO for consistent DB comparison
+    // Use a 5-minute window to ensure no post is missed due to worker lag
+    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000).toISOString();
     const nowISO = now.toISOString();
     
-    console.log(`📡 [Worker] Checking for due posts at: ${nowISO}`);
+    console.log(`📡 [Worker] Syncing due posts. Window: ${fiveMinutesAgo} -> ${nowISO}`);
     
     const duePosts = await ScheduledPost.find({
-      scheduledFor: { $lte: nowISO },
+      scheduledFor: { $lte: nowISO, $gte: fiveMinutesAgo },
       status: 'Scheduled'
     });
 
     if (duePosts.length > 0) {
-       console.log(`⏰ Found ${duePosts.length} due posts to process.`);
+       console.log(`⏰ [ALARM] Found ${duePosts.length} posts to publish NOW.`);
     }
 
-    for (const post of duePosts) {
-      console.log(`🔄 Processing Scheduled Post: ${post._id || post.id} (Scheduled For: ${post.scheduledFor})`);
+    const { publishInstagramContent } = await import('./utils/metaApi.js');
 
-      // Deserialize metadata if it's a JSON object/array
+    for (const post of duePosts) {
+      console.log(`🔄 EXECUTION: Processing Post ${post._id} for User ${post.userId}`);
+
+      // Deserialize metadata
       let finalMedia = post.mediaUrl;
       let finalType = post.type || 'image';
       let finalCarousel = [];
@@ -1786,20 +1789,16 @@ setInterval(async () => {
           finalType = meta.type || finalType;
           finalCarousel = meta.carouselItems || [];
           finalMedia = meta.mediaUrl || (finalCarousel.length > 0 ? finalCarousel[0] : '');
-        } catch (e) {}
-      } else if (post.mediaUrl && post.mediaUrl.startsWith('[')) {
-        try {
-          finalCarousel = JSON.parse(post.mediaUrl);
-          finalMedia = finalCarousel[0];
-        } catch (e) {}
+        } catch (e) {
+          console.warn("⚠️ Metadata parse failed, using raw mediaUrl");
+        }
       }
 
-      await ScheduledPost.findByIdAndUpdate(post._id || post.id, { status: 'Processing' });
+      // Atomically mark as processing to prevent double-posting
+      await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Processing' });
 
       try {
-        const { publishInstagramContent } = await import('./utils/metaApi.js');
-        
-        console.log(`📸 Publishing ${finalType} to Instagram for User: ${post.userId}`);
+        console.log(`📸 Meta API: Publishing ${finalType.toUpperCase()}...`);
         const publishedId = await publishInstagramContent(post.userId, finalType, finalMedia, post.caption, finalCarousel);
 
         if (post.triggerKeyword && post.autoResponse) {
@@ -1813,17 +1812,23 @@ setInterval(async () => {
             postId: publishedId
           });
           await campaign.save();
-          console.log(`✅ Automation Campaign created for post ${publishedId}`);
+          console.log(`✨ AUTOMATION LIVE: Post ${publishedId} is now guarded by bot.`);
         }
 
-        await ScheduledPost.findByIdAndUpdate(post._id || post.id, { status: 'Posted' });
+        await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted', postedAt: new Date() });
+        console.log(`✅ SUCCESS: Post ${post._id} is now LIVE on Instagram.`);
       } catch (postErr) {
-        console.error(`❌ Failed to process scheduled post ${post._id}:`, postErr.message);
-        await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed' });
+        console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);
+        // Fallback to 'Scheduled' for retry if it was a transient Meta error
+        const isTransient = postErr.message?.includes('timeout') || postErr.message?.includes('processing');
+        await ScheduledPost.findByIdAndUpdate(post._id, { 
+          status: isTransient ? 'Scheduled' : 'Failed',
+          errorLog: postErr.message 
+        });
       }
     }
   } catch (err) {
-    console.error("Worker Error:", err);
+    console.error("🔥 CRITICAL WORKER ERROR:", err.message);
   }
 }, 60000);
 

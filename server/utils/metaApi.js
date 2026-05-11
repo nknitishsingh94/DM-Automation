@@ -270,17 +270,24 @@ export const publishInstagramContent = async (userId, type, mediaUrl, caption = 
 
     console.log(`📦 Final Media Container created: ${finalCreationId}`);
 
-    // --- STEP 2: Polling for Status ---
+    // --- STEP 2: Polling for Status (Increased attempts for Reels) ---
     let isReady = false;
     let attempts = 0;
-    while (!isReady && attempts < 20) {
+    const maxAttempts = 30; // Increased from 20 to 30 for large Reels
+    
+    while (!isReady && attempts < maxAttempts) {
       await new Promise(r => setTimeout(r, 10000));
       const statusRes = await axios.get(`https://graph.facebook.com/v19.0/${finalCreationId}?fields=status_code&access_token=${accessToken}`);
-      console.log(`⏳ Status Check (${attempts + 1}): ${statusRes.data.status_code}`);
-      if (statusRes.data.status_code === 'FINISHED') {
+      const statusCode = statusRes.data.status_code;
+      
+      console.log(`⏳ Meta Sync (${attempts + 1}/${maxAttempts}): ${statusCode}`);
+      
+      if (statusCode === 'FINISHED') {
         isReady = true;
-      } else if (statusRes.data.status_code === 'ERROR') {
-        throw new Error('Meta processing failed');
+      } else if (statusCode === 'ERROR') {
+        // Fetch detailed error message if possible
+        const errDetail = await axios.get(`https://graph.facebook.com/v19.0/${finalCreationId}?fields=video_status&access_token=${accessToken}`);
+        throw new Error(`Meta Processing Error: ${JSON.stringify(errDetail.data.video_status || statusCode)}`);
       }
       attempts++;
     }
