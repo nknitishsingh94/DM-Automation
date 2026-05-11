@@ -829,13 +829,13 @@ export default function Scheduling() {
         }}>
           <div style={{ 
             background: 'white', width: '100%', maxWidth: '1100px', height: '90vh', 
-            display: 'grid', gridTemplateColumns: 'minmax(350px, 400px) 1fr',
+            display: 'grid', gridTemplateColumns: '480px 1fr',
             boxShadow: '0 30px 70px rgba(0,0,0,0.3)', borderRadius: '32px',
             overflow: 'hidden', position: 'relative',
             animation: 'modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
           }}>
              {/* Left side: Chat Preview (Premium) */}
-             <div style={{ background: '#f8fafc', borderRight: '1.5px solid #e2e8f0', padding: '40px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+             <div style={{ background: '#f8fafc', borderRight: '1.5px solid #e2e8f0', padding: '40px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', overflowY: 'auto' }}>
                 <div style={{ color: '#64748b', fontWeight: '800', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
                   <Smartphone size={18} /> Chat Preview
                 </div>
@@ -1092,17 +1092,21 @@ export default function Scheduling() {
                    </div>
                    <p style={{ color: '#64748b', fontSize: '0.8rem', marginBottom: '24px' }}>Grow your audience faster — with smart, hands-free engagement.</p>
 
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                      <span style={{ fontWeight: '800', color: '#1e1b4b', fontSize: '0.9rem' }}>Public Comment Reply</span>
-                      <span style={{ fontSize: '0.65rem', fontWeight: '800', color: '#7c3aed', background: '#f5f3ff', padding: '2px 6px', borderRadius: '4px' }}>RECOMMENDED</span>
-                   </div>
-                   <p style={{ color: '#94a3b8', fontSize: '0.75rem', marginBottom: '12px' }}>Trigger on ANY Comment</p>
-                   <input 
-                      type="text" 
-                      value={createdPost.publicReply}
-                      onChange={(e) => setCreatedPost({...createdPost, publicReply: e.target.value})}
-                      style={{ width: '100%', padding: '14px', borderRadius: '14px', border: '1.5px solid #e2e8f0', background: '#f8fafc', outline: 'none', fontSize: '0.9rem' }}
-                   />
+                    <div style={{ background: '#f5f3ff', border: '1.5px solid #ddd6fe', borderRadius: '20px', padding: '24px', marginTop: '20px' }}>
+                       <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '900', color: '#7c3aed', marginBottom: '12px' }}>PUBLIC COMMENT REPLY (RECOMMENDED)</label>
+                       <div style={{ position: 'relative' }}>
+                          <input 
+                            type="text" 
+                            value={createdPost.publicReply || ''}
+                            onChange={(e) => setCreatedPost({...createdPost, publicReply: e.target.value})}
+                            placeholder="e.g. Check your DMs! 🚀"
+                            style={{ width: '100%', padding: '16px 50px 16px 16px', borderRadius: '16px', border: '1.5px solid #ddd6fe', outline: 'none', fontSize: '0.95rem', fontWeight: '600', background: 'white' }}
+                          />
+                          <div style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', color: '#7c3aed' }}>
+                             <Sparkles size={20} />
+                          </div>
+                       </div>
+                    </div>
                 
                 {/* Sticky Action Button Container */}
                 <div style={{ 
