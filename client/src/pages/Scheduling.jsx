@@ -1060,35 +1060,58 @@ export default function Scheduling() {
                    </div>
 
                    {!createdPost.anyKeyword && (
-                     <div style={{ position: 'relative' }}>
-                       <input 
-                         type="text" 
-                         placeholder="Type & Hit ↵ Enter to add Keyword" 
-                         value={keywordInput}
-                         onChange={(e) => setKeywordInput(e.target.value)}
-                         onKeyDown={(e) => {
-                           if (e.key === 'Enter' && keywordInput.trim()) {
-                              const kws = (createdPost.triggerKeyword || '').split(',').filter(k => k.trim());
-                              if (!kws.includes(keywordInput.trim())) kws.push(keywordInput.trim());
-                              setCreatedPost({...createdPost, triggerKeyword: kws.join(', ')});
-                              setKeywordInput('');
-                           }
-                         }}
-                         style={{ width: '100%', padding: '14px 50px 14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', fontWeight: '600' }}
-                       />
-                        <button 
-                          onClick={() => {
-                            if (keywordInput.trim()) {
-                               const kws = (createdPost.triggerKeyword || '').split(',').filter(k => k.trim());
-                               if (!kws.includes(keywordInput.trim())) kws.push(keywordInput.trim());
-                               setCreatedPost({...createdPost, triggerKeyword: kws.join(', ')});
-                               setKeywordInput('');
-                            }
-                          }}
-                          style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                          <Plus size={18} />
-                        </button>
-                     </div>
+                     <>
+                        <div style={{ position: 'relative' }}>
+                          <input 
+                            type="text" 
+                            placeholder="Type & Hit ↵ Enter to add Keyword" 
+                            value={keywordInput}
+                            onChange={(e) => setKeywordInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                 e.preventDefault();
+                                 if (keywordInput.trim()) {
+                                   const kws = (createdPost.triggerKeyword || '').split(',').map(s=>s.trim()).filter(k => k);
+                                   if (!kws.includes(keywordInput.trim())) kws.push(keywordInput.trim());
+                                   setCreatedPost({...createdPost, triggerKeyword: kws.join(', ')});
+                                   setKeywordInput('');
+                                 }
+                              }
+                            }}
+                            style={{ width: '100%', padding: '14px 50px 14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', fontWeight: '600' }}
+                          />
+                          <button 
+                            onClick={() => {
+                              if (keywordInput.trim()) {
+                                 const kws = (createdPost.triggerKeyword || '').split(',').map(s=>s.trim()).filter(k => k);
+                                 if (!kws.includes(keywordInput.trim())) kws.push(keywordInput.trim());
+                                 setCreatedPost({...createdPost, triggerKeyword: kws.join(', ')});
+                                 setKeywordInput('');
+                              }
+                            }}
+                            style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                            <Plus size={18} />
+                          </button>
+                        </div>
+                        
+                        {createdPost.triggerKeyword && createdPost.triggerKeyword !== '*' && (
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
+                            {createdPost.triggerKeyword.split(',').filter(k => k.trim()).map((kw, i) => (
+                              <div key={i} style={{ background: '#eff6ff', color: '#3b82f6', padding: '6px 12px', borderRadius: '10px', fontSize: '0.8rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px', border: '1px solid #dbeafe' }}>
+                                {kw.trim()}
+                                <X 
+                                  size={14} 
+                                  style={{ cursor: 'pointer' }} 
+                                  onClick={() => {
+                                    const kws = createdPost.triggerKeyword.split(',').map(s=>s.trim()).filter((_, idx) => idx !== i);
+                                    setCreatedPost({...createdPost, triggerKeyword: kws.join(', ')});
+                                  }}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </>
                    )}
                 </div>
 
