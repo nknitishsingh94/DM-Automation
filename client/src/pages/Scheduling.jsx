@@ -1046,23 +1046,7 @@ export default function Scheduling() {
                                ))}
                             </div>
                          )}
-                      </div>
-
-                      {/* Bottom Bar Mockup */}
-                      <div style={{ padding: '12px 16px 20px', display: 'flex', gap: '10px', borderTop: '1px solid #efefef', background: '#FFF' }}>
-                         <div style={{ flex: 1, height: '40px', background: '#FAFAFA', borderRadius: '20px', border: '1px solid #efefef', display: 'flex', alignItems: 'center', padding: '0 16px', color: '#94a3b8', fontSize: '0.85rem' }}>
-                            Message...
-                         </div>
-                         <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#FAFAFA', border: '1px solid #efefef', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <ImageIcon size={20} color="#64748b" />
-                         </div>
-                      </div>
-
-                      {/* Bottom Bar Mockup */}
-                      <div style={{ padding: '12px 16px 20px', display: 'flex', gap: '10px', borderTop: '1px solid #1a1a1a', background: '#000' }}>
-                         <div style={{ flex: 1, height: '34px', background: '#1a1a1a', borderRadius: '17px', border: '1px solid #333' }}></div>
-                         <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#1a1a1a', border: '1px solid #333' }}></div>
-                      </div>
+                      </div>   
                    </div>
                 </div>
              </div>
