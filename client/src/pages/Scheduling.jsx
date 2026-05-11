@@ -963,6 +963,17 @@ export default function Scheduling() {
                                   </div>
                                )}
 
+                               {/* Follow Request (Gated) */}
+                               {createdPost.requireFollow && createdPost.unfollowedResponse && (
+                                  <div style={{ alignSelf: 'flex-start', maxWidth: '85%', display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
+                                     <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
+                                     <div style={{ background: '#262626', color: 'white', padding: '10px 14px', borderRadius: '18px 18px 18px 4px', fontSize: '0.8rem', fontWeight: '500', border: '1px solid #10b981' }}>
+                                        <div style={{ fontSize: '0.65rem', color: '#10b981', fontWeight: '800', marginBottom: '4px' }}>FOLLOW REQUEST</div>
+                                        {createdPost.unfollowedResponse}
+                                     </div>
+                                  </div>
+                               )}
+
                                {/* Automation Response */}
                                {createdPost.autoResponse && (
                                   <div style={{ alignSelf: 'flex-start', maxWidth: '85%', display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
