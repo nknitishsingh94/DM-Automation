@@ -853,8 +853,12 @@ export default function Scheduling() {
                       {/* IG Header */}
                       <div style={{ padding: '20px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #1a1a1a' }}>
                         <ArrowLeft size={16} color="white" />
-                        <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: '800', color: 'white' }}>IG</div>
-                        <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>Instagram Account</div>
+                        <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: '800', color: 'white' }}>
+                          {(settings?.connectedInstagramName || 'IG').substring(0, 2).toUpperCase()}
+                        </div>
+                        <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>
+                          {settings?.connectedInstagramName || 'Instagram Account'}
+                        </div>
                       </div>
 
                       {/* Chat Messages */}
