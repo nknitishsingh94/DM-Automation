@@ -1047,9 +1047,9 @@ export default function Scheduling() {
                               <div style={{ padding: '16px 20px', fontSize: '0.95rem', fontWeight: '500', lineHeight: '1.5' }}>
                                  {createdPost.autoResponse || "Hello! 👋 Your automated response will appear here. Start typing in the 'Response Content' box on the right to see the live effect!"}
                               </div>
-                              {/* Integrated Buttons (List style) */}
+                              {/* Integrated Buttons (Interactive List style) */}
                               {(createdPost.buttons && createdPost.buttons.length > 0) ? createdPost.buttons.map((btn, i) => (
-                                 <div key={i} style={{ borderTop: '1px solid #363636', padding: '14px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636' }}>
+                                 <div key={i} style={{ borderTop: '1px solid #363636', padding: '16px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636', cursor: 'pointer', transition: '0.2s', userSelect: 'none' }} onMouseOver={(e) => e.target.style.background = '#404040'} onMouseOut={(e) => e.target.style.background = '#363636'}>
                                     {btn.text || 'Action Button'}
                                  </div>
                               )) : (
@@ -1071,10 +1071,10 @@ export default function Scheduling() {
                                 <div style={{ padding: '16px 20px', fontSize: '0.95rem', fontWeight: '500', lineHeight: '1.5' }}>
                                    {createdPost.unfollowedResponse || "Wait! You're not following me yet. Please follow to unlock the link! 🔒"}
                                 </div>
-                                <div style={{ borderTop: '1px solid #363636', padding: '14px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636' }}>
+                                <div style={{ borderTop: '1px solid #363636', padding: '16px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636', cursor: 'pointer', transition: '0.2s' }} onMouseOver={(e) => e.target.style.background = '#404040'} onMouseOut={(e) => e.target.style.background = '#363636'}>
                                    Visit Profile
                                 </div>
-                                <div style={{ borderTop: '1px solid #363636', padding: '14px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636' }}>
+                                <div style={{ borderTop: '1px solid #363636', padding: '16px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636', cursor: 'pointer', transition: '0.2s' }} onMouseOver={(e) => e.target.style.background = '#404040'} onMouseOut={(e) => e.target.style.background = '#363636'}>
                                    I'm following ✅
                                 </div>
                              </div>
