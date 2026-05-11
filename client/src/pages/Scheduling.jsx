@@ -863,18 +863,22 @@ export default function Scheduling() {
                       <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
                          {(() => {
                             let mediaData = { type: 'image', mediaUrl: createdPost.mediaUrl };
-                            try {
-                               if (createdPost.mediaUrl && typeof createdPost.mediaUrl === 'string' && createdPost.mediaUrl.startsWith('{')) {
-                                 mediaData = JSON.parse(createdPost.mediaUrl);
-                               }
-                            } catch (e) {}
+                            if (createdPost.mediaUrl && typeof createdPost.mediaUrl === 'object') {
+                               mediaData = createdPost.mediaUrl;
+                            } else {
+                               try {
+                                  if (createdPost.mediaUrl && typeof createdPost.mediaUrl === 'string' && createdPost.mediaUrl.startsWith('{')) {
+                                    mediaData = JSON.parse(createdPost.mediaUrl);
+                                  }
+                               } catch (e) {}
+                            }
 
                             // Robust URL Construction
                             let finalMediaUrl = '';
                             if (mediaData.mediaUrl) {
-                              if (mediaData.mediaUrl.startsWith('http') || mediaData.mediaUrl.startsWith('blob:')) {
+                              if (typeof mediaData.mediaUrl === 'string' && (mediaData.mediaUrl.startsWith('http') || mediaData.mediaUrl.startsWith('blob:'))) {
                                 finalMediaUrl = mediaData.mediaUrl;
-                              } else {
+                              } else if (typeof mediaData.mediaUrl === 'string') {
                                 finalMediaUrl = `${API_BASE_URL}${mediaData.mediaUrl.startsWith('/') ? '' : '/'}${mediaData.mediaUrl}`;
                               }
                             } else if (previews && previews.length > 0) {
@@ -886,9 +890,9 @@ export default function Scheduling() {
                             // Robust Type Detection
                             const isVideo = mediaData.type === 'reel' || 
                                             mediaData.type === 'video' || 
-                                            (finalMediaUrl && (
+                                            (finalMediaUrl && typeof finalMediaUrl === 'string' && (
                                               finalMediaUrl.toLowerCase().match(/\.(mp4|mov|webm|m4v)$/i) || 
-                                              finalMediaUrl.startsWith('blob:') // Blobs are often videos if type is reel
+                                              finalMediaUrl.startsWith('blob:')
                                             ));
 
                             return (
