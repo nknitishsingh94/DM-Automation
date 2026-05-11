@@ -1063,18 +1063,6 @@ export default function Scheduling() {
                         </div>
                       </div>
                     )}
-                    {/* Bottom Bar Mockup (High-Fidelity Dark) */}
-                    <div style={{ padding: '12px 16px 24px', display: 'flex', gap: '16px', borderTop: '1px solid #1a1a1a', background: '#000', alignItems: 'center' }}>
-                       <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Camera size={20} color="white" />
-                       </div>
-                       <div style={{ flex: 1, height: '44px', background: '#dfd7d7ff', borderRadius: '22px', border: '1px solid #333', display: 'flex', alignItems: 'center', padding: '0 16px', color: '#8e8e8e', fontSize: '0.85rem' }}>
-                          Message...
-                       </div>
-                       <Mic size={22} color="#FFF" />
-                       <ImageIcon size={22} color="#FFF" />
-                       <PlusCircle size={22} color="#FFF" />
-                    </div>
                   </div>
                 </div>
               </div>
