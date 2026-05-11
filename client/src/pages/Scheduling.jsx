@@ -270,6 +270,27 @@ export default function Scheduling() {
     setCreatedPost({ ...createdPost, buttons: newButtons });
   };
 
+  const toggleAutomationStatus = async (id, newStatus) => {
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      // Optimistic Update
+      setPosts(prev => prev.map(p => p._id === id ? { ...p, automationStatus: newStatus } : p));
+      
+      const res = await fetch(`${API_BASE_URL}/api/scheduling/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ automationStatus: newStatus })
+      });
+      if (!res.ok) {
+        fetchPosts(); // Rollback
+        notify("Failed to update status", "error");
+      }
+    } catch (err) {
+      fetchPosts();
+      notify("Network error", "error");
+    }
+  };
+
   const deletePost = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this scheduled post?")) return;
     try {
@@ -410,6 +431,26 @@ export default function Scheduling() {
                   <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#1e1b4b' }}>
                     {post.status || 'SCHEDULED'}
                   </span>
+                  {/* Automation Status Mini-Toggle */}
+                  {(post.autoResponse || post.triggerKeyword) && (
+                    <div 
+                      onClick={(e) => {
+                         e.stopPropagation();
+                         const newStatus = post.automationStatus === 'Paused' ? 'Active' : 'Paused';
+                         toggleAutomationStatus(post._id, newStatus);
+                      }}
+                      style={{ 
+                        width: '24px', height: '12px', borderRadius: '6px', 
+                        background: post.automationStatus === 'Paused' ? '#cbd5e1' : '#10b981',
+                        position: 'relative', cursor: 'pointer', marginLeft: '4px'
+                      }}>
+                       <div style={{ 
+                         width: '10px', height: '10px', borderRadius: '50%', background: 'white',
+                         position: 'absolute', top: '1px', left: post.automationStatus === 'Paused' ? '1px' : '13px',
+                         transition: '0.2s'
+                       }}></div>
+                    </div>
+                  )}
                 </div>
 
                 <div style={{ 
@@ -460,7 +501,8 @@ export default function Scheduling() {
                     onClick={() => {
                       setCreatedPost({
                         ...post,
-                        anyKeyword: post.triggerKeyword === '*'
+                        anyKeyword: post.triggerKeyword === '*',
+                        automationStatus: post.automationStatus || 'Active'
                       });
                       setShowAdvanced(true);
                     }}
@@ -1018,7 +1060,25 @@ export default function Scheduling() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                    <div>
                       <h3 style={{ fontSize: '1.6rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Advanced <span style={{ color: '#7c3aed' }}>Automation</span></h3>
-                      <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>Click to rename your automation</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+                         <div 
+                           onClick={() => setCreatedPost({...createdPost, automationStatus: createdPost.automationStatus === 'Active' ? 'Paused' : 'Active'})}
+                           style={{ 
+                             width: '40px', height: '20px', borderRadius: '10px', 
+                             background: createdPost.automationStatus === 'Active' ? '#10b981' : '#cbd5e1', 
+                             position: 'relative', cursor: 'pointer', transition: '0.3s' 
+                           }}
+                         >
+                            <div style={{ 
+                               width: '16px', height: '16px', borderRadius: '50%', background: 'white', 
+                               position: 'absolute', top: '2px', left: createdPost.automationStatus === 'Active' ? '22px' : '2px', 
+                               transition: '0.3s' 
+                            }}></div>
+                         </div>
+                         <span style={{ fontSize: '0.8rem', fontWeight: '800', color: createdPost.automationStatus === 'Active' ? '#10b981' : '#64748b' }}>
+                            Automation {createdPost.automationStatus === 'Active' ? 'Enabled' : 'Disabled'}
+                         </span>
+                      </div>
                    </div>
                    <button onClick={() => setShowAdvanced(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '8px', cursor: 'pointer', color: '#64748b' }}>
                       <X size={20} />
@@ -1266,7 +1326,8 @@ export default function Scheduling() {
                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                            body: JSON.stringify({
                               ...createdPost,
-                              triggerKeyword: createdPost.anyKeyword ? '*' : createdPost.triggerKeyword
+                              triggerKeyword: createdPost.anyKeyword ? '*' : createdPost.triggerKeyword,
+                               automationStatus: createdPost.automationStatus || 'Active'
                            })
                          });
                          if (res.ok) {
