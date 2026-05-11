@@ -227,6 +227,7 @@ export default function Scheduling() {
   };
 
   const [showSuccess, setShowSuccess] = useState(false);
+  const [previewMode, setPreviewMode] = useState('dm');
   const [createdPost, setCreatedPost] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
@@ -236,7 +237,6 @@ export default function Scheduling() {
   const [tempLinkTitle, setTempLinkTitle] = useState('Open Link');
   const [tempLinkUrl, setTempLinkUrl] = useState('https://example.com');
   const [keywordInput, setKeywordInput] = useState('');
-  const [previewMode, setPreviewMode] = useState('dm'); // 'dm' or 'post'
 
   const openAddLinkModal = () => {
     setEditingLinkIndex(null);
@@ -914,68 +914,37 @@ export default function Scheduling() {
                 <div style={{ color: '#64748b', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
                   <Smartphone size={18} /> Chat Preview
                 </div>
-                {/* View Toggle */}
-                <div style={{ display: 'flex', background: '#e2e8f0', padding: '4px', borderRadius: '12px', gap: '4px' }}>
-                  <button
-                    onClick={() => setPreviewMode('post')}
-                    style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: previewMode === 'post' ? 'white' : 'transparent', color: previewMode === 'post' ? '#1e1b4b' : '#64748b', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', boxShadow: previewMode === 'post' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}>
-                    Post View
-                  </button>
-                  <button
-                    onClick={() => setPreviewMode('dm')}
-                    style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: previewMode === 'dm' ? 'white' : 'transparent', color: previewMode === 'dm' ? '#1e1b4b' : '#64748b', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', boxShadow: previewMode === 'dm' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}>
-                    DM View
-                  </button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Live <span style={{ color: '#7c3aed' }}>Simulation</span></h2>
+                    <p style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '600', marginTop: '2px' }}>Real-time chat automation preview</p>
+                  </div>
                 </div>
               </div>
 
-              {/* iPhone Mockup (Ultra Pro Max - Extra Tall) */}
-              <div style={{
-                width: '380px', height: '1500px', background: '#FFF', borderRadius: '60px', border: '16px solid #1e1b4b',
-                position: 'relative', overflow: 'hidden', boxShadow: '0 60px 150px -40px rgba(0,0,0,0.5)',
-                display: 'flex', flexDirection: 'column'
-              }}>
-                <style>{`
-                  .custom-ig-scroller::-webkit-scrollbar {
-                    width: 4px;
-                  }
-                  .custom-ig-scroller::-webkit-scrollbar-track {
-                    background: #000;
-                  }
-                  .custom-ig-scroller::-webkit-scrollbar-thumb {
-                    background: #333;
-                    border-radius: 10px;
-                  }
-                  .custom-ig-scroller::-webkit-scrollbar-thumb:hover {
-                    background: #555;
-                  }
-                `}</style>
-                {/* Dynamic Island */}
-                <div style={{ position: 'absolute', top: '12px', left: '50%', transform: 'translateX(-50%)', width: '90px', height: '22px', background: '#000', borderRadius: '20px', zIndex: 100 }}></div>
-
-                {/* Status Bar (Light Mode) */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 24px 8px', fontSize: '0.75rem', fontWeight: '800', color: '#000', zIndex: 50 }}>
-                  <span>9:41</span>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <div style={{ width: '14px', height: '8px', border: '1px solid #000', borderRadius: '2px' }}></div>
-                  </div>
-                </div>
-
-                <div style={{ flex: 1, background: '#FFF', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                  {/* IG Header (Premium Light) */}
-                  <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid #efefef' }}>
-                    <ArrowLeft size={20} color="#000" />
-                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: '900', color: 'white' }}>
-                      {(settings?.connectedInstagramName || user?.username || 'IG').substring(0, 2).toUpperCase()}
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <div style={{ color: '#000', fontSize: '0.85rem', fontWeight: '800' }}>
-                        {settings?.connectedInstagramName || user?.username || 'Instagram'}
-                      </div>
-                      <div style={{ color: '#64748b', fontSize: '0.65rem', fontWeight: '500' }}>Active now</div>
-                    </div>
-                  </div>
-
+               {/* Simple Live Simulation Box (Clean & Minimal) */}
+               <div style={{
+                 width: '400px', height: '800px', background: '#000', borderRadius: '24px', border: '1px solid #1e1b4b',
+                 position: 'relative', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+                 display: 'flex', flexDirection: 'column'
+               }}>
+                 <style>{`
+                   .custom-ig-scroller::-webkit-scrollbar {
+                     width: 4px;
+                   }
+                   .custom-ig-scroller::-webkit-scrollbar-track {
+                     background: #000;
+                   }
+                   .custom-ig-scroller::-webkit-scrollbar-thumb {
+                     background: #333;
+                     border-radius: 10px;
+                   }
+                   .custom-ig-scroller::-webkit-scrollbar-thumb:hover {
+                     background: #555;
+                   }
+                 `}</style>
+                 
+                 <div style={{ flex: 1, background: '#000', display: 'flex', flexDirection: 'column', position: 'relative' }}>
                   {/* Dynamic View Content */}
                   <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#FFF' }}>
                     {previewMode === 'post' ? (
