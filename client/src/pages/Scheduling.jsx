@@ -202,7 +202,10 @@ export default function Scheduling() {
         setPosts(prev => [data, ...prev]);
 
         // 3. Set created post for the success modal
-        setCreatedPost(data);
+        setCreatedPost({
+          ...data,
+          anyKeyword: data.triggerKeyword === '*'
+        });
 
         // 4. Trigger Success Flow with a tiny delay to ensure UI has settled
         setTimeout(() => {
@@ -454,7 +457,10 @@ export default function Scheduling() {
                   </button>
                    <button 
                     onClick={() => {
-                      setCreatedPost(post);
+                      setCreatedPost({
+                        ...post,
+                        anyKeyword: post.triggerKeyword === '*'
+                      });
                       setShowAdvanced(true);
                     }}
                     style={{ 

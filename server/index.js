@@ -309,7 +309,8 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     if (!f.triggerKeyword) return false;
     const keywords = f.triggerKeyword.split(',').map(k => k.toLowerCase().replace(/\s+/g, ' ').trim());
     const cleanUserMsg = text.toLowerCase().replace(/\s+/g, ' ').trim();
-    return keywords.some(k => cleanUserMsg.includes(k));
+    // Support wildcard (*) for flows too
+    return keywords.some(k => k === '*' || cleanUserMsg.includes(k));
   });
 
   if (matchedFlow) {
