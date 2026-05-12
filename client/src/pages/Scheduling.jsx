@@ -918,7 +918,7 @@ export default function Scheduling() {
             animation: 'modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
           }}>
             {/* Left side: Chat Preview (Premium) */}
-<div style={{ padding: '0', background: '#F8FAFC', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ padding: '40px 0', background: '#F8FAFC', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', overflowY: 'auto' }}>
                {/* iPhone Mockup (Ultra Pro Max - Dark Mode) */}
                {(() => {
                  const previewData = createdPost || newPost;
@@ -938,10 +938,12 @@ export default function Scheduling() {
                    .custom-ig-scroller::-webkit-scrollbar-track {
                      background: #000;
                    }
-                   .custom-ig-scroller::-webkit-scrollbar-thumb {
-                     background: #333;
-                     border-radius: 10px;
-                   }
+                    .custom-ig-scroller::-webkit-scrollbar-thumb {
+                      background: #7c3aed;
+                      border-radius: 10px;
+                    }
+                  `}</style>
+                 <style>{`
                    .custom-ig-scroller::-webkit-scrollbar-thumb:hover {
                      background: #555;
                    }
