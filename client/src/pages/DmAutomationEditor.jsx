@@ -278,21 +278,44 @@ export default function DmAutomationEditor() {
                      </div>
                    ) : (
                      <>
+                        {/* Trigger Message */}
                         <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#0095f6', color: 'white', padding: '8px 12px', borderRadius: '14px 14px 2px 14px', fontSize: '0.75rem' }}>
-                           {anyKeyword ? 'Hey! I saw your post.' : (keywords[0] || 'Type Keyword')}
+                           {anyKeyword ? 'hi' : (keywords[0] || 'hi')}
                         </div>
 
-                        {(openingMessage || message) && (
+                        {/* Opening Message (Step 1) */}
+                        {openingMessage && (
                            <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
                               <div style={{ background: '#262626', borderRadius: '14px 14px 14px 2px', overflow: 'hidden' }}>
                                  <div style={{ padding: '10px 12px', borderBottom: '1px solid #333' }}>
-                                    <div style={{ color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>{openingMessage ? openingMessageText : message}</div>
+                                    <div style={{ color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>{openingMessageText}</div>
                                  </div>
-                                 {(openingMessage || buttons.length > 0) && (
-                                    <div style={{ padding: '10px', textAlign: 'center', color: '#3b82f6', fontSize: '0.75rem', fontWeight: '800' }}>
-                                       {openingMessage ? openingMessageButton : (buttons[0]?.text || 'Open Link')}
+                                 <div style={{ padding: '10px', textAlign: 'center', color: '#3b82f6', fontSize: '0.75rem', fontWeight: '800' }}>
+                                    {openingMessageButton}
+                                 </div>
+                              </div>
+                           </div>
+                        )}
+
+                        {/* User Clicks Button (Visual Hint) */}
+                        {openingMessage && (
+                           <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#0095f6', color: 'white', padding: '8px 12px', borderRadius: '14px 14px 2px 14px', fontSize: '0.75rem' }}>
+                              {openingMessageButton}
+                           </div>
+                        )}
+
+                        {/* Final Response (Step 2) */}
+                        {message && (
+                           <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
+                              <div style={{ background: '#262626', borderRadius: '14px 14px 14px 2px', overflow: 'hidden' }}>
+                                 <div style={{ padding: '10px 12px', borderBottom: buttons.length > 0 ? '1px solid #333' : 'none' }}>
+                                    <div style={{ color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>{message}</div>
+                                 </div>
+                                 {buttons.map((btn, idx) => (
+                                    <div key={idx} style={{ padding: '10px', textAlign: 'center', borderBottom: idx === buttons.length - 1 ? 'none' : '1px solid #333', color: '#3b82f6', fontSize: '0.75rem', fontWeight: '800' }}>
+                                       {btn.text}
                                     </div>
-                                 )}
+                                 ))}
                               </div>
                            </div>
                         )}
@@ -309,14 +332,56 @@ export default function DmAutomationEditor() {
         </div>
 
         {/* Right Side: Configuration */}
-        <div style={{ padding: '48px 64px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '48px' }}>
+        <div style={{ padding: '48px 64px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '36px' }}>
            
+           {/* Section 0: Advanced Automations Toggle */}
+           <div style={{ 
+             background: 'white', 
+             border: '2px solid #f1f5f9', 
+             borderRadius: '24px', 
+             padding: '24px 32px'
+           }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                 <div>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Advanced Automations</h3>
+                    <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '4px 0 0 0', fontWeight: '500' }}>Grow your audience faster — with smart, hands-free engagement.</p>
+                 </div>
+                 <div onClick={() => setOpeningMessage(!openingMessage)} style={{ width: '52px', height: '28px', borderRadius: '14px', background: openingMessage ? '#3b82f6' : '#e2e8f0', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                   <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: openingMessage ? '27px' : '3px', transition: '0.3s' }}></div>
+                 </div>
+              </div>
+
+              {openingMessage && (
+                <div style={{ marginTop: '24px', padding: '24px', borderRadius: '20px', background: '#f8fafc', border: '1.5px solid #e2e8f0' }}>
+                   <h4 style={{ fontWeight: '900', color: '#1e1b4b', margin: '0 0 16px 0', fontSize: '1rem' }}>Opening Message</h4>
+                   <textarea 
+                     value={openingMessageText} 
+                     onChange={(e) => setOpeningMessageText(e.target.value)} 
+                     placeholder="Hey there! I'm so happy you're here..."
+                     style={{ width: '100%', height: '100px', padding: '16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', resize: 'none', marginBottom: '20px', background: 'white', fontWeight: '500' }}
+                   />
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '1.5px solid #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                         <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#3b82f6' }}></div>
+                      </div>
+                      <input 
+                        value={openingMessageButton} 
+                        onChange={(e) => setOpeningMessageButton(e.target.value)} 
+                        placeholder="Button Label" 
+                        style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', fontWeight: '700', background: 'white' }} 
+                      />
+                   </div>
+                </div>
+              )}
+           </div>
+
            {/* Section 1: Follower Growth Gating */}
            <div style={{ position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-                 <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: '900' }}>1</div>
-                 <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Follower Growth Gating</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900' }}>1</div>
+                 <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Follower Growth Gating</h3>
               </div>
+... (rest of file remains same, I'll use multi_replace for better accuracy)
 
               <div style={{ 
                 background: '#fff', 
