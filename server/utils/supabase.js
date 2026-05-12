@@ -74,7 +74,8 @@ function parseFilter(q, queryObj, tableName) {
     'status': 'status',
     'isAI': 'is_ai',
     'timestamp': 'created_at',
-    'chatId': 'chat_id'
+    'chatId': 'chat_id',
+    'automationStatus': 'automation_status'
   };
 
   for (const [key, v] of Object.entries(queryObj)) {
@@ -137,6 +138,7 @@ function convertIncoming(doc, tableName) {
   if (doc.userid) newDoc.userId = doc.userid;
   if (doc.created_at) newDoc.createdAt = doc.created_at;
   if (doc.updated_at) newDoc.updatedAt = doc.updated_at;
+  if (doc.automation_status) newDoc.automationStatus = doc.automation_status;
 
   ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost', 'isUniversal'].forEach(field => {
     if (newDoc[field] !== undefined && newDoc[field] !== null) {
@@ -186,6 +188,11 @@ function convertOutgoing(doc, tableName) {
     const fieldName = (tableName === 'settings' || tableName === 'campaigns') ? 'updatedAt' : 'updated_at';
     newDoc[fieldName] = newDoc.updatedAt;
     if (fieldName !== 'updatedAt') delete newDoc.updatedAt;
+  }
+  
+  if (newDoc.automationStatus) {
+    newDoc.automation_status = newDoc.automationStatus;
+    delete newDoc.automationStatus;
   }
 
   if (tableName === 'campaigns') {
