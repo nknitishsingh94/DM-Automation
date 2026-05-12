@@ -1301,10 +1301,16 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
 
     if (updateData.buttons) {
       currentMetadata.buttons = updateData.buttons;
-      delete updateData.buttons; // Avoid Supabase schema error
     }
 
     updateData.mediaUrl = JSON.stringify(currentMetadata);
+
+    // Clean up fields that might not exist in the Supabase schema
+    delete updateData.buttons;
+    delete updateData.type;
+    delete updateData.carouselItems;
+    delete updateData.anyKeyword;
+    delete updateData.openingMessage;
 
     const updatedPost = await ScheduledPost.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.userId },
@@ -1312,16 +1318,22 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
       { new: true }
     );
     
-    // 2. Sync to Active Campaign if already posted
-    if (updatedPost.status === 'Posted' && updatedPost.postId) {
-      await Campaign.findOneAndUpdate(
-        { userId: req.user.userId, postId: updatedPost.postId },
-        { 
-          triggerKeyword: updatedPost.triggerKeyword, 
-          autoResponse: updatedPost.autoResponse,
-          publicReply: updatedPost.publicReply
-        }
-      );
+    if (!updatedPost) return res.status(404).json({ error: 'Post not found after update' });
+
+    // 2. Sync to Active Campaign if already posted (Defensive)
+    try {
+      if (updatedPost.status === 'Posted' && updatedPost.postId) {
+        await Campaign.findOneAndUpdate(
+          { userId: req.user.userId, postId: updatedPost.postId },
+          { 
+            triggerKeyword: updatedPost.triggerKeyword, 
+            autoResponse: updatedPost.autoResponse,
+            publicReply: updatedPost.publicReply
+          }
+        );
+      }
+    } catch (campaignErr) {
+      console.error('⚠️ Campaign Sync Error (Non-critical):', campaignErr.message);
     }
     
     res.json(updatedPost);
