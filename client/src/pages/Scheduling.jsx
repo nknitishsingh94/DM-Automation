@@ -1024,18 +1024,14 @@ export default function Scheduling() {
                              overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
                            }}>
                               <div style={{ padding: '16px 20px', fontSize: '0.95rem', fontWeight: '500', lineHeight: '1.5' }}>
-                                 {previewData?.autoResponse || "Hello! 👋 Your automated response will appear here. Start typing in the 'Response Content' box on the right to see the live effect!"}
+                                 {previewData?.autoResponse || ""}
                               </div>
                               {/* Integrated Buttons (Interactive List style) */}
-                              {(previewData?.buttons && previewData?.buttons.length > 0) ? previewData.buttons.map((btn, i) => (
+                              {(previewData?.buttons && previewData?.buttons.length > 0) && previewData.buttons.map((btn, i) => (
                                  <div key={i} style={{ borderTop: '1px solid #363636', padding: '16px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636', cursor: 'pointer', transition: '0.2s', userSelect: 'none' }} onMouseOver={(e) => e.target.style.background = '#404040'} onMouseOut={(e) => e.target.style.background = '#363636'}>
                                     {btn.text || 'Action Button'}
                                  </div>
-                              )) : (
-                                 <div style={{ borderTop: '1px solid #363636', padding: '14px', textAlign: 'center', color: '#8e8e8e', fontSize: '0.85rem', fontWeight: '500', background: '#363636', fontStyle: 'italic' }}>
-                                    Buttons will appear here...
-                                 </div>
-                              )}
+                              ))}
                            </div>
                         </div>
 
