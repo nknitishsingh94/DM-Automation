@@ -48,6 +48,13 @@ export default function DmAutomationEditor() {
   const [editingLinkIndex, setEditingLinkIndex] = useState(null);
   const [tempLinkTitle, setTempLinkTitle] = useState('Open Link');
   const [tempLinkUrl, setTempLinkUrl] = useState('https://example.com');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const isValidUrl = (url) => {
     try {
@@ -183,20 +190,23 @@ export default function DmAutomationEditor() {
       overflow: 'hidden'
     }}>
       <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'minmax(350px, 450px) 1fr',
+        display: isMobile ? 'block' : 'grid', 
+        gridTemplateColumns: isMobile ? '1fr' : 'minmax(350px, 450px) 1fr',
         flex: 1,
-        overflow: 'hidden'
+        overflowX: 'hidden',
+        overflowY: isMobile ? 'auto' : 'hidden'
       }}>
         {/* Left Side: Preview */}
         <div style={{ 
           background: '#f8fafc', 
-          borderRight: '1px solid #f1f5f9', 
-          padding: '30px 20px', 
+          borderRight: isMobile ? 'none' : '1px solid #f1f5f9', 
+          borderBottom: isMobile ? '1px solid #f1f5f9' : 'none',
+          padding: isMobile ? '20px' : '30px 20px', 
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'center',
-          overflowY: 'auto'
+          overflowY: 'visible',
+          zIndex: 2
         }}>
           <div style={{ color: '#94a3b8', fontWeight: '800', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             <Smartphone size={16} /> Automation Preview
@@ -211,8 +221,9 @@ export default function DmAutomationEditor() {
             border: '8px solid #1e1b4b',
             position: 'relative',
             overflow: 'hidden',
-            boxShadow: '0 30px 60px -12px rgba(0,0,0,0.2)',
-            flexShrink: 0
+            flexShrink: 0,
+            transform: isMobile ? 'scale(0.9)' : 'none',
+            marginBottom: isMobile ? '-40px' : '0'
           }}>
              <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translateX(-50%)', width: '80px', height: '18px', background: '#000', borderRadius: '20px', zIndex: 10 }}></div>
              
@@ -292,13 +303,15 @@ export default function DmAutomationEditor() {
 
         {/* Right Side: Configuration */}
         <div style={{ 
-          padding: '48px 64px', 
+          padding: isMobile ? '32px 20px' : '48px 64px', 
           overflowY: 'auto', 
           display: 'flex', 
           flexDirection: 'column', 
           gap: '40px',
           background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-          position: 'relative'
+          position: 'relative',
+          width: '100%',
+          boxSizing: 'border-box'
         }}>
            
            {/* Vertical Flow Line */}

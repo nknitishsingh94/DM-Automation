@@ -1034,11 +1034,18 @@ app.get('/api/stats', verifyToken, async (req, res) => {
     const aiSentMessages = await Message.countDocuments({ ...messageMatch, type: 'sent', isAI: true });
 
     const uniqueContacts = await Message.distinct('chatId', messageMatch);
-    const userProfile = await User.findById(req.user.userId);
+    
+    let userProfile = null;
+    try {
+      userProfile = await User.findById(req.user.userId);
+    } catch (e) {
+      console.warn("⚠️ Could not fetch user profile for stats:", e.message);
+    }
 
     let accuracy = 0;
     if (receivedMessages > 0) {
       accuracy = Math.round((aiSentMessages / receivedMessages) * 100);
+      if (isNaN(accuracy)) accuracy = 0;
       if (accuracy > 100) accuracy = 100;
     }
 
