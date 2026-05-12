@@ -47,11 +47,19 @@ export default function Scheduling() {
     publicReply: "Check your DMs! 🚀 I've sent you the info."
   });
 
+  const chatRef = useRef(null);
+
   useEffect(() => {
     fetchPosts();
     fetchCaptions();
     fetchSettings();
   }, []);
+
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [newPost?.autoResponse, newPost?.buttons, newPost?.requireFollow]);
 
   const fetchSettings = async () => {
     try {
@@ -921,15 +929,7 @@ export default function Scheduling() {
             <div style={{ padding: '40px 0', background: '#F8FAFC', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', overflowY: 'auto' }}>
                {/* iPhone Mockup (Ultra Pro Max - Dark Mode) */}
                 {(() => {
-                  const previewData = createdPost || newPost;
-                  const chatRef = useRef(null);
-
-                  useEffect(() => {
-                    if (chatRef.current) {
-                      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-                    }
-                  }, [previewData?.autoResponse, previewData?.buttons, previewData?.requireFollow]);
-
+                  const previewData = newPost;
                   return (
                 <div style={{
                   width: '380px', height: '800px', background: '#000', borderRadius: '60px', border: '16px solid #1e1b4b',
