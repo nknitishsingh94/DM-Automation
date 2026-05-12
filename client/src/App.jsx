@@ -348,6 +348,7 @@ function MainLayout() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isPublic = ['/', '/login', '/signup', '/help', '/about', '/resources', '/blog'].includes(location.pathname) || location.pathname.startsWith('/blog/');
+  const hideSidebar = isPublic || location.pathname === '/onboarding';
   const isEditor = location.pathname === '/dm-automation-editor';
   const hideTopBar = hideSidebar || isEditor;
 
