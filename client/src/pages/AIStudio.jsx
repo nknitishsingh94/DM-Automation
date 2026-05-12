@@ -136,23 +136,36 @@ export default function AIStudio() {
       <Toaster position="top-right" />
       
       {/* Header */}
-      <div className="studio-header" style={{ flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? '20px' : '0' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+      <div className="studio-header" style={{ 
+        flexDirection: isMobile ? 'column' : 'row', 
+        alignItems: 'center', 
+        justifyContent: isMobile ? 'center' : 'space-between',
+        textAlign: isMobile ? 'center' : 'left',
+        gap: isMobile ? '16px' : '0' 
+      }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', gap: isMobile ? '12px' : '20px' }}>
           <div className="brain-glow">
-            <Brain size={28} color="white" />
+            <Brain size={isMobile ? 24 : 28} color="white" />
           </div>
           <div>
-            <h2 style={{ fontSize: isMobile ? '1.4rem' : '1.8rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>AI Neural Studio</h2>
+            <h2 style={{ fontSize: isMobile ? '1.3rem' : '1.8rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>AI Neural Studio</h2>
             {!isMobile && <p style={{ color: '#94a3b8', margin: 0 }}>Configure and train your custom AI personality</p>}
           </div>
         </div>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', width: isMobile ? '100%' : 'auto' }}>
-          <div className={`save-status ${showSaved ? 'visible' : ''}`}>
-            <CheckCircle size={14} /> Saved
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', width: isMobile ? '100%' : 'auto' }}>
+          <div className={`save-status ${showSaved ? 'visible' : ''}`} style={{ fontSize: '12px' }}>
+            <CheckCircle size={12} /> Saved
           </div>
-          <button onClick={handleSave} disabled={isSaving} className="btn-primary" style={{ background: '#8b5cf6', borderRadius: '14px', padding: '12px 24px', flex: isMobile ? 1 : 'none' }}>
-            {isSaving ? 'Syncing...' : <><Save size={18} /> Update Agent</>}
+          <button onClick={handleSave} disabled={isSaving} className="btn-primary" style={{ 
+            background: '#8b5cf6', 
+            borderRadius: '12px', 
+            padding: isMobile ? '8px 16px' : '12px 24px', 
+            fontSize: isMobile ? '13px' : '14px',
+            flex: isMobile ? 1 : 'none',
+            maxWidth: isMobile ? '200px' : 'none'
+          }}>
+            {isSaving ? 'Syncing...' : <><Save size={16} /> Update Agent</>}
           </button>
         </div>
       </div>
