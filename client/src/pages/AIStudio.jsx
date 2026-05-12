@@ -159,13 +159,14 @@ export default function AIStudio() {
           </div>
           <button onClick={handleSave} disabled={isSaving} className="btn-primary" style={{ 
             background: '#8b5cf6', 
-            borderRadius: '12px', 
-            padding: isMobile ? '8px 16px' : '12px 24px', 
-            fontSize: isMobile ? '13px' : '14px',
-            flex: isMobile ? 1 : 'none',
-            maxWidth: isMobile ? '200px' : 'none'
+            borderRadius: '10px', 
+            padding: isMobile ? '6px 12px' : '12px 24px', 
+            fontSize: isMobile ? '12px' : '14px',
+            width: 'auto',
+            minWidth: 'auto',
+            flex: 'none'
           }}>
-            {isSaving ? 'Syncing...' : <><Save size={16} /> Update Agent</>}
+            {isSaving ? 'Syncing...' : <><Save size={14} /> Update Agent</>}
           </button>
         </div>
       </div>
