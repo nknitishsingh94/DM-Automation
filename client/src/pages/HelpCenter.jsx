@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, BookOpen, GitBranch, AlertCircle, Sparkles, ChevronRight, MessageCircle, Send, X, Loader2 } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 export default function HelpCenter() {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,7 +30,7 @@ export default function HelpCenter() {
 
     try {
       // Native fetch use kar rahe hain axios ki jagah
-      const response = await fetch('/api/support/chat', {
+      const response = await fetch(`${API_BASE_URL}/api/support/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

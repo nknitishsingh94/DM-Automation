@@ -22,7 +22,11 @@ If you don't know the answer, ask them to email support. Keep responses concise.
 
 router.post('/chat', async (req, res) => {
     try {
-        const { message, history } = req.body;
+        const { message, history = [] } = req.body;
+
+        if (!message) {
+            return res.status(400).json({ error: 'Message is required' });
+        }
 
         const messages = [
             { role: "system", content: SYSTEM_PROMPT },
@@ -40,8 +44,11 @@ router.post('/chat', async (req, res) => {
         res.json({ response: aiResponse });
 
     } catch (error) {
-        console.error('Support AI Error:', error);
-        res.status(500).json({ error: 'Failed to get AI response' });
+        console.error('Support AI Error:', error.message);
+        res.status(500).json({ 
+            error: 'Failed to get AI response',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined 
+        });
     }
 });
 
