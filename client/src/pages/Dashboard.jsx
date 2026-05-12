@@ -37,28 +37,18 @@ export default function Dashboard() {
           fetch(`${API_BASE_URL}/api/flows`, { headers })
         ]);
         
-        // Handle Unauthorized
-        if (statsRes.status === 401 || settingsRes.status === 401 || flowsRes.status === 401) {
-          logout();
-          navigate('/login');
-          return;
+        if (statsRes.status === 401) {
+          logout(); navigate('/login'); return;
         }
 
-        const statsData = await statsRes.json();
-        const settingsData = await settingsRes.json();
-        const flowsData = await flowsRes.json();
+        const statsData = await statsRes.json().catch(() => ({}));
+        const settingsData = await settingsRes.json().catch(() => ({}));
+        const flowsData = await flowsRes.json().catch(() => ([]));
 
-        setStats(statsData);
+        if (statsData) setStats(statsData);
         
-        // Check setup progress
-        const isConnected = !!(settingsData.isAccountConnected || settingsData.isFacebookConnected || settingsData.isWhatsAppConnected || settingsData.instagramAccessToken);
+        const isConnected = !!(settingsData?.isAccountConnected || settingsData?.isFacebookConnected || settingsData?.isWhatsAppConnected || settingsData?.instagramAccessToken);
         
-        if (!isConnected && !loading) {
-          console.log("🚩 User not connected, redirecting to onboarding...");
-          navigate('/onboarding');
-          return;
-        }
-
         setSetupStatus({
           profileDone: true, 
           metaDone: isConnected,
@@ -66,7 +56,7 @@ export default function Dashboard() {
         });
 
       } catch (err) {
-        console.error("Error fetching dashboard data:", err);
+        console.error("Dashboard Fetch Error:", err);
       } finally {
         setLoading(false);
       }
