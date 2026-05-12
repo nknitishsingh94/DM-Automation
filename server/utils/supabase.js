@@ -74,7 +74,7 @@ function parseFilter(q, queryObj, tableName) {
     'status': 'status',
     'isAI': 'is_ai',
     'timestamp': 'created_at',
-    'chatId': (tableName === 'messages' || tableName === 'contacts') ? 'chatId' : 'chat_id'
+    'chatId': 'chat_id'
   };
 
   for (const [key, v] of Object.entries(queryObj)) {
@@ -85,9 +85,12 @@ function parseFilter(q, queryObj, tableName) {
 
     let parsedKey = (key === '_id' || key === 'id') ? 'id' : (fieldMap[key] || key);
     
-    if (parsedKey === 'id' && !isUUID(val)) {
-        console.warn(`🛑 Skipping filter for non-UUID: ${key}=${val}`);
-        q = q.eq('id', '00000000-0000-0000-0000-000000000000');
+    // UUID Safety Check: Prevents Postgres from crashing on invalid UUID syntax
+    const uuidColumns = ['id', 'userId', 'user_id', 'chatId', 'chat_id'];
+    if (uuidColumns.includes(parsedKey) && val && typeof val === 'string' && !isUUID(val)) {
+        console.warn(`🛑 Skipping filter for invalid UUID on column ${parsedKey}: ${val}`);
+        // Instead of crashing, we force a no-match to prevent 500 error
+        q = q.eq(parsedKey, '00000000-0000-0000-0000-000000000000');
         continue;
     }
 
