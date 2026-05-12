@@ -998,73 +998,16 @@ app.delete('/api/chats', verifyToken, async (req, res) => {
 // Dashboard Stats Endpoint
 app.get('/api/stats', verifyToken, async (req, res) => {
   try {
-    const { filter } = req.query;
-    let dateQuery = {};
-
-    if (filter === '7d') {
-      const d = new Date(); d.setDate(d.getDate() - 7);
-      dateQuery = { $gte: d.toISOString() };
-    } else if (filter === '30d') {
-      const d = new Date(); d.setDate(d.getDate() - 30);
-      dateQuery = { $gte: d.toISOString() };
-    }
-
-    const campaignMatch = { userId: req.user.userId };
-    const messageMatch = { userId: req.user.userId };
-
-    if (Object.keys(dateQuery).length > 0) {
-      campaignMatch.createdAt = dateQuery;
-      messageMatch.timestamp = dateQuery;
-    }
-
-    console.log(`📊 Fetching dashboard stats for user: ${req.user.userId}`);
-    
-    // Initialize results with safe defaults
-    let totalDMs = 0;
-    let campaignsCount = 0;
-    let messagesCount = 0;
-    let sentMessages = 0;
-    let receivedMessages = 0;
-    let aiSentMessages = 0;
-    let uniqueContacts = [];
-    let userProfile = { plan: 'free' };
-
-    // Independent Query Blocks to prevent one failure from crashing everything
-    try {
-      const totalDMsData = await Campaign.aggregate([
-        { $match: campaignMatch },
-        { $group: { _id: null, total: { $sum: "$dmsSent" } } }
-      ]);
-      totalDMs = totalDMsData[0]?.total || 0;
-    } catch (e) { console.error("❌ Stats: totalDMs error", e.message); }
-
-    try { campaignsCount = await Campaign.countDocuments(campaignMatch); } catch (e) {}
-    try { messagesCount = await Message.countDocuments(messageMatch); } catch (e) {}
-    try { sentMessages = await Message.countDocuments({ ...messageMatch, type: 'sent' }); } catch (e) {}
-    try { receivedMessages = await Message.countDocuments({ ...messageMatch, type: 'received' }); } catch (e) {}
-    try { aiSentMessages = await Message.countDocuments({ ...messageMatch, type: 'sent', isAI: true }); } catch (e) {}
-    try { uniqueContacts = await Message.distinct('chatId', messageMatch); } catch (e) {}
-    try { 
-      const profile = await User.findById(req.user.userId); 
-      if (profile) userProfile = profile;
-    } catch (e) {}
-
-    let accuracy = 0;
-    if (receivedMessages > 0) {
-      accuracy = Math.round((aiSentMessages / receivedMessages) * 100);
-      if (isNaN(accuracy)) accuracy = 0;
-      if (accuracy > 100) accuracy = 100;
-    }
-
-    res.json({
-      totalDMs,
-      sentMessages,
-      receivedMessages,
-      campaigns: campaignsCount,
-      messages: messagesCount,
-      aiReplyRate: `${accuracy}%`,
-      plan: userProfile?.plan || 'free',
-      contactCount: uniqueContacts.length || 0
+    // DIAGNOSTIC: Return dummy data to see if 500 error persists
+    return res.json({
+      totalDMs: 100,
+      sentMessages: 50,
+      receivedMessages: 50,
+      campaigns: 5,
+      messages: 100,
+      aiReplyRate: "90%",
+      plan: "free",
+      contactCount: 10
     });
   } catch (err) {
     console.error("❌ DASHBOARD STATS ERROR:", err);
