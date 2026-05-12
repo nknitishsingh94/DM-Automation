@@ -1338,8 +1338,13 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     
     res.json(updatedPost);
   } catch (err) {
-    console.error('❌ UPDATE ERROR:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error('❌ CRITICAL UPDATE ERROR:', err);
+    if (err.details) console.error('🔍 DB Details:', err.details);
+    if (err.hint) console.error('💡 DB Hint:', err.hint);
+    res.status(500).json({ 
+      error: err.message,
+      details: err.details || 'Check server logs for more info'
+    });
   }
 });
 
