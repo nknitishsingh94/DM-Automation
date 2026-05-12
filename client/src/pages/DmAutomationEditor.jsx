@@ -262,7 +262,7 @@ export default function DmAutomationEditor() {
                     {(connectedSettings?.connectedInstagramName || user?.username || 'IG').substring(0, 2).toUpperCase()}
                   </div>
                   <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>
-                    {connectedSettings?.connectedInstagramName || user?.username || 'monster_pk_8795'}
+                    {connectedSettings?.connectedInstagramName || user?.username || 'Instagram Account'}
                   </div>
                 </div>
 

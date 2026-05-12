@@ -534,7 +534,6 @@ export default function Campaigns() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <Zap size={28} color="#d946ef" />
               <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Visual Flows</h3>
-              <span className="sidebar-badge badge-new">PRO</span>
             </div>
             <span style={{ padding: '6px 16px', background: '#fdf4ff', color: '#d946ef', borderRadius: '50px', fontSize: '0.85rem', fontWeight: '700' }}>
               {flows.length} Total
