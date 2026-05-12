@@ -497,34 +497,6 @@ export default function DmAutomationEditor() {
               </div>
            </div>
 
-           {/* New Section 4: Public Comment Reply (Only for Comments) */}
-           {(template === 'comments' || anyKeyword) && (
-             <div style={{ position: 'relative' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-                   <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#ec4899', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: '900' }}>4</div>
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Public Comment Reply</h3>
-                      <span style={{ background: '#fdf2f8', color: '#ec4899', fontSize: '0.65rem', fontWeight: '900', padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase' }}>Recommended</span>
-                   </div>
-                </div>
-
-                <div style={{ 
-                  background: 'white', 
-                  border: '2px solid #f1f5f9', 
-                  borderRadius: '24px', 
-                  padding: '32px'
-                }}>
-                   <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '20px', fontWeight: '500' }}>Trigger on ANY Comment</p>
-                   <input 
-                     type="text"
-                     value={publicReplyText}
-                     onChange={(e) => setPublicReplyText(e.target.value)}
-                     placeholder="Check your DMs! 🚀 I've sent you the info."
-                     style={{ width: '100%', padding: '18px 24px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem', fontWeight: '600', color: '#1e1b4b' }}
-                   />
-                </div>
-             </div>
-           )}
 
            {/* Final Launch Button at Bottom */}
            <div style={{ marginTop: '20px' }}>
