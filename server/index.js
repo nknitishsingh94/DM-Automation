@@ -1060,11 +1060,11 @@ app.get('/api/stats', verifyToken, async (req, res) => {
       contactCount: uniqueContacts.length
     });
   } catch (err) {
-    console.error("❌ DASHBOARD STATS ERROR (Full):", JSON.stringify(err, null, 2));
+    console.error("❌ DASHBOARD STATS ERROR:", err);
     res.status(500).json({ 
       error: "Stats calculation failed", 
-      details: err.message || "Unknown Database Error",
-      hint: "Check if all tables (campaigns, messages, users) exist in Supabase and RLS is disabled for testing."
+      message: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
   }
 });

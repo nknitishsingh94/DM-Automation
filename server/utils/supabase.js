@@ -60,8 +60,8 @@ function parseFilter(q, queryObj, tableName) {
 
   const fieldMap = {
     'userId': (['settings', 'campaigns', 'scheduled_posts', 'flows'].includes(tableName)) ? 'userId' : 'user_id',
-    'createdAt': (tableName === 'settings' || tableName === 'campaigns') ? 'createdAt' : 'created_at',
-    'updatedAt': (tableName === 'settings' || tableName === 'campaigns') ? 'updatedAt' : 'updated_at',
+    'createdAt': (['settings', 'campaigns', 'scheduled_posts', 'flows'].includes(tableName)) ? 'createdAt' : 'created_at',
+    'updatedAt': (['settings', 'campaigns', 'scheduled_posts', 'flows'].includes(tableName)) ? 'updatedAt' : 'updated_at',
     'dmsSent': 'dmsSent',
     'trigger': 'trigger',
     'response': 'response',
@@ -73,6 +73,7 @@ function parseFilter(q, queryObj, tableName) {
     'isUniversal': 'isUniversal',
     'status': 'status',
     'isAI': 'is_ai',
+    'timestamp': 'created_at',
     'chatId': (tableName === 'messages' || tableName === 'contacts') ? 'chatId' : 'chat_id'
   };
 
