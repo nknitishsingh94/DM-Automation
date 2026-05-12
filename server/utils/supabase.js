@@ -108,7 +108,7 @@ function parseFilter(q, queryObj, tableName) {
         else if (op === '$gt') q = q.gt(parsedKey, subVal);
         else if (op === '$lt') q = q.lt(parsedKey, subVal);
         else if (op === '$ne') q = q.neq(parsedKey, subVal);
-        else q = q.eq(parsedKey, subVal);
+        else q = q.eq(parsedKey, val);
       }
     } else {
       q = q.eq(parsedKey, val);
