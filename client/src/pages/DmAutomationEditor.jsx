@@ -308,9 +308,57 @@ export default function DmAutomationEditor() {
                  />
                  <Pencil size={18} color="#cbd5e1" />
               </div>
+
+                {/* Step 1: Follower Growth Gating */}
+           <div style={{ position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900' }}>1</div>
+                 <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Follower Growth Gating</h3>
+              </div>
+              <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: '24px', padding: '32px' }}>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                    <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem', fontWeight: '500' }}>Only respond to users who follow you.</p>
+                    <div onClick={() => setRequireFollow(!requireFollow)} style={{ width: '48px', height: '24px', borderRadius: '12px', background: requireFollow ? '#10b981' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                       <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: requireFollow ? '27px' : '3px', transition: '0.3s' }}></div>
+                    </div>
+                 </div>
+                 {requireFollow && (
+                    <div style={{ padding: '20px', background: '#ecfdf5', borderRadius: '16px', border: '1.5px solid #d1fae5' }}>
+                       <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: '900', color: '#059669', marginBottom: '8px', textTransform: 'uppercase' }}>Unfollowed Message</label>
+                       <textarea value={unfollowedMessage} onChange={(e) => setUnfollowedMessage(e.target.value)} style={{ width: '100%', height: '80px', background: 'transparent', border: 'none', outline: 'none', color: '#065f46', fontSize: '0.95rem', fontWeight: '600', resize: 'none' }} />
+                    </div>
+                 )}
+              </div>
            </div>
 
-           {/* Section 0: Advanced Automations Toggle */}
+           {/* Step 2: Trigger Settings */}
+           <div style={{ position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900' }}>2</div>
+                 <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Trigger Settings</h3>
+              </div>
+              <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: '24px', padding: '32px' }}>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                    <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem', fontWeight: '500' }}>{template === 'stories' ? 'Trigger on Story Replies' : 'Trigger on specific keywords'}</p>
+                    <div onClick={() => setAnyKeyword(!anyKeyword)} style={{ width: '48px', height: '24px', borderRadius: '12px', background: anyKeyword ? '#7c3aed' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                       <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: anyKeyword ? '27px' : '3px', transition: '0.3s' }}></div>
+                    </div>
+                 </div>
+                 {!anyKeyword && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                       {keywords.map((k, i) => (
+                          <span key={i} style={{ padding: '8px 16px', background: '#f5f3ff', color: '#7c3aed', borderRadius: '10px', fontWeight: '700', fontSize: '0.9rem', border: '1.5px solid #ddd6fe', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                             {k} <X size={14} style={{ cursor: 'pointer' }} onClick={() => setKeywords(keywords.filter((_, idx) => idx !== i))} />
+                          </span>
+                       ))}
+                       <input value={keywordInput} onChange={(e) => setKeywordInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && (setKeywords([...keywords, keywordInput]), setKeywordInput(''))} placeholder="Type keyword..." style={{ border: 'none', outline: 'none', background: 'transparent', fontWeight: '700', fontSize: '0.9rem', color: '#7c3aed', width: '120px' }} />
+                    </div>
+                 )}
+                 {anyKeyword && <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1.5px dashed #cbd5e1', textAlign: 'center', color: '#64748b', fontWeight: '700', fontSize: '0.9rem' }}>Responding to ANY message</div>}
+              </div>
+           </div>
+
+           {/* Step 3: Advanced Automations (Opening Message) */}
            <div style={{ 
              background: 'white', 
              border: '2px solid #f1f5f9', 
@@ -318,9 +366,12 @@ export default function DmAutomationEditor() {
              padding: '24px 32px'
            }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                 <div>
-                    <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Advanced Automations</h3>
-                    <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '4px 0 0 0', fontWeight: '500' }}>Grow your audience faster — with smart, hands-free engagement.</p>
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900' }}>3</div>
+                    <div>
+                       <h3 style={{ fontSize: '1.1rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Advanced: Opening Message</h3>
+                       <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '2px 0 0 0', fontWeight: '500' }}>Send a greeting button before the final response.</p>
+                    </div>
                  </div>
                  <div onClick={() => setOpeningMessage(!openingMessage)} style={{ width: '52px', height: '28px', borderRadius: '14px', background: openingMessage ? '#3b82f6' : '#e2e8f0', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
                    <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: openingMessage ? '27px' : '3px', transition: '0.3s' }}></div>
@@ -329,12 +380,10 @@ export default function DmAutomationEditor() {
 
               {openingMessage && (
                 <div style={{ marginTop: '24px', padding: '24px', borderRadius: '20px', background: '#f8fafc', border: '1.5px solid #e2e8f0' }}>
-                   <h4 style={{ fontWeight: '900', color: '#1e1b4b', margin: '0 0 16px 0', fontSize: '1rem' }}>Opening Message</h4>
                    <textarea 
                      value={openingMessageText} 
                      onChange={(e) => setOpeningMessageText(e.target.value)} 
-                     placeholder="Hey there! I'm so happy you're here..."
-                     style={{ width: '100%', height: '100px', padding: '16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', resize: 'none', marginBottom: '20px', background: 'white', fontWeight: '500' }}
+                     style={{ width: '100%', height: '80px', padding: '16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', resize: 'none', marginBottom: '20px', background: 'white', fontWeight: '500' }}
                    />
                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '1.5px solid #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -343,7 +392,6 @@ export default function DmAutomationEditor() {
                       <input 
                         value={openingMessageButton} 
                         onChange={(e) => setOpeningMessageButton(e.target.value)} 
-                        placeholder="Button Label" 
                         style={{ flex: 1, padding: '12px 16px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', fontWeight: '700', background: 'white' }} 
                       />
                    </div>
@@ -351,94 +399,11 @@ export default function DmAutomationEditor() {
               )}
            </div>
 
-           {/* Section 1: Follower Growth Gating */}
+           {/* Step 4: Automated DM Response */}
            <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900' }}>1</div>
-                 <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Follower Growth Gating</h3>
-              </div>
-... (rest of file remains same, I'll use multi_replace for better accuracy)
-
-              <div style={{ 
-                background: '#fff', 
-                border: '2px solid #10b981', 
-                borderRadius: '24px', 
-                padding: '32px',
-                boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.05)'
-              }}>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <div style={{ fontWeight: '800', color: '#1e1b4b', fontSize: '1.1rem' }}>Require Follow to Trigger</div>
-                    <div onClick={() => setRequireFollow(!requireFollow)} style={{ width: '52px', height: '28px', borderRadius: '14px', background: requireFollow ? '#10b981' : '#e2e8f0', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
-                      <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: requireFollow ? '27px' : '3px', transition: '0.3s' }}></div>
-                    </div>
-                 </div>
-                 <p style={{ fontSize: '0.9rem', color: '#64748b', lineHeight: '1.6', marginBottom: '24px', maxWidth: '500px' }}>
-                    Only people who follow you will receive your link. Non-followers will get a request to follow you first. 🚀
-                 </p>
-                 
-                 <div style={{ background: '#f0fdf4', borderRadius: '20px', padding: '20px', border: '1px solid #d1fae5' }}>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '900', color: '#10b981', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Follow Request Message</label>
-                    <textarea 
-                      value={unfollowedMessage} 
-                      onChange={(e) => setUnfollowedMessage(e.target.value)} 
-                      placeholder="Hey! Please follow our account first..."
-                      style={{ width: '100%', height: '80px', padding: '16px', borderRadius: '12px', border: 'none', outline: 'none', fontSize: '0.95rem', resize: 'none', background: 'white', color: '#1e1b4b', fontWeight: '600' }}
-                    />
-                 </div>
-              </div>
-           </div>
-
-           {/* Section 2: Trigger Settings */}
-           <div style={{ position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-                 <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#4f46e5', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: '900' }}>2</div>
-                 <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Message / Keyword</h3>
-              </div>
-
-              <div style={{ 
-                background: 'white', 
-                border: '2px solid #f1f5f9', 
-                borderRadius: '24px', 
-                padding: '32px'
-              }}>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                    <div>
-                       <span style={{ fontWeight: '800', color: '#1e1b4b', display: 'block', fontSize: '1.1rem' }}>Any Message / Keyword</span>
-                       <span style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: '500' }}>Trigger on ANY incoming interaction</span>
-                    </div>
-                    <div onClick={() => setAnyKeyword(!anyKeyword)} style={{ width: '52px', height: '28px', borderRadius: '14px', background: anyKeyword ? '#4f46e5' : '#e2e8f0', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
-                       <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: anyKeyword ? '27px' : '3px', transition: '0.3s' }}></div>
-                    </div>
-                 </div>
-
-                 {!anyKeyword && (
-                    <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '24px' }}>
-                       <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '900', color: '#4f46e5', marginBottom: '10px', textTransform: 'uppercase' }}>Type Keyword</label>
-                       <input 
-                         type="text" 
-                         placeholder="Type Keyword & Hit Enter ↵" 
-                         value={keywordInput} 
-                         onChange={(e) => setKeywordInput(e.target.value)} 
-                         onKeyDown={handleAddKeyword} 
-                         style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem', fontWeight: '700', marginBottom: '12px' }} 
-                       />
-                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                         {keywords.map(kw => (
-                           <span key={kw} style={{ background: 'white', padding: '8px 16px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b', display: 'flex', alignItems: 'center', gap: '8px', border: '1.5px solid #e2e8f0' }}>
-                             {kw} <X size={16} onClick={() => removeKeyword(kw)} style={{ cursor: 'pointer', color: '#ef4444' }} />
-                           </span>
-                         ))}
-                       </div>
-                    </div>
-                 )}
-              </div>
-           </div>
-
-           {/* Section 3: Automated Response */}
-           <div style={{ position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-                 <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: '900' }}>3</div>
-                 <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Automated DM Response</h3>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900' }}>4</div>
+                 <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Automated DM Response</h3>
               </div>
 
               <div style={{ 
@@ -451,7 +416,7 @@ export default function DmAutomationEditor() {
                    placeholder="Write the DM content here..." 
                    value={message} 
                    onChange={(e) => setMessage(e.target.value)} 
-                   style={{ width: '100%', height: '120px', padding: '24px', borderRadius: '20px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '1.1rem', resize: 'none', marginBottom: '24px', fontWeight: '500', color: '#1e1b4b' }}
+                   style={{ width: '100%', height: '100px', padding: '24px', borderRadius: '20px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '1.1rem', resize: 'none', marginBottom: '24px', fontWeight: '500', color: '#1e1b4b' }}
                  />
                  
                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '24px' }}>
