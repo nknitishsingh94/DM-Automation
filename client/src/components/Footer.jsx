@@ -48,7 +48,7 @@ export default function Footer() {
             <li><a href="#" className="disabled-link">Comment-to-DM</a></li>
             <li><a href="#" className="disabled-link">Grow your Followers</a></li>
             <li><a href="#" className="disabled-link">Never Miss a Comment</a></li>
-            <li><a href="#" className="disabled-link">Collect Emails</a></li>
+            <li><Link to="/forms">Collect Emails</Link></li>
           </ul>
         </div>
 

@@ -1809,10 +1809,10 @@ setInterval(async () => {
     const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000).toISOString();
     const nowISO = now.toISOString();
     
-    console.log(`📡 [Worker] Syncing due posts. Window: ${fiveMinutesAgo} -> ${nowISO}`);
+    console.log(`📡 [Worker] Syncing all due posts up to: ${nowISO}`);
     
     const duePosts = await ScheduledPost.find({
-      scheduledFor: { $lte: nowISO, $gte: fiveMinutesAgo },
+      scheduledFor: { $lte: nowISO },
       status: 'Scheduled'
     });
 
@@ -1870,7 +1870,7 @@ setInterval(async () => {
         const isTransient = postErr.message?.includes('timeout') || postErr.message?.includes('processing');
         await ScheduledPost.findByIdAndUpdate(post._id, { 
           status: isTransient ? 'Scheduled' : 'Failed',
-          errorLog: postErr.message 
+          lastError: postErr.message 
         });
       }
     }

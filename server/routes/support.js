@@ -1,5 +1,6 @@
 import express from 'express';
 import OpenAI from 'openai';
+import FormSubmission from '../models/FormSubmission.js';
 
 const router = express.Router();
 
@@ -49,6 +50,33 @@ router.post('/chat', async (req, res) => {
             error: 'Failed to get AI response',
             details: process.env.NODE_ENV === 'development' ? error.message : undefined 
         });
+    }
+});
+
+// Submit a contact form / support inquiry
+router.post('/contact', async (req, res) => {
+    try {
+        const { name, email, subject, message } = req.body;
+        
+        if (!name || !email || !message) {
+            return res.status(400).json({ error: 'Name, email and message are required.' });
+        }
+
+        // Save as a lead/submission
+        const submission = new FormSubmission({
+            formId: 'system_support_form',
+            data: { name, email, subject, message },
+            submittedAt: new Date()
+        });
+
+        await submission.save();
+
+        console.log(`✉️ New Support Inquiry from ${email}: ${subject}`);
+        
+        res.status(200).json({ message: 'Support request received.' });
+    } catch (err) {
+        console.error("Support Contact Error:", err.message);
+        res.status(500).json({ error: 'Internal server error.' });
     }
 });
 

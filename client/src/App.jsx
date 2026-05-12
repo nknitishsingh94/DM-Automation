@@ -59,6 +59,7 @@ const Onboarding = lazyRetry(() => import('./pages/Onboarding'));
 const UniversalTriggersFeature = lazyRetry(() => import('./pages/UniversalTriggersFeature'));
 const ScheduleFeature = lazyRetry(() => import('./pages/ScheduleFeature'));
 const Scheduling = lazyRetry(() => import('./pages/Scheduling'));
+const Contact = lazyRetry(() => import('./pages/Contact'));
 
 const NotificationContext = createContext();
 export const useNotification = () => useContext(NotificationContext);
@@ -398,6 +399,7 @@ function MainLayout() {
               <Route path="/features/universal-triggers" element={<UniversalTriggersFeature />} />
               <Route path="/features/scheduling" element={<ScheduleFeature />} />
               <Route path="/scheduling" element={<ProtectedRoute><Scheduling /></ProtectedRoute>} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<div style={{textAlign:'center', marginTop:'50px', color:'var(--text-muted)'}}>Page Under Construction</div>} />
             </Routes>
           </Suspense>
