@@ -23,6 +23,13 @@ export default function AIStudio() {
   const [isTyping, setIsTyping] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const personas = [
     { id: 'pro', name: 'Professional', icon: <ShieldCheck size={18} />, tone: 'Expert, efficient, and serious', prompt: 'You are a high-level executive assistant. Your goal is to solve problems quickly and use professional language.'},
@@ -125,32 +132,37 @@ export default function AIStudio() {
   };
 
   return (
-    <div className="studio-container">
+    <div className="studio-container" style={{ padding: isMobile ? '20px' : '40px' }}>
       <Toaster position="top-right" />
       
       {/* Header */}
-      <div className="studio-header">
+      <div className="studio-header" style={{ flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? '20px' : '0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <div className="brain-glow">
             <Brain size={28} color="white" />
           </div>
           <div>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>AI Neural Studio</h2>
-            <p style={{ color: '#94a3b8', margin: 0 }}>Configure and train your custom AI personality</p>
+            <h2 style={{ fontSize: isMobile ? '1.4rem' : '1.8rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>AI Neural Studio</h2>
+            {!isMobile && <p style={{ color: '#94a3b8', margin: 0 }}>Configure and train your custom AI personality</p>}
           </div>
         </div>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', width: isMobile ? '100%' : 'auto' }}>
           <div className={`save-status ${showSaved ? 'visible' : ''}`}>
-            <CheckCircle size={14} /> Saved to cloud
+            <CheckCircle size={14} /> Saved
           </div>
-          <button onClick={handleSave} disabled={isSaving} className="btn-primary" style={{ background: '#8b5cf6', borderRadius: '14px', padding: '12px 24px' }}>
+          <button onClick={handleSave} disabled={isSaving} className="btn-primary" style={{ background: '#8b5cf6', borderRadius: '14px', padding: '12px 24px', flex: isMobile ? 1 : 'none' }}>
             {isSaving ? 'Syncing...' : <><Save size={18} /> Update Agent</>}
           </button>
         </div>
       </div>
 
-      <div className="studio-grid" style={{ gridTemplateColumns: '1fr 380px', gap: '32px' }}>
+      <div className="studio-grid" style={{ 
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', 
+        gap: '32px',
+        overflowX: 'hidden'
+      }}>
         
         {/* LEFT: Training Config */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -172,7 +184,7 @@ export default function AIStudio() {
               ))}
             </div>
 
-            <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '20px', marginBottom: '20px' }}>
               <div style={{ flex: 1 }}>
                 <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8', marginBottom: '8px', textTransform: 'uppercase' }}>Agent Identity</label>
                 <input 
@@ -207,7 +219,7 @@ export default function AIStudio() {
              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                   <h4 style={{ margin: 0, fontWeight: '800' }}>Neural Creativity</h4>
-                  <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>Higher values make the bot more creative but less predictable.</p>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>Higher values make the bot more creative.</p>
                 </div>
                 <div style={{ fontSize: '1.5rem', fontWeight: '900', color: '#8b5cf6' }}>{aiSettings.aiTemperature.toFixed(1)}</div>
              </div>
@@ -222,7 +234,12 @@ export default function AIStudio() {
         </div>
 
         {/* RIGHT: Live Simulator */}
-        <div className="simulator-wrap">
+        <div className="simulator-wrap" style={{ 
+          height: isMobile ? '500px' : 'auto',
+          minHeight: '500px',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}>
           <div className="simulator-top">
              <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%' }}></div>
              <div style={{ fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8' }}>LIVE NEURAL INTERFACE</div>
@@ -246,7 +263,7 @@ export default function AIStudio() {
               className="training-input"
               value={testMessage}
               onChange={e => setTestMessage(e.target.value)}
-              placeholder="Improve your Business...."
+              placeholder="Test your AI here..."
               style={{ border: 'none', background: '#26658C', color: 'white' }}
             />
             <button type="submit" disabled={!testMessage.trim()} style={{ background: '#8b5cf6', border: 'none', width: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}>
