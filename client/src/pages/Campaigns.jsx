@@ -456,11 +456,11 @@ export default function Campaigns() {
                 <div style={{ 
                   position: 'absolute', top: '24px', right: '24px',
                   padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800',
-                  background: campaign.triggerSource === 'story_mention' ? '#fdf2f8' : '#f0f9ff',
-                  color: campaign.triggerSource === 'story_mention' ? '#db2777' : '#0369a1',
+                  background: campaign.triggerSource === 'story_mention' ? '#fdf2f8' : (campaign.triggerSource === 'comment' ? '#f0fdf4' : '#f0f9ff'),
+                  color: campaign.triggerSource === 'story_mention' ? '#db2777' : (campaign.triggerSource === 'comment' ? '#16a34a' : '#0369a1'),
                   textTransform: 'uppercase'
                 }}>
-                  {campaign.triggerSource === 'story_mention' ? 'Story' : 'Comment'}
+                  {campaign.triggerSource === 'story_mention' ? 'Story' : (campaign.triggerSource === 'comment' ? 'Comment' : 'DM')}
                 </div>
 
                 {campaign.isUniversal && (

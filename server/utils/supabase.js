@@ -66,6 +66,10 @@ function parseFilter(q, queryObj, tableName) {
     'trigger': 'trigger',
     'response': 'response',
     'triggerSource': 'triggerSource',
+    'triggerOnDms': 'triggerOnDms',
+    'triggerOnComments': 'triggerOnComments',
+    'triggerOnStories': 'triggerOnStories',
+    'publicReplyText': 'publicReplyText',
     'isUniversal': 'isUniversal',
     'status': 'status',
     'chatId': (tableName === 'messages' || tableName === 'contacts') ? 'chatId' : 'chat_id'
