@@ -58,27 +58,27 @@ function parseFilter(q, queryObj, tableName) {
     console.log(`🔍 [Supabase Query] Table: ${tableName}, Filter Keys: ${Object.keys(queryObj).join(', ')}`);
   }
 
+  const fieldMap = {
+    'userId': (['settings', 'campaigns', 'scheduled_posts', 'flows'].includes(tableName)) ? 'userId' : 'user_id',
+    'createdAt': (tableName === 'settings' || tableName === 'campaigns') ? 'createdAt' : 'created_at',
+    'updatedAt': (tableName === 'settings' || tableName === 'campaigns') ? 'updatedAt' : 'updated_at',
+    'dmsSent': 'dmsSent',
+    'trigger': 'trigger',
+    'response': 'response',
+    'triggerSource': 'triggerSource',
+    'isUniversal': 'isUniversal',
+    'status': 'status',
+    'chatId': (tableName === 'messages' || tableName === 'contacts') ? 'chatId' : 'chat_id'
+  };
+
   for (const [key, v] of Object.entries(queryObj)) {
     let val = v;
     if (val instanceof Date) {
       val = val.toISOString();
     }
 
-    let parsedKey = (key === '_id' || key === 'id') ? 'id' : key;
+    let parsedKey = (key === '_id' || key === 'id') ? 'id' : (fieldMap[key] || key);
     
-    // Defensive mapping for case-sensitive Postgres columns
-    if (key === 'userId') {
-      if (['settings', 'campaigns', 'scheduled_posts', 'flows'].includes(tableName)) {
-        parsedKey = 'userId'; 
-      } else {
-        parsedKey = 'user_id';
-      }
-    } else if (key === 'createdAt') {
-      parsedKey = (tableName === 'settings' || tableName === 'campaigns') ? 'createdAt' : 'created_at';
-    } else if (key === 'updatedAt') {
-      parsedKey = (tableName === 'settings' || tableName === 'campaigns') ? 'updatedAt' : 'updated_at';
-    }
-
     if (parsedKey === 'id' && !isUUID(val)) {
         console.warn(`🛑 Skipping filter for non-UUID: ${key}=${val}`);
         q = q.eq('id', '00000000-0000-0000-0000-000000000000');
