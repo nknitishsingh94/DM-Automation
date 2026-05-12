@@ -348,13 +348,14 @@ function MainLayout() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isPublic = ['/', '/login', '/signup', '/help', '/about', '/resources', '/blog'].includes(location.pathname) || location.pathname.startsWith('/blog/');
-  const hideSidebar = isPublic || location.pathname === '/onboarding';
+  const isEditor = location.pathname === '/dm-automation-editor';
+  const hideTopBar = hideSidebar || isEditor;
 
   return (
     <div className="app-container" style={{ height: '100%', width: '100%', position: 'fixed', top: 0, left: 0 }}>
       {user && !hideSidebar && <Sidebar isMobileOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />}
       <main className="main-content">
-        {!hideSidebar && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
+        {!hideTopBar && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
         <div className="page-container" style={{ 
           padding: (isPublic || location.pathname === '/inbox') ? '0' : undefined,
           overflow: (location.pathname === '/inbox') ? 'hidden' : 'auto',

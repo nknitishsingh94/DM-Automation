@@ -184,16 +184,17 @@ export default function DmAutomationEditor() {
     }}>
       {/* Dynamic Header integrated with Layout */}
       <div style={{ 
-        padding: '24px 40px', 
+        padding: '16px 40px', 
         borderBottom: '1px solid #f1f5f9',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        background: 'white'
+        background: 'white',
+        zIndex: 100
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-           <button onClick={() => navigate(-1)} style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: '12px', padding: '10px', cursor: 'pointer', color: '#64748b' }}>
-              <ArrowLeft size={20} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+           <button onClick={() => navigate(-1)} style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: '12px', padding: '8px', cursor: 'pointer', color: '#64748b' }}>
+              <ArrowLeft size={18} />
            </button>
            <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -201,22 +202,22 @@ export default function DmAutomationEditor() {
                   type="text" 
                   value={name} 
                   onChange={(e) => setName(e.target.value)} 
-                  style={{ fontSize: '1.8rem', fontWeight: '900', color: '#1e1b4b', border: 'none', outline: 'none', background: 'transparent', padding: 0, width: 'auto' }} 
+                  style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e1b4b', border: 'none', outline: 'none', background: 'transparent', padding: 0, width: 'auto' }} 
                 />
-                <Pencil size={18} color="#cbd5e1" />
+                <Pencil size={16} color="#cbd5e1" />
               </div>
-              <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: 0, fontWeight: '600' }}>
+              <p style={{ color: '#94a3b8', fontSize: '0.8rem', margin: 0, fontWeight: '600' }}>
                 {template === 'comments' ? 'Comment Automation' : 'Direct Messages Automation'}
               </p>
            </div>
         </div>
         
-        <div style={{ display: 'flex', gap: '12px' }}>
-           <button onClick={() => navigate('/campaigns')} style={{ padding: '12px 24px', borderRadius: '12px', background: '#f8fafc', color: '#64748b', border: '1.5px solid #e2e8f0', fontWeight: '800', cursor: 'pointer' }}>Discard</button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+           <button onClick={() => navigate('/campaigns')} style={{ padding: '10px 20px', borderRadius: '10px', background: '#f8fafc', color: '#64748b', border: '1.5px solid #e2e8f0', fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem' }}>Discard</button>
            <button 
              onClick={handleCreate} 
              disabled={submitting} 
-             style={{ padding: '12px 32px', borderRadius: '12px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', fontWeight: '900', cursor: 'pointer', boxShadow: '0 10px 20px rgba(124, 58, 237, 0.2)' }}
+             style={{ padding: '10px 24px', borderRadius: '10px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', fontWeight: '900', cursor: 'pointer', boxShadow: '0 8px 16px rgba(124, 58, 237, 0.2)', fontSize: '0.9rem' }}
            >
              {submitting ? 'Saving...' : 'Launch Automation'}
            </button>
@@ -233,7 +234,7 @@ export default function DmAutomationEditor() {
         <div style={{ 
           background: '#f8fafc', 
           borderRight: '1px solid #f1f5f9', 
-          padding: '40px 20px', 
+          padding: '30px 20px', 
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'center',
