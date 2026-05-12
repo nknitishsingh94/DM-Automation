@@ -17,7 +17,7 @@ router.get('/facebook', verifyToken, (req, res) => {
   }
 
   const redirectUri = encodeURIComponent(`${baseUrl}/api/oauth/facebook/callback`);
-  const scope = 'instagram_basic,instagram_manage_messages,pages_show_list,pages_manage_metadata,pages_messaging,whatsapp_business_management,whatsapp_business_messaging,business_management';
+  const scope = 'instagram_basic,instagram_content_publish,instagram_manage_messages,pages_show_list,pages_manage_metadata,pages_messaging,whatsapp_business_management,whatsapp_business_messaging,business_management';
   const state = req.user.userId + (req.query.onboarding === 'true' ? '_onboarding' : '') + (req.query.connectType ? `_${req.query.connectType}` : '');
 
   if (!appId) {
