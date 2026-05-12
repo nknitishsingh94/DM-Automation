@@ -918,7 +918,7 @@ export default function Scheduling() {
             animation: 'modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
           }}>
             {/* Left side: Chat Preview (Premium) */}
-            <div style={{ padding: '0', background: '#F8FAFC', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+<div style={{ padding: '0', background: '#F8FAFC', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                {/* iPhone Mockup (Ultra Pro Max - Dark Mode) */}
                {(() => {
                  const previewData = createdPost || newPost;
@@ -926,7 +926,10 @@ export default function Scheduling() {
                <div style={{
                  width: '380px', height: '800px', background: '#000', borderRadius: '60px', border: '16px solid #1e1b4b',
                  position: 'relative', overflow: 'hidden', boxShadow: '0 60px 150px -40px rgba(0,0,0,0.5)',
-                 display: 'flex', flexDirection: 'column'
+                 display: 'flex', flexDirection: 'column',
+                 transform: window.innerHeight < 900 ? `scale(${window.innerHeight / 1000})` : 'scale(1)',
+                 transformOrigin: 'top center',
+                 marginTop: window.innerHeight < 900 ? '20px' : '0'
                }}>
                  <style>{`
                    .custom-ig-scroller::-webkit-scrollbar {
