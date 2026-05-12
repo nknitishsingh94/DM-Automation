@@ -39,6 +39,7 @@ export default function DmAutomationEditor() {
   const [openingMessageButton, setOpeningMessageButton] = useState("Send me the link");
   const [requireFollow, setRequireFollow] = useState(true);
   const [unfollowedMessage, setUnfollowedMessage] = useState("Hey! Please follow our account first to get the link! 😊");
+  const [publicReplyText, setPublicReplyText] = useState("Check your DMs! 🚀 I've sent you the info.");
   const [submitting, setSubmitting] = useState(false);
   const [name, setName] = useState(`${template === 'stories' ? 'Story' : 'DM'} Automation #${Math.floor(Math.random() * 1000)}`);
   const [connectedSettings, setConnectedSettings] = useState(null);
@@ -150,9 +151,10 @@ export default function DmAutomationEditor() {
           openingMessage: openingMessage,
           openingMessageText: openingMessageText,
           openingMessageButton: openingMessageButton,
-          triggerOnDms: anyKeyword ? true : (template !== 'stories'),
-          triggerOnComments: anyKeyword ? true : false,
+          triggerOnDms: anyKeyword ? true : (template === 'all_dms'),
+          triggerOnComments: anyKeyword ? true : (template === 'comments'),
           triggerOnStories: anyKeyword ? true : (template === 'stories'),
+          publicReplyText: publicReplyText,
           status: 'Active'
         })
       });
@@ -395,7 +397,7 @@ export default function DmAutomationEditor() {
            <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
                  <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: '900' }}>3</div>
-                 <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Automated Response</h3>
+                 <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Automated DM Response</h3>
               </div>
 
               <div style={{ 
@@ -405,10 +407,10 @@ export default function DmAutomationEditor() {
                 padding: '32px'
               }}>
                  <textarea 
-                   placeholder="Write your response here..." 
+                   placeholder="Write the DM content here..." 
                    value={message} 
                    onChange={(e) => setMessage(e.target.value)} 
-                   style={{ width: '100%', height: '150px', padding: '24px', borderRadius: '20px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '1.1rem', resize: 'none', marginBottom: '24px', fontWeight: '500', color: '#1e1b4b' }}
+                   style={{ width: '100%', height: '120px', padding: '24px', borderRadius: '20px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '1.1rem', resize: 'none', marginBottom: '24px', fontWeight: '500', color: '#1e1b4b' }}
                  />
                  
                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '24px' }}>
@@ -429,7 +431,68 @@ export default function DmAutomationEditor() {
               </div>
            </div>
 
-           <div style={{ height: '80px' }}></div>
+           {/* New Section 4: Public Comment Reply (Only for Comments) */}
+           {(template === 'comments' || anyKeyword) && (
+             <div style={{ position: 'relative' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+                   <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#ec4899', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: '900' }}>4</div>
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Public Comment Reply</h3>
+                      <span style={{ background: '#fdf2f8', color: '#ec4899', fontSize: '0.65rem', fontWeight: '900', padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase' }}>Recommended</span>
+                   </div>
+                </div>
+
+                <div style={{ 
+                  background: 'white', 
+                  border: '2px solid #f1f5f9', 
+                  borderRadius: '24px', 
+                  padding: '32px'
+                }}>
+                   <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '20px', fontWeight: '500' }}>Trigger on ANY Comment</p>
+                   <input 
+                     type="text"
+                     value={publicReplyText}
+                     onChange={(e) => setPublicReplyText(e.target.value)}
+                     placeholder="Check your DMs! 🚀 I've sent you the info."
+                     style={{ width: '100%', padding: '18px 24px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem', fontWeight: '600', color: '#1e1b4b' }}
+                   />
+                </div>
+             </div>
+           )}
+
+           {/* Final Launch Button at Bottom */}
+           <div style={{ marginTop: '20px' }}>
+              <button 
+                onClick={handleCreate} 
+                disabled={submitting} 
+                style={{ 
+                  width: '100%', 
+                  padding: '20px', 
+                  borderRadius: '20px', 
+                  background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
+                  color: 'white', 
+                  border: 'none', 
+                  fontWeight: '900', 
+                  fontSize: '1.2rem',
+                  cursor: 'pointer', 
+                  boxShadow: '0 15px 30px rgba(124, 58, 237, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '12px'
+                }}
+              >
+                {submitting ? (
+                  'Creating...'
+                ) : (
+                  <>
+                    <Zap size={24} fill="white" /> Create Automation
+                  </>
+                )}
+              </button>
+           </div>
+
+           <div style={{ height: '100px' }}></div>
         </div>
       </div>
 
