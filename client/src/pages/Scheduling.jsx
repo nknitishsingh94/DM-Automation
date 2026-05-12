@@ -769,7 +769,7 @@ export default function Scheduling() {
 
                     <div style={{ flex: 1, background: '#000', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                       {previewMode === 'post' ? (
-                        <div className="custom-ig-scroller" style={{ flex: 1, overflowY: 'auto' }}>
+                        <div ref={chatRef} className="custom-ig-scroller" style={{ flex: 1, overflowY: 'auto' }}>
                           {/* Main Media Display */}
                           <div style={{ width: '100%', aspectRatio: '1/1', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                             {previews.length > 0 ? (
@@ -805,7 +805,7 @@ export default function Scheduling() {
                           </div>
                         </div>
                       ) : (
-                        <div className="custom-ig-scroller" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', padding: '20px', gap: '20px' }}>
+                        <div ref={chatRef} className="custom-ig-scroller" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', padding: '20px', gap: '20px' }}>
                           <div style={{ color: '#8e8e8e', fontSize: '0.7rem', textAlign: 'center' }}>
                              Automated DM Preview
                           </div>
@@ -920,17 +920,22 @@ export default function Scheduling() {
             {/* Left side: Chat Preview (Premium) */}
             <div style={{ padding: '40px 0', background: '#F8FAFC', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', overflowY: 'auto' }}>
                {/* iPhone Mockup (Ultra Pro Max - Dark Mode) */}
-               {(() => {
-                 const previewData = createdPost || newPost;
-                 return (
-               <div style={{
-                 width: '380px', height: '800px', background: '#000', borderRadius: '60px', border: '16px solid #1e1b4b',
-                 position: 'relative', overflow: 'hidden', boxShadow: '0 60px 150px -40px rgba(0,0,0,0.5)',
-                 display: 'flex', flexDirection: 'column',
-                 transform: window.innerHeight < 900 ? `scale(${window.innerHeight / 1000})` : 'scale(1)',
-                 transformOrigin: 'top center',
-                 marginTop: window.innerHeight < 900 ? '20px' : '0'
-               }}>
+                {(() => {
+                  const previewData = createdPost || newPost;
+                  const chatRef = useRef(null);
+
+                  useEffect(() => {
+                    if (chatRef.current) {
+                      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+                    }
+                  }, [previewData?.autoResponse, previewData?.buttons, previewData?.requireFollow]);
+
+                  return (
+                <div style={{
+                  width: '380px', height: '800px', background: '#000', borderRadius: '60px', border: '16px solid #1e1b4b',
+                  position: 'relative', overflow: 'hidden', boxShadow: '0 60px 150px -40px rgba(0,0,0,0.5)',
+                  display: 'flex', flexDirection: 'column'
+                }}>
                  <style>{`
                    .custom-ig-scroller::-webkit-scrollbar {
                      width: 4px;
@@ -999,7 +1004,7 @@ export default function Scheduling() {
                   <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#000' }}>
                     {/* SIMULATED DM VIEW (Premium Dynamic High-Fidelity) */}
                     <div 
-                      className="custom-ig-scroller"
+                      ref={chatRef} className="custom-ig-scroller"
                       style={{ 
                         flex: 1, display: 'flex', flexDirection: 'column', padding: '28px', gap: '28px', 
                         overflowY: 'auto', background: '#000', minHeight: 0,
