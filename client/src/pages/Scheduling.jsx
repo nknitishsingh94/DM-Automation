@@ -22,6 +22,13 @@ export default function Scheduling() {
   // Caption State
   const [savedCaptions, setSavedCaptions] = useState([]);
   const [showCaptionsModal, setShowCaptionsModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // New Post State
   const [postType, setPostType] = useState('image');
@@ -921,15 +928,23 @@ export default function Scheduling() {
           padding: '20px'
         }}>
           <div style={{
-            background: 'white', width: '96%', maxWidth: '1440px', height: '90vh', borderRadius: '40px',
-            display: 'grid', gridTemplateColumns: '480px 1fr', overflow: 'hidden', position: 'relative',
+            background: 'white', 
+            width: isMobile ? '100%' : '96%', 
+            maxWidth: '1440px', 
+            height: isMobile ? '100%' : '90vh', 
+            borderRadius: isMobile ? '0' : '40px',
+            display: 'grid', 
+            gridTemplateColumns: isMobile ? '1fr' : '480px 1fr', 
+            overflow: 'hidden', 
+            position: 'relative',
             animation: 'modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
           }}>
             {/* Left side: Chat Preview (Premium) */}
-            <div style={{ padding: '40px 0', background: '#F8FAFC', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', overflowY: 'auto' }}>
-               {/* iPhone Mockup (Ultra Pro Max - Dark Mode) */}
-                {(() => {
-                  const previewData = newPost;
+            {!isMobile && (
+              <div style={{ padding: '40px 0', background: '#F8FAFC', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', overflowY: 'auto' }}>
+                 {/* iPhone Mockup (Ultra Pro Max - Dark Mode) */}
+                  {(() => {
+                    const previewData = newPost;
                   return (
                 <div style={{
                   width: '380px', height: '800px', background: '#000', borderRadius: '60px', border: '16px solid #1e1b4b',
@@ -1070,6 +1085,7 @@ export default function Scheduling() {
                );
                })()}
             </div>
+            )}
 
             {/* Right side: Config Steps (Premium Builder) */}
             <div style={{ padding: '40px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
