@@ -2,6 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || '';
+// Service role key bypasses RLS — used ONLY for server-side storage uploads
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseKey;
 
 export let supabase = null;
 try {
@@ -14,19 +16,28 @@ try {
   console.warn('⚠️ Could not initialize Supabase Client:', e.message);
 }
 
+// Separate admin client for storage uploads (bypasses RLS)
+let supabaseAdmin = null;
+try {
+  if (supabaseUrl && supabaseUrl.startsWith('http')) {
+    supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+  }
+} catch (e) {}
+
 export const uploadToSupabase = async (fileBuffer, fileName, contentType) => {
-  if (!supabase) return null;
+  const client = supabaseAdmin || supabase;
+  if (!client) return null;
   try {
     // --- AUTO-CREATE BUCKET IF MISSING ---
-    const { data: buckets } = await supabase.storage.listBuckets();
+    const { data: buckets } = await client.storage.listBuckets();
     const bucketExists = buckets?.some(b => b.name === 'media');
     
     if (!bucketExists) {
       console.log("📁 Creating 'media' bucket in Supabase...");
-      await supabase.storage.createBucket('media', { public: true });
+      await client.storage.createBucket('media', { public: true });
     }
 
-    const { data, error } = await supabase.storage
+    const { data, error } = await client.storage
       .from('media') 
       .upload(fileName, fileBuffer, {
         contentType,
@@ -35,7 +46,7 @@ export const uploadToSupabase = async (fileBuffer, fileName, contentType) => {
     
     if (error) throw error;
     
-    const { data: { publicUrl } } = supabase.storage
+    const { data: { publicUrl } } = client.storage
       .from('media')
       .getPublicUrl(fileName);
       

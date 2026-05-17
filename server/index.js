@@ -1846,22 +1846,33 @@ setInterval(async () => {
         }
       }
 
-      // Local development fallback: If the URL is local, map to a publicly accessible premium placeholder so Meta API can download and publish successfully!
-      if (!finalMedia || finalMedia.startsWith('/uploads/') || finalMedia.includes('localhost') || finalMedia.includes('127.0.0.1')) {
-        console.log(`⚠️ Media URL is local (${finalMedia}). Mapping to high-quality public placeholder so Meta API can publish successfully.`);
-        if (finalType === 'video' || finalType === 'reel') {
-          finalMedia = 'https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-background-1611-large.mp4';
-        } else {
-          finalMedia = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800';
-        }
-        if (finalCarousel && finalCarousel.length > 0) {
-          finalCarousel = finalCarousel.map(item => {
-            if (item.startsWith('/uploads/') || item.includes('localhost') || item.includes('127.0.0.1')) {
-              return 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800';
-            }
-            return item;
-          });
-        }
+      // If the media URL is a local path, convert it to a public URL using the production server
+      // This allows Meta API to download the actual user image
+      const SERVER_PUBLIC_URL = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 5001}`;
+      
+      if (finalMedia && finalMedia.startsWith('/uploads/')) {
+        const publicUrl = `${SERVER_PUBLIC_URL}${finalMedia}`;
+        console.log(`🌐 Converting local path to public URL: ${finalMedia} → ${publicUrl}`);
+        finalMedia = publicUrl;
+      }
+      
+      if (finalCarousel && finalCarousel.length > 0) {
+        finalCarousel = finalCarousel.map(item => {
+          if (item && item.startsWith('/uploads/')) {
+            return `${SERVER_PUBLIC_URL}${item}`;
+          }
+          return item;
+        });
+      }
+      
+      // Last resort: if still no valid public URL (empty or localhost only), warn and skip
+      if (!finalMedia || finalMedia.includes('127.0.0.1') || finalMedia.includes('localhost')) {
+        console.error(`❌ No publicly accessible media URL for post ${post._id}. Cannot publish without a public image URL.`);
+        await ScheduledPost.findByIdAndUpdate(post._id, { 
+          status: 'Failed',
+          lastError: 'No public media URL available. Please use Supabase Storage or a public image URL.'
+        });
+        continue;
       }
 
       // Atomically mark as processing to prevent double-posting
