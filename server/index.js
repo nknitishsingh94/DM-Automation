@@ -387,7 +387,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         const checkFollowPayload = `CHECK_FOLLOW_${match._id}`;
 
         // Use a generic template with a postback button for reliability
-        await sendMessageToInstagram(platform, chatId, followText, '', userId, "I've Followed! ✅", activeToken, [], checkFollowPayload);
+        await sendMessageToInstagram(platform, chatId, followText, '', userId, "I've Followed! ✅", activeToken, [], checkFollowPayload, commentId);
 
         // 2. Send PUBLIC Comment Reply (Crucial for Comments)
         if (source === 'comment' && commentId) {
@@ -414,7 +414,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       const btnText = match.openingMessageButton || "Click to Continue 🚀";
       const payload = `CAMP_${match._id}`;
 
-      const openingSent = await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, btnText, activeToken, [], payload);
+      const openingSent = await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, btnText, activeToken, [], payload, commentId);
 
       if (openingSent) {
         // Track that this user is waiting for an opening message confirmation
@@ -437,7 +437,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
 
     console.log(`✅ EXECUTING: Dispatching response for "${campaignName}"`);
-    const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
+    const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons, '', commentId);
 
     // NEW: If it's a comment, also send a public reply to the comment
     if (source === 'comment' && commentId) {
@@ -476,7 +476,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       const aiResponse = await generateAIResponse(userId, text);
 
       if (aiResponse) {
-        const sent = await sendMessageToInstagram(platform, chatId, aiResponse, '', userId);
+        const sent = await sendMessageToInstagram(platform, chatId, aiResponse, '', userId, '', null, [], '', commentId);
 
         if (sent) {
           try {

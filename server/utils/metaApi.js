@@ -4,7 +4,7 @@ import Settings from '../models/Settings.js';
 /**
  * Meta Graph API Helper: Send Message (Instagram / Facebook)
  */
-export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null, buttonText = '', manualToken = null, buttons = [], buttonPayload = '') => {
+export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null, buttonText = '', manualToken = null, buttons = [], buttonPayload = '', commentId = null) => {
   try {
     let accessToken = manualToken || process.env.META_PAGE_ACCESS_TOKEN;
     let pageId = null;
@@ -35,11 +35,13 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     let safeText = text || '';
     safeText = safeText.replace(/(^|\s)(www\.[^\s]+)/g, '$1https://$2');
 
+    // Dynamic Recipient Builder for Private Replies on Instagram Comments
+    const recipient = (platform === 'instagram' && commentId) ? { comment_id: commentId } : { id: recipientId };
     let payload = null;
 
     if (buttons && buttons.length > 0) {
       payload = {
-        recipient: { id: recipientId },
+        recipient,
         messaging_type: "RESPONSE",
         message: {
           attachment: {
@@ -69,7 +71,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     } else if (buttonText) {
       if (buttonPayload) {
         payload = {
-          recipient: { id: recipientId },
+          recipient,
           messaging_type: "RESPONSE",
           message: {
             attachment: {
@@ -88,7 +90,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
         };
       } else {
         payload = {
-          recipient: { id: recipientId },
+          recipient,
           messaging_type: "RESPONSE",
           message: {
             text: safeText || "Options:",
@@ -102,7 +104,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
       }
     } else {
       payload = {
-        recipient: { id: recipientId },
+        recipient,
         messaging_type: "RESPONSE",
         message: { text: safeText }
       };
@@ -167,6 +169,13 @@ export const sendWhatsAppMessage = async (recipientPhone, text, userId = null) =
  */
 export const sendPrivateReply = async (platform, commentId, text, userId = null) => {
   try {
+    if (platform === 'instagram') {
+      // Instagram private replies MUST be sent via the standard messages endpoint
+      // using comment_id in the recipient field!
+      console.log(`💬 Instagram Private Reply: Routing through sendMessageToInstagram for comment ${commentId}...`);
+      return await sendMessageToInstagram(platform, '', text, '', userId, '', null, [], '', commentId);
+    }
+
     let accessToken = process.env.META_PAGE_ACCESS_TOKEN;
     if (userId) {
       const userSettings = await Settings.findOne({ userId });
@@ -182,7 +191,8 @@ export const sendPrivateReply = async (platform, commentId, text, userId = null)
     console.log("✅ Private reply sent:", response.data);
     return true;
   } catch (err) {
-    console.error("❌ Private Reply Error:", err.response?.data || err.message);
+    const errorData = err.response?.data || err.message;
+    console.error("❌ Private Reply Error:", JSON.stringify(errorData, null, 2));
     return false;
   }
 };
