@@ -51,6 +51,26 @@ const isUUID = (str) => {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 };
 
+const convertObjectIDToUUID = (id) => {
+  if (typeof id !== 'string') return id;
+  if (id.length === 24 && /^[0-9a-f]{24}$/i.test(id)) {
+    return `${id.substring(0, 8)}-${id.substring(8, 12)}-${id.substring(12, 16)}-${id.substring(16, 20)}-${id.substring(20, 24)}00000000`;
+  }
+  return id;
+};
+
+const convertUUIDToObjectID = (uuid) => {
+  if (typeof uuid !== 'string') return uuid;
+  if (uuid.endsWith('00000000')) {
+    const clean = uuid.replace(/-/g, '');
+    if (clean.length === 32) {
+      return clean.substring(0, 24);
+    }
+  }
+  return uuid;
+};
+
+
 function parseFilter(q, queryObj, tableName) {
   if (!queryObj) return q;
   
@@ -91,6 +111,12 @@ function parseFilter(q, queryObj, tableName) {
     if (tableName !== 'settings') {
       uuidColumns.push('userId', 'user_id');
     }
+    
+    // Map ObjectID queries to UUID queries for UUID columns
+    if (uuidColumns.includes(parsedKey) && val && typeof val === 'string' && val.length === 24 && /^[0-9a-f]{24}$/i.test(val)) {
+      val = convertObjectIDToUUID(val);
+    }
+
     if (uuidColumns.includes(parsedKey) && val && typeof val === 'string' && !isUUID(val)) {
         console.warn(`🛑 Skipping filter for invalid UUID on column ${parsedKey}: ${val}`);
         // Instead of crashing, we force a no-match to prevent 500 error
@@ -139,6 +165,7 @@ function convertIncoming(doc, tableName) {
   // Universal mapping for incoming data
   if (doc.user_id) newDoc.userId = doc.user_id;
   if (doc.userid) newDoc.userId = doc.userid;
+  if (newDoc.userId) newDoc.userId = convertUUIDToObjectID(newDoc.userId);
   if (doc.created_at) newDoc.createdAt = doc.created_at;
   if (doc.updated_at) newDoc.updatedAt = doc.updated_at;
   if (doc.automation_status) newDoc.automationStatus = doc.automation_status;
@@ -175,10 +202,11 @@ function convertOutgoing(doc, tableName) {
   
   // Per-table mapping based on verified schema
   if (newDoc.userId) {
+    const mappedUserId = convertObjectIDToUUID(newDoc.userId);
     if (tableName === 'settings' || tableName === 'campaigns' || tableName === 'scheduled_posts') {
-      newDoc.userId = newDoc.userId;
+      newDoc.userId = mappedUserId;
     } else {
-      newDoc.user_id = newDoc.userId;
+      newDoc.user_id = mappedUserId;
     }
   }
 
@@ -194,8 +222,12 @@ function convertOutgoing(doc, tableName) {
   }
   
   if (newDoc.automationStatus) {
-    newDoc.automation_status = newDoc.automationStatus;
-    delete newDoc.automationStatus;
+    if (['settings', 'campaigns', 'scheduled_posts', 'flows'].includes(tableName)) {
+      newDoc.automationStatus = newDoc.automationStatus;
+    } else {
+      newDoc.automation_status = newDoc.automationStatus;
+      delete newDoc.automationStatus;
+    }
   }
 
   if (tableName === 'campaigns') {
@@ -343,7 +375,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
 
   ModelInstance.findById = async function (id) {
     if (!supabase || !id) return null;
-    if (!isUUID(id)) {
+    if (!['users', 'settings'].includes(tableName) && !isUUID(id)) {
       console.warn(`🛑 findById skipped: Invalid UUID format "${id}"`);
       return null;
     }

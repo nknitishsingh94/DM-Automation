@@ -1149,6 +1149,12 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
           const meta = JSON.parse(p.mediaUrl);
           p.type = meta.type || p.type;
           p.carouselItems = meta.carouselItems || [];
+          p.buttons = meta.buttons || [];
+          p.requireFollow = meta.requireFollow !== undefined ? meta.requireFollow : false;
+          p.unfollowedResponse = meta.unfollowedResponse || '';
+          p.publicReply = meta.publicReply || '';
+          p.automationStatus = meta.automationStatus || 'Paused';
+          p.anyKeyword = meta.anyKeyword !== undefined ? meta.anyKeyword : false;
           p.mediaUrl = meta.mediaUrl || (p.carouselItems.length > 0 ? p.carouselItems[0] : '');
         } catch (e) {}
       } else if (p.mediaUrl && p.mediaUrl.startsWith('[')) {
@@ -1198,7 +1204,13 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
     const metadata = {
       type: req.body.type || 'image',
       carouselItems: mediaFiles.length > 0 ? mediaFiles : (req.body.carouselItems || []),
-      mediaUrl: mediaUrl
+      mediaUrl: mediaUrl,
+      buttons: req.body.buttons || [],
+      requireFollow: req.body.requireFollow !== undefined ? (req.body.requireFollow === 'true' || req.body.requireFollow === true) : false,
+      unfollowedResponse: req.body.unfollowedResponse || '',
+      publicReply: req.body.publicReply || '',
+      automationStatus: req.body.automationStatus || 'Paused',
+      anyKeyword: req.body.anyKeyword !== undefined ? (req.body.anyKeyword === 'true' || req.body.anyKeyword === true) : false
     };
     
     const finalMediaUrl = JSON.stringify(metadata);
@@ -1224,6 +1236,13 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
     // Clean up fields that might not exist in schema
     delete postData.type;
     delete postData.carouselItems;
+    delete postData.buttons;
+    delete postData.requireFollow;
+    delete postData.unfollowedResponse;
+    delete postData.publicReply;
+    delete postData.automationStatus;
+    delete postData.anyKeyword;
+    delete postData.openingMessage;
 
     console.log(`📡 Checking user existence for: ${req.user.userId}`);
     const userExists = await User.findById(req.user.userId);
@@ -1287,7 +1306,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
 
     const updateData = { ...req.body };
     
-    // 1. Handle Schema-Safe Metadata (Serialize buttons into mediaUrl JSON)
+    // 1. Handle Schema-Safe Metadata (Serialize all advanced options into mediaUrl JSON)
     let currentMetadata = {};
     try {
       if (postToUpdate.mediaUrl && postToUpdate.mediaUrl.startsWith('{')) {
@@ -1299,9 +1318,12 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
       currentMetadata = { mediaUrl: postToUpdate.mediaUrl };
     }
 
-    if (updateData.buttons) {
-      currentMetadata.buttons = updateData.buttons;
-    }
+    if (updateData.buttons !== undefined) currentMetadata.buttons = updateData.buttons;
+    if (updateData.requireFollow !== undefined) currentMetadata.requireFollow = updateData.requireFollow;
+    if (updateData.unfollowedResponse !== undefined) currentMetadata.unfollowedResponse = updateData.unfollowedResponse;
+    if (updateData.publicReply !== undefined) currentMetadata.publicReply = updateData.publicReply;
+    if (updateData.automationStatus !== undefined) currentMetadata.automationStatus = updateData.automationStatus;
+    if (updateData.anyKeyword !== undefined) currentMetadata.anyKeyword = updateData.anyKeyword;
 
     updateData.mediaUrl = JSON.stringify(currentMetadata);
 
@@ -1311,6 +1333,10 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     delete updateData.carouselItems;
     delete updateData.anyKeyword;
     delete updateData.openingMessage;
+    delete updateData.requireFollow;
+    delete updateData.unfollowedResponse;
+    delete updateData.publicReply;
+    delete updateData.automationStatus;
 
     const updatedPost = await ScheduledPost.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.userId },
@@ -1822,7 +1848,23 @@ setInterval(async () => {
         console.log(`📸 Meta API: Publishing ${finalType.toUpperCase()}...`);
         const publishedId = await publishInstagramContent(post.userId, finalType, finalMedia, post.caption, finalCarousel);
 
-        if (post.triggerKeyword && post.autoResponse) {
+        // Deserialize advanced options from metadata
+        let requireFollow = false;
+        let unfollowedResponse = '';
+        let publicReply = '';
+        let automationStatus = 'Paused';
+
+        if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
+          try {
+            const meta = JSON.parse(post.mediaUrl);
+            requireFollow = meta.requireFollow || false;
+            unfollowedResponse = meta.unfollowedResponse || '';
+            publicReply = meta.publicReply || '';
+            automationStatus = meta.automationStatus || 'Paused';
+          } catch (e) {}
+        }
+
+        if (post.triggerKeyword && post.autoResponse && automationStatus === 'Active') {
           const campaign = new Campaign({
             userId: post.userId,
             name: `Auto: ${post.caption.substring(0, 20)}...`,
@@ -1830,10 +1872,13 @@ setInterval(async () => {
             response: post.autoResponse,
             status: 'Active',
             isAnyPost: false,
-            postId: publishedId
+            postId: publishedId,
+            requireFollow: requireFollow,
+            unfollowedResponse: unfollowedResponse,
+            publicReply: publicReply
           });
           await campaign.save();
-          console.log(`✨ AUTOMATION LIVE: Post ${publishedId} is now guarded by bot.`);
+          console.log(`✨ AUTOMATION LIVE: Post ${publishedId} is now guarded by bot (Followers Gated: ${requireFollow}).`);
         }
 
         await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted' });
