@@ -23,6 +23,103 @@ export default function Scheduling() {
   const [savedCaptions, setSavedCaptions] = useState([]);
   const [showCaptionsModal, setShowCaptionsModal] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const textareaRef = useRef(null);
+  const popularEmojis = ['🔥', '🚀', '❤️', '✨', '😍', '👇', '📸', '💬', '🌟', '🎯', '💡', '👑', '🤩', '✅', '💯', '👏'];
+
+  const toUnicodeBold = (text) => {
+    return Array.from(text).map(char => {
+      const code = char.charCodeAt(0);
+      if (code >= 65 && code <= 90) {
+        return String.fromCodePoint(0x1D400 + (code - 65));
+      } else if (code >= 97 && code <= 122) {
+        return String.fromCodePoint(0x1D41A + (code - 97));
+      } else if (code >= 48 && code <= 57) {
+        return String.fromCodePoint(0x1D7CE + (code - 48));
+      }
+      return char;
+    }).join('');
+  };
+
+  const toUnicodeItalic = (text) => {
+    return Array.from(text).map(char => {
+      const code = char.charCodeAt(0);
+      if (code >= 65 && code <= 90) {
+        return String.fromCodePoint(0x1D434 + (code - 65));
+      } else if (code >= 97 && code <= 122) {
+        if (char === 'h') return 'ℎ';
+        return String.fromCodePoint(0x1D44E + (code - 97));
+      }
+      return char;
+    }).join('');
+  };
+
+  const applyFormatting = (formatType) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selectedText = text.substring(start, end);
+
+    if (formatType === 'bold') {
+      if (!selectedText) {
+        notify("Please highlight/select text first to make it Bold!", "info");
+        return;
+      }
+      const formatted = toUnicodeBold(selectedText);
+      const newCaption = text.substring(0, start) + formatted + text.substring(end);
+      setNewPost(prev => ({ ...prev, caption: newCaption }));
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start, start + formatted.length);
+      }, 0);
+    } else if (formatType === 'italic') {
+      if (!selectedText) {
+        notify("Please highlight/select text first to make it Italic!", "info");
+        return;
+      }
+      const formatted = toUnicodeItalic(selectedText);
+      const newCaption = text.substring(0, start) + formatted + text.substring(end);
+      setNewPost(prev => ({ ...prev, caption: newCaption }));
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start, start + formatted.length);
+      }, 0);
+    } else if (formatType === 'mention') {
+      const newCaption = text.substring(0, start) + '@' + text.substring(end);
+      setNewPost(prev => ({ ...prev, caption: newCaption }));
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + 1, start + 1);
+      }, 0);
+    } else if (formatType === 'hashtag') {
+      const newCaption = text.substring(0, start) + '#' + text.substring(end);
+      setNewPost(prev => ({ ...prev, caption: newCaption }));
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + 1, start + 1);
+      }, 0);
+    }
+  };
+
+  const insertEmoji = (emoji) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+
+    const newCaption = text.substring(0, start) + emoji + text.substring(end);
+    setNewPost(prev => ({ ...prev, caption: newCaption }));
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + emoji.length, start + emoji.length);
+    }, 0);
+  };
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -708,11 +805,122 @@ export default function Scheduling() {
                           </button>
                         </div>
                       </div>
+
+                      {/* Professional Social Formatting Toolbar */}
+                      <div style={{
+                        display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px',
+                        background: '#f8fafc', borderRadius: '12px 12px 0 0', border: '1.5px solid #e2e8f0',
+                        borderBottom: 'none', flexWrap: 'wrap'
+                      }}>
+                        <button
+                          type="button"
+                          onClick={() => applyFormatting('bold')}
+                          style={{
+                            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            borderRadius: '8px', border: 'none', background: 'white', color: '#0f172a',
+                            fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', fontSize: '0.9rem'
+                          }}
+                          title="Convert selected text to Bold"
+                        >
+                          B
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => applyFormatting('italic')}
+                          style={{
+                            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            borderRadius: '8px', border: 'none', background: 'white', color: '#0f172a',
+                            fontStyle: 'italic', fontWeight: '600', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', fontSize: '0.9rem'
+                          }}
+                          title="Convert selected text to Italic"
+                        >
+                          I
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => applyFormatting('mention')}
+                          style={{
+                            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            borderRadius: '8px', border: 'none', background: 'white', color: '#7c3aed',
+                            fontWeight: '800', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', fontSize: '0.85rem'
+                          }}
+                          title="Add @mention"
+                        >
+                          @
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => applyFormatting('hashtag')}
+                          style={{
+                            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            borderRadius: '8px', border: 'none', background: 'white', color: '#7c3aed',
+                            fontWeight: '800', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', fontSize: '0.85rem'
+                          }}
+                          title="Add #hashtag"
+                        >
+                          #
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                          style={{
+                            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            borderRadius: '8px', border: 'none', background: 'white', cursor: 'pointer',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.05)', fontSize: '0.95rem'
+                          }}
+                          title="Insert Emoji"
+                        >
+                          😊
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleSaveCaption}
+                          style={{
+                            marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px',
+                            background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: '8px',
+                            padding: '6px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer'
+                          }}
+                        >
+                          <Save size={12} /> Save
+                        </button>
+                      </div>
+
+                      {/* Emoji Selector Panel */}
+                      {showEmojiPicker && (
+                        <div style={{
+                          display: 'flex', gap: '6px', flexWrap: 'wrap', padding: '12px',
+                          background: 'white', border: '1.5px solid #e2e8f0', borderTop: 'none',
+                          borderBottom: 'none', animation: 'fadeIn 0.2s ease'
+                        }}>
+                          {popularEmojis.map(emoji => (
+                            <button
+                              key={emoji}
+                              type="button"
+                              onClick={() => insertEmoji(emoji)}
+                              style={{
+                                width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                borderRadius: '6px', border: '1px solid #f1f5f9', background: '#f8fafc',
+                                cursor: 'pointer', fontSize: '1.05rem', transition: '0.15s'
+                              }}
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
                       <textarea
+                        ref={textareaRef}
                         value={newPost.caption}
                         onChange={e => setNewPost({ ...newPost, caption: e.target.value })}
-                        placeholder="Write your caption..."
-                        style={{ width: '100%', height: '100px', padding: '16px', borderRadius: '14px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', resize: 'none' }}
+                        placeholder="Write your caption... Tip: Select text to make it Bold or Italic!"
+                        style={{
+                          width: '100%', height: '110px', padding: '16px',
+                          borderRadius: '0 0 14px 14px', border: '1.5px solid #e2e8f0',
+                          outline: 'none', fontSize: '0.95rem', resize: 'none',
+                          boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+                        }}
                         required
                       />
                     </div>
