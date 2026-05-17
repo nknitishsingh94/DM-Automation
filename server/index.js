@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // --- GLOBAL STABILITY GUARD ---
-// Prevents the server from crashing on unhandled errors
+// Prevents // Main server file from crashing on unhandled errors
 process.on('unhandledRejection', (reason, promise) => {
   console.error('🔥 CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason);
   // Optional: Send alert to monitoring service
