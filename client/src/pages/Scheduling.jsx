@@ -191,7 +191,15 @@ export default function Scheduling() {
 
     const formData = new FormData();
     formData.append('caption', newPost.caption);
-    formData.append('scheduledFor', newPost.scheduledFor);
+    
+    // Convert timezone-naive local date string to proper UTC ISO String
+    if (newPost.scheduledFor) {
+      const localDate = new Date(newPost.scheduledFor);
+      formData.append('scheduledFor', localDate.toISOString());
+    } else {
+      formData.append('scheduledFor', '');
+    }
+    
     formData.append('triggerKeyword', newPost.triggerKeyword);
     formData.append('autoResponse', newPost.autoResponse);
     formData.append('type', postType);
@@ -945,12 +953,87 @@ export default function Scheduling() {
                  {/* iPhone Mockup (Ultra Pro Max - Dark Mode) */}
                   {(() => {
                     const previewData = createdPost;
-                  return (
-                <div style={{
-                  width: '320px', height: '840px', background: '#000', borderRadius: '48px', border: '12px solid #1e1b4b',
-                  position: 'relative', overflow: 'hidden', boxShadow: '0 60px 150px -40px rgba(0,0,0,0.5)',
-                  display: 'flex', flexDirection: 'column'
-                }}>
+
+                    // Parse media URL for the bound post card
+                    let mediaData = { type: 'image', mediaUrl: createdPost?.mediaUrl };
+                    try {
+                      if (createdPost?.mediaUrl && createdPost.mediaUrl.startsWith('{')) {
+                        mediaData = JSON.parse(createdPost.mediaUrl);
+                      }
+                    } catch (e) { }
+
+                    const finalMediaUrl = mediaData.mediaUrl && mediaData.mediaUrl.startsWith('http')
+                      ? mediaData.mediaUrl
+                      : (mediaData.mediaUrl ? `${API_BASE_URL}${mediaData.mediaUrl}` : '/placeholder-ig.png');
+
+                    return (
+                      <>
+                        <style>{`
+                          @keyframes pulse {
+                            0% { transform: scale(0.95); opacity: 0.5; }
+                            50% { transform: scale(1.15); opacity: 1; }
+                            100% { transform: scale(0.95); opacity: 0.5; }
+                          }
+                          .pulse-dot {
+                            animation: pulse 2s infinite;
+                          }
+                        `}</style>
+
+                        {/* Bound Scheduled Post Card */}
+                        <div style={{ 
+                          width: '320px', 
+                          background: 'white', 
+                          borderRadius: '24px', 
+                          border: '1.5px solid #e2e8f0', 
+                          boxShadow: '0 8px 30px rgba(0,0,0,0.04)',
+                          padding: '16px',
+                          marginBottom: '24px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '12px'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div className="pulse-dot" style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#7c3aed' }}></div>
+                            <span style={{ fontSize: '0.75rem', fontWeight: '900', color: '#7c3aed', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Bound Scheduled Post</span>
+                          </div>
+                          
+                          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                            <div style={{ width: '64px', height: '64px', borderRadius: '12px', overflow: 'hidden', background: '#f8fafc', border: '1px solid #f1f5f9', flexShrink: 0 }}>
+                              {mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i)) ? (
+                                <video src={finalMediaUrl} muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              ) : (
+                                <img src={finalMediaUrl} alt="Post preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              )}
+                            </div>
+                            
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <h4 style={{ margin: 0, fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {createdPost.caption || 'No caption provided'}
+                              </h4>
+                              <div style={{ display: 'flex', gap: '4px', alignItems: 'center', marginTop: '4px', color: '#64748b', fontSize: '0.7rem', fontWeight: '700' }}>
+                                <Calendar size={10} />
+                                <span>
+                                  {new Date(createdPost.scheduledFor).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                </span>
+                                <span>•</span>
+                                <Clock size={10} />
+                                <span>
+                                  {new Date(createdPost.scheduledFor).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                              <div style={{ display: 'inline-block', marginTop: '6px', background: '#f5f3ff', color: '#7c3aed', padding: '3px 8px', borderRadius: '6px', fontSize: '0.65rem', fontWeight: '800', textTransform: 'uppercase' }}>
+                                {createdPost.type || 'IMAGE'}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* iPhone Mockup (Ultra Pro Max - Dark Mode) */}
+                        <div style={{
+                          width: '320px', height: '840px', background: '#000', borderRadius: '48px', border: '12px solid #1e1b4b',
+                          position: 'relative', overflow: 'hidden', boxShadow: '0 60px 150px -40px rgba(0,0,0,0.5)',
+                          display: 'flex', flexDirection: 'column'
+                        }}>
                  <style>{`
                    .custom-ig-scroller::-webkit-scrollbar {
                      width: 6px;
@@ -1097,6 +1180,7 @@ export default function Scheduling() {
                     </div>
                   </div>
                 </div>
+              </>
                );
                })()}
             </div>
@@ -1130,6 +1214,126 @@ export default function Scheduling() {
                 <button onClick={() => setShowAdvanced(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '8px', cursor: 'pointer', color: '#64748b' }}>
                   <X size={20} />
                 </button>
+              </div>
+
+              {/* Visual Workflow Map (Blueprint) */}
+              <div style={{
+                background: '#faf5ff',
+                borderRadius: '24px',
+                padding: '24px',
+                border: '1.5px dashed #d8b4fe',
+                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                  <Layers size={16} color="#7c3aed" />
+                  <span style={{ fontSize: '0.8rem', fontWeight: '900', color: '#7c3aed', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Live Automation Blueprint</span>
+                </div>
+                
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                  position: 'relative',
+                  gap: '8px',
+                  flexWrap: isMobile ? 'wrap' : 'nowrap'
+                }}>
+                  {/* Step 1: Post */}
+                  <div style={{ 
+                    flex: 1, 
+                    minWidth: '70px',
+                    background: 'white', 
+                    border: '1.5px solid #cbd5e1', 
+                    borderRadius: '12px', 
+                    padding: '10px 6px', 
+                    textAlign: 'center',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.02)',
+                    zIndex: 2
+                  }}>
+                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>Trigger Post</div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                      <ImageIcon size={12} color="#7c3aed" />
+                      <span style={{ fontSize: '0.75rem', fontWeight: '900', color: '#1e1b4b' }}>This Post</span>
+                    </div>
+                  </div>
+
+                  {/* Arrow 1 */}
+                  <div style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', zIndex: 1 }}>
+                    <ArrowRight size={14} />
+                  </div>
+
+                  {/* Step 2: Comment */}
+                  <div style={{ 
+                    flex: 1.2, 
+                    minWidth: '85px',
+                    background: 'white', 
+                    border: '1.5px solid #3b82f6', 
+                    borderRadius: '12px', 
+                    padding: '10px 6px', 
+                    textAlign: 'center',
+                    boxShadow: '0 4px 10px rgba(59, 130, 246, 0.05)',
+                    zIndex: 2
+                  }}>
+                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#3b82f6', textTransform: 'uppercase', marginBottom: '4px' }}>User Comment</div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', overflow: 'hidden' }}>
+                      <MessageCircle size={12} color="#3b82f6" />
+                      <span style={{ fontSize: '0.7rem', fontWeight: '900', color: '#1e1b4b', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>
+                        {createdPost.anyKeyword ? 'Any Comment' : (createdPost.triggerKeyword ? `"${createdPost.triggerKeyword.split(',')[0]}"` : 'Keyword')}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Arrow 2 */}
+                  <div style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', zIndex: 1 }}>
+                    <ArrowRight size={14} />
+                  </div>
+
+                  {/* Step 3: Gating (Optional) */}
+                  <div style={{ 
+                    flex: 1, 
+                    minWidth: '70px',
+                    background: createdPost.requireFollow ? '#f0fdf4' : 'white', 
+                    border: createdPost.requireFollow ? '1.5px solid #10b981' : '1.5px dashed #cbd5e1', 
+                    borderRadius: '12px', 
+                    padding: '10px 6px', 
+                    textAlign: 'center',
+                    boxShadow: createdPost.requireFollow ? '0 4px 10px rgba(16, 185, 129, 0.05)' : 'none',
+                    opacity: createdPost.requireFollow ? 1 : 0.6,
+                    zIndex: 2
+                  }}>
+                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: createdPost.requireFollow ? '#10b981' : '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>Follow check</div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                      <Lock size={12} color={createdPost.requireFollow ? '#10b981' : '#64748b'} />
+                      <span style={{ fontSize: '0.75rem', fontWeight: '900', color: '#1e1b4b' }}>
+                        {createdPost.requireFollow ? 'Active' : 'Skipped'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Arrow 3 */}
+                  <div style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', zIndex: 1 }}>
+                    <ArrowRight size={14} />
+                  </div>
+
+                  {/* Step 4: Actions */}
+                  <div style={{ 
+                    flex: 1.2, 
+                    minWidth: '85px',
+                    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
+                    border: 'none', 
+                    borderRadius: '12px', 
+                    padding: '10px 6px', 
+                    textAlign: 'center',
+                    color: 'white',
+                    boxShadow: '0 4px 12px rgba(124, 58, 237, 0.15)',
+                    zIndex: 2
+                  }}>
+                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', marginBottom: '4px' }}>Bot Response</div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                      <Zap size={11} fill="white" />
+                      <span style={{ fontSize: '0.7rem', fontWeight: '900' }}>DM & Reply</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* 1. Follower Growth Gating */}

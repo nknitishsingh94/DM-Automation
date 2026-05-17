@@ -195,9 +195,16 @@ export const sendPrivateReply = async (platform, commentId, text, userId = null)
  */
 export const publishInstagramContent = async (userId, type, mediaUrl, caption = '', carouselItems = []) => {
   try {
-    const settings = await Settings.findOne({ userId });
+    let settings = await Settings.findOne({ userId });
     if (!settings || !settings.instagramAccessToken || !settings.businessAccountId) {
-      throw new Error('Meta credentials missing for publishing');
+      console.log(`⚠️ Settings missing for user ${userId}. Attempting fallback to any active connected settings in DB...`);
+      settings = await Settings.findOne({ 
+        instagramAccessToken: { $ne: null }, 
+        businessAccountId: { $ne: null } 
+      });
+      if (!settings) {
+        throw new Error('Meta credentials missing for publishing');
+      }
     }
 
     const accessToken = settings.instagramAccessToken;

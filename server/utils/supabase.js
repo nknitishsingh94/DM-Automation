@@ -87,7 +87,10 @@ function parseFilter(q, queryObj, tableName) {
     let parsedKey = (key === '_id' || key === 'id') ? 'id' : (fieldMap[key] || key);
     
     // UUID Safety Check: Prevents Postgres from crashing on invalid UUID syntax
-    const uuidColumns = ['id', 'userId', 'user_id', 'chatId', 'chat_id'];
+    const uuidColumns = ['id', 'chatId', 'chat_id'];
+    if (tableName !== 'settings') {
+      uuidColumns.push('userId', 'user_id');
+    }
     if (uuidColumns.includes(parsedKey) && val && typeof val === 'string' && !isUUID(val)) {
         console.warn(`🛑 Skipping filter for invalid UUID on column ${parsedKey}: ${val}`);
         // Instead of crashing, we force a no-match to prevent 500 error

@@ -1836,7 +1836,7 @@ setInterval(async () => {
           console.log(`✨ AUTOMATION LIVE: Post ${publishedId} is now guarded by bot.`);
         }
 
-        await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted', postedAt: new Date() });
+        await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted' });
         console.log(`✅ SUCCESS: Post ${post._id} is now LIVE on Instagram.`);
       } catch (postErr) {
         console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);
