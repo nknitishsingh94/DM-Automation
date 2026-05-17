@@ -359,9 +359,17 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       return cleanUserMsg.includes(k);
     });
 
-    // Only apply Post ID filtering for COMMENTS. DMs and Story Mentions stay global.
-    // Universal Triggers (c.isUniversal) bypass post-specific filtering.
-    const postMatch = (source !== 'comment') || c.isUniversal || c.isAnyPost || (mediaId && c.postId === mediaId);
+    // Strict Post-Specific Filter for Comments:
+    // If a campaign has a specific postId defined, it MUST match the commented post's mediaId.
+    // Otherwise, if it has no postId, it can match any post if isAnyPost or isUniversal is true.
+    let postMatch = true;
+    if (source === 'comment') {
+      if (c.postId && c.postId !== 'any' && c.postId !== '') {
+        postMatch = (mediaId && c.postId === mediaId);
+      } else {
+        postMatch = c.isUniversal || c.isAnyPost || !c.postId;
+      }
+    }
 
     return platformMatch && sourceMatch && keywordMatch && postMatch;
   });
@@ -1412,13 +1420,39 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
 
     // 2. Sync to Active Campaign if already posted (Defensive)
     try {
-      if (updatedPost.status === 'Posted' && updatedPost.postId) {
+      let igMediaId = null;
+      if (updatedPost.mediaUrl && updatedPost.mediaUrl.startsWith('{')) {
+        try {
+          const meta = JSON.parse(updatedPost.mediaUrl);
+          igMediaId = meta.instagramMediaId;
+        } catch (e) {}
+      }
+
+      const postIds = [];
+      if (updatedPost.postId) postIds.push(updatedPost.postId);
+      if (igMediaId) postIds.push(igMediaId);
+
+      if (postIds.length > 0) {
+        // Parse current metadata to get automationStatus
+        let automationStatus = 'Paused';
+        if (updatedPost.mediaUrl && updatedPost.mediaUrl.startsWith('{')) {
+          try {
+            const meta = JSON.parse(updatedPost.mediaUrl);
+            automationStatus = meta.automationStatus || 'Paused';
+          } catch (e) {}
+        }
+
+        const isPaused = (automationStatus === 'Paused') || !updatedPost.triggerKeyword || !updatedPost.autoResponse;
+
+        console.log(`🔄 Syncing Campaign for post IDs ${postIds}. Paused status: ${isPaused}`);
+
         await Campaign.findOneAndUpdate(
-          { userId: req.user.userId, postId: updatedPost.postId },
+          { userId: req.user.userId, postId: { $in: postIds } },
           { 
-            triggerKeyword: updatedPost.triggerKeyword, 
-            autoResponse: updatedPost.autoResponse,
-            publicReply: updatedPost.publicReply
+            trigger: updatedPost.triggerKeyword || '*', 
+            response: updatedPost.autoResponse || '',
+            publicReplyText: updatedPost.publicReply || '',
+            status: isPaused ? 'Paused' : 'Active'
           }
         );
       }
@@ -1440,7 +1474,30 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
   try {
-    await ScheduledPost.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+    const postToDelete = await ScheduledPost.findOne({ _id: req.params.id, userId: req.user.userId });
+    if (postToDelete) {
+      let igMediaId = null;
+      if (postToDelete.mediaUrl && postToDelete.mediaUrl.startsWith('{')) {
+        try {
+          const meta = JSON.parse(postToDelete.mediaUrl);
+          igMediaId = meta.instagramMediaId;
+        } catch (e) {}
+      }
+
+      const postIds = [];
+      if (postToDelete.postId) postIds.push(postToDelete.postId);
+      if (igMediaId) postIds.push(igMediaId);
+
+      if (postIds.length > 0) {
+        console.log(`🗑️ Deleting associated campaigns for scheduled post IDs:`, postIds);
+        await Campaign.deleteMany({
+          userId: req.user.userId,
+          postId: { $in: postIds }
+        });
+      }
+      
+      await ScheduledPost.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+    }
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
