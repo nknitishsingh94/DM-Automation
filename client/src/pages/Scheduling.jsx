@@ -517,7 +517,7 @@ export default function Scheduling() {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {posts.map(post => {
             // Smart Media Parser
             let mediaData = { type: 'image', mediaUrl: post.mediaUrl };
@@ -536,64 +536,47 @@ export default function Scheduling() {
                 key={post._id}
                 className="scheduling-card"
                 style={{
-                  background: 'white', borderRadius: '28px', overflow: 'hidden',
-                  border: '1px solid #f1f5f9', boxShadow: '0 10px 30px rgba(0,0,0,0.04)',
-                  transition: 'all 0.3s ease',
-                  position: 'relative'
+                  background: 'white', borderRadius: '20px', overflow: 'hidden',
+                  border: '1px solid #f1f5f9', boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
+                  transition: 'all 0.3s ease', display: 'flex', alignItems: 'center',
+                  padding: '16px', gap: '20px', position: 'relative'
                 }}
               >
-                {/* Image Preview */}
-                <div style={{ height: '220px', background: '#f8fafc', position: 'relative' }}>
+                {/* Thumbnail Preview */}
+                <div style={{ width: '80px', height: '80px', borderRadius: '14px', overflow: 'hidden', background: '#f8fafc', flexShrink: 0, position: 'relative' }}>
                   {mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i)) ? (
                     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-                      <video
-                        src={finalMediaUrl}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)' }}>
-                        <Film size={40} color="white" />
+                      <video src={finalMediaUrl} muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)' }}>
+                        <Film size={18} color="white" />
                       </div>
                     </div>
                   ) : (
-                    <img
-                      src={finalMediaUrl}
-                      alt="Preview"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
+                    <img src={finalMediaUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   )}
+                </div>
 
-                  {/* Status Badge */}
-                  <div style={{
-                    position: 'absolute', top: '16px', left: '16px',
-                    background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(4px)',
-                    padding: '6px 14px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '6px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                  }}>
-                    {post.status === 'Retrying' ? (
-                      <div style={{
-                        width: '8px', height: '8px', borderRadius: '50%',
-                        border: '2px solid #f59e0b', borderTopColor: 'transparent',
-                        animation: 'spin 0.8s linear infinite'
-                      }}></div>
-                    ) : (
-                      <div style={{
-                        width: '8px', height: '8px', borderRadius: '50%',
-                        background: post.status === 'Posted' ? '#10b981'
-                          : post.status === 'Failed' ? '#ef4444'
-                          : '#7c3aed'
-                      }}></div>
-                    )}
-                    <span style={{
-                      fontSize: '0.75rem', fontWeight: '800',
-                      color: post.status === 'Posted' ? '#059669'
-                        : post.status === 'Failed' ? '#dc2626'
-                        : post.status === 'Retrying' ? '#d97706'
-                        : '#1e1b4b'
-                    }}>
-                      {post.status === 'Retrying'
-                        ? `Retrying${post.retryCount ? ` (${post.retryCount}/5)` : ''}...`
-                        : (post.status || 'SCHEDULED')}
-                    </span>
+                {/* Details Section */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                    {/* Status Badge */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#f8fafc', padding: '4px 10px', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+                      {post.status === 'Retrying' ? (
+                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', border: '1.5px solid #f59e0b', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
+                      ) : (
+                        <div style={{
+                          width: '6px', height: '6px', borderRadius: '50%',
+                          background: post.status === 'Posted' ? '#10b981' : post.status === 'Failed' ? '#ef4444' : '#7c3aed'
+                        }} />
+                      )}
+                      <span style={{
+                        fontSize: '0.65rem', fontWeight: '800',
+                        color: post.status === 'Posted' ? '#059669' : post.status === 'Failed' ? '#dc2626' : post.status === 'Retrying' ? '#d97706' : '#1e1b4b'
+                      }}>
+                        {post.status === 'Retrying' ? `Retrying${post.retryCount ? ` (${post.retryCount}/5)` : ''}` : (post.status || 'SCHEDULED')}
+                      </span>
+                    </div>
+
                     {/* Automation Status Mini-Toggle */}
                     {(post.autoResponse || post.triggerKeyword) && (
                       <div
@@ -605,88 +588,80 @@ export default function Scheduling() {
                         style={{
                           width: '24px', height: '12px', borderRadius: '6px',
                           background: post.automationStatus === 'Paused' ? '#cbd5e1' : '#10b981',
-                          position: 'relative', cursor: 'pointer', marginLeft: '4px'
-                        }}>
+                          position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center'
+                        }}
+                        title="Toggle Automation"
+                      >
                         <div style={{
-                          width: '10px', height: '10px', borderRadius: '50%', background: 'white',
-                          position: 'absolute', top: '1px', left: post.automationStatus === 'Paused' ? '1px' : '13px',
+                          width: '8px', height: '8px', borderRadius: '50%', background: 'white',
+                          position: 'absolute', top: '2px', left: post.automationStatus === 'Paused' ? '2px' : '14px',
                           transition: '0.2s'
-                        }}></div>
+                        }} />
                       </div>
                     )}
+
+                    {/* Post Type Badge */}
+                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', background: '#f1f5f9', padding: '4px 8px', borderRadius: '6px' }}>
+                      {post.type || 'IMAGE'}
+                    </div>
                   </div>
 
-                  <div style={{
-                    position: 'absolute', top: '16px', right: '16px',
-                    background: 'rgba(30, 27, 75, 0.7)', backdropFilter: 'blur(4px)',
-                    color: 'white', padding: '6px 12px', borderRadius: '10px', fontSize: '0.7rem', fontWeight: '800'
+                  {/* Caption & Date Row */}
+                  <h4 style={{
+                    fontSize: '0.95rem', fontWeight: '700', color: '#1e1b4b', margin: '0 0 6px 0',
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
                   }}>
-                    {(post.type || 'IMAGE').toUpperCase()}
-                  </div>
-                </div>
+                    {post.caption || 'No caption provided.'}
+                  </h4>
 
-                {/* Card Details */}
-                <div style={{ padding: '24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', color: '#64748b' }}>
-                    <Calendar size={14} />
-                    <span style={{ fontSize: '0.85rem', fontWeight: '700' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.8rem', fontWeight: '600' }}>
+                    <Calendar size={12} />
+                    <span>
                       {new Date(post.scheduledFor).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </span>
-                    <span style={{ color: '#cbd5e1' }}>•</span>
-                    <Clock size={14} />
-                    <span style={{ fontSize: '0.85rem', fontWeight: '700' }}>
+                    <span>•</span>
+                    <Clock size={12} />
+                    <span>
                       {new Date(post.scheduledFor).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
+                </div>
 
-                  <p style={{
-                    fontSize: '0.95rem', fontWeight: '600', color: '#1e293b', marginBottom: '20px',
-                    display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '2.8rem'
-                  }}>
-                    {post.caption || 'No caption provided.'}
-                  </p>
+                {/* Action Buttons */}
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+                  <button
+                    onClick={() => {
+                      setCreatedPost({
+                        ...post,
+                        anyKeyword: post.triggerKeyword === '*',
+                        automationStatus: post.automationStatus || 'Active'
+                      });
+                      setShowAdvanced(true);
+                    }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '6px',
+                      padding: '10px 16px', borderRadius: '12px', border: '1px solid #f5f3ff',
+                      background: '#f5f3ff', color: '#7c3aed', fontWeight: '800', cursor: 'pointer',
+                      transition: 'all 0.2s', fontSize: '0.8rem'
+                    }}
+                  >
+                    <Zap size={14} /> <span className="mobile-hide">Automation</span>
+                  </button>
 
-                  <div style={{ display: 'flex', gap: '12px' }}>
-                    <button
-                      onClick={() => deletePost(post._id)}
-                      style={{
-                        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                        padding: '12px', borderRadius: '14px', border: '1.5px solid #fee2e2',
-                        background: 'white', color: '#ef4444', fontWeight: '800', cursor: 'pointer',
-                        transition: 'all 0.2s'
-                      }}
-                      onMouseOver={(e) => e.target.style.background = '#fef2f2'}
-                      onMouseOut={(e) => e.target.style.background = 'white'}
-                    >
-                      <Trash2 size={16} /> Cancel
-                    </button>
-                    <button
-                      onClick={() => {
-                        setCreatedPost({
-                          ...post,
-                          anyKeyword: post.triggerKeyword === '*',
-                          automationStatus: post.automationStatus || 'Active'
-                        });
-                        setShowAdvanced(true);
-                      }}
-                      style={{
-                        flex: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                        padding: '12px', borderRadius: '14px', border: '1.5px solid #f5f3ff',
-                        background: '#f5f3ff', color: '#7c3aed', fontWeight: '800', cursor: 'pointer',
-                        transition: 'all 0.2s'
-                      }}
-                    >
-                      <Zap size={16} /> Automation
-                    </button>
-                    <button
-                      style={{
-                        padding: '12px', borderRadius: '14px', border: '1.5px solid #e2e8f0',
-                        background: 'white', color: '#64748b', cursor: 'pointer'
-                      }}
-                    >
-                      <Eye size={18} />
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => deletePost(post._id)}
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      width: '38px', height: '38px', borderRadius: '12px', border: '1px solid #fee2e2',
+                      background: 'white', color: '#ef4444', cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'white'}
+                    title="Cancel/Delete Post"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               </div>
             );
