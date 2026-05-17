@@ -1185,10 +1185,15 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
           const fileName = `${Date.now()}-${file.filename}`;
           const publicUrl = await uploadToSupabase(fileContent, fileName, file.mimetype);
           
-          // Cleanup local file
-          try { fs.unlinkSync(file.path); } catch (e) {}
-          
-          return publicUrl;
+          if (publicUrl) {
+            // Cleanup local file since it was successfully uploaded to cloud
+            try { fs.unlinkSync(file.path); } catch (e) {}
+            return publicUrl;
+          } else {
+            // Fallback: Supabase failed, keep local file and return local static URL!
+            console.log(`⚠️ Supabase upload failed, falling back to local static URL for: ${file.filename}`);
+            return `/uploads/${file.filename}`;
+          }
         } catch (err) {
           console.error(`❌ Upload Failed for file: ${file.filename}`, err.message);
           return null;
