@@ -450,9 +450,30 @@ export default function Scheduling() {
                     padding: '6px 14px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '6px',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                   }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: post.status === 'Posted' ? '#10b981' : '#7c3aed' }}></div>
-                    <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#1e1b4b' }}>
-                      {post.status || 'SCHEDULED'}
+                    {post.status === 'Retrying' ? (
+                      <div style={{
+                        width: '8px', height: '8px', borderRadius: '50%',
+                        border: '2px solid #f59e0b', borderTopColor: 'transparent',
+                        animation: 'spin 0.8s linear infinite'
+                      }}></div>
+                    ) : (
+                      <div style={{
+                        width: '8px', height: '8px', borderRadius: '50%',
+                        background: post.status === 'Posted' ? '#10b981'
+                          : post.status === 'Failed' ? '#ef4444'
+                          : '#7c3aed'
+                      }}></div>
+                    )}
+                    <span style={{
+                      fontSize: '0.75rem', fontWeight: '800',
+                      color: post.status === 'Posted' ? '#059669'
+                        : post.status === 'Failed' ? '#dc2626'
+                        : post.status === 'Retrying' ? '#d97706'
+                        : '#1e1b4b'
+                    }}>
+                      {post.status === 'Retrying'
+                        ? `Retrying${post.retryCount ? ` (${post.retryCount}/5)` : ''}...`
+                        : (post.status || 'SCHEDULED')}
                     </span>
                     {/* Automation Status Mini-Toggle */}
                     {(post.autoResponse || post.triggerKeyword) && (

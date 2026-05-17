@@ -1818,7 +1818,7 @@ setInterval(async () => {
     
     const duePosts = await ScheduledPost.find({
       scheduledFor: { $lte: nowISO },
-      status: 'Scheduled'
+      status: { $in: ['Scheduled', 'Retrying'] }
     });
 
     if (duePosts.length > 0) {
@@ -1908,12 +1908,33 @@ setInterval(async () => {
         console.log(`✅ SUCCESS: Post ${post._id} is now LIVE on Instagram.`);
       } catch (postErr) {
         console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);
-        // Fallback to 'Scheduled' for retry if it was a transient Meta error
-        const isTransient = postErr.message?.includes('timeout') || postErr.message?.includes('processing');
-        await ScheduledPost.findByIdAndUpdate(post._id, { 
-          status: isTransient ? 'Scheduled' : 'Failed',
-          lastError: postErr.message 
-        });
+
+        // ── SMART RETRY SYSTEM ────────────────────────────────────────────────
+        // Don't mark as Failed immediately. Retry up to 5 times within 30 mins.
+        const currentRetryCount = (post.retryCount || 0) + 1;
+        const MAX_RETRIES = 5;
+        const MAX_RETRY_WINDOW_MINUTES = 30;
+        const scheduledAt = new Date(post.scheduledFor);
+        const minutesSinceScheduled = (Date.now() - scheduledAt.getTime()) / 60000;
+        const withinRetryWindow = minutesSinceScheduled < MAX_RETRY_WINDOW_MINUTES;
+
+        if (currentRetryCount <= MAX_RETRIES && withinRetryWindow) {
+          // Still within retry window — mark as Retrying, not Failed
+          console.log(`🔁 RETRY ${currentRetryCount}/${MAX_RETRIES}: Will retry post ${post._id} in next worker cycle.`);
+          await ScheduledPost.findByIdAndUpdate(post._id, {
+            status: 'Retrying',
+            retryCount: currentRetryCount,
+            lastError: postErr.message
+          });
+        } else {
+          // Exhausted retries or past 30-minute window — mark as truly Failed
+          console.error(`🛑 GIVING UP on Post ${post._id} after ${currentRetryCount} attempts. Marking as Failed.`);
+          await ScheduledPost.findByIdAndUpdate(post._id, {
+            status: 'Failed',
+            retryCount: currentRetryCount,
+            lastError: postErr.message
+          });
+        }
       }
     }
   } catch (err) {
