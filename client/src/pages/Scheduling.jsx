@@ -362,9 +362,9 @@ export default function Scheduling() {
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', animation: 'fadeIn 0.4s ease-out' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', flexWrap: 'wrap', gap: '20px' }}>
         <div>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '12px', letterSpacing: '-0.5px' }}>
+          <h1 style={{ fontSize: '2.4rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '8px', letterSpacing: '-0.5px' }}>
             Content <span style={{ color: '#7c3aed' }}>Scheduler</span>
           </h1>
           <p style={{ color: '#64748b', fontSize: '1.05rem', fontWeight: '500' }}>
@@ -376,15 +376,21 @@ export default function Scheduling() {
             onClick={() => setShowCreate(true)}
             style={{
               display: 'flex', alignItems: 'center', gap: '8px',
-              background: '#0f172a', color: 'white', padding: '14px 24px', borderRadius: '14px',
-              fontWeight: '700', border: 'none', cursor: 'pointer', boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
-              transition: 'all 0.2s ease'
+              background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', padding: '16px 28px', borderRadius: '16px',
+              fontWeight: '800', border: 'none', cursor: 'pointer', boxShadow: '0 10px 25px rgba(124,58,237,0.3)',
+              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)', fontSize: '0.95rem'
             }}
-            onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-            onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = 'translateY(-3px)';
+              e.currentTarget.style.boxShadow = '0 15px 30px rgba(124,58,237,0.4)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 10px 25px rgba(124,58,237,0.3)';
+            }}
           >
-            <Plus size={20} />
-            <span className="mobile-hide">Schedule New Post</span>
+            <Plus size={20} strokeWidth={2.5} />
+            <span>Schedule New Post</span>
           </button>
         )}
       </div>
