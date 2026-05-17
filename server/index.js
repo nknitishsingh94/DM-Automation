@@ -252,7 +252,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   // If the user has a pending campaign (was gated by Follow Check),
   // we check if they have followed now. This allows desktop users
   // (who can't see the "I Followed" button) to just follow and send ANY message to continue.
-  if (contact && contact.pendingCampaignId) {
+  if (contact && contact.pendingCampaignId && !contact.pendingCampaignId.startsWith('OPENING:')) {
     console.log(`📡 [DESKTOP FALLBACK] User ${chatId} has pending campaign ${contact.pendingCampaignId}. Checking follow status...`);
     const isFollowing = await checkFollowerStatus(platform, chatId, userId);
     
@@ -281,12 +281,12 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   // --- DESKTOP FALLBACK: Opening Message Re-check ---
   // If the user was sent an "Opening Message" (Double opt-in), and they reply with text,
   // we treat it as if they clicked the button.
-  if (contact && contact.pendingOpeningCampaignId) {
+  if (contact && contact.pendingCampaignId && contact.pendingCampaignId.startsWith('OPENING:')) {
     console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied to Opening Message. Triggering final response.`);
-    const pendingId = contact.pendingOpeningCampaignId;
+    const pendingId = contact.pendingCampaignId.replace('OPENING:', '');
     
     // Clear pending status
-    await Contact.findOneAndUpdate({ userId, chatId }, { $unset: { pendingOpeningCampaignId: 1 } });
+    await Contact.findOneAndUpdate({ userId, chatId }, { $unset: { pendingCampaignId: 1 } });
     
     const match = await Campaign.findById(pendingId);
     if (match && match.status === 'Active') {
@@ -417,10 +417,10 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       const openingSent = await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, btnText, activeToken, [], payload, commentId);
 
       if (openingSent) {
-        // Track that this user is waiting for an opening message confirmation
+        // Track that this user is waiting for an opening message confirmation (using pendingCampaignId with OPENING: prefix)
         await Contact.findOneAndUpdate(
           { userId, chatId },
-          { pendingOpeningCampaignId: match._id, lastActive: new Date() },
+          { pendingCampaignId: `OPENING:${match._id}`, lastActive: new Date() },
           { upsert: true }
         );
 
@@ -820,7 +820,7 @@ app.post('/api/webhook', async (req, res) => {
             // Find if this user has a pending automation
             const contact = await Contact.findOne({ chatId: senderId });
 
-            if (contact && contact.pendingCampaignId) {
+            if (contact && contact.pendingCampaignId && !contact.pendingCampaignId.startsWith('OPENING:')) {
               console.log(`🎯 AUTO-TRIGGER: User ${senderId} followed! Sending pending campaign ${contact.pendingCampaignId}`);
 
               const targetUserId = contact.userId;
