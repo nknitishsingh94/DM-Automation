@@ -90,9 +90,9 @@ function parseFilter(q, queryObj, tableName) {
   }
 
   const fieldMap = {
-    'userId': (['settings', 'campaigns', 'scheduled_posts', 'flows'].includes(tableName)) ? 'userId' : 'user_id',
-    'createdAt': (['settings', 'campaigns', 'scheduled_posts', 'flows'].includes(tableName)) ? 'createdAt' : 'created_at',
-    'updatedAt': (['settings', 'campaigns', 'scheduled_posts', 'flows'].includes(tableName)) ? 'updatedAt' : 'updated_at',
+    'userId': (tableName === 'captions') ? 'user_id' : 'userId',
+    'createdAt': (tableName === 'scheduled_posts' || tableName === 'captions') ? 'created_at' : 'createdAt',
+    'updatedAt': (tableName === 'scheduled_posts' || tableName === 'captions') ? 'updated_at' : 'updatedAt',
     'dmsSent': 'dmsSent',
     'trigger': 'trigger',
     'response': 'response',
@@ -103,10 +103,10 @@ function parseFilter(q, queryObj, tableName) {
     'publicReplyText': 'publicReplyText',
     'isUniversal': 'isUniversal',
     'status': 'status',
-    'isAI': 'is_ai',
-    'timestamp': 'created_at',
-    'chatId': 'chat_id',
-    'automationStatus': 'automation_status'
+    'isAI': 'isAI',
+    'timestamp': 'timestamp',
+    'chatId': 'chatId',
+    'automationStatus': 'automationStatus'
   };
 
   for (const [key, v] of Object.entries(queryObj)) {
@@ -118,7 +118,7 @@ function parseFilter(q, queryObj, tableName) {
     let parsedKey = (key === '_id' || key === 'id') ? 'id' : (fieldMap[key] || key);
     
     // UUID Safety Check: Prevents Postgres from crashing on invalid UUID syntax
-    const uuidColumns = ['id', 'chatId', 'chat_id'];
+    const uuidColumns = ['id'];
     if (tableName !== 'settings') {
       uuidColumns.push('userId', 'user_id');
     }
@@ -141,7 +141,7 @@ function parseFilter(q, queryObj, tableName) {
         const subVal = subValRaw instanceof Date ? subValRaw.toISOString() : subValRaw;
         let subParsedKey = subKey === '_id' || subKey === 'id' ? 'id' : subKey;
         if (subKey === 'userId') {
-          subParsedKey = (tableName === 'settings' || tableName === 'campaigns') ? 'userId' : 'user_id';
+          subParsedKey = (tableName === 'captions') ? 'user_id' : 'userId';
         }
         return `${subParsedKey}.eq.${subVal}`;
       }).join(',');
@@ -215,31 +215,28 @@ function convertOutgoing(doc, tableName) {
   // Per-table mapping based on verified schema
   if (newDoc.userId) {
     const mappedUserId = convertObjectIDToUUID(newDoc.userId);
-    if (tableName === 'settings' || tableName === 'campaigns' || tableName === 'scheduled_posts') {
-      newDoc.userId = mappedUserId;
-    } else {
+    if (tableName === 'captions') {
       newDoc.user_id = mappedUserId;
+      delete newDoc.userId;
+    } else {
+      newDoc.userId = mappedUserId;
+      delete newDoc.user_id;
     }
   }
 
   if (newDoc.createdAt) {
-    const fieldName = (tableName === 'settings' || tableName === 'campaigns') ? 'createdAt' : 'created_at';
+    const fieldName = (tableName === 'scheduled_posts' || tableName === 'captions') ? 'created_at' : 'createdAt';
     newDoc[fieldName] = newDoc.createdAt;
     if (fieldName !== 'createdAt') delete newDoc.createdAt;
   }
   if (newDoc.updatedAt) {
-    const fieldName = (tableName === 'settings' || tableName === 'campaigns') ? 'updatedAt' : 'updated_at';
+    const fieldName = (tableName === 'scheduled_posts' || tableName === 'captions') ? 'updated_at' : 'updatedAt';
     newDoc[fieldName] = newDoc.updatedAt;
     if (fieldName !== 'updatedAt') delete newDoc.updatedAt;
   }
   
   if (newDoc.automationStatus) {
-    if (['settings', 'campaigns', 'scheduled_posts', 'flows'].includes(tableName)) {
-      newDoc.automationStatus = newDoc.automationStatus;
-    } else {
-      newDoc.automation_status = newDoc.automationStatus;
-      delete newDoc.automationStatus;
-    }
+    delete newDoc.automation_status;
   }
 
   if (tableName === 'campaigns') {
