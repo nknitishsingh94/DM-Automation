@@ -371,6 +371,22 @@ export default function Scheduling() {
             Plan, Manage and Automate your Instagram content effortlessly.
           </p>
         </div>
+        {posts.length > 0 && (
+          <button
+            onClick={() => setShowCreate(true)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+              background: '#0f172a', color: 'white', padding: '14px 24px', borderRadius: '14px',
+              fontWeight: '700', border: 'none', cursor: 'pointer', boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <Plus size={20} />
+            <span className="mobile-hide">Schedule New Post</span>
+          </button>
+        )}
       </div>
 
       {posts.length === 0 ? (
