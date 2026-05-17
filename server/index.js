@@ -1142,30 +1142,88 @@ app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
 app.get('/api/scheduling', verifyToken, async (req, res) => {
   try {
     const posts = await ScheduledPost.find({ userId: req.user.userId }).sort({ scheduledFor: 1 });
-    // Handle serialized metadata
-    const processedPosts = posts.map(post => {
+    
+    // Fetch user settings once to use across posts
+    const userSettings = await Settings.findOne({ userId: req.user.userId });
+    const accessToken = userSettings?.instagramAccessToken;
+
+    // Handle serialized metadata and fetch live image for Posted status
+    const processedPosts = await Promise.all(posts.map(async (post) => {
       const p = post.toObject ? post.toObject() : { ...post };
+      
+      let instagramMediaId = null;
+      let cachedLiveMediaUrl = null;
+      let localImage = p.mediaUrl;
+      let parsedMeta = null;
+
       if (p.mediaUrl && p.mediaUrl.startsWith('{')) {
         try {
-          const meta = JSON.parse(p.mediaUrl);
-          p.type = meta.type || p.type;
-          p.carouselItems = meta.carouselItems || [];
-          p.buttons = meta.buttons || [];
-          p.requireFollow = meta.requireFollow !== undefined ? meta.requireFollow : false;
-          p.unfollowedResponse = meta.unfollowedResponse || '';
-          p.publicReply = meta.publicReply || '';
-          p.automationStatus = meta.automationStatus || 'Paused';
-          p.anyKeyword = meta.anyKeyword !== undefined ? meta.anyKeyword : false;
-          p.mediaUrl = meta.mediaUrl || (p.carouselItems.length > 0 ? p.carouselItems[0] : '');
+          parsedMeta = JSON.parse(p.mediaUrl);
+          p.type = parsedMeta.type || p.type;
+          p.carouselItems = parsedMeta.carouselItems || [];
+          p.buttons = parsedMeta.buttons || [];
+          p.requireFollow = parsedMeta.requireFollow !== undefined ? parsedMeta.requireFollow : false;
+          p.unfollowedResponse = parsedMeta.unfollowedResponse || '';
+          p.publicReply = parsedMeta.publicReply || '';
+          p.automationStatus = parsedMeta.automationStatus || 'Paused';
+          p.anyKeyword = parsedMeta.anyKeyword !== undefined ? parsedMeta.anyKeyword : false;
+          p.mediaUrl = parsedMeta.mediaUrl || (p.carouselItems.length > 0 ? p.carouselItems[0] : '');
+          
+          instagramMediaId = parsedMeta.instagramMediaId || null;
+          cachedLiveMediaUrl = parsedMeta.cachedLiveMediaUrl || null;
+          localImage = p.mediaUrl;
         } catch (e) {}
       } else if (p.mediaUrl && p.mediaUrl.startsWith('[')) {
         try {
           p.carouselItems = JSON.parse(p.mediaUrl);
           p.mediaUrl = p.carouselItems[0];
+          localImage = p.mediaUrl;
         } catch (e) {}
       }
+
+      // --- EXPECTED FLOW IMPLEMENTATION ---
+      if (p.status === 'Posted') {
+        if (cachedLiveMediaUrl) {
+          p.mediaUrl = cachedLiveMediaUrl;
+        } else if (instagramMediaId && accessToken) {
+          try {
+            // First priority: Fetch actual live image from Meta Platforms API
+            console.log(`🌐 [Meta API] Fetching live image for post ${p._id} (Media ID: ${instagramMediaId})...`);
+            const metaRes = await axios.get(`https://graph.facebook.com/v19.0/${instagramMediaId}`, {
+              params: {
+                fields: 'media_url,thumbnail_url',
+                access_token: accessToken
+              },
+              timeout: 4000 // Fast timeout so it doesn't block frontend load
+            });
+
+            if (metaRes.data && (metaRes.data.media_url || metaRes.data.thumbnail_url)) {
+              const liveUrl = metaRes.data.thumbnail_url || metaRes.data.media_url;
+              p.mediaUrl = liveUrl;
+
+              // Cache it back to DB to optimize future API requests
+              if (parsedMeta) {
+                parsedMeta.cachedLiveMediaUrl = liveUrl;
+                await ScheduledPost.findByIdAndUpdate(p.id || p._id, { mediaUrl: JSON.stringify(parsedMeta) });
+              }
+            } else {
+              p.mediaUrl = localImage; // Fallback
+            }
+          } catch (error) {
+            console.error(`⚠️ [Meta API Fallback] Failed to fetch live image:`, error.message);
+            p.mediaUrl = localImage; // Fallback
+          }
+        } else {
+          p.mediaUrl = localImage; // Fallback
+        }
+      } else {
+        // Status is "scheduling" / "Scheduled" / "Retrying" / "Failed"
+        p.mediaUrl = localImage;
+      }
+
       return p;
-    });
+    }));
+
     res.json(processedPosts);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1916,7 +1974,24 @@ setInterval(async () => {
           console.log(`✨ AUTOMATION LIVE: Post ${publishedId} is now guarded by bot (Followers Gated: ${requireFollow}).`);
         }
 
-        await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted' });
+        let updatedMediaUrl = post.mediaUrl;
+        if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
+          try {
+            const meta = JSON.parse(post.mediaUrl);
+            meta.instagramMediaId = publishedId;
+            updatedMediaUrl = JSON.stringify(meta);
+          } catch (e) {}
+        } else {
+          updatedMediaUrl = JSON.stringify({
+            mediaUrl: post.mediaUrl,
+            instagramMediaId: publishedId
+          });
+        }
+
+        await ScheduledPost.findByIdAndUpdate(post._id, { 
+          status: 'Posted',
+          mediaUrl: updatedMediaUrl
+        });
         console.log(`✅ SUCCESS: Post ${post._id} is now LIVE on Instagram.`);
       } catch (postErr) {
         console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);
