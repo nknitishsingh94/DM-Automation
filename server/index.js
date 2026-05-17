@@ -1282,7 +1282,10 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
       unfollowedResponse: req.body.unfollowedResponse || '',
       publicReply: req.body.publicReply || '',
       automationStatus: req.body.automationStatus || 'Paused',
-      anyKeyword: req.body.anyKeyword !== undefined ? (req.body.anyKeyword === 'true' || req.body.anyKeyword === true) : false
+      anyKeyword: req.body.anyKeyword !== undefined ? (req.body.anyKeyword === 'true' || req.body.anyKeyword === true) : false,
+      openingMessage: req.body.openingMessage !== undefined ? (req.body.openingMessage === 'true' || req.body.openingMessage === true) : false,
+      openingMessageText: req.body.openingMessageText || '',
+      openingMessageButton: req.body.openingMessageButton || ''
     };
     
     const finalMediaUrl = JSON.stringify(metadata);
@@ -1315,6 +1318,8 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
     delete postData.automationStatus;
     delete postData.anyKeyword;
     delete postData.openingMessage;
+    delete postData.openingMessageText;
+    delete postData.openingMessageButton;
 
     console.log(`📡 Checking user existence for: ${req.user.userId}`);
     const userExists = await User.findById(req.user.userId);
@@ -1396,6 +1401,9 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     if (updateData.publicReply !== undefined) currentMetadata.publicReply = updateData.publicReply;
     if (updateData.automationStatus !== undefined) currentMetadata.automationStatus = updateData.automationStatus;
     if (updateData.anyKeyword !== undefined) currentMetadata.anyKeyword = updateData.anyKeyword;
+    if (updateData.openingMessage !== undefined) currentMetadata.openingMessage = updateData.openingMessage;
+    if (updateData.openingMessageText !== undefined) currentMetadata.openingMessageText = updateData.openingMessageText;
+    if (updateData.openingMessageButton !== undefined) currentMetadata.openingMessageButton = updateData.openingMessageButton;
 
     updateData.mediaUrl = JSON.stringify(currentMetadata);
 
@@ -1405,6 +1413,8 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     delete updateData.carouselItems;
     delete updateData.anyKeyword;
     delete updateData.openingMessage;
+    delete updateData.openingMessageText;
+    delete updateData.openingMessageButton;
     delete updateData.requireFollow;
     delete updateData.unfollowedResponse;
     delete updateData.publicReply;
@@ -2003,6 +2013,10 @@ setInterval(async () => {
         let unfollowedResponse = '';
         let publicReply = '';
         let automationStatus = 'Paused';
+        let openingMessage = false;
+        let openingMessageText = '';
+        let openingMessageButton = '';
+        let buttons = [];
 
         if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
           try {
@@ -2011,6 +2025,10 @@ setInterval(async () => {
             unfollowedResponse = meta.unfollowedResponse || '';
             publicReply = meta.publicReply || '';
             automationStatus = meta.automationStatus || 'Paused';
+            openingMessage = meta.openingMessage || false;
+            openingMessageText = meta.openingMessageText || '';
+            openingMessageButton = meta.openingMessageButton || '';
+            buttons = meta.buttons || [];
           } catch (e) {}
         }
 
@@ -2025,7 +2043,11 @@ setInterval(async () => {
             postId: publishedId,
             requireFollow: requireFollow,
             unfollowedResponse: unfollowedResponse,
-            publicReply: publicReply
+            publicReplyText: publicReply,
+            openingMessage: openingMessage,
+            openingMessageText: openingMessageText,
+            openingMessageButton: openingMessageButton,
+            buttons: buttons
           });
           await campaign.save();
           console.log(`✨ AUTOMATION LIVE: Post ${publishedId} is now guarded by bot (Followers Gated: ${requireFollow}).`);
