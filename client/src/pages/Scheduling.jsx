@@ -944,16 +944,16 @@ export default function Scheduling() {
               <div style={{ padding: '40px 0', background: '#F8FAFC', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', overflowY: 'auto' }}>
                  {/* iPhone Mockup (Ultra Pro Max - Dark Mode) */}
                   {(() => {
-                    const previewData = newPost;
+                    const previewData = createdPost;
                   return (
                 <div style={{
-                  width: '380px', height: '800px', background: '#000', borderRadius: '60px', border: '16px solid #1e1b4b',
+                  width: '320px', height: '840px', background: '#000', borderRadius: '48px', border: '12px solid #1e1b4b',
                   position: 'relative', overflow: 'hidden', boxShadow: '0 60px 150px -40px rgba(0,0,0,0.5)',
                   display: 'flex', flexDirection: 'column'
                 }}>
                  <style>{`
                    .custom-ig-scroller::-webkit-scrollbar {
-                     width: 4px;
+                     width: 6px;
                    }
                    .custom-ig-scroller::-webkit-scrollbar-track {
                      background: #000;
@@ -971,12 +971,12 @@ export default function Scheduling() {
                  
                  {/* Realistic Notch (Dynamic Island) */}
                  <div style={{
-                   position: 'absolute', top: '12px', left: '50%', transform: 'translateX(-50%)',
-                   width: '90px', height: '22px', background: '#000', borderRadius: '20px', zIndex: 100
+                   position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)',
+                   width: '75px', height: '18px', background: '#000', borderRadius: '20px', zIndex: 100
                  }}></div>
 
                  {/* Status Bar (Dark Mode) */}
-                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 28px 8px', fontSize: '0.75rem', fontWeight: '800', color: '#FFF', zIndex: 50 }}>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 20px 8px', fontSize: '0.65rem', fontWeight: '800', color: '#FFF', zIndex: 50 }}>
                    <span>9:41</span>
                    <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
                      <Zap size={10} fill="white" />
@@ -987,32 +987,32 @@ export default function Scheduling() {
                  </div>
 
                  {/* IG Profile Header (Premium Dark) */}
-                 <div style={{ padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '12px', background: '#000', zIndex: 10 }}>
-                   <ChevronLeft size={22} color="white" />
+                 <div style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '10px', background: '#000', zIndex: 10 }}>
+                   <ChevronLeft size={20} color="white" />
                    <div style={{ 
-                     width: '32px', height: '32px', borderRadius: '50%', 
+                     width: '28px', height: '28px', borderRadius: '50%', 
                      background: user?.profilePhoto 
                         ? (user.profilePhoto.startsWith('http') ? `url(${user.profilePhoto})` : `url(${API_BASE_URL}/${user.profilePhoto})`)
                         : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
                      backgroundSize: 'cover', backgroundPosition: 'center',
-                     display: 'flex', alignItems: 'center', justifyContent: 'center' 
+                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                    }}>
-                      {!user?.profilePhoto && <span style={{ color: 'white', fontSize: '0.7rem', fontWeight: '900' }}>{(settings?.connectedInstagramName || user?.username || 'IG')[0]?.toUpperCase()}</span>}
+                      {!user?.profilePhoto && <span style={{ color: 'white', fontSize: '0.65rem', fontWeight: '900' }}>{(settings?.connectedInstagramName || user?.username || 'IG')[0]?.toUpperCase()}</span>}
                    </div>
                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                     <div style={{ color: 'white', fontSize: '0.9rem', fontWeight: '800' }}>
+                     <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '800' }}>
                        {settings?.connectedInstagramName || user?.username || 'monster_pk_8795'}
                      </div>
-                     <div style={{ width: '12px', height: '12px', background: '#0095f6', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                       <svg width="6" height="6" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                     <div style={{ width: '10px', height: '10px', background: '#0095f6', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                       <svg width="5" height="5" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                      </div>
                    </div>
                  </div>
 
-                 {/* Sub-Header: Posts (From Screenshot) */}
-                 <div style={{ padding: '8px 20px', display: 'flex', alignItems: 'center', gap: '10px', background: '#000', borderTop: '1px solid #1a1a1a', borderBottom: '1px solid #1a1a1a' }}>
-                   <ChevronLeft size={18} color="white" />
-                   <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '800', flex: 1, textAlign: 'center', marginRight: '18px' }}>Posts</div>
+                 {/* Sub-Header: DM Navigation */}
+                 <div style={{ padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '10px', background: '#000', borderTop: '1px solid #1a1a1a', borderBottom: '1px solid #1a1a1a' }}>
+                   <ChevronLeft size={16} color="white" />
+                   <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '800', flex: 1, textAlign: 'center', marginRight: '16px' }}>Chat Automation</div>
                  </div>
                  
                  <div style={{ flex: 1, background: '#000', display: 'flex', flexDirection: 'column', position: 'relative' }}>
@@ -1021,58 +1021,73 @@ export default function Scheduling() {
                     <div 
                       ref={chatRef} className="custom-ig-scroller"
                       style={{ 
-                        flex: 1, display: 'flex', flexDirection: 'column', padding: '28px', gap: '28px', 
+                        flex: 1, display: 'flex', flexDirection: 'column', padding: '16px', gap: '16px', 
                         overflowY: 'auto', background: '#000', minHeight: 0,
                         scrollBehavior: 'smooth'
                       }}
                     >
-                        {/* System Notification */}
-                        <div style={{ color: '#8e8e8e', fontSize: '0.75rem', textAlign: 'center', padding: '0 24px', lineHeight: '1.5', fontWeight: '500' }}>
-                           <span style={{ color: '#4f95ff', fontWeight: '700' }}>{(settings?.connectedInstagramName || user?.username || 'IG')}</span> messaged you about a comment you made on their post. <span style={{ color: '#4f95ff', fontWeight: '700' }}>See Post</span>
+                        {/* 1. User's triggering Comment */}
+                        <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-end', maxWidth: '85%' }}>
+                           <div style={{ background: '#3b82f6', color: '#FFF', padding: '10px 14px', borderRadius: '18px 18px 4px 18px', fontSize: '0.85rem', fontWeight: '500' }}>
+                              💬 Comment: "{previewData?.anyKeyword ? "Loved this! 🔥" : (previewData?.triggerKeyword?.split(',')[0]?.trim() || "keyword")}"
+                           </div>
                         </div>
 
-                        {/* Bot Message Card Bubble (Integrated - Dark Mode Card) */}
-                        <div style={{ alignSelf: 'flex-start', maxWidth: '90%', display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
-                           <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
+                        {/* 2. Bot's Public Comment Reply */}
+                        <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-start', maxWidth: '85%' }}>
+                           <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0, fontSize: '0.55rem', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>IG</div>
+                           <div style={{ background: '#262626', color: '#a3a3a3', padding: '10px 14px', borderRadius: '18px 18px 18px 4px', fontSize: '0.85rem', border: '1px solid #333' }}>
+                              💬 Reply: "{previewData?.publicReply || "Check your DMs! 🚀"}"
+                           </div>
+                        </div>
+
+                        {/* 3. System Notification */}
+                        <div style={{ color: '#8e8e8e', fontSize: '0.72rem', textAlign: 'center', padding: '8px 12px', background: '#121212', borderRadius: '12px', border: '1px solid #222', lineHeight: '1.4', fontWeight: '500' }}>
+                           ⚙️ <span style={{ color: '#4f95ff', fontWeight: '700' }}>System Automation</span>: Sent DM because user commented on your post.
+                        </div>
+
+                        {/* 4. Bot Message Card Bubble (Integrated - Dark Mode Card) */}
+                        <div style={{ alignSelf: 'flex-start', maxWidth: '90%', display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+                           <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
                            <div style={{ 
-                             background: '#262626', color: '#FFF', borderRadius: '24px 24px 24px 6px', 
+                             background: '#262626', color: '#FFF', borderRadius: '18px 18px 18px 4px', 
                              overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
                            }}>
-                              <div style={{ padding: '16px 20px', fontSize: '0.95rem', fontWeight: '500', lineHeight: '1.5' }}>
-                                 {previewData?.autoResponse || ""}
+                              <div style={{ padding: '12px 14px', fontSize: '0.85rem', fontWeight: '500', lineHeight: '1.4' }}>
+                                 {previewData?.autoResponse || "Here is your requested link! 👇"}
                               </div>
                               {/* Integrated Buttons (Interactive List style) */}
                               {(previewData?.buttons && previewData?.buttons.length > 0) && previewData.buttons.map((btn, i) => (
-                                 <div key={i} style={{ borderTop: '1px solid #363636', padding: '16px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636', cursor: 'pointer', transition: '0.2s', userSelect: 'none' }} onMouseOver={(e) => e.target.style.background = '#404040'} onMouseOut={(e) => e.target.style.background = '#363636'}>
-                                    {btn.text || 'Action Button'}
+                                 <div key={i} style={{ borderTop: '1px solid #363636', padding: '12px', textAlign: 'center', color: '#FFF', fontSize: '0.85rem', fontWeight: '800', background: '#363636', cursor: 'pointer', transition: '0.2s', userSelect: 'none' }} onMouseOver={(e) => e.target.style.background = '#404040'} onMouseOut={(e) => e.target.style.background = '#363636'}>
+                                    🔗 {btn.text || 'Action Button'}
                                  </div>
                               ))}
                            </div>
                         </div>
 
-                        {/* Follow Check Card Bubble (Gated Integrated - Dark Mode Card) */}
+                        {/* 5. Follow Check Card Bubble (Gated Integrated - Dark Mode Card) */}
                         {previewData?.requireFollow && (
-                          <div style={{ alignSelf: 'flex-start', maxWidth: '90%', display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
-                             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
+                          <div style={{ alignSelf: 'flex-start', maxWidth: '90%', display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+                             <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
                              <div style={{ 
-                               background: '#262626', color: '#FFF', borderRadius: '24px 24px 24px 6px', 
+                               background: '#262626', color: '#FFF', borderRadius: '18px 18px 18px 4px', 
                                overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
                              }}>
-                                <div style={{ padding: '16px 20px', fontSize: '0.95rem', fontWeight: '500', lineHeight: '1.5' }}>
-                                   {previewData?.unfollowedResponse || "Wait! You're not following me yet. Please follow to unlock the link! 🔒"}
+                                <div style={{ padding: '12px 14px', fontSize: '0.85rem', fontWeight: '500', lineHeight: '1.4', borderBottom: '1px solid #333' }}>
+                                   🔒 {previewData?.unfollowedResponse || "Wait! You're not following me yet. Please follow to unlock the link! 🔒"}
                                 </div>
-                                <div style={{ borderTop: '1px solid #363636', padding: '16px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636', cursor: 'pointer', transition: '0.2s' }} onMouseOver={(e) => e.target.style.background = '#404040'} onMouseOut={(e) => e.target.style.background = '#363636'}>
+                                <div style={{ padding: '12px', textAlign: 'center', color: '#4f95ff', fontSize: '0.85rem', fontWeight: '800', background: '#363636', cursor: 'pointer' }} onMouseOver={(e) => e.target.style.background = '#404040'} onMouseOut={(e) => e.target.style.background = '#363636'}>
                                    Visit Profile
                                 </div>
-                                <div style={{ borderTop: '1px solid #363636', padding: '16px', textAlign: 'center', color: '#FFF', fontSize: '0.95rem', fontWeight: '800', background: '#363636', cursor: 'pointer', transition: '0.2s' }} onMouseOver={(e) => e.target.style.background = '#404040'} onMouseOut={(e) => e.target.style.background = '#363636'}>
+                                <div style={{ borderTop: '1px solid #333', padding: '12px', textAlign: 'center', color: '#10b981', fontSize: '0.85rem', fontWeight: '800', background: '#363636', cursor: 'pointer' }} onMouseOver={(e) => e.target.style.background = '#404040'} onMouseOut={(e) => e.target.style.background = '#363636'}>
                                    I'm following ✅
                                 </div>
                              </div>
                           </div>
                         )}
 
-                        {/* User Reply Bubble (Signature Purple Gradient) */}
-                        <div style={{ alignSelf: 'flex-end', maxWidth: '85%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: '#FFF', padding: '16px 22px', borderRadius: '24px 24px 6px 24px', fontSize: '1rem', fontWeight: '600', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.2)' }}>
+                        {/* 6. User Reply Bubble (Signature Purple Gradient) */}
+                        <div style={{ alignSelf: 'flex-end', maxWidth: '85%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: '#FFF', padding: '12px 16px', borderRadius: '18px 18px 4px 18px', fontSize: '0.85rem', fontWeight: '600', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.2)' }}>
                            {previewData?.requireFollow ? "I'm following ✅" : "Checking it out! 👍"}
                         </div>
                         

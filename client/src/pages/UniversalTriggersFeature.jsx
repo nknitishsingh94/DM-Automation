@@ -120,7 +120,6 @@ export default function UniversalTriggersFeature() {
 
             <div style={{ position: 'relative' }}>
               <div style={{
-                background: '#ffffff',
                 borderRadius: '24px',
                 boxShadow: '0 40px 100px rgba(0,0,0,0.1)',
                 border: '1px solid #e2e8f0',
