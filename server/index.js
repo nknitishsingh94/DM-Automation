@@ -1659,9 +1659,11 @@ app.get('/api/instagram/media', verifyToken, async (req, res) => {
 
 app.post('/api/settings', verifyToken, async (req, res) => {
   try {
-    const data = { ...req.body, updatedAt: new Date() };
+    const data = { ...req.body };
     const platform = req.body._platform; // frontend sends which platform is being saved
     delete data._platform;
+    delete data.updatedAt; // Remove updatedAt as the 'settings' table doesn't have this column
+
 
     // ── Validate tokens against Meta Graph API ──
     if (platform === 'instagram') {

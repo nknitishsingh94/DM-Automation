@@ -152,15 +152,21 @@ export default function Settings() {
       
       if (!res.ok) {
         setMessage({ type: 'error', text: data.error || 'Connection failed.' });
+        notify(data.error || 'Connection failed.', 'error');
       } else {
         setSettings(s => ({ ...s, ...data }));
         if (e) {
           setMessage({ type: 'success', text: '✅ Settings saved successfully!' });
           setTimeout(() => setMessage({ type: '', text: '' }), 5000);
+          notify('Settings saved successfully!', 'success');
+        } else {
+          // Null event implies a disconnect or platform switch event triggered in settings
+          notify('Account status updated successfully!', 'success');
         }
       }
     } catch (err) {
       setMessage({ type: 'error', text: 'Network error.' });
+      notify('A network error occurred. Please check your connection.', 'error');
     } finally {
       setSavingSettings(false);
     }
