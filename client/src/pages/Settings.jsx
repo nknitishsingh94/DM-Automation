@@ -343,140 +343,203 @@ export default function Settings() {
             {showStatusDropdown && (
               <div className="filter-dropdown" style={{ right: 0, left: 'auto' }}>
                 <div onClick={() => { setStatusFilter('All statuses'); setShowStatusDropdown(false); }} className="filter-item">All statuses</div>
-                <div onClick={() => { setStatusFilter('Active'); setShowStatusDropdown(false); }} className="filter-item">Active</div>
+                <div onClick={() => { setStatusFilter('Connected'); setShowStatusDropdown(false); }} className="filter-item">Connected</div>
                 <div onClick={() => { setStatusFilter('Inactive'); setShowStatusDropdown(false); }} className="filter-item">Inactive</div>
               </div>
             )}
           </div>
 
+          {/* Reset Filters button matching screenshot */}
+          {(platformFilter !== 'All platforms' || statusFilter !== 'All statuses' || profileFilter !== 'All profiles') && (
+            <button 
+              onClick={() => {
+                setPlatformFilter('All platforms');
+                setStatusFilter('All statuses');
+                setProfileFilter('All profiles');
+                notify("Filters reset successfully", "info");
+              }}
+              style={{ 
+                background: 'transparent', border: 'none', color: '#6b7280', fontSize: '0.85rem', 
+                display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontWeight: '600',
+                padding: '8px 10px', transition: 'color 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.color = '#111827'}
+              onMouseOut={(e) => e.currentTarget.style.color = '#6b7280'}
+            >
+              <X size={15} style={{ verticalAlign: 'middle', marginTop: '-2px' }} /> Reset
+            </button>
+          )}
+
         </div>
       </div>
 
-      {/* Main Connection Table Card (matches screenshot empty slots or renders connected row) */}
+      {/* Main Connection Table Card (matches screenshot empty slots or renders connected card) */}
       <div style={{ 
         background: '#ffffff', 
         borderRadius: '12px', 
         border: '1px solid #e5e7eb', 
         boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
         overflow: 'hidden',
-        minHeight: '220px',
+        minHeight: '240px',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        padding: '24px'
       }}>
         
-        {settings.isAccountConnected ? (
-          /* Active Integration Row - Render Table style */
-          <div style={{ width: '100%' }}>
-            {/* Table Header */}
+        {settings.isAccountConnected && 
+         (statusFilter === 'All statuses' || statusFilter === 'Connected') && 
+         (platformFilter === 'All platforms' || platformFilter === 'Instagram') ? (
+          /* Active Integration Card Grid View - Replicates user screenshot perfectly */
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'flex-start' }}>
+            
             <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: '1.5fr 1fr 1fr 1fr', 
-              padding: '14px 24px', 
-              background: '#f9fafb', 
-              borderBottom: '1px solid #e5e7eb',
-              fontSize: '0.75rem',
-              fontWeight: '600',
-              color: '#4b5563',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
+              width: '240px',
+              border: '1px solid #e5e7eb',
+              borderRadius: '12px',
+              padding: '16px',
+              background: '#ffffff',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              position: 'relative'
             }}>
-              <span>Profile / Account</span>
-              <span>Platform</span>
-              <span>Status</span>
-              <span style={{ textAlign: 'right' }}>Actions</span>
-            </div>
-
-            {/* Connected Row */}
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: '1.5fr 1fr 1fr 1fr', 
-              padding: '24px', 
-              alignItems: 'center',
-              borderBottom: '1px solid #f3f4f6',
-              transition: 'background 0.2s'
-            }} onMouseOver={(e) => e.currentTarget.style.background = '#fafafa'} onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}>
-              
-              {/* Account Info */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ 
-                  width: '42px', height: '42px', borderRadius: '50%', 
-                  background: 'linear-gradient(135deg, #ec4899, #8b5cf6)', 
-                  color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontWeight: '600', fontSize: '0.9rem', boxShadow: '0 2px 5px rgba(236, 72, 153, 0.1)'
-                }}>
-                  {settings.connectedInstagramName ? settings.connectedInstagramName.substring(0,2).toUpperCase() : 'IG'}
+              {/* Header Row */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  {/* Rounded image avatar with tiny pink instagram overlay icon */}
+                  <div style={{ position: 'relative', width: '42px', height: '42px' }}>
+                    <img 
+                      src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&auto=format&fit=crop&q=60" 
+                      alt="Instagram Avatar" 
+                      style={{ width: '42px', height: '42px', borderRadius: '8px', objectFit: 'cover' }}
+                    />
+                    <div style={{ 
+                      position: 'absolute', bottom: '-2px', right: '-2px', 
+                      width: '16px', height: '16px', borderRadius: '50%', 
+                      background: '#ec4899', display: 'flex', alignItems: 'center', 
+                      justifyContent: 'center', border: '1.5px solid white' 
+                    }}>
+                      <Instagram size={10} color="white" />
+                    </div>
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Instagram</h4>
+                    <span style={{ 
+                      display: 'inline-block', background: '#ccfbf1', color: '#0f766e', 
+                      fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', 
+                      borderRadius: '4px', marginTop: '2px' 
+                    }}>
+                      connected
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>
-                    @{settings.connectedInstagramName || 'Instagram Account'}
-                  </h4>
-                  <span style={{ color: '#9ca3af', fontSize: '0.75rem' }}>Business Account</span>
-                </div>
+                
+                {/* Details Circle button */}
+                <Info 
+                  size={16} 
+                  color="#9ca3af" 
+                  style={{ cursor: 'pointer' }} 
+                  onClick={() => notify(`Instagram Integration: Page ID ${settings.instagramPageId || 'N/A'}`, "info")}
+                />
               </div>
 
-              {/* Platform name */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ec4899', fontWeight: '500', fontSize: '0.9rem' }}>
-                <Instagram size={18} />
-                <span>Instagram</span>
-              </div>
-
-              {/* Status active Badge */}
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <span style={{ 
-                  fontSize: '0.75rem', padding: '4px 10px', borderRadius: '20px', 
-                  background: '#ecfdf5', color: '#047857', fontWeight: '600',
-                  display: 'inline-flex', alignItems: 'center', gap: '5px'
-                }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }}></span>
-                  Active
+              {/* Username with Copy Icon */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                <span style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>
+                  @{settings.connectedInstagramName || 'monster__pk_8795'}
+                </span>
+                <span 
+                  style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(settings.connectedInstagramName || 'monster__pk_8795');
+                    notify("Username copied to clipboard!", "success");
+                  }}
+                  title="Copy Username"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
                 </span>
               </div>
 
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', justifyContent: 'flex-end' }}>
-                
-                {/* AI Replies Toggle Switch */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '0.78rem', color: '#4b5563', fontWeight: '500' }}>AI replies</span>
-                  <label className="switch">
-                    <input 
-                      type="checkbox" 
-                      checked={settings.instagramAutomationEnabled}
-                      onChange={(e) => {
-                        const newVal = e.target.checked;
-                        setSettings(s => ({ ...s, instagramAutomationEnabled: newVal }));
-                        handleSaveSettings(null, { ...settings, instagramAutomationEnabled: newVal });
-                      }}
-                    />
-                    <span className="slider round"></span>
-                  </label>
-                </div>
-
-                {/* Disconnect Action */}
-                <button 
-                  onClick={() => {
-                    if(window.confirm("Are you sure you want to disconnect Instagram? Automation will stop immediately.")) {
-                      setSettings({...settings, instagramAccessToken: '', instagramPageId: '', businessAccountId: '', isAccountConnected: false});
-                      handleSaveSettings(null, { ...settings, instagramAccessToken: '', instagramPageId: '', businessAccountId: '', isAccountConnected: false });
-                    }
-                  }}
-                  style={{ 
-                    padding: '8px', color: '#dc2626', background: 'transparent', border: 'none', cursor: 'pointer',
-                    borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                  }}
-                  title="Disconnect Account"
-                  className="trash-btn"
-                >
-                  <Trash2 size={16} />
-                </button>
+              {/* Date */}
+              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>
+                {settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : '5/18/2026'}
               </div>
 
+              {/* Default Badge */}
+              <div>
+                <span style={{ 
+                  display: 'inline-flex', alignItems: 'center', gap: '4px', 
+                  background: '#f3f4f6', color: '#4b5563', fontSize: '0.72rem', 
+                  fontWeight: '600', padding: '3px 8px', borderRadius: '4px' 
+                }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f97316' }}></span>
+                  Default
+                </span>
+              </div>
+
+              {/* AI Auto-Replies Toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #f3f4f6', paddingTop: '8px', marginTop: '4px' }}>
+                <span style={{ fontSize: '0.78rem', color: '#4b5563', fontWeight: '600' }}>AI auto-replies</span>
+                <label className="switch">
+                  <input 
+                    type="checkbox" 
+                    checked={settings.instagramAutomationEnabled}
+                    onChange={(e) => {
+                      const newVal = e.target.checked;
+                      setSettings(s => ({ ...s, instagramAutomationEnabled: newVal }));
+                      handleSaveSettings(null, { ...settings, instagramAutomationEnabled: newVal });
+                    }}
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+
+              {/* Disconnect Button */}
+              <button 
+                onClick={() => {
+                  if(window.confirm("Are you sure you want to disconnect Instagram? Automation will stop immediately.")) {
+                    setSettings({...settings, instagramAccessToken: '', instagramPageId: '', businessAccountId: '', isAccountConnected: false});
+                    handleSaveSettings(null, { ...settings, instagramAccessToken: '', instagramPageId: '', businessAccountId: '', isAccountConnected: false });
+                  }
+                }}
+                style={{ 
+                  marginTop: '8px',
+                  width: '100%',
+                  padding: '8px',
+                  background: '#ffffff',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  color: '#374151',
+                  fontSize: '0.85rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  transition: 'all 0.15s'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = '#fef2f2';
+                  e.currentTarget.style.borderColor = '#fca5a5';
+                  e.currentTarget.style.color = '#ef4444';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = '#ffffff';
+                  e.currentTarget.style.borderColor = '#d1d5db';
+                  e.currentTarget.style.color = '#374151';
+                }}
+              >
+                Disconnect
+              </button>
             </div>
+
           </div>
         ) : (
           /* Empty Connections slot matching screenshot exactly */
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 24px', textAlign: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 24px', textAlign: 'center' }}>
             <span style={{ color: '#4b5563', fontSize: '0.95rem', fontWeight: '500', marginBottom: '16px' }}>
               No accounts connected yet.
             </span>
