@@ -118,10 +118,7 @@ function parseFilter(q, queryObj, tableName) {
     let parsedKey = (key === '_id' || key === 'id') ? 'id' : (fieldMap[key] || key);
     
     // UUID Safety Check: Prevents Postgres from crashing on invalid UUID syntax
-    const uuidColumns = ['id'];
-    if (tableName !== 'settings') {
-      uuidColumns.push('userId', 'user_id');
-    }
+    const uuidColumns = ['id', 'userId', 'user_id'];
     
     // Map ObjectID queries to UUID queries for UUID columns
     if (uuidColumns.includes(parsedKey) && val && typeof val === 'string' && val.length === 24 && /^[0-9a-f]{24}$/i.test(val)) {
