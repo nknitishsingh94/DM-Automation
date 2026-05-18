@@ -468,28 +468,26 @@ export default function Scheduling() {
             Plan, Manage and Automate your Instagram content effortlessly.
           </p>
         </div>
-        {posts.length > 0 && (
-          <button
-            onClick={() => setShowCreate(true)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '8px',
-              background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', padding: '16px 28px', borderRadius: '16px',
-              fontWeight: '800', border: 'none', cursor: 'pointer', boxShadow: '0 10px 25px rgba(124,58,237,0.3)',
-              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)', fontSize: '0.95rem'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-3px)';
-              e.currentTarget.style.boxShadow = '0 15px 30px rgba(124,58,237,0.4)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 10px 25px rgba(124,58,237,0.3)';
-            }}
-          >
-            <Plus size={20} strokeWidth={2.5} />
-            <span>Schedule New Post</span>
-          </button>
-        )}
+        <button
+          onClick={() => setShowCreate(true)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', padding: '16px 28px', borderRadius: '16px',
+            fontWeight: '800', border: 'none', cursor: 'pointer', boxShadow: '0 10px 25px rgba(124,58,237,0.3)',
+            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)', fontSize: '0.95rem'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-3px)';
+            e.currentTarget.style.boxShadow = '0 15px 30px rgba(124,58,237,0.4)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 10px 25px rgba(124,58,237,0.3)';
+          }}
+        >
+          <Plus size={20} strokeWidth={2.5} />
+          <span>Schedule New Post</span>
+        </button>
       </div>
 
       {posts.length === 0 ? (
