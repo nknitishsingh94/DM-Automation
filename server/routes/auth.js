@@ -86,9 +86,11 @@ router.post('/login', async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-    // SECURITY: Same error message for missing user OR wrong password (prevents user enumeration)
-    if (!user || !(await user.comparePassword(password))) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+    if (!user) {
+      return res.status(404).json({ message: 'Account not found. Please create an account first!' });
+    }
+    if (!(await user.comparePassword(password))) {
+      return res.status(400).json({ message: 'Incorrect password. Please try again.' });
     }
 
     const messageCount = await Message.countDocuments({ userId: user._id });
