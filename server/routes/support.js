@@ -23,6 +23,11 @@ If you don't know the answer, ask them to email support. Keep responses concise.
 
 router.post('/chat', async (req, res) => {
     try {
+        // Validate OpenAI API key presence
+        if (!process.env.OPENAI_API_KEY) {
+            console.error('❌ OPENAI_API_KEY not set in environment');
+            return res.status(500).json({ error: 'AI service is not configured. Please contact support.' });
+        }
         const { message, history = [] } = req.body;
 
         if (!message) {
@@ -43,12 +48,11 @@ router.post('/chat', async (req, res) => {
 
         const aiResponse = completion.choices[0].message.content;
         res.json({ response: aiResponse });
-
     } catch (error) {
         console.error('Support AI Error:', error.message);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Failed to get AI response',
-            details: process.env.NODE_ENV === 'development' ? error.message : undefined 
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 });
