@@ -191,23 +191,27 @@ export default function DmAutomationEditor() {
     }}>
       <div style={{ 
         display: isMobile ? 'block' : 'grid', 
-        gridTemplateColumns: isMobile ? '1fr' : 'minmax(350px, 450px) 1fr',
+        gridTemplateColumns: isMobile ? '1fr' : 'minmax(320px, 380px) 1fr',
         flex: 1,
         overflowX: 'hidden',
         overflowY: isMobile ? 'auto' : 'hidden'
       }}>
         {/* Left Side: Preview */}
-        <div style={{ 
-          background: '#f8fafc', 
-          borderRight: isMobile ? 'none' : '1px solid #f1f5f9', 
-          borderBottom: isMobile ? '1px solid #f1f5f9' : 'none',
-          padding: isMobile ? '20px' : '30px 20px', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center',
-          overflowY: 'visible',
-          zIndex: 2
-        }}>
+        <div 
+          className="editor-preview"
+          style={{ 
+            background: '#f8fafc', 
+            borderRight: isMobile ? 'none' : '1px solid #f1f5f9', 
+            borderBottom: isMobile ? '1px solid #f1f5f9' : 'none',
+            padding: isMobile ? '20px' : '30px 20px', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center',
+            overflowY: 'visible',
+            zIndex: 2,
+            height: isMobile ? 'auto' : '100vh'
+          }}
+        >
           <div style={{ color: '#94a3b8', fontWeight: '800', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             <Smartphone size={16} /> Automation Preview
           </div>

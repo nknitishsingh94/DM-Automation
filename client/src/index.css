@@ -2348,7 +2348,7 @@ tr:hover {
 }
 
 .editor-preview {
-  width: 450px;
+  width: 380px;
   border-right: 1px solid var(--border-subtle);
   height: 100vh;
   position: sticky;
@@ -2360,6 +2360,29 @@ tr:hover {
   padding: 20px;
   background: #f1f5f9;
   z-index: 10;
+}
+
+/* Dynamically scale down phone preview on low height viewports to prevent cutoff */
+@media (max-height: 800px) {
+  .editor-preview > div:nth-child(2) {
+    transform: scale(0.9) !important;
+    margin-top: -20px !important;
+    margin-bottom: -20px !important;
+  }
+}
+@media (max-height: 700px) {
+  .editor-preview > div:nth-child(2) {
+    transform: scale(0.8) !important;
+    margin-top: -40px !important;
+    margin-bottom: -40px !important;
+  }
+}
+@media (max-height: 600px) {
+  .editor-preview > div:nth-child(2) {
+    transform: scale(0.7) !important;
+    margin-top: -65px !important;
+    margin-bottom: -65px !important;
+  }
 }
 
 .editor-config {
