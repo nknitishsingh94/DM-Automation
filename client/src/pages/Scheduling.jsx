@@ -1206,16 +1206,66 @@ export default function Scheduling() {
                           </div>
                         </div>
                       ) : (
-                        <div ref={chatRef} className="custom-ig-scroller" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', padding: '20px', gap: '20px' }}>
-                          <div style={{ color: '#8e8e8e', fontSize: '0.7rem', textAlign: 'center' }}>
-                             Automated DM Preview
+                        <div 
+                          ref={chatRef} className="custom-ig-scroller"
+                          style={{ 
+                            flex: 1, display: 'flex', flexDirection: 'column', padding: '16px', gap: '16px', 
+                            overflowY: 'auto', background: '#000', minHeight: 0,
+                            scrollBehavior: 'smooth'
+                          }}
+                        >
+                          <div style={{ color: '#8e8e8e', fontSize: '0.72rem', textAlign: 'center', padding: '4px 0' }}>
+                            Automated DM Preview
                           </div>
+
+                          {/* 1. User's triggering Comment */}
+                          <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-end', maxWidth: '85%' }}>
+                            <div style={{ background: '#3b82f6', color: '#FFF', padding: '10px 14px', borderRadius: '18px 18px 4px 18px', fontSize: '0.85rem', fontWeight: '500' }}>
+                              💬 Comment: "{previewData?.triggerKeyword ? `Comment matching "${previewData.triggerKeyword}"` : "Comment matching trigger keyword"}"
+                            </div>
+                          </div>
+
+                          {/* 2. Bot's Public Comment Reply */}
+                          <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-start', maxWidth: '85%' }}>
+                            <div style={{ 
+                              width: '24px', height: '24px', borderRadius: '50%', 
+                              background: user?.profilePhoto ? `url(${user.profilePhoto})` : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+                              backgroundSize: 'cover', backgroundPosition: 'center', flexShrink: 0, fontSize: '0.55rem', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' 
+                            }}>
+                              {!user?.profilePhoto && "IG"}
+                            </div>
+                            <div style={{ background: '#262626', color: '#a3a3a3', padding: '10px 14px', borderRadius: '18px 18px 18px 4px', fontSize: '0.85rem', border: '1px solid #333' }}>
+                              💬 Reply: "{previewData?.publicReply || "Check your DMs! 🚀"}"
+                            </div>
+                          </div>
+
+                          {/* 3. System Notification */}
+                          <div style={{ color: '#8e8e8e', fontSize: '0.72rem', textAlign: 'center', padding: '8px 12px', background: '#121212', borderRadius: '12px', border: '1px solid #222', lineHeight: '1.4', fontWeight: '500' }}>
+                            ⚙️ <span style={{ color: '#4f95ff', fontWeight: '700' }}>System Automation</span>: Sent DM because user commented on your post.
+                          </div>
+
+                          {/* 4. Bot Message Card Bubble (Integrated - Dark Mode Card) */}
                           <div style={{ alignSelf: 'flex-start', maxWidth: '90%', display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-                             <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', flexShrink: 0 }}></div>
-                             <div style={{ background: '#262626', color: '#FFF', borderRadius: '18px 18px 18px 4px', overflow: 'hidden', border: '1px solid #333' }}>
-                                <div style={{ padding: '12px 16px', fontSize: '0.85rem' }}>{previewData?.autoResponse || "Typing response..."}</div>
-                             </div>
+                            <div style={{ 
+                              width: '28px', height: '28px', borderRadius: '50%', 
+                              background: user?.profilePhoto ? `url(${user.profilePhoto})` : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+                              backgroundSize: 'cover', backgroundPosition: 'center', flexShrink: 0 
+                            }}></div>
+                            <div style={{ 
+                              background: '#262626', color: '#FFF', borderRadius: '18px 18px 18px 4px', 
+                              overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+                            }}>
+                              <div style={{ padding: '12px 14px', fontSize: '0.85rem', fontWeight: '500', lineHeight: '1.4' }}>
+                                {previewData?.autoResponse || "Here is your requested link! 👇"}
+                              </div>
+                            </div>
                           </div>
+
+                          {/* 5. User Reply Bubble (Signature Purple Gradient) */}
+                          <div style={{ alignSelf: 'flex-end', maxWidth: '85%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: '#FFF', padding: '12px 16px', borderRadius: '18px 18px 4px 18px', fontSize: '0.85rem', fontWeight: '600', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.2)' }}>
+                            Checking it out! 👍
+                          </div>
+
                           <div style={{ height: '10px' }} ref={el => { if (el && previewMode === 'dm') el.scrollIntoView({ behavior: 'smooth' }); }}></div>
                         </div>
                       )}
