@@ -19,6 +19,94 @@ export default function Scheduling() {
   const { notify } = useNotification();
   const [settings, setSettings] = useState(null);
 
+  // Timezone and Country Scheduling options
+  const [selectedTimezone, setSelectedTimezone] = useState('browser');
+  const [displayTimezone, setDisplayTimezone] = useState('browser');
+
+  const timezoneOptions = [
+    { value: 'browser', label: '🌍 Local Browser Time (' + Intl.DateTimeFormat().resolvedOptions().timeZone + ')', tzName: Intl.DateTimeFormat().resolvedOptions().timeZone },
+    { value: 'Asia/Kolkata', label: '🇮🇳 India (IST)', tzName: 'Asia/Kolkata' },
+    { value: 'America/New_York', label: '🇺🇸 USA - East (EST/EDT)', tzName: 'America/New_York' },
+    { value: 'America/Los_Angeles', label: '🇺🇸 USA - West (PST/PDT)', tzName: 'America/Los_Angeles' },
+    { value: 'America/Chicago', label: '🇺🇸 USA - Central (CST/CDT)', tzName: 'America/Chicago' },
+    { value: 'Europe/London', label: '🇬🇧 United Kingdom (GMT/BST)', tzName: 'Europe/London' },
+    { value: 'Asia/Dubai', label: '🇦🇪 Dubai (GST)', tzName: 'Asia/Dubai' },
+    { value: 'Asia/Singapore', label: '🇸🇬 Singapore (SGT)', tzName: 'Asia/Singapore' },
+    { value: 'Australia/Sydney', label: '🇦🇺 Australia (AEST/AEDT)', tzName: 'Australia/Sydney' },
+    { value: 'Europe/Paris', label: '🇪🇺 Europe (CET/CEST)', tzName: 'Europe/Paris' }
+  ];
+
+  const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
+    if (!localDateTimeStr) return '';
+    if (targetTimezone === 'browser') {
+      return new Date(localDateTimeStr).toISOString();
+    }
+    const parts = localDateTimeStr.split('T');
+    const dateParts = parts[0].split('-');
+    const timeParts = parts[1].split(':');
+    
+    const year = parseInt(dateParts[0], 10);
+    const month = parseInt(dateParts[1], 10) - 1;
+    const day = parseInt(dateParts[2], 10);
+    const hour = parseInt(timeParts[0], 10);
+    const minute = parseInt(timeParts[1], 10);
+
+    const utcDate = new Date(Date.UTC(year, month, day, hour, minute));
+    
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: targetTimezone,
+      year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: 'numeric', minute: 'numeric', second: 'numeric',
+      hour12: false
+    });
+    
+    const formattedString = formatter.format(utcDate);
+    const match = formattedString.match(/(\d+)\/(\d+)\/(\d+),\s+(\d+):(\d+):(\d+)/);
+    if (!match) return utcDate.toISOString();
+
+    const fMonth = parseInt(match[1], 10) - 1;
+    const fDay = parseInt(match[2], 10);
+    const fYear = parseInt(match[3], 10);
+    const fHour = parseInt(match[4], 10);
+    const fMinute = parseInt(match[5], 10);
+
+    const formattedUtc = Date.UTC(fYear, fMonth, fDay, fHour, fMinute);
+    const offsetDiff = utcDate.getTime() - formattedUtc;
+
+    return new Date(utcDate.getTime() + offsetDiff).toISOString();
+  };
+
+  const formatInTimezone = (utcString, targetTimezone) => {
+    if (!utcString) return { date: '', time: '', abbr: '' };
+    try {
+      const date = new Date(utcString);
+      const tz = targetTimezone === 'browser' ? Intl.DateTimeFormat().resolvedOptions().timeZone : targetTimezone;
+      
+      const optionsDate = {
+        timeZone: tz,
+        month: 'short', day: 'numeric', year: 'numeric'
+      };
+      const optionsTime = {
+        timeZone: tz,
+        hour: '2-digit', minute: '2-digit'
+      };
+
+      const formattedDate = date.toLocaleDateString('en-US', optionsDate);
+      const formattedTime = date.toLocaleTimeString('en-US', optionsTime);
+
+      const optionsAbbr = {
+        timeZone: tz,
+        timeZoneName: 'short'
+      };
+      const parts = date.toLocaleTimeString('en-US', optionsAbbr).split(' ');
+      const abbr = parts[parts.length - 1] || '';
+
+      return { date: formattedDate, time: formattedTime, abbr };
+    } catch (e) {
+      return { date: new Date(utcString).toLocaleDateString(), time: new Date(utcString).toLocaleTimeString(), abbr: '' };
+    }
+  };
+
   // Caption State
   const [savedCaptions, setSavedCaptions] = useState([]);
   const [showCaptionsModal, setShowCaptionsModal] = useState(false);
@@ -289,10 +377,10 @@ export default function Scheduling() {
     const formData = new FormData();
     formData.append('caption', newPost.caption);
     
-    // Convert timezone-naive local date string to proper UTC ISO String
+    // Convert timezone-naive local date string to proper UTC ISO String using target timezone
     if (newPost.scheduledFor) {
-      const localDate = new Date(newPost.scheduledFor);
-      formData.append('scheduledFor', localDate.toISOString());
+      const utcIsoStr = convertLocalToUTC(newPost.scheduledFor, selectedTimezone);
+      formData.append('scheduledFor', utcIsoStr);
     } else {
       formData.append('scheduledFor', '');
     }
@@ -490,6 +578,43 @@ export default function Scheduling() {
         </button>
       </div>
 
+      {/* Timezone Switcher */}
+      <div style={{
+        background: 'white', padding: '16px 24px', borderRadius: '20px',
+        border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.01)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Globe size={18} color="#7c3aed" />
+          <span style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b' }}>Display Timezone:</span>
+        </div>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {[
+            { value: 'browser', label: '🌍 Local' },
+            { value: 'Asia/Kolkata', label: '🇮🇳 India' },
+            { value: 'America/New_York', label: '🇺🇸 New York' },
+            { value: 'America/Los_Angeles', label: '🇺🇸 Los Angeles' },
+            { value: 'Asia/Dubai', label: '🇦🇪 Dubai' },
+            { value: 'Asia/Singapore', label: '🇸🇬 Singapore' }
+          ].map(tz => (
+            <button
+              key={tz.value}
+              onClick={() => setDisplayTimezone(tz.value)}
+              style={{
+                padding: '8px 16px', borderRadius: '12px',
+                border: displayTimezone === tz.value ? '2px solid #7c3aed' : '1px solid #e2e8f0',
+                background: displayTimezone === tz.value ? '#f5f3ff' : 'white',
+                color: displayTimezone === tz.value ? '#7c3aed' : '#64748b',
+                fontWeight: '800', fontSize: '0.85rem', cursor: 'pointer', transition: 'all 0.2s'
+              }}
+            >
+              {tz.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {posts.length === 0 ? (
         <div style={{
           textAlign: 'center',
@@ -515,7 +640,7 @@ export default function Scheduling() {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
           {posts.map(post => {
             // Smart Media Parser
             let mediaData = { type: 'image', mediaUrl: post.mediaUrl };
@@ -536,49 +661,51 @@ export default function Scheduling() {
                 style={{
                   background: 'white', borderRadius: '24px', padding: '16px',
                   border: '1.5px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
-                  transition: 'all 0.3s ease', display: 'flex', gap: '20px', alignItems: 'center'
+                  transition: 'all 0.3s ease', display: 'flex', flexDirection: 'column', gap: '16px'
                 }}
               >
-                {/* Image/Video Preview (Left, fixed small size: 80x80) */}
-                <div style={{ width: '80px', height: '80px', borderRadius: '16px', background: '#f8fafc', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                {/* Image/Video Preview Header (takes full width of card) */}
+                <div style={{ width: '100%', height: '180px', borderRadius: '16px', background: '#f8fafc', overflow: 'hidden', position: 'relative' }}>
                   {mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i)) ? (
                     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
                       <video src={finalMediaUrl} muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)' }}>
-                        <Film size={20} color="white" />
+                        <Film size={28} color="white" />
                       </div>
                     </div>
                   ) : (
                     <img src={finalMediaUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   )}
-                </div>
 
-                {/* Details Section */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                  {/* Overlays inside media preview */}
+                  <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                     {/* Status Badge */}
                     <div style={{
-                      background: post.status === 'Posted' ? '#ecfdf5' : post.status === 'Failed' ? '#fef2f2' : '#f5f3ff',
-                      padding: '4px 10px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px'
+                      background: post.status === 'Posted' ? '#10b981' : post.status === 'Failed' ? '#ef4444' : '#7c3aed',
+                      color: 'white', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px',
+                      fontSize: '0.65rem', fontWeight: '800', boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                     }}>
                       {post.status === 'Retrying' ? (
-                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', border: '1.5px solid #f59e0b', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
+                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', border: '1.5px solid white', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
                       ) : (
-                        <div style={{
-                          width: '6px', height: '6px', borderRadius: '50%',
-                          background: post.status === 'Posted' ? '#10b981' : post.status === 'Failed' ? '#ef4444' : '#7c3aed'
-                        }} />
+                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'white' }} />
                       )}
-                      <span style={{
-                        fontSize: '0.65rem', fontWeight: '800',
-                        color: post.status === 'Posted' ? '#059669' : post.status === 'Failed' ? '#dc2626' : post.status === 'Retrying' ? '#d97706' : '#1e1b4b'
-                      }}>
-                        {post.status === 'Retrying' ? `Retrying` : (post.status || 'SCHEDULED')}
-                      </span>
+                      <span>{post.status === 'Retrying' ? `Retrying` : (post.status || 'SCHEDULED')}</span>
                     </div>
 
-                    {/* Automation Status Mini-Toggle */}
-                    {(post.autoResponse || post.triggerKeyword) && (
+                    {/* Post Type Badge */}
+                    <div style={{
+                      fontSize: '0.65rem', fontWeight: '800', color: '#1e293b', textTransform: 'uppercase',
+                      background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(4px)', padding: '4px 8px', borderRadius: '8px',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
+                    }}>
+                      {post.type || 'IMAGE'}
+                    </div>
+                  </div>
+
+                  {/* Automation Toggle Overlay on Bottom-Right */}
+                  {(post.autoResponse || post.triggerKeyword) && (
+                    <div style={{ position: 'absolute', bottom: '10px', right: '10px' }}>
                       <div
                         onClick={(e) => {
                           e.stopPropagation();
@@ -586,49 +713,59 @@ export default function Scheduling() {
                           toggleAutomationStatus(post._id, newStatus);
                         }}
                         style={{
-                          width: '24px', height: '12px', borderRadius: '6px',
-                          background: post.automationStatus === 'Paused' ? '#cbd5e1' : '#10b981',
-                          position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center'
+                          background: post.automationStatus === 'Paused' ? 'rgba(241, 245, 249, 0.95)' : 'rgba(16, 185, 129, 0.95)',
+                          color: post.automationStatus === 'Paused' ? '#64748b' : 'white',
+                          padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px',
+                          cursor: 'pointer', fontSize: '0.65rem', fontWeight: '800', boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                          backdropFilter: 'blur(4px)'
                         }}
                         title="Toggle Automation"
                       >
-                        <div style={{
-                          width: '8px', height: '8px', borderRadius: '50%', background: 'white',
-                          position: 'absolute', top: '2px', left: post.automationStatus === 'Paused' ? '2px' : '14px',
-                          transition: '0.2s'
-                        }} />
+                        <Zap size={10} fill={post.automationStatus === 'Paused' ? 'none' : 'white'} />
+                        <span>{post.automationStatus === 'Paused' ? 'Paused' : 'Active'}</span>
                       </div>
-                    )}
-
-                    {/* Post Type Badge */}
-                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', background: '#f1f5f9', padding: '4px 8px', borderRadius: '6px' }}>
-                      {post.type || 'IMAGE'}
                     </div>
-                  </div>
+                  )}
+                </div>
 
-                  {/* Caption & Date Row */}
+                {/* Details Section */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, minWidth: 0 }}>
                   <h4 style={{
-                    fontSize: '0.95rem', fontWeight: '700', color: '#1e1b4b', margin: '0 0 6px 0',
-                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                    fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b', margin: 0,
+                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden', height: '36px', lineHeight: '1.25'
                   }}>
                     {post.caption || 'No caption provided.'}
                   </h4>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.8rem', fontWeight: '600' }}>
-                    <Calendar size={12} />
-                    <span>
-                      {new Date(post.scheduledFor).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </span>
-                    <span>•</span>
-                    <Clock size={12} />
-                    <span>
-                      {new Date(post.scheduledFor).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
+                  {(() => {
+                    const tzData = formatInTimezone(post.scheduledFor, displayTimezone);
+                    return (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontSize: '0.75rem', fontWeight: '600', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Calendar size={12} />
+                          <span>{tzData.date}</span>
+                        </div>
+                        <span>•</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Clock size={12} />
+                          <span>{tzData.time}</span>
+                        </div>
+                        {tzData.abbr && (
+                          <>
+                            <span>•</span>
+                            <span style={{ color: '#7c3aed', background: '#f5f3ff', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '800' }}>
+                              {tzData.abbr}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Action Buttons */}
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', borderTop: '1px solid #f1f5f9', paddingTop: '12px' }}>
                   <button
                     onClick={() => {
                       setCreatedPost({
@@ -639,13 +776,13 @@ export default function Scheduling() {
                       setShowAdvanced(true);
                     }}
                     style={{
-                      display: 'flex', alignItems: 'center', gap: '6px',
-                      padding: '10px 16px', borderRadius: '12px', border: '1px solid #f5f3ff',
+                      flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                      padding: '10px 14px', borderRadius: '12px', border: '1px solid #f5f3ff',
                       background: '#f5f3ff', color: '#7c3aed', fontWeight: '800', cursor: 'pointer',
                       transition: 'all 0.2s', fontSize: '0.8rem'
                     }}
                   >
-                    <Zap size={14} /> <span className="mobile-hide">Automation</span>
+                    <Zap size={14} /> <span>Automation</span>
                   </button>
 
                   <button
@@ -755,9 +892,9 @@ export default function Scheduling() {
                     </div>
                   )}
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #e2e8f0' }}>
                     {/* Schedule Time */}
-                    <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #e2e8f0' }}>
+                    <div>
                       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '12px' }}>* Schedule Time</label>
                       <input
                         type="datetime-local"
@@ -766,6 +903,21 @@ export default function Scheduling() {
                         style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', fontWeight: '600' }}
                         required
                       />
+                    </div>
+                    {/* Target Timezone / Country */}
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '12px' }}>🌐 Target Country / Timezone</label>
+                      <select
+                        value={selectedTimezone}
+                        onChange={e => setSelectedTimezone(e.target.value)}
+                        style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', fontWeight: '600', background: 'white' }}
+                      >
+                        {timezoneOptions.map(opt => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
