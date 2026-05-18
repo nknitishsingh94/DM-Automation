@@ -445,7 +445,19 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
 
     console.log(`✅ EXECUTING: Dispatching response for "${campaignName}"`);
-    const sent = await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons, '', commentId);
+    let finalResponse = match.response;
+    if (match.isAI) {
+      console.log(`🤖 Campaign has AI response enabled. Generating dynamic response...`);
+      try {
+        const generated = await generateAIResponse(userId, text);
+        if (generated) {
+          finalResponse = generated;
+        }
+      } catch (aiErr) {
+        console.error("🔥 Campaign AI generation failed, falling back to static response:", aiErr);
+      }
+    }
+    const sent = await sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons, '', commentId);
 
     // NEW: If it's a comment, also send a public reply to the comment
     if (source === 'comment' && commentId) {
@@ -457,7 +469,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     if (sent) {
       const autoReply = new Message({
         userId: userId,
-        chatId: chatId || 'default', sender: 'AI Agent', text: match.response, type: 'sent', platform, isAI: true, campaignId: match._id, timestamp: new Date()
+        chatId: chatId || 'default', sender: 'AI Agent', text: finalResponse, type: 'sent', platform, isAI: true, campaignId: match._id, timestamp: new Date()
       });
       try {
         await autoReply.save();

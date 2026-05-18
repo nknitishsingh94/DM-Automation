@@ -14,7 +14,8 @@ import {
   Settings,
   Sparkles,
   MessageCircle,
-  Crown
+  Crown,
+  Brain
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
@@ -49,6 +50,7 @@ export default function DmAutomationEditor() {
   const [tempLinkTitle, setTempLinkTitle] = useState('Open Link');
   const [tempLinkUrl, setTempLinkUrl] = useState('https://example.com');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [isAI, setIsAI] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -162,6 +164,7 @@ export default function DmAutomationEditor() {
           triggerOnComments: anyKeyword ? true : (template === 'comments'),
           triggerOnStories: anyKeyword ? true : (template === 'stories'),
           publicReplyText: publicReplyText,
+          isAI: isAI,
           status: 'Active'
         })
       });
@@ -279,7 +282,30 @@ export default function DmAutomationEditor() {
                         )}
 
                         {/* Final Response (Step 2) */}
-                        {message && (
+                        {isAI ? (
+                            <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
+                               <div style={{ 
+                                  background: 'linear-gradient(135deg, #1e1b4b, #2e1065)', 
+                                  border: '1.5px solid #c084fc',
+                                  borderRadius: '14px 14px 14px 2px', 
+                                  overflow: 'hidden',
+                                  boxShadow: '0 0 12px rgba(168, 85, 247, 0.4)'
+                               }}>
+                                  <div style={{ padding: '10px 12px', display: 'flex', alignItems: 'center', gap: '6px', borderBottom: buttons.length > 0 ? '1px solid rgba(192, 132, 252, 0.2)' : 'none' }}>
+                                     <Sparkles size={12} color="#c084fc" className="animate-pulse" />
+                                     <span style={{ color: '#c084fc', fontSize: '0.65rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI Neural Reply</span>
+                                  </div>
+                                  <div style={{ padding: '10px 12px', color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>
+                                     {message && message !== "[AI Agent will generate a custom neural reply here]" ? message : "Generates premium custom response using your custom business AI knowledge base profile..."}
+                                  </div>
+                                  {buttons.map((btn, idx) => (
+                                     <div key={idx} style={{ padding: '10px', textAlign: 'center', borderBottom: idx === buttons.length - 1 ? 'none' : '1px solid rgba(192, 132, 252, 0.2)', color: '#c084fc', fontSize: '0.75rem', fontWeight: '800' }}>
+                                        {btn.text}
+                                     </div>
+                                  ))}
+                               </div>
+                            </div>
+                         ) : message && (
                            <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
                               <div style={{ background: '#262626', borderRadius: '14px 14px 14px 2px', overflow: 'hidden' }}>
                                  <div style={{ padding: '10px 12px', borderBottom: buttons.length > 0 ? '1px solid #333' : 'none' }}>
@@ -476,12 +502,78 @@ export default function DmAutomationEditor() {
                 padding: '20px 24px',
                 boxShadow: '0 10px 15px -3px rgba(0,0,0,0.04)'
               }}>
-                 <textarea 
-                   placeholder="Type your final message here..." 
-                   value={message} 
-                   onChange={(e) => setMessage(e.target.value)} 
-                   style={{ width: '100%', height: '80px', padding: '14px 18px', borderRadius: '14px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '0.95rem', resize: 'none', marginBottom: '16px', fontWeight: '500', color: '#1e1b4b', lineHeight: '1.5' }}
-                 />
+                 {/* AI Toggle Section */}
+                 <div style={{ 
+                   display: 'flex', 
+                   justifyContent: 'space-between', 
+                   alignItems: 'center', 
+                   marginBottom: '18px', 
+                   paddingBottom: '14px', 
+                   borderBottom: '1.5px solid #f1f5f9' 
+                 }}>
+                   <div>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800', color: '#7c3aed', fontSize: '0.95rem' }}>
+                       <Sparkles size={14} style={{ color: '#7c3aed' }} />
+                       <span>AI Neural Studio Reply</span>
+                     </div>
+                     <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Let our AI Agent reply dynamically to DMs</span>
+                   </div>
+                   <div 
+                     onClick={() => {
+                       const nextIsAi = !isAI;
+                       setIsAI(nextIsAi);
+                       if (nextIsAi && !message) {
+                         setMessage("[AI Agent will generate a custom neural reply here]");
+                       } else if (!nextIsAi && message === "[AI Agent will generate a custom neural reply here]") {
+                         setMessage("");
+                       }
+                     }}
+                     style={{ 
+                       width: '40px', height: '22px', borderRadius: '11px', background: isAI ? 'linear-gradient(135deg, #7c3aed, #0ea5e9)' : '#cbd5e1', 
+                       position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
+                     }}
+                   >
+                     <div style={{ 
+                       width: '16px', height: '16px', borderRadius: '50%', background: 'white', 
+                       position: 'absolute', top: '3px', left: isAI ? '21px' : '3px', transition: 'all 0.3s' 
+                     }}></div>
+                   </div>
+                 </div>
+
+                 {!isAI ? (
+                    <textarea 
+                      placeholder="Type your final message here..." 
+                      value={message} 
+                      onChange={(e) => setMessage(e.target.value)} 
+                      style={{ width: '100%', height: '80px', padding: '14px 18px', borderRadius: '14px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '0.95rem', resize: 'none', marginBottom: '16px', fontWeight: '500', color: '#1e1b4b', lineHeight: '1.5' }}
+                    />
+                 ) : (
+                    <div style={{ 
+                      padding: '14px', 
+                      borderRadius: '14px', 
+                      background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.04), rgba(14, 165, 233, 0.04))', 
+                      border: '1.5px dashed #7c3aed', 
+                      marginBottom: '16px' 
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                        <Brain size={16} color="#7c3aed" />
+                        <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7c3aed' }}>AI Neural Responder Active</span>
+                      </div>
+                      <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0, lineHeight: '1.4' }}>
+                        The AI Agent will use your AI Neural Studio profile/knowledge base to reply dynamically. 
+                        If AI is offline, it will fall back to:
+                      </p>
+                      <textarea 
+                        placeholder="Enter fallback message..."
+                        value={message === "[AI Agent will generate a custom neural reply here]" ? "" : message}
+                        onChange={(e) => setMessage(e.target.value || "[AI Agent will generate a custom neural reply here]")}
+                        style={{ 
+                          width: '100%', height: '60px', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', 
+                          outline: 'none', fontSize: '0.85rem', resize: 'none', marginTop: '8px', lineHeight: '1.4', background: 'white'
+                        }}
+                      ></textarea>
+                    </div>
+                 )}
                  
                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
                     <div style={{ fontWeight: '900', color: '#64748b', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Interactive Elements</div>
