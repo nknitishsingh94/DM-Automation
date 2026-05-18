@@ -247,8 +247,8 @@ export default function AutomationEditor() {
           
           {/* Phone Frame - Scaled down for better fit */}
           <div style={{ 
-            width: '320px', 
-            height: '640px', 
+            width: '360px', 
+            height: '710px', 
             background: '#000', 
             borderRadius: '40px', 
             border: '8px solid #1e1b4b',
