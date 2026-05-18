@@ -518,6 +518,15 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     return existing;
   };
 
+  ModelInstance.findByIdAndUpdate = async function (id, updateData, options = {}) {
+    if (!supabase || !id) return null;
+    let idToUse = id;
+    if (typeof id === 'string' && id.length === 24 && /^[0-9a-f]{24}$/i.test(id)) {
+      idToUse = convertObjectIDToUUID(id);
+    }
+    return await ModelInstance.findOneAndUpdate({ id: idToUse }, updateData, options);
+  };
+
   ModelInstance.deleteMany = async function (query) {
     if (!supabase) return { acknowledged: true };
     let q = supabase.from(tableName).delete();
