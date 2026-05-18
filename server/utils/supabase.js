@@ -602,5 +602,42 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
 
 
 
+  ModelInstance.updateMany = async function (query, updateData, options = {}) {
+    if (!supabase) return { acknowledged: true, modifiedCount: 0 };
+    let q = supabase.from(tableName).select('*');
+    q = parseFilter(q, query, tableName);
+    const { data, error } = await q;
+    if (error) throw error;
+    if (data && data.length > 0) {
+      let modifiedCount = 0;
+      for (const existing of data) {
+        let finalUpdate = { ...updateData };
+        if (updateData.$set) {
+          finalUpdate = { ...finalUpdate, ...updateData.$set };
+        }
+        if (updateData.$unset) {
+          for (const key of Object.keys(updateData.$unset)) {
+            finalUpdate[key] = null;
+          }
+        }
+        delete finalUpdate.$set;
+        delete finalUpdate.$unset;
+        if (updateData.$inc) {
+          for (const [key, val] of Object.entries(updateData.$inc)) {
+            finalUpdate[key] = (existing[key] || 0) + val;
+          }
+          delete finalUpdate.$inc;
+        }
+        const merged = { ...convertIncoming(existing, tableName), ...finalUpdate };
+        const cleanUpdate = convertOutgoing(merged, tableName);
+        const { error: upErr } = await supabase.from(tableName).update(cleanUpdate).eq('id', existing.id);
+        if (upErr) throw upErr;
+        modifiedCount++;
+      }
+      return { acknowledged: true, modifiedCount };
+    }
+    return { acknowledged: true, modifiedCount: 0 };
+  };
+
   return ModelInstance;
 }
