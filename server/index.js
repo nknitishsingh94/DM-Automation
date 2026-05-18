@@ -1007,23 +1007,38 @@ app.delete('/api/chats', verifyToken, async (req, res) => {
 // Dashboard Stats Endpoint
 app.get('/api/stats', verifyToken, async (req, res) => {
   try {
-    // DIAGNOSTIC: Return dummy data to see if 500 error persists
-    return res.json({
-      totalDMs: 100,
-      sentMessages: 50,
-      receivedMessages: 50,
-      campaigns: 5,
-      messages: 100,
-      aiReplyRate: "90%",
-      plan: "free",
-      contactCount: 10
+    const userId = req.user.userId;
+
+    // Fetch real metrics dynamically from the database for this specific user
+    const [sentMessages, receivedMessages, campaigns, contactCount] = await Promise.all([
+      Message.countDocuments({ userId, type: 'sent' }),
+      Message.countDocuments({ userId, type: 'received' }),
+      Campaign.countDocuments({ userId }),
+      Contact.countDocuments({ userId })
+    ]);
+
+    const totalDMs = sentMessages + receivedMessages;
+
+    // Fetch current user plan
+    const user = await User.findById(userId);
+    const plan = user?.plan || 'free';
+
+    res.json({
+      totalDMs,
+      sentMessages,
+      receivedMessages,
+      campaigns,
+      messages: totalDMs,
+      aiReplyRate: sentMessages > 0 ? `${Math.round((sentMessages / (sentMessages + receivedMessages)) * 100)}%` : "0%",
+      plan,
+      contactCount,
+      newFollowers: contactCount // Maps to Contact count for active growth representation
     });
   } catch (err) {
     console.error("❌ DASHBOARD STATS ERROR:", err);
     res.status(500).json({ 
       error: "Stats calculation failed", 
-      message: err.message,
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+      message: err.message
     });
   }
 });
