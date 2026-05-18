@@ -160,9 +160,9 @@ export default function DmAutomationEditor() {
           openingMessage: openingMessage,
           openingMessageText: openingMessageText,
           openingMessageButton: openingMessageButton,
-          triggerOnDms: anyKeyword ? true : (template === 'all_dms'),
-          triggerOnComments: anyKeyword ? true : (template === 'comments'),
-          triggerOnStories: anyKeyword ? true : (template === 'stories'),
+          triggerOnDms: true,
+          triggerOnComments: false,
+          triggerOnStories: false,
           publicReplyText: publicReplyText,
           isAI: isAI,
           status: 'Active'

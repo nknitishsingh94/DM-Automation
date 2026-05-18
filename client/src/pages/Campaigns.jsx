@@ -434,8 +434,9 @@ export default function Campaigns() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
             {filteredCampaigns.map((campaign) => {
-              const isStory = campaign.triggerOnStories || campaign.triggerSource === 'story_mention';
-              const isComment = campaign.triggerOnComments || campaign.triggerSource === 'comment';
+              const isAllThree = campaign.triggerOnDms && campaign.triggerOnComments && campaign.triggerOnStories;
+              const isStory = (campaign.triggerOnStories || campaign.triggerSource === 'story_mention') && !isAllThree;
+              const isComment = (campaign.triggerOnComments || campaign.triggerSource === 'comment') && !isAllThree;
 
               return (
                 <div key={campaign._id} style={{ 
