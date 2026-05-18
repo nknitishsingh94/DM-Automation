@@ -234,26 +234,6 @@ export default function Settings() {
           >
             <Plus size={16} /> New Connection
           </button>
-          
-          <button 
-            onClick={() => notify("Profile manager is loading...", "info")}
-            style={{ 
-              background: 'white', 
-              color: '#374151', 
-              padding: '9px 18px', 
-              borderRadius: '8px', 
-              fontWeight: '600', 
-              fontSize: '0.88rem',
-              border: '1px solid #d1d5db', 
-              cursor: 'pointer', 
-              boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-              transition: 'border 0.2s'
-            }}
-            onMouseOver={(e) => e.currentTarget.style.borderColor = '#9ca3af'}
-            onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
-          >
-            New Profile
-          </button>
         </div>
       </div>
 
