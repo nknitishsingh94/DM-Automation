@@ -107,6 +107,48 @@ export default function Scheduling() {
     }
   };
 
+  const getCurrentTimeInTimezone = (targetTimezone) => {
+    try {
+      const tz = targetTimezone === 'browser' ? Intl.DateTimeFormat().resolvedOptions().timeZone : targetTimezone;
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: tz,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      const parts = formatter.formatToParts(new Date());
+      const partMap = {};
+      parts.forEach(p => {
+        partMap[p.type] = p.value;
+      });
+      const year = partMap.year;
+      const month = partMap.month;
+      const day = partMap.day;
+      let hour = partMap.hour;
+      if (hour === '24') hour = '00';
+      const minute = partMap.minute;
+      return `${year}-${month}-${day}T${hour}:${minute}`;
+    } catch (e) {
+      const now = new Date();
+      const offset = now.getTimezoneOffset();
+      const local = new Date(now.getTime() - offset * 60 * 1000);
+      return local.toISOString().slice(0, 16);
+    }
+  };
+
+  const handleTimezoneChange = (tzValue) => {
+    setSelectedTimezone(tzValue);
+    const newLocalTime = getCurrentTimeInTimezone(tzValue);
+    setNewPost(prev => ({
+      ...prev,
+      scheduledFor: newLocalTime
+    }));
+    notify(`Time synchronized to ${tzValue === 'browser' ? 'local browser timezone' : tzValue}!`, 'info');
+  };
+
   // Caption State
   const [savedCaptions, setSavedCaptions] = useState([]);
   const [showCaptionsModal, setShowCaptionsModal] = useState(false);
@@ -245,6 +287,11 @@ export default function Scheduling() {
     fetchPosts();
     fetchCaptions();
     fetchSettings();
+    // Initialize schedule time to browser's current local time
+    setNewPost(prev => ({
+      ...prev,
+      scheduledFor: getCurrentTimeInTimezone('browser')
+    }));
   }, []);
 
   useEffect(() => {
@@ -909,7 +956,7 @@ export default function Scheduling() {
                       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '12px' }}>🌐 Target Country / Timezone</label>
                       <select
                         value={selectedTimezone}
-                        onChange={e => setSelectedTimezone(e.target.value)}
+                        onChange={e => handleTimezoneChange(e.target.value)}
                         style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', fontWeight: '600', background: 'white' }}
                       >
                         {timezoneOptions.map(opt => (
