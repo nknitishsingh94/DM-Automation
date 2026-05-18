@@ -198,9 +198,13 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>AI Studio</span>
               <span className="sidebar-badge badge-new">NEW</span>
             </NavLink>
+            <NavLink to="/campaigns" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Zap size={18} />
+              <span>Automation</span>
+            </NavLink>
             <NavLink to="/scheduling" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Calendar size={18} />
-              <span>Scheduling</span>
+              <span>Post</span>
               <span className="sidebar-badge badge-new">HOT</span>
             </NavLink>
             <NavLink to="/forms" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
