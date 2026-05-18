@@ -366,8 +366,8 @@ export default function Campaigns() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
             {[
               { id: 'dm', title: 'DM Automation', desc: 'Trigger DMs from Keywords', icon: <Zap size={24} />, color: '#4f46e5', bg: 'rgba(79, 70, 229, 0.1)', path: '/dm-automation-editor?template=all_dms' },
-              { id: 'comment', title: 'Comment Reply', desc: 'Auto-DM on Comments', icon: <MessageSquare size={24} />, color: '#0ea5e9', bg: 'rgba(14, 165, 233, 0.1)', path: '/campaign-builder/new?triggerSource=comment' },
-              { id: 'story', title: 'Story Trigger', desc: 'Reply to Story Mentions', icon: <Instagram size={24} />, color: '#ec4899', bg: 'rgba(236, 72, 153, 0.1)', path: '/campaign-builder/new?triggerSource=story_mention' },
+              { id: 'comment', title: 'Comment Reply', desc: 'Auto-DM on Comments', icon: <MessageSquare size={24} />, color: '#0ea5e9', bg: 'rgba(14, 165, 233, 0.1)', path: '/automation-editor?template=comments' },
+              { id: 'story', title: 'Story Trigger', desc: 'Reply to Story Mentions', icon: <Instagram size={24} />, color: '#ec4899', bg: 'rgba(236, 72, 153, 0.1)', path: '/automation-editor?template=stories' },
               { id: 'ai', title: 'AI Neural Studio', desc: 'Train your custom AI', icon: <Bot size={24} />, color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)', path: '/ai-studio' }
             ].map(item => (
               <div 
