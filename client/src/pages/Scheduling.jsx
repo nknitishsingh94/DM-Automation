@@ -515,7 +515,7 @@ export default function Scheduling() {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {posts.map(post => {
             // Smart Media Parser
             let mediaData = { type: 'image', mediaUrl: post.mediaUrl };
@@ -534,70 +534,48 @@ export default function Scheduling() {
                 key={post._id}
                 className="scheduling-card"
                 style={{
-                  background: 'white', borderRadius: '20px', overflow: 'hidden',
-                  border: '1px solid #f1f5f9', boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
-                  transition: 'all 0.3s ease', display: 'flex', flexDirection: 'column',
-                  position: 'relative'
+                  background: 'white', borderRadius: '24px', padding: '16px',
+                  border: '1.5px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
+                  transition: 'all 0.3s ease', display: 'flex', gap: '20px', alignItems: 'center'
                 }}
               >
-                {/* Image Preview (Compact height: 130px) */}
-                <div style={{ height: '130px', background: '#f8fafc', position: 'relative', overflow: 'hidden' }}>
+                {/* Image/Video Preview (Left, fixed small size: 80x80) */}
+                <div style={{ width: '80px', height: '80px', borderRadius: '16px', background: '#f8fafc', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
                   {mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i)) ? (
                     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
                       <video src={finalMediaUrl} muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)' }}>
-                        <Film size={28} color="white" />
+                        <Film size={20} color="white" />
                       </div>
                     </div>
                   ) : (
                     <img src={finalMediaUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   )}
-
-                  {/* Status Badge */}
-                  <div style={{
-                    position: 'absolute', top: '10px', left: '10px',
-                    background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(4px)',
-                    padding: '4px 10px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
-                  }}>
-                    {post.status === 'Retrying' ? (
-                      <div style={{ width: '6px', height: '6px', borderRadius: '50%', border: '1.5px solid #f59e0b', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
-                    ) : (
-                      <div style={{
-                        width: '6px', height: '6px', borderRadius: '50%',
-                        background: post.status === 'Posted' ? '#10b981' : post.status === 'Failed' ? '#ef4444' : '#7c3aed'
-                      }} />
-                    )}
-                    <span style={{
-                      fontSize: '0.65rem', fontWeight: '800',
-                      color: post.status === 'Posted' ? '#059669' : post.status === 'Failed' ? '#dc2626' : post.status === 'Retrying' ? '#d97706' : '#1e1b4b'
-                    }}>
-                      {post.status === 'Retrying' ? `Retrying` : (post.status || 'SCHEDULED')}
-                    </span>
-                  </div>
-
-                  {/* Post Type Badge */}
-                  <div style={{
-                    position: 'absolute', top: '10px', right: '10px',
-                    background: 'rgba(30, 27, 75, 0.7)', backdropFilter: 'blur(4px)',
-                    color: 'white', padding: '4px 8px', borderRadius: '8px', fontSize: '0.65rem', fontWeight: '800'
-                  }}>
-                    {(post.type || 'IMAGE').toUpperCase()}
-                  </div>
                 </div>
 
                 {/* Details Section */}
-                <div style={{ padding: '14px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', color: '#64748b' }}>
-                    <Calendar size={12} />
-                    <span style={{ fontSize: '0.75rem', fontWeight: '700' }}>
-                      {new Date(post.scheduledFor).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </span>
-                    <span style={{ color: '#cbd5e1' }}>•</span>
-                    <Clock size={12} />
-                    <span style={{ fontSize: '0.75rem', fontWeight: '700' }}>
-                      {new Date(post.scheduledFor).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                    {/* Status Badge */}
+                    <div style={{
+                      background: post.status === 'Posted' ? '#ecfdf5' : post.status === 'Failed' ? '#fef2f2' : '#f5f3ff',
+                      padding: '4px 10px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px'
+                    }}>
+                      {post.status === 'Retrying' ? (
+                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', border: '1.5px solid #f59e0b', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
+                      ) : (
+                        <div style={{
+                          width: '6px', height: '6px', borderRadius: '50%',
+                          background: post.status === 'Posted' ? '#10b981' : post.status === 'Failed' ? '#ef4444' : '#7c3aed'
+                        }} />
+                      )}
+                      <span style={{
+                        fontSize: '0.65rem', fontWeight: '800',
+                        color: post.status === 'Posted' ? '#059669' : post.status === 'Failed' ? '#dc2626' : post.status === 'Retrying' ? '#d97706' : '#1e1b4b'
+                      }}>
+                        {post.status === 'Retrying' ? `Retrying` : (post.status || 'SCHEDULED')}
+                      </span>
+                    </div>
 
                     {/* Automation Status Mini-Toggle */}
                     {(post.autoResponse || post.triggerKeyword) && (
@@ -610,7 +588,7 @@ export default function Scheduling() {
                         style={{
                           width: '24px', height: '12px', borderRadius: '6px',
                           background: post.automationStatus === 'Paused' ? '#cbd5e1' : '#10b981',
-                          position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center', marginLeft: 'auto'
+                          position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center'
                         }}
                         title="Toggle Automation"
                       >
@@ -621,53 +599,69 @@ export default function Scheduling() {
                         }} />
                       </div>
                     )}
+
+                    {/* Post Type Badge */}
+                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', background: '#f1f5f9', padding: '4px 8px', borderRadius: '6px' }}>
+                      {post.type || 'IMAGE'}
+                    </div>
                   </div>
 
-                  {/* Caption */}
-                  <p style={{
-                    fontSize: '0.85rem', fontWeight: '600', color: '#1e293b', marginBottom: '12px',
-                    display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '2.4rem',
-                    lineHeight: '1.2rem'
+                  {/* Caption & Date Row */}
+                  <h4 style={{
+                    fontSize: '0.95rem', fontWeight: '700', color: '#1e1b4b', margin: '0 0 6px 0',
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
                   }}>
                     {post.caption || 'No caption provided.'}
-                  </p>
+                  </h4>
 
-                  {/* Action Buttons */}
-                  <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
-                    <button
-                      onClick={() => {
-                        setCreatedPost({
-                          ...post,
-                          anyKeyword: post.triggerKeyword === '*',
-                          automationStatus: post.automationStatus || 'Active'
-                        });
-                        setShowAdvanced(true);
-                      }}
-                      style={{
-                        flex: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
-                        padding: '8px', borderRadius: '10px', border: '1px solid #f5f3ff',
-                        background: '#f5f3ff', color: '#7c3aed', fontWeight: '800', cursor: 'pointer',
-                        transition: 'all 0.2s', fontSize: '0.75rem'
-                      }}
-                    >
-                      <Zap size={12} /> Automation
-                    </button>
-
-                    <button
-                      onClick={() => deletePost(post._id)}
-                      style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        width: '32px', height: '32px', borderRadius: '10px', border: '1px solid #fee2e2',
-                        background: 'white', color: '#ef4444', cursor: 'pointer',
-                        transition: 'all 0.2s', flexShrink: 0
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
-                      onMouseOut={(e) => e.currentTarget.style.background = 'white'}
-                      title="Cancel/Delete Post"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.8rem', fontWeight: '600' }}>
+                    <Calendar size={12} />
+                    <span>
+                      {new Date(post.scheduledFor).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </span>
+                    <span>•</span>
+                    <Clock size={12} />
+                    <span>
+                      {new Date(post.scheduledFor).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+                  <button
+                    onClick={() => {
+                      setCreatedPost({
+                        ...post,
+                        anyKeyword: post.triggerKeyword === '*',
+                        automationStatus: post.automationStatus || 'Active'
+                      });
+                      setShowAdvanced(true);
+                    }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '6px',
+                      padding: '10px 16px', borderRadius: '12px', border: '1px solid #f5f3ff',
+                      background: '#f5f3ff', color: '#7c3aed', fontWeight: '800', cursor: 'pointer',
+                      transition: 'all 0.2s', fontSize: '0.8rem'
+                    }}
+                  >
+                    <Zap size={14} /> <span className="mobile-hide">Automation</span>
+                  </button>
+
+                  <button
+                    onClick={() => deletePost(post._id)}
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      width: '38px', height: '38px', borderRadius: '12px', border: '1px solid #fee2e2',
+                      background: 'white', color: '#ef4444', cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'white'}
+                    title="Cancel/Delete Post"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               </div>
             );

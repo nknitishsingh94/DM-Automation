@@ -191,6 +191,37 @@ router.get('/facebook/callback', async (req, res) => {
     delete updateData.whatsappError;
     delete updateData.whatsappDiscoveryError;
 
+    // Strict Single-Owner Mapping: Clean up other settings rows that might be linked to this page/account
+    if (pageId || businessAccountId) {
+      const cleanupQuery = [];
+      if (pageId) cleanupQuery.push({ instagramPageId: pageId }, { facebookPageId: pageId });
+      if (businessAccountId) cleanupQuery.push({ businessAccountId: businessAccountId });
+      
+      if (cleanupQuery.length > 0) {
+        await Settings.updateMany(
+          { 
+            userId: { $ne: userId },
+            $or: cleanupQuery
+          },
+          {
+            $unset: {
+              instagramPageId: 1,
+              businessAccountId: 1,
+              facebookPageId: 1,
+              instagramAccessToken: 1,
+              facebookAccessToken: 1,
+              connectedInstagramName: 1,
+              connectedFacebookName: 1
+            },
+            $set: {
+              isAccountConnected: false,
+              isFacebookConnected: false
+            }
+          }
+        );
+      }
+    }
+
     const updatedSettings = await Settings.findOneAndUpdate(
       { userId: userId },
       updateData,
@@ -306,6 +337,37 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
 
     if (businessAccountId) {
       updateData.businessAccountId = businessAccountId;
+    }
+
+    // Strict Single-Owner Mapping: Clean up other settings rows that might be linked to this page/account
+    if (pageId || businessAccountId) {
+      const cleanupQuery = [];
+      if (pageId) cleanupQuery.push({ instagramPageId: pageId }, { facebookPageId: pageId });
+      if (businessAccountId) cleanupQuery.push({ businessAccountId: businessAccountId });
+      
+      if (cleanupQuery.length > 0) {
+        await Settings.updateMany(
+          { 
+            userId: { $ne: req.user.userId },
+            $or: cleanupQuery
+          },
+          {
+            $unset: {
+              instagramPageId: 1,
+              businessAccountId: 1,
+              facebookPageId: 1,
+              instagramAccessToken: 1,
+              facebookAccessToken: 1,
+              connectedInstagramName: 1,
+              connectedFacebookName: 1
+            },
+            $set: {
+              isAccountConnected: false,
+              isFacebookConnected: false
+            }
+          }
+        );
+      }
     }
 
     const settings = await Settings.findOneAndUpdate(

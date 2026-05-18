@@ -8,25 +8,29 @@ const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function run() {
-  console.log("Checking scheduled posts for active user ffe99b88-3156-4f9f-aabf-3302264a96bf...");
+  console.log("Checking campaigns for active user ffe99b88-3156-4f9f-aabf-3302264a96bf...");
   const { data, error } = await supabase
-    .from('scheduled_posts')
+    .from('campaigns')
     .select('*')
     .eq('userId', 'ffe99b88-3156-4f9f-aabf-3302264a96bf');
   
   if (error) {
-    console.error("Error fetching scheduled posts:", error);
+    console.error("Error fetching campaigns:", error);
     return;
   }
   
-  console.log(`Found ${data.length} scheduled posts:`);
+  console.log(`Found ${data.length} campaigns:`);
   data.forEach((row, i) => {
-    console.log(`\n--- Post ${i + 1} ---`);
+    console.log(`\n--- Campaign ${i + 1} ---`);
     console.log(`id: ${row.id}`);
-    console.log(`caption: ${row.caption}`);
+    console.log(`name: ${row.name}`);
+    console.log(`trigger: ${row.trigger}`);
+    console.log(`response: ${row.response}`);
     console.log(`status: ${row.status}`);
+    console.log(`platform: ${row.platform}`);
     console.log(`postId: ${row.postId}`);
-    console.log(`mediaUrl: ${row.mediaUrl}`);
+    console.log(`isAnyPost: ${row.isAnyPost}`);
+    console.log(`triggerOnComments: ${row.triggerOnComments}`);
   });
 }
 

@@ -1458,12 +1458,27 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
       if (igMediaId) postIds.push(igMediaId);
 
       if (postIds.length > 0) {
-        // Parse current metadata to get automationStatus
+        // Parse current metadata to get automationStatus and advanced options
         let automationStatus = 'Paused';
+        let reqFollow = false;
+        let unfollowedResp = '';
+        let pubReply = '';
+        let openMsg = false;
+        let openMsgText = '';
+        let openMsgBtn = '';
+        let btns = [];
+
         if (updatedPost.mediaUrl && updatedPost.mediaUrl.startsWith('{')) {
           try {
             const meta = JSON.parse(updatedPost.mediaUrl);
             automationStatus = meta.automationStatus || 'Paused';
+            reqFollow = meta.requireFollow || false;
+            unfollowedResp = meta.unfollowedResponse || '';
+            pubReply = meta.publicReply || '';
+            openMsg = meta.openingMessage || false;
+            openMsgText = meta.openingMessageText || '';
+            openMsgBtn = meta.openingMessageButton || '';
+            btns = meta.buttons || [];
           } catch (e) {}
         }
 
@@ -1476,8 +1491,18 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
           { 
             trigger: updatedPost.triggerKeyword || '*', 
             response: updatedPost.autoResponse || '',
-            publicReplyText: updatedPost.publicReply || '',
-            status: isPaused ? 'Paused' : 'Active'
+            publicReplyText: pubReply,
+            status: isPaused ? 'Paused' : 'Active',
+            platform: 'instagram',
+            triggerOnComments: true,
+            triggerOnDms: false,
+            triggerOnStories: false,
+            requireFollow: reqFollow,
+            unfollowedResponse: unfollowedResp,
+            openingMessage: openMsg,
+            openingMessageText: openMsgText,
+            openingMessageButton: openMsgBtn,
+            buttons: btns
           }
         );
       }
@@ -2058,6 +2083,10 @@ setInterval(async () => {
             status: 'Active',
             isAnyPost: false,
             postId: publishedId,
+            platform: 'instagram',
+            triggerOnComments: true,
+            triggerOnDms: false,
+            triggerOnStories: false,
             requireFollow: requireFollow,
             unfollowedResponse: unfollowedResponse,
             publicReplyText: publicReply,

@@ -1,32 +1,33 @@
-import 'dotenv/config';
-import Settings from '../models/Settings.js';
-import User from '../models/User.js';
-import axios from 'axios';
+import dotenv from 'dotenv';
+import { createClient } from '@supabase/supabase-js';
 
-async function checkAllSettings() {
-  try {
-    const users = await User.find({});
-    console.log(`\n--- ALL USERS (${users.length}) ---`);
-    users.forEach(u => {
-      console.log(`User: ${u.username || 'No name'} (${u.email}) [ID: ${u._id}]`);
-    });
+dotenv.config();
 
-    const allSettings = await Settings.find({});
-    console.log(`\n--- ALL SETTINGS RECORDS (${allSettings.length}) ---`);
-    allSettings.forEach(s => {
-      console.log(`Settings ID: ${s._id}`);
-      console.log(`User ID: ${s.userId}`);
-      console.log(`Business Account ID: ${s.businessAccountId}`);
-      console.log(`Instagram Page ID: ${s.instagramPageId}`);
-      console.log(`Has Instagram Token: ${!!s.instagramAccessToken}`);
-      console.log('---');
-    });
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-  } catch (err) {
-    console.error("🔥 Error:", err.message);
-  } finally {
-    process.exit();
+async function run() {
+  console.log("Checking settings table...");
+  const { data, error } = await supabase
+    .from('settings')
+    .select('*');
+  
+  if (error) {
+    console.error("Error fetching settings:", error);
+    return;
   }
+  
+  console.log(`Found ${data.length} settings rows:`);
+  data.forEach((row, i) => {
+    console.log(`\n--- Settings Row ${i + 1} ---`);
+    console.log(`id: ${row.id}`);
+    console.log(`userId: ${row.userId}`);
+    console.log(`instagramPageId: ${row.instagramPageId}`);
+    console.log(`businessAccountId: ${row.businessAccountId}`);
+    console.log(`facebookPageId: ${row.facebookPageId}`);
+    console.log(`instagramUsername: ${row.instagramUsername}`);
+  });
 }
 
-checkAllSettings();
+run();

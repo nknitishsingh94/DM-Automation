@@ -394,42 +394,6 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     return data && data.length > 0 ? ModelInstance(convertIncoming(data[0], tableName)) : null;
   };
 
-  ModelInstance.findByIdAndUpdate = async function (id, updateData, options = {}) {
-    if (!supabase || !id) return null;
-    let finalUpdate = { ...updateData };
-    
-    // Handle MongoDB operators
-    if (updateData.$set) {
-      finalUpdate = { ...finalUpdate, ...updateData.$set };
-      delete finalUpdate.$set;
-    }
-    
-    if (updateData.$unset) {
-      for (const key of Object.keys(updateData.$unset)) {
-        finalUpdate[key] = null;
-      }
-      delete finalUpdate.$unset;
-    }
-    
-    const existing = await ModelInstance.findById(id);
-    if (existing) {
-      if (updateData.$inc) {
-        for (const [key, val] of Object.entries(updateData.$inc)) {
-          finalUpdate[key] = (existing[key] || 0) + val;
-        }
-        delete finalUpdate.$inc;
-      }
-      finalUpdate = { ...existing, ...finalUpdate };
-    }
-    const cleanUpdate = convertOutgoing(finalUpdate, tableName);
-    const { data, error } = await supabase
-      .from(tableName)
-      .update(cleanUpdate)
-      .eq('id', id)
-      .select();
-    if (error) throw error;
-    return data && data.length > 0 ? convertIncoming(data[0], tableName) : null;
-  };
 
   ModelInstance.findOneAndUpdate = async function (query, updateData, options = {}) {
     if (!supabase) return null;
@@ -540,14 +504,6 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     return { acknowledged: true };
   };
 
-  ModelInstance.countDocuments = async function (query) {
-    if (!supabase) return 0;
-    let q = supabase.from(tableName).select('*', { count: 'exact', head: true });
-    q = parseFilter(q, query, tableName);
-    const { count, error } = await q;
-    if (error) throw error;
-    return count || 0;
-  };
 
   ModelInstance.distinct = async function (field, query) {
     if (!supabase) return [];
@@ -644,17 +600,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     return { acknowledged: true, modifiedCount: 0 };
   };
 
-  ModelInstance.findByIdAndDelete = async function (id) {
-    if (!supabase || !id) return null;
-    const { data, error } = await supabase.from(tableName).select('*').eq('id', id).limit(1);
-    if (error) throw error;
-    if (data && data.length > 0) {
-      const { error: delErr } = await supabase.from(tableName).delete().eq('id', id);
-      if (delErr) throw delErr;
-      return convertIncoming(data[0], tableName);
-    }
-    return null;
-  };
+
 
   return ModelInstance;
 }
