@@ -540,67 +540,66 @@ export default function AutomationEditor() {
               <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>Click to rename your automation</p>
             </div>
             {/* Step 1: Follower Growth Gating (NEW PRIORITY) */}
-            <div style={{ marginBottom: '32px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>1</div>
-                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Follower Growth Gating</h3>
+            <div style={{ marginBottom: '18px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>1</div>
+                <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Follower Growth Gating</h3>
               </div>
               
               <div style={{ 
-                padding: '24px', 
-                borderRadius: '16px', 
+                padding: '16px 20px', 
+                borderRadius: '12px', 
                 background: '#ecfdf5', 
                 border: '1px solid #10b981',
-                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.08)',
-                marginBottom: '16px'
+                boxShadow: '0 2px 6px rgba(16, 185, 129, 0.05)',
+                marginBottom: '12px'
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <div style={{ fontWeight: '800', color: '#065f46', fontSize: '0.95rem' }}>Require Follow to Trigger</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <div style={{ fontWeight: '800', color: '#065f46', fontSize: '0.85rem' }}>Require Follow to Trigger</div>
                   <div 
                     onClick={() => setRequireFollow(!requireFollow)}
                     style={{ 
-                      width: '44px', height: '24px', borderRadius: '12px', background: requireFollow ? '#10b981' : '#cbd5e1', 
+                      width: '40px', height: '22px', borderRadius: '11px', background: requireFollow ? '#10b981' : '#cbd5e1', 
                       position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
                     }}
                   >
                     <div style={{ 
-                      width: '18px', height: '18px', borderRadius: '50%', background: 'white', 
-                      position: 'absolute', top: '3px', left: requireFollow ? '23px' : '3px', transition: 'all 0.3s' 
+                      width: '16px', height: '16px', borderRadius: '50%', background: 'white', 
+                      position: 'absolute', top: '3px', left: requireFollow ? '21px' : '3px', transition: 'all 0.3s' 
                     }}></div>
                   </div>
                 </div>
-                <p style={{ fontSize: '0.8rem', color: '#047857', marginBottom: '20px', lineHeight: '1.4' }}>
+                <p style={{ fontSize: '0.75rem', color: '#047857', marginBottom: '12px', lineHeight: '1.4' }}>
                   Only people who follow you will receive your link. Non-followers will get a request to follow you first. 🚀
                 </p>
                 
                 {requireFollow && (
                   <div>
-                    <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#065f46', marginBottom: '8px' }}>Follow Request Message</div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: '800', color: '#065f46', marginBottom: '6px' }}>Follow Request Message</div>
                     <textarea 
                       value={unfollowedMessage}
                       onChange={(e) => setUnfollowedMessage(e.target.value)}
                       placeholder="E.g. Please follow us first!"
                       style={{ 
-                        width: '100%', height: '70px', padding: '12px', borderRadius: '10px', border: '1px solid #10b981', 
-                        outline: 'none', fontSize: '0.85rem', resize: 'none', lineHeight: '1.5', background: 'white'
+                        width: '100%', height: '50px', padding: '10px', borderRadius: '8px', border: '1px solid #10b981', 
+                        outline: 'none', fontSize: '0.8rem', resize: 'none', lineHeight: '1.4', background: 'white'
                       }}
                     ></textarea>
                   </div>
                 )}
               </div>
             </div>
-
-            {/* Step 2: Select a Post (Restored) */}
+               {/* Step 2: Select a Post (Restored) */}
             {template !== 'dms' && (
-              <div style={{ marginBottom: '32px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>2</div>
-                  <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>{template === 'stories' ? 'Select a Story' : 'Select a Post'}</h3>
+              <div style={{ marginBottom: '18px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>2</div>
+                  <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>{template === 'stories' ? 'Select a Story' : 'Select a Post'}</h3>
                 </div>
-              <div style={{ padding: '20px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
+              <div style={{ padding: '14px 18px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
                 {template === 'stories' ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100px', background: '#e2e8f0', borderRadius: '12px', fontWeight: '800', color: '#475569', fontSize: '1.2rem', border: '2px dashed #cbd5e1' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', background: '#e2e8f0', borderRadius: '10px', fontWeight: '800', color: '#475569', fontSize: '1rem', border: '2px dashed #cbd5e1' }}>
                         Story Mode Active
                       </div>
                       <a 
@@ -608,11 +607,11 @@ export default function AutomationEditor() {
                         target="_blank" 
                         rel="noopener noreferrer"
                         style={{ 
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', 
-                          padding: '12px', borderRadius: '12px', background: '#00c4cc', color: 'white', 
-                          fontWeight: '800', textDecoration: 'none', transition: 'all 0.3s', boxShadow: '0 4px 12px rgba(0, 196, 204, 0.2)'
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', 
+                          padding: '8px 12px', borderRadius: '10px', background: '#00c4cc', color: 'white', 
+                          fontWeight: '800', textDecoration: 'none', transition: 'all 0.3s', boxShadow: '0 2px 6px rgba(0, 196, 204, 0.15)', fontSize: '0.85rem'
                         }}
-                        onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                        onMouseOver={e => e.currentTarget.style.transform = 'translateY(-1px)'}
                         onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
                       >
                         🎨 Open Canva Story Templates
@@ -620,37 +619,37 @@ export default function AutomationEditor() {
                     </div>
                 ) : (
                   <>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                      <span style={{ fontWeight: '700', color: '#475569' }}>Any post</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: !anyStory ? '10px' : '0' }}>
+                      <span style={{ fontWeight: '700', color: '#475569', fontSize: '0.85rem' }}>Any post</span>
                       <div 
                         onClick={() => setAnyStory(!anyStory)}
                         style={{ 
-                          width: '44px', height: '24px', borderRadius: '12px', background: anyStory ? '#7c3aed' : '#cbd5e1', 
+                          width: '40px', height: '22px', borderRadius: '11px', background: anyStory ? '#7c3aed' : '#cbd5e1', 
                           position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
                         }}
                       >
                         <div style={{ 
-                          width: '18px', height: '18px', borderRadius: '50%', background: 'white', 
-                          position: 'absolute', top: '3px', left: anyStory ? '23px' : '3px', transition: 'all 0.3s' 
+                          width: '16px', height: '16px', borderRadius: '50%', background: 'white', 
+                          position: 'absolute', top: '3px', left: anyStory ? '21px' : '3px', transition: 'all 0.3s' 
                         }}></div>
                       </div>
                     </div>
                     {!anyStory && (
-                      <div style={{ marginTop: '20px' }}>
+                      <div style={{ marginTop: '12px' }}>
                         {loadingMedia ? (
-                          <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8' }}>
-                            <Loader2 className="animate-spin" style={{ margin: '0 auto 8px' }} />
+                          <div style={{ textAlign: 'center', padding: '10px', color: '#94a3b8', fontSize: '0.8rem' }}>
+                            <Loader2 className="animate-spin" style={{ margin: '0 auto 4px' }} />
                             Fetching your posts...
                           </div>
                         ) : realMedia.length === 0 ? (
-                          <div style={{ textAlign: 'center', padding: '20px', color: '#94a3b8', fontSize: '0.85rem' }}>
+                          <div style={{ textAlign: 'center', padding: '10px', color: '#94a3b8', fontSize: '0.8rem' }}>
                             No posts found.
                           </div>
                         ) : (
                           <div style={{ 
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))',
-                            gap: '12px'
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(70px, 1fr))',
+                            gap: '8px'
                           }}>
                             {realMedia.map((item) => (
                               <div 
@@ -659,8 +658,8 @@ export default function AutomationEditor() {
                                 style={{ 
                                   aspectRatio: '1/1',
                                   background: '#e2e8f0',
-                                  borderRadius: '12px',
-                                  border: selectedContentId === item.id ? '3px solid #7c3aed' : '2px solid transparent',
+                                  borderRadius: '8px',
+                                  border: selectedContentId === item.id ? '2px solid #7c3aed' : '2px solid transparent',
                                   cursor: 'pointer',
                                   transition: 'all 0.2s',
                                   overflow: 'hidden',
@@ -674,10 +673,10 @@ export default function AutomationEditor() {
                                 />
                                 {selectedContentId === item.id && (
                                   <div style={{ 
-                                    position: 'absolute', top: '4px', right: '4px', 
-                                    background: '#7c3aed', borderRadius: '50%', padding: '2px' 
+                                    position: 'absolute', top: '2px', right: '2px', 
+                                    background: '#7c3aed', borderRadius: '50%', padding: '1px' 
                                   }}>
-                                    <CheckCircle2 size={12} color="white" />
+                                    <CheckCircle2 size={10} color="white" />
                                   </div>
                                 )}
                               </div>
@@ -690,23 +689,23 @@ export default function AutomationEditor() {
                 )}
               </div>
             </div>
-          )}
+            )}
 
 
 
             <div 
               onClick={() => setPreviewMode('comment')}
-              style={{ marginBottom: '32px', cursor: 'pointer' }}
+              style={{ marginBottom: '18px', cursor: 'pointer' }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>3</div>
-                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>3</div>
+                <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>
                   {template === 'stories' ? 'Reply Trigger' : (template === 'comments' ? 'Comment Trigger' : 'Keyword Trigger')}
                 </h3>
               </div>
               
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <span style={{ fontWeight: '700', color: '#475569', fontSize: '0.9rem' }}>Any keyword</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <span style={{ fontWeight: '700', color: '#475569', fontSize: '0.85rem' }}>Any keyword</span>
                 <div 
                   onClick={() => setAnyKeyword(!anyKeyword)}
                   style={{ 
@@ -723,7 +722,7 @@ export default function AutomationEditor() {
 
               {!anyKeyword && (
                 <div>
-                  <div style={{ position: 'relative', marginBottom: '12px' }}>
+                  <div style={{ position: 'relative', marginBottom: '8px' }}>
                     <input 
                       type="text" 
                       placeholder="Type & Hit ↵ Enter to add Keyword"
@@ -731,8 +730,8 @@ export default function AutomationEditor() {
                       onChange={(e) => setKeywordInput(e.target.value)}
                       onKeyDown={handleAddKeyword}
                       style={{ 
-                        width: '100%', padding: '14px 45px 14px 16px', borderRadius: '12px', border: '1.5px solid #cbd5e1', 
-                        outline: 'none', fontSize: '0.9rem', fontWeight: '500'
+                        width: '100%', padding: '10px 45px 10px 14px', borderRadius: '10px', border: '1.5px solid #cbd5e1', 
+                        outline: 'none', fontSize: '0.85rem', fontWeight: '500'
                       }}
                     />
                     <div 
@@ -743,23 +742,23 @@ export default function AutomationEditor() {
                         }
                       }}
                       style={{ 
-                        position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)',
-                        width: '32px', height: '32px', borderRadius: '8px', background: '#7c3aed',
+                        position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)',
+                        width: '28px', height: '28px', borderRadius: '6px', background: '#7c3aed',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
                         cursor: 'pointer', zIndex: 5
                       }}
                     >
-                      <Plus size={18} />
+                      <Plus size={16} />
                     </div>
                   </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                     {keywords.map(kw => (
                       <span key={kw} style={{ 
-                        background: '#f1f5f9', color: '#475569', padding: '6px 12px', 
-                        borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700', 
-                        display: 'flex', alignItems: 'center', gap: '8px' 
+                        background: '#f1f5f9', color: '#475569', padding: '4px 10px', 
+                        borderRadius: '6px', fontSize: '0.8rem', fontWeight: '700', 
+                        display: 'flex', alignItems: 'center', gap: '6px' 
                       }}>
-                        {kw} <X size={14} onClick={() => removeKeyword(kw)} style={{ cursor: 'pointer', color: '#94a3b8' }} />
+                        {kw} <X size={12} onClick={() => removeKeyword(kw)} style={{ cursor: 'pointer', color: '#94a3b8' }} />
                       </span>
                     ))}
                   </div>
@@ -770,60 +769,60 @@ export default function AutomationEditor() {
             {/* Step 3: Send a DM (Modern Design) */}
             <div 
               onClick={() => setPreviewMode('dm')}
-              style={{ marginBottom: '40px', cursor: 'pointer' }}
+              style={{ marginBottom: '24px', cursor: 'pointer' }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800' }}>4</div>
-                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b' }}>Send a DM</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>4</div>
+                <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Send a DM</h3>
               </div>
               
               <div style={{ 
-                padding: '24px', 
-                borderRadius: '16px', 
+                padding: '18px 22px', 
+                borderRadius: '12px', 
                 background: 'white', 
                 border: '1px solid #7c3aed',
-                boxShadow: '0 4px 20px rgba(124, 58, 237, 0.08)',
-                marginBottom: '16px'
+                boxShadow: '0 2px 10px rgba(124, 58, 237, 0.05)',
+                marginBottom: '12px'
               }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: '800', color: '#4338ca', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                   <Send size={14} /> DM Response Text
+                <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#4338ca', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                   <Send size={12} /> DM Response Text
                 </div>
                 <textarea 
                   placeholder="Enter your final message here... (e.g. Here is your link!)"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   style={{ 
-                    width: '100%', height: '110px', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', 
-                    outline: 'none', fontSize: '0.9rem', resize: 'none', marginBottom: '8px', lineHeight: '1.5',
+                    width: '100%', height: '80px', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', 
+                    outline: 'none', fontSize: '0.85rem', resize: 'none', marginBottom: '4px', lineHeight: '1.4',
                     background: '#fcfaff'
                   }}
                 ></textarea>
-                <div style={{ fontSize: '0.7rem', color: '#94a3b8', textAlign: 'right', marginBottom: '20px' }}>{message.length}/1000 characters</div>
+                <div style={{ fontSize: '0.65rem', color: '#94a3b8', textAlign: 'right', marginBottom: '12px' }}>{message.length}/1000 characters</div>
 
                 {/* Link Section Inside Box */}
-                <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '20px' }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: '800', color: '#4338ca', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <LinkIcon size={14} /> Link & Call to Action
+                <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '14px' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#4338ca', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <LinkIcon size={12} /> Link & Call to Action
                   </div>
                   
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {buttons.map((btn, idx) => (
                       <div key={idx} style={{ 
                         display: 'flex', 
                         alignItems: 'center', 
                         justifyContent: 'space-between',
-                        padding: '12px 16px',
+                        padding: '10px 14px',
                         background: '#f8fafc',
                         border: '1px solid #e2e8f0',
-                        borderRadius: '12px'
+                        borderRadius: '10px'
                       }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <LinkIcon size={16} color="#7c3aed" />
-                          <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#1e1b4b' }}>{btn.text}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <LinkIcon size={14} color="#7c3aed" />
+                          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#1e1b4b' }}>{btn.text}</span>
                         </div>
-                        <div style={{ display: 'flex', gap: '12px' }}>
-                          <Pencil size={16} color="#64748b" style={{ cursor: 'pointer' }} onClick={() => openEditLinkModal(idx)} />
-                          <Trash2 size={16} color="#ef4444" style={{ cursor: 'pointer' }} onClick={() => removeLink(idx)} />
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                          <Pencil size={14} color="#64748b" style={{ cursor: 'pointer' }} onClick={() => openEditLinkModal(idx)} />
+                          <Trash2 size={14} color="#ef4444" style={{ cursor: 'pointer' }} onClick={() => removeLink(idx)} />
                         </div>
                       </div>
                     ))}
@@ -833,17 +832,17 @@ export default function AutomationEditor() {
                         onClick={openAddLinkModal}
                         style={{ 
                           width: '100%',
-                          padding: '12px',
+                          padding: '10px',
                           background: 'white',
                           border: '1.5px dashed #cbd5e1',
-                          borderRadius: '12px',
+                          borderRadius: '10px',
                           color: '#64748b',
-                          fontSize: '0.85rem',
+                          fontSize: '0.8rem',
                           fontWeight: '700',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '8px',
+                          gap: '6px',
                           cursor: 'pointer',
                           transition: 'all 0.2s'
                         }}
@@ -859,9 +858,9 @@ export default function AutomationEditor() {
             </div>
 
             {/* Advanced Automations (Matching Photo) */}
-            <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '24px', paddingBottom: '60px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b' }}>Advanced Automations</h4>
+            <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '16px', paddingBottom: '30px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Advanced Automations</h4>
                 <div 
                   onClick={() => setOpeningMessage(!openingMessage)}
                   style={{ 
@@ -875,25 +874,25 @@ export default function AutomationEditor() {
                   }}></div>
                 </div>
               </div>
-              <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '20px' }}>Grow your audience faster — with smart, hands-free engagement.</p>
+              <p style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '14px', margin: '4px 0 12px' }}>Grow your audience faster — with smart, hands-free engagement.</p>
               
               {openingMessage && (
                 <div style={{ 
-                  padding: '20px', 
-                  borderRadius: '16px', 
+                  padding: '14px 18px', 
+                  borderRadius: '12px', 
                   background: 'white', 
                   border: '1px solid #7c3aed',
-                  boxShadow: '0 4px 20px rgba(124, 58, 237, 0.05)',
-                  marginBottom: '24px'
+                  boxShadow: '0 2px 10px rgba(124, 58, 237, 0.03)',
+                  marginBottom: '16px'
                 }}>
-                  <div style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '12px' }}>Opening Message</div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px' }}>Opening Message</div>
                   <textarea 
                     value={openingMessageText}
                     onChange={(e) => setOpeningMessageText(e.target.value)}
                     placeholder="Enter opening message..."
                     style={{ 
-                      width: '100%', height: '120px', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', 
-                      outline: 'none', fontSize: '0.85rem', resize: 'none', marginBottom: '16px', lineHeight: '1.5'
+                      width: '100%', height: '70px', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', 
+                      outline: 'none', fontSize: '0.85rem', resize: 'none', marginBottom: '12px', lineHeight: '1.4'
                     }}
                   ></textarea>
                   <div style={{ position: 'relative' }}>
@@ -903,11 +902,11 @@ export default function AutomationEditor() {
                       onChange={(e) => setOpeningMessageButton(e.target.value)}
                       placeholder="Button Label (e.g. Send me the link)"
                       style={{ 
-                        width: '100%', padding: '12px 12px 12px 40px', borderRadius: '10px', border: '1px solid #e2e8f0', 
+                        width: '100%', padding: '10px 10px 10px 36px', borderRadius: '8px', border: '1px solid #e2e8f0', 
                         outline: 'none', fontSize: '0.85rem', fontWeight: '700'
                       }}
                     />
-                    <CheckCircle2 size={18} color="#7c3aed" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                    <CheckCircle2 size={16} color="#7c3aed" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
                   </div>
                 </div>
               )}
@@ -915,21 +914,21 @@ export default function AutomationEditor() {
 
               {/* Public Comment Reply (Now shown if triggerOnComments is true) */}
               {triggerOnComments && (
-                <div style={{ marginTop: '24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b' }}>Public Comment Reply</h4>
-                    <span style={{ background: '#f5f3ff', color: '#7c3aed', padding: '2px 8px', borderRadius: '4px', fontSize: '0.65rem', fontWeight: '800' }}>RECOMMENDED</span>
+                <div style={{ marginTop: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Public Comment Reply</h4>
+                    <span style={{ background: '#f5f3ff', color: '#7c3aed', padding: '2px 6px', borderRadius: '4px', fontSize: '0.6rem', fontWeight: '800' }}>RECOMMENDED</span>
                   </div>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
                     Trigger on ANY {template === 'stories' ? 'Story interaction' : (template === 'comments' ? 'Comment' : 'DM message')}
                   </span>
                   
                   <div style={{ 
-                    padding: '16px', 
-                    borderRadius: '12px', 
+                    padding: '10px 14px', 
+                    borderRadius: '10px', 
                     background: '#f8fafc', 
                     border: '1px solid #e2e8f0',
-                    marginTop: '8px'
+                    marginTop: '6px'
                   }}>
                     <input 
                       type="text" 
@@ -937,7 +936,7 @@ export default function AutomationEditor() {
                       onChange={(e) => setPublicReply(e.target.value)}
                       placeholder="Check your DMs! 🚀"
                       style={{ 
-                        width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', 
+                        width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', 
                         outline: 'none', fontSize: '0.85rem', background: 'white'
                       }}
                     />
@@ -951,20 +950,20 @@ export default function AutomationEditor() {
               disabled={submitting}
               style={{
                 width: '100%',
-                padding: '18px',
-                borderRadius: '16px',
+                padding: '14px',
+                borderRadius: '12px',
                 background: '#7c3aed',
                 color: 'white',
                 border: 'none',
                 fontWeight: '800',
-                fontSize: '1.1rem',
+                fontSize: '1rem',
                 cursor: submitting ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '12px',
-                marginTop: '10px',
-                boxShadow: '0 10px 15px -3px rgba(124, 58, 237, 0.3)',
+                gap: '10px',
+                marginTop: '6px',
+                boxShadow: '0 8px 12px -3px rgba(124, 58, 237, 0.25)',
                 transition: 'all 0.3s'
               }}
               onMouseEnter={(e) => {
@@ -974,7 +973,7 @@ export default function AutomationEditor() {
                 if (!submitting) e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              {submitting ? <Loader2 className="animate-spin" size={24} /> : <><Zap size={24} fill="white" /> Create Automation</>}
+              {submitting ? <Loader2 className="animate-spin" size={20} /> : <><Zap size={20} fill="white" /> Create Automation</>}
             </button>
           </div>
         </div>
