@@ -317,6 +317,16 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   if (matchedFlow) {
     console.log(`🌊 FLOW MATCH: Triggering Flow "${matchedFlow.name}" for Sender: ${chatId}`);
     await runFlow(userId, matchedFlow._id, chatId, platform, text, commentId);
+
+    // NEW: Also send a public reply to the comment for matched visual flows!
+    if (source === 'comment' && commentId) {
+      console.log(`💬 Sending public comment reply for matched flow to ${commentId}`);
+      const userSettings = await Settings.findOne({ userId });
+      const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+      const replyText = matchedFlow.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
+      await sendPublicComment(platform, commentId, replyText, userId, activeToken);
+    }
+
     return { flow: matchedFlow.name };
   }
 
