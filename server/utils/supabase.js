@@ -504,6 +504,20 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     return convertIncoming(existing, tableName);
   };
 
+  ModelInstance.findByIdAndDelete = async function (id) {
+    if (!supabase || !id) return null;
+    const existing = await ModelInstance.findById(id);
+    if (!existing) return null;
+
+    let idToUse = id;
+    if (typeof id === 'string' && id.length === 24 && /^[0-9a-f]{24}$/i.test(id)) {
+      idToUse = convertObjectIDToUUID(id);
+    }
+    const { error } = await supabase.from(tableName).delete().eq('id', idToUse);
+    if (error) throw error;
+    return existing;
+  };
+
   ModelInstance.deleteMany = async function (query) {
     if (!supabase) return { acknowledged: true };
     let q = supabase.from(tableName).delete();
