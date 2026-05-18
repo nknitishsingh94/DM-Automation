@@ -194,7 +194,7 @@ export default function DmAutomationEditor() {
     }}>
       <div style={{ 
         display: isMobile ? 'block' : 'grid', 
-        gridTemplateColumns: isMobile ? '1fr' : 'minmax(420px, 540px) 1fr',
+        gridTemplateColumns: isMobile ? '1fr' : 'minmax(300px, 360px) 1fr',
         flex: 1,
         overflowX: 'hidden',
         overflowY: isMobile ? 'auto' : 'hidden'
@@ -221,8 +221,8 @@ export default function DmAutomationEditor() {
           
           {/* iPhone Mockup */}
           <div style={{ 
-            width: '360px', 
-            height: '710px', 
+            width: '270px', 
+            height: '540px', 
             background: '#000', 
             borderRadius: '40px', 
             border: '8px solid #1e1b4b',
