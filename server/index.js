@@ -1489,6 +1489,10 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
         await Campaign.findOneAndUpdate(
           { userId: req.user.userId, postId: { $in: postIds } },
           { 
+            userId: req.user.userId,
+            postId: igMediaId || updatedPost.postId || postIds[0],
+            name: `Auto: ${(updatedPost.caption || '').substring(0, 20)}...`,
+            isAnyPost: false,
             trigger: updatedPost.triggerKeyword || '*', 
             response: updatedPost.autoResponse || '',
             publicReplyText: pubReply,
@@ -1503,7 +1507,8 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
             openingMessageText: openMsgText,
             openingMessageButton: openMsgBtn,
             buttons: btns
-          }
+          },
+          { upsert: true, new: true }
         );
       }
     } catch (campaignErr) {

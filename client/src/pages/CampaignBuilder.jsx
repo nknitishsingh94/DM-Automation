@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
@@ -7,8 +7,12 @@ import { ArrowLeft, CheckCircle, Video, Link as LinkIcon, Zap, ChevronLeft, More
 
 export default function CampaignBuilder() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const { notify } = useNotification();
+  
+  const params = new URLSearchParams(location.search);
+  const initialTriggerSource = params.get('triggerSource') || 'dm';
   
   const [formStep, setFormStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
@@ -18,7 +22,7 @@ export default function CampaignBuilder() {
   const [newCamp, setNewCamp] = useState({ 
     name: '', 
     trigger: '', 
-    triggerSource: 'dm',
+    triggerSource: initialTriggerSource,
     response: '', 
     platform: 'all', 
     videoUrl: '', 
