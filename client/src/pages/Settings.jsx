@@ -131,7 +131,12 @@ export default function Settings() {
         setMessage({ type: 'error', text: data.error || 'Connection failed.' });
         notify(data.error || 'Connection failed.', 'error');
       } else {
-        setSettings(s => ({ ...s, ...data }));
+        const derivedData = {
+          ...data,
+          isAccountConnected: !!data.instagramAccessToken && !!data.businessAccountId,
+          isFacebookConnected: false
+        };
+        setSettings(s => ({ ...s, ...derivedData }));
         if (e) {
           setMessage({ type: 'success', text: '✅ Settings updated successfully!' });
           setTimeout(() => setMessage({ type: '', text: '' }), 5000);
@@ -197,10 +202,10 @@ export default function Settings() {
   );
 
   return (
-    <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '100px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', padding: '0 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
       
       {/* Header Block with top-right buttons */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
+      <div className="settings-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
         <div style={{ textAlign: 'left' }}>
           <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
             Connections
@@ -213,6 +218,7 @@ export default function Settings() {
         {/* Buttons matching screenshot */}
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <button 
+            className="settings-header-btn"
             onClick={() => setShowConnectModal(true)}
             style={{ 
               background: '#ea580c', 
@@ -238,7 +244,7 @@ export default function Settings() {
       </div>
 
       {/* Filters Row matching screenshot */}
-      <div style={{ 
+      <div className="settings-filters" style={{ 
         display: 'flex', 
         justifyContent: 'flex-end', 
         alignItems: 'center', 
@@ -249,7 +255,7 @@ export default function Settings() {
         position: 'relative'
       }}>
         {/* Right filters: All platforms & All statuses dropdowns */}
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <div className="settings-filters-group" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           
           {/* All platforms dropdown */}
           <div style={{ position: 'relative' }}>
@@ -346,9 +352,9 @@ export default function Settings() {
          (statusFilter === 'All statuses' || statusFilter === 'Connected') && 
          (platformFilter === 'All platforms' || platformFilter === 'Instagram') ? (
           /* Active Integration Card Grid View - Replicates user screenshot perfectly */
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'flex-start' }}>
+          <div className="connection-card-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'flex-start' }}>
             
-            <div style={{ 
+            <div className="connection-card" style={{ 
               width: '240px',
               border: '1px solid #e5e7eb',
               borderRadius: '12px',
@@ -458,8 +464,16 @@ export default function Settings() {
               <button 
                 onClick={() => {
                   if(window.confirm("Are you sure you want to disconnect Instagram? Automation will stop immediately.")) {
-                    setSettings({...settings, instagramAccessToken: '', instagramPageId: '', businessAccountId: '', isAccountConnected: false});
-                    handleSaveSettings(null, { ...settings, instagramAccessToken: '', instagramPageId: '', businessAccountId: '', isAccountConnected: false });
+                    const clearedSettings = {
+                      ...settings,
+                      instagramAccessToken: null,
+                      instagramPageId: null,
+                      businessAccountId: null,
+                      connectedInstagramName: null,
+                      isAccountConnected: false
+                    };
+                    setSettings(clearedSettings);
+                    handleSaveSettings(null, clearedSettings);
                   }
                 }}
                 style={{ 
@@ -772,6 +786,51 @@ export default function Settings() {
         .trash-btn:hover {
           background: #fef2f2;
           transform: scale(1.05);
+        }
+
+        /* Premium Mobile Responsiveness Queries */
+        @media (max-width: 640px) {
+          .settings-header {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 16px !important;
+          }
+          .settings-header-btn {
+            width: 100%;
+            justify-content: center;
+            padding: 12px 18px !important;
+            font-size: 0.95rem !important;
+          }
+          .settings-filters {
+            width: 100%;
+            justify-content: space-between !important;
+            gap: 12px !important;
+            padding: 12px 0 !important;
+          }
+          .settings-filters-group {
+            width: 100%;
+            display: flex !important;
+            flex-direction: row !important; /* side by side */
+            gap: 10px !important;
+            align-items: center !important;
+          }
+          .settings-filters-group > div {
+            flex: 1;
+            width: 100%;
+          }
+          .settings-filters-group button {
+            width: 100%;
+            justify-content: space-between;
+            padding: 10px 14px !important;
+            font-size: 0.85rem !important;
+          }
+          .connection-card-grid {
+            justify-content: center !important;
+          }
+          .connection-card {
+            width: 100% !important;
+            max-width: 100% !important;
+          }
         }
       `}</style>
     </div>

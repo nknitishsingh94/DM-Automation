@@ -1736,11 +1736,28 @@ app.get('/api/instagram/media', verifyToken, async (req, res) => {
 
 app.post('/api/settings', verifyToken, async (req, res) => {
   try {
-    const data = { ...req.body };
     const platform = req.body._platform; // frontend sends which platform is being saved
-    delete data._platform;
-    delete data.updatedAt; // Remove updatedAt as the 'settings' table doesn't have this column
+    
+    // Explicitly allow only valid settings columns in PostgreSQL to prevent 500 Column Not Found errors
+    const allowedKeys = [
+      'id', 'userId', 
+      'instagramAccessToken', 'instagramPageId', 'businessAccountId', 'connectedInstagramName', 'isAccountConnected', 'instagramAutomationEnabled',
+      'facebookAccessToken', 'facebookPageId', 'connectedFacebookName', 'isFacebookConnected', 'facebookAutomationEnabled',
+      'whatsappToken', 'whatsappPhoneNumberId', 'connectedWhatsAppName', 'isWhatsAppConnected', 'whatsappAutomationEnabled',
+      'telegramToken', 'isTelegramConnected', 'telegramAutomationEnabled',
+      'twitterApiKey', 'isTwitterConnected', 'twitterAutomationEnabled',
+      'youtubeApiKey', 'isYouTubeConnected', 'youtubeAutomationEnabled',
+      'linkedinAccessToken', 'isLinkedInConnected', 'linkedinAutomationEnabled',
+      'connectionError', 'lastTestedAt',
+      'aiFallbackMessage', 'aiName', 'aiTone', 'aiKnowledgeBase', 'aiTemperature'
+    ];
 
+    const data = {};
+    for (const key of allowedKeys) {
+      if (req.body[key] !== undefined) {
+        data[key] = req.body[key];
+      }
+    }
 
     // ── Validate tokens against Meta Graph API ──
     if (platform === 'instagram') {
@@ -1764,7 +1781,13 @@ app.post('/api/settings', verifyToken, async (req, res) => {
           });
         }
       } else {
+        // Explicitly clear integration from database when disconnecting
         data.isAccountConnected = false;
+        data.instagramAccessToken = null;
+        data.instagramPageId = null;
+        data.businessAccountId = null;
+        data.connectedInstagramName = null;
+        data.connectionError = null;
       }
     }
 
