@@ -188,13 +188,27 @@ function convertIncoming(doc, tableName) {
       }
     }
   });
-  if (tableName === 'campaigns' && newDoc.response && newDoc.response.includes('__CAMP_NAME__:')) {
-    const startIdx = newDoc.response.indexOf('__CAMP_NAME__:');
-    const endIdx = newDoc.response.indexOf('__END_CAMP_NAME__');
-    if (startIdx !== -1 && endIdx !== -1) {
-      const name = newDoc.response.slice(startIdx + '__CAMP_NAME__:'.length, endIdx);
-      newDoc.name = name;
-      newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_CAMP_NAME__'.length);
+  if (tableName === 'campaigns') {
+    if (newDoc.response && newDoc.response.includes('__CAMP_NAME__:')) {
+      const startIdx = newDoc.response.indexOf('__CAMP_NAME__:');
+      const endIdx = newDoc.response.indexOf('__END_CAMP_NAME__');
+      if (startIdx !== -1 && endIdx !== -1) {
+        const name = newDoc.response.slice(startIdx + '__CAMP_NAME__:'.length, endIdx);
+        newDoc.name = name;
+        newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_CAMP_NAME__'.length);
+      }
+    }
+    // Parse isAI from response tag
+    if (newDoc.response && newDoc.response.includes('__IS_AI__:')) {
+      const startIdx = newDoc.response.indexOf('__IS_AI__:');
+      const endIdx = newDoc.response.indexOf('__END_IS_AI__');
+      if (startIdx !== -1 && endIdx !== -1) {
+        const valStr = newDoc.response.slice(startIdx + '__IS_AI__:'.length, endIdx);
+        newDoc.isAI = valStr === 'true';
+        newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_IS_AI__'.length);
+      }
+    } else {
+      newDoc.isAI = false;
     }
   }
   newDoc.toObject = () => newDoc;
@@ -237,10 +251,15 @@ function convertOutgoing(doc, tableName) {
   }
 
   if (tableName === 'campaigns') {
+    // Pack isAI into response field to avoid schema cache issues
+    if (newDoc.isAI !== undefined && newDoc.isAI !== null) {
+      newDoc.response = `__IS_AI__:${newDoc.isAI}__END_IS_AI__${newDoc.response || ''}`;
+    }
     if (newDoc.name && newDoc.response) {
       newDoc.response = `__CAMP_NAME__:${newDoc.name}__END_CAMP_NAME__${newDoc.response}`;
     }
     delete newDoc.name;
+    delete newDoc.isAI;
   }
   delete newDoc.toObject;
   delete newDoc.save;
