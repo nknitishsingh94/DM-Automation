@@ -381,11 +381,15 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
 
   ModelInstance.findById = async function (id) {
     if (!supabase || !id) return null;
-    if (!['users', 'settings'].includes(tableName) && !isUUID(id)) {
-      console.warn(`🛑 findById skipped: Invalid UUID format "${id}"`);
+    let idToUse = id;
+    if (typeof id === 'string' && id.length === 24 && /^[0-9a-f]{24}$/i.test(id)) {
+      idToUse = convertObjectIDToUUID(id);
+    }
+    if (!['users', 'settings'].includes(tableName) && !isUUID(idToUse)) {
+      console.warn(`🛑 findById skipped: Invalid UUID format "${idToUse}"`);
       return null;
     }
-    const { data, error } = await supabase.from(tableName).select('*').eq('id', id).limit(1);
+    const { data, error } = await supabase.from(tableName).select('*').eq('id', idToUse).limit(1);
     if (error) throw error;
     return data && data.length > 0 ? ModelInstance(convertIncoming(data[0], tableName)) : null;
   };
