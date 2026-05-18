@@ -240,7 +240,7 @@ export default function Settings() {
       {/* Filters Row matching screenshot */}
       <div style={{ 
         display: 'flex', 
-        justifyContent: 'space-between', 
+        justifyContent: 'flex-end', 
         alignItems: 'center', 
         flexWrap: 'wrap', 
         gap: '16px',
@@ -248,31 +248,6 @@ export default function Settings() {
         borderBottom: '1px solid #f3f4f6',
         position: 'relative'
       }}>
-        {/* Platforms dropdown filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }}>
-          <span style={{ fontSize: '0.9rem', fontWeight: '600', color: '#374151' }}>Platforms</span>
-          
-          <div style={{ position: 'relative' }}>
-            <button 
-              onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-              style={{ 
-                background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '8px 16px', 
-                fontSize: '0.88rem', color: '#374151', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: '130px', justifyContent: 'space-between'
-              }}
-            >
-              <span>{profileFilter}</span>
-              <ChevronDown size={15} color="#9ca3af" />
-            </button>
-            {showProfileDropdown && (
-              <div className="filter-dropdown">
-                <div onClick={() => { setProfileFilter('All profiles'); setShowProfileDropdown(false); }} className="filter-item">All profiles</div>
-                <div onClick={() => { setProfileFilter('Business profiles'); setShowProfileDropdown(false); }} className="filter-item">Business profiles</div>
-                <div onClick={() => { setProfileFilter('Personal profiles'); setShowProfileDropdown(false); }} className="filter-item">Personal profiles</div>
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* Right filters: All platforms & All statuses dropdowns */}
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           
