@@ -433,35 +433,39 @@ export default function Campaigns() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
-            {filteredCampaigns.map((campaign) => (
-              <div key={campaign._id} style={{ 
-                background: 'white', 
-                borderRadius: '24px', 
-                padding: '24px', 
-                border: '1px solid #f1f5f9',
-                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)',
-                transition: 'all 0.3s',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0,0,0,0.05)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)';
-              }}
-              >
-                <div style={{ 
-                  position: 'absolute', top: '24px', right: '24px',
-                  padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800',
-                  background: campaign.triggerSource === 'story_mention' ? '#fdf2f8' : (campaign.triggerSource === 'comment' ? '#f0fdf4' : '#f0f9ff'),
-                  color: campaign.triggerSource === 'story_mention' ? '#db2777' : (campaign.triggerSource === 'comment' ? '#16a34a' : '#0369a1'),
-                  textTransform: 'uppercase'
-                }}>
-                  {campaign.triggerSource === 'story_mention' ? 'Story' : (campaign.triggerSource === 'comment' ? 'Comment' : 'DM')}
-                </div>
+            {filteredCampaigns.map((campaign) => {
+              const isStory = campaign.triggerOnStories || campaign.triggerSource === 'story_mention';
+              const isComment = campaign.triggerOnComments || campaign.triggerSource === 'comment';
+
+              return (
+                <div key={campaign._id} style={{ 
+                  background: 'white', 
+                  borderRadius: '24px', 
+                  padding: '24px', 
+                  border: '1px solid #f1f5f9',
+                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)',
+                  transition: 'all 0.3s',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0,0,0,0.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)';
+                }}
+                >
+                  <div style={{ 
+                    position: 'absolute', top: '24px', right: '24px',
+                    padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800',
+                    background: isStory ? '#fdf2f8' : (isComment ? '#f0fdf4' : '#f0f9ff'),
+                    color: isStory ? '#db2777' : (isComment ? '#16a34a' : '#0369a1'),
+                    textTransform: 'uppercase'
+                  }}>
+                    {isStory ? 'Story' : (isComment ? 'Comment' : 'DM')}
+                  </div>
 
                 {campaign.isUniversal && (
                   <div style={{ 
@@ -516,7 +520,8 @@ export default function Campaigns() {
                   </button>
                 </div>
               </div>
-            ))}
+            );
+          })}
           </div>
         </div>
       ) : (
