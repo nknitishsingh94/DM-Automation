@@ -142,13 +142,25 @@ router.get('/facebook/callback', async (req, res) => {
     // 5. Save to Database
     const updateData = { lastTestedAt: new Date() };
 
-    // Set connection flags based on what we actually found
-    updateData.isAccountConnected = !!businessAccountId;
-    updateData.isFacebookConnected = !!pageId;
-    updateData.isWhatsAppConnected = !!whatsappPhoneId;
-
-    if (!isInstagram && !isFacebook) {
-      // General flow: try to fill everything
+    if (isInstagram) {
+      updateData.instagramAccessToken = pageAccessToken;
+      updateData.instagramPageId = pageId;
+      updateData.businessAccountId = businessAccountId;
+      updateData.isAccountConnected = !!businessAccountId;
+      updateData.connectedInstagramName = accountName;
+      
+      // Explicitly ensure Facebook is not marked connected
+      updateData.isFacebookConnected = false;
+      updateData.facebookPageId = null;
+      updateData.facebookAccessToken = null;
+      updateData.connectedFacebookName = null;
+    } else if (isFacebook) {
+      updateData.facebookAccessToken = pageAccessToken;
+      updateData.facebookPageId = pageId;
+      updateData.isFacebookConnected = !!pageId;
+      updateData.connectedFacebookName = accountName;
+    } else {
+      // General flow: try to fill everything only if no platform was explicitly specified
       updateData.instagramAccessToken = pageAccessToken;
       updateData.facebookAccessToken = pageAccessToken;
       updateData.instagramPageId = pageId;
@@ -157,24 +169,11 @@ router.get('/facebook/callback', async (req, res) => {
       updateData.connectedInstagramName = accountName;
       updateData.connectedFacebookName = accountName;
 
-      // If we found a page at all, consider it at least partially connected
-      if (pageId) updateData.isFacebookConnected = true;
-      if (businessAccountId) updateData.isAccountConnected = true;
-    } else {
-      if (isInstagram) {
-        updateData.instagramAccessToken = pageAccessToken;
-        updateData.instagramPageId = pageId;
-        updateData.businessAccountId = businessAccountId;
-        updateData.isAccountConnected = !!businessAccountId;
-        updateData.connectedInstagramName = accountName;
-      }
-      if (isFacebook) {
-        updateData.facebookAccessToken = pageAccessToken;
-        updateData.facebookPageId = pageId;
-        updateData.isFacebookConnected = !!pageId;
-        updateData.connectedFacebookName = accountName;
-      }
+      updateData.isFacebookConnected = !!pageId;
+      updateData.isAccountConnected = !!businessAccountId;
     }
+
+    updateData.isWhatsAppConnected = !!whatsappPhoneId;
 
     if (whatsappPhoneId) {
       updateData.whatsappToken = longToken;
@@ -326,13 +325,15 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
 
     const updateData = {
       instagramAccessToken: pageAccessToken,
-      facebookAccessToken: pageAccessToken,
       instagramPageId: pageId,
-      facebookPageId: pageId,
       isAccountConnected: !!businessAccountId,
-      isFacebookConnected: !!pageId,
       connectedInstagramName: instagramUsername || 'Connected Instagram',
-      connectedFacebookName: 'Connected Facebook'
+      
+      // Explicitly isolate from Facebook:
+      facebookAccessToken: null,
+      facebookPageId: null,
+      isFacebookConnected: false,
+      connectedFacebookName: null
     };
 
     if (businessAccountId) {

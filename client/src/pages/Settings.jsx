@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ShieldCheck, Instagram, Facebook, MessageSquare, Key, MapPin, Save, Info, 
   CheckCircle, XCircle, Rocket, Trash2, AlertTriangle, Send, Twitter, 
-  Youtube, Linkedin, ChevronDown, ChevronRight 
+  Youtube, Linkedin, ChevronDown, ChevronRight, Plus, X, Globe, Sliders, Activity, Sparkles
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
@@ -18,64 +18,47 @@ export default function Settings() {
     businessAccountId: '',
     facebookAccessToken: '',
     facebookPageId: '',
-    whatsappToken: '',
-    whatsappPhoneNumberId: '',
-    telegramToken: '',
-    twitterApiKey: '',
-    youtubeApiKey: '',
-    linkedinAccessToken: '',
     isAccountConnected: false,
     isFacebookConnected: false,
-    isWhatsAppConnected: false,
-    isTelegramConnected: false,
-    isTwitterConnected: false,
-    isYouTubeConnected: false,
-    isLinkedInConnected: false,
-    instagramAutomationEnabled: true,
-    facebookAutomationEnabled: true,
-    whatsappAutomationEnabled: true,
-    telegramAutomationEnabled: true,
-    twitterAutomationEnabled: true,
-    youtubeAutomationEnabled: true,
-    linkedinAutomationEnabled: true
+    instagramAutomationEnabled: true
   });
   
-  const [activeTab, setActiveTab] = useState('instagram'); 
   const [loading, setLoading] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [whatsappQrUrl, setWhatsappQrUrl] = useState('');
   const [redirectingInsta, setRedirectingInsta] = useState(false);
-  const [redirectingFb, setRedirectingFb] = useState(false);
+  
+  // Interactive UI Dropdowns & Modals
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const [showPlatformDropdown, setShowPlatformDropdown] = useState(false);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  
+  const [platformFilter, setPlatformFilter] = useState('All platforms');
+  const [statusFilter, setStatusFilter] = useState('All statuses');
+  const [profileFilter, setProfileFilter] = useState('All profiles');
+  const [showDangerZone, setShowDangerZone] = useState(false);
 
   const { notify } = useNotification();
 
-  const platforms = [
-    { id: 'instagram', name: 'Instagram', icon: Instagram, color: '#ec4899', description: 'Automate DMs and Comments', connected: settings.isAccountConnected },
-    { id: 'facebook', name: 'Facebook', icon: Facebook, color: '#1877f2', description: 'Messenger automation for Pages', connected: settings.isFacebookConnected },
-    { id: 'whatsapp', name: 'WhatsApp', icon: MessageSquare, color: '#25D366', description: 'WhatsApp Business API', connected: settings.isWhatsAppConnected },
-    { id: 'telegram', name: 'Telegram', icon: Send, color: '#0088cc', description: 'Telegram Bot automation', connected: settings.isTelegramConnected },
-    { id: 'twitter', name: 'X (Twitter)', icon: Twitter, color: '#1da1f2', description: 'Tweet and DM automation', connected: settings.isTwitterConnected },
-    { id: 'youtube', name: 'YouTube', icon: Youtube, color: '#ff0000', description: 'Comment guard for videos', connected: settings.isYouTubeConnected },
-    { id: 'linkedin', name: 'LinkedIn', icon: Linkedin, color: '#0077b5', description: 'Professional profile sync', connected: settings.isLinkedInConnected },
+  const platformsList = [
+    { name: 'TikTok', icon: MusicIcon, color: '#000000', enabled: false },
+    { name: 'Instagram', icon: Instagram, color: '#ec4899', enabled: true },
+    { name: 'Facebook', icon: Facebook, color: '#1877f2', enabled: false },
+    { name: 'YouTube', icon: Youtube, color: '#ff0000', enabled: false },
+    { name: 'LinkedIn', icon: Linkedin, color: '#0077b5', enabled: false },
+    { name: 'Twitter/X', icon: Twitter, color: '#0f1419', enabled: false },
+    { name: 'Threads', icon: ThreadsIcon, color: '#000000', enabled: false },
+    { name: 'Bluesky', icon: Globe, color: '#0a7aff', enabled: false },
+    { name: 'Pinterest', icon: Save, color: '#bd081c', enabled: false },
+    { name: 'Reddit', icon: Globe, color: '#ff4500', enabled: false },
+    { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: false },
+    { name: 'Telegram', icon: Send, color: '#0088cc', enabled: false },
+    { name: 'Discord', icon: MessageSquare, color: '#5865f2', enabled: false },
+    { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: false }
   ];
-
-  useEffect(() => {
-    if (activeTab === 'whatsapp' && !settings.isWhatsAppConnected) {
-      const token = localStorage.getItem('insta_agent_token');
-      fetch(`${API_BASE_URL}/api/config/api-base-url`).then(r => r.json()).catch(() => {}); // optional
-      fetch(`${API_BASE_URL}/api/settings/whatsapp/qr`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.qrUrl) setWhatsappQrUrl(data.qrUrl);
-      })
-      .catch(err => console.error("Error loading QR:", err));
-    }
-  }, [activeTab, settings.isWhatsAppConnected]);
 
   useEffect(() => {
     const token = localStorage.getItem('insta_agent_token');
@@ -92,11 +75,11 @@ export default function Settings() {
         }
 
         const data = await res.json();
-        // Ensure connection flags are derived correctly if missing
+        // Ensure connection flags are cleanly isolated
         const derivedData = {
           ...data,
-          isAccountConnected: data.isAccountConnected || !!data.instagramAccessToken,
-          isFacebookConnected: data.isFacebookConnected || !!data.facebookPageId
+          isAccountConnected: !!data.instagramAccessToken && !!data.businessAccountId,
+          isFacebookConnected: false // Keep Facebook inactive per request
         };
         setSettings(s => ({ ...s, ...derivedData }));
         setLoading(false);
@@ -110,23 +93,17 @@ export default function Settings() {
     // --- HANDLE OAUTH FEEDBACK ---
     const params = new URLSearchParams(window.location.search);
     if (params.get('oauth_success')) {
-      // Re-load settings explicitly to get the new tokens from DB
       loadSettings();
-      notify("🚀 Meta account connected! Taking you to automation setup...", "success");
-      
-      // Clean up URL
+      notify("🚀 Instagram profile linked successfully! Opening dashboard...", "success");
       window.history.replaceState({}, document.title, window.location.pathname);
-      
-      // AUTO-REDIRECT after a short delay for better UX
       setTimeout(() => {
         navigate('/campaigns?setup=true');
-      }, 5000);
+      }, 3500);
     } else if (params.get('oauth_error')) {
       const errorType = params.get('oauth_error');
-      let msg = "Facebook/Meta connection failed.";
-      if (errorType === 'declined') msg = "Meta connection was declined.";
-      if (errorType === 'exchange_failed') msg = "Token exchange failed. Check server logs.";
-      
+      let msg = "Meta integration failed.";
+      if (errorType === 'declined') msg = "Meta oauth permissions declined.";
+      if (errorType === 'exchange_failed') msg = "Token exchange failed. Reconnect Facebook Page.";
       notify(msg, "error");
       window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -146,7 +123,7 @@ export default function Settings() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ ...payload, _platform: activeTab })
+        body: JSON.stringify({ ...payload, _platform: 'instagram' })
       });
       const data = await res.json();
       
@@ -156,12 +133,11 @@ export default function Settings() {
       } else {
         setSettings(s => ({ ...s, ...data }));
         if (e) {
-          setMessage({ type: 'success', text: '✅ Settings saved successfully!' });
+          setMessage({ type: 'success', text: '✅ Settings updated successfully!' });
           setTimeout(() => setMessage({ type: '', text: '' }), 5000);
-          notify('Settings saved successfully!', 'success');
+          notify('Settings updated successfully!', 'success');
         } else {
-          // Null event implies a disconnect or platform switch event triggered in settings
-          notify('Account status updated successfully!', 'success');
+          notify('Instagram status updated successfully!', 'success');
         }
       }
     } catch (err) {
@@ -209,488 +185,597 @@ export default function Settings() {
     }
   };
 
+  const triggerConnect = () => {
+    setRedirectingInsta(true);
+    window.location.href = `${API_BASE_URL}/api/oauth/facebook?connectType=instagram&token=${localStorage.getItem('insta_agent_token')}`;
+  };
+
   if (loading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', color: '#64748b', fontSize: '1.1rem', fontWeight: '600' }}>
-      <div className="animate-pulse">Loading smart10X settings...</div>
+      <div className="animate-pulse">Loading connections panel...</div>
     </div>
   );
 
   return (
-    <div style={{ maxWidth: '1000px', width: '100%', display: 'flex', flexDirection: 'column', gap: '32px', paddingBottom: '100px', animation: 'fadeIn 0.6s ease-out' }}>
+    <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '100px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
       
-      <div style={{ textAlign: 'left', marginBottom: '8px' }}>
-        <h1 style={{ fontSize: '2.8rem', fontWeight: '900', background: 'linear-gradient(135deg, #1e293b, #475569)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.03em', marginBottom: '8px' }}>
-          Platform Connections
-        </h1>
-        <p style={{ color: '#64748b', fontSize: '1.15rem', fontWeight: '500' }}>
-          Connect your social accounts to enable AI-powered automation and smart replies.
-        </p>
+      {/* Header Block with top-right buttons */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
+        <div style={{ textAlign: 'left' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
+            Connections
+          </h1>
+          <p style={{ color: '#6b7280', fontSize: '0.95rem', fontWeight: '400', margin: 0 }}>
+            Manage profiles and platform integrations
+          </p>
+        </div>
+
+        {/* Buttons matching screenshot */}
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <button 
+            onClick={() => setShowConnectModal(true)}
+            style={{ 
+              background: '#ea580c', 
+              color: 'white', 
+              padding: '10px 18px', 
+              borderRadius: '8px', 
+              fontWeight: '600', 
+              fontSize: '0.88rem',
+              border: 'none', 
+              cursor: 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '6px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              transition: 'background 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = '#c2410c'}
+            onMouseOut={(e) => e.currentTarget.style.background = '#ea580c'}
+          >
+            <Plus size={16} /> New Connection
+          </button>
+          
+          <button 
+            onClick={() => notify("Profile manager is loading...", "info")}
+            style={{ 
+              background: 'white', 
+              color: '#374151', 
+              padding: '9px 18px', 
+              borderRadius: '8px', 
+              fontWeight: '600', 
+              fontSize: '0.88rem',
+              border: '1px solid #d1d5db', 
+              cursor: 'pointer', 
+              boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+              transition: 'border 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.borderColor = '#9ca3af'}
+            onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
+          >
+            New Profile
+          </button>
+        </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {platforms.map((platform) => {
-          const isOpen = activeTab === platform.id;
-          return (
-            <div 
-              key={platform.id}
+      {/* Filters Row matching screenshot */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        flexWrap: 'wrap', 
+        gap: '16px',
+        padding: '8px 0',
+        borderBottom: '1px solid #f3f4f6',
+        position: 'relative'
+      }}>
+        {/* Platforms dropdown filter */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }}>
+          <span style={{ fontSize: '0.9rem', fontWeight: '600', color: '#374151' }}>Platforms</span>
+          
+          <div style={{ position: 'relative' }}>
+            <button 
+              onClick={() => setShowProfileDropdown(!showProfileDropdown)}
               style={{ 
-                background: '#ffffff', 
-                borderRadius: '24px', 
-                border: '1px solid #e2e8f0',
-                boxShadow: isOpen ? '0 20px 40px rgba(0,0,0,0.06)' : '0 4px 12px rgba(0,0,0,0.02)',
-                overflow: 'hidden',
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                transform: isOpen ? 'scale(1.02)' : 'scale(1)',
-                position: 'relative'
+                background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '8px 16px', 
+                fontSize: '0.88rem', color: '#374151', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: '130px', justifyContent: 'space-between'
               }}
             >
-              {/* ACCORDION HEADER */}
-              <div 
-                onClick={() => setActiveTab(isOpen ? null : platform.id)}
-                style={{ 
-                  padding: '28px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '24px', 
-                  cursor: 'pointer',
-                  userSelect: 'none',
-                  background: isOpen ? `${platform.color}05` : 'transparent',
-                  transition: 'background 0.3s'
-                }}
-              >
-                <div style={{ 
-                  width: '64px', 
-                  height: '64px', 
-                  borderRadius: '18px', 
-                  background: `${platform.color}15`, 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  color: platform.color,
-                  flexShrink: 0,
-                  boxShadow: isOpen ? `0 8px 20px ${platform.color}20` : 'none',
-                  transition: 'all 0.3s'
-                }}>
-                  <platform.icon size={30} />
-                </div>
-                
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
-                    <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>{platform.name}</h3>
-                    {platform.connected ? (
-                      <span style={{ fontSize: '0.75rem', padding: '4px 12px', borderRadius: '20px', background: '#dcfce7', color: '#15803d', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <CheckCircle size={12} /> ACTIVE
-                      </span>
-                    ) : (
-                      <span style={{ fontSize: '0.75rem', padding: '4px 12px', borderRadius: '20px', background: '#f1f5f9', color: '#64748b', fontWeight: '700' }}>
-                        NOT CONNECTED
-                      </span>
-                    )}
-                  </div>
-                  <p style={{ color: '#64748b', fontSize: '0.95rem', margin: 0, fontWeight: '500' }}>{platform.description}</p>
-                </div>
-
-                <div style={{ 
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: isOpen ? '#7c3aed' : '#f1f5f9',
-                  color: isOpen ? 'white' : '#94a3b8', 
-                  transition: 'all 0.3s ease',
-                  transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <ChevronDown size={22} />
-                </div>
+              <span>{profileFilter}</span>
+              <ChevronDown size={15} color="#9ca3af" />
+            </button>
+            {showProfileDropdown && (
+              <div className="filter-dropdown">
+                <div onClick={() => { setProfileFilter('All profiles'); setShowProfileDropdown(false); }} className="filter-item">All profiles</div>
+                <div onClick={() => { setProfileFilter('Business profiles'); setShowProfileDropdown(false); }} className="filter-item">Business profiles</div>
+                <div onClick={() => { setProfileFilter('Personal profiles'); setShowProfileDropdown(false); }} className="filter-item">Personal profiles</div>
               </div>
+            )}
+          </div>
+        </div>
 
-              {/* ACCORDION CONTENT */}
-              <div style={{ 
-                maxHeight: isOpen ? '2500px' : '0', 
-                overflow: 'hidden', 
-                transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                background: '#ffffff'
-              }}>
-                <div style={{ padding: '0 32px 40px 32px', borderTop: '1px solid #f1f5f9' }}>
-                  <div style={{ paddingTop: '32px' }}>
-                    
-                    {/* INSTAGRAM CONFIG */}
-                    {platform.id === 'instagram' && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                        {settings.isAccountConnected ? (
-                          <>
-                            <div style={{ padding: '24px', background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                              <div style={{ width: '56px', height: '56px', background: '#10b981', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                                <ShieldCheck size={28} />
-                              </div>
-                              <div>
-                                <h4 style={{ margin: 0, fontSize: '1.2rem', fontWeight: '800', color: '#065f46' }}>Connected as {settings.connectedInstagramName || 'Instagram Business'}</h4>
-                                <p style={{ margin: '4px 0 0 0', color: '#047857', fontSize: '0.9rem', fontWeight: '500' }}>Your AI agent is now monitoring comments and DMs.</p>
-                              </div>
-                            </div>
-
-                            <div style={{ padding: '24px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                              <div>
-                                <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: '#1e293b' }}>Enable AI Responses</h4>
-                                <p style={{ margin: '6px 0 0 0', fontSize: '0.9rem', color: '#64748b' }}>Allow smart10X to automatically reply to customers on this platform.</p>
-                              </div>
-                              <label className="switch">
-                                <input 
-                                  type="checkbox" 
-                                  checked={settings.instagramAutomationEnabled}
-                                  onChange={(e) => {
-                                    const newVal = e.target.checked;
-                                    setSettings(s => ({ ...s, instagramAutomationEnabled: newVal }));
-                                    handleSaveSettings(null, { ...settings, instagramAutomationEnabled: newVal });
-                                  }}
-                                />
-                                <span className="slider round"></span>
-                              </label>
-                            </div>
-
-                            <button 
-                              onClick={() => {
-                                if(window.confirm("Are you sure you want to disconnect Instagram? Automation will stop immediately.")) {
-                                  setSettings({...settings, instagramAccessToken: '', instagramPageId: '', businessAccountId: '', isAccountConnected: false});
-                                  handleSaveSettings(null, { ...settings, instagramAccessToken: '', instagramPageId: '', businessAccountId: '', isAccountConnected: false });
-                                }
-                              }}
-                              style={{ padding: '14px', color: '#ef4444', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.1)', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s', width: 'fit-content' }}
-                            >
-                              <Trash2 size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} /> Disconnect Instagram Account
-                            </button>
-                          </>
-                        ) : (
-                          <div style={{ textAlign: 'center', padding: '48px 24px', background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)', borderRadius: '24px', border: '2px dashed #e2e8f0' }}>
-                            <div style={{ width: '80px', height: '80px', background: 'white', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
-                              <Instagram size={40} color="#ec4899" />
-                            </div>
-                            <h3 style={{ fontSize: '1.6rem', fontWeight: '800', color: '#1e293b', marginBottom: '12px' }}>Link Your Instagram</h3>
-                            <p style={{ color: '#64748b', fontSize: '1.05rem', marginBottom: '32px', maxWidth: '500px', margin: '0 auto 32px auto', lineHeight: '1.6' }}>
-                              Connect your Facebook Page that is linked to your Instagram Business account to enable AI automation.
-                            </p>
-                            <button 
-                              onClick={() => {
-                                setRedirectingInsta(true);
-                                window.location.href = `${API_BASE_URL}/api/oauth/facebook?connectType=instagram&token=${localStorage.getItem('insta_agent_token')}`;
-                              }}
-                              disabled={redirectingInsta}
-                              style={{ 
-                                background: '#1877F2', color: 'white', padding: '18px 36px', borderRadius: '16px', fontWeight: '800', 
-                                border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', margin: '0 auto',
-                                boxShadow: '0 8px 20px rgba(24, 119, 242, 0.3)', transition: 'all 0.3s'
-                              }}
-                            >
-                              <Facebook size={24} /> {redirectingInsta ? 'Connecting to Meta...' : 'Connect via Facebook'}
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* FACEBOOK CONFIG */}
-                    {platform.id === 'facebook' && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                        {settings.isFacebookConnected ? (
-                          <>
-                            <div style={{ padding: '24px', background: 'rgba(24, 119, 242, 0.05)', border: '1px solid rgba(24, 119, 242, 0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                              <div style={{ width: '56px', height: '56px', background: '#1877f2', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                                <Facebook size={28} />
-                              </div>
-                              <div>
-                                <h4 style={{ margin: 0, fontSize: '1.2rem', fontWeight: '800', color: '#1e3a8a' }}>Connected to {settings.connectedFacebookName || 'Business Page'}</h4>
-                                <p style={{ margin: '4px 0 0 0', color: '#1e40af', fontSize: '0.9rem', fontWeight: '500' }}>Messenger automation is currently active.</p>
-                              </div>
-                            </div>
-
-                            <div style={{ padding: '24px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                              <div>
-                                <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: '#1e293b' }}>Enable Messenger AI</h4>
-                                <p style={{ margin: '6px 0 0 0', fontSize: '0.9rem', color: '#64748b' }}>Allow smart10X to reply to Facebook Messenger inquiries.</p>
-                              </div>
-                              <label className="switch">
-                                <input 
-                                  type="checkbox" 
-                                  checked={settings.facebookAutomationEnabled}
-                                  onChange={(e) => {
-                                    const newVal = e.target.checked;
-                                    setSettings(s => ({ ...s, facebookAutomationEnabled: newVal }));
-                                    handleSaveSettings(null, { ...settings, facebookAutomationEnabled: newVal });
-                                  }}
-                                />
-                                <span className="slider round"></span>
-                              </label>
-                            </div>
-
-                            <button 
-                              onClick={() => {
-                                if(window.confirm("Disconnect Facebook Page?")) {
-                                  setSettings({...settings, facebookAccessToken: '', facebookPageId: '', isFacebookConnected: false});
-                                  handleSaveSettings(null, { ...settings, facebookAccessToken: '', facebookPageId: '', isFacebookConnected: false });
-                                }
-                              }}
-                              style={{ padding: '14px', color: '#ef4444', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.1)', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s', width: 'fit-content' }}
-                            >
-                              Disconnect Facebook Page
-                            </button>
-                          </>
-                        ) : (
-                          <div style={{ textAlign: 'center', padding: '48px 24px', background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)', borderRadius: '24px', border: '2px dashed #e2e8f0' }}>
-                            <div style={{ width: '80px', height: '80px', background: 'white', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
-                              <Facebook size={40} color="#1877f2" />
-                            </div>
-                            <h3 style={{ fontSize: '1.6rem', fontWeight: '800', color: '#1e293b', marginBottom: '12px' }}>Sync Facebook Page</h3>
-                            <button 
-                              onClick={() => {
-                                setRedirectingFb(true);
-                                window.location.href = `${API_BASE_URL}/api/oauth/facebook?connectType=facebook&token=${localStorage.getItem('insta_agent_token')}`;
-                              }}
-                              disabled={redirectingFb}
-                              style={{ 
-                                background: '#1877f2', color: 'white', padding: '18px 36px', borderRadius: '16px', fontWeight: '800', 
-                                border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', margin: '0 auto',
-                                boxShadow: '0 8px 20px rgba(24, 119, 242, 0.3)', transition: 'all 0.3s'
-                              }}
-                            >
-                              <Facebook size={24} /> {redirectingFb ? 'Connecting...' : 'Connect Facebook Page'}
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* WHATSAPP CONFIG */}
-                    {platform.id === 'whatsapp' && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                        {settings.isWhatsAppConnected ? (
-                          <>
-                             <div style={{ padding: '24px', background: 'rgba(37, 211, 102, 0.05)', border: '1px solid rgba(37, 211, 102, 0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                               <div style={{ width: '56px', height: '56px', background: '#25D366', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                                 <MessageSquare size={28} />
-                               </div>
-                               <div>
-                                 <h4 style={{ margin: 0, fontSize: '1.2rem', fontWeight: '800', color: '#166534' }}>WhatsApp Active</h4>
-                                 <p style={{ margin: '4px 0 0 0', color: '#15803d', fontSize: '0.9rem', fontWeight: '500' }}>Phone ID: {settings.whatsappPhoneNumberId}</p>
-                               </div>
-                             </div>
-                             
-                             <div style={{ padding: '24px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <div>
-                                  <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: '#1e293b' }}>WhatsApp AI Automation</h4>
-                                  <p style={{ margin: '6px 0 0 0', fontSize: '0.9rem', color: '#64748b' }}>AI will handle customer queries on WhatsApp.</p>
-                                </div>
-                                <label className="switch">
-                                  <input 
-                                    type="checkbox" 
-                                    checked={settings.whatsappAutomationEnabled}
-                                    onChange={(e) => {
-                                      const newVal = e.target.checked;
-                                      setSettings(s => ({ ...s, whatsappAutomationEnabled: newVal }));
-                                      handleSaveSettings(null, { ...settings, whatsappAutomationEnabled: newVal });
-                                    }}
-                                  />
-                                  <span className="slider round"></span>
-                                </label>
-                             </div>
-
-                             <button 
-                               onClick={() => {
-                                 if(window.confirm("Disconnect WhatsApp?")) {
-                                   setSettings({...settings, whatsappToken: '', whatsappPhoneNumberId: '', isWhatsAppConnected: false});
-                                   handleSaveSettings(null, { ...settings, whatsappToken: '', whatsappPhoneNumberId: '', isWhatsAppConnected: false });
-                                 }
-                               }}
-                               style={{ padding: '14px', color: '#ef4444', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.1)', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', width: 'fit-content' }}
-                             >
-                               Disconnect WhatsApp
-                             </button>
-                          </>
-                        ) : (
-                          <div style={{ textAlign: 'center', padding: '48px 24px', background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)', borderRadius: '24px', border: '2px dashed #e2e8f0' }}>
-                            <div style={{ width: '80px', height: '80px', background: 'white', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
-                              <MessageSquare size={40} color="#25D366" />
-                            </div>
-                            <h3 style={{ fontSize: '1.6rem', fontWeight: '800', color: '#1e293b', marginBottom: '12px' }}>WhatsApp Business Setup</h3>
-                            <p style={{ color: '#64748b', fontSize: '1.05rem', marginBottom: '32px', maxWidth: '500px', margin: '0 auto 32px auto', lineHeight: '1.6' }}>
-                              Integrate with the official Meta WhatsApp Cloud API to automate customer conversations.
-                            </p>
-                            <button 
-                              onClick={() => window.location.href = `${API_BASE_URL}/api/oauth/facebook?connectType=whatsapp&token=${localStorage.getItem('insta_agent_token')}`}
-                              style={{ background: '#25D366', color: 'white', padding: '18px 36px', borderRadius: '16px', fontWeight: '800', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', margin: '0 auto', boxShadow: '0 8px 20px rgba(37, 211, 102, 0.3)' }}
-                            >
-                              <MessageSquare size={24} /> Connect WhatsApp Business
-                            </button>
-                            
-                            <div style={{ marginTop: '32px', textAlign: 'left', background: 'white', padding: '24px', borderRadius: '20px', border: '1px solid #e2e8f0', maxWidth: '600px', margin: '32px auto 0 auto' }}>
-                              <h4 style={{ margin: '0 0 16px 0', fontSize: '1rem', fontWeight: '800', color: '#1e293b', textTransform: 'uppercase', letterSpacing: '1px' }}>📋 Setup Checklist</h4>
-                              <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#475569', fontSize: '0.95rem' }}>
-                                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#dcfce7', color: '#15803d', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>✓</div>
-                                  Ensure WhatsApp Product is added in Meta Developer Portal.
-                                </li>
-                                <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#475569', fontSize: '0.95rem' }}>
-                                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#dcfce7', color: '#15803d', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>✓</div>
-                                  Verify phone number in WhatsApp Manager.
-                                </li>
-                                <li style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#475569', fontSize: '0.95rem' }}>
-                                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#dcfce7', color: '#15803d', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>✓</div>
-                                  Link Facebook Page to your WhatsApp Business Account.
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* OTHER PLATFORMS */}
-                    {(['telegram', 'twitter', 'youtube', 'linkedin'].includes(platform.id)) && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-                         <div style={{ background: '#f8fafc', padding: '32px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                            <label style={{ display: 'block', fontSize: '1rem', fontWeight: '800', color: '#1e293b', marginBottom: '12px' }}>
-                              {platform.id === 'telegram' ? 'BotFather API Token' : 'API Access Key / Token'}
-                            </label>
-                            <div style={{ position: 'relative' }}>
-                              <input 
-                                type="password" 
-                                placeholder={`Enter your ${platform.name} API credentials...`}
-                                value={settings[`${platform.id}Token`] || settings[`${platform.id}ApiKey`] || settings[`${platform.id}AccessToken`] || ''} 
-                                onChange={(e) => {
-                                  const key = platform.id === 'telegram' ? 'telegramToken' : platform.id === 'twitter' ? 'twitterApiKey' : platform.id === 'youtube' ? 'youtubeApiKey' : 'linkedinAccessToken';
-                                  setSettings({...settings, [key]: e.target.value});
-                                }} 
-                                style={{ width: '100%', padding: '16px 20px', borderRadius: '16px', border: '2px solid #e2e8f0', fontSize: '1rem', outline: 'none', transition: 'all 0.3s', boxSizing: 'border-box' }} 
-                              />
-                            </div>
-                            <p style={{ marginTop: '12px', color: '#64748b', fontSize: '0.88rem', fontWeight: '500' }}>
-                              {platform.id === 'telegram' && "Obtain this from @BotFather on Telegram."}
-                              {platform.id === 'twitter' && "Requires X Developer Portal API v2 Access."}
-                              {platform.id === 'youtube' && "Requires Google Cloud Console API Key."}
-                            </p>
-                         </div>
-                         
-                         <div style={{ padding: '24px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <div>
-                              <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: '#1e293b' }}>Enable {platform.name} Automation</h4>
-                              <p style={{ margin: '6px 0 0 0', fontSize: '0.9rem', color: '#64748b' }}>AI will handle interactions on this account.</p>
-                            </div>
-                            <label className="switch">
-                              <input 
-                                type="checkbox" 
-                                checked={settings[`${platform.id}AutomationEnabled`]}
-                                onChange={(e) => {
-                                  const key = `${platform.id}AutomationEnabled`;
-                                  const newVal = e.target.checked;
-                                  setSettings(s => ({ ...s, [key]: newVal }));
-                                  handleSaveSettings(null, { ...settings, [key]: newVal });
-                                }}
-                              />
-                              <span className="slider round"></span>
-                            </label>
-                         </div>
-
-                         <SaveButton savingSettings={savingSettings} message={message} onClick={handleSaveSettings} />
-                      </div>
-                    )}
+        {/* Right filters: All platforms & All statuses dropdowns */}
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          
+          {/* All platforms dropdown */}
+          <div style={{ position: 'relative' }}>
+            <button 
+              onClick={() => setShowPlatformDropdown(!showPlatformDropdown)}
+              style={{ 
+                background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '8px 16px', 
+                fontSize: '0.88rem', color: '#374151', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: '150px', justifyContent: 'space-between'
+              }}
+            >
+              <span>{platformFilter}</span>
+              <ChevronDown size={15} color="#9ca3af" />
+            </button>
+            
+            {showPlatformDropdown && (
+              <div className="filter-dropdown" style={{ right: 0, left: 'auto', maxHeight: '320px', overflowY: 'auto', width: '200px' }}>
+                <div onClick={() => { setPlatformFilter('All platforms'); setShowPlatformDropdown(false); }} className="filter-item" style={{ fontWeight: 'bold' }}>All platforms</div>
+                {platformsList.map(plat => (
+                  <div 
+                    key={plat.name} 
+                    onClick={() => { setPlatformFilter(plat.name); setShowPlatformDropdown(false); }} 
+                    className="filter-item"
+                    style={{ display: 'flex', alignItems: 'center', gap: '10px', color: plat.enabled ? '#111827' : '#9ca3af' }}
+                  >
+                    <plat.icon size={15} color={plat.enabled ? plat.color : '#9ca3af'} />
+                    <span>{plat.name}</span>
+                    {!plat.enabled && <span style={{ fontSize: '0.65rem', marginLeft: 'auto', background: '#f3f4f6', padding: '2px 6px', borderRadius: '4px' }}>locked</span>}
                   </div>
-                </div>
+                ))}
               </div>
-            </div>
-          );
-        })}
+            )}
+          </div>
+
+          {/* All statuses dropdown */}
+          <div style={{ position: 'relative' }}>
+            <button 
+              onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+              style={{ 
+                background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '8px 16px', 
+                fontSize: '0.88rem', color: '#374151', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: '130px', justifyContent: 'space-between'
+              }}
+            >
+              <span>{statusFilter}</span>
+              <ChevronDown size={15} color="#9ca3af" />
+            </button>
+            {showStatusDropdown && (
+              <div className="filter-dropdown" style={{ right: 0, left: 'auto' }}>
+                <div onClick={() => { setStatusFilter('All statuses'); setShowStatusDropdown(false); }} className="filter-item">All statuses</div>
+                <div onClick={() => { setStatusFilter('Active'); setShowStatusDropdown(false); }} className="filter-item">Active</div>
+                <div onClick={() => { setStatusFilter('Inactive'); setShowStatusDropdown(false); }} className="filter-item">Inactive</div>
+              </div>
+            )}
+          </div>
+
+        </div>
       </div>
 
-      <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '32px', padding: '40px', marginTop: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', color: '#be123c', marginBottom: '20px' }}>
-          <AlertTriangle size={32} />
-          <h3 style={{ fontSize: '1.5rem', fontWeight: '900', margin: 0 }}>Danger Zone</h3>
-        </div>
+      {/* Main Connection Table Card (matches screenshot empty slots or renders connected row) */}
+      <div style={{ 
+        background: '#ffffff', 
+        borderRadius: '12px', 
+        border: '1px solid #e5e7eb', 
+        boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+        overflow: 'hidden',
+        minHeight: '220px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center'
+      }}>
         
-        <p style={{ color: '#9f1239', fontSize: '1rem', lineHeight: '1.7', marginBottom: '32px', fontWeight: '500' }}>
-          Deleting your account is permanent and irreversible. All your campaigns, messages, and connected platform tokens will be wiped from our database forever.
-        </p>
-
-        {!showDeleteConfirm ? (
-          <button 
-            onClick={() => setShowDeleteConfirm(true)}
-            style={{ padding: '16px 32px', background: '#e11d48', color: 'white', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', boxShadow: '0 8px 20px rgba(225, 29, 72, 0.2)', transition: 'all 0.2s' }}
-          >
-            Delete Account Permanently
-          </button>
-        ) : (
-          <div style={{ background: 'white', padding: '32px', borderRadius: '24px', border: '2px solid #e11d48', animation: 'shake 0.5s ease-in-out' }}>
-            <h4 style={{ fontWeight: '900', color: '#1e293b', marginBottom: '12px', fontSize: '1.3rem' }}>Are you absolutely sure?</h4>
-            <p style={{ color: '#64748b', fontSize: '1rem', marginBottom: '24px' }}>Once deleted, there is no way to recover your data.</p>
-            <div style={{ display: 'flex', gap: '16px' }}>
-              <button onClick={handleDeleteAccount} disabled={deleting} style={{ flex: 1, background: '#e11d48', color: 'white', padding: '16px', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>
-                {deleting ? 'Wiping Data...' : 'Yes, Delete Everything'}
-              </button>
-              <button onClick={() => setShowDeleteConfirm(false)} style={{ flex: 1, background: '#f1f5f9', padding: '16px', border: 'none', borderRadius: '12px', fontWeight: '700', cursor: 'pointer' }}>
-                Cancel
-              </button>
+        {settings.isAccountConnected ? (
+          /* Active Integration Row - Render Table style */
+          <div style={{ width: '100%' }}>
+            {/* Table Header */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1.5fr 1fr 1fr 1fr', 
+              padding: '14px 24px', 
+              background: '#f9fafb', 
+              borderBottom: '1px solid #e5e7eb',
+              fontSize: '0.75rem',
+              fontWeight: '600',
+              color: '#4b5563',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              <span>Profile / Account</span>
+              <span>Platform</span>
+              <span>Status</span>
+              <span style={{ textAlign: 'right' }}>Actions</span>
             </div>
+
+            {/* Connected Row */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1.5fr 1fr 1fr 1fr', 
+              padding: '24px', 
+              alignItems: 'center',
+              borderBottom: '1px solid #f3f4f6',
+              transition: 'background 0.2s'
+            }} onMouseOver={(e) => e.currentTarget.style.background = '#fafafa'} onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}>
+              
+              {/* Account Info */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{ 
+                  width: '42px', height: '42px', borderRadius: '50%', 
+                  background: 'linear-gradient(135deg, #ec4899, #8b5cf6)', 
+                  color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontWeight: '600', fontSize: '0.9rem', boxShadow: '0 2px 5px rgba(236, 72, 153, 0.1)'
+                }}>
+                  {settings.connectedInstagramName ? settings.connectedInstagramName.substring(0,2).toUpperCase() : 'IG'}
+                </div>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>
+                    @{settings.connectedInstagramName || 'Instagram Account'}
+                  </h4>
+                  <span style={{ color: '#9ca3af', fontSize: '0.75rem' }}>Business Account</span>
+                </div>
+              </div>
+
+              {/* Platform name */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ec4899', fontWeight: '500', fontSize: '0.9rem' }}>
+                <Instagram size={18} />
+                <span>Instagram</span>
+              </div>
+
+              {/* Status active Badge */}
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ 
+                  fontSize: '0.75rem', padding: '4px 10px', borderRadius: '20px', 
+                  background: '#ecfdf5', color: '#047857', fontWeight: '600',
+                  display: 'inline-flex', alignItems: 'center', gap: '5px'
+                }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }}></span>
+                  Active
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', justifyContent: 'flex-end' }}>
+                
+                {/* AI Replies Toggle Switch */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '0.78rem', color: '#4b5563', fontWeight: '500' }}>AI replies</span>
+                  <label className="switch">
+                    <input 
+                      type="checkbox" 
+                      checked={settings.instagramAutomationEnabled}
+                      onChange={(e) => {
+                        const newVal = e.target.checked;
+                        setSettings(s => ({ ...s, instagramAutomationEnabled: newVal }));
+                        handleSaveSettings(null, { ...settings, instagramAutomationEnabled: newVal });
+                      }}
+                    />
+                    <span className="slider round"></span>
+                  </label>
+                </div>
+
+                {/* Disconnect Action */}
+                <button 
+                  onClick={() => {
+                    if(window.confirm("Are you sure you want to disconnect Instagram? Automation will stop immediately.")) {
+                      setSettings({...settings, instagramAccessToken: '', instagramPageId: '', businessAccountId: '', isAccountConnected: false});
+                      handleSaveSettings(null, { ...settings, instagramAccessToken: '', instagramPageId: '', businessAccountId: '', isAccountConnected: false });
+                    }
+                  }}
+                  style={{ 
+                    padding: '8px', color: '#dc2626', background: 'transparent', border: 'none', cursor: 'pointer',
+                    borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}
+                  title="Disconnect Account"
+                  className="trash-btn"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+
+            </div>
+          </div>
+        ) : (
+          /* Empty Connections slot matching screenshot exactly */
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 24px', textAlign: 'center' }}>
+            <span style={{ color: '#4b5563', fontSize: '0.95rem', fontWeight: '500', marginBottom: '16px' }}>
+              No accounts connected yet.
+            </span>
+            
+            <button 
+              onClick={() => setShowConnectModal(true)}
+              style={{ 
+                background: 'white', 
+                color: '#374151', 
+                padding: '8px 16px', 
+                borderRadius: '8px', 
+                fontWeight: '600', 
+                fontSize: '0.88rem',
+                border: '1px solid #d1d5db', 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                transition: 'border 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.borderColor = '#9ca3af'}
+              onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
+            >
+              <Plus size={16} /> Connect an account
+            </button>
+          </div>
+        )}
+
+      </div>
+
+      {/* Advanced Settings Drawer (Danger Zone trigger) */}
+      <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', background: 'white', overflow: 'hidden' }}>
+        <div 
+          onClick={() => setShowDangerZone(!showDangerZone)}
+          style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: '#f9fafb' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#475569' }}>
+            <Sliders size={18} />
+            <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>Advanced Account Preferences</span>
+          </div>
+          <ChevronDown size={18} style={{ transform: showDangerZone ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
+        </div>
+
+        {showDangerZone && (
+          <div style={{ padding: '24px', borderTop: '1px solid #e5e7eb', background: '#fff1f2' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#be123c', marginBottom: '12px' }}>
+              <AlertTriangle size={24} />
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', margin: 0 }}>Permanently Delete Account</h3>
+            </div>
+            
+            <p style={{ color: '#9f1239', fontSize: '0.85rem', lineHeight: '1.5', marginBottom: '20px', fontWeight: '500' }}>
+              Deleting your account is permanent. All your automated DM configurations, rules, active message counters, and connected platform credentials will be wiped from our database forever.
+            </p>
+
+            {!showDeleteConfirm ? (
+              <button 
+                onClick={() => setShowDeleteConfirm(true)}
+                style={{ 
+                  padding: '10px 20px', background: '#e11d48', color: 'white', border: 'none', 
+                  borderRadius: '8px', fontWeight: '700', fontSize: '0.82rem', cursor: 'pointer' 
+                }}
+              >
+                Delete Account
+              </button>
+            ) : (
+              <div style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1.5px solid #e11d48' }}>
+                <h4 style={{ fontWeight: '800', color: '#1e293b', marginBottom: '4px', fontSize: '0.95rem' }}>Are you absolutely sure?</h4>
+                <p style={{ color: '#64748b', fontSize: '0.8rem', marginBottom: '16px' }}>This cannot be undone. You will have to sign up again to restore access.</p>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button 
+                    onClick={handleDeleteAccount} 
+                    disabled={deleting} 
+                    style={{ flex: 1, background: '#e11d48', color: 'white', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontSize: '0.82rem' }}
+                  >
+                    {deleting ? 'Wiping Data...' : 'Yes, Delete Everything'}
+                  </button>
+                  <button 
+                    onClick={() => setShowDeleteConfirm(false)} 
+                    style={{ flex: 1, background: '#f1f5f9', color: '#475569', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontSize: '0.82rem' }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
 
+      {/* STYLISH PLATFORM CONNECT MODAL */}
+      {showConnectModal && (
+        <div style={{ 
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+          background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+          animation: 'fadeIn 0.2s ease-out'
+        }}>
+          <div style={{ 
+            background: 'white', borderRadius: '20px', width: '100%', maxWidth: '640px', 
+            padding: '32px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            border: '1px solid #e5e7eb', position: 'relative', margin: '20px',
+            animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+          }}>
+            {/* Close Button */}
+            <button 
+              onClick={() => setShowConnectModal(false)}
+              style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', padding: '6px', borderRadius: '50%' }}
+              onMouseOver={(e) => e.currentTarget.style.color = '#111827'}
+              onMouseOut={(e) => e.currentTarget.style.color = '#9ca3af'}
+            >
+              <X size={20} />
+            </button>
+
+            <h3 style={{ fontSize: '1.4rem', fontWeight: '700', color: '#111827', margin: '0 0 6px 0' }}>Connect Account</h3>
+            <p style={{ color: '#6b7280', fontSize: '0.88rem', margin: '0 0 28px 0', lineHeight: '1.5' }}>
+              Choose a messaging channel to integrate. Only Instagram is fully active per settings configuration.
+            </p>
+
+            {/* Grid of Platforms */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '12px', maxHeight: '380px', overflowY: 'auto', padding: '4px' }}>
+              {platformsList.map(platform => (
+                <div 
+                  key={platform.name}
+                  onClick={() => {
+                    if (platform.enabled) {
+                      setShowConnectModal(false);
+                      triggerConnect();
+                    } else {
+                      notify(`${platform.name} integration is coming soon!`, "info");
+                    }
+                  }}
+                  style={{ 
+                    border: platform.enabled ? '2px solid #ec4899' : '1px solid #e5e7eb',
+                    borderRadius: '16px',
+                    padding: '20px 14px',
+                    textAlign: 'center',
+                    cursor: platform.enabled ? 'pointer' : 'not-allowed',
+                    background: platform.enabled ? 'linear-gradient(135deg, #ffffff 0%, #fff1f2 100%)' : '#fafafa',
+                    transition: 'all 0.2s',
+                    position: 'relative',
+                    opacity: platform.enabled ? 1 : 0.65
+                  }}
+                  onMouseOver={(e) => {
+                    if (platform.enabled) {
+                      e.currentTarget.style.transform = 'translateY(-3px)';
+                      e.currentTarget.style.boxShadow = '0 8px 16px rgba(236, 72, 153, 0.12)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (platform.enabled) {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }
+                  }}
+                >
+                  <div style={{ 
+                    width: '42px', height: '42px', borderRadius: '12px', 
+                    background: platform.enabled ? 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)' : '#e5e7eb',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    margin: '0 auto 12px auto', color: platform.enabled ? 'white' : '#9ca3af'
+                  }}>
+                    <platform.icon size={22} />
+                  </div>
+                  
+                  <span style={{ fontSize: '0.82rem', fontWeight: '600', color: platform.enabled ? '#111827' : '#6b7280' }}>
+                    {platform.name}
+                  </span>
+
+                  {platform.enabled ? (
+                    <span style={{ 
+                      position: 'absolute', top: '-8px', right: '10px', 
+                      background: '#ec4899', color: 'white', fontSize: '0.62rem', 
+                      padding: '2px 8px', borderRadius: '10px', fontWeight: '800',
+                      boxShadow: '0 2px 4px rgba(236,72,153,0.2)'
+                    }}>
+                      ACTIVE
+                    </span>
+                  ) : (
+                    <span style={{ 
+                      display: 'block', fontSize: '0.62rem', color: '#9ca3af', 
+                      fontWeight: '700', marginTop: '4px', textTransform: 'uppercase'
+                    }}>
+                      locked
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Global CSS Style Rules */}
       <style>{`
         @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
+          from { opacity: 0; transform: translateY(12px); }
           to { opacity: 1; transform: translateY(0); }
         }
         
+        @keyframes scaleIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+
         .animate-pulse {
           animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
-
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: .5; }
         }
 
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-8px); }
-          75% { transform: translateX(8px); }
+        .filter-dropdown {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          z-index: 100;
+          margin-top: 6px;
+          background: white;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+          width: 170px;
+          padding: 6px 0;
+          animation: scaleIn 0.15s ease-out;
         }
-        
-        .switch { position: relative; display: inline-block; width: 56px; height: 30px; }
+
+        .filter-item {
+          padding: 8px 16px;
+          font-size: 0.85rem;
+          color: #374151;
+          cursor: pointer;
+          transition: background 0.15s;
+        }
+
+        .filter-item:hover {
+          background: #f3f4f6;
+        }
+
+        .switch { 
+          position: relative; 
+          display: inline-block; 
+          width: 44px; 
+          height: 24px; 
+        }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e2e8f0; border-radius: 34px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; border-radius: 50%; transition: .4s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        input:checked + .slider { background-color: #7c3aed; }
-        input:checked + .slider:before { transform: translateX(26px); }
+        .slider { 
+          position: absolute; 
+          cursor: pointer; 
+          top: 0; left: 0; right: 0; bottom: 0; 
+          background-color: #e5e7eb; 
+          border-radius: 34px; 
+          transition: .3s; 
+        }
+        .slider:before { 
+          position: absolute; 
+          content: ""; 
+          height: 18px; 
+          width: 18px; 
+          left: 3px; 
+          bottom: 3px; 
+          background-color: white; 
+          border-radius: 50%; 
+          transition: .3s; 
+          box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+        input:checked + .slider { background-color: #ea580c; }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .trash-btn {
+          border-radius: 6px;
+          transition: all 0.2s;
+        }
+        .trash-btn:hover {
+          background: #fef2f2;
+          transform: scale(1.05);
+        }
       `}</style>
     </div>
   );
 }
 
-function SaveButton({ savingSettings, message }) {
+// Stubs for Custom Icons not in standard lucide
+function MusicIcon({ size = 18, color = 'currentColor' }) {
   return (
-    <>
-      {message.text && (
-        <div style={{ 
-          padding: '12px', borderRadius: '8px', 
-          background: message.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-          color: message.type === 'success' ? '#34d399' : '#f87171',
-          fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px'
-        }}>
-          <Info size={16} /> {message.text}
-        </div>
-      )}
-      <button 
-        type="submit" 
-        disabled={savingSettings}
-        style={{
-          marginTop: '10px', background: 'var(--accent-color)', color: 'white', padding: '14px', borderRadius: '8px',
-          fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-          opacity: savingSettings ? 0.7 : 1, transition: 'all 0.2s', border: 'none', cursor: 'pointer'
-        }}
-      >
-        <Save size={18} /> {savingSettings ? 'Saving...' : 'Save Configuration & Connect'}
-      </button>
-    </>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18V5l12-2v13" />
+      <circle cx="6" cy="18" r="3" />
+      <circle cx="18" cy="16" r="3" />
+    </svg>
+  );
+}
+
+function ThreadsIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2a10 10 0 1 0 10 10H12Z" />
+      <path d="M12 12a4 4 0 1 0 4 4h-4Z" />
+    </svg>
   );
 }
