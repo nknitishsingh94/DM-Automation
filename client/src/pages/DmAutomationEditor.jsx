@@ -194,7 +194,7 @@ export default function DmAutomationEditor() {
     }}>
       <div style={{ 
         display: isMobile ? 'block' : 'grid', 
-        gridTemplateColumns: isMobile ? '1fr' : 'minmax(300px, 360px) 1fr',
+        gridTemplateColumns: isMobile ? '1fr' : 'minmax(320px, 400px) 1fr',
         flex: 1,
         overflowX: 'hidden',
         overflowY: isMobile ? 'auto' : 'hidden'
@@ -221,8 +221,8 @@ export default function DmAutomationEditor() {
           
           {/* iPhone Mockup */}
           <div style={{ 
-            width: '270px', 
-            height: '540px', 
+            width: '300px', 
+            height: '600px', 
             background: '#000', 
             borderRadius: '40px', 
             border: '8px solid #1e1b4b',
@@ -267,9 +267,24 @@ export default function DmAutomationEditor() {
                                  <div style={{ padding: '10px 12px', borderBottom: '1px solid #333' }}>
                                     <div style={{ color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>{openingMessageText}</div>
                                  </div>
-                                 <div style={{ padding: '10px', textAlign: 'center', color: '#3b82f6', fontSize: '0.75rem', fontWeight: '800' }}>
-                                    {openingMessageButton}
-                                 </div>
+                                  <div style={{ padding: '8px 12px', display: 'flex', justifyContent: 'center' }}>
+                                     <div style={{ 
+                                       background: 'rgba(59, 130, 246, 0.12)', 
+                                       color: '#3b82f6', 
+                                       padding: '6px 16px', 
+                                       borderRadius: '16px', 
+                                       fontSize: '0.72rem', 
+                                       fontWeight: '800',
+                                       display: 'inline-block',
+                                       textAlign: 'center',
+                                       maxWidth: '85%',
+                                       overflow: 'hidden',
+                                       textOverflow: 'ellipsis',
+                                       whiteSpace: 'nowrap'
+                                     }}>
+                                        {openingMessageButton}
+                                     </div>
+                                  </div>
                               </div>
                            </div>
                         )}
@@ -298,11 +313,26 @@ export default function DmAutomationEditor() {
                                   <div style={{ padding: '10px 12px', color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>
                                      {message && message !== "[AI Agent will generate a custom neural reply here]" ? message : "Generates premium custom response using your custom business AI knowledge base profile..."}
                                   </div>
-                                  {buttons.map((btn, idx) => (
-                                     <div key={idx} style={{ padding: '10px', textAlign: 'center', borderBottom: idx === buttons.length - 1 ? 'none' : '1px solid rgba(192, 132, 252, 0.2)', color: '#c084fc', fontSize: '0.75rem', fontWeight: '800' }}>
-                                        {btn.text}
-                                     </div>
-                                  ))}
+                                  <div style={{ padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center', borderTop: buttons.length > 0 ? '1px solid rgba(192, 132, 252, 0.2)' : 'none' }}>
+                                     {buttons.map((btn, idx) => (
+                                        <div key={idx} style={{ 
+                                          background: 'rgba(192, 132, 252, 0.15)', 
+                                          color: '#c084fc', 
+                                          padding: '6px 16px', 
+                                          borderRadius: '16px', 
+                                          fontSize: '0.7rem', 
+                                          fontWeight: '800',
+                                          textAlign: 'center',
+                                          width: 'fit-content',
+                                          maxWidth: '90%',
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          whiteSpace: 'nowrap'
+                                        }}>
+                                           {btn.text}
+                                        </div>
+                                     ))}
+                                  </div>
                                </div>
                             </div>
                          ) : message && (
@@ -311,11 +341,26 @@ export default function DmAutomationEditor() {
                                  <div style={{ padding: '10px 12px', borderBottom: buttons.length > 0 ? '1px solid #333' : 'none' }}>
                                     <div style={{ color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>{message}</div>
                                  </div>
-                                 {buttons.map((btn, idx) => (
-                                    <div key={idx} style={{ padding: '10px', textAlign: 'center', borderBottom: idx === buttons.length - 1 ? 'none' : '1px solid #333', color: '#3b82f6', fontSize: '0.75rem', fontWeight: '800' }}>
-                                       {btn.text}
-                                    </div>
-                                 ))}
+                                  <div style={{ padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center', borderTop: buttons.length > 0 ? '1px solid #333' : 'none' }}>
+                                     {buttons.map((btn, idx) => (
+                                        <div key={idx} style={{ 
+                                          background: 'rgba(59, 130, 246, 0.12)', 
+                                          color: '#3b82f6', 
+                                          padding: '6px 16px', 
+                                          borderRadius: '16px', 
+                                          fontSize: '0.7rem', 
+                                          fontWeight: '800',
+                                          textAlign: 'center',
+                                          width: 'fit-content',
+                                          maxWidth: '90%',
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          whiteSpace: 'nowrap'
+                                        }}>
+                                           {btn.text}
+                                        </div>
+                                     ))}
+                                  </div>
                               </div>
                            </div>
                         )}
