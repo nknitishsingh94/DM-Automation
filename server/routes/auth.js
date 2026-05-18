@@ -9,6 +9,8 @@ import Flow from '../models/Flow.js';
 import Form from '../models/Form.js';
 import FormSubmission from '../models/FormSubmission.js';
 import ChatMessage from '../models/ChatMessage.js';
+import Caption from '../models/Caption.js';
+import ScheduledPost from '../models/ScheduledPost.js';
 import verifyToken from '../middleware/auth.js';
 import { OAuth2Client } from 'google-auth-library';
 
@@ -315,7 +317,7 @@ router.delete('/account', verifyToken, async (req, res) => {
 
     console.log(`🗑️ Starting permanent deletion for User: ${userId} (${user.email})`);
 
-    // Define all related models to clean up
+    // Define all related models to clean up (including captions and scheduled posts)
     const models = [
       { name: 'Settings', model: Settings },
       { name: 'Campaigns', model: Campaign },
@@ -324,17 +326,24 @@ router.delete('/account', verifyToken, async (req, res) => {
       { name: 'Flows', model: Flow },
       { name: 'Forms', model: Form },
       { name: 'FormSubmissions', model: FormSubmission },
-      { name: 'ChatMessages', model: ChatMessage }
+      { name: 'ChatMessages', model: ChatMessage },
+      { name: 'Captions', model: Caption },
+      { name: 'ScheduledPosts', model: ScheduledPost }
     ];
 
-    // Delete related data first (resiliently)
+    // Delete related data first (resiliently trying both userId and user_id fields for schema compatibility)
     for (const item of models) {
       try {
+        // 1. Try camelCase 'userId'
         await item.model.deleteMany({ userId });
+
+        // 2. Try snake_case 'user_id'
+        await item.model.deleteMany({ user_id: userId });
+
         console.log(`✅ Deleted ${item.name} records for user ${userId}`);
       } catch (err) {
         console.warn(`⚠️ Could not delete ${item.name} records:`, err.message);
-        // Continue even if one fails (table might not exist)
+        // Continue even if one fails
       }
     }
 

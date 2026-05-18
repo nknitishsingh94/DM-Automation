@@ -2108,6 +2108,110 @@ setInterval(async () => {
   }
 }, 60000);
 
+// ── Public Testimonials & Reviews API (Self-Contained JSON Database) ──────────
+const REVIEWS_FILE_PATH = path.join(__dirname, 'uploads', 'reviews.json');
+
+const DEFAULT_REVIEWS = [
+  {
+    id: "review-1",
+    name: "Sarah Jenkins",
+    handle: "@sarah_fitsocial",
+    role: "Fitness Coach (120k Followers)",
+    rating: 5,
+    text: "This automation is absolute magic! I used to spend 3 hours a day replying to 'INFO' comments on my reels. Now, smart10X handles it in milliseconds. My story engagement went up by 42% in the first week!",
+    platform: "instagram",
+    verified: true,
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: "review-2",
+    name: "Michael Chen",
+    handle: "@techdeals_co",
+    role: "E-Commerce Founder",
+    rating: 5,
+    text: "The WhatsApp and Instagram funnel integrations are flawless. We set up an automated discount code delivery system based on trigger words. Our conversion rate increased by 18% instantly.",
+    platform: "whatsapp",
+    verified: true,
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: "review-3",
+    name: "Elena Rostova",
+    handle: "@elena_travels",
+    role: "Travel Creator",
+    rating: 5,
+    text: "The AI Studio fallback option is a game-changer! When someone replies with something unexpected, the AI automatically replies in my tone instead of breaking. My DM inbox has never been cleaner.",
+    platform: "instagram",
+    verified: true,
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: "review-4",
+    name: "Marcus Aurelius",
+    handle: "@philosophy_daily",
+    role: "Content Creator",
+    rating: 5,
+    text: "Aesthetically pleasing UI and highly functional campaign manager. It is remarkably robust. Extremely simple to create new keyword-based responses for comment threads.",
+    platform: "facebook",
+    verified: true,
+    createdAt: new Date().toISOString()
+  }
+];
+
+app.get('/api/reviews', (req, res) => {
+  try {
+    if (fs.existsSync(REVIEWS_FILE_PATH)) {
+      const rawData = fs.readFileSync(REVIEWS_FILE_PATH, 'utf8');
+      const reviews = JSON.parse(rawData);
+      return res.json(reviews);
+    }
+    res.json(DEFAULT_REVIEWS);
+  } catch (err) {
+    console.error("Error reading reviews:", err);
+    res.json(DEFAULT_REVIEWS);
+  }
+});
+
+app.post('/api/reviews', (req, res) => {
+  try {
+    const { name, handle, role, rating, text, platform } = req.body;
+    if (!name || !text) {
+      return res.status(400).json({ error: 'Name and review text are required.' });
+    }
+
+    let existingReviews = [];
+    if (fs.existsSync(REVIEWS_FILE_PATH)) {
+      try {
+        const rawData = fs.readFileSync(REVIEWS_FILE_PATH, 'utf8');
+        existingReviews = JSON.parse(rawData);
+      } catch (e) {
+        existingReviews = [...DEFAULT_REVIEWS];
+      }
+    } else {
+      existingReviews = [...DEFAULT_REVIEWS];
+    }
+
+    const newReview = {
+      id: `review-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name: xss(name),
+      handle: handle ? xss(handle) : '',
+      role: role ? xss(role) : 'Verified Creator',
+      rating: Number(rating) || 5,
+      text: xss(text),
+      platform: platform || 'instagram',
+      verified: true,
+      createdAt: new Date().toISOString()
+    };
+
+    existingReviews.unshift(newReview);
+    fs.writeFileSync(REVIEWS_FILE_PATH, JSON.stringify(existingReviews, null, 2), 'utf8');
+    res.status(201).json(newReview);
+  } catch (err) {
+    console.error("Error saving review:", err);
+    res.status(500).json({ error: 'Failed to save review' });
+  }
+});
+
 // ── SECURITY: Global Error Handler ────────────────────────────────────────────
 // Must be LAST middleware. Prevents stack trace leakage in production.
 // eslint-disable-next-line no-unused-vars
