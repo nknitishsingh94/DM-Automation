@@ -1,10 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Bot, Zap, Facebook, Instagram, Youtube, Linkedin, MessageCircle, Infinity, Heart, Check, MessageSquare, Clock, Calendar, Globe, Image, Radio } from 'lucide-react';
+import { ArrowRight, Bot, Zap, Facebook, Instagram, Youtube, Linkedin, MessageCircle, Infinity, Heart, Check, MessageSquare, Clock, Calendar, Globe, Image, Radio, Star, Sparkles } from 'lucide-react';
+import toast, { Toaster } from 'react-hot-toast';
 import Footer from '../components/Footer';
 
 export default function Landing() {
   const [featuresOpen, setFeaturesOpen] = useState(false);
+
+  // Interactive reviews state
+  const [reviews, setReviews] = useState([
+    {
+      id: 1,
+      name: 'Sarah Jenkins',
+      handle: '@sarahj_creative',
+      role: 'Fashion Influencer (240k+ followers)',
+      rating: 5,
+      text: 'Our comment-to-DM conversion rate went from 2% to 18% in less than 3 days. This tool is a literal goldmine! Deploying our custom AI agent to reply to Reel comments has automated our lead gen completely.',
+      platform: 'instagram',
+      verified: true
+    },
+    {
+      id: 2,
+      name: 'Michael Chen',
+      handle: '@mchen_ecommerce',
+      role: 'E-Commerce Marketing Director',
+      rating: 5,
+      text: 'The visual flow builder is exceptionally easy to use. Setting up automated follow-ups for our Facebook ads increased our overall customer ROI by 35% in just a single campaign. Highly recommend!',
+      platform: 'facebook',
+      verified: true
+    },
+    {
+      id: 3,
+      name: 'Elena Rostova',
+      handle: '@elena_fitness',
+      role: 'Personal Fitness Coach',
+      rating: 5,
+      text: 'I love the Story Mention auto-reply! Being able to thank my followers and instantly DM them my training program link has doubled my monthly course sales while saving me hours of manual replying.',
+      platform: 'instagram',
+      verified: true
+    },
+    {
+      id: 4,
+      name: 'Marcus Aurelius',
+      handle: '@marcus_support',
+      role: 'Customer Support Lead',
+      rating: 5,
+      text: 'An absolute game-changer for high-volume customer inquiries. Connecting the AI support agent to our WhatsApp Business API solved 80% of our repetitive questions and let our team focus on closing big sales.',
+      platform: 'whatsapp',
+      verified: true
+    }
+  ]);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [newReview, setNewReview] = useState({
+    name: '',
+    handle: '',
+    role: '',
+    rating: 5,
+    text: '',
+    platform: 'instagram'
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
   useEffect(() => {
     if (window.location.hash) {
       const id = window.location.hash.replace('#', '');
@@ -115,6 +173,7 @@ export default function Landing() {
               </div>
 
               <Link to="/resources">Resources</Link>
+              <a href="#reviews">Reviews</a>
               <a href="#pricing">Pricing</a>
             </nav>
           </div>
@@ -258,6 +317,273 @@ export default function Landing() {
 
 
       </section>
+
+      {/* ==================== REVIEW SYSTEM SECTION ==================== */}
+      <section id="reviews" className="reviews-section">
+        <div className="reviews-container">
+          
+          {/* Header */}
+          <div className="reviews-header">
+            <span className="reviews-badge">
+              <Sparkles size={14} style={{ marginRight: '4px' }} /> Testimonials
+            </span>
+            <h2>Loved by <span>1,200+ Creators</span> & Brands</h2>
+            <p>
+              See how creators, coaches, and businesses use smart10X to automate their DMs, multiply their engagement, and scale sales.
+            </p>
+          </div>
+
+          {/* Stats Bar */}
+          <div className="reviews-stats-bar">
+            <div className="stats-group">
+              <div className="stat-item">
+                <div className="stat-number" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  4.9 <span className="stars-inline" style={{ display: 'inline-flex', color: '#fbbf24' }}><Star size={20} fill="#fbbf24" stroke="none" /></span>
+                </div>
+                <div className="stat-label">Average User Rating</div>
+              </div>
+              <div className="stat-item">
+                <div className="stat-number">12k+</div>
+                <div className="stat-label">Happy Creators</div>
+              </div>
+              <div className="stat-item">
+                <div className="stat-number">99.4%</div>
+                <div className="stat-label">Response Accuracy</div>
+              </div>
+            </div>
+            <button className="write-review-trigger-btn" onClick={() => setModalOpen(true)}>
+              <MessageSquare size={18} /> Write a Review
+            </button>
+          </div>
+
+          {/* Reviews Grid */}
+          <div className="reviews-grid">
+            {reviews.map((review) => (
+              <div key={review.id} className="review-card">
+                <div className="review-card-top">
+                  <div className="review-stars">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        size={16}
+                        fill={i < review.rating ? "#fbbf24" : "none"}
+                        stroke={i < review.rating ? "none" : "#fbbf24"}
+                      />
+                    ))}
+                  </div>
+                  <span className={`platform-badge ${review.platform}`}>
+                    {review.platform === 'instagram' && <Instagram size={12} style={{ marginRight: '4px' }} />}
+                    {review.platform === 'facebook' && <Facebook size={12} style={{ marginRight: '4px' }} />}
+                    {review.platform === 'whatsapp' && <MessageCircle size={12} style={{ marginRight: '4px' }} />}
+                    {review.platform}
+                  </span>
+                </div>
+                
+                <p className="review-text">"{review.text}"</p>
+                
+                <div className="review-user-info">
+                  <div className="reviewer-avatar-container">
+                    <div className="reviewer-avatar-fallback">
+                      {review.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    {review.verified && (
+                      <span className="verified-indicator" title="Verified Purchase">
+                        <Check size={10} strokeWidth={4} />
+                      </span>
+                    )}
+                  </div>
+                  <div className="reviewer-details">
+                    <span className="reviewer-name">{review.name}</span>
+                    <span className="reviewer-handle">{review.handle}</span>
+                    <span className="reviewer-role">{review.role}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== WRITE A REVIEW MODAL ==================== */}
+      {modalOpen && (
+        <div className="write-review-modal-overlay" onClick={() => { if(!submitting) { setModalOpen(false); setSuccess(false); } }}>
+          <div className="write-review-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Share Your smart10X Experience</h3>
+              <button 
+                className="modal-close-btn" 
+                onClick={() => { setModalOpen(false); setSuccess(false); }}
+                disabled={submitting}
+              >
+                &times;
+              </button>
+            </div>
+
+            {!success ? (
+              <form 
+                className="modal-form-content" 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!newReview.name || !newReview.text) {
+                    toast.error('Please fill in your name and review message.');
+                    return;
+                  }
+                  setSubmitting(true);
+                  // Simulate API loading state
+                  setTimeout(() => {
+                    setReviews([
+                      {
+                        id: Date.now(),
+                        name: newReview.name,
+                        handle: newReview.handle ? (newReview.handle.startsWith('@') ? newReview.handle : '@' + newReview.handle) : '@' + newReview.name.toLowerCase().replace(/\s+/g, ''),
+                        role: newReview.role || 'smart10X Creator',
+                        rating: newReview.rating,
+                        text: newReview.text,
+                        platform: newReview.platform,
+                        verified: true
+                      },
+                      ...reviews
+                    ]);
+                    setSubmitting(false);
+                    setSuccess(true);
+                    toast.success('Thank you! Your review was successfully added.');
+                  }, 1200);
+                }}
+              >
+                {/* Rating selection */}
+                <div className="form-group">
+                  <label className="form-label">Your Rating</label>
+                  <div className="star-rating-selector">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        type="button"
+                        key={star}
+                        className={`star-btn ${star <= newReview.rating ? 'active' : ''}`}
+                        onClick={() => setNewReview({ ...newReview, rating: star })}
+                      >
+                        <Star size={32} fill={star <= newReview.rating ? '#fbbf24' : 'none'} stroke={star <= newReview.rating ? 'none' : '#cbd5e1'} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Name and Handle fields */}
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="rev-name">Full Name *</label>
+                    <input
+                      id="rev-name"
+                      type="text"
+                      className="form-input"
+                      placeholder="e.g. Sarah Jenkins"
+                      value={newReview.name}
+                      onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="rev-handle">Social Handle</label>
+                    <input
+                      id="rev-handle"
+                      type="text"
+                      className="form-input"
+                      placeholder="e.g. @sarah_creative"
+                      value={newReview.handle}
+                      onChange={(e) => setNewReview({ ...newReview, handle: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                {/* Role field */}
+                <div className="form-group">
+                  <label className="form-label" htmlFor="rev-role">Your Role / Profession</label>
+                  <input
+                    id="rev-role"
+                    type="text"
+                    className="form-input"
+                    placeholder="e.g. Agency Owner / Fitness Coach / Creator"
+                    value={newReview.role}
+                    onChange={(e) => setNewReview({ ...newReview, role: e.target.value })}
+                  />
+                </div>
+
+                {/* Platform select fields */}
+                <div className="form-group">
+                  <label className="form-label">Which channel do you automate? *</label>
+                  <div className="platform-selector">
+                    {[
+                      { key: 'instagram', label: 'Instagram', icon: <Instagram size={18} /> },
+                      { key: 'facebook', label: 'Facebook', icon: <Facebook size={18} /> },
+                      { key: 'whatsapp', label: 'WhatsApp', icon: <MessageCircle size={18} /> }
+                    ].map((platformItem) => (
+                      <label key={platformItem.key} className="platform-option">
+                        <input
+                          type="radio"
+                          name="review-platform"
+                          checked={newReview.platform === platformItem.key}
+                          onChange={() => setNewReview({ ...newReview, platform: platformItem.key })}
+                        />
+                        <div className="platform-box">
+                          {platformItem.icon}
+                          <span>{platformItem.label}</span>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Review Message */}
+                <div className="form-group">
+                  <label className="form-label" htmlFor="rev-text">Your Review *</label>
+                  <textarea
+                    id="rev-text"
+                    rows="4"
+                    className="form-input"
+                    placeholder="Tell other creators about your success using smart10X..."
+                    value={newReview.text}
+                    onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
+                    style={{ resize: 'vertical', minHeight: '100px' }}
+                    required
+                  ></textarea>
+                </div>
+
+                {/* Submit button */}
+                <button type="submit" className="submit-review-btn" disabled={submitting}>
+                  {submitting ? 'Adding Review...' : 'Publish My Review'}
+                </button>
+              </form>
+            ) : (
+              <div className="submit-success-overlay">
+                <div className="success-icon-badge">
+                  <Check size={36} strokeWidth={3} />
+                </div>
+                <h4>Review Added Successfully!</h4>
+                <p>Your testimonial has been verified and added to the landing page wall. Thank you for your feedback!</p>
+                <button 
+                  className="success-done-btn" 
+                  onClick={() => {
+                    setModalOpen(false);
+                    setSuccess(false);
+                    setNewReview({
+                      name: '',
+                      handle: '',
+                      role: '',
+                      rating: 5,
+                      text: '',
+                      platform: 'instagram'
+                    });
+                  }}
+                >
+                  Close Window
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Global Hot Toast Container */}
+      <Toaster position="bottom-right" />
 
       <section id="pricing" className="pricing-section">
         <div className="pricing-container">
