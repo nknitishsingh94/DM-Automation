@@ -359,7 +359,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
         try {
           const { data, error } = await q;
           if (error) throw error;
-          const results = (data || []).map(d => convertIncoming(d, tableName));
+          const results = (data || []).map(d => ModelInstance(convertIncoming(d, tableName)));
           resolve(results);
         } catch (err) {
           reject(err);
@@ -379,7 +379,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     q = parseFilter(q, query, tableName);
     const { data, error } = await q.limit(1);
     if (error) throw error;
-    return data && data.length > 0 ? convertIncoming(data[0], tableName) : null;
+    return data && data.length > 0 ? ModelInstance(convertIncoming(data[0], tableName)) : null;
   };
 
   ModelInstance.findById = async function (id) {
@@ -390,7 +390,7 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
     }
     const { data, error } = await supabase.from(tableName).select('*').eq('id', id).limit(1);
     if (error) throw error;
-    return data && data.length > 0 ? convertIncoming(data[0], tableName) : null;
+    return data && data.length > 0 ? ModelInstance(convertIncoming(data[0], tableName)) : null;
   };
 
   ModelInstance.findByIdAndUpdate = async function (id, updateData, options = {}) {
