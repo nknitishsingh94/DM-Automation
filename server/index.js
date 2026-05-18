@@ -390,12 +390,22 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       if (!isFollowing) {
         console.log(`🚫 GATED: User ${chatId} is not following. Sending follow-request DM.`);
 
-        // 1. Send Private DM Request with a "Check Follow" button
+        // 1. Send Private DM Request with "Visit Profile" + "Check Follow" buttons
         const followText = match.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊";
         const checkFollowPayload = `CHECK_FOLLOW_${match._id}`;
 
-        // Use a generic template with a postback button for reliability
-        await sendMessageToInstagram(platform, chatId, followText, '', userId, "I've Followed! ✅", activeToken, [], checkFollowPayload, commentId);
+        // Build the profile URL from the connected Instagram username
+        const igUsername = userSettings?.connectedInstagramName;
+        const profileUrl = igUsername
+          ? `https://www.instagram.com/${igUsername.replace('@', '')}/`
+          : null;
+
+        // Send two buttons: Visit Profile (URL) + I've Followed (postback)
+        const followButtons = [
+          ...(profileUrl ? [{ text: 'Visit Profile 👤', url: profileUrl }] : []),
+          { text: "I've Followed! ✅", payload: checkFollowPayload }
+        ];
+        await sendMessageToInstagram(platform, chatId, followText, '', userId, '', activeToken, followButtons, '', commentId);
 
         // 2. Send PUBLIC Comment Reply (Crucial for Comments)
         if (source === 'comment' && commentId) {
