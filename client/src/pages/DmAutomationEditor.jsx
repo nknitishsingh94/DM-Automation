@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -36,11 +36,11 @@ export default function DmAutomationEditor() {
   const [keywordInput, setKeywordInput] = useState('');
   const [message, setMessage] = useState('');
   const [openingMessage, setOpeningMessage] = useState(false);
-  const [openingMessageText, setOpeningMessageText] = useState("Hey there! I'm so happy you're here! 😊\n\nClick below and I'll send you the link! 🚀");
+  const [openingMessageText, setOpeningMessageText] = useState("Hey there! I'm so happy you're here! ðŸ˜Š\n\nClick below and I'll send you the link! ðŸš€");
   const [openingMessageButton, setOpeningMessageButton] = useState("Send me the link");
   const [requireFollow, setRequireFollow] = useState(true);
-  const [unfollowedMessage, setUnfollowedMessage] = useState("Hey! Please follow our account first to get the link! 😊");
-  const [publicReplyText, setPublicReplyText] = useState("Check your DMs! 🚀 I've sent you the info.");
+  const [unfollowedMessage, setUnfollowedMessage] = useState("Hey! Please follow our account first to get the link! ðŸ˜Š");
+  const [publicReplyText, setPublicReplyText] = useState("Check your DMs! ðŸš€ I've sent you the info.");
   const [submitting, setSubmitting] = useState(false);
   const [name, setName] = useState(`${template === 'stories' ? 'Story' : 'DM'} Automation #${Math.floor(Math.random() * 1000)}`);
   const [connectedSettings, setConnectedSettings] = useState(null);
@@ -170,7 +170,7 @@ export default function DmAutomationEditor() {
       });
 
       if (res.ok) {
-        notify('✅ Automation created successfully!', 'success');
+        notify('âœ… Automation created successfully!', 'success');
         navigate('/campaigns');
       } else {
         const data = await res.json();
@@ -194,7 +194,7 @@ export default function DmAutomationEditor() {
     }}>
       <div style={{ 
         display: isMobile ? 'block' : 'grid', 
-        gridTemplateColumns: isMobile ? '1fr' : 'minmax(320px, 400px) 1fr',
+        gridTemplateColumns: isMobile ? '1fr' : 'minmax(360px, 420px) 1fr',
         flex: 1,
         overflowX: 'hidden',
         overflowY: isMobile ? 'auto' : 'hidden'
@@ -206,11 +206,11 @@ export default function DmAutomationEditor() {
             background: '#f8fafc', 
             borderRight: isMobile ? 'none' : '1px solid #f1f5f9', 
             borderBottom: isMobile ? '1px solid #f1f5f9' : 'none',
-            padding: isMobile ? '20px' : '30px 20px', 
+            padding: isMobile ? '20px' : '32px 24px', 
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center',
-            overflowY: 'visible',
+            overflowY: 'auto',
             zIndex: 2,
             height: isMobile ? 'auto' : '100vh'
           }}
@@ -221,20 +221,21 @@ export default function DmAutomationEditor() {
           
           {/* iPhone Mockup */}
           <div style={{ 
-            width: '300px', 
-            height: '600px', 
+            width: isMobile ? '100%' : '340px',
+            maxWidth: '340px',
+            minHeight: '580px',
+            height: 'auto',
             background: '#000', 
             borderRadius: '40px', 
             border: '8px solid #1e1b4b',
             position: 'relative',
-            overflow: 'hidden',
+            overflow: 'visible',
             flexShrink: 0,
-            transform: isMobile ? 'scale(0.9)' : 'none',
-            marginBottom: isMobile ? '-40px' : '0'
+            marginBottom: isMobile ? '16px' : '24px'
           }}>
              <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translateX(-50%)', width: '80px', height: '18px', background: '#000', borderRadius: '20px', zIndex: 10 }}></div>
              
-             <div style={{ height: '100%', background: '#000', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+             <div style={{ minHeight: '564px', background: '#000', borderRadius: '32px', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
                 <div style={{ padding: '30px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <ChevronLeft size={20} color="white" />
                   <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: '800', color: 'white' }}>
@@ -481,7 +482,7 @@ export default function DmAutomationEditor() {
                        />
                     </div>
                  )}
-                 {anyKeyword && <div style={{ padding: '14px 18px', background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', borderRadius: '14px', border: '1.5px dashed #7c3aed', textAlign: 'center', color: '#7c3aed', fontWeight: '800', fontSize: '0.9rem' }}>⚡ Responding to ANY incoming message</div>}
+                 {anyKeyword && <div style={{ padding: '14px 18px', background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', borderRadius: '14px', border: '1.5px dashed #7c3aed', textAlign: 'center', color: '#7c3aed', fontWeight: '800', fontSize: '0.9rem' }}>âš¡ Responding to ANY incoming message</div>}
               </div>
            </div>
 
@@ -625,7 +626,7 @@ export default function DmAutomationEditor() {
                     <button 
                       onClick={openAddLinkModal} 
                       onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 10px -3px rgba(124, 58, 237, 0.15)'; }}
-                      onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
                       style={{ background: '#f5f3ff', color: '#7c3aed', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s', fontSize: '0.85rem' }}
                     >
                       <LinkIcon size={16} /> Add Call to Action
@@ -648,32 +649,32 @@ export default function DmAutomationEditor() {
               <button 
                 onClick={handleCreate} 
                 disabled={submitting} 
-                onMouseEnter={(e) => { e.target.style.transform = 'translateY(-4px)'; e.target.style.boxShadow = '0 25px 50px -12px rgba(124, 58, 237, 0.5)'; }}
-                onMouseLeave={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 15px 30px rgba(124, 58, 237, 0.3)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 20px 40px -8px rgba(124, 58, 237, 0.45)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(124, 58, 237, 0.25)'; }}
                 style={{ 
                   width: '100%', 
-                  padding: '24px', 
-                  borderRadius: '24px', 
-                  background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
-                  color: 'white', 
-                  border: 'none', 
-                  fontWeight: '900', 
-                  fontSize: '1.3rem',
-                  cursor: 'pointer', 
-                  boxShadow: '0 15px 30px rgba(124, 58, 237, 0.3)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '16px',
-                  transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  letterSpacing: '0.02em'
+                  padding: '16px 24px',
+                   borderRadius: '18px',
+                   background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+                   color: 'white',
+                   border: 'none',
+                   fontWeight: '800',
+                   fontSize: '1rem',
+                   cursor: 'pointer',
+                   boxShadow: '0 10px 20px rgba(124, 58, 237, 0.25)',
+                   display: 'flex',
+                   alignItems: 'center',
+                   justifyContent: 'center',
+                   gap: '10px',
+                   transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                   letterSpacing: '0.02em'
                 }}
               >
                 {submitting ? (
-                  'Launching Your Automation...'
+                  'Launching...'
                 ) : (
                   <>
-                    <Zap size={28} fill="white" /> Launch Automation
+                    <Zap size={20} fill="white" /> Launch Automation
                   </>
                 )}
               </button>
@@ -700,3 +701,5 @@ export default function DmAutomationEditor() {
     </div>
   );
 }
+
+
