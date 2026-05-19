@@ -44,6 +44,7 @@ import { sendMessageToInstagram, sendWhatsAppMessage, sendPrivateReply, sendPubl
 import authRoutes from './routes/auth.js';
 import ChatMessage from './models/ChatMessage.js';
 import Caption from './models/Caption.js';
+import Review from './models/Review.js';
 import paymentRoutes from './routes/payment.js';
 import formRoutes from './routes/forms.js';
 import oauthRoutes from './routes/oauth.js';
@@ -2227,8 +2228,7 @@ app.get('/api/cron/publish', async (req, res) => {
   res.json({ success: true, message: 'Scheduling check completed' });
 });
 
-// ── Public Testimonials & Reviews API (Self-Contained JSON Database) ──────────
-const REVIEWS_FILE_PATH = path.join(__dirname, 'uploads', 'reviews.json');
+// ── Public Testimonials & Reviews API (Supabase Postgres Database) ──────────
 
 const DEFAULT_REVIEWS = [
   {
@@ -2277,57 +2277,41 @@ const DEFAULT_REVIEWS = [
   }
 ];
 
-app.get('/api/reviews', (req, res) => {
+app.get('/api/reviews', async (req, res) => {
   try {
-    if (fs.existsSync(REVIEWS_FILE_PATH)) {
-      const rawData = fs.readFileSync(REVIEWS_FILE_PATH, 'utf8');
-      const reviews = JSON.parse(rawData);
+    const reviews = await Review.find({}).sort({ createdAt: -1 });
+    if (reviews && reviews.length > 0) {
       return res.json(reviews);
     }
     res.json(DEFAULT_REVIEWS);
   } catch (err) {
-    console.error("Error reading reviews:", err);
+    console.error("Error reading reviews from Supabase:", err.message);
     res.json(DEFAULT_REVIEWS);
   }
 });
 
-app.post('/api/reviews', (req, res) => {
+app.post('/api/reviews', async (req, res) => {
   try {
     const { name, handle, role, rating, text, platform } = req.body;
     if (!name || !text) {
       return res.status(400).json({ error: 'Name and review text are required.' });
     }
 
-    let existingReviews = [];
-    if (fs.existsSync(REVIEWS_FILE_PATH)) {
-      try {
-        const rawData = fs.readFileSync(REVIEWS_FILE_PATH, 'utf8');
-        existingReviews = JSON.parse(rawData);
-      } catch (e) {
-        existingReviews = [...DEFAULT_REVIEWS];
-      }
-    } else {
-      existingReviews = [...DEFAULT_REVIEWS];
-    }
-
-    const newReview = {
-      id: `review-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    const newReview = new Review({
       name: xss(name),
       handle: handle ? xss(handle) : '',
       role: role ? xss(role) : 'Verified Creator',
       rating: Number(rating) || 5,
       text: xss(text),
       platform: platform || 'instagram',
-      verified: true,
-      createdAt: new Date().toISOString()
-    };
+      verified: true
+    });
 
-    existingReviews.unshift(newReview);
-    fs.writeFileSync(REVIEWS_FILE_PATH, JSON.stringify(existingReviews, null, 2), 'utf8');
+    await newReview.save();
     res.status(201).json(newReview);
   } catch (err) {
-    console.error("Error saving review:", err);
-    res.status(500).json({ error: 'Failed to save review' });
+    console.error("Error saving review to Supabase:", err.message);
+    res.status(500).json({ error: 'Failed to save review to database' });
   }
 });
 

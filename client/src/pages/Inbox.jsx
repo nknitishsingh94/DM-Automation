@@ -99,34 +99,87 @@ export default function Inbox() {
     fetchMessages();
     fetchContacts();
 
-    // Socket Setup
-    const socket = io(API_BASE_URL);
+    // Socket Setup with HTTP Polling Fallback
+    let socket;
+    let pollInterval;
 
-    if (user && user.id) {
-      socket.emit('join_room', user.id);
+    const startPolling = () => {
+      if (pollInterval) return;
+      console.log("⏱️ Starting fallback polling for new messages...");
+      pollInterval = setInterval(async () => {
+        const token = localStorage.getItem('insta_agent_token');
+        if (!token) return;
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/messages`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const latestMessages = await res.json();
+            setMessages((prev) => {
+              const existingIds = new Set(prev.map(m => String(m._id)));
+              const newMsgs = latestMessages.filter(m => !existingIds.has(String(m._id)));
+              if (newMsgs.length > 0) {
+                console.log(`📡 Polled ${newMsgs.length} new messages.`);
+                return [...prev, ...newMsgs];
+              }
+              return prev;
+            });
+          }
+        } catch (err) {
+          console.error("Polling error:", err);
+        }
+      }, 5000);
+    };
+
+    try {
+      socket = io(API_BASE_URL, {
+        transports: ['websocket', 'polling'],
+        timeout: 5000,
+        reconnectionAttempts: 3
+      });
+
+      if (user && user.id) {
+        socket.emit('join_room', user.id);
+      }
+
+      socket.on('new_message', (message) => {
+        console.log("📨 Real-time message received:", message);
+        setMessages((prev) => {
+          const isDuplicate = prev.some(m => 
+            String(m._id) === String(message._id) || 
+            (message.tempId && String(m._id) === String(message.tempId)) ||
+            (message.tempId && String(m.tempId) === String(message.tempId))
+          );
+          if (isDuplicate) return prev;
+          return [...prev, message];
+        });
+      });
+
+      socket.on('connect_error', () => {
+        console.warn("⚠️ Socket connection error. Falling back to HTTP polling.");
+        startPolling();
+      });
+
+      socket.on('disconnect', (reason) => {
+        console.warn("⚠️ Socket disconnected:", reason);
+        startPolling();
+      });
+      
+      // Fallback timer: if socket fails to connect in 3 seconds, start polling
+      setTimeout(() => {
+        if (!socket.connected) {
+          startPolling();
+        }
+      }, 3000);
+
+    } catch (e) {
+      console.warn("⚠️ Failed to initialize socket, starting polling fallback:", e);
+      startPolling();
     }
 
-    socket.on('new_message', (message) => {
-      console.log("📨 Real-time message received:", message);
-      setMessages((prev) => {
-        // Prevent duplicate if message was already added via REST response
-        // Also check if the socket message matches a tempId we optimistically added
-        const isDuplicate = prev.some(m => 
-          String(m._id) === String(message._id) || 
-          (message.tempId && String(m._id) === String(message.tempId)) ||
-          (message.tempId && String(m.tempId) === String(message.tempId))
-        );
-
-        if (isDuplicate) {
-          console.log("♻️ Duplicate message detected via Socket, ignoring.");
-          return prev;
-        }
-        return [...prev, message];
-      });
-    });
-
     return () => {
-      socket.disconnect();
+      if (socket) socket.disconnect();
+      if (pollInterval) clearInterval(pollInterval);
     };
   }, [user]);
 
