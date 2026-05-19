@@ -51,11 +51,10 @@ export default function Dashboard() {
         
         const isInstagramConnected = !!(settingsData?.isAccountConnected || settingsData?.instagramAccessToken);
         const isWhatsAppConnected = !!(settingsData?.isWhatsAppConnected || settingsData?.whatsappToken);
-        const isConnected = isInstagramConnected || isWhatsAppConnected;
         
         setSetupStatus({
           profileDone: true, 
-          metaDone: isConnected,
+          metaDone: isInstagramConnected, // Launch readiness setup complete if Instagram is connected
           flowDone: Array.isArray(flowsData) && flowsData.length > 0,
           instagramConnected: isInstagramConnected,
           whatsAppConnected: isWhatsAppConnected
@@ -248,14 +247,22 @@ export default function Dashboard() {
                   <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.metaDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Users size={14} color="white" />
                   </div>
-                  <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.metaDone ? 'white' : '#94a3b8' }}>Connect IG/WhatsApp</span>
+                  <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.metaDone ? 'white' : '#94a3b8' }}>
+                    {setupStatus.whatsAppConnected ? 'Connect IG/WhatsApp' : 'Connect Instagram'}
+                  </span>
                 </div>
-                {(setupStatus.instagramConnected && setupStatus.whatsAppConnected) ? (
-                  <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>ALL DONE</span>
-                ) : setupStatus.metaDone ? (
-                  <span style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700' }}>PARTIAL</span>
+                {setupStatus.whatsAppConnected ? (
+                  (setupStatus.instagramConnected && setupStatus.whatsAppConnected) ? (
+                    <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>ALL DONE</span>
+                  ) : (
+                    <span style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700' }}>PARTIAL</span>
+                  )
                 ) : (
-                  <Link to="/settings" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT</Link>
+                  setupStatus.instagramConnected ? (
+                    <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>
+                  ) : (
+                    <Link to="/settings" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT</Link>
+                  )
                 )}
               </div>
               
@@ -280,17 +287,15 @@ export default function Dashboard() {
                     <Link to="/settings" style={{ fontSize: '11px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT</Link>
                   )}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
-                  <span style={{ color: setupStatus.whatsAppConnected ? '#fff' : '#64748b', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: setupStatus.whatsAppConnected ? '#10b981' : '#64748b' }}></span>
-                    💬 WhatsApp Business
-                  </span>
-                  {setupStatus.whatsAppConnected ? (
+                {setupStatus.whatsAppConnected && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                    <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
+                      💬 WhatsApp Business
+                    </span>
                     <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
-                  ) : (
-                    <Link to="/settings" style={{ fontSize: '11px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT</Link>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
 
