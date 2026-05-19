@@ -1553,6 +1553,34 @@ export default function Scheduling() {
                     <ArrowRight size={14} />
                   </div>
 
+                  {/* Step 3.5: Greeting (Optional) */}
+                  {createdPost.openingMessage && (
+                    <>
+                      <div style={{ 
+                        flex: 1.1, 
+                        minWidth: '80px',
+                        background: 'white', 
+                        border: '1.5px solid #3b82f6', 
+                        borderRadius: '12px', 
+                        padding: '10px 6px', 
+                        textAlign: 'center',
+                        boxShadow: '0 4px 10px rgba(59, 130, 246, 0.02)',
+                        zIndex: 2
+                      }}>
+                        <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#3b82f6', textTransform: 'uppercase', marginBottom: '4px' }}>Greeting</div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                          <MessageCircle size={12} color="#3b82f6" />
+                          <span style={{ fontSize: '0.75rem', fontWeight: '900', color: '#1e1b4b' }}>Greeting Msg</span>
+                        </div>
+                      </div>
+
+                      {/* Arrow 3.5 */}
+                      <div style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', zIndex: 1 }}>
+                        <ArrowRight size={14} />
+                      </div>
+                    </>
+                  )}
+
                   {/* Step 4: Actions */}
                   <div style={{ 
                     flex: 1.2, 
@@ -1696,12 +1724,55 @@ export default function Scheduling() {
                     )}
                   </>
                 )}
+              </div>              {/* 4. Opening Message */}
+              <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #cbd5e1', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>4</div>
+                    <div>
+                      <h4 style={{ margin: 0, fontWeight: '900', color: '#1e1b4b', fontSize: '1rem' }}>Advanced: Opening Message</h4>
+                      <p style={{ margin: '2px 0 0 0', fontSize: '0.75rem', color: '#64748b', fontWeight: '500' }}>Send a greeting button before the final response.</p>
+                    </div>
+                  </div>
+                  <div
+                    onClick={() => setCreatedPost({ ...createdPost, openingMessage: !createdPost.openingMessage })}
+                    style={{ width: '44px', height: '24px', borderRadius: '12px', background: createdPost.openingMessage ? '#3b82f6' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                    <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: createdPost.openingMessage ? '23px' : '3px', transition: '0.3s' }}></div>
+                  </div>
+                </div>
+
+                {createdPost.openingMessage && (
+                  <div style={{ border: '1.5px solid #dbeafe', borderRadius: '20px', padding: '20px', background: '#f0f9ff', marginTop: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: '800', color: '#0369a1' }}>GREETING TEXT</label>
+                      <button
+                        onClick={() => handleAIGenerate('openingMessageText', `Write a friendly Instagram DM greeting message thanking someone for interest and telling them to click the button below to get the link.`)}
+                        style={{ background: 'none', border: 'none', color: '#0369a1', fontWeight: '800', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                      >
+                        <Sparkles size={12} /> AI Write
+                      </button>
+                    </div>
+                    <textarea
+                      value={createdPost.openingMessageText || ''}
+                      onChange={(e) => setCreatedPost({ ...createdPost, openingMessageText: e.target.value })}
+                      style={{ width: '100%', height: '80px', padding: '16px', borderRadius: '16px', border: '1.5px solid #3b82f6', outline: 'none', fontSize: '0.9rem', resize: 'none', background: 'white', marginBottom: '16px' }}
+                    />
+
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: '#0369a1', marginBottom: '8px' }}>BUTTON TEXT</label>
+                    <input
+                      type="text"
+                      value={createdPost.openingMessageButton || ''}
+                      onChange={(e) => setCreatedPost({ ...createdPost, openingMessageButton: e.target.value })}
+                      style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #3b82f6', outline: 'none', fontSize: '0.9rem', fontWeight: '800', background: 'white' }}
+                    />
+                  </div>
+                )}
               </div>
 
-              {/* 4. Send a DM */}
-              <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #e2e8f0' }}>
+              {/* 5. Send a DM */}
+              <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #cbd5e1', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>4</div>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>5</div>
                   <h4 style={{ margin: 0, fontWeight: '900', color: '#1e1b4b', fontSize: '1rem' }}>Send a DM</h4>
                 </div>
 
