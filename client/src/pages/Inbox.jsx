@@ -4,6 +4,7 @@ import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
+import { supabase } from '../supabase';
 
 
 export default function Inbox() {
@@ -99,87 +100,58 @@ export default function Inbox() {
     fetchMessages();
     fetchContacts();
 
-    // Socket Setup with HTTP Polling Fallback
-    let socket;
-    let pollInterval;
-
-    const startPolling = () => {
-      if (pollInterval) return;
-      console.log("⏱️ Starting fallback polling for new messages...");
-      pollInterval = setInterval(async () => {
-        const token = localStorage.getItem('insta_agent_token');
-        if (!token) return;
-        try {
-          const res = await fetch(`${API_BASE_URL}/api/messages`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (res.ok) {
-            const latestMessages = await res.json();
-            setMessages((prev) => {
-              const existingIds = new Set(prev.map(m => String(m._id)));
-              const newMsgs = latestMessages.filter(m => !existingIds.has(String(m._id)));
-              if (newMsgs.length > 0) {
-                console.log(`📡 Polled ${newMsgs.length} new messages.`);
-                return [...prev, ...newMsgs];
-              }
-              return prev;
-            });
-          }
-        } catch (err) {
-          console.error("Polling error:", err);
-        }
-      }, 5000);
-    };
+    // ── SUPABASE REALTIME MESSAGE SUBSCRIPTION ──
+    let supabaseChannel = null;
 
     try {
-      socket = io(API_BASE_URL, {
-        transports: ['websocket', 'polling'],
-        timeout: 5000,
-        reconnectionAttempts: 3
-      });
+      console.log("🔌 Connecting to Supabase Realtime for messages...");
+      supabaseChannel = supabase
+        .channel('public:messages')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'messages' },
+          (payload) => {
+            const rawMessage = payload.new;
+            console.log("📨 Real-time message received via Supabase Realtime:", rawMessage);
+            
+            // Format incoming message keys to match frontend expectations
+            const formattedMessage = {
+              ...rawMessage,
+              _id: rawMessage.id,
+              userId: rawMessage.userId || rawMessage.user_id,
+              timestamp: rawMessage.timestamp || rawMessage.created_at || new Date().toISOString(),
+              createdAt: rawMessage.created_at,
+              sender: rawMessage.sender,
+              text: rawMessage.text,
+              type: rawMessage.type,
+              chatId: rawMessage.chatId,
+              platform: rawMessage.platform
+            };
 
-      if (user && user.id) {
-        socket.emit('join_room', user.id);
-      }
-
-      socket.on('new_message', (message) => {
-        console.log("📨 Real-time message received:", message);
-        setMessages((prev) => {
-          const isDuplicate = prev.some(m => 
-            String(m._id) === String(message._id) || 
-            (message.tempId && String(m._id) === String(message.tempId)) ||
-            (message.tempId && String(m.tempId) === String(message.tempId))
-          );
-          if (isDuplicate) return prev;
-          return [...prev, message];
+            setMessages((prev) => {
+              const isDuplicate = prev.some(m => 
+                String(m._id) === String(formattedMessage._id) || 
+                (formattedMessage.tempId && String(m._id) === String(formattedMessage.tempId)) ||
+                (formattedMessage.tempId && String(m.tempId) === String(formattedMessage.tempId))
+              );
+              if (isDuplicate) return prev;
+              return [...prev, formattedMessage];
+            });
+            
+            setTimeout(scrollToBottom, 50);
+          }
+        )
+        .subscribe((status) => {
+          console.log(`🔌 Supabase Realtime Subscription status: ${status}`);
         });
-      });
-
-      socket.on('connect_error', () => {
-        console.warn("⚠️ Socket connection error. Falling back to HTTP polling.");
-        startPolling();
-      });
-
-      socket.on('disconnect', (reason) => {
-        console.warn("⚠️ Socket disconnected:", reason);
-        startPolling();
-      });
-      
-      // Fallback timer: if socket fails to connect in 3 seconds, start polling
-      setTimeout(() => {
-        if (!socket.connected) {
-          startPolling();
-        }
-      }, 3000);
-
     } catch (e) {
-      console.warn("⚠️ Failed to initialize socket, starting polling fallback:", e);
-      startPolling();
+      console.error("❌ Failed to initialize Supabase Realtime subscription:", e);
     }
 
     return () => {
-      if (socket) socket.disconnect();
-      if (pollInterval) clearInterval(pollInterval);
+      if (supabaseChannel) {
+        supabase.removeChannel(supabaseChannel);
+      }
     };
   }, [user]);
 
