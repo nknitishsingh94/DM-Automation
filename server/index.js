@@ -237,9 +237,9 @@ const checkFollowerStatus = async (platform, chatId, userId) => {
     // is_user_follow_business is a boolean returned by Meta
     return !!(res.data && res.data.is_user_follow_business === true);
   } catch (err) {
-    // FALLBACK: If we can't verify (e.g. permission missing or private), 
-    // we return 'false' to ensure we prioritize follower growth.
-    return false;
+    console.warn("⚠️ Follow check API failed:", err.response?.data || err.message);
+    // FALLBACK: Return true on API error so we don't permanently block automation when permissions are missing
+    return true;
   }
 };
 
