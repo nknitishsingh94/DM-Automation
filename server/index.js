@@ -1287,11 +1287,15 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
 
 app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, res) => {
   try {
-    // Process and save files to local storage to bypass limited Supabase storage quota
+    // Save files locally to serve from local server storage (conserving limited Supabase cloud storage)
     let mediaFiles = [];
     if (req.files && req.files.length > 0) {
-      console.log(`🚀 Local Storage Upload: Saving ${req.files.length} files locally...`);
-      mediaFiles = req.files.map((file) => `/uploads/${file.filename}`);
+      console.log(`🚀 Local Storage Upload: Storing ${req.files.length} files locally...`);
+      mediaFiles = req.files.map((file) => {
+        // Return local static URL of the file (already written by multer to the uploads folder)
+        console.log(`✅ File stored locally at: /uploads/${file.filename}`);
+        return `/uploads/${file.filename}`;
+      });
     }
 
     let mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
