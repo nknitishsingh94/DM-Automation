@@ -51,21 +51,9 @@ import oauthRoutes from './routes/oauth.js';
 import supportRoutes from './routes/support.js';
 import { generateAIResponse } from './utils/aiHandler.js';
 import { supabase } from './utils/supabase.js';
-// --- MULTER SETUP (Media Uploads) ---
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, 'uploads')),
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
-});
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
+// --- MULTER SETUP (Media Uploads - Using Memory Storage for Serverless compatibility) ---
 const upload = multer({
-  storage: storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit (reduced from 50MB)
   fileFilter: (req, file, cb) => {
     // SECURITY: Only allow safe file types
@@ -962,23 +950,24 @@ app.use('/api/oauth', oauthRoutes);
 app.use('/api/forms', formRoutes);
 
 // --- MEDIA UPLOAD ROUTE ---
-app.post('/api/upload', verifyToken, upload.single('media'), (req, res) => {
+app.post('/api/upload', verifyToken, upload.single('media'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
-    // Dynamically determine the base URL from the request
-    const host = req.get('host');
-    const protocol = req.protocol;
-    // Prioritize localhost for local testing even if API_BASE_URL is set (prevents ngrok tunnel issues)
-    const baseUrl = (host.includes('localhost') || host.includes('127.0.0.1'))
-      ? `${protocol}://${host}`
-      : (process.env.API_BASE_URL || `${protocol}://${host}`);
+    const { uploadToSupabase } = await import('./utils/supabase.js');
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(req.file.originalname)}`;
+    
+    console.log(`📤 Uploading file to Supabase Storage: ${uniqueName}...`);
+    const publicUrl = await uploadToSupabase(req.file.buffer, uniqueName, req.file.mimetype);
+    
+    if (!publicUrl) {
+      throw new Error("Failed to upload file to Supabase Storage");
+    }
 
-    const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-    const fileUrl = `${cleanBaseUrl}/uploads/${req.file.filename}`;
-
-    res.json({ url: fileUrl });
+    console.log(`✅ Upload success! Public URL: ${publicUrl}`);
+    res.json({ url: publicUrl });
   } catch (err) {
+    console.error("❌ Upload Endpoint Error:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -1298,15 +1287,21 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
 
 app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, res) => {
   try {
-    // Save files locally to serve from local server storage (conserving limited Supabase cloud storage)
     let mediaFiles = [];
     if (req.files && req.files.length > 0) {
-      console.log(`🚀 Local Storage Upload: Storing ${req.files.length} files locally...`);
-      mediaFiles = req.files.map((file) => {
-        // Return local static URL of the file (already written by multer to the uploads folder)
-        console.log(`✅ File stored locally at: /uploads/${file.filename}`);
-        return `/uploads/${file.filename}`;
-      });
+      console.log(`🚀 Memory Upload: Uploading ${req.files.length} files to Supabase Storage...`);
+      const { uploadToSupabase } = await import('./utils/supabase.js');
+      
+      for (const file of req.files) {
+        const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
+        const publicUrl = await uploadToSupabase(file.buffer, uniqueName, file.mimetype);
+        if (publicUrl) {
+          console.log(`✅ File uploaded successfully: ${publicUrl}`);
+          mediaFiles.push(publicUrl);
+        } else {
+          throw new Error("Failed to upload file to Supabase Storage");
+        }
+      }
     }
 
     let mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
