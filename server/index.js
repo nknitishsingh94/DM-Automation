@@ -698,9 +698,11 @@ app.post('/api/webhook', async (req, res) => {
               console.error("⚠️ Failed to save incoming DM to DB:", dbErr.message);
             }
 
-            processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm").catch(err => {
+            try {
+              await processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm");
+            } catch (err) {
               console.error("🔥 AutoReply error:", err);
-            });
+            }
           }
         }
 
@@ -714,66 +716,58 @@ app.post('/api/webhook', async (req, res) => {
           // A. Opening Message Button Click
           if (payload.startsWith('CAMP_')) {
             const campaignId = payload.split('_')[1];
+            try {
+              const match = await Campaign.findById(campaignId);
 
-            // Run asynchronously to prevent webhook timeouts
-            (async () => {
-              try {
-                const match = await Campaign.findById(campaignId);
-
-                if (match && match.status === 'Active') {
-                  console.log(`🚀 TRIGGERING MAIN RESPONSE for Campaign: ${match.name}`);
-                  const userSettings = await Settings.findOne({ userId: match.userId });
-                  const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
-                  await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
-                  await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
-                }
-              } catch (err) {
-                console.error("Error processing CAMP_ postback:", err);
+              if (match && match.status === 'Active') {
+                console.log(`🚀 TRIGGERING MAIN RESPONSE for Campaign: ${match.name}`);
+                const userSettings = await Settings.findOne({ userId: match.userId });
+                const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+                await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
+                await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
               }
-            })();
+            } catch (err) {
+              console.error("Error processing CAMP_ postback:", err);
+            }
           }
 
           // B. "I've Followed" Button Click
           if (payload.startsWith('CHECK_FOLLOW_')) {
             const campaignId = payload.split('_')[2];
+            try {
+              const match = await Campaign.findById(campaignId);
 
-            // Run asynchronously to prevent webhook timeouts
-            (async () => {
-              try {
-                const match = await Campaign.findById(campaignId);
+              if (match && match.status === 'Active') {
+                console.log(`🛡️ VERIFYING FOLLOW on button click for ${senderId}...`);
+                const isFollowing = await checkFollowerStatus(platform, senderId, match.userId);
 
-                if (match && match.status === 'Active') {
-                  console.log(`🛡️ VERIFYING FOLLOW on button click for ${senderId}...`);
-                  const isFollowing = await checkFollowerStatus(platform, senderId, match.userId);
+                const userSettings = await Settings.findOne({ userId: match.userId });
+                const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
-                  const userSettings = await Settings.findOne({ userId: match.userId });
-                  const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+                if (isFollowing) {
+                  console.log(`✅ VERIFIED! Triggering automation for ${match.name}`);
 
-                  if (isFollowing) {
-                    console.log(`✅ VERIFIED! Triggering automation for ${match.name}`);
+                  // 1. Clear pending status
+                  await Contact.findOneAndUpdate({ chatId: senderId }, { $unset: { pendingCampaignId: 1 } });
 
-                    // 1. Clear pending status
-                    await Contact.findOneAndUpdate({ chatId: senderId }, { $unset: { pendingCampaignId: 1 } });
-
-                    // 2. Decide: Opening Message or Main Response?
-                    if (match.openingMessage && match.openingMessageText) {
-                      const btnText = match.openingMessageButton || "Click to Continue 🚀";
-                      const nextPayload = `CAMP_${match._id}`;
-                      await sendMessageToInstagram(platform, senderId, match.openingMessageText, '', match.userId, btnText, activeToken, [], nextPayload);
-                    } else {
-                      await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
-                      await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
-                    }
+                  // 2. Decide: Opening Message or Main Response?
+                  if (match.openingMessage && match.openingMessageText) {
+                    const btnText = match.openingMessageButton || "Click to Continue 🚀";
+                    const nextPayload = `CAMP_${match._id}`;
+                    await sendMessageToInstagram(platform, senderId, match.openingMessageText, '', match.userId, btnText, activeToken, [], nextPayload);
                   } else {
-                    console.log(`🚫 STILL NOT FOLLOWING: ${senderId}`);
-                    const retryText = "It looks like you haven't followed yet! Please follow @us and then click the button again. 😊";
-                    await sendMessageToInstagram(platform, senderId, retryText, '', match.userId, "Try Again! ✅", activeToken, [], payload);
+                    await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
+                    await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
                   }
+                } else {
+                  console.log(`🚫 STILL NOT FOLLOWING: ${senderId}`);
+                  const retryText = "It looks like you haven't followed yet! Please follow @us and then click the button again. 😊";
+                  await sendMessageToInstagram(platform, senderId, retryText, '', match.userId, "Try Again! ✅", activeToken, [], payload);
                 }
-              } catch (err) {
-                console.error("Error processing CHECK_FOLLOW_ postback:", err);
               }
-            })();
+            } catch (err) {
+              console.error("Error processing CHECK_FOLLOW_ postback:", err);
+            }
           }
         }
       }
@@ -853,10 +847,11 @@ app.post('/api/webhook', async (req, res) => {
                 console.error("⚠️ Failed to save incoming comment to DB:", dbErr.message);
               }
 
-              // Pass the fresh token and mediaId to processAutoReply
-              processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId, accessToken, mediaId).catch(err => {
+              try {
+                await processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId, accessToken, mediaId);
+              } catch (err) {
                 console.error("🔥 Comment Reply error:", err);
-              });
+              }
             }
           } else {
             console.log(`⏭️ Skipping comment: text missing or sender is the page itself.`);
@@ -889,10 +884,11 @@ app.post('/api/webhook', async (req, res) => {
                 const userSettings = await Settings.findOne({ userId: targetUserId });
                 const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
-                // Execute! (Opening message flow if enabled)
-                processAutoReply(targetUserId.toString(), platform, senderId, "[FOLLOW_TRIGGER]", 'dm', null, activeToken).catch(err => {
+                try {
+                  await processAutoReply(targetUserId.toString(), platform, senderId, "[FOLLOW_TRIGGER]", 'dm', null, activeToken);
+                } catch (err) {
                   console.error("🔥 Follow Auto-Trigger error:", err);
-                });
+                }
               }
             }
           }
@@ -2218,8 +2214,11 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Vercel Cron/Webhook Route to trigger scheduler
 app.get('/api/cron/publish', async (req, res) => {
+  const isVercelCron = req.headers['x-vercel-cron'] === '1';
   const authHeader = req.headers.authorization;
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const hasSecret = !!process.env.CRON_SECRET;
+  
+  if (hasSecret && !isVercelCron && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
