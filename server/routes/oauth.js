@@ -3,6 +3,13 @@ import axios from 'axios';
 import Settings from '../models/Settings.js';
 import User from '../models/User.js';
 import verifyToken from '../middleware/auth.js';
+import Campaign from '../models/Campaign.js';
+import ScheduledPost from '../models/ScheduledPost.js';
+import Flow from '../models/Flow.js';
+import Contact from '../models/Contact.js';
+import Message from '../models/Message.js';
+import ChatMessage from '../models/ChatMessage.js';
+import Caption from '../models/Caption.js';
 
 const router = express.Router();
 
@@ -17,7 +24,7 @@ router.get('/facebook', verifyToken, (req, res) => {
   }
 
   const redirectUri = encodeURIComponent(`${baseUrl}/api/oauth/facebook/callback`);
-  const scope = 'instagram_basic,instagram_content_publish,instagram_manage_messages,pages_show_list,pages_manage_metadata,pages_messaging,whatsapp_business_management,whatsapp_business_messaging,business_management';
+  const scope = 'instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_messages,pages_show_list,pages_manage_metadata,pages_messaging,whatsapp_business_management,whatsapp_business_messaging,business_management';
   const state = req.user.userId + (req.query.onboarding === 'true' ? '_onboarding' : '') + (req.query.connectType ? `_${req.query.connectType}` : '');
 
   if (!appId) {
@@ -197,6 +204,31 @@ router.get('/facebook/callback', async (req, res) => {
       if (businessAccountId) cleanupQuery.push({ businessAccountId: businessAccountId });
       
       if (cleanupQuery.length > 0) {
+        // Migration: Find other users previously linked to this page/account to move their data
+        try {
+          const otherSettings = await Settings.find({
+            userId: { $ne: userId },
+            $or: cleanupQuery
+          });
+          const oldUserIds = otherSettings.map(s => s.userId).filter(Boolean);
+          
+          if (oldUserIds.length > 0) {
+            console.log(`🔄 Migrating campaigns, posts, flows, and contacts from old users [${oldUserIds.join(', ')}] to user ${userId}...`);
+            for (const oldUserId of oldUserIds) {
+              await Campaign.updateMany({ userId: oldUserId }, { userId });
+              await ScheduledPost.updateMany({ userId: oldUserId }, { userId });
+              await Flow.updateMany({ userId: oldUserId }, { userId });
+              await Contact.updateMany({ userId: oldUserId }, { userId });
+              await Message.updateMany({ userId: oldUserId }, { userId });
+              await ChatMessage.updateMany({ userId: oldUserId }, { userId });
+              await Caption.updateMany({ userId: oldUserId }, { userId });
+            }
+            console.log(`✅ Data migration complete for user ${userId}`);
+          }
+        } catch (migrationErr) {
+          console.error("⚠️ Failed to migrate page/account data:", migrationErr.message);
+        }
+
         await Settings.updateMany(
           { 
             userId: { $ne: userId },
@@ -347,6 +379,31 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
       if (businessAccountId) cleanupQuery.push({ businessAccountId: businessAccountId });
       
       if (cleanupQuery.length > 0) {
+        // Migration: Find other users previously linked to this page/account to move their data
+        try {
+          const otherSettings = await Settings.find({
+            userId: { $ne: req.user.userId },
+            $or: cleanupQuery
+          });
+          const oldUserIds = otherSettings.map(s => s.userId).filter(Boolean);
+          
+          if (oldUserIds.length > 0) {
+            console.log(`🔄 Migrating campaigns, posts, flows, and contacts from old users [${oldUserIds.join(', ')}] to user ${req.user.userId}...`);
+            for (const oldUserId of oldUserIds) {
+              await Campaign.updateMany({ userId: oldUserId }, { userId: req.user.userId });
+              await ScheduledPost.updateMany({ userId: oldUserId }, { userId: req.user.userId });
+              await Flow.updateMany({ userId: oldUserId }, { userId: req.user.userId });
+              await Contact.updateMany({ userId: oldUserId }, { userId: req.user.userId });
+              await Message.updateMany({ userId: oldUserId }, { userId: req.user.userId });
+              await ChatMessage.updateMany({ userId: oldUserId }, { userId: req.user.userId });
+              await Caption.updateMany({ userId: oldUserId }, { userId: req.user.userId });
+            }
+            console.log(`✅ Data migration complete for user ${req.user.userId}`);
+          }
+        } catch (migrationErr) {
+          console.error("⚠️ Failed to migrate page/account data:", migrationErr.message);
+        }
+
         await Settings.updateMany(
           { 
             userId: { $ne: req.user.userId },

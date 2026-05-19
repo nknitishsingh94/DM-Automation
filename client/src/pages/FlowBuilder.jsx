@@ -49,6 +49,11 @@ const TriggerNode = ({ data }) => (
     <div style={{ fontSize: '11px', color: '#94a3b8' }}>
       Keyword: <span style={{ color: '#fbbf24', fontWeight: 'bold' }}>{data.keyword || '*Any Message*'}</span>
     </div>
+    {data.publicReplyText && (
+      <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px', borderTop: '1px solid #334155', paddingTop: '4px' }}>
+        Reply: <span style={{ color: '#a7f3d0' }}>{data.publicReplyText}</span>
+      </div>
+    )}
     <Handle type="source" position={Position.Bottom} style={{ background: '#fbbf24' }} />
   </div>
 );
@@ -347,13 +352,23 @@ export default function FlowBuilder() {
                </div>
                
                {selectedNode.type === 'trigger' && (
-                <div className="input-group">
-                  <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Keyword Trigger</label>
-                  <StableInput 
-                    value={selectedNode.data.keyword || ''}
-                    onChange={(val) => updateNodeData('keyword', val)}
-                    placeholder="e.g. START"
-                  />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div className="input-group">
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Keyword Trigger</label>
+                    <StableInput 
+                      value={selectedNode.data.keyword || ''}
+                      onChange={(val) => updateNodeData('keyword', val)}
+                      placeholder="e.g. START"
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Public Comment Reply (optional)</label>
+                    <StableInput 
+                      value={selectedNode.data.publicReplyText || ''}
+                      onChange={(val) => updateNodeData('publicReplyText', val)}
+                      placeholder="e.g. Thank you! Check your DMs 🚀"
+                    />
+                  </div>
                 </div>
               )}
 

@@ -326,7 +326,18 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       console.log(`💬 Sending public comment reply for matched flow to ${commentId}`);
       const userSettings = await Settings.findOne({ userId });
       const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
-      const replyText = matchedFlow.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
+      
+      let nodesArray = matchedFlow.nodes;
+      if (typeof nodesArray === 'string') {
+        try {
+          nodesArray = JSON.parse(nodesArray);
+        } catch (e) {
+          nodesArray = [];
+        }
+      }
+      const triggerNode = Array.isArray(nodesArray) ? nodesArray.find(n => n.type === 'trigger') : null;
+      const replyText = triggerNode?.data?.publicReplyText || matchedFlow.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
+      
       await sendPublicComment(platform, commentId, replyText, userId, activeToken);
     }
 
