@@ -1545,8 +1545,16 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
   try {
-    const postToDelete = await ScheduledPost.findOne({ _id: req.params.id, userId: req.user.userId });
+    console.log(`🗑️ DELETE scheduled post requested. ID: ${req.params.id}, User: ${req.user.userId}`);
+    const postToDelete = await ScheduledPost.findById(req.params.id);
+    
     if (postToDelete) {
+      // Validate that this scheduled post belongs to the requesting user
+      if (postToDelete.userId !== req.user.userId) {
+        console.warn(`⚠️ User ${req.user.userId} unauthorized to delete post ${req.params.id} belonging to ${postToDelete.userId}`);
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
       let igMediaId = null;
       if (postToDelete.mediaUrl && postToDelete.mediaUrl.startsWith('{')) {
         try {
@@ -1567,10 +1575,15 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
         });
       }
       
-      await ScheduledPost.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+      await ScheduledPost.findByIdAndDelete(req.params.id);
+      console.log(`✅ Successfully deleted scheduled post: ${req.params.id}`);
+      return res.json({ success: true });
     }
-    res.json({ success: true });
+    
+    console.warn(`⚠️ Scheduled post not found for ID: ${req.params.id}`);
+    res.status(404).json({ error: "Post not found" });
   } catch (err) {
+    console.error(`❌ Error in DELETE /api/scheduling/:id:`, err);
     res.status(500).json({ error: err.message });
   }
 });

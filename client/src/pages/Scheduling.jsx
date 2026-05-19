@@ -557,6 +557,9 @@ export default function Scheduling() {
       if (res.ok) {
         notify("Post cancelled", "success");
         fetchPosts();
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        notify(errData.error || "Failed to delete post", "error");
       }
     } catch (err) {
       notify("Error deleting post", "error");

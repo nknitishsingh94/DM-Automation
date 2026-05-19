@@ -503,6 +503,42 @@ export default function Settings() {
               >
                 Disconnect
               </button>
+
+              {/* Profile Button */}
+              <button 
+                onClick={() => {
+                  const username = settings.connectedInstagramName || 'monster__pk_8795';
+                  window.open(`https://instagram.com/${username.replace(/^@/, '')}`, '_blank');
+                }}
+                style={{ 
+                  marginTop: '8px',
+                  width: '100%',
+                  padding: '8px',
+                  background: '#f9fafb',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '6px',
+                  color: '#374151',
+                  fontSize: '0.85rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  transition: 'all 0.15s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = '#f3f4f6';
+                  e.currentTarget.style.borderColor = '#d1d5db';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = '#f9fafb';
+                  e.currentTarget.style.borderColor = '#e5e7eb';
+                }}
+              >
+                Profile
+              </button>
             </div>
 
           </div>
