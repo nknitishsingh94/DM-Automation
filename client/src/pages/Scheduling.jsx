@@ -836,7 +836,12 @@ export default function Scheduling() {
                   </button>
 
                   <button
-                    onClick={() => deletePost(post._id)}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      deletePost(post._id);
+                    }}
                     style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       width: '38px', height: '38px', borderRadius: '12px', border: '1px solid #fee2e2',
