@@ -122,7 +122,6 @@ const ALLOWED_ORIGINS = [
   process.env.FRONTEND_URL,
   process.env.API_BASE_URL,
 ].filter(Boolean);
-
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true); // Server-to-server / curl
@@ -131,8 +130,12 @@ app.use(cors({
       || origin.includes('127.0.0.1')
       || origin.includes('vercel.app')
       || origin.includes('render.com');
-    if (isAllowed) return callback(null, origin);
-    callback(new Error(`CORS blocked for origin: ${origin}`));
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.warn(`⚠️ CORS request rejected for origin: ${origin}`);
+      callback(null, false);
+    }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
