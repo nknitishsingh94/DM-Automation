@@ -2520,6 +2520,7 @@ tr:hover {
 
 .reviews-header h2 span {
   background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

@@ -2,5 +2,5 @@
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
   ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? `${window.location.protocol}//${window.location.hostname}:5001`
-    : 'https://dm-automation-lu44.onrender.com');
+    : 'https://dm-automation-w9a4.vercel.app');
 export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '885857827712-0lge2dbqoutuugmfbh560r35ebk4oq70.apps.googleusercontent.com';

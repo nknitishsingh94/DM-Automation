@@ -16,7 +16,7 @@ const router = express.Router();
 // Step 1: Redirect to Facebook OAuth
 router.get('/facebook', verifyToken, (req, res) => {
   const appId = process.env.META_APP_ID;
-  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-lu44.onrender.com';
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
 
   // Clean trailing slash to prevent double-slash issues
   if (baseUrl.endsWith('/')) {
