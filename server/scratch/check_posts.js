@@ -1,33 +1,20 @@
-import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+dotenv.config({ path: 'server/.env' });
 
-dotenv.config();
-
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 async function run() {
-  console.log("Checking scheduled posts for active user ffe99b88-3156-4f9f-aabf-3302264a96bf...");
-  const { data, error } = await supabase
+  const { data: posts, error } = await supabase
     .from('scheduled_posts')
     .select('*')
-    .eq('userId', 'ffe99b88-3156-4f9f-aabf-3302264a96bf');
-  
+    .limit(10);
+    
   if (error) {
-    console.error("Error fetching scheduled posts:", error);
-    return;
+    console.error('Error fetching posts:', error);
+  } else {
+    console.log('Posts:', JSON.stringify(posts, null, 2));
   }
-  
-  console.log(`Found ${data.length} scheduled posts:`);
-  data.forEach((row, i) => {
-    console.log(`\n--- Post ${i + 1} ---`);
-    console.log(`id: ${row.id}`);
-    console.log(`caption: ${row.caption}`);
-    console.log(`status: ${row.status}`);
-    console.log(`postId: ${row.postId}`);
-    console.log(`mediaUrl: ${row.mediaUrl}`);
-  });
 }
 
 run();

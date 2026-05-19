@@ -14,7 +14,7 @@ A scalable, multi-tenant social media automation platform built with the MERN st
 
 - **Frontend**: React.js, Vite, TailwindCSS (for UI), Lucide React.
 - **Backend**: Node.js, Express.js.
-- **Database**: MongoDB Atlas with Mongoose.
+- **Database**: Supabase.
 - **Real-time**: Socket.io.
 - **Authentication**: JWT-based secure authentication.
 
@@ -43,7 +43,7 @@ A scalable, multi-tenant social media automation platform built with the MERN st
    Create a `.env` file in the `server` directory with the following keys:
    ```env
    PORT=5000
-   MONGODB_URI=your_mongodb_uri
+  
    JWT_SECRET=your_secret_key
    GOOGLE_CLIENT_ID=your_google_id
    FACEBOOK_APP_ID=your_fb_id
