@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -190,14 +190,16 @@ export default function DmAutomationEditor() {
       display: 'flex',
       flexDirection: 'column',
       flex: 1,
-      overflow: 'hidden'
+      minHeight: 0
     }}>
       <div style={{ 
         display: isMobile ? 'block' : 'grid', 
         gridTemplateColumns: isMobile ? '1fr' : 'minmax(360px, 420px) 1fr',
         flex: 1,
+        minHeight: 0,
         overflowX: 'hidden',
-        overflowY: isMobile ? 'auto' : 'hidden'
+        overflowY: isMobile ? 'auto' : 'hidden',
+        height: isMobile ? 'auto' : '100vh'
       }}>
         {/* Left Side: Preview */}
         <div 
@@ -210,7 +212,7 @@ export default function DmAutomationEditor() {
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center',
-            overflowY: 'auto',
+            overflowY: isMobile ? 'visible' : 'auto',
             zIndex: 2,
             height: isMobile ? 'auto' : '100vh'
           }}
@@ -381,12 +383,14 @@ export default function DmAutomationEditor() {
         <div style={{ 
           padding: isMobile ? '20px 16px' : '32px 48px', 
           overflowY: 'auto', 
+          overflowX: 'hidden',
           display: 'flex', 
           flexDirection: 'column', 
           gap: '24px',
           background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
           position: 'relative',
           width: '100%',
+          height: isMobile ? 'auto' : '100vh',
           boxSizing: 'border-box'
         }}>
            
