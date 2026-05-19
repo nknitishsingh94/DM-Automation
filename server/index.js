@@ -2037,11 +2037,9 @@ app.get('/api/debug/settings', verifyToken, async (req, res) => {
 // Start the server
 
 // --- REINFORCED BACKGROUND WORKER (Scheduling) ---
-setInterval(async () => {
+async function runSchedulingWorker() {
   try {
     const now = new Date();
-    // Use a 5-minute window to ensure no post is missed due to worker lag
-    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000).toISOString();
     const nowISO = now.toISOString();
     
     console.log(`📡 [Worker] Syncing all due posts up to: ${nowISO}`);
@@ -2077,7 +2075,6 @@ setInterval(async () => {
       }
 
       // If the media URL is a local path, convert it to a public URL using the production server
-      // This allows Meta API to download the actual user image
       const SERVER_PUBLIC_URL = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 5001}`;
       
       if (finalMedia && finalMedia.startsWith('/uploads/')) {
@@ -2095,7 +2092,7 @@ setInterval(async () => {
         });
       }
       
-      // Last resort: if still no valid public URL (empty or localhost only), warn and skip
+      // Last resort: check if media URL is valid
       if (!finalMedia || finalMedia.includes('127.0.0.1') || finalMedia.includes('localhost')) {
         console.error(`❌ No publicly accessible media URL for post ${post._id}. Cannot publish without a public image URL.`);
         await ScheduledPost.findByIdAndUpdate(post._id, { 
@@ -2183,8 +2180,7 @@ setInterval(async () => {
       } catch (postErr) {
         console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);
 
-        // ── SMART RETRY SYSTEM ────────────────────────────────────────────────
-        // Don't mark as Failed immediately. Retry up to 5 times within 30 mins.
+        // Smart Retry System
         const currentRetryCount = (post.retryCount || 0) + 1;
         const MAX_RETRIES = 5;
         const MAX_RETRY_WINDOW_MINUTES = 30;
@@ -2193,7 +2189,6 @@ setInterval(async () => {
         const withinRetryWindow = minutesSinceScheduled < MAX_RETRY_WINDOW_MINUTES;
 
         if (currentRetryCount <= MAX_RETRIES && withinRetryWindow) {
-          // Still within retry window — mark as Retrying, not Failed
           console.log(`🔁 RETRY ${currentRetryCount}/${MAX_RETRIES}: Will retry post ${post._id} in next worker cycle.`);
           await ScheduledPost.findByIdAndUpdate(post._id, {
             status: 'Retrying',
@@ -2201,7 +2196,6 @@ setInterval(async () => {
             lastError: postErr.message
           });
         } else {
-          // Exhausted retries or past 30-minute window — mark as truly Failed
           console.error(`🛑 GIVING UP on Post ${post._id} after ${currentRetryCount} attempts. Marking as Failed.`);
           await ScheduledPost.findByIdAndUpdate(post._id, {
             status: 'Failed',
@@ -2214,7 +2208,24 @@ setInterval(async () => {
   } catch (err) {
     console.error("🔥 CRITICAL WORKER ERROR:", err.message);
   }
-}, 60000);
+}
+
+// Run as local interval fallback if not running on serverless Vercel
+if (process.env.NODE_ENV !== 'production') {
+  setInterval(runSchedulingWorker, 60000);
+}
+
+// Vercel Cron/Webhook Route to trigger scheduler
+app.get('/api/cron/publish', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  console.log("⏰ Vercel Cron Job triggered scheduling check...");
+  await runSchedulingWorker();
+  res.json({ success: true, message: 'Scheduling check completed' });
+});
 
 // ── Public Testimonials & Reviews API (Self-Contained JSON Database) ──────────
 const REVIEWS_FILE_PATH = path.join(__dirname, 'uploads', 'reviews.json');
@@ -2336,3 +2347,5 @@ httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🔒 Security: Rate limiting, Helmet CSP, CORS whitelist, NoSQL sanitization, XSS protection active`);
 });
+
+export default app;
