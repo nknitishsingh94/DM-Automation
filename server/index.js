@@ -1287,34 +1287,11 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
 
 app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, res) => {
   try {
-    const { uploadToSupabase } = await import('./utils/supabase.js');
-    
-    // Process and upload files to Supabase Storage in PARALLEL for speed
+    // Process and save files to local storage to bypass limited Supabase storage quota
     let mediaFiles = [];
     if (req.files && req.files.length > 0) {
-      console.log(`🚀 Parallel Upload: Starting for ${req.files.length} files...`);
-      mediaFiles = await Promise.all(req.files.map(async (file) => {
-        try {
-          const fileContent = fs.readFileSync(file.path);
-          const fileName = `${Date.now()}-${file.filename}`;
-          const publicUrl = await uploadToSupabase(fileContent, fileName, file.mimetype);
-          
-          if (publicUrl) {
-            // Cleanup local file since it was successfully uploaded to cloud
-            try { fs.unlinkSync(file.path); } catch (e) {}
-            return publicUrl;
-          } else {
-            // Fallback: Supabase failed, keep local file and return local static URL!
-            console.log(`⚠️ Supabase upload failed, falling back to local static URL for: ${file.filename}`);
-            return `/uploads/${file.filename}`;
-          }
-        } catch (err) {
-          console.error(`❌ Upload Failed for file: ${file.filename}`, err.message);
-          return null;
-        }
-      }));
-      // Filter out any failed uploads
-      mediaFiles = mediaFiles.filter(url => url !== null);
+      console.log(`🚀 Local Storage Upload: Saving ${req.files.length} files locally...`);
+      mediaFiles = req.files.map((file) => `/uploads/${file.filename}`);
     }
 
     let mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
