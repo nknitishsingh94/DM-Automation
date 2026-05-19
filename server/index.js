@@ -607,7 +607,7 @@ app.get('/api/webhook', (req, res) => {
   const challenge = req.query['hub.challenge'];
 
   if (mode && token) {
-    if (mode === 'subscribe' && token === (process.env.META_VERIFY_TOKEN || 'dm_automate_verify_123')) {
+    if (mode === 'subscribe' && token === (process.env.META_VERIFY_TOKEN || process.env.VERIFY_TOKEN || 'dm_automate_verify_123')) {
       console.log('✅ Webhook Verified');
       res.status(200).send(challenge);
     } else {
