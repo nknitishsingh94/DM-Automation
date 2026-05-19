@@ -185,59 +185,37 @@ export default function DmAutomationEditor() {
 
   return (
     <div style={{ 
-      background: 'white', 
+      minHeight: '100vh', 
+      background: '#f8fafc', 
       fontFamily: "'Outfit', sans-serif",
       display: 'flex',
-      flexDirection: 'column',
-      flex: 1,
-      minHeight: 0
+      flexDirection: 'column'
     }}>
-      <div style={{ 
-        display: isMobile ? 'block' : 'grid', 
-        gridTemplateColumns: isMobile ? '1fr' : 'minmax(360px, 420px) 1fr',
-        flex: 1,
-        minHeight: 0,
-        overflowX: 'hidden',
-        overflowY: isMobile ? 'auto' : 'hidden',
-        height: isMobile ? 'auto' : '100vh'
-      }}>
+
+      <div className="editor-layout">
         {/* Left Side: Preview */}
-        <div 
-          className="editor-preview"
-          style={{ 
-            background: '#f8fafc', 
-            borderRight: isMobile ? 'none' : '1px solid #f1f5f9', 
-            borderBottom: isMobile ? '1px solid #f1f5f9' : 'none',
-            padding: isMobile ? '20px' : '32px 24px', 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center',
-            overflowY: isMobile ? 'visible' : 'auto',
-            zIndex: 2,
-            height: isMobile ? 'auto' : '100vh'
-          }}
-        >
-          <div style={{ color: '#94a3b8', fontWeight: '800', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            <Smartphone size={16} /> Automation Preview
+        <div className="editor-preview" style={{ background: '#f8fafc' }}>
+          <div style={{ color: '#64748b', fontWeight: '700', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
+            <Smartphone size={18} /> Preview Automation
           </div>
           
           {/* iPhone Mockup */}
           <div style={{ 
-            width: isMobile ? '100%' : '340px',
-            maxWidth: '340px',
-            minHeight: '580px',
-            height: 'auto',
+            width: '340px', 
+            height: '680px', 
             background: '#000', 
             borderRadius: '40px', 
             border: '8px solid #1e1b4b',
             position: 'relative',
-            overflow: 'visible',
-            flexShrink: 0,
-            marginBottom: isMobile ? '16px' : '24px'
+            overflow: 'hidden',
+            boxShadow: '0 30px 60px -12px rgba(0,0,0,0.25)',
+            transform: 'scale(1)',
+            margin: '0 auto',
+            flexShrink: 0
           }}>
              <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translateX(-50%)', width: '80px', height: '18px', background: '#000', borderRadius: '20px', zIndex: 10 }}></div>
              
-             <div style={{ minHeight: '564px', background: '#000', borderRadius: '32px', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+             <div style={{ height: '100%', background: '#000', display: 'flex', flexDirection: 'column', position: 'relative' }}>
                 <div style={{ padding: '30px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <ChevronLeft size={20} color="white" />
                   <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: '800', color: 'white' }}>
@@ -380,19 +358,14 @@ export default function DmAutomationEditor() {
         </div>
 
         {/* Right Side: Configuration */}
-        <div style={{ 
-          padding: isMobile ? '20px 16px' : '32px 48px', 
-          overflowY: 'auto', 
-          overflowX: 'hidden',
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: '24px',
-          background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-          position: 'relative',
-          width: '100%',
-          height: isMobile ? 'auto' : '100vh',
-          boxSizing: 'border-box'
-        }}>
+        <div className="editor-config" style={{ 
+           background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+           position: 'relative',
+           boxSizing: 'border-box',
+           display: 'flex', 
+           flexDirection: 'column', 
+           gap: '24px'
+         }}>
            
            {/* Vertical Flow Line */}
            <div style={{ 

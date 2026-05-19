@@ -247,8 +247,8 @@ export default function AutomationEditor() {
           
           {/* Phone Frame - Scaled down for better fit */}
           <div style={{ 
-            width: '300px', 
-            height: '600px', 
+            width: '340px', 
+            height: '680px', 
             background: '#000', 
             borderRadius: '40px', 
             border: '8px solid #1e1b4b',
@@ -319,7 +319,7 @@ export default function AutomationEditor() {
             </div>
 
             {/* Chat Area / Comment Area Wrapper */}
-            <div style={{ position: 'relative', height: '540px', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', height: '620px', overflow: 'hidden' }}>
               
               {/* CONDITION: Switch between Comment View and DM View */}
               {previewMode === 'comment' && triggerOnComments ? (
