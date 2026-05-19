@@ -2322,6 +2322,42 @@ app.post('/api/reviews', async (req, res) => {
     console.error("Error saving review to Supabase:", err.message);
     res.status(500).json({ error: 'Failed to save review to database' });
   }
+app.get('/api/diag-storage', async (req, res) => {
+  try {
+    const diag = {
+      NODE_ENV: process.env.NODE_ENV,
+      SUPABASE_URL_DEFINED: !!process.env.SUPABASE_URL,
+      SUPABASE_URL_PREFIX: process.env.SUPABASE_URL ? process.env.SUPABASE_URL.slice(0, 15) : 'none',
+      SUPABASE_KEY_DEFINED: !!process.env.SUPABASE_KEY,
+      SUPABASE_KEY_LENGTH: process.env.SUPABASE_KEY ? process.env.SUPABASE_KEY.length : 0,
+      SUPABASE_SERVICE_ROLE_KEY_DEFINED: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      SUPABASE_SERVICE_ROLE_KEY_LENGTH: process.env.SUPABASE_SERVICE_ROLE_KEY ? process.env.SUPABASE_SERVICE_ROLE_KEY.length : 0,
+      VITE_SUPABASE_URL_DEFINED: !!process.env.VITE_SUPABASE_URL,
+      VITE_SUPABASE_PUBLISHABLE_KEY_DEFINED: !!process.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+    };
+
+    const { createClient } = await import('@supabase/supabase-js');
+    const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || '';
+
+    diag.CLIENT_INIT = { urlDefined: !!url, keyDefined: !!key };
+    
+    if (url && key) {
+      try {
+        const client = createClient(url, key);
+        const { data, error } = await client.storage.listBuckets();
+        diag.LIST_BUCKETS = { success: !error, error: error ? error.message : null, buckets: data ? data.map(b => b.name) : [] };
+      } catch (clientErr) {
+        diag.LIST_BUCKETS = { success: false, error: clientErr.message };
+      }
+    } else {
+      diag.LIST_BUCKETS = 'Skipped - missing URL or Key';
+    }
+
+    res.json(diag);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // ── SECURITY: Global Error Handler ────────────────────────────────────────────
