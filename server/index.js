@@ -1220,7 +1220,7 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
           p.requireFollow = parsedMeta.requireFollow !== undefined ? parsedMeta.requireFollow : false;
           p.unfollowedResponse = parsedMeta.unfollowedResponse || '';
           p.publicReply = parsedMeta.publicReply || '';
-          p.automationStatus = parsedMeta.automationStatus || 'Paused';
+          p.automationStatus = parsedMeta.automationStatus || 'Active';
           p.anyKeyword = parsedMeta.anyKeyword !== undefined ? parsedMeta.anyKeyword : false;
           p.mediaUrl = parsedMeta.mediaUrl || (p.carouselItems.length > 0 ? p.carouselItems[0] : '');
           
@@ -1328,7 +1328,7 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
       requireFollow: req.body.requireFollow !== undefined ? (req.body.requireFollow === 'true' || req.body.requireFollow === true) : false,
       unfollowedResponse: req.body.unfollowedResponse || '',
       publicReply: req.body.publicReply || '',
-      automationStatus: req.body.automationStatus || 'Paused',
+      automationStatus: req.body.automationStatus || 'Active',
       anyKeyword: req.body.anyKeyword !== undefined ? (req.body.anyKeyword === 'true' || req.body.anyKeyword === true) : false,
       openingMessage: req.body.openingMessage !== undefined ? (req.body.openingMessage === 'true' || req.body.openingMessage === true) : false,
       openingMessageText: req.body.openingMessageText || '',
@@ -1491,7 +1491,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
 
       if (postIds.length > 0) {
         // Parse current metadata to get automationStatus and advanced options
-        let automationStatus = 'Paused';
+        let automationStatus = 'Active';
         let reqFollow = false;
         let unfollowedResp = '';
         let pubReply = '';
@@ -1503,7 +1503,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
         if (updatedPost.mediaUrl && updatedPost.mediaUrl.startsWith('{')) {
           try {
             const meta = JSON.parse(updatedPost.mediaUrl);
-            automationStatus = meta.automationStatus || 'Paused';
+            automationStatus = meta.automationStatus || 'Active';
             reqFollow = meta.requireFollow || false;
             unfollowedResp = meta.unfollowedResponse || '';
             pubReply = meta.publicReply || '';
@@ -2114,7 +2114,7 @@ setInterval(async () => {
         let requireFollow = false;
         let unfollowedResponse = '';
         let publicReply = '';
-        let automationStatus = 'Paused';
+        let automationStatus = 'Active';
         let openingMessage = false;
         let openingMessageText = '';
         let openingMessageButton = '';
@@ -2126,7 +2126,7 @@ setInterval(async () => {
             requireFollow = meta.requireFollow || false;
             unfollowedResponse = meta.unfollowedResponse || '';
             publicReply = meta.publicReply || '';
-            automationStatus = meta.automationStatus || 'Paused';
+            automationStatus = meta.automationStatus || 'Active';
             openingMessage = meta.openingMessage || false;
             openingMessageText = meta.openingMessageText || '';
             openingMessageButton = meta.openingMessageButton || '';
