@@ -22,7 +22,9 @@ export default function Dashboard() {
   const [setupStatus, setSetupStatus] = useState({
     profileDone: true,
     metaDone: false,
-    flowDone: false
+    flowDone: false,
+    instagramConnected: false,
+    whatsAppConnected: false
   });
 
   useEffect(() => {
@@ -47,12 +49,16 @@ export default function Dashboard() {
 
         if (statsData) setStats(statsData);
         
-        const isConnected = !!(settingsData?.isAccountConnected || settingsData?.isFacebookConnected || settingsData?.isWhatsAppConnected || settingsData?.instagramAccessToken);
+        const isInstagramConnected = !!(settingsData?.isAccountConnected || settingsData?.instagramAccessToken);
+        const isWhatsAppConnected = !!(settingsData?.isWhatsAppConnected || settingsData?.whatsappToken);
+        const isConnected = isInstagramConnected || isWhatsAppConnected;
         
         setSetupStatus({
           profileDone: true, 
           metaDone: isConnected,
-          flowDone: Array.isArray(flowsData) && flowsData.length > 0
+          flowDone: Array.isArray(flowsData) && flowsData.length > 0,
+          instagramConnected: isInstagramConnected,
+          whatsAppConnected: isWhatsAppConnected
         });
 
       } catch (err) {
@@ -224,6 +230,7 @@ export default function Dashboard() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {/* 1. Account Verification */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.profileDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -234,14 +241,68 @@ export default function Dashboard() {
               {setupStatus.profileDone && <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>}
             </div>
 
+            {/* 2. Connect IG/WhatsApp */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.metaDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Users size={14} color="white" />
+                  </div>
+                  <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.metaDone ? 'white' : '#94a3b8' }}>Connect IG/WhatsApp</span>
+                </div>
+                {(setupStatus.instagramConnected && setupStatus.whatsAppConnected) ? (
+                  <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>ALL DONE</span>
+                ) : setupStatus.metaDone ? (
+                  <span style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700' }}>PARTIAL</span>
+                ) : (
+                  <Link to="/settings" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT</Link>
+                )}
+              </div>
+              
+              {/* Dynamic sub-platforms list */}
+              <div style={{ 
+                paddingLeft: '16px', 
+                marginLeft: '12px', 
+                borderLeft: '1px dashed rgba(255,255,255,0.15)', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '8px',
+                marginTop: '4px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                  <span style={{ color: setupStatus.instagramConnected ? '#fff' : '#64748b', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: setupStatus.instagramConnected ? '#10b981' : '#64748b' }}></span>
+                    📸 Instagram Account
+                  </span>
+                  {setupStatus.instagramConnected ? (
+                    <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
+                  ) : (
+                    <Link to="/settings" style={{ fontSize: '11px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT</Link>
+                  )}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                  <span style={{ color: setupStatus.whatsAppConnected ? '#fff' : '#64748b', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: setupStatus.whatsAppConnected ? '#10b981' : '#64748b' }}></span>
+                    💬 WhatsApp Business
+                  </span>
+                  {setupStatus.whatsAppConnected ? (
+                    <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
+                  ) : (
+                    <Link to="/settings" style={{ fontSize: '11px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT</Link>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Create First Automation */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.metaDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Users size={14} color="white" />
+                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.flowDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Zap size={14} color="white" />
                 </div>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.metaDone ? 'white' : '#94a3b8' }}>Connect IG/WhatsApp</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.flowDone ? 'white' : '#94a3b8' }}>Create First Automation</span>
               </div>
-              {setupStatus.metaDone ? <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span> : <Link to="/settings" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT</Link>}
+              {setupStatus.flowDone ? <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span> : <Link to="/campaigns" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>BUILD</Link>}
             </div>
           </div>
         </div>
