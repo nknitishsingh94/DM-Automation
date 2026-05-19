@@ -2313,11 +2313,10 @@ app.post('/api/reviews', async (req, res) => {
 // Must be LAST middleware. Prevents stack trace leakage in production.
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  const isProd = process.env.NODE_ENV === 'production';
-  console.error(`❌ [Error] ${req.method} ${req.url}:`, err.message);
+  console.error(`❌ [Error] ${req.method} ${req.url}:`, err.stack || err.message || err);
   res.status(err.status || 500).json({
-    message: isProd ? 'An unexpected error occurred.' : err.message,
-    ...(isProd ? {} : { stack: err.stack }),
+    message: err.message,
+    stack: err.stack,
   });
 });
 
