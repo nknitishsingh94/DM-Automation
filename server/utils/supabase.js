@@ -28,14 +28,6 @@ export const uploadToSupabase = async (fileBuffer, fileName, contentType) => {
   const client = supabaseAdmin || supabase;
   if (!client) return null;
   try {
-    // --- AUTO-CREATE BUCKET IF MISSING ---
-    const { data: buckets } = await client.storage.listBuckets();
-    const bucketExists = buckets?.some(b => b.name === 'media');
-    
-    if (!bucketExists) {
-      console.log("📁 Creating 'media' bucket in Supabase...");
-      await client.storage.createBucket('media', { public: true });
-    }
 
     const { data, error } = await client.storage
       .from('media') 

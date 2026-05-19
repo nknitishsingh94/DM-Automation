@@ -208,11 +208,11 @@ app.get('/api/ping', (req, res) => res.send('pong'));
 
 // (Messaging helpers moved to utils/metaApi.js for cleaner architecture)
 
-const checkFollowerStatus = async (platform, chatId, userId) => {
+const checkFollowerStatus = async (platform, chatId, userId, preloadedSettings = null) => {
   if (platform !== 'instagram') return true; // Follow check currently only for Instagram
 
   try {
-    const userSettings = await Settings.findOne({ userId });
+    const userSettings = preloadedSettings || await Settings.findOne({ userId });
     if (!userSettings || !userSettings.instagramAccessToken) {
       console.log("⚠️ Missing credentials for follow check. Defaulting to true.");
       return true;
@@ -233,8 +233,13 @@ const checkFollowerStatus = async (platform, chatId, userId) => {
 
 // Reusable Auto-Reply Logic
 const processAutoReply = async (userId, platform, chatId, text, source = 'dm', commentId = null, passedToken = null, mediaId = null) => {
-  // Human Handover Check
-  const contact = await Contact.findOne({ userId, chatId });
+  const queryUserId = userId;
+  // Load settings and contact in parallel
+  const [contact, userSettings] = await Promise.all([
+    Contact.findOne({ userId, chatId }),
+    Settings.findOne({ $or: [{ userId }, { userId: queryUserId }] })
+  ]);
+
   if (contact && contact.isBotMuted) {
     console.log(`🔇 Bot is muted for contact ${chatId}. Skipping auto-reply.`);
     return { skipped: true, reason: 'muted' };
@@ -246,7 +251,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   // (who can't see the "I Followed" button) to just follow and send ANY message to continue.
   if (contact && contact.pendingCampaignId && !contact.pendingCampaignId.startsWith('OPENING:')) {
     console.log(`📡 [DESKTOP FALLBACK] User ${chatId} has pending campaign ${contact.pendingCampaignId}. Checking follow status...`);
-    const isFollowing = await checkFollowerStatus(platform, chatId, userId);
+    const isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
     
     if (isFollowing) {
       console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} has now followed! Triggering pending campaign.`);
@@ -258,7 +263,6 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       // Execute the pending campaign
       const match = await Campaign.findById(pendingId);
       if (match && match.status === 'Active') {
-        const userSettings = await Settings.findOne({ userId });
         const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
         
         await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
@@ -282,7 +286,6 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     
     const match = await Campaign.findById(pendingId);
     if (match && match.status === 'Active') {
-      const userSettings = await Settings.findOne({ userId });
       const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
       
       await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
@@ -291,12 +294,17 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
   }
 
-  // 1. Check for Active Flows first (Advanced Automation)
-  const queryUserId = userId;
-  const activeFlows = await Flow.find({
-    $or: [{ userId }, { userId: queryUserId }],
-    status: 'Active'
-  });
+  // 1. Fetch Active Flows and Keyword Campaigns in parallel (Advanced Automation)
+  const [activeFlows, activeCampaignsRaw] = await Promise.all([
+    Flow.find({
+      $or: [{ userId }, { userId: queryUserId }],
+      status: 'Active'
+    }),
+    Campaign.find({
+      $or: [{ userId }, { userId: queryUserId }],
+      status: 'Active'
+    })
+  ]);
 
   const matchedFlow = activeFlows.find(f => {
     if (!f.triggerKeyword) return false;
@@ -336,10 +344,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   const userMessage = text.toLowerCase();
 
   // 2. Keyword Campaign Checking
-  let activeCampaigns = await Campaign.find({
-    $or: [{ userId }, { userId: queryUserId }],
-    status: 'Active'
-  });
+  let activeCampaigns = activeCampaignsRaw;
 
   // SORT: Specific keywords first, Wildcards (*) last
   activeCampaigns = activeCampaigns.sort((a, b) => {
@@ -392,13 +397,12 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     console.log(`🎯 MATCH FOUND! Campaign: "${campaignName}" | Trigger: "${match.trigger}" | Platform: ${platform} | Source: ${source}`);
 
     // Determine the best token to use
-    const userSettings = await Settings.findOne({ userId });
     const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
     // GATING: Follower Check (Only enforced for Comments, never for direct DMs)
     if (match.requireFollow && source === 'comment') {
       console.log(`🛡️ GATING: Checking follower status for ${chatId}...`);
-      const isFollowing = await checkFollowerStatus(platform, chatId, userId);
+      const isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
 
       if (!isFollowing) {
         console.log(`🚫 GATED: User ${chatId} is not following. Sending follow-request DM.`);
@@ -480,26 +484,28 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         console.error("🔥 Campaign AI generation failed, falling back to static response:", aiErr);
       }
     }
-    const sent = await sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons, '', commentId);
+    const dmPromise = sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons, '', commentId);
 
-    // NEW: If it's a comment, also send a public reply to the comment
+    let commentPromise = Promise.resolve(true);
     if (source === 'comment' && commentId) {
       console.log(`💬 Sending CUSTOM public comment reply to ${commentId}`);
       const replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
-      await sendPublicComment(platform, commentId, replyText, userId, activeToken);
+      commentPromise = sendPublicComment(platform, commentId, replyText, userId, activeToken);
     }
+
+    const [sent, commentSent] = await Promise.all([dmPromise, commentPromise]);
 
     if (sent) {
       const autoReply = new Message({
         userId: userId,
         chatId: chatId || 'default', sender: 'AI Agent', text: finalResponse, type: 'sent', platform, isAI: true, campaignId: match._id, timestamp: new Date()
       });
-      try {
-        await autoReply.save();
-      } catch (dbErr) {
-        console.error("⚠️ Failed to save campaign message to DB:", dbErr.message);
-      }
-      await Campaign.findByIdAndUpdate(match._id, { $inc: { dmsSent: 1 } });
+      
+      await Promise.all([
+        autoReply.save().catch(dbErr => console.error("⚠️ Failed to save campaign message to DB:", dbErr.message)),
+        Campaign.findByIdAndUpdate(match._id, { $inc: { dmsSent: 1 } }).catch(dbErr => console.error("⚠️ Failed to increment dmsSent:", dbErr.message))
+      ]);
+
       io.to(userId.toString()).emit('new_message', autoReply);
       console.log(`🚀 REPLY DISPATCHED to ${chatId}`);
       return { reply: autoReply };
@@ -510,10 +516,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   }
 
   // 3. AI Studio Fallback (Only if enabled)
-  const settings = await Settings.findOne({
-    $or: [{ userId }, { userId: queryUserId }]
-  });
-  if (settings?.isAiEnabled) {
+  if (userSettings?.isAiEnabled) {
     console.log(`😴 NO KEYWORD MATCH: Falling back to AI Studio...`);
     try {
       const aiResponse = await generateAIResponse(userId, text);
@@ -664,33 +667,43 @@ app.post('/api/webhook', async (req, res) => {
           }
 
           let userSettings = allMatchingSettings[0];
-          for (const setting of allMatchingSettings) {
-            const campaigns = await Campaign.find({ userId: setting.userId, status: 'Active' });
-            if (campaigns && campaigns.length > 0) {
-              userSettings = setting;
-              break;
+          if (allMatchingSettings.length > 1) {
+            for (const setting of allMatchingSettings) {
+              const campaigns = await Campaign.find({ userId: setting.userId, status: 'Active' });
+              if (campaigns && campaigns.length > 0) {
+                userSettings = setting;
+                break;
+              }
             }
           }
 
 
           const targetUserId = userSettings.userId;
           if (targetUserId) {
-            try {
-              const incoming = new Message({
-                userId: targetUserId, chatId: senderId, sender: 'user', text: messageText,
-                type: 'received', platform, timestamp: new Date()
-              });
-              await incoming.save();
-              io.to(targetUserId.toString()).emit('new_message', incoming);
-            } catch (dbErr) {
-              console.error("⚠️ Failed to save incoming DM to DB:", dbErr.message);
-            }
+            const saveAndEmitPromise = (async () => {
+              try {
+                const incoming = new Message({
+                  userId: targetUserId, chatId: senderId, sender: 'user', text: messageText,
+                  type: 'received', platform, timestamp: new Date()
+                });
+                await incoming.save();
+                io.to(targetUserId.toString()).emit('new_message', incoming);
+              } catch (dbErr) {
+                console.error("⚠️ Failed to save incoming DM to DB:", dbErr.message);
+              }
+            })();
 
-            try {
-              await processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm");
-            } catch (err) {
-              console.error("🔥 AutoReply error:", err);
-            }
+            const replyPromise = (async () => {
+              try {
+                await processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm");
+              } catch (err) {
+                console.error("🔥 AutoReply error:", err);
+              }
+            })();
+
+            // Execute logging and socket emission in the background to minimize response latency
+            saveAndEmitPromise.catch(err => console.error("⚠️ Background save/emit error:", err));
+            await replyPromise;
           }
         }
 
@@ -803,11 +816,13 @@ app.post('/api/webhook', async (req, res) => {
             });
 
             let userSettings = allMatchingSettings[0];
-            for (const setting of allMatchingSettings) {
-              const campaigns = await Campaign.find({ userId: setting.userId, status: 'Active' });
-              if (campaigns && campaigns.length > 0) {
-                userSettings = setting;
-                break;
+            if (allMatchingSettings.length > 1) {
+              for (const setting of allMatchingSettings) {
+                const campaigns = await Campaign.find({ userId: setting.userId, status: 'Active' });
+                if (campaigns && campaigns.length > 0) {
+                  userSettings = setting;
+                  break;
+                }
               }
             }
 
@@ -824,22 +839,30 @@ app.post('/api/webhook', async (req, res) => {
               console.log(`✅ [MATCH FOUND]: Processing comment for User ${targetUserId}`);
               const accessToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
-              try {
-                const incoming = new Message({
-                  userId: targetUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
-                  type: 'received', platform, timestamp: new Date()
-                });
-                await incoming.save();
-                io.to(targetUserId.toString()).emit('new_message', incoming);
-              } catch (dbErr) {
-                console.error("⚠️ Failed to save incoming comment to DB:", dbErr.message);
-              }
+              const saveAndEmitPromise = (async () => {
+                try {
+                  const incoming = new Message({
+                    userId: targetUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
+                    type: 'received', platform, timestamp: new Date()
+                  });
+                  await incoming.save();
+                  io.to(targetUserId.toString()).emit('new_message', incoming);
+                } catch (dbErr) {
+                  console.error("⚠️ Failed to save incoming comment to DB:", dbErr.message);
+                }
+              })();
 
-              try {
-                await processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId, accessToken, mediaId);
-              } catch (err) {
-                console.error("🔥 Comment Reply error:", err);
-              }
+              const replyPromise = (async () => {
+                try {
+                  await processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId, accessToken, mediaId);
+                } catch (err) {
+                  console.error("🔥 Comment Reply error:", err);
+                }
+              })();
+
+              // Execute logging and socket emission in the background to minimize response latency
+              saveAndEmitPromise.catch(err => console.error("⚠️ Background save/emit error:", err));
+              await replyPromise;
             }
           } else {
             console.log(`⏭️ Skipping comment: text missing or sender is the page itself.`);
@@ -1354,14 +1377,6 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
     delete postData.openingMessage;
     delete postData.openingMessageText;
     delete postData.openingMessageButton;
-
-    console.log(`📡 Checking user existence for: ${req.user.userId}`);
-    const userExists = await User.findById(req.user.userId);
-    if (!userExists) {
-      console.error(`❌ USER NOT FOUND IN DATABASE: ${req.user.userId}. This will cause a foreign key error.`);
-    } else {
-      console.log(`✅ User verified in database: ${userExists.username || userExists.email}`);
-    }
 
     const newPost = new ScheduledPost(postData);
     try {
