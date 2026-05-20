@@ -461,9 +461,8 @@ export default function Scheduling() {
           });
 
           mediaUrls = await Promise.all(uploadPromises);
-          console.log("✅ Frontend upload success:", mediaUrls);
         } catch (uploadErr) {
-          console.warn("⚠️ Frontend Upload Failed (likely RLS). Falling back to Backend...", uploadErr.message);
+          // Silent fallback — no need to scare the user/developer if we have a backup
           uploadSuccessful = false;
         }
       }
