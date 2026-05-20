@@ -122,7 +122,8 @@ app.use(cors({
     const originLower = origin.toLowerCase();
     const isVercel = originLower.endsWith('.vercel.app') || originLower.includes('vercel.app');
     const isLocal = originLower.includes('localhost') || originLower.includes('127.0.0.1');
-    const isAllowed = isVercel || isLocal || ALLOWED_ORIGINS.some(o => originLower.startsWith(o.toLowerCase())) || originLower.includes('render.com');
+    const isCustom = originLower.includes('dm-automation-roan.vercel.app');
+    const isAllowed = isVercel || isLocal || isCustom || ALLOWED_ORIGINS.some(o => originLower.startsWith(o.toLowerCase()));
 
     if (isAllowed) {
       callback(null, true);
@@ -1397,6 +1398,30 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
 
     res.json(processedPosts);
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- NEW: Signed URL Endpoint for Large File Uploads (Bypasses Vercel 4.5MB limit) ---
+app.post('/api/storage/sign', verifyToken, async (req, res) => {
+  try {
+    const { fileName, contentType } = req.body;
+    if (!fileName) return res.status(400).json({ error: 'fileName is required' });
+
+    console.log(`🔐 Generating Signed URL for: ${fileName}`);
+    const { data, error } = await supabase.storage
+      .from('media')
+      .createSignedUploadUrl(fileName);
+
+    if (error) throw error;
+
+    res.json({ 
+      uploadUrl: data.signedUrl, 
+      token: data.token,
+      publicUrl: supabase.storage.from('media').getPublicUrl(fileName).data.publicUrl
+    });
+  } catch (err) {
+    console.error('❌ Signed URL Error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

@@ -426,39 +426,63 @@ export default function Scheduling() {
 
     try {
       const token = localStorage.getItem('insta_agent_token');
-      const formData = new FormData();
       
-      // Basic Metadata
-      formData.append('caption', newPost.caption);
-      formData.append('scheduledFor', newPost.scheduledFor ? convertLocalToUTC(newPost.scheduledFor, selectedTimezone) : '');
-      formData.append('triggerKeyword', newPost.triggerKeyword);
-      formData.append('autoResponse', newPost.autoResponse);
-      formData.append('type', postType);
-      formData.append('mediaUrl', newPost.mediaUrl);
-      
-      // Advanced Logic
-      formData.append('requireFollow', newPost.requireFollow);
-      formData.append('unfollowedResponse', newPost.unfollowedResponse);
-      formData.append('publicReply', newPost.publicReply);
-      formData.append('automationStatus', newPost.automationStatus);
-      formData.append('anyKeyword', newPost.anyKeyword);
-      formData.append('openingMessage', newPost.openingMessage);
-      formData.append('openingMessageText', newPost.openingMessageText);
-      formData.append('openingMessageButton', newPost.openingMessageButton);
-      formData.append('buttons', JSON.stringify(newPost.buttons || []));
-
-      // Direct Local Files to Backend
+      // --- STEP 1: Process Files via Signed URL (Bypasses Vercel Limit) ---
+      let mediaUrls = [];
       if (selectedFiles.length > 0) {
-        notify(`Processing ${selectedFiles.length} file(s) directly from your storage...`, "info");
-        selectedFiles.forEach(file => {
-          formData.append('files', file);
+        notify(`Optimizing ${selectedFiles.length} file(s) for large upload...`, "info");
+        
+        const uploadPromises = selectedFiles.map(async (file) => {
+          const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+          
+          // A. Ask backend for a Signed URL (Uses Service Key, so no RLS issues)
+          const signRes = await fetch(`${API_BASE_URL}/api/storage/sign`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fileName, contentType: file.type })
+          });
+          
+          if (!signRes.ok) throw new Error("Failed to secure upload channel.");
+          const { uploadUrl, publicUrl } = await signRes.json();
+
+          // B. Direct upload to the signed URL (No Vercel limits here!)
+          const uploadRes = await fetch(uploadUrl, {
+            method: 'PUT',
+            body: file,
+            headers: { 'Content-Type': file.type }
+          });
+
+          if (!uploadRes.ok) throw new Error(`Network failed during large file upload.`);
+          return publicUrl;
         });
+
+        mediaUrls = await Promise.all(uploadPromises);
       }
+
+      // --- STEP 2: Send Metadata to Backend (Lightweight JSON) ---
+      const payload = {
+        caption: newPost.caption,
+        scheduledFor: newPost.scheduledFor ? convertLocalToUTC(newPost.scheduledFor, selectedTimezone) : '',
+        triggerKeyword: newPost.triggerKeyword,
+        autoResponse: newPost.autoResponse,
+        type: postType,
+        mediaUrl: mediaUrls.length > 0 ? mediaUrls[0] : newPost.mediaUrl,
+        carouselItems: mediaUrls.length > 0 ? mediaUrls : [],
+        requireFollow: newPost.requireFollow,
+        unfollowedResponse: newPost.unfollowedResponse,
+        publicReply: newPost.publicReply,
+        automationStatus: newPost.automationStatus,
+        anyKeyword: newPost.anyKeyword,
+        openingMessage: newPost.openingMessage,
+        openingMessageText: newPost.openingMessageText,
+        openingMessageButton: newPost.openingMessageButton,
+        buttons: JSON.stringify(newPost.buttons || [])
+      };
 
       const res = await fetch(`${API_BASE_URL}/api/scheduling`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: formData
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
       
       const data = await res.json();
