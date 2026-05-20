@@ -425,95 +425,41 @@ export default function Scheduling() {
     setSubmitting(true);
 
     try {
-      // --- STEP 1: Attempt Direct-to-Supabase Upload (Best for Large Files) ---
-      let mediaUrls = [];
-      let uploadSuccessful = true;
-
-      if (selectedFiles.length > 0) {
-        notify(`Uploading ${selectedFiles.length} file(s)...`, "info");
-        
-        try {
-          const uploadPromises = selectedFiles.map(async (file) => {
-            const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-            
-            const { data, error } = await supabase.storage
-              .from('media')
-              .upload(fileName, file, { cacheControl: '3600', upsert: false });
-
-            if (error) throw error; // Catch and move to fallback
-
-            const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(fileName);
-            return publicUrl;
-          });
-
-          mediaUrls = await Promise.all(uploadPromises);
-        } catch (uploadErr) {
-          // Silent fallback — no need to scare the user/developer if we have a backup
-          uploadSuccessful = false;
-        }
-      }
-
-      // --- STEP 2: Submit to Backend (Hybrid) ---
-      let res;
       const token = localStorage.getItem('insta_agent_token');
+      const formData = new FormData();
+      
+      // Basic Metadata
+      formData.append('caption', newPost.caption);
+      formData.append('scheduledFor', newPost.scheduledFor ? convertLocalToUTC(newPost.scheduledFor, selectedTimezone) : '');
+      formData.append('triggerKeyword', newPost.triggerKeyword);
+      formData.append('autoResponse', newPost.autoResponse);
+      formData.append('type', postType);
+      formData.append('mediaUrl', newPost.mediaUrl);
+      
+      // Advanced Logic
+      formData.append('requireFollow', newPost.requireFollow);
+      formData.append('unfollowedResponse', newPost.unfollowedResponse);
+      formData.append('publicReply', newPost.publicReply);
+      formData.append('automationStatus', newPost.automationStatus);
+      formData.append('anyKeyword', newPost.anyKeyword);
+      formData.append('openingMessage', newPost.openingMessage);
+      formData.append('openingMessageText', newPost.openingMessageText);
+      formData.append('openingMessageButton', newPost.openingMessageButton);
+      formData.append('buttons', JSON.stringify(newPost.buttons || []));
 
-      if (uploadSuccessful) {
-        // Option A: Send as JSON (Files already uploaded)
-        const payload = {
-          caption: newPost.caption,
-          scheduledFor: newPost.scheduledFor ? convertLocalToUTC(newPost.scheduledFor, selectedTimezone) : '',
-          triggerKeyword: newPost.triggerKeyword,
-          autoResponse: newPost.autoResponse,
-          type: postType,
-          mediaUrl: mediaUrls.length > 0 ? mediaUrls[0] : newPost.mediaUrl,
-          carouselItems: mediaUrls.length > 0 ? mediaUrls : [],
-          requireFollow: newPost.requireFollow,
-          unfollowedResponse: newPost.unfollowedResponse,
-          publicReply: newPost.publicReply,
-          automationStatus: newPost.automationStatus,
-          anyKeyword: newPost.anyKeyword,
-          openingMessage: newPost.openingMessage,
-          openingMessageText: newPost.openingMessageText,
-          openingMessageButton: newPost.openingMessageButton,
-          buttons: JSON.stringify(newPost.buttons || [])
-        };
-
-        res = await fetch(`${API_BASE_URL}/api/scheduling`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      } else {
-        // Option B: Fallback to FormData (Backend will handle upload using Service Key)
-        notify("Routing upload through server...", "info");
-        const formData = new FormData();
-        formData.append('caption', newPost.caption);
-        formData.append('scheduledFor', newPost.scheduledFor ? convertLocalToUTC(newPost.scheduledFor, selectedTimezone) : '');
-        formData.append('triggerKeyword', newPost.triggerKeyword);
-        formData.append('autoResponse', newPost.autoResponse);
-        formData.append('type', postType);
-        formData.append('mediaUrl', newPost.mediaUrl);
-        // Map fields that the backend expects as strings but might be booleans
-        formData.append('requireFollow', newPost.requireFollow);
-        formData.append('unfollowedResponse', newPost.unfollowedResponse);
-        formData.append('publicReply', newPost.publicReply);
-        formData.append('automationStatus', newPost.automationStatus);
-        formData.append('anyKeyword', newPost.anyKeyword);
-        formData.append('openingMessage', newPost.openingMessage);
-        formData.append('openingMessageText', newPost.openingMessageText);
-        formData.append('openingMessageButton', newPost.openingMessageButton);
-        formData.append('buttons', JSON.stringify(newPost.buttons || []));
-
+      // Direct Local Files to Backend
+      if (selectedFiles.length > 0) {
+        notify(`Processing ${selectedFiles.length} file(s) directly from your storage...`, "info");
         selectedFiles.forEach(file => {
           formData.append('files', file);
         });
-
-        res = await fetch(`${API_BASE_URL}/api/scheduling`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}` },
-          body: formData
-        });
       }
+
+      const res = await fetch(`${API_BASE_URL}/api/scheduling`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      });
       
       const data = await res.json();
       if (res.ok) {
