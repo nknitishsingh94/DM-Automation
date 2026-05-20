@@ -1398,19 +1398,20 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
   try {
     let mediaFiles = [];
     if (req.files && req.files.length > 0) {
-      console.log(`🚀 Memory Upload: Uploading ${req.files.length} files to Supabase Storage...`);
+      console.log(`🚀 Memory Upload: Uploading ${req.files.length} files in parallel to Supabase Storage...`);
       const { uploadToSupabase } = await import('./utils/supabase.js');
       
-      for (const file of req.files) {
+      const uploadPromises = req.files.map(async (file) => {
         const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
         const publicUrl = await uploadToSupabase(file.buffer, uniqueName, file.mimetype);
-        if (publicUrl) {
-          console.log(`✅ File uploaded successfully: ${publicUrl}`);
-          mediaFiles.push(publicUrl);
-        } else {
-          throw new Error("Failed to upload file to Supabase Storage");
+        if (!publicUrl) {
+          throw new Error(`Failed to upload file "${file.originalname}" to Supabase Storage`);
         }
-      }
+        console.log(`✅ File uploaded successfully: ${publicUrl}`);
+        return publicUrl;
+      });
+
+      mediaFiles = await Promise.all(uploadPromises);
     }
 
     let mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
