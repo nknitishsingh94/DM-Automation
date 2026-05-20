@@ -99,7 +99,7 @@ function parseFilter(q, queryObj, tableName) {
     'timestamp': 'timestamp',
     'chatId': 'chatId',
     'automationStatus': 'automationStatus',
-    'scheduledFor': 'scheduled_for'
+    'scheduledFor': 'scheduledFor'
   };
 
   for (const [key, v] of Object.entries(queryObj)) {
@@ -204,7 +204,7 @@ function convertIncoming(doc, tableName) {
   if (newDoc.userId) newDoc.userId = convertUUIDToObjectID(newDoc.userId);
   if (doc.created_at) newDoc.createdAt = doc.created_at;
   if (doc.updated_at) newDoc.updatedAt = doc.updated_at;
-  if (doc.scheduled_for) newDoc.scheduledFor = doc.scheduled_for;
+  if (doc.scheduledFor) newDoc.scheduledFor = doc.scheduledFor;
   if (doc.automation_status) newDoc.automationStatus = doc.automation_status;
 
   ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost', 'isUniversal'].forEach(field => {
@@ -275,8 +275,7 @@ function convertOutgoing(doc, tableName) {
   }
   
   if (newDoc.scheduledFor) {
-    newDoc.scheduled_for = newDoc.scheduledFor;
-    delete newDoc.scheduledFor;
+    newDoc.scheduledFor = newDoc.scheduledFor;
   }
   
   if (newDoc.automationStatus) {

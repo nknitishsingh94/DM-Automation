@@ -762,7 +762,7 @@ app.post('/api/webhook', async (req, res) => {
             }
           }
 
-
+          const targetUserId = userSettings?.userId;
           if (targetUserId) {
             console.log(`✅ [ID MATCH]: Processing message for User ${targetUserId}`);
             // 1. Send Reply FIRST (Nitro Speed)

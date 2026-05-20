@@ -305,8 +305,8 @@ export default function Scheduling() {
     unfollowedResponse: "Hey! Please follow our account first to get the link! 😊",
     openingMessage: false,
     openingMessageText: "Hey there! I'm so happy you're here, thanks so much for your interest 😊\n\nClick below and I'll send you the link in just a sec 🚀",
-    openingMessageButton: "Send me the link",
-    buttons: [],
+    openingMessageButton: "click the button",
+    buttons: [{ text: 'click the button', url: '' }],
     anyKeyword: false,
     publicReply: "Check your DMs! 🚀 I've sent you the info."
   });
