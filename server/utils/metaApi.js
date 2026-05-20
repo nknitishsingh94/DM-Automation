@@ -37,7 +37,18 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     const recipient = (platform === 'instagram' && commentId) ? { comment_id: commentId } : { id: recipientId };
     let payload = null;
 
-    if (buttons && buttons.length > 0) {
+    // Meta API STRICT RULE: Private replies (using comment_id) CANNOT contain buttons or templates.
+    // If we try to send a button, it will throw an API error and drop the message.
+    const isPrivateReply = !!(platform === 'instagram' && commentId);
+    let effectiveButtons = isPrivateReply ? [] : (buttons || []);
+    let effectiveButtonText = isPrivateReply ? null : buttonText;
+
+    if (isPrivateReply && (buttonText || (buttons && buttons.length > 0))) {
+      // Append a fallback instruction since we had to strip the button
+      safeText = safeText + `\n\n👉 (Reply "Done" or click the link if you see one to continue)`;
+    }
+
+    if (effectiveButtons.length > 0) {
       payload = {
         recipient,
         messaging_type: "RESPONSE",
@@ -47,7 +58,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
             payload: {
               template_type: "button",
               text: safeText || "Options:",
-              buttons: buttons.map(btn => {
+              buttons: effectiveButtons.map(btn => {
                 let safeUrl = btn.url || '';
                 if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
                   safeUrl = 'https://' + safeUrl;
@@ -66,7 +77,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
           }
         }
       };
-    } else if (buttonText) {
+    } else if (effectiveButtonText) {
       if (buttonPayload) {
         payload = {
           recipient,
@@ -79,7 +90,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
                 text: safeText || "Options:",
                 buttons: [{
                   type: "postback",
-                  title: buttonText,
+                  title: effectiveButtonText,
                   payload: buttonPayload
                 }]
               }
@@ -94,8 +105,8 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
             text: safeText || "Options:",
             quick_replies: [{
               content_type: "text",
-              title: buttonText,
-              payload: buttonText
+              title: effectiveButtonText,
+              payload: effectiveButtonText
             }]
           }
         };
