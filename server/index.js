@@ -445,9 +445,9 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     // Determine the best token to use
     const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
-    // GATING: Follower Check (Only enforced for Comments, never for direct DMs)
-    if (match.requireFollow && source === 'comment') {
-      console.log(`🛡️ GATING: Checking follower status for ${chatId}...`);
+    // GATING: Follower Check (Now universal for ALL sources)
+    if (match.requireFollow) {
+      console.log(`🛡️ UNIVERSAL GATING: Checking follower status for ${chatId}...`);
       const isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
 
       if (!isFollowing) {
