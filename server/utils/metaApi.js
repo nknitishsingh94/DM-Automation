@@ -126,8 +126,9 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
       // CRITICAL FIX: If this was a private reply (stripped buttons), send buttons as a SECOND message via standard recipient ID
       if (isPrivateReply && (buttonText || (buttons && buttons.length > 0))) {
         console.log(`🚀 SPLIT SEND: Dispatching follow-up buttons to recipient ID ${recipientId}...`);
-        // Recurse once without the commentId to send the buttons as a standard DM
-        await sendMessageToInstagram(platform, recipientId, "Tap your choice below to continue:", '', userId, buttonText, accessToken, buttons, buttonPayload, null);
+        // Recurse once WITHOUT the commentId to send the buttons as a standard DM
+        // Remove the extra "Tap your choice" text to keep it premium
+        await sendMessageToInstagram(platform, recipientId, '', '', userId, buttonText, accessToken, buttons, buttonPayload, null);
       }
       
       return true;

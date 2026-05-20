@@ -677,9 +677,11 @@ function isDuplicateEvent(eventId) {
   }
   
   if (webhookCache.has(eventId)) {
+    console.log(`🚫 [DEDUPE] Event ${eventId} already in flight. Blocking duplicate.`);
     return true;
   }
   
+  // Set immediate lock for 5 minutes
   webhookCache.set(eventId, now);
   return false;
 }
@@ -867,7 +869,17 @@ app.post('/api/webhook', async (req, res) => {
                 } else {
                   console.log(`🚫 STILL NOT FOLLOWING: ${senderId}`);
                   const retryText = "It looks like you haven't followed yet! Please follow our profile and then click the button again. 😊";
-                  await sendMessageToInstagram(platform, senderId, retryText, '', match.userId, "Try Again! ✅", activeToken, [], payload);
+                  
+                  // Build the profile URL again for the retry block
+                  const igUsername = userSettings?.connectedInstagramName;
+                  const profileUrl = igUsername ? `https://www.instagram.com/${igUsername.replace('@', '')}/` : null;
+                  
+                  const retryButtons = [
+                    ...(profileUrl ? [{ text: 'Visit Profile 👤', url: profileUrl }] : []),
+                    { text: "I've Followed! ✅", payload: payload } // Re-use original payload
+                  ];
+
+                  await sendMessageToInstagram(platform, senderId, retryText, '', match.userId, '', activeToken, retryButtons);
                 }
               }
             } catch (err) {
