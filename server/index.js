@@ -1401,9 +1401,18 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
   }
 });
 
-app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, res) => {
+app.post('/api/scheduling', verifyToken, (req, res, next) => {
+  // If request is JSON, skip multer and move to handler
+  if (req.is('json')) {
+    return next();
+  }
+  // Otherwise, use multer to process files
+  upload.array('files', 10)(req, res, next);
+}, async (req, res) => {
   try {
     let mediaFiles = [];
+    
+    // Handle files if uploaded via multipart
     if (req.files && req.files.length > 0) {
       console.log(`🚀 Memory Upload: Uploading ${req.files.length} files in parallel to Supabase Storage...`);
       const { uploadToSupabase } = await import('./utils/supabase.js');
@@ -1414,27 +1423,34 @@ app.post('/api/scheduling', verifyToken, upload.array('files', 10), async (req, 
         if (!publicUrl) {
           throw new Error(`Failed to upload file "${file.originalname}" to Supabase Storage`);
         }
-        console.log(`✅ File uploaded successfully: ${publicUrl}`);
         return publicUrl;
       });
 
       mediaFiles = await Promise.all(uploadPromises);
     }
 
+    // Determine final media URL and carousel items
+    // If JSON was sent, files will be empty and we use body.mediaUrl / body.carouselItems
     let mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
+    let carouselItems = mediaFiles.length > 0 ? mediaFiles : (req.body.carouselItems || []);
+
+    // Ensure carouselItems is always an array (Multer might send it as a string if it was FormData)
+    if (typeof carouselItems === 'string') {
+      try { carouselItems = JSON.parse(carouselItems); } catch (e) { carouselItems = [carouselItems]; }
+    }
     
     // Serialize metadata for Supabase/DB compatibility
     const metadata = {
       type: req.body.type || 'image',
-      carouselItems: mediaFiles.length > 0 ? mediaFiles : (req.body.carouselItems || []),
+      carouselItems: carouselItems,
       mediaUrl: mediaUrl,
-      buttons: req.body.buttons || [],
-      requireFollow: req.body.requireFollow !== undefined ? (req.body.requireFollow === 'true' || req.body.requireFollow === true) : false,
+      buttons: typeof req.body.buttons === 'string' ? JSON.parse(req.body.buttons) : (req.body.buttons || []),
+      requireFollow: req.body.requireFollow === 'true' || req.body.requireFollow === true,
       unfollowedResponse: req.body.unfollowedResponse || '',
       publicReply: req.body.publicReply || '',
       automationStatus: req.body.automationStatus || 'Active',
-      anyKeyword: req.body.anyKeyword !== undefined ? (req.body.anyKeyword === 'true' || req.body.anyKeyword === true) : false,
-      openingMessage: req.body.openingMessage !== undefined ? (req.body.openingMessage === 'true' || req.body.openingMessage === true) : false,
+      anyKeyword: req.body.anyKeyword === 'true' || req.body.anyKeyword === true,
+      openingMessage: req.body.openingMessage === 'true' || req.body.openingMessage === true,
       openingMessageText: req.body.openingMessageText || '',
       openingMessageButton: req.body.openingMessageButton || ''
     };
@@ -2156,78 +2172,63 @@ async function runSchedulingWorker() {
 
     const { publishInstagramContent } = await import('./utils/metaApi.js');
 
-    for (const post of duePosts) {
-      console.log(`🔄 EXECUTION: Processing Post ${post._id} for User ${post.userId}`);
-
-      // Deserialize metadata
-      let finalMedia = post.mediaUrl;
-      let finalType = post.type || 'image';
-      let finalCarousel = [];
-      
-      if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
-        try {
-          const meta = JSON.parse(post.mediaUrl);
-          finalType = meta.type || finalType;
-          finalCarousel = meta.carouselItems || [];
-          finalMedia = meta.mediaUrl || (finalCarousel.length > 0 ? finalCarousel[0] : '');
-        } catch (e) {
-          console.warn("⚠️ Metadata parse failed, using raw mediaUrl");
-        }
-      }
-
-      // If the media URL is a local path, convert it to a public URL using the production server
-      const SERVER_PUBLIC_URL = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 5001}`;
-      
-      if (finalMedia && finalMedia.startsWith('/uploads/')) {
-        const publicUrl = `${SERVER_PUBLIC_URL}${finalMedia}`;
-        console.log(`🌐 Converting local path to public URL: ${finalMedia} → ${publicUrl}`);
-        finalMedia = publicUrl;
-      }
-      
-      if (finalCarousel && finalCarousel.length > 0) {
-        finalCarousel = finalCarousel.map(item => {
-          if (item && item.startsWith('/uploads/')) {
-            return `${SERVER_PUBLIC_URL}${item}`;
-          }
-          return item;
-        });
-      }
-      
-      // Last resort: check if media URL is valid
-      if (!finalMedia || finalMedia.includes('127.0.0.1') || finalMedia.includes('localhost')) {
-        console.error(`❌ No publicly accessible media URL for post ${post._id}. Cannot publish without a public image URL.`);
-        await ScheduledPost.findByIdAndUpdate(post._id, { 
-          status: 'Failed',
-          lastError: 'No public media URL available. Please use Supabase Storage or a public image URL.'
-        });
-        continue;
-      }
-
-      // Atomically mark as processing to prevent double-posting and race conditions
-      const claimedPost = await ScheduledPost.findOneAndUpdate(
-        { _id: post._id, status: { $in: ['Scheduled', 'Retrying'] } },
-        { status: 'Processing' },
-        { new: true }
-      );
-
-      if (!claimedPost) {
-        console.log(`⏩ [Worker] Skipping post ${post._id} - already claimed by another worker.`);
-        continue;
-      }
-
+    // Process all due posts in parallel to avoid one slow Reel blocking others
+    const processPromises = duePosts.map(async (post) => {
       try {
+        console.log(`🔄 EXECUTION: Processing Post ${post._id} for User ${post.userId}`);
+
+        // Deserialize metadata
+        let finalMedia = post.mediaUrl;
+        let finalType = post.type || 'image';
+        let finalCarousel = [];
+        
+        if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
+          try {
+            const meta = JSON.parse(post.mediaUrl);
+            finalType = meta.type || finalType;
+            finalCarousel = meta.carouselItems || [];
+            finalMedia = meta.mediaUrl || (finalCarousel.length > 0 ? finalCarousel[0] : '');
+          } catch (e) {
+            console.warn("⚠️ Metadata parse failed, using raw mediaUrl");
+          }
+        }
+
+        // If the media URL is a local path, convert it to a public URL
+        const SERVER_PUBLIC_URL = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 5001}`;
+        
+        if (finalMedia && finalMedia.startsWith('/uploads/')) {
+          finalMedia = `${SERVER_PUBLIC_URL}${finalMedia}`;
+        }
+        
+        if (finalCarousel && finalCarousel.length > 0) {
+          finalCarousel = finalCarousel.map(item => (item && item.startsWith('/uploads/')) ? `${SERVER_PUBLIC_URL}${item}` : item);
+        }
+        
+        // Validation
+        if (!finalMedia || finalMedia.includes('127.0.0.1') || finalMedia.includes('localhost')) {
+          console.error(`❌ No publicly accessible media URL for post ${post._id}.`);
+          await ScheduledPost.findByIdAndUpdate(post._id, { 
+            status: 'Failed',
+            lastError: 'No public media URL available. Please use Supabase Storage or a public image URL.'
+          });
+          return;
+        }
+
+        // Atomically mark as processing
+        const claimedPost = await ScheduledPost.findOneAndUpdate(
+          { _id: post._id, status: { $in: ['Scheduled', 'Retrying'] } },
+          { status: 'Processing' },
+          { new: true }
+        );
+
+        if (!claimedPost) return;
+
         console.log(`📸 Meta API: Publishing ${finalType.toUpperCase()}...`);
         const publishedId = await publishInstagramContent(post.userId, finalType, finalMedia, post.caption, finalCarousel);
 
-        // Deserialize advanced options from metadata
-        let requireFollow = false;
-        let unfollowedResponse = '';
-        let publicReply = '';
-        let automationStatus = 'Active';
-        let openingMessage = false;
-        let openingMessageText = '';
-        let openingMessageButton = '';
-        let buttons = [];
+        // Advanced Options & Automation
+        let requireFollow = false, unfollowedResponse = '', publicReply = '', automationStatus = 'Active';
+        let openingMessage = false, openingMessageText = '', openingMessageButton = '', buttons = [];
 
         if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
           try {
@@ -2254,18 +2255,15 @@ async function runSchedulingWorker() {
             postId: publishedId,
             platform: 'instagram',
             triggerOnComments: true,
-            triggerOnDms: false,
-            triggerOnStories: false,
-            requireFollow: requireFollow,
-            unfollowedResponse: unfollowedResponse,
+            requireFollow,
+            unfollowedResponse,
             publicReplyText: publicReply,
-            openingMessage: openingMessage,
-            openingMessageText: openingMessageText,
-            openingMessageButton: openingMessageButton,
-            buttons: buttons
+            openingMessage,
+            openingMessageText,
+            openingMessageButton,
+            buttons
           });
           await campaign.save();
-          console.log(`✨ AUTOMATION LIVE: Post ${publishedId} is now guarded by bot (Followers Gated: ${requireFollow}).`);
         }
 
         let updatedMediaUrl = post.mediaUrl;
@@ -2276,43 +2274,29 @@ async function runSchedulingWorker() {
             updatedMediaUrl = JSON.stringify(meta);
           } catch (e) {}
         } else {
-          updatedMediaUrl = JSON.stringify({
-            mediaUrl: post.mediaUrl,
-            instagramMediaId: publishedId
-          });
+          updatedMediaUrl = JSON.stringify({ mediaUrl: post.mediaUrl, instagramMediaId: publishedId });
         }
 
-        await ScheduledPost.findByIdAndUpdate(post._id, { 
-          status: 'Posted',
-          mediaUrl: updatedMediaUrl
-        });
+        await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted', mediaUrl: updatedMediaUrl });
         console.log(`✅ SUCCESS: Post ${post._id} is now LIVE on Instagram.`);
+
       } catch (postErr) {
         console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);
-
-        // Smart Retry System
         const currentRetryCount = (post.retryCount || 0) + 1;
         const MAX_RETRIES = 5;
-        const MAX_RETRY_WINDOW_MINUTES = 2880; // Expanded to 48 hours to prevent drops from Vercel sleeping
+        const MAX_RETRY_WINDOW = 2880; 
         const scheduledAt = new Date(post.scheduledFor);
         const minutesSinceScheduled = (Date.now() - scheduledAt.getTime()) / 60000;
-        const withinRetryWindow = minutesSinceScheduled < MAX_RETRY_WINDOW_MINUTES;
 
-        if (currentRetryCount <= MAX_RETRIES && withinRetryWindow) {
-          console.log(`🔁 RETRY ${currentRetryCount}/${MAX_RETRIES}: Will retry post ${post._id} in next worker cycle.`);
-          await ScheduledPost.findByIdAndUpdate(post._id, {
-            status: 'Retrying',
-            lastError: postErr.message
-          });
+        if (currentRetryCount <= MAX_RETRIES && minutesSinceScheduled < MAX_RETRY_WINDOW) {
+          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Retrying', lastError: postErr.message, retryCount: currentRetryCount });
         } else {
-          console.error(`🛑 GIVING UP on Post ${post._id} after ${currentRetryCount} attempts. Marking as Failed.`);
-          await ScheduledPost.findByIdAndUpdate(post._id, {
-            status: 'Failed',
-            lastError: postErr.message
-          });
+          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', lastError: postErr.message });
         }
       }
-    }
+    });
+
+    await Promise.allSettled(processPromises);
   } catch (err) {
     console.error("🔥 CRITICAL WORKER ERROR:", err.message);
   }

@@ -9,6 +9,7 @@ import {
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../supabase';
 
 export default function Scheduling() {
   const { user } = useAuth();
@@ -446,61 +447,94 @@ export default function Scheduling() {
 
     setSubmitting(true);
 
-    const formData = new FormData();
-    formData.append('caption', newPost.caption);
-    
-    // Convert timezone-naive local date string to proper UTC ISO String using target timezone
-    if (newPost.scheduledFor) {
-      const utcIsoStr = convertLocalToUTC(newPost.scheduledFor, selectedTimezone);
-      formData.append('scheduledFor', utcIsoStr);
-    } else {
-      formData.append('scheduledFor', '');
-    }
-    
-    formData.append('triggerKeyword', newPost.triggerKeyword);
-    formData.append('autoResponse', newPost.autoResponse);
-    formData.append('type', postType);
-
-    selectedFiles.forEach(file => {
-      formData.append('files', file);
-    });
-
     try {
+      // --- STEP 1: Direct-to-Supabase Upload (Bypass Vercel Payload Limits) ---
+      let mediaUrls = [];
+      if (selectedFiles.length > 0) {
+        notify(`Uploading ${selectedFiles.length} file(s) to secure storage...`, "info");
+        
+        const uploadPromises = selectedFiles.map(async (file) => {
+          const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+          
+          const { data, error } = await supabase.storage
+            .from('media')
+            .upload(fileName, file, {
+              cacheControl: '3600',
+              upsert: false
+            });
+
+          if (error) {
+            console.error("Supabase Storage Error:", error);
+            throw new Error(`Upload failed for ${file.name}: ${error.message}`);
+          }
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('media')
+            .getPublicUrl(fileName);
+            
+          return publicUrl;
+        });
+
+        mediaUrls = await Promise.all(uploadPromises);
+        console.log("✅ All files uploaded to Supabase:", mediaUrls);
+      }
+
+      // --- STEP 2: Send Metadata to Backend ---
+      const payload = {
+        caption: newPost.caption,
+        scheduledFor: newPost.scheduledFor ? convertLocalToUTC(newPost.scheduledFor, selectedTimezone) : '',
+        triggerKeyword: newPost.triggerKeyword,
+        autoResponse: newPost.autoResponse,
+        type: postType,
+        mediaUrl: mediaUrls.length > 0 ? mediaUrls[0] : newPost.mediaUrl,
+        carouselItems: mediaUrls.length > 0 ? mediaUrls : [],
+        // Advanced
+        requireFollow: newPost.requireFollow,
+        unfollowedResponse: newPost.unfollowedResponse,
+        publicReply: newPost.publicReply,
+        automationStatus: newPost.automationStatus,
+        anyKeyword: newPost.anyKeyword,
+        openingMessage: newPost.openingMessage,
+        openingMessageText: newPost.openingMessageText,
+        openingMessageButton: newPost.openingMessageButton,
+        buttons: newPost.buttons
+      };
+
       const res = await fetch(`${API_BASE_URL}/api/scheduling`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
-        body: formData
+        body: JSON.stringify(payload)
       });
+      
       const data = await res.json();
       if (res.ok) {
-        // 1. Close creation modal first
         setShowCreate(false);
-
-        // 2. Update list immediately (Manual Prepend)
         setPosts(prev => [data, ...prev]);
-
-        // 3. Set created post for the success modal
-        setCreatedPost({
-          ...data,
-          anyKeyword: data.triggerKeyword === '*'
-        });
-
-        // 4. Trigger Success Flow with a tiny delay to ensure UI has settled
+        setCreatedPost({ ...data, anyKeyword: data.triggerKeyword === '*' });
+        
         setTimeout(() => {
           setShowSuccess(true);
-          fetchPosts(); // Background sync to be 100% sure
+          fetchPosts();
         }, 100);
 
-        // 5. Clear form (keeping previews for modal)
-        setNewPost({ caption: '', scheduledFor: '', mediaUrl: '', triggerKeyword: '', autoResponse: '', coverUrl: '' });
+        setNewPost({ 
+          caption: '', scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', 
+          triggerKeyword: '', autoResponse: '', coverUrl: '',
+          requireFollow: true, unfollowedResponse: "Hey! Please follow our account first to get the link! 😊",
+          publicReply: "Check your DMs! 🚀 I've sent you the info.",
+          automationStatus: 'Active'
+        });
         setSelectedFiles([]);
+        setPreviews([]);
       } else {
-        notify("Failed to schedule post", "error");
+        notify(data.error || "Failed to schedule post", "error");
       }
     } catch (err) {
-      notify("Network error", "error");
+      console.error("Submit Error:", err);
+      notify(err.message || "Network error during upload", "error");
     } finally {
       setSubmitting(false);
     }
