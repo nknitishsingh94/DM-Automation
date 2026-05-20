@@ -52,7 +52,36 @@ import supportRoutes from './routes/support.js';
 import { generateAIResponse } from './utils/aiHandler.js';
 import { supabase } from './utils/supabase.js';
 
-let lastDbError = null;
+// --- GLOBAL CACHE (Nitro Speed) ---
+const settingsCache = new Map();
+const campaignsCache = new Map();
+
+// Periodic Cache Refresh (Every 30s)
+async function refreshGlobalCache() {
+  try {
+    const [allSettings, allCampaigns] = await Promise.all([
+      Settings.find({}),
+      Campaign.find({ status: 'Active' })
+    ]);
+    
+    settingsCache.clear();
+    allSettings.forEach(s => settingsCache.set(s.userId?.toString(), s));
+    
+    campaignsCache.clear();
+    allCampaigns.forEach(c => {
+      const uid = c.userId?.toString();
+      if (!campaignsCache.has(uid)) campaignsCache.set(uid, []);
+      campaignsCache.get(uid).push(c);
+    });
+    
+    console.log(`⚡ [NITRO] Cache Refreshed: ${settingsCache.size} users, ${allCampaigns.length} active campaigns.`);
+  } catch (err) {
+    console.warn("⚠️ NITRO Cache Refresh Failed:", err.message);
+  }
+}
+setInterval(refreshGlobalCache, 30000);
+refreshGlobalCache();
+
 // --- MULTER SETUP (Media Uploads - Using Memory Storage for Serverless compatibility) ---
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -253,9 +282,11 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   // Ensure text is a string to prevent crashing on null/undefined
   text = typeof text === 'string' ? text : '';
   // Load settings and contact in parallel
+  // Load settings and contact in parallel (Use cache if available)
+  const cachedSettings = settingsCache.get(userId.toString());
   const [contact, userSettings] = await Promise.all([
     Contact.findOne({ userId, chatId }),
-    Settings.findOne({ $or: [{ userId }, { userId: queryUserId }] })
+    cachedSettings ? Promise.resolve(cachedSettings) : Settings.findOne({ userId })
   ]);
 
   if (contact && contact.isBotMuted) {
@@ -313,15 +344,11 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   }
 
   // 1. Fetch Active Flows and Keyword Campaigns in parallel (Advanced Automation)
+  // 1. Fetch Active Flows and Keyword Campaigns (Use cache)
+  const cachedCampaigns = campaignsCache.get(userId.toString());
   const [activeFlows, activeCampaignsRaw] = await Promise.all([
-    Flow.find({
-      $or: [{ userId }, { userId: queryUserId }],
-      status: 'Active'
-    }),
-    Campaign.find({
-      $or: [{ userId }, { userId: queryUserId }],
-      status: 'Active'
-    })
+    Flow.find({ userId, status: 'Active' }),
+    cachedCampaigns ? Promise.resolve(cachedCampaigns) : Campaign.find({ userId, status: 'Active' })
   ]);
 
   const matchedFlow = activeFlows.find(f => {
@@ -738,29 +765,28 @@ app.post('/api/webhook', async (req, res) => {
 
           if (targetUserId) {
             console.log(`✅ [ID MATCH]: Processing message for User ${targetUserId}`);
+            // 1. Send Reply FIRST (Nitro Speed)
+            const replyPromise = processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm")
+              .catch(err => console.error("🔥 Nitro Reply error:", err));
+
+            // 2. Log in background
             const saveAndEmitPromise = (async () => {
               try {
                 const incoming = new Message({
                   userId: targetUserId, chatId: senderId, sender: 'user', text: messageText,
                   type: 'received', platform, timestamp: new Date()
                 });
-                await incoming.save();
+                incoming.save(); // Don't await the save for speed
                 io.to(targetUserId.toString()).emit('new_message', incoming);
               } catch (dbErr) {
-                console.error("⚠️ Failed to save incoming DM to DB:", dbErr.message);
+                console.error("⚠️ Background logging failed:", dbErr.message);
               }
             })();
 
-            const replyPromise = (async () => {
-              try {
-                await processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm");
-              } catch (err) {
-                console.error("🔥 AutoReply error:", err);
-              }
-            })();
-
-            // CRITICAL (Vercel/Serverless): Must await both promises so the function doesn't terminate early.
-            await Promise.all([saveAndEmitPromise, replyPromise]);
+            // We still await the reply to ensure Vercel doesn't kill the function before the DM is fired
+            await replyPromise;
+            // Background logging doesn't need to block the response
+            saveAndEmitPromise.catch(e => console.error("Logging background fail:", e));
           }
         }
 
