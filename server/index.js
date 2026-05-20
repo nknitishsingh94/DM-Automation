@@ -2151,8 +2151,17 @@ async function runSchedulingWorker() {
         continue;
       }
 
-      // Atomically mark as processing to prevent double-posting
-      await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Processing' });
+      // Atomically mark as processing to prevent double-posting and race conditions
+      const claimedPost = await ScheduledPost.findOneAndUpdate(
+        { _id: post._id, status: { $in: ['Scheduled', 'Retrying'] } },
+        { status: 'Processing' },
+        { new: true }
+      );
+
+      if (!claimedPost) {
+        console.log(`⏩ [Worker] Skipping post ${post._id} - already claimed by another worker.`);
+        continue;
+      }
 
       try {
         console.log(`📸 Meta API: Publishing ${finalType.toUpperCase()}...`);
