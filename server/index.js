@@ -122,8 +122,8 @@ app.use(cors({
     const originLower = origin.toLowerCase();
     const isVercel = originLower.endsWith('.vercel.app') || originLower.includes('vercel.app');
     const isLocal = originLower.includes('localhost') || originLower.includes('127.0.0.1');
-    const isCustom = originLower.includes('dm-automation-roan.vercel.app');
-    const isAllowed = isVercel || isLocal || isCustom || ALLOWED_ORIGINS.some(o => originLower.startsWith(o.toLowerCase()));
+    const isExplicit = originLower === 'https://dm-automation-roan.vercel.app';
+    const isAllowed = isVercel || isLocal || isExplicit || ALLOWED_ORIGINS.some(o => originLower.startsWith(o.toLowerCase()));
 
     if (isAllowed) {
       callback(null, true);
