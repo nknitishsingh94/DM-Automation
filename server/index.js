@@ -460,8 +460,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       if (source === 'comment' && commentId) {
         console.log(`💬 Sending CUSTOM public comment reply to ${commentId} (Opening Message)`);
         const replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
-        // Intentionally not awaiting so it runs in parallel
-        sendPublicComment(platform, commentId, replyText, userId, activeToken).catch(e => console.error("Public comment failed:", e));
+        await sendPublicComment(platform, commentId, replyText, userId, activeToken).catch(e => console.error("Public comment failed:", e));
       }
 
       // This is a comment reply, so it uses commentId
@@ -720,8 +719,8 @@ app.post('/api/webhook', async (req, res) => {
           }
 
 
-          const targetUserId = userSettings.userId;
           if (targetUserId) {
+            console.log(`✅ [ID MATCH]: Processing message for User ${targetUserId}`);
             const saveAndEmitPromise = (async () => {
               try {
                 const incoming = new Message({
@@ -743,9 +742,8 @@ app.post('/api/webhook', async (req, res) => {
               }
             })();
 
-            // Execute logging and socket emission in the background to minimize response latency
-            saveAndEmitPromise.catch(err => console.error("⚠️ Background save/emit error:", err));
-            await replyPromise;
+            // CRITICAL (Vercel/Serverless): Must await both promises so the function doesn't terminate early.
+            await Promise.all([saveAndEmitPromise, replyPromise]);
           }
         }
 
@@ -911,7 +909,7 @@ app.post('/api/webhook', async (req, res) => {
               }
             }
 
-            let targetUserId = userSettings?.userId;
+            const targetUserId = userSettings?.userId;
 
             if (!targetUserId) {
               console.warn(`🚨 [ID MISMATCH]: No user settings found for ID ${pageId}. Trying fallback...`);
@@ -945,9 +943,8 @@ app.post('/api/webhook', async (req, res) => {
                 }
               })();
 
-              // Execute logging and socket emission in the background to minimize response latency
-              saveAndEmitPromise.catch(err => console.error("⚠️ Background save/emit error:", err));
-              await replyPromise;
+              // CRITICAL (Vercel/Serverless): Must await both promises
+              await Promise.all([saveAndEmitPromise, replyPromise]);
             }
           } else {
             console.log(`⏭️ Skipping comment: text missing or sender is the page itself.`);
@@ -2143,7 +2140,9 @@ async function runSchedulingWorker() {
       status: { $in: ['Scheduled', 'Retrying'] }
     });
 
-    console.log(`🔍 [Worker] Query result: ${Array.isArray(duePosts) ? duePosts.length : 0} posts due.`);
+    if (duePosts.length > 0) {
+      console.log(`🔥 [Worker] STARTING: ${duePosts.length} posts detected for processing.`);
+    }
 
     const { publishInstagramContent } = await import('./utils/metaApi.js');
 
