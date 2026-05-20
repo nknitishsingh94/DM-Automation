@@ -51,6 +51,8 @@ import oauthRoutes from './routes/oauth.js';
 import supportRoutes from './routes/support.js';
 import { generateAIResponse } from './utils/aiHandler.js';
 import { supabase } from './utils/supabase.js';
+
+let lastDbError = null;
 // --- MULTER SETUP (Media Uploads - Using Memory Storage for Serverless compatibility) ---
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -236,6 +238,9 @@ const checkFollowerStatus = async (platform, chatId, userId, preloadedSettings =
 // Reusable Auto-Reply Logic
 const processAutoReply = async (userId, platform, chatId, text, source = 'dm', commentId = null, passedToken = null, mediaId = null) => {
   const queryUserId = userId;
+  
+  // Ensure text is a string to prevent crashing on null/undefined
+  text = typeof text === 'string' ? text : '';
   // Load settings and contact in parallel
   const [contact, userSettings] = await Promise.all([
     Contact.findOne({ userId, chatId }),
@@ -370,11 +375,12 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
     const cleanUserMsg = text.toLowerCase().replace(/\s+/g, ' ').trim();
 
-    // Support for multiple keywords separated by commas
-    const keywords = c.trigger.split(',').map(k => k.toLowerCase().replace(/\s+/g, ' ').trim());
+    // Support for multiple keywords separated by commas (safely handle undefined triggers)
+    const keywords = (c.trigger || '').split(',').map(k => k.toLowerCase().replace(/\s+/g, ' ').trim());
 
     // Check if any keyword matches
     const keywordMatch = keywords.some(k => {
+      if (!k) return false; // Avoid matching empty triggers/trailing commas to everything
       if (k === '*') return true; // Wildcard match
       return cleanUserMsg.includes(k);
     });

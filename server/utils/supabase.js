@@ -127,11 +127,20 @@ function parseFilter(q, queryObj, tableName) {
     if (key === '$or' && Array.isArray(val)) {
       const orConditions = val.map(cond => {
         const [subKey, subValRaw] = Object.entries(cond)[0];
-        const subVal = subValRaw instanceof Date ? subValRaw.toISOString() : subValRaw;
+        let subVal = subValRaw instanceof Date ? subValRaw.toISOString() : subValRaw;
         let subParsedKey = subKey === '_id' || subKey === 'id' ? 'id' : subKey;
         if (subKey === 'userId') {
           subParsedKey = (tableName === 'captions') ? 'user_id' : 'userId';
         }
+        
+        // Map ObjectID queries to UUID queries for UUID columns in $or
+        if (uuidColumns.includes(subParsedKey) && typeof subVal === 'string' && subVal.length === 24 && /^[0-9a-f]{24}$/i.test(subVal)) {
+          subVal = convertObjectIDToUUID(subVal);
+        }
+        if (uuidColumns.includes(subParsedKey) && typeof subVal === 'string' && !isUUID(subVal)) {
+          subVal = '00000000-0000-0000-0000-000000000000';
+        }
+        
         return `${subParsedKey}.eq.${subVal}`;
       }).join(',');
       q = q.or(orConditions);
@@ -140,6 +149,28 @@ function parseFilter(q, queryObj, tableName) {
         let subVal = subValRaw;
         if (subVal instanceof Date) {
           subVal = subVal.toISOString();
+        }
+        
+        // Map ObjectID queries to UUID queries for UUID columns in operator filters
+        if (uuidColumns.includes(parsedKey)) {
+          if (Array.isArray(subVal)) {
+            subVal = subVal.map(item => {
+              if (typeof item === 'string' && item.length === 24 && /^[0-9a-f]{24}$/i.test(item)) {
+                return convertObjectIDToUUID(item);
+              }
+              if (typeof item === 'string' && !isUUID(item)) {
+                return '00000000-0000-0000-0000-000000000000';
+              }
+              return item;
+            });
+          } else {
+            if (typeof subVal === 'string' && subVal.length === 24 && /^[0-9a-f]{24}$/i.test(subVal)) {
+              subVal = convertObjectIDToUUID(subVal);
+            }
+            if (typeof subVal === 'string' && !isUUID(subVal)) {
+              subVal = '00000000-0000-0000-0000-000000000000';
+            }
+          }
         }
         
         if (op === '$gte') q = q.gte(parsedKey, subVal);
