@@ -1,4 +1,5 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({ path: 'server/.env' });
 import { supabase } from '../utils/supabase.js';
 
 async function listPosts() {

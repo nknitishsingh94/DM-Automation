@@ -2245,17 +2245,27 @@ async function runSchedulingWorker() {
     const now = new Date();
     const nowISO = now.toISOString();
     
-    console.log(`📡 [Worker] Syncing all due posts up to: ${nowISO}`);
+    console.log(`📡 [Worker] Checking posts due before: ${nowISO}`);
     
     const duePosts = await ScheduledPost.find({
       scheduledFor: { $lte: nowISO },
       status: { $in: ['Scheduled', 'Retrying'] }
     });
 
-    if (duePosts.length > 0) {
-      console.log(`🔥 [Worker] STARTING: ${duePosts.length} posts detected for processing.`);
+    console.log(`📡 [Worker] Query returned ${duePosts?.length || 0} posts.`);
+
+    if (!duePosts || duePosts.length === 0) {
+      // Diagnostic: check if ANY scheduled posts exist at all
+      const anyPost = await ScheduledPost.findOne({ status: 'Scheduled' });
+      if (anyPost) {
+        console.log(`🔍 [Worker] Found a future post: ID ${anyPost.id}, scheduled for ${anyPost.scheduledFor}`);
+      } else {
+        console.log(`🔍 [Worker] No posts with status "Scheduled" found in database.`);
+      }
+      return;
     }
 
+    console.log(`🔥 [Worker] Processing ${duePosts.length} posts...`);
     const { publishInstagramContent } = await import('./utils/metaApi.js');
 
     // Process all due posts in parallel to avoid one slow Reel blocking others
