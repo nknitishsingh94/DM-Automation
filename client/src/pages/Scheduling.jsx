@@ -14,23 +14,15 @@ import { supabase } from '../supabase';
 // --- UTILITIES (Moved outside for stability) ---
 const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
   if (!localDateTimeStr) return '';
-  if (targetTimezone === 'browser') {
-    return new Date(localDateTimeStr).toISOString();
+  const date = new Date(localDateTimeStr);
+  
+  if (targetTimezone === 'browser' || !targetTimezone) {
+    return date.toISOString();
   }
-  const parts = localDateTimeStr.split('T');
-  if (parts.length < 2) return new Date(localDateTimeStr).toISOString();
-  const dateParts = parts[0].split('-');
-  const timeParts = parts[1].split(':');
-  
-  const year = parseInt(dateParts[0], 10);
-  const month = parseInt(dateParts[1], 10) - 1;
-  const day = parseInt(dateParts[2], 10);
-  const hour = parseInt(timeParts[0], 10);
-  const minute = parseInt(timeParts[1], 10);
 
-  const utcDate = new Date(Date.UTC(year, month, day, hour, minute));
-  
   try {
+    // Robust conversion for specific timezones
+    const localDate = new Date(localDateTimeStr);
     const formatter = new Intl.DateTimeFormat('en-US', {
       timeZone: targetTimezone,
       year: 'numeric', month: 'numeric', day: 'numeric',
@@ -38,22 +30,16 @@ const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
       hour12: false
     });
     
-    const formattedString = formatter.format(utcDate);
-    const match = formattedString.match(/(\d+)\/(\d+)\/(\d+),\s+(\d+):(\d+):(\d+)/);
-    if (!match) return utcDate.toISOString();
-
-    const fMonth = parseInt(match[1], 10) - 1;
-    const fDay = parseInt(match[2], 10);
-    const fYear = parseInt(match[3], 10);
-    const fHour = parseInt(match[4], 10);
-    const fMinute = parseInt(match[5], 10);
-
-    const formattedUtc = Date.UTC(fYear, fMonth, fDay, fHour, fMinute);
-    const offsetDiff = utcDate.getTime() - formattedUtc;
-
-    return new Date(utcDate.getTime() + offsetDiff).toISOString();
+    // We want to find the UTC time that, when viewed in targetTimezone, matches localDate's parts
+    const parts = formatter.formatToParts(localDate);
+    const partMap = {};
+    parts.forEach(p => { partMap[p.type] = p.value; });
+    
+    const tzDate = new Date(Date.UTC(partMap.year, partMap.month - 1, partMap.day, partMap.hour, partMap.minute));
+    const offset = localDate.getTime() - tzDate.getTime();
+    return new Date(localDate.getTime() + offset).toISOString();
   } catch (e) {
-    return utcDate.toISOString();
+    return date.toISOString();
   }
 };
 
