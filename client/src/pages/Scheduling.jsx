@@ -292,6 +292,31 @@ export default function Scheduling() {
       ...prev,
       scheduledFor: getCurrentTimeInTimezone('browser')
     }));
+
+    // ── Background Scheduler Trigger ──────────────────────────────────────
+    // Vercel serverless = no persistent setInterval on server.
+    // While this page is open, silently ping the cron endpoint every 60s
+    // so due posts get published without needing an external cron service.
+    const token = localStorage.getItem('insta_agent_token');
+    const triggerCron = () => {
+      fetch(`${API_BASE_URL}/api/cron/publish`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      }).catch(() => {}); // Silent fail — fire and forget
+    };
+
+    // Trigger once immediately on page load (catches any overdue posts)
+    triggerCron();
+
+    // Then every 60 seconds while page is open
+    const cronInterval = setInterval(triggerCron, 60000);
+
+    // Auto-refresh post list every 30s so status updates (Scheduled → Posted) show live
+    const refreshInterval = setInterval(fetchPosts, 30000);
+
+    return () => {
+      clearInterval(cronInterval);
+      clearInterval(refreshInterval);
+    };
   }, []);
 
   useEffect(() => {
@@ -492,6 +517,7 @@ export default function Scheduling() {
   const [tempLinkTitle, setTempLinkTitle] = useState('Open Link');
   const [tempLinkUrl, setTempLinkUrl] = useState('https://example.com');
   const [keywordInput, setKeywordInput] = useState('');
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
   const openAddLinkModal = () => {
     setEditingLinkIndex(null);
@@ -547,7 +573,6 @@ export default function Scheduling() {
   };
 
   const deletePost = async (id) => {
-    if (!window.confirm("Are you sure you want to cancel this scheduled post?")) return;
     try {
       const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/scheduling/${id}`, {
@@ -555,14 +580,16 @@ export default function Scheduling() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
-        notify("Post cancelled", "success");
-        fetchPosts();
+        setPosts(prev => prev.filter(p => p._id !== id));
+        notify("Post deleted successfully!", "success");
       } else {
         const errData = await res.json().catch(() => ({}));
         notify(errData.error || "Failed to delete post", "error");
       }
     } catch (err) {
       notify("Error deleting post", "error");
+    } finally {
+      setDeleteConfirmId(null);
     }
   };
 
@@ -840,7 +867,7 @@ export default function Scheduling() {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      deletePost(post._id);
+                      setDeleteConfirmId(post._id);
                     }}
                     style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1962,6 +1989,77 @@ export default function Scheduling() {
                 Save Button
               </button>
               <button onClick={() => setShowLinkModal(false)} style={{ flex: 1, padding: '16px', background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer' }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Delete Confirmation Modal ── */}
+      {deleteConfirmId && (
+        <div
+          onClick={() => setDeleteConfirmId(null)}
+          style={{
+            position: 'fixed', inset: 0,
+            background: 'rgba(15, 23, 42, 0.5)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 9999, padding: '20px'
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: 'white',
+              borderRadius: '28px',
+              padding: '36px 32px',
+              maxWidth: '380px',
+              width: '100%',
+              boxShadow: '0 30px 60px rgba(0,0,0,0.18)',
+              animation: 'modalSlideUp 0.25s ease-out',
+              textAlign: 'center'
+            }}
+          >
+            <div style={{
+              width: '64px', height: '64px', borderRadius: '50%',
+              background: '#fef2f2', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', margin: '0 auto 20px auto'
+            }}>
+              <Trash2 size={28} color="#ef4444" />
+            </div>
+            <h3 style={{ fontSize: '1.3rem', fontWeight: '900', color: '#1e1b4b', margin: '0 0 10px 0' }}>
+              Delete Scheduled Post?
+            </h3>
+            <p style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: '500', margin: '0 0 28px 0', lineHeight: '1.5' }}>
+              This will permanently cancel and remove this scheduled post. This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                style={{
+                  flex: 1, padding: '14px', background: '#f1f5f9', color: '#64748b',
+                  border: 'none', borderRadius: '14px', fontWeight: '800',
+                  cursor: 'pointer', fontSize: '0.9rem', transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = '#e2e8f0'}
+                onMouseOut={(e) => e.currentTarget.style.background = '#f1f5f9'}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => deletePost(deleteConfirmId)}
+                style={{
+                  flex: 1, padding: '14px',
+                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  color: 'white', border: 'none', borderRadius: '14px',
+                  fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem',
+                  boxShadow: '0 8px 20px rgba(239, 68, 68, 0.3)',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(239,68,68,0.4)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(239,68,68,0.3)'; }}
+              >
+                Yes, Delete
+              </button>
             </div>
           </div>
         </div>
