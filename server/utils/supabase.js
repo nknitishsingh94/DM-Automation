@@ -373,9 +373,9 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
         if (sortObj) {
           const [field, dir] = Object.entries(sortObj)[0];
           let parsedField = field;
-          if (field === 'createdAt') parsedField = (tableName === 'settings' || tableName === 'campaigns') ? 'createdAt' : 'created_at';
-          if (field === 'updatedAt') parsedField = (tableName === 'settings' || tableName === 'campaigns') ? 'updatedAt' : 'updated_at';
-          if (field === 'userId') parsedField = (tableName === 'settings' || tableName === 'campaigns') ? 'userId' : 'user_id';
+          if (field === 'createdAt') parsedField = (tableName === 'scheduled_posts' || tableName === 'captions') ? 'created_at' : 'createdAt';
+          if (field === 'updatedAt') parsedField = (tableName === 'scheduled_posts' || tableName === 'captions') ? 'updated_at' : 'updatedAt';
+          if (field === 'userId') parsedField = (tableName === 'captions') ? 'user_id' : 'userId';
           
           console.log(`   └─ Sorting by: ${parsedField} (${dir === 1 ? 'asc' : 'desc'}) for table ${tableName}`);
           q = q.order(parsedField, { ascending: dir === 1 });
