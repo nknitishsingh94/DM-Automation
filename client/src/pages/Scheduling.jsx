@@ -11,49 +11,26 @@ import { useNotification } from '../App';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../supabase';
 
-export default function Scheduling() {
-  const { user } = useAuth();
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showCreate, setShowCreate] = useState(false); // Modal state
-  const [submitting, setSubmitting] = useState(false);
-  const { notify } = useNotification();
-  const [settings, setSettings] = useState(null);
+// --- UTILITIES (Moved outside for stability) ---
+const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
+  if (!localDateTimeStr) return '';
+  if (targetTimezone === 'browser') {
+    return new Date(localDateTimeStr).toISOString();
+  }
+  const parts = localDateTimeStr.split('T');
+  if (parts.length < 2) return new Date(localDateTimeStr).toISOString();
+  const dateParts = parts[0].split('-');
+  const timeParts = parts[1].split(':');
+  
+  const year = parseInt(dateParts[0], 10);
+  const month = parseInt(dateParts[1], 10) - 1;
+  const day = parseInt(dateParts[2], 10);
+  const hour = parseInt(timeParts[0], 10);
+  const minute = parseInt(timeParts[1], 10);
 
-  // Timezone and Country Scheduling options
-  const [selectedTimezone, setSelectedTimezone] = useState('browser');
-  const [displayTimezone, setDisplayTimezone] = useState('browser');
-
-  const timezoneOptions = [
-    { value: 'browser', label: '🌍 Local Browser Time (' + Intl.DateTimeFormat().resolvedOptions().timeZone + ')', tzName: Intl.DateTimeFormat().resolvedOptions().timeZone },
-    { value: 'Asia/Kolkata', label: '🇮🇳 India (IST)', tzName: 'Asia/Kolkata' },
-    { value: 'America/New_York', label: '🇺🇸 USA - East (EST/EDT)', tzName: 'America/New_York' },
-    { value: 'America/Los_Angeles', label: '🇺🇸 USA - West (PST/PDT)', tzName: 'America/Los_Angeles' },
-    { value: 'America/Chicago', label: '🇺🇸 USA - Central (CST/CDT)', tzName: 'America/Chicago' },
-    { value: 'Europe/London', label: '🇬🇧 United Kingdom (GMT/BST)', tzName: 'Europe/London' },
-    { value: 'Asia/Dubai', label: '🇦🇪 Dubai (GST)', tzName: 'Asia/Dubai' },
-    { value: 'Asia/Singapore', label: '🇸🇬 Singapore (SGT)', tzName: 'Asia/Singapore' },
-    { value: 'Australia/Sydney', label: '🇦🇺 Australia (AEST/AEDT)', tzName: 'Australia/Sydney' },
-    { value: 'Europe/Paris', label: '🇪🇺 Europe (CET/CEST)', tzName: 'Europe/Paris' }
-  ];
-
-  const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
-    if (!localDateTimeStr) return '';
-    if (targetTimezone === 'browser') {
-      return new Date(localDateTimeStr).toISOString();
-    }
-    const parts = localDateTimeStr.split('T');
-    const dateParts = parts[0].split('-');
-    const timeParts = parts[1].split(':');
-    
-    const year = parseInt(dateParts[0], 10);
-    const month = parseInt(dateParts[1], 10) - 1;
-    const day = parseInt(dateParts[2], 10);
-    const hour = parseInt(timeParts[0], 10);
-    const minute = parseInt(timeParts[1], 10);
-
-    const utcDate = new Date(Date.UTC(year, month, day, hour, minute));
-    
+  const utcDate = new Date(Date.UTC(year, month, day, hour, minute));
+  
+  try {
     const formatter = new Intl.DateTimeFormat('en-US', {
       timeZone: targetTimezone,
       year: 'numeric', month: 'numeric', day: 'numeric',
@@ -75,70 +52,111 @@ export default function Scheduling() {
     const offsetDiff = utcDate.getTime() - formattedUtc;
 
     return new Date(utcDate.getTime() + offsetDiff).toISOString();
-  };
+  } catch (e) {
+    return utcDate.toISOString();
+  }
+};
 
-  const formatInTimezone = (utcString, targetTimezone) => {
-    if (!utcString) return { date: '', time: '', abbr: '' };
-    try {
-      const date = new Date(utcString);
-      const tz = targetTimezone === 'browser' ? Intl.DateTimeFormat().resolvedOptions().timeZone : targetTimezone;
-      
-      const optionsDate = {
-        timeZone: tz,
-        month: 'short', day: 'numeric', year: 'numeric'
-      };
-      const optionsTime = {
-        timeZone: tz,
-        hour: '2-digit', minute: '2-digit'
-      };
+const formatInTimezone = (utcString, targetTimezone) => {
+  if (!utcString) return { date: '', time: '', abbr: '' };
+  try {
+    const date = new Date(utcString);
+    const tz = targetTimezone === 'browser' ? Intl.DateTimeFormat().resolvedOptions().timeZone : targetTimezone;
+    
+    const optionsDate = { timeZone: tz, month: 'short', day: 'numeric', year: 'numeric' };
+    const optionsTime = { timeZone: tz, hour: '2-digit', minute: '2-digit' };
 
-      const formattedDate = date.toLocaleDateString('en-US', optionsDate);
-      const formattedTime = date.toLocaleTimeString('en-US', optionsTime);
+    const formattedDate = date.toLocaleDateString('en-US', optionsDate);
+    const formattedTime = date.toLocaleTimeString('en-US', optionsTime);
 
-      const optionsAbbr = {
-        timeZone: tz,
-        timeZoneName: 'short'
-      };
-      const parts = date.toLocaleTimeString('en-US', optionsAbbr).split(' ');
-      const abbr = parts[parts.length - 1] || '';
+    const optionsAbbr = { timeZone: tz, timeZoneName: 'short' };
+    const parts = date.toLocaleTimeString('en-US', optionsAbbr).split(' ');
+    const abbr = parts[parts.length - 1] || '';
 
-      return { date: formattedDate, time: formattedTime, abbr };
-    } catch (e) {
-      return { date: new Date(utcString).toLocaleDateString(), time: new Date(utcString).toLocaleTimeString(), abbr: '' };
+    return { date: formattedDate, time: formattedTime, abbr };
+  } catch (e) {
+    return { date: new Date(utcString).toLocaleDateString(), time: new Date(utcString).toLocaleTimeString(), abbr: '' };
+  }
+};
+
+const getCurrentTimeInTimezone = (targetTimezone) => {
+  try {
+    const tz = targetTimezone === 'browser' ? Intl.DateTimeFormat().resolvedOptions().timeZone : targetTimezone;
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hour12: false
+    });
+    const parts = formatter.formatToParts(new Date());
+    const partMap = {};
+    parts.forEach(p => { partMap[p.type] = p.value; });
+    const year = partMap.year;
+    const month = partMap.month;
+    const day = partMap.day;
+    let hour = partMap.hour;
+    if (hour === '24') hour = '00';
+    const minute = partMap.minute;
+    return `${year}-${month}-${day}T${hour}:${minute}`;
+  } catch (e) {
+    const now = new Date();
+    const offset = now.getTimezoneOffset();
+    const local = new Date(now.getTime() - offset * 60 * 1000);
+    return local.toISOString().slice(0, 16);
+  }
+};
+
+const toUnicodeBold = (text) => {
+  if (!text) return "";
+  return Array.from(text).map(char => {
+    const code = char.charCodeAt(0);
+    if (code >= 65 && code <= 90) return String.fromCodePoint(0x1D400 + (code - 65));
+    if (code >= 97 && code <= 122) return String.fromCodePoint(0x1D41A + (code - 97));
+    if (code >= 48 && code <= 57) return String.fromCodePoint(0x1D7CE + (code - 48));
+    return char;
+  }).join('');
+};
+
+const toUnicodeItalic = (text) => {
+  if (!text) return "";
+  return Array.from(text).map(char => {
+    const code = char.charCodeAt(0);
+    if (code >= 65 && code <= 90) return String.fromCodePoint(0x1D434 + (code - 65));
+    if (code >= 97 && code <= 122) {
+      if (char === 'h') return 'ℎ';
+      return String.fromCodePoint(0x1D44E + (code - 97));
     }
-  };
+    return char;
+  }).join('');
+};
 
-  const getCurrentTimeInTimezone = (targetTimezone) => {
-    try {
-      const tz = targetTimezone === 'browser' ? Intl.DateTimeFormat().resolvedOptions().timeZone : targetTimezone;
-      const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: tz,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      });
-      const parts = formatter.formatToParts(new Date());
-      const partMap = {};
-      parts.forEach(p => {
-        partMap[p.type] = p.value;
-      });
-      const year = partMap.year;
-      const month = partMap.month;
-      const day = partMap.day;
-      let hour = partMap.hour;
-      if (hour === '24') hour = '00';
-      const minute = partMap.minute;
-      return `${year}-${month}-${day}T${hour}:${minute}`;
-    } catch (e) {
-      const now = new Date();
-      const offset = now.getTimezoneOffset();
-      const local = new Date(now.getTime() - offset * 60 * 1000);
-      return local.toISOString().slice(0, 16);
-    }
-  };
+export default function Scheduling() {
+  const { user } = useAuth();
+  
+  // High-level States
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [settings, setSettings] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [createdPost, setCreatedPost] = useState(null);
+  const { notify } = useNotification();
+
+  // Settings & Timezone
+  const [selectedTimezone, setSelectedTimezone] = useState('browser');
+  const [displayTimezone, setDisplayTimezone] = useState('browser');
+
+  const timezoneOptions = [
+    { value: 'browser', label: '🌍 Local Browser Time (' + Intl.DateTimeFormat().resolvedOptions().timeZone + ')', tzName: Intl.DateTimeFormat().resolvedOptions().timeZone },
+    { value: 'Asia/Kolkata', label: '🇮🇳 India (IST)', tzName: 'Asia/Kolkata' },
+    { value: 'America/New_York', label: '🇺🇸 USA - East (EST/EDT)', tzName: 'America/New_York' },
+    { value: 'America/Los_Angeles', label: '🇺🇸 USA - West (PST/PDT)', tzName: 'America/Los_Angeles' },
+    { value: 'America/Chicago', label: '🇺🇸 USA - Central (CST/CDT)', tzName: 'America/Chicago' },
+    { value: 'Europe/London', label: '🇬🇧 United Kingdom (GMT/BST)', tzName: 'Europe/London' },
+    { value: 'Asia/Dubai', label: '🇦🇪 Dubai (GST)', tzName: 'Asia/Dubai' },
+    { value: 'Asia/Singapore', label: '🇸🇬 Singapore (SGT)', tzName: 'Asia/Singapore' },
+    { value: 'Australia/Sydney', label: '🇦🇺 Australia (AEST/AEDT)', tzName: 'Australia/Sydney' },
+    { value: 'Europe/Paris', label: '🇪🇺 Europe (CET/CEST)', tzName: 'Europe/Paris' }
+  ];
 
   const handleTimezoneChange = (tzValue) => {
     setSelectedTimezone(tzValue);
@@ -157,33 +175,6 @@ export default function Scheduling() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const textareaRef = useRef(null);
   const popularEmojis = ['🔥', '🚀', '❤️', '✨', '😍', '👇', '📸', '💬', '🌟', '🎯', '💡', '👑', '🤩', '✅', '💯', '👏'];
-
-  const toUnicodeBold = (text) => {
-    return Array.from(text).map(char => {
-      const code = char.charCodeAt(0);
-      if (code >= 65 && code <= 90) {
-        return String.fromCodePoint(0x1D400 + (code - 65));
-      } else if (code >= 97 && code <= 122) {
-        return String.fromCodePoint(0x1D41A + (code - 97));
-      } else if (code >= 48 && code <= 57) {
-        return String.fromCodePoint(0x1D7CE + (code - 48));
-      }
-      return char;
-    }).join('');
-  };
-
-  const toUnicodeItalic = (text) => {
-    return Array.from(text).map(char => {
-      const code = char.charCodeAt(0);
-      if (code >= 65 && code <= 90) {
-        return String.fromCodePoint(0x1D434 + (code - 65));
-      } else if (code >= 97 && code <= 122) {
-        if (char === 'h') return 'ℎ';
-        return String.fromCodePoint(0x1D44E + (code - 97));
-      }
-      return char;
-    }).join('');
-  };
 
   const applyFormatting = (formatType) => {
     const textarea = textareaRef.current;
@@ -540,9 +531,7 @@ export default function Scheduling() {
     }
   };
 
-  const [showSuccess, setShowSuccess] = useState(false);
   const [previewMode, setPreviewMode] = useState('post');
-  const [createdPost, setCreatedPost] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
   const [isPreviewMuted, setIsPreviewMuted] = useState(true);
