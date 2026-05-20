@@ -632,14 +632,6 @@ function isDuplicateEvent(eventId) {
 app.post('/api/webhook', async (req, res) => {
   const body = req.body;
   
-  // ⚡ CRITICAL FIX: Meta requires a 200 OK within seconds. 
-  // Send immediately to prevent delayed retries and "bot not replying on time" issues.
-  if (body.object === 'instagram' || body.object === 'page' || body.object === 'whatsapp_business_account') {
-    res.status(200).send('EVENT_RECEIVED');
-  } else {
-    return res.sendStatus(404);
-  }
-
   console.log('🚀 [SUPER LOG] Webhook Received! Object:', body.object);
   console.log('📦 Full Payload:', JSON.stringify(body, null, 2));
 
@@ -955,6 +947,7 @@ app.post('/api/webhook', async (req, res) => {
         }
       }
     }
+    return res.status(200).send('EVENT_RECEIVED');
 
     // WhatsApp webhook handling
   } else if (body.object === 'whatsapp_business_account') {
@@ -1009,6 +1002,9 @@ app.post('/api/webhook', async (req, res) => {
         }
       }
     }
+    res.status(200).send('EVENT_RECEIVED');
+  } else {
+    res.sendStatus(404);
   }
 });
 
