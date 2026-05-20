@@ -2239,19 +2239,70 @@ async function runSchedulingWorker() {
           return;
         }
 
-        // Atomically mark as processing
+        // Atomic claims also pick up posts where Meta is still processing (indicated by updatedAt being old)
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
         const claimedPost = await ScheduledPost.findOneAndUpdate(
-          { _id: post._id, status: { $in: ['Scheduled', 'Retrying'] } },
-          { status: 'Processing' },
+          { 
+            _id: post._id, 
+            $or: [
+              { status: { $in: ['Scheduled', 'Retrying'] } },
+              { status: 'Processing', updatedAt: { $lt: fiveMinutesAgo } } // Rescue stuck 'Processing' posts
+            ]
+          },
+          { status: 'Processing', updatedAt: new Date() },
           { new: true }
         );
 
         if (!claimedPost) return;
 
-        console.log(`📸 Meta API: Publishing ${finalType.toUpperCase()}...`);
-        const { id: publishedId, url: liveUrl } = await publishInstagramContent(post.userId, finalType, finalMedia, post.caption, finalCarousel);
+        // --- STEP 1: Metadata Check (Check if we already started with Meta) ---
+        let existingContainerId = null;
+        if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
+          try {
+            const meta = JSON.parse(post.mediaUrl);
+            existingContainerId = meta.igContainerId;
+          } catch (e) {}
+        }
 
-        // Advanced Options & Automation
+        // --- STEP 2: Publish (Using state-machine logic) ---
+        const publishResult = await publishInstagramContent(
+          post.userId, 
+          finalType, 
+          finalMedia, 
+          post.caption, 
+          finalCarousel,
+          existingContainerId
+        );
+
+        if (publishResult.status === 'IG_PROCESSING') {
+          // Meta is still thinking. Save the containerId and try again in the next cron run
+          console.log(`⏳ Meta is still processing Post ${post._id}. Container: ${publishResult.containerId}`);
+          
+          let updatedMeta = {};
+          try {
+            if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
+              updatedMeta = JSON.parse(post.mediaUrl);
+            }
+          } catch (e) {}
+          
+          updatedMeta.igContainerId = publishResult.containerId;
+          updatedMeta.type = finalType;
+          updatedMeta.mediaUrl = finalMedia;
+          updatedMeta.carouselItems = finalCarousel;
+
+          await ScheduledPost.findByIdAndUpdate(post._id, { 
+            status: 'Processing', 
+            mediaUrl: JSON.stringify(updatedMeta),
+            updatedAt: new Date() 
+          });
+          return;
+        }
+
+        // --- STEP 3: Success Logic ---
+        const publishedId = publishResult.id;
+        const liveUrl = publishResult.url;
+        
+        // Deserialize automation options
         let requireFollow = false, unfollowedResponse = '', publicReply = '', automationStatus = 'Active';
         let openingMessage = false, openingMessageText = '', openingMessageButton = '', buttons = [];
 
@@ -2259,8 +2310,8 @@ async function runSchedulingWorker() {
           try {
             const meta = JSON.parse(post.mediaUrl);
             requireFollow = meta.requireFollow || false;
-            unfollowedResponse = meta.unfollowedResponse || '';
-            publicReply = meta.publicReply || '';
+            unfollowedResponse = meta.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊";
+            publicReply = meta.publicReply || "Check your DMs! 🚀 I've sent you the info.";
             automationStatus = meta.automationStatus || 'Active';
             openingMessage = meta.openingMessage || false;
             openingMessageText = meta.openingMessageText || '';
@@ -2291,24 +2342,14 @@ async function runSchedulingWorker() {
           await campaign.save();
         }
 
-        let updatedMediaUrl = post.mediaUrl;
-        if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
-          try {
-            const meta = JSON.parse(post.mediaUrl);
-            meta.instagramMediaId = publishedId;
-            meta.mediaUrl = liveUrl; // Update to official path
-            updatedMediaUrl = JSON.stringify(meta);
-          } catch (e) {}
-        } else {
-          updatedMediaUrl = JSON.stringify({ 
-            mediaUrl: liveUrl, // Official path
-            localMediaUrl: post.mediaUrl, // Keep original as backup
-            instagramMediaId: publishedId 
-          });
-        }
+        const updatedMediaUrl = JSON.stringify({ 
+          mediaUrl: liveUrl, // Official path
+          localMediaUrl: finalMedia, 
+          instagramMediaId: publishedId 
+        });
 
         await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted', mediaUrl: updatedMediaUrl });
-        console.log(`✅ SUCCESS: Post ${post._id} is now LIVE on Instagram with official URL.`);
+        console.log(`✅ SUCCESS: Post ${post._id} is now LIVE on Instagram.`);
 
       } catch (postErr) {
         console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);
