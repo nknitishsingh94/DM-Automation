@@ -119,9 +119,10 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
 
-    const isVercel = origin.endsWith('.vercel.app') || origin.includes('vercel.app');
-    const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
-    const isAllowed = isVercel || isLocal || ALLOWED_ORIGINS.some(o => origin.startsWith(o)) || origin.includes('render.com');
+    const originLower = origin.toLowerCase();
+    const isVercel = originLower.endsWith('.vercel.app') || originLower.includes('vercel.app');
+    const isLocal = originLower.includes('localhost') || originLower.includes('127.0.0.1');
+    const isAllowed = isVercel || isLocal || ALLOWED_ORIGINS.some(o => originLower.startsWith(o.toLowerCase())) || originLower.includes('render.com');
 
     if (isAllowed) {
       callback(null, true);
@@ -131,9 +132,16 @@ app.use(cors({
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
+
+// Explicitly handle OPTIONS preflight for all routes
+app.options('*', (req, res) => {
+  res.sendStatus(204);
+});
 
 // ── SECURITY: Rate Limiters ───────────────────────────────────────────────────
 // Auth routes (login/signup) — very strict to prevent brute-force
