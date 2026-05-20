@@ -299,11 +299,11 @@ export default function Scheduling() {
     // Trigger once immediately on page load (catches any overdue posts)
     triggerCron();
 
-    // Then every 60 seconds while page is open
-    const cronInterval = setInterval(triggerCron, 60000);
+    // Then every 15 seconds while page is open for high precision
+    const cronInterval = setInterval(triggerCron, 15000);
 
-    // Auto-refresh post list every 30s so status updates (Scheduled → Posted) show live
-    const refreshInterval = setInterval(fetchPosts, 30000);
+    // Auto-refresh post list every 20s so status updates (Scheduled → Posted) show live
+    const refreshInterval = setInterval(fetchPosts, 20000);
 
     return () => {
       clearInterval(cronInterval);

@@ -2307,11 +2307,9 @@ async function runSchedulingWorker() {
   }
 }
 
-// Run scheduling worker every 60s (works in both local dev and production)
-// On Vercel, setInterval may not persist between cold starts — the /api/cron/publish route
-// is the primary trigger. setInterval acts as a fallback for warm instances.
-setInterval(runSchedulingWorker, 60000);
-console.log('⏰ Scheduling worker started (60s interval).');
+// Run scheduling worker every 20s for higher precision
+setInterval(runSchedulingWorker, 20000);
+console.log('⏰ Scheduling worker started (20s interval).');
 
 // Vercel Cron/Webhook Route to trigger scheduler
 // This is the PRIMARY trigger on Vercel (serverless = no persistent setInterval)
