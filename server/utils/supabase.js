@@ -119,10 +119,13 @@ function parseFilter(q, queryObj, tableName) {
     }
 
     if (uuidColumns.includes(parsedKey) && val && typeof val === 'string' && !isUUID(val)) {
-        console.warn(`🛑 Skipping filter for invalid UUID on column ${parsedKey}: ${val}`);
-        // Instead of crashing, we force a no-match to prevent 500 error
-        q = q.eq(parsedKey, '00000000-0000-0000-0000-000000000000');
-        continue;
+        // If it's a 24-char Mongo ID, we already converted it above. 
+        // If it's still not a UUID, only then we fallback.
+        if (val.length !== 36) {
+           console.warn(`🛑 Skipping filter for invalid UUID on column ${parsedKey}: ${val}`);
+           q = q.eq(parsedKey, '00000000-0000-0000-0000-000000000000');
+           continue;
+        }
     }
 
     if (key === '$or' && Array.isArray(val)) {
