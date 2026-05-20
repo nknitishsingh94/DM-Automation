@@ -2322,6 +2322,8 @@ app.post('/api/reviews', async (req, res) => {
     console.error("Error saving review to Supabase:", err.message);
     res.status(500).json({ error: 'Failed to save review to database' });
   }
+});
+
 app.get('/api/diag-storage', async (req, res) => {
   try {
     const diag = {
@@ -2375,5 +2377,6 @@ httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🔒 Security: Rate limiting, Helmet CSP, CORS whitelist, NoSQL sanitization, XSS protection active`);
 });
+
 
 export default app;
