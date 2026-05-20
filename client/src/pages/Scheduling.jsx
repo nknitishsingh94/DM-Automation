@@ -57,30 +57,62 @@ const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
 const formatInTimezone = (utcString, targetTimezone) => {
   if (!utcString) return { date: '', time: '', abbr: '' };
   try {
-    // CRITICAL FIX: Ensure the string is treated as UTC by appending 'Z' if it's missing (Postgres raw timestamps)
-    const normalizedUtc = (typeof utcString === 'string' && !utcString.endsWith('Z')) ? utcString.replace(' ', 'T') + 'Z' : utcString;
-    const date = new Date(normalizedUtc);
-    
-    if (isNaN(date.getTime())) {
-       // Fallback for weird formats
-       return { date: 'Invalid Date', time: '', abbr: '' };
+    // 1. Prepare/Clean the input
+    let cleanStr = utcString;
+    if (typeof cleanStr === 'string') {
+      cleanStr = cleanStr.trim();
+      // Handle Postgres format with space and no TZ: '2026-05-20 18:02:00'
+      if (cleanStr.includes(' ') && !cleanStr.includes('T')) {
+        cleanStr = cleanStr.replace(' ', 'T');
+      }
+      // If no TZ indicator (+ or Z), append Z to force UTC
+      if (!cleanStr.includes('Z') && !cleanStr.includes('+')) {
+        cleanStr += 'Z';
+      }
     }
 
+    const date = new Date(cleanStr);
+
+    // 2. Fallback to basic Date if ISO parsing failed
+    if (isNaN(date.getTime())) {
+      console.warn("⚠️ Date parsing failed twice for:", utcString);
+      const rawDate = new Date(utcString);
+      if (isNaN(rawDate.getTime())) return { date: 'Invalid Time', time: '', abbr: '' };
+      return { 
+        date: rawDate.toLocaleDateString(), 
+        time: rawDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 
+        abbr: '' 
+      };
+    }
+
+    // 3. Get the correct timezone name
     const tz = targetTimezone === 'browser' ? Intl.DateTimeFormat().resolvedOptions().timeZone : targetTimezone;
     
-    const optionsDate = { timeZone: tz, month: 'short', day: 'numeric', year: 'numeric' };
-    const optionsTime = { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: true };
+    // 4. Format with Intl for maximum accuracy
+    const dateFormatted = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, month: 'short', day: 'numeric', year: 'numeric'
+    }).format(date);
 
-    const formattedDate = date.toLocaleDateString('en-US', optionsDate);
-    const formattedTime = date.toLocaleTimeString('en-US', optionsTime);
+    const timeFormatted = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: true
+    }).format(date);
 
-    const optionsAbbr = { timeZone: tz, timeZoneName: 'short' };
-    const parts = date.toLocaleTimeString('en-US', optionsAbbr).split(' ');
-    const abbr = parts[parts.length - 1] || '';
+    // 5. Clean Abbreviation Label
+    let abbr = '';
+    if (tz === 'Asia/Kolkata') {
+      abbr = 'GMT+5:30';
+    } else {
+      try {
+        const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' })
+          .formatToParts(date);
+        const namePart = parts.find(p => p.type === 'timeZoneName');
+        abbr = namePart ? namePart.value : '';
+      } catch (e) {}
+    }
 
-    return { date: formattedDate, time: formattedTime, abbr };
+    return { date: dateFormatted, time: timeFormatted, abbr };
   } catch (e) {
-    console.error("Format Error:", e);
+    console.error("🔥 Final Date Format Crash:", e);
     return { date: 'Error', time: '', abbr: '' };
   }
 };
