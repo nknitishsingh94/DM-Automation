@@ -510,8 +510,14 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
     let commentPromise = Promise.resolve(true);
     if (source === 'comment' && commentId) {
-      console.log(`💬 Sending CUSTOM public comment reply to ${commentId}`);
-      const replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
+      console.log(`💬 Sending "Thanks" style public comment reply to ${commentId}`);
+      const thanksReplies = [
+        "Thanks for your comment! Check DMs! 🚀",
+        "Thanks! I've sent you the info in your DMs! 😊",
+        "I've sent the details to your inbox! Thanks for reaching out! 🔥",
+        "Check your DMs! I just sent it over. Thanks! ✨"
+      ];
+      const replyText = match.publicReplyText || thanksReplies[Math.floor(Math.random() * thanksReplies.length)];
       commentPromise = sendPublicComment(platform, commentId, replyText, userId, activeToken);
     }
 
@@ -823,40 +829,54 @@ app.post('/api/webhook', async (req, res) => {
                 const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
                 if (isFollowing) {
-                  console.log(`✅ VERIFIED! Triggering automation for ${match.name}`);
+                  console.log(`✅ VERIFIED! Sending "Send me the link" button for ${match.name}`);
 
                   // 1. Clear pending status
                   await Contact.findOneAndUpdate({ chatId: senderId, userId: match.userId }, { $unset: { pendingCampaignId: 1 } });
 
-                  // 2. Decide: Opening Message or Main Response?
-                  if (match.openingMessage && match.openingMessageText) {
-                    const btnText = match.openingMessageButton || "Click to Continue 🚀";
-                    const nextPayload = `CAMP_${match._id}`;
-                    await sendMessageToInstagram(platform, senderId, match.openingMessageText, '', match.userId, btnText, activeToken, [], nextPayload);
-                  } else {
-                     let finalResponse = match.response;
-                     if (match.isAI) {
-                        try {
-                           const { generateAIResponse } = await import('./utils/aiHandler.js');
-                           const generated = await generateAIResponse(match.userId, `User verified they followed us for campaign "${match.trigger}". Say a short warm thank you and give them the link.`);
-                           if (generated) finalResponse = generated;
-                        } catch (aiErr) {
-                           finalResponse = "Thank you for following! Here is your link! 👇";
-                        }
-                     } else if (finalResponse === "[AI Agent will generate a custom neural reply here]") {
-                        finalResponse = "Thank you for following! Here is your link! 👇";
-                     }
-                    await sendMessageToInstagram(platform, senderId, finalResponse, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
-                    await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
-                  }
+                  // 2. Send the "Send me the link" intermediate button
+                  const followSuccessText = "Verified! Awesome. Click below to receive your link instantly. 🚀";
+                  const sendLinkPayload = `SEND_LINK_${match._id}`;
+                  await sendMessageToInstagram(platform, senderId, followSuccessText, '', match.userId, "Send me the link! 🔗", activeToken, [], sendLinkPayload);
                 } else {
                   console.log(`🚫 STILL NOT FOLLOWING: ${senderId}`);
-                  const retryText = "It looks like you haven't followed yet! Please follow @us and then click the button again. 😊";
+                  const retryText = "It looks like you haven't followed yet! Please follow our profile and then click the button again. 😊";
                   await sendMessageToInstagram(platform, senderId, retryText, '', match.userId, "Try Again! ✅", activeToken, [], payload);
                 }
               }
             } catch (err) {
               console.error("Error processing CHECK_FOLLOW_ postback:", err);
+            }
+          }
+
+          // C. "Send me the link" Postback (Final Delivery)
+          if (payload.startsWith('SEND_LINK_')) {
+            const campaignId = payload.split('_')[2];
+            try {
+              const match = await Campaign.findById(campaignId);
+              if (match && match.status === 'Active') {
+                console.log(`🚀 FINAL DELIVERY: Delivering content for campaign ${match.name}`);
+                const userSettings = await Settings.findOne({ userId: match.userId });
+                const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+
+                let finalResponse = match.response;
+                if (match.isAI) {
+                   try {
+                     const { generateAIResponse } = await import('./utils/aiHandler.js');
+                     const generated = await generateAIResponse(match.userId, `User just confirmed they want the link. Warmly deliver the content for "${match.trigger}".`);
+                     if (generated) finalResponse = generated;
+                   } catch (e) {
+                     finalResponse = "Here it is! Click the button below! 👇";
+                   }
+                } else if (finalResponse === "[AI Agent will generate a custom neural reply here]") {
+                   finalResponse = "Here is your link! 👇";
+                }
+
+                await sendMessageToInstagram(platform, senderId, finalResponse, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
+                await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
+              }
+            } catch (err) {
+              console.error("Error processing SEND_LINK_ postback:", err);
             }
           }
         }
