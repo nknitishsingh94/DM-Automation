@@ -91,12 +91,12 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://*.facebook.com", "https://*.facebook.net", "https://*.instagram.com", "https://dm-automation-roan.vercel.app"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://*.facebook.com", "https://*.facebook.net", "https://*.instagram.com", "https://*.vercel.app"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      imgSrc: ["'self'", "data:", "https:", "https://*.googleusercontent.com", "https://*.facebook.com", "https://*.instagram.com", "https://*.fbcdn.net", "https://dm-automation-w9a4.vercel.app"],
-      mediaSrc: ["'self'", "data:", "https:", "https://dm-automation-w9a4.vercel.app"],
-      connectSrc: ["'self'", "https://*.facebook.com", "https://*.facebook.net", "https://*.instagram.com", "https://api.openai.com", "https://accounts.google.com", "https://dm-automation-w9a4.vercel.app", "https://dm-automation-roan.vercel.app"],
-      frameSrc: ["'self'", "https://accounts.google.com", "https://*.facebook.com", "https://*.instagram.com", "https://dm-automation-roan.vercel.app"],
+      imgSrc: ["'self'", "data:", "https:", "https://*.googleusercontent.com", "https://*.facebook.com", "https://*.instagram.com", "https://*.fbcdn.net", "https://*.vercel.app"],
+      mediaSrc: ["'self'", "data:", "https:", "https://*.vercel.app"],
+      connectSrc: ["'self'", "https://*.facebook.com", "https://*.facebook.net", "https://*.instagram.com", "https://api.openai.com", "https://accounts.google.com", "https://*.vercel.app"],
+      frameSrc: ["'self'", "https://accounts.google.com", "https://*.facebook.com", "https://*.instagram.com", "https://*.vercel.app"],
       objectSrc: ["'none'"],
     },
   },
@@ -113,14 +113,16 @@ const ALLOWED_ORIGINS = [
   process.env.FRONTEND_URL,
   process.env.API_BASE_URL,
 ].filter(Boolean);
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // Server-to-server / curl
-    const isAllowed = ALLOWED_ORIGINS.some(o => origin.startsWith(o))
-      || origin.includes('localhost')
-      || origin.includes('127.0.0.1')
-      || origin.includes('vercel.app')
-      || origin.includes('render.com');
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+
+    const isVercel = origin.endsWith('.vercel.app') || origin.includes('vercel.app');
+    const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
+    const isAllowed = isVercel || isLocal || ALLOWED_ORIGINS.some(o => origin.startsWith(o)) || origin.includes('render.com');
+
     if (isAllowed) {
       callback(null, true);
     } else {
@@ -129,7 +131,7 @@ app.use(cors({
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   credentials: true,
 }));
 
