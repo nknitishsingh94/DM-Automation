@@ -214,20 +214,22 @@ const checkFollowerStatus = async (platform, chatId, userId, preloadedSettings =
   try {
     const userSettings = preloadedSettings || await Settings.findOne({ userId });
     if (!userSettings || !userSettings.instagramAccessToken) {
-      console.log("⚠️ Missing credentials for follow check. Defaulting to true.");
-      return true;
+      console.log("⚠️ Missing credentials for follow check. Defaulting to false.");
+      return false; // MUST fail if no token to prevent unwanted leaks
     }
 
     // Official Instagram Messaging API way to check if a user follows the business.
     // Requires instagram_manage_messages and instagram_basic permissions.
-    const res = await axios.get(`https://graph.facebook.com/v19.0/${chatId}?fields=is_user_follow_business&access_token=${userSettings.instagramAccessToken}`);
+    const res = await axios.get(`https://graph.facebook.com/v19.0/${chatId}?fields=is_user_follow_business&access_token=${userSettings.instagramAccessToken}`, {
+      timeout: 5000 // Fast timeout so it doesn't block frontend load or webhook replies
+    });
 
     // is_user_follow_business is a boolean returned by Meta
     return !!(res.data && res.data.is_user_follow_business === true);
   } catch (err) {
     console.warn("⚠️ Follow check API failed:", err.response?.data || err.message);
-    // FALLBACK: Return true on API error so we don't permanently block automation when permissions are missing
-    return true;
+    // FALLBACK: Return false on API error so we strictly enforce the gated follower setting
+    return false;
   }
 };
 
