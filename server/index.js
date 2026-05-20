@@ -2445,9 +2445,12 @@ app.get('/api/cron/publish', async (req, res) => {
   const authHeader = req.headers.authorization;
   const hasSecret = !!process.env.CRON_SECRET;
   
-  // Allow Vercel internal cron OR a valid CRON_SECRET bearer token
-  // If no CRON_SECRET is set, allow all requests (open endpoint)
-  if (hasSecret && !isVercelCron && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  // Allow Vercel internal cron OR a valid CRON_SECRET OR an authenticated user
+  const isAuthorized = isVercelCron || 
+                      (hasSecret && authHeader === `Bearer ${process.env.CRON_SECRET}`) ||
+                      (!hasSecret && authHeader); // If no secret, any auth token works
+  
+  if (!isAuthorized) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
