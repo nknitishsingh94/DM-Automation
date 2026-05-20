@@ -2224,7 +2224,7 @@ async function runSchedulingWorker() {
         if (!claimedPost) return;
 
         console.log(`📸 Meta API: Publishing ${finalType.toUpperCase()}...`);
-        const publishedId = await publishInstagramContent(post.userId, finalType, finalMedia, post.caption, finalCarousel);
+        const { id: publishedId, url: liveUrl } = await publishInstagramContent(post.userId, finalType, finalMedia, post.caption, finalCarousel);
 
         // Advanced Options & Automation
         let requireFollow = false, unfollowedResponse = '', publicReply = '', automationStatus = 'Active';
@@ -2271,14 +2271,19 @@ async function runSchedulingWorker() {
           try {
             const meta = JSON.parse(post.mediaUrl);
             meta.instagramMediaId = publishedId;
+            meta.mediaUrl = liveUrl; // Update to official path
             updatedMediaUrl = JSON.stringify(meta);
           } catch (e) {}
         } else {
-          updatedMediaUrl = JSON.stringify({ mediaUrl: post.mediaUrl, instagramMediaId: publishedId });
+          updatedMediaUrl = JSON.stringify({ 
+            mediaUrl: liveUrl, // Official path
+            localMediaUrl: post.mediaUrl, // Keep original as backup
+            instagramMediaId: publishedId 
+          });
         }
 
         await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted', mediaUrl: updatedMediaUrl });
-        console.log(`✅ SUCCESS: Post ${post._id} is now LIVE on Instagram.`);
+        console.log(`✅ SUCCESS: Post ${post._id} is now LIVE on Instagram with official URL.`);
 
       } catch (postErr) {
         console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);

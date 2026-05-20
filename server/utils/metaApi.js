@@ -354,8 +354,23 @@ export const publishInstagramContent = async (userId, type, mediaUrl, caption = 
     const publishUrl = `https://graph.facebook.com/v19.0/${igId}/media_publish?creation_id=${finalCreationId}&access_token=${accessToken}`;
     const publishRes = await axios.post(publishUrl);
     
-    console.log(`✅ PUBLISH SUCCESS: ${publishRes.data.id}`);
-    return publishRes.data.id;
+    // --- STEP 4: Fetch Official Live URL ---
+    let liveUrl = mediaUrl; // Fallback to local
+    try {
+      console.log(`📡 Fetching official live URL for media item: ${publishRes.data.id}`);
+      const mediaInfoRes = await axios.get(`https://graph.facebook.com/v19.0/${publishRes.data.id}`, {
+        params: {
+          fields: 'media_url,permalink,thumbnail_url',
+          access_token: accessToken
+        }
+      });
+      liveUrl = mediaInfoRes.data.media_url || mediaInfoRes.data.thumbnail_url || mediaInfoRes.data.permalink || liveUrl;
+      console.log(`🔗 Official Live URL obtained: ${liveUrl}`);
+    } catch (e) {
+      console.warn(`⚠️ Failed to fetch live URL from Meta (using original): ${e.message}`);
+    }
+
+    return { id: publishRes.data.id, url: liveUrl };
   } catch (err) {
     const errorData = err.response?.data || err.message;
     console.error("❌ Meta Publishing Error:", JSON.stringify(errorData, null, 2));
