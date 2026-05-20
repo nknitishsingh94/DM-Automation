@@ -15,14 +15,16 @@ import { supabase } from '../supabase';
 const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
   if (!localDateTimeStr) return '';
   const date = new Date(localDateTimeStr);
-  
+  if (isNaN(date.getTime())) return '';
+
+  // If browser time is selected, just use the built-in toISOString
   if (targetTimezone === 'browser' || !targetTimezone) {
     return date.toISOString();
   }
 
   try {
-    // Robust conversion for specific timezones
-    const localDate = new Date(localDateTimeStr);
+    // For specific timezones, calculate the offset between UTC and the target timezone at that specific time
+    // 1. Get the time string in the target timezone
     const formatter = new Intl.DateTimeFormat('en-US', {
       timeZone: targetTimezone,
       year: 'numeric', month: 'numeric', day: 'numeric',
@@ -30,15 +32,24 @@ const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
       hour12: false
     });
     
-    // We want to find the UTC time that, when viewed in targetTimezone, matches localDate's parts
-    const parts = formatter.formatToParts(localDate);
-    const partMap = {};
-    parts.forEach(p => { partMap[p.type] = p.value; });
+    // We want to find the UTC time X such that formatter.format(X) == localDateTimeStr
+    // A good approximation of X is localDate + offset
+    const localDate = new Date(localDateTimeStr);
     
-    const tzDate = new Date(Date.UTC(partMap.year, partMap.month - 1, partMap.day, partMap.hour, partMap.minute));
-    const offset = localDate.getTime() - tzDate.getTime();
-    return new Date(localDate.getTime() + offset).toISOString();
+    // Calculate current offset of target timezone
+    const parts = formatter.formatToParts(localDate);
+    const p = {};
+    parts.forEach(part => { p[part.type] = part.value; });
+    
+    // Construct the date as if it were UTC
+    const utcOfTarget = new Date(Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute));
+    
+    // The difference is our offset
+    const offsetMs = localDate.getTime() - utcOfTarget.getTime();
+    
+    return new Date(localDate.getTime() + offsetMs).toISOString();
   } catch (e) {
+    console.error("TZ Conversion Error:", e);
     return date.toISOString();
   }
 };
