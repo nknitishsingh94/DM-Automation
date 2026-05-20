@@ -607,6 +607,28 @@ app.get('/api/webhook', (req, res) => {
   }
 });
 
+// Webhook Event Deduplication Cache
+const webhookCache = new Map();
+
+function isDuplicateEvent(eventId) {
+  if (!eventId) return false;
+  const now = Date.now();
+  
+  // Clean up old entries (older than 2 minutes)
+  for (const [key, time] of webhookCache.entries()) {
+    if (now - time > 120000) {
+      webhookCache.delete(key);
+    }
+  }
+  
+  if (webhookCache.has(eventId)) {
+    return true;
+  }
+  
+  webhookCache.set(eventId, now);
+  return false;
+}
+
 app.post('/api/webhook', async (req, res) => {
   const body = req.body;
   console.log('🚀 [SUPER LOG] Webhook Received! Object:', body.object);
@@ -644,6 +666,13 @@ app.post('/api/webhook', async (req, res) => {
         // EXTRA SAFETY: If the sender is the page itself, skip it
         if (senderId === pageId) {
           console.log('⏭️ Skipping message from our own Page ID.');
+          continue;
+        }
+
+        // DEDUPLICATION: Skip duplicate message IDs
+        const messageId = messaging.message?.mid;
+        if (messageId && isDuplicateEvent(messageId)) {
+          console.log(`⏭️ Skipping duplicate message event: ${messageId}`);
           continue;
         }
 
@@ -709,6 +738,12 @@ app.post('/api/webhook', async (req, res) => {
 
         // 1.2 Handle Postbacks (Button Clicks)
         if (messaging.postback) {
+          const postbackKey = `postback_${senderId}_${messaging.timestamp}`;
+          if (isDuplicateEvent(postbackKey)) {
+            console.log(`⏭️ Skipping duplicate postback event: ${postbackKey}`);
+            continue;
+          }
+
           const payload = messaging.postback.payload;
           console.log(`🔘 POSTBACK DETECTED from ${senderId}: ${payload}`);
 
@@ -804,6 +839,11 @@ app.post('/api/webhook', async (req, res) => {
           console.log(`💬 COMMENT DETECTED: "${text}" from ${senderId} (on Page: ${pageId})`);
 
           if (text && senderId && commentId) {
+            if (isDuplicateEvent(commentId)) {
+              console.log(`⏭️ Skipping duplicate comment event: ${commentId}`);
+              continue;
+            }
+
             const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
 
             // Identity Search

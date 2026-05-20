@@ -6,21 +6,19 @@ import Settings from '../models/Settings.js';
  */
 export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null, buttonText = '', manualToken = null, buttons = [], buttonPayload = '', commentId = null) => {
   try {
-    let accessToken = manualToken || process.env.META_PAGE_ACCESS_TOKEN;
-    let pageId = null;
-
-    if (userId) {
+    let accessToken = manualToken;
+    if (!accessToken && userId) {
       const userSettings = await Settings.findOne({ userId });
       if (userSettings) {
         if (platform === 'facebook' && userSettings.facebookAccessToken) {
           accessToken = userSettings.facebookAccessToken;
-          pageId = userSettings.facebookPageId;
         } else if (userSettings.instagramAccessToken) {
           accessToken = userSettings.instagramAccessToken;
-          // Instagram messaging uses the connected Page ID
-          pageId = userSettings.instagramPageId || userSettings.businessAccountId;
         }
       }
+    }
+    if (!accessToken) {
+      accessToken = process.env.META_PAGE_ACCESS_TOKEN;
     }
 
     if (!accessToken) {
@@ -329,12 +327,15 @@ export const publishInstagramContent = async (userId, type, mediaUrl, caption = 
  */
 export const sendPublicComment = async (platform, commentId, text, userId = null, manualToken = null) => {
   try {
-    let accessToken = manualToken || process.env.META_PAGE_ACCESS_TOKEN;
-    if (userId) {
+    let accessToken = manualToken;
+    if (!accessToken && userId) {
       const userSettings = await Settings.findOne({ userId });
       if (userSettings) {
         accessToken = platform === 'facebook' ? userSettings.facebookAccessToken : userSettings.instagramAccessToken;
       }
+    }
+    if (!accessToken) {
+      accessToken = process.env.META_PAGE_ACCESS_TOKEN;
     }
 
     if (!accessToken) return false;
