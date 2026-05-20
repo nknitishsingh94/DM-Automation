@@ -446,11 +446,20 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
 
     if (match.openingMessage && match.openingMessageText) {
-      console.log(`👋 Sending OPENING message for campaign "${campaignName}"`);
-      // Ensure there's a button text, otherwise the postback flow won't work
+      console.log(`📩 Sending OPENING MESSAGE First for ${match.name}`);
       const btnText = match.openingMessageButton || "Click to Continue 🚀";
       const payload = `CAMP_${match._id}`;
 
+      // Fire the public comment FIRST so it always happens, even if the DM button is rejected by Meta
+      if (source === 'comment' && commentId) {
+        console.log(`💬 Sending CUSTOM public comment reply to ${commentId} (Opening Message)`);
+        const replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
+        // Intentionally not awaiting so it runs in parallel
+        sendPublicComment(platform, commentId, replyText, userId, activeToken).catch(e => console.error("Public comment failed:", e));
+      }
+
+      // This is a comment reply, so it uses commentId
+      // NOTE: If Meta rejects the template (button) for comment private replies, it will silently fail the DM but the public comment was already sent.
       const openingSent = await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, btnText, activeToken, [], payload, commentId);
 
       if (openingSent) {
@@ -461,11 +470,6 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
           { upsert: true }
         );
 
-        if (source === 'comment' && commentId) {
-          console.log(`💬 Sending CUSTOM public comment reply to ${commentId} (Opening Message)`);
-          const replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
-          await sendPublicComment(platform, commentId, replyText, userId, activeToken);
-        }
         console.log(`⏳ Flow paused. Waiting for user to click "${btnText}" or reply. Payload: ${payload}`);
         return { opening_message_sent: true };
       } else {
@@ -762,7 +766,27 @@ app.post('/api/webhook', async (req, res) => {
                 console.log(`🚀 TRIGGERING MAIN RESPONSE for Campaign: ${match.name}`);
                 const userSettings = await Settings.findOne({ userId: match.userId });
                 const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
-                await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
+
+                let finalResponse = match.response;
+                if (match.isAI) {
+                   console.log(`🤖 Postback has AI response enabled. Generating dynamic response...`);
+                   try {
+                     const { generateAIResponse } = await import('./utils/aiHandler.js');
+                     // Note: We use a descriptive prompt for the AI since there's no user text for a button click
+                     const generated = await generateAIResponse(match.userId, `User just clicked the button to get the link for campaign "${match.trigger}". Give a very warm, short, friendly one-sentence reply handing them the link.`);
+                     if (generated) {
+                       finalResponse = generated;
+                     }
+                   } catch (aiErr) {
+                     console.error("🔥 Postback AI generation failed:", aiErr);
+                     finalResponse = "Here is exactly what you requested! 👇";
+                   }
+                } else if (finalResponse === "[AI Agent will generate a custom neural reply here]") {
+                   // Fallback in case AI toggle was off but placeholder was saved
+                   finalResponse = "Here is your link! 👇";
+                }
+
+                await sendMessageToInstagram(platform, senderId, finalResponse, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
                 await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
               }
             } catch (err) {
@@ -787,7 +811,7 @@ app.post('/api/webhook', async (req, res) => {
                   console.log(`✅ VERIFIED! Triggering automation for ${match.name}`);
 
                   // 1. Clear pending status
-                  await Contact.findOneAndUpdate({ chatId: senderId }, { $unset: { pendingCampaignId: 1 } });
+                  await Contact.findOneAndUpdate({ chatId: senderId, userId: match.userId }, { $unset: { pendingCampaignId: 1 } });
 
                   // 2. Decide: Opening Message or Main Response?
                   if (match.openingMessage && match.openingMessageText) {
@@ -795,7 +819,19 @@ app.post('/api/webhook', async (req, res) => {
                     const nextPayload = `CAMP_${match._id}`;
                     await sendMessageToInstagram(platform, senderId, match.openingMessageText, '', match.userId, btnText, activeToken, [], nextPayload);
                   } else {
-                    await sendMessageToInstagram(platform, senderId, match.response, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
+                     let finalResponse = match.response;
+                     if (match.isAI) {
+                        try {
+                           const { generateAIResponse } = await import('./utils/aiHandler.js');
+                           const generated = await generateAIResponse(match.userId, `User verified they followed us for campaign "${match.trigger}". Say a short warm thank you and give them the link.`);
+                           if (generated) finalResponse = generated;
+                        } catch (aiErr) {
+                           finalResponse = "Thank you for following! Here is your link! 👇";
+                        }
+                     } else if (finalResponse === "[AI Agent will generate a custom neural reply here]") {
+                        finalResponse = "Thank you for following! Here is your link! 👇";
+                     }
+                    await sendMessageToInstagram(platform, senderId, finalResponse, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
                     await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
                   }
                 } else {
