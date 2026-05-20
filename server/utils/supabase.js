@@ -82,24 +82,15 @@ function parseFilter(q, queryObj, tableName) {
   }
 
   const fieldMap = {
-    'userId': (tableName === 'captions') ? 'user_id' : 'userId',
+    'userId': (tableName === 'captions' || tableName === 'scheduled_posts') ? 'user_id' : 'userId',
     'createdAt': (tableName === 'scheduled_posts' || tableName === 'captions') ? 'created_at' : 'createdAt',
     'updatedAt': (tableName === 'scheduled_posts' || tableName === 'captions') ? 'updated_at' : 'updatedAt',
-    'dmsSent': 'dmsSent',
-    'trigger': 'trigger',
-    'response': 'response',
-    'triggerSource': 'triggerSource',
-    'triggerOnDms': 'triggerOnDms',
-    'triggerOnComments': 'triggerOnComments',
-    'triggerOnStories': 'triggerOnStories',
-    'publicReplyText': 'publicReplyText',
-    'isUniversal': 'isUniversal',
-    'status': 'status',
-    'isAI': 'isAI',
-    'timestamp': 'timestamp',
-    'chatId': 'chatId',
-    'automationStatus': 'automationStatus',
-    'scheduledFor': 'scheduledFor'
+    'scheduledFor': (tableName === 'scheduled_posts') ? 'scheduled_for' : 'scheduledFor',
+    'dmsSent': (tableName === 'campaigns') ? 'dms_sent' : 'dmsSent',
+    'triggerKeyword': 'triggerKeyword',
+    'autoResponse': 'autoResponse',
+    'requireFollow': 'requireFollow',
+    'publicReply': 'publicReply'
   };
 
   for (const [key, v] of Object.entries(queryObj)) {
@@ -254,12 +245,11 @@ function convertOutgoing(doc, tableName) {
   // Per-table mapping based on verified schema
   if (newDoc.userId) {
     const mappedUserId = convertObjectIDToUUID(newDoc.userId);
-    if (tableName === 'captions') {
+    if (tableName === 'captions' || tableName === 'scheduled_posts') {
       newDoc.user_id = mappedUserId;
       delete newDoc.userId;
     } else {
       newDoc.userId = mappedUserId;
-      delete newDoc.user_id;
     }
   }
 
@@ -274,8 +264,9 @@ function convertOutgoing(doc, tableName) {
     if (fieldName !== 'updatedAt') delete newDoc.updatedAt;
   }
   
-  if (newDoc.scheduledFor) {
-    newDoc.scheduledFor = newDoc.scheduledFor;
+  if (newDoc.scheduledFor && tableName === 'scheduled_posts') {
+    newDoc.scheduled_for = newDoc.scheduledFor;
+    delete newDoc.scheduledFor;
   }
   
   if (newDoc.automationStatus) {
