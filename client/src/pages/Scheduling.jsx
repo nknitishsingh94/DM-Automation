@@ -14,17 +14,25 @@ import { supabase } from '../supabase';
 // --- UTILITIES (Moved outside for stability) ---
 const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
   if (!localDateTimeStr) return '';
-  const date = new Date(localDateTimeStr);
-  if (isNaN(date.getTime())) return '';
+  
+  const [datePart, timePart] = localDateTimeStr.split('T');
+  if (!datePart || !timePart) return new Date(localDateTimeStr).toISOString();
+  
+  const [year, month, day] = datePart.split('-').map(Number);
+  const [hour, minute] = timePart.split(':').map(Number);
 
-  // If browser time is selected, just use the built-in toISOString
+  // If browser time is selected, just use the built-in parser which treats naive strings as local
   if (targetTimezone === 'browser' || !targetTimezone) {
-    return date.toISOString();
+    const d = new Date(year, month - 1, day, hour, minute);
+    return d.toISOString();
   }
 
   try {
-    // For specific timezones, calculate the offset between UTC and the target timezone at that specific time
-    // 1. Get the time string in the target timezone
+    // We want to interpret year, month, day, hour, minute as being in targetTimezone
+    // 1. Create a UTC date from these components as a reference point
+    const d = new Date(Date.UTC(year, month - 1, day, hour, minute));
+    
+    // 2. Use formatter to find the offset of the target timezone at THIS UTC time
     const formatter = new Intl.DateTimeFormat('en-US', {
       timeZone: targetTimezone,
       year: 'numeric', month: 'numeric', day: 'numeric',
@@ -32,63 +40,43 @@ const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
       hour12: false
     });
     
-    // We want to find the UTC time X such that formatter.format(X) == localDateTimeStr
-    // A good approximation of X is localDate + offset
-    const localDate = new Date(localDateTimeStr);
-    
-    // Calculate current offset of target timezone
-    const parts = formatter.formatToParts(localDate);
+    const parts = formatter.formatToParts(d);
     const p = {};
     parts.forEach(part => { p[part.type] = part.value; });
     
-    // Construct the date as if it were UTC
-    const utcOfTarget = new Date(Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute));
+    // 3. Construct the local equivalent of the UTC reference
+    const localOfTest = new Date(Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute));
     
-    // The difference is our offset
-    const offsetMs = localDate.getTime() - utcOfTarget.getTime();
+    // 4. Offset = Reference UTC - Local equivalent
+    const offset = d.getTime() - localOfTest.getTime();
     
-    return new Date(localDate.getTime() + offsetMs).toISOString();
+    // 5. Correct UTC = Reference UTC + offset
+    return new Date(d.getTime() + offset).toISOString();
   } catch (e) {
     console.error("TZ Conversion Error:", e);
-    return date.toISOString();
+    return new Date(localDateTimeStr).toISOString();
   }
 };
 
 const formatInTimezone = (utcString, targetTimezone) => {
   if (!utcString) return { date: '', time: '', abbr: '' };
   try {
-    // 1. Prepare/Clean the input
     let cleanStr = utcString;
     if (typeof cleanStr === 'string') {
       cleanStr = cleanStr.trim();
-      // Handle Postgres format with space and no TZ: '2026-05-20 18:02:00'
       if (cleanStr.includes(' ') && !cleanStr.includes('T')) {
         cleanStr = cleanStr.replace(' ', 'T');
       }
-      // If no TZ indicator (+ or Z), append Z to force UTC
       if (!cleanStr.includes('Z') && !cleanStr.includes('+')) {
         cleanStr += 'Z';
       }
     }
 
     const date = new Date(cleanStr);
+    if (isNaN(date.getTime())) return { date: 'Invalid Time', time: '', abbr: '' };
 
-    // 2. Fallback to basic Date if ISO parsing failed
-    if (isNaN(date.getTime())) {
-      console.warn("⚠️ Date parsing failed twice for:", utcString);
-      const rawDate = new Date(utcString);
-      if (isNaN(rawDate.getTime())) return { date: 'Invalid Time', time: '', abbr: '' };
-      return { 
-        date: rawDate.toLocaleDateString(), 
-        time: rawDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 
-        abbr: '' 
-      };
-    }
-
-    // 3. Get the correct timezone name
     const tz = targetTimezone === 'browser' ? Intl.DateTimeFormat().resolvedOptions().timeZone : targetTimezone;
     
-    // 4. Format with Intl for maximum accuracy
     const dateFormatted = new Intl.DateTimeFormat('en-US', {
       timeZone: tz, month: 'short', day: 'numeric', year: 'numeric'
     }).format(date);
@@ -97,22 +85,22 @@ const formatInTimezone = (utcString, targetTimezone) => {
       timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: true
     }).format(date);
 
-    // 5. Clean Abbreviation Label
     let abbr = '';
-    if (tz === 'Asia/Kolkata') {
-      abbr = 'GMT+5:30';
-    } else {
-      try {
-        const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' })
-          .formatToParts(date);
-        const namePart = parts.find(p => p.type === 'timeZoneName');
-        abbr = namePart ? namePart.value : '';
-      } catch (e) {}
-    }
+    try {
+      const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' })
+        .formatToParts(date);
+      const namePart = parts.find(p => p.type === 'timeZoneName');
+      abbr = namePart ? namePart.value : '';
+      
+      // Clean up GMT offsets for India specifically if needed
+      if (tz === 'Asia/Kolkata' && (abbr === 'GMT+5:30' || abbr === 'IST')) {
+        abbr = 'IST';
+      }
+    } catch (e) {}
 
     return { date: dateFormatted, time: timeFormatted, abbr };
   } catch (e) {
-    console.error("🔥 Final Date Format Crash:", e);
+    console.error("Format Error:", e);
     return { date: 'Error', time: '', abbr: '' };
   }
 };
