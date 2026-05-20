@@ -1336,7 +1336,8 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
         }
       } else {
         // Status is "scheduling" / "Scheduled" / "Retrying" / "Failed"
-        p.mediaUrl = localImage;
+        // Always return the parsed Supabase public URL (not the raw JSON string)
+        p.mediaUrl = localImage && localImage.startsWith('http') ? localImage : (parsedMeta?.mediaUrl || localImage || '');
       }
 
       return p;
@@ -2096,9 +2097,7 @@ async function runSchedulingWorker() {
       status: { $in: ['Scheduled', 'Retrying'] }
     });
 
-    if (duePosts.length > 0) {
-       console.log(`⏰ [ALARM] Found ${duePosts.length} posts to publish NOW.`);
-    }
+    console.log(`🔍 [Worker] Query result: ${Array.isArray(duePosts) ? duePosts.length : 0} posts due.`);
 
     const { publishInstagramContent } = await import('./utils/metaApi.js');
 
@@ -2229,8 +2228,8 @@ async function runSchedulingWorker() {
 
         // Smart Retry System
         const currentRetryCount = (post.retryCount || 0) + 1;
-        const MAX_RETRIES = 5;
-        const MAX_RETRY_WINDOW_MINUTES = 30;
+        const MAX_RETRIES = 3;
+        const MAX_RETRY_WINDOW_MINUTES = 60;
         const scheduledAt = new Date(post.scheduledFor);
         const minutesSinceScheduled = (Date.now() - scheduledAt.getTime()) / 60000;
         const withinRetryWindow = minutesSinceScheduled < MAX_RETRY_WINDOW_MINUTES;
@@ -2239,14 +2238,12 @@ async function runSchedulingWorker() {
           console.log(`🔁 RETRY ${currentRetryCount}/${MAX_RETRIES}: Will retry post ${post._id} in next worker cycle.`);
           await ScheduledPost.findByIdAndUpdate(post._id, {
             status: 'Retrying',
-            retryCount: currentRetryCount,
             lastError: postErr.message
           });
         } else {
           console.error(`🛑 GIVING UP on Post ${post._id} after ${currentRetryCount} attempts. Marking as Failed.`);
           await ScheduledPost.findByIdAndUpdate(post._id, {
             status: 'Failed',
-            retryCount: currentRetryCount,
             lastError: postErr.message
           });
         }
@@ -2257,24 +2254,31 @@ async function runSchedulingWorker() {
   }
 }
 
-// Run as local interval fallback if not running on serverless Vercel
-if (process.env.NODE_ENV !== 'production') {
-  setInterval(runSchedulingWorker, 60000);
-}
+// Run scheduling worker every 60s (works in both local dev and production)
+// On Vercel, setInterval may not persist between cold starts — the /api/cron/publish route
+// is the primary trigger. setInterval acts as a fallback for warm instances.
+setInterval(runSchedulingWorker, 60000);
+console.log('⏰ Scheduling worker started (60s interval).');
 
 // Vercel Cron/Webhook Route to trigger scheduler
+// This is the PRIMARY trigger on Vercel (serverless = no persistent setInterval)
 app.get('/api/cron/publish', async (req, res) => {
   const isVercelCron = req.headers['x-vercel-cron'] === '1';
   const authHeader = req.headers.authorization;
   const hasSecret = !!process.env.CRON_SECRET;
   
+  // Allow Vercel internal cron OR a valid CRON_SECRET bearer token
+  // If no CRON_SECRET is set, allow all requests (open endpoint)
   if (hasSecret && !isVercelCron && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
-  console.log("⏰ Vercel Cron Job triggered scheduling check...");
+  console.log('⏰ [CRON] Vercel Cron Job triggered scheduling check...');
+  const startTime = Date.now();
   await runSchedulingWorker();
-  res.json({ success: true, message: 'Scheduling check completed' });
+  const elapsed = Date.now() - startTime;
+  console.log(`✅ [CRON] Worker finished in ${elapsed}ms`);
+  res.json({ success: true, message: 'Scheduling check completed', elapsed });
 });
 
 // ── Public Testimonials & Reviews API (Supabase Postgres Database) ──────────
