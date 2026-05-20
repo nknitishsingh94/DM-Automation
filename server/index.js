@@ -79,7 +79,7 @@ async function refreshGlobalCache() {
     console.warn("⚠️ NITRO Cache Refresh Failed:", err.message);
   }
 }
-setInterval(refreshGlobalCache, 30000);
+setInterval(refreshGlobalCache, 15000); // Faster background refresh (15s)
 refreshGlobalCache();
 
 // --- MULTER SETUP (Media Uploads - Using Memory Storage for Serverless compatibility) ---
@@ -1313,6 +1313,7 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
       userId: req.user.userId
     });
     await newCampaign.save();
+    refreshGlobalCache(); // Instant Sync
     res.json(newCampaign);
   } catch (err) {
     console.error("❌ Error creating campaign:", err.message);
@@ -1328,6 +1329,7 @@ app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
       { $set: updateData },
       { new: true }
     );
+    refreshGlobalCache(); // Instant Sync
     res.json(campaign);
   } catch (err) {
     console.error("❌ Error updating campaign:", err.message);
@@ -1346,6 +1348,7 @@ app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
       return res.status(404).json({ message: "Campaign not found or unauthorized to delete" });
     }
 
+    refreshGlobalCache(); // Instant Sync
     res.json({ message: 'Campaign deleted successfully' });
   } catch (err) {
     console.error("❌ Error deleting campaign:", err.message);
@@ -2047,6 +2050,7 @@ app.post('/api/settings', verifyToken, async (req, res) => {
       data,
       { upsert: true, new: true }
     );
+    refreshGlobalCache(); // Instant Sync
     res.json(settings);
   } catch (err) {
     res.status(500).json({ error: err.message });
