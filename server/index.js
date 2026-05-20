@@ -457,17 +457,26 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         const followText = match.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊";
         const checkFollowPayload = `CHECK_FOLLOW_${match._id}`;
 
-        // Build the profile URL from the connected Instagram username
-        const igUsername = userSettings?.connectedInstagramName;
-        const profileUrl = igUsername
-          ? `https://www.instagram.com/${igUsername.replace('@', '')}/`
-          : null;
+        // Build the profile URL from the connected Instagram username (with multi-level fallback)
+        const igUsername = userSettings?.connectedInstagramName || userSettings?.instagramUsername;
+        // Try username first, then fallback to a profile ID-based URL, then a generic search
+        let profileUrl;
+        if (igUsername) {
+          profileUrl = `https://www.instagram.com/${igUsername.replace('@', '')}/`;
+        } else if (userSettings?.businessAccountId || userSettings?.instagramPageId) {
+          // Fallback: use numeric ID (still opens a valid IG page)
+          const igId = userSettings?.businessAccountId || userSettings?.instagramPageId;
+          profileUrl = `https://www.instagram.com/accounts/login/?next=/${igId}/`;
+        } else {
+          profileUrl = `https://www.instagram.com/`;
+        }
 
-        // Send two buttons: Visit Profile (URL) + I've Followed (postback)
+        // Always send TWO buttons: Visit Profile (URL) + I've Followed (postback)
         const followButtons = [
-          ...(profileUrl ? [{ text: 'Visit Profile 👤', url: profileUrl }] : []),
+          { text: 'Follow Us 👤', url: profileUrl },
           { text: "I've Followed! ✅", payload: checkFollowPayload }
         ];
+        console.log(`📎 Profile URL for follow gate: ${profileUrl}`);
         await sendMessageToInstagram(platform, chatId, followText, '', userId, '', activeToken, followButtons, '', commentId);
 
         // 2. Send PUBLIC Comment Reply (Crucial for Comments)
@@ -869,17 +878,7 @@ app.post('/api/webhook', async (req, res) => {
                 } else {
                   console.log(`🚫 STILL NOT FOLLOWING: ${senderId}`);
                   const retryText = "It looks like you haven't followed yet! Please follow our profile and then click the button again. 😊";
-                  
-                  // Build the profile URL again for the retry block
-                  const igUsername = userSettings?.connectedInstagramName;
-                  const profileUrl = igUsername ? `https://www.instagram.com/${igUsername.replace('@', '')}/` : null;
-                  
-                  const retryButtons = [
-                    ...(profileUrl ? [{ text: 'Visit Profile 👤', url: profileUrl }] : []),
-                    { text: "I've Followed! ✅", payload: payload } // Re-use original payload
-                  ];
-
-                  await sendMessageToInstagram(platform, senderId, retryText, '', match.userId, '', activeToken, retryButtons);
+                  await sendMessageToInstagram(platform, senderId, retryText, '', match.userId, "Try Again! ✅", activeToken, [], payload);
                 }
               }
             } catch (err) {
