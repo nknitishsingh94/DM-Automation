@@ -57,11 +57,19 @@ const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
 const formatInTimezone = (utcString, targetTimezone) => {
   if (!utcString) return { date: '', time: '', abbr: '' };
   try {
-    const date = new Date(utcString);
+    // CRITICAL FIX: Ensure the string is treated as UTC by appending 'Z' if it's missing (Postgres raw timestamps)
+    const normalizedUtc = (typeof utcString === 'string' && !utcString.endsWith('Z')) ? utcString.replace(' ', 'T') + 'Z' : utcString;
+    const date = new Date(normalizedUtc);
+    
+    if (isNaN(date.getTime())) {
+       // Fallback for weird formats
+       return { date: 'Invalid Date', time: '', abbr: '' };
+    }
+
     const tz = targetTimezone === 'browser' ? Intl.DateTimeFormat().resolvedOptions().timeZone : targetTimezone;
     
     const optionsDate = { timeZone: tz, month: 'short', day: 'numeric', year: 'numeric' };
-    const optionsTime = { timeZone: tz, hour: '2-digit', minute: '2-digit' };
+    const optionsTime = { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: true };
 
     const formattedDate = date.toLocaleDateString('en-US', optionsDate);
     const formattedTime = date.toLocaleTimeString('en-US', optionsTime);
@@ -72,7 +80,8 @@ const formatInTimezone = (utcString, targetTimezone) => {
 
     return { date: formattedDate, time: formattedTime, abbr };
   } catch (e) {
-    return { date: new Date(utcString).toLocaleDateString(), time: new Date(utcString).toLocaleTimeString(), abbr: '' };
+    console.error("Format Error:", e);
+    return { date: 'Error', time: '', abbr: '' };
   }
 };
 
