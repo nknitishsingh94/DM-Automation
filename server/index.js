@@ -79,7 +79,6 @@ async function refreshGlobalCache() {
     console.warn("⚠️ NITRO Cache Refresh Failed:", err.message);
   }
 }
-setInterval(refreshGlobalCache, 15000); // Faster background refresh (15s)
 refreshGlobalCache();
 
 // --- MULTER SETUP (Media Uploads - Using Memory Storage for Serverless compatibility) ---
@@ -2488,9 +2487,7 @@ async function runSchedulingWorker() {
   }
 }
 
-// Run scheduling worker every 20s for higher precision
-setInterval(runSchedulingWorker, 20000);
-console.log('⏰ Scheduling worker started (20s interval).');
+console.log('⏰ Scheduling worker ready (Triggered via /api/cron/publish).');
 
 // Vercel Cron/Webhook Route to trigger scheduler
 // This is the PRIMARY trigger on Vercel (serverless = no persistent setInterval)
