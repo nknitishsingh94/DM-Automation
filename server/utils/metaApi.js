@@ -45,7 +45,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
 
     if (isPrivateReply && (buttonText || (buttons && buttons.length > 0))) {
       // Append a fallback instruction since we had to strip the button
-      safeText = safeText + `\n\n👉 (Reply "Done" or click the link if you see one to continue)`;
+      safeText = safeText + `\n\n👉 (Please reply "Done" to continue)`;
     }
 
     if (effectiveButtons.length > 0) {
@@ -122,14 +122,6 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     if (payload) {
       console.log("📦 Sending Payload:", JSON.stringify(payload, null, 2));
       const res = await axios.post(url, payload);
-      
-      // CRITICAL FIX: If this was a private reply (stripped buttons), send buttons as a SECOND message via standard recipient ID
-      if (isPrivateReply && (buttonText || (buttons && buttons.length > 0))) {
-        console.log(`🚀 SPLIT SEND: Dispatching follow-up buttons to recipient ID ${recipientId}...`);
-        // Recurse once WITHOUT the commentId to send the buttons as a standard DM
-        // Remove the extra "Tap your choice" text to keep it premium
-        await sendMessageToInstagram(platform, recipientId, '', '', userId, buttonText, accessToken, buttons, buttonPayload, null);
-      }
       
       return true;
     }

@@ -302,24 +302,49 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     console.log(`📡 [DESKTOP FALLBACK] User ${chatId} has pending campaign ${contact.pendingCampaignId}. Checking follow status...`);
     const isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
     
-    if (isFollowing) {
-      console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} has now followed! Triggering pending campaign.`);
-      const pendingId = contact.pendingCampaignId;
+    const pendingId = contact.pendingCampaignId;
+    const match = await Campaign.findById(pendingId);
+    
+    if (match && match.status === 'Active') {
+      const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
       
-      // Clear pending status first to avoid loops
-      await Contact.findOneAndUpdate({ userId, chatId }, { $unset: { pendingCampaignId: 1 } });
-      
-      // Execute the pending campaign
-      const match = await Campaign.findById(pendingId);
-      if (match && match.status === 'Active') {
-        const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+      if (isFollowing) {
+        console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} has now followed! Triggering pending campaign.`);
+        await Contact.findOneAndUpdate({ userId, chatId }, { $unset: { pendingCampaignId: 1 } });
+        
+        if (match.openingMessage && match.openingMessageText) {
+          console.log(`📩 Sending OPENING MESSAGE after follow for ${match.name}`);
+          const btnText = match.openingMessageButton || "Click to Continue 🚀";
+          const payload = `CAMP_${match._id}`;
+          
+          const openingSent = await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, btnText, activeToken, [], payload);
+          if (openingSent) {
+            await Contact.findOneAndUpdate(
+              { userId, chatId },
+              { pendingCampaignId: `OPENING:${match._id}`, lastActive: new Date() },
+              { upsert: true }
+            );
+            return { opening_message_sent: true };
+          }
+        }
         
         await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
         await Campaign.findByIdAndUpdate(pendingId, { $inc: { dmsSent: 1 } });
         return { pending_triggered: true };
+      } else {
+        console.log(`🚫 [DESKTOP FAIL] User ${chatId} still not following. Sending buttons!`);
+        const followText = "It looks like you haven't followed us yet! Please follow our profile and then click the button below. 😊";
+        const checkFollowPayload = `CHECK_FOLLOW_${match._id}`;
+        const igUsername = userSettings?.connectedInstagramName || userSettings?.instagramUsername;
+        const profileUrl = igUsername ? `https://www.instagram.com/${igUsername.replace('@', '')}/` : `https://www.instagram.com/`;
+        
+        const followButtons = [
+          { text: 'Follow Us 👤', url: profileUrl },
+          { text: "I've Followed! ✅", payload: checkFollowPayload }
+        ];
+        await sendMessageToInstagram(platform, chatId, followText, '', userId, '', activeToken, followButtons, '');
+        return { pending_retry: true };
       }
-    } else {
-      console.log(`🚫 [DESKTOP FAIL] User ${chatId} still not following.`);
     }
   }
 
