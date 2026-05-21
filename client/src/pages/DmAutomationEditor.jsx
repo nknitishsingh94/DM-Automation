@@ -36,19 +36,19 @@ export default function DmAutomationEditor() {
   const [keywordInput, setKeywordInput] = useState('');
   const [message, setMessage] = useState('');
   const [openingMessage, setOpeningMessage] = useState(false);
-  const [openingMessageText, setOpeningMessageText] = useState("Hey there! I'm so happy you're here! ðŸ˜Š\n\nClick below and I'll send you the link! ðŸš€");
-  const [openingMessageButton, setOpeningMessageButton] = useState("Send me the link");
+  const [openingMessageText, setOpeningMessageText] = useState("");
+  const [openingMessageButton, setOpeningMessageButton] = useState("");
   const [requireFollow, setRequireFollow] = useState(true);
-  const [unfollowedMessage, setUnfollowedMessage] = useState("Hey! Please follow our account first to get the link! ðŸ˜Š");
-  const [publicReplyText, setPublicReplyText] = useState("Check your DMs! ðŸš€ I've sent you the info.");
+  const [unfollowedMessage, setUnfollowedMessage] = useState("");
+  const [publicReplyText, setPublicReplyText] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [name, setName] = useState(`${template === 'stories' ? 'Story' : 'DM'} Automation #${Math.floor(Math.random() * 1000)}`);
   const [connectedSettings, setConnectedSettings] = useState(null);
   const [buttons, setButtons] = useState([]);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [editingLinkIndex, setEditingLinkIndex] = useState(null);
-  const [tempLinkTitle, setTempLinkTitle] = useState('Open Link');
-  const [tempLinkUrl, setTempLinkUrl] = useState('https://example.com');
+  const [tempLinkTitle, setTempLinkTitle] = useState('');
+  const [tempLinkUrl, setTempLinkUrl] = useState('https://');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [isAI, setIsAI] = useState(false);
 
@@ -98,8 +98,8 @@ export default function DmAutomationEditor() {
 
   const openAddLinkModal = () => {
     setEditingLinkIndex(null);
-    setTempLinkTitle('Open Link');
-    setTempLinkUrl('https://example.com');
+    setTempLinkTitle('');
+    setTempLinkUrl('https://');
     setShowLinkModal(true);
   };
 

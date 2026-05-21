@@ -1,0 +1,29 @@
+commit 9c51f1b3ab54b57d3388c85ab9c6f19e38747433
+Author: Nitesh Singh <your_github_email@example.com>
+Date:   Thu May 21 14:12:48 2026 +0530
+
+    update in schedule part:
+
+commit 5c5ac65a72a78fb7bf9095e89af8d08a180e1b99
+Author: Nitesh Singh <your_github_email@example.com>
+Date:   Thu May 21 14:04:20 2026 +0530
+
+    update in schedule part:
+
+commit ff622a6d873f4b92b4f061b0b1c8f2e4410d9904
+Author: Nitesh Singh <your_github_email@example.com>
+Date:   Thu May 21 01:51:48 2026 +0530
+
+    Fix: Timezone and field mapping for scheduling
+
+commit b79ad01141ab86a266743af254a8bd77f4c795b2
+Author: Nitesh Singh <your_github_email@example.com>
+Date:   Thu May 21 01:47:07 2026 +0530
+
+    change in supabase for some update
+
+commit 886fa712fd1ee8e72cbe027140c385d7f13840d5
+Author: Nitesh Singh <your_github_email@example.com>
+Date:   Thu May 21 01:44:31 2026 +0530
+
+    change in time zone
