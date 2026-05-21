@@ -247,8 +247,9 @@ export const checkMediaReadiness = async (mediaId, accessToken) => {
 /**
  * Meta Content Publishing API: Post Image, Reel, Story, or Carousel
  */
-export const publishInstagramContent = async (userId, type, mediaUrl, caption = '', carouselItems = [], existingContainerId = null) => {
+export const publishInstagramContent = async (userId, { type, mediaUrl, caption = '', carouselItems = [], containerId = null }) => {
   try {
+    console.log(`📡 [Meta API] Start Publishing for User: ${userId}. Type: ${type}, Container: ${containerId || 'NEW'}`);
     let settings = await Settings.findOne({ userId });
     if (!settings || !settings.instagramAccessToken || !settings.businessAccountId) {
       console.log(`⚠️ Settings missing for user ${userId}. Attempting fallback to any active connected settings in DB...`);
@@ -264,7 +265,7 @@ export const publishInstagramContent = async (userId, type, mediaUrl, caption = 
     const accessToken = settings.instagramAccessToken;
     const igId = settings.businessAccountId;
     
-    let finalCreationId = existingContainerId;
+    let finalCreationId = containerId;
 
     if (!finalCreationId) {
       console.log(`🎬 Starting Meta Container Creation [${type.toUpperCase()}] for user ${userId}`);
@@ -310,7 +311,10 @@ export const publishInstagramContent = async (userId, type, mediaUrl, caption = 
 
     // Publish
     const publishUrl = `https://graph.facebook.com/v19.0/${igId}/media_publish?creation_id=${finalCreationId}&access_token=${accessToken}`;
+    console.log(`🚀 [Meta API] Final Publish Step. Container: ${finalCreationId}`);
+    
     const publishRes = await axios.post(publishUrl);
+    console.log(`✅ [Meta API] Published Successfully! Media ID: ${publishRes.data.id}`);
     
     // Fetch Official URL
     let liveUrl = mediaUrl;
@@ -319,12 +323,17 @@ export const publishInstagramContent = async (userId, type, mediaUrl, caption = 
         params: { fields: 'media_url,permalink,thumbnail_url', access_token: accessToken }
       });
       liveUrl = mediaInfoRes.data.media_url || mediaInfoRes.data.thumbnail_url || mediaInfoRes.data.permalink || liveUrl;
-    } catch (e) {}
+      console.log(`🔗 [Meta API] Official URL Fetched: ${liveUrl}`);
+    } catch (e) {
+      console.warn(`⚠️ [Meta API] Could not fetch live URL info: ${e.message}`);
+    }
 
     return { id: publishRes.data.id, url: liveUrl, status: 'PUBLISHED' };
   } catch (err) {
+    const metaError = err.response?.data?.error;
+    const errorMessage = metaError ? `${metaError.message} (Code: ${metaError.code})` : err.message;
     console.error("❌ Meta Publishing Error:", JSON.stringify(err.response?.data || err.message, null, 2));
-    throw err;
+    throw new Error(errorMessage);
   }
 };
 

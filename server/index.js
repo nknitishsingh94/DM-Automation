@@ -2336,14 +2336,13 @@ async function runSchedulingWorker() {
         }
 
         // --- STEP 2: Publish (Using state-machine logic) ---
-        const publishResult = await publishInstagramContent(
-          post.userId, 
-          finalType, 
-          finalMedia, 
-          post.caption, 
-          finalCarousel,
-          existingContainerId
-        );
+        const publishResult = await publishInstagramContent(post.userId, {
+          type: finalType,
+          mediaUrl: finalMedia,
+          caption: post.caption,
+          carouselItems: finalCarousel,
+          containerId: existingContainerId
+        });
 
         if (publishResult.status === 'IG_PROCESSING') {
           // Meta is still thinking. Save the containerId and try again in the next cron run

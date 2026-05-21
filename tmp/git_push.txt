@@ -1,0 +1,21 @@
+git : To https://github.com
+/nknitishsingh94/DM-Automat
+ion.git
+At line:1 char:195
++ ... e -FilePath 
+tmp\git_commit.txt 
+-Encoding ascii; git push 
+2>&1 | Out-F ...
++                          
+                           
+~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (To   
+  https://gith...-Automa   
+ tion.git:String) [], R    
+emoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+   b79ad01..ff622a6  main 
+-> main
