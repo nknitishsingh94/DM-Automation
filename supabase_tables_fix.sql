@@ -37,6 +37,12 @@ CREATE TABLE IF NOT EXISTS public.scheduled_posts (
 -- Ensure user_id column exists just in case it was missing
 ALTER TABLE public.scheduled_posts ADD COLUMN IF NOT EXISTS user_id UUID;
 
+-- Ensure createdAt and updatedAt columns exist with correct casing
+ALTER TABLE public.scheduled_posts ADD COLUMN IF NOT EXISTS "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now());
+ALTER TABLE public.scheduled_posts ADD COLUMN IF NOT EXISTS "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now());
+ALTER TABLE public.captions ADD COLUMN IF NOT EXISTS "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now());
+ALTER TABLE public.captions ADD COLUMN IF NOT EXISTS "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now());
+
 -- 3. Enable RLS and add basic policies
 ALTER TABLE public.captions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.scheduled_posts ENABLE ROW LEVEL SECURITY;
