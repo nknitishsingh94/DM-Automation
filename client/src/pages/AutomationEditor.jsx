@@ -40,10 +40,10 @@ export default function AutomationEditor() {
   const [keywordInput, setKeywordInput] = useState('');
   const [message, setMessage] = useState('');
   const [openingMessage, setOpeningMessage] = useState(false);
-  const [openingMessageText, setOpeningMessageText] = useState("Hey there! I'm so happy you're here, thanks so much for your interest 😊\n\nClick below and I'll send you the link in just a sec 🚀");
-  const [openingMessageButton, setOpeningMessageButton] = useState("Send me the link");
+  const [openingMessageText, setOpeningMessageText] = useState("");
+  const [openingMessageButton, setOpeningMessageButton] = useState("");
   const [requireFollow, setRequireFollow] = useState(true);
-  const [unfollowedMessage, setUnfollowedMessage] = useState("Hey! Please follow our account first to get the link! 😊");
+  const [unfollowedMessage, setUnfollowedMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [name, setName] = useState(`${template === 'stories' ? 'Story' : (template === 'dms' ? 'DM' : 'Comment')} Automation #${Math.floor(Math.random() * 1000)}`);
   const [connectedSettings, setConnectedSettings] = useState(null);
@@ -54,8 +54,8 @@ export default function AutomationEditor() {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [editingLinkIndex, setEditingLinkIndex] = useState(null);
   const [tempLinkTitle, setTempLinkTitle] = useState('Open Link');
-  const [tempLinkUrl, setTempLinkUrl] = useState('https://example.com');
-  const [publicReply, setPublicReply] = useState("Check your DMs! 🚀 I've sent you the info.");
+  const [tempLinkUrl, setTempLinkUrl] = useState('https://');
+  const [publicReply, setPublicReply] = useState("");
   const [triggerOnDms, setTriggerOnDms] = useState(template === 'dms' || template === 'stories');
   const [triggerOnComments, setTriggerOnComments] = useState(template === 'comments');
   const [triggerOnStories, setTriggerOnStories] = useState(template === 'stories');

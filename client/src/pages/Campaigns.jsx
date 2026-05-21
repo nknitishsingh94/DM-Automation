@@ -23,7 +23,7 @@ export default function Campaigns() {
     videoUrl: '', 
     linkUrl: '',
     requireFollow: false,
-    unfollowedResponse: 'Please follow our account first to get a reply!',
+    unfollowedResponse: '',
     isUniversal: false
   });
   
@@ -183,7 +183,7 @@ export default function Campaigns() {
           videoUrl: '', 
           linkUrl: '',
           requireFollow: false,
-          unfollowedResponse: 'Please follow our account first to get a reply!',
+          unfollowedResponse: '',
           isUniversal: false
         });
         setFormStep(1);
