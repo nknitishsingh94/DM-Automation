@@ -2370,30 +2370,34 @@ async function runSchedulingWorker() {
         }
         
         // Validation
+        const { supabase: _sb } = await import('./utils/supabase.js');
+        const _updatePost = async (id, fields) => _sb.from('scheduled_posts').update({ ...fields, updatedAt: new Date().toISOString() }).eq('id', id);
+
         if (!finalMedia || finalMedia.includes('127.0.0.1') || finalMedia.includes('localhost')) {
           console.error(`❌ No publicly accessible media URL for post ${post._id}.`);
-          await ScheduledPost.findByIdAndUpdate(post._id, { 
-            status: 'Failed',
-            lastError: 'No public media URL available. Please use Supabase Storage or a public image URL.'
-          });
+          await _updatePost(post.id || post._id, { status: 'Failed', lastError: 'No public media URL. Use Supabase Storage or a public image URL.' });
           return;
         }
 
-        // Atomic claims also pick up posts where Meta is still processing (indicated by updatedAt being old)
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-        const claimedPost = await ScheduledPost.findOneAndUpdate(
-          { 
-            _id: post._id, 
-            $or: [
-              { status: { $in: ['Scheduled', 'Retrying'] } },
-              { status: 'Processing', updatedAt: { $lt: fiveMinutesAgo } } // Rescue stuck 'Processing' posts
-            ]
-          },
-          { status: 'Processing', updatedAt: new Date() },
-          { new: true }
-        );
+        // Atomic claim: directly update status to 'Processing'
+        const postId = post.id || post._id;
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
 
-        if (!claimedPost) return;
+        const { data: claimData, error: claimErr } = await _sb
+          .from('scheduled_posts')
+          .update({ status: 'Processing', updatedAt: new Date().toISOString() })
+          .eq('id', postId)
+          .or(`status.in.(Scheduled,Retrying),and(status.eq.Processing,updatedAt.lt.${fiveMinutesAgo})`)
+          .select()
+          .limit(1);
+
+        if (claimErr) console.warn('⚠️ Claim error:', claimErr.message);
+        const claimedPost = !claimErr && claimData && claimData.length > 0 ? claimData[0] : null;
+        if (!claimedPost) {
+          console.log(`⏭️ Post ${postId} skipped - already claimed`);
+          return;
+        }
+
 
         // --- STEP 1: Metadata Check (Check if we already started with Meta) ---
         let existingContainerId = null;
@@ -2429,11 +2433,7 @@ async function runSchedulingWorker() {
           updatedMeta.mediaUrl = finalMedia;
           updatedMeta.carouselItems = finalCarousel;
 
-          await ScheduledPost.findByIdAndUpdate(post._id, { 
-            status: 'Processing', 
-            mediaUrl: JSON.stringify(updatedMeta),
-            updatedAt: new Date() 
-          });
+          await _updatePost(postId, { status: 'Processing', mediaUrl: JSON.stringify(updatedMeta) });
           return;
         }
 
@@ -2487,8 +2487,8 @@ async function runSchedulingWorker() {
           instagramMediaId: publishedId 
         });
 
-        await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted', mediaUrl: updatedMediaUrl });
-        console.log(`✅ SUCCESS: Post ${post._id} is now LIVE on Instagram.`);
+        await _updatePost(postId, { status: 'Posted', mediaUrl: updatedMediaUrl });
+        console.log(`✅ SUCCESS: Post ${postId} is now LIVE on Instagram.`);
 
       } catch (postErr) {
         console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);
@@ -2499,9 +2499,9 @@ async function runSchedulingWorker() {
         const minutesSinceScheduled = (Date.now() - scheduledAt.getTime()) / 60000;
 
         if (currentRetryCount <= MAX_RETRIES && minutesSinceScheduled < MAX_RETRY_WINDOW) {
-          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Retrying', lastError: postErr.message, retryCount: currentRetryCount });
+          await _updatePost(postId, { status: 'Retrying', lastError: postErr.message, retryCount: currentRetryCount });
         } else {
-          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', lastError: postErr.message });
+          await _updatePost(postId, { status: 'Failed', lastError: postErr.message });
         }
       }
     });
