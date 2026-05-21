@@ -1667,16 +1667,33 @@ app.get('/api/captions', verifyToken, async (req, res) => {
 
 app.post('/api/captions', verifyToken, async (req, res) => {
   try {
-    console.log('📝 Saving caption for user:', req.user.userId, 'Body:', req.body);
-    const newCaption = new Caption({ ...req.body, userId: req.user.userId });
-    await newCaption.save();
-    console.log('✅ Caption saved:', newCaption);
-    res.json(newCaption);
+    const { supabase } = await import('./utils/supabase.js');
+    const { title, content } = req.body;
+    const userId = req.user.userId;
+
+    console.log('📝 Saving caption for user:', userId, '| title:', title);
+
+    if (!supabase) return res.status(500).json({ error: 'Database not connected' });
+
+    const { data, error } = await supabase
+      .from('captions')
+      .insert({ title: title || '', content: content || '', user_id: userId })
+      .select()
+      .limit(1);
+
+    if (error) {
+      console.error('❌ CAPTIONS SAVE ERROR:', error.message, error.code, error.details, error.hint);
+      return res.status(500).json({ error: error.message, details: error.details, hint: error.hint });
+    }
+
+    console.log('✅ Caption saved:', data);
+    res.json(data && data.length > 0 ? data[0] : { success: true });
   } catch (err) {
-    console.error('❌ CAPTIONS SAVE ERROR:', err.message, err.code, err.details, err.hint);
-    res.status(500).json({ error: err.message, details: err.details, hint: err.hint });
+    console.error('❌ CAPTIONS SAVE CRASH:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
+
 
 app.delete('/api/captions/:id', verifyToken, async (req, res) => {
   try {
