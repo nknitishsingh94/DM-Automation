@@ -333,7 +333,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         return { pending_triggered: true };
       } else {
         console.log(`🚫 [DESKTOP FAIL] User ${chatId} still not following. Sending buttons!`);
-        const followText = "It looks like you haven't followed us yet! Please follow our profile and then click the button below. 😊";
+        const followText = match.unfollowedResponse || "It looks like you haven't followed us yet! Please follow our profile and then click the button below. 😊";
         const checkFollowPayload = `CHECK_FOLLOW_${match._id}`;
         const igUsername = userSettings?.connectedInstagramName || userSettings?.instagramUsername;
         const profileUrl = igUsername ? `https://www.instagram.com/${igUsername.replace('@', '')}/` : `https://www.instagram.com/`;
