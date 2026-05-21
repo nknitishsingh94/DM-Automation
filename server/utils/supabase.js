@@ -95,7 +95,7 @@ function parseFilter(q, queryObj, tableName) {
     }
 
     let parsedKey = (key === '_id' || key === 'id') ? 'id' : (fieldMap[key] || key);
-    if (tableName === 'captions' && key === 'userId') {
+    if ((tableName === 'captions' || tableName === 'scheduled_posts') && key === 'userId') {
       parsedKey = 'user_id';
     }
     
