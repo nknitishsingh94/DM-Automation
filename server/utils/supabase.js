@@ -215,6 +215,7 @@ function convertIncoming(doc, tableName) {
         const valStr = newDoc.response.slice(startIdx + '__IS_AI__:'.length, endIdx);
         newDoc.isAI = valStr === 'true';
         newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_IS_AI__'.length);
+      }
     } else {
       newDoc.isAI = false;
     }
