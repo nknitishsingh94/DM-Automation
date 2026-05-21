@@ -95,9 +95,12 @@ function parseFilter(q, queryObj, tableName) {
     }
 
     let parsedKey = (key === '_id' || key === 'id') ? 'id' : (fieldMap[key] || key);
+    if (tableName === 'captions' && key === 'userId') {
+      parsedKey = 'user_id';
+    }
     
     // UUID Safety Check: Prevents Postgres from crashing on invalid UUID syntax
-    const uuidColumns = ['id', 'userId'];
+    const uuidColumns = ['id', 'userId', 'user_id'];
     
     // Map ObjectID queries to UUID queries for UUID columns
     if (uuidColumns.includes(parsedKey) && val && typeof val === 'string' && val.length === 24 && /^[0-9a-f]{24}$/i.test(val)) {
@@ -217,6 +220,13 @@ function convertIncoming(doc, tableName) {
       newDoc.isAI = false;
     }
   }
+  if (tableName === 'captions') {
+    if (newDoc.user_id) {
+      newDoc.userId = newDoc.user_id;
+      delete newDoc.user_id;
+    }
+  }
+
   newDoc.toObject = () => newDoc;
   return newDoc;
 }
@@ -249,6 +259,13 @@ function convertOutgoing(doc, tableName) {
     delete newDoc.name;
     delete newDoc.isAI;
   }
+  if (tableName === 'captions') {
+    if (newDoc.userId) {
+      newDoc.user_id = newDoc.userId;
+      delete newDoc.userId;
+    }
+  }
+
   delete newDoc.toObject;
   delete newDoc.save;
   delete newDoc.comparePassword;
