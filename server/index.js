@@ -374,6 +374,9 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
              }
            }
          } catch (e) {
+           finalResponse = "Here it is! Click the button below! 👇";
+         }
+      } else if (finalResponse === "[AI Agent will generate a custom neural reply here]") {
          finalResponse = "Here is your link! 👇";
       }
 
