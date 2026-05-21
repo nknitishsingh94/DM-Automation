@@ -2324,8 +2324,9 @@ async function runSchedulingWorker() {
         console.log(`🔍 [Worker] Found a future post: ID ${anyPost.id}, scheduled for ${anyPost.scheduledFor}`);
         return { message: 'No due posts found. Future post exists.', anyPost, nowISO };
       } else {
+        const allPosts = await ScheduledPost.find({});
         console.log(`🔍 [Worker] No posts with status "Scheduled" found in database.`);
-        return { message: 'No scheduled posts found in database.', nowISO };
+        return { message: 'No scheduled posts found in database.', nowISO, allPosts };
       }
     }
 
