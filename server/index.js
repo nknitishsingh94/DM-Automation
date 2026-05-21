@@ -507,7 +507,13 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         // 2. Send PUBLIC Comment Reply (Crucial for Comments)
         if (source === 'comment' && commentId) {
           console.log(`💬 Sending GATED public reply to comment ${commentId}`);
-          const publicGated = "I've sent you a DM! 🚀 Please follow our account first to receive your exclusive link! 😊";
+          const thanksReplies = [
+            "Thanks for your comment! Check DMs! 🚀",
+            "Thanks! I've sent you the info in your DMs! 😊",
+            "I've sent the details to your inbox! Thanks for reaching out! 🔥",
+            "Check your DMs! I just sent it over. Thanks! ✨"
+          ];
+          const publicGated = match.publicReplyText || thanksReplies[Math.floor(Math.random() * thanksReplies.length)];
           await sendPublicComment(platform, commentId, publicGated, userId, activeToken);
         }
 
