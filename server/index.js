@@ -541,7 +541,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       console.log(`✅ UNGATED: User ${chatId} is a follower.`);
     }
 
-    if (match.openingMessage && match.openingMessageText && source !== 'comment') {
+    if (match.openingMessage && match.openingMessageText) {
       console.log(`📩 Sending OPENING MESSAGE First for ${match.name}`);
       const btnText = match.openingMessageButton || "Click to Continue 🚀";
       const payload = `CAMP_${match._id}`;
