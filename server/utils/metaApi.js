@@ -33,24 +33,13 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     let safeText = text || '';
     safeText = safeText.replace(/(^|\s)(www\.[^\s]+)/g, '$1https://$2');
 
-    // Dynamic Recipient Builder for Private Replies on Instagram Comments
-    const recipient = (platform === 'instagram' && commentId) ? { comment_id: commentId } : { id: recipientId };
-    let payload = null;
-
-    // Meta API STRICT RULE: Private replies (using comment_id) CANNOT contain buttons or templates.
-    // If we try to send a button, it will throw an API error and drop the message.
-    const isPrivateReply = !!(platform === 'instagram' && commentId);
-    let effectiveButtons = isPrivateReply ? [] : (buttons || []);
-    let effectiveButtonText = isPrivateReply ? null : buttonText;
-
-    if (isPrivateReply && (buttonText || (buttons && buttons.length > 0))) {
-      // Append a fallback instruction since we had to strip the button
-      safeText = safeText + `\n\n👉 (Please reply "Done" to continue)`;
-    }
-
-    if (effectiveButtons.length > 0) {
-      payload = {
-        recipient,
+    // 1. Build Standard Payload (Always uses recipientId, always keeps buttons if present)
+    const standardRecipient = { id: recipientId };
+    let standardPayload = null;
+    
+    if (buttons && buttons.length > 0) {
+      standardPayload = {
+        recipient: standardRecipient,
         messaging_type: "RESPONSE",
         message: {
           attachment: {
@@ -58,7 +47,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
             payload: {
               template_type: "button",
               text: safeText || "Options:",
-              buttons: effectiveButtons.map(btn => {
+              buttons: buttons.map(btn => {
                 let safeUrl = btn.url || '';
                 if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
                   safeUrl = 'https://' + safeUrl;
@@ -77,10 +66,10 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
           }
         }
       };
-    } else if (effectiveButtonText) {
+    } else if (buttonText) {
       if (buttonPayload) {
-        payload = {
-          recipient,
+        standardPayload = {
+          recipient: standardRecipient,
           messaging_type: "RESPONSE",
           message: {
             attachment: {
@@ -90,7 +79,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
                 text: safeText || "Options:",
                 buttons: [{
                   type: "postback",
-                  title: effectiveButtonText,
+                  title: buttonText,
                   payload: buttonPayload
                 }]
               }
@@ -98,41 +87,67 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
           }
         };
       } else {
-        payload = {
-          recipient,
+        standardPayload = {
+          recipient: standardRecipient,
           messaging_type: "RESPONSE",
           message: {
             text: safeText || "Options:",
             quick_replies: [{
               content_type: "text",
-              title: effectiveButtonText,
-              payload: effectiveButtonText
+              title: buttonText,
+              payload: buttonText
             }]
           }
         };
       }
     } else {
-      payload = {
-        recipient,
+      standardPayload = {
+        recipient: standardRecipient,
         messaging_type: "RESPONSE",
         message: { text: safeText }
       };
     }
 
-    if (payload) {
-      console.log("📦 Sending Payload:", JSON.stringify(payload, null, 2));
-      const res = await axios.post(url, payload);
-      
-      return true;
+    // 2. Build Fallback Private Reply Payload (Only for comments, no buttons)
+    let fallbackPayload = null;
+    if (platform === 'instagram' && commentId) {
+      let fallbackText = safeText;
+      if (buttons && buttons.length > 0 || buttonText) {
+         fallbackText += `\n\n👉 (Please reply "Done" to continue)`;
+      }
+      fallbackPayload = {
+        recipient: { comment_id: commentId },
+        messaging_type: "RESPONSE",
+        message: { text: fallbackText }
+      };
     }
 
-    console.log(`✅ SEND SUCCESS: Message delivered to ${recipientId} via ${platform}`);
-    return true;
-  } catch (err) {
-    const errorData = err.response?.data || err.message;
-    console.error(`❌ SEND FAIL (${platform}):`, JSON.stringify(errorData, null, 2));
-    return false;
-  }
+    // 3. Execution Logic
+    try {
+      // ALWAYS try the standard payload first! 
+      // If the 24h window is open, it works beautifully (with buttons!).
+      console.log("📦 Trying Standard Payload (with buttons if any):", JSON.stringify(standardPayload, null, 2));
+      const res = await axios.post(url, standardPayload);
+      console.log(`✅ SEND SUCCESS: Standard Message delivered to ${recipientId}`);
+      return true;
+    } catch (err) {
+      // If standard payload fails, check if we have a fallback (commentId)
+      if (fallbackPayload) {
+        console.warn(`⚠️ Standard payload failed (likely 24h window closed). Falling back to comment_id private reply...`);
+        try {
+           const fallbackRes = await axios.post(url, fallbackPayload);
+           console.log(`✅ SEND SUCCESS: Fallback Private Reply delivered via comment_id ${commentId}`);
+           return true;
+        } catch (fallbackErr) {
+           console.error(`❌ FALLBACK SEND FAIL:`, fallbackErr.response?.data || fallbackErr.message);
+           return false;
+        }
+      }
+      
+      const errorData = err.response?.data || err.message;
+      console.error(`❌ SEND FAIL (${platform}):`, JSON.stringify(errorData, null, 2));
+      return false;
+    }
 };
 
 /**
