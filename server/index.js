@@ -362,7 +362,20 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     if (match && match.status === 'Active') {
       const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
       
-      await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
+      let finalResponse = match.response;
+      if (match.isAI) {
+         try {
+           const { generateAIResponse } = await import('./utils/aiHandler.js');
+           const generated = await generateAIResponse(match.userId, `User just confirmed they want the link. Warmly deliver the content for "${match.triggerKeyword || match.trigger}".`);
+           if (generated) finalResponse = generated;
+         } catch (e) {
+           finalResponse = "Here it is! Click the button below! 👇";
+         }
+      } else if (finalResponse === "[AI Agent will generate a custom neural reply here]") {
+         finalResponse = "Here is your link! 👇";
+      }
+
+      await sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
       await Campaign.findByIdAndUpdate(pendingId, { $inc: { dmsSent: 1 } });
       return { opening_triggered: true };
     }
