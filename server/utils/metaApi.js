@@ -45,7 +45,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
 
     if (isPrivateReply && (buttonText || (buttons && buttons.length > 0))) {
       // Append a fallback instruction since we had to strip the button
-      safeText = safeText + `\n\n👉 (Please reply "Done" to continue)`;
+      safeText = safeText + `\n\n👉 (Reply "Yes" to receive it!)`;
     }
 
     if (effectiveButtons.length > 0) {
