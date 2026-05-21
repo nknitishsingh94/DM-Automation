@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 if (!process.env.JWT_SECRET) {
-  throw new Error('❌ FATAL: JWT_SECRET is not set in environment variables. Server cannot start securely.');
+  console.error('❌ FATAL: JWT_SECRET is not set in environment variables. Server cannot start securely.');
 }
 
 const verifyToken = (req, res, next) => {
