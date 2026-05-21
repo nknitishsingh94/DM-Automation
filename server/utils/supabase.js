@@ -82,10 +82,6 @@ function parseFilter(q, queryObj, tableName) {
   }
 
   const fieldMap = {
-    'userId': (tableName === 'captions' || tableName === 'scheduled_posts' || tableName === 'campaigns') ? 'user_id' : 'userId',
-    'createdAt': (tableName === 'scheduled_posts' || tableName === 'captions') ? 'created_at' : 'createdAt',
-    'updatedAt': (tableName === 'scheduled_posts' || tableName === 'captions') ? 'updated_at' : 'updatedAt',
-    'dmsSent': (tableName === 'campaigns') ? 'dms_sent' : 'dmsSent',
     'triggerKeyword': 'triggerKeyword',
     'autoResponse': 'autoResponse',
     'requireFollow': 'requireFollow',
@@ -101,7 +97,7 @@ function parseFilter(q, queryObj, tableName) {
     let parsedKey = (key === '_id' || key === 'id') ? 'id' : (fieldMap[key] || key);
     
     // UUID Safety Check: Prevents Postgres from crashing on invalid UUID syntax
-    const uuidColumns = ['id', 'userId', 'user_id'];
+    const uuidColumns = ['id', 'userId'];
     
     // Map ObjectID queries to UUID queries for UUID columns
     if (uuidColumns.includes(parsedKey) && val && typeof val === 'string' && val.length === 24 && /^[0-9a-f]{24}$/i.test(val)) {
@@ -123,9 +119,6 @@ function parseFilter(q, queryObj, tableName) {
         const [subKey, subValRaw] = Object.entries(cond)[0];
         let subVal = subValRaw instanceof Date ? subValRaw.toISOString() : subValRaw;
         let subParsedKey = subKey === '_id' || subKey === 'id' ? 'id' : subKey;
-        if (subKey === 'userId') {
-          subParsedKey = (tableName === 'captions' || tableName === 'scheduled_posts' || tableName === 'campaigns') ? 'user_id' : 'userId';
-        }
         
         // Map ObjectID queries to UUID queries for UUID columns in $or
         if (uuidColumns.includes(subParsedKey) && typeof subVal === 'string' && subVal.length === 24 && /^[0-9a-f]{24}$/i.test(subVal)) {
@@ -189,11 +182,7 @@ function convertIncoming(doc, tableName) {
     newDoc._id = doc.id;
   }
   // Universal mapping for incoming data
-  if (doc.user_id) newDoc.userId = doc.user_id;
-  if (doc.userid) newDoc.userId = doc.userid;
   if (newDoc.userId) newDoc.userId = convertUUIDToObjectID(newDoc.userId);
-  if (doc.created_at) newDoc.createdAt = doc.created_at;
-  if (doc.updated_at) newDoc.updatedAt = doc.updated_at;
   if (doc.automation_status) newDoc.automationStatus = doc.automation_status;
 
   ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost', 'isUniversal'].forEach(field => {
@@ -242,24 +231,7 @@ function convertOutgoing(doc, tableName) {
   
   // Per-table mapping based on verified schema
   if (newDoc.userId) {
-    const mappedUserId = convertObjectIDToUUID(newDoc.userId);
-    if (tableName === 'captions' || tableName === 'scheduled_posts') {
-      newDoc.user_id = mappedUserId;
-      delete newDoc.userId;
-    } else {
-      newDoc.userId = mappedUserId;
-    }
-  }
-
-  if (newDoc.createdAt) {
-    const fieldName = (tableName === 'scheduled_posts' || tableName === 'captions') ? 'created_at' : 'createdAt';
-    newDoc[fieldName] = newDoc.createdAt;
-    if (fieldName !== 'createdAt') delete newDoc.createdAt;
-  }
-  if (newDoc.updatedAt) {
-    const fieldName = (tableName === 'scheduled_posts' || tableName === 'captions') ? 'updated_at' : 'updatedAt';
-    newDoc[fieldName] = newDoc.updatedAt;
-    if (fieldName !== 'updatedAt') delete newDoc.updatedAt;
+    newDoc.userId = convertObjectIDToUUID(newDoc.userId);
   }
   
   if (newDoc.automationStatus) {
@@ -366,10 +338,6 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
         if (sortObj) {
           const [field, dir] = Object.entries(sortObj)[0];
           let parsedField = field;
-          if (field === 'createdAt') parsedField = (tableName === 'scheduled_posts' || tableName === 'captions') ? 'created_at' : 'createdAt';
-          if (field === 'updatedAt') parsedField = (tableName === 'scheduled_posts' || tableName === 'captions') ? 'updated_at' : 'updatedAt';
-          if (field === 'userId') parsedField = (tableName === 'captions' || tableName === 'scheduled_posts' || tableName === 'campaigns') ? 'user_id' : 'userId';
-          
           console.log(`   └─ Sorting by: ${parsedField} (${dir === 1 ? 'asc' : 'desc'}) for table ${tableName}`);
           q = q.order(parsedField, { ascending: dir === 1 });
         }
