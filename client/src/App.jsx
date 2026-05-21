@@ -207,10 +207,11 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>Post</span>
               <span className="sidebar-badge badge-new">HOT</span>
             </NavLink>
-            <NavLink to="/forms" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <div className="nav-item" style={{ opacity: 0.6, cursor: 'not-allowed' }} title="Coming Soon">
               <MessageSquare size={18} />
               <span>Forms</span>
-            </NavLink>
+              <span className="sidebar-badge badge-new" style={{ background: '#cbd5e1', color: '#475569' }}>SOON</span>
+            </div>
             <NavLink to="/audiences" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Users size={18} />
               <span>Contacts</span>
@@ -219,10 +220,11 @@ function Sidebar({ isMobileOpen, onClose }) {
               <CreditCard size={18} />
               <span>Billing</span>
             </NavLink>
-            <NavLink to="/refer" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <div className="nav-item" style={{ opacity: 0.6, cursor: 'not-allowed' }} title="Coming Soon">
               <Users size={18} />
               <span>Refer & Earn</span>
-            </NavLink>
+              <span className="sidebar-badge badge-new" style={{ background: '#cbd5e1', color: '#475569' }}>SOON</span>
+            </div>
             <NavLink to="/settings" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Settings size={18} />
               <span>Settings</span>
