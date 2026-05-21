@@ -45,7 +45,29 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
 
     if (isPrivateReply && (buttonText || (buttons && buttons.length > 0))) {
       // Append a fallback instruction since we had to strip the button
-      safeText = safeText + `\n\n👉 (Please reply "Done" to continue)`;
+      let urlLinks = [];
+      let isFollowGate = false;
+      
+      if (mediaUrl) {
+          urlLinks.push(mediaUrl);
+      }
+      
+      if (buttons && buttons.length > 0) {
+          buttons.forEach(b => {
+              if (b.url) urlLinks.push(b.url);
+              if (b.text && b.text.toLowerCase().includes("follow")) isFollowGate = true;
+          });
+      }
+      
+      if (urlLinks.length > 0) {
+          safeText = safeText + `\n\n🔗 Link:\n` + urlLinks.join('\n');
+      }
+      
+      if (isFollowGate) {
+          safeText = safeText + `\n\n👉 (Please reply "Done" after following!)`;
+      } else if (urlLinks.length === 0) {
+          safeText = safeText + `\n\n👉 (Please reply "Done" to continue)`;
+      }
     }
 
     if (effectiveButtons.length > 0) {
