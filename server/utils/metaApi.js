@@ -213,9 +213,10 @@ export const sendPrivateReply = async (platform, commentId, text, userId = null)
  */
 export const checkMediaReadiness = async (mediaId, accessToken) => {
   try {
+    // Try to get status_code first (supported by all media types)
     const statusRes = await axios.get(`https://graph.facebook.com/v19.0/${mediaId}`, {
       params: {
-        fields: 'status_code,video_status',
+        fields: 'status_code',
         access_token: accessToken
       }
     });
@@ -225,8 +226,19 @@ export const checkMediaReadiness = async (mediaId, accessToken) => {
     if (statusCode === 'FINISHED') {
       return true;
     } else if (statusCode === 'ERROR') {
-      const videoStatus = statusRes.data.video_status || {};
-      throw new Error(`Meta Processing Error: ${videoStatus.message || statusCode}`);
+      // If it failed, try to get video_status for more details
+      try {
+        const videoStatusRes = await axios.get(`https://graph.facebook.com/v19.0/${mediaId}`, {
+          params: {
+            fields: 'video_status',
+            access_token: accessToken
+          }
+        });
+        const videoStatus = videoStatusRes.data.video_status || {};
+        throw new Error(`Meta Processing Error: ${videoStatus.message || statusCode}`);
+      } catch (e) {
+        throw new Error(`Meta Processing Error: ${statusCode}`);
+      }
     }
     
     return false; // Still processing
