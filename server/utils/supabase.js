@@ -85,7 +85,6 @@ function parseFilter(q, queryObj, tableName) {
     'userId': (tableName === 'captions' || tableName === 'scheduled_posts' || tableName === 'campaigns') ? 'user_id' : 'userId',
     'createdAt': (tableName === 'scheduled_posts' || tableName === 'captions') ? 'created_at' : 'createdAt',
     'updatedAt': (tableName === 'scheduled_posts' || tableName === 'captions') ? 'updated_at' : 'updatedAt',
-    'scheduledFor': (tableName === 'scheduled_posts') ? 'scheduled_for' : 'scheduledFor',
     'dmsSent': (tableName === 'campaigns') ? 'dms_sent' : 'dmsSent',
     'triggerKeyword': 'triggerKeyword',
     'autoResponse': 'autoResponse',
@@ -126,9 +125,6 @@ function parseFilter(q, queryObj, tableName) {
         let subParsedKey = subKey === '_id' || subKey === 'id' ? 'id' : subKey;
         if (subKey === 'userId') {
           subParsedKey = (tableName === 'captions' || tableName === 'scheduled_posts' || tableName === 'campaigns') ? 'user_id' : 'userId';
-        }
-        if (subKey === 'scheduledFor') {
-          subParsedKey = (tableName === 'scheduled_posts') ? 'scheduled_for' : 'scheduledFor';
         }
         
         // Map ObjectID queries to UUID queries for UUID columns in $or
@@ -198,8 +194,6 @@ function convertIncoming(doc, tableName) {
   if (newDoc.userId) newDoc.userId = convertUUIDToObjectID(newDoc.userId);
   if (doc.created_at) newDoc.createdAt = doc.created_at;
   if (doc.updated_at) newDoc.updatedAt = doc.updated_at;
-  if (doc.scheduled_for) newDoc.scheduledFor = doc.scheduled_for;
-  if (doc.scheduledFor) newDoc.scheduledFor = doc.scheduledFor;
   if (doc.automation_status) newDoc.automationStatus = doc.automation_status;
 
   ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost', 'isUniversal'].forEach(field => {
@@ -266,11 +260,6 @@ function convertOutgoing(doc, tableName) {
     const fieldName = (tableName === 'scheduled_posts' || tableName === 'captions') ? 'updated_at' : 'updatedAt';
     newDoc[fieldName] = newDoc.updatedAt;
     if (fieldName !== 'updatedAt') delete newDoc.updatedAt;
-  }
-  
-  if (newDoc.scheduledFor && tableName === 'scheduled_posts') {
-    newDoc.scheduled_for = newDoc.scheduledFor;
-    delete newDoc.scheduledFor;
   }
   
   if (newDoc.automationStatus) {
@@ -380,7 +369,6 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
           if (field === 'createdAt') parsedField = (tableName === 'scheduled_posts' || tableName === 'captions') ? 'created_at' : 'createdAt';
           if (field === 'updatedAt') parsedField = (tableName === 'scheduled_posts' || tableName === 'captions') ? 'updated_at' : 'updatedAt';
           if (field === 'userId') parsedField = (tableName === 'captions' || tableName === 'scheduled_posts' || tableName === 'campaigns') ? 'user_id' : 'userId';
-          if (field === 'scheduledFor') parsedField = (tableName === 'scheduled_posts') ? 'scheduled_for' : 'scheduledFor';
           
           console.log(`   └─ Sorting by: ${parsedField} (${dir === 1 ? 'asc' : 'desc'}) for table ${tableName}`);
           q = q.order(parsedField, { ascending: dir === 1 });
