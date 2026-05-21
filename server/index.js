@@ -2322,10 +2322,11 @@ async function runSchedulingWorker() {
       const anyPost = await ScheduledPost.findOne({ status: 'Scheduled' });
       if (anyPost) {
         console.log(`🔍 [Worker] Found a future post: ID ${anyPost.id}, scheduled for ${anyPost.scheduledFor}`);
+        return { message: 'No due posts found. Future post exists.', anyPost, nowISO };
       } else {
         console.log(`🔍 [Worker] No posts with status "Scheduled" found in database.`);
+        return { message: 'No scheduled posts found in database.', nowISO };
       }
-      return;
     }
 
     console.log(`🔥 [Worker] Processing ${duePosts.length} posts...`);
@@ -2500,9 +2501,11 @@ async function runSchedulingWorker() {
       }
     });
 
-    await Promise.allSettled(processPromises);
+    const results = await Promise.allSettled(processPromises);
+    return { message: 'Processed due posts', count: duePosts.length, results };
   } catch (err) {
     console.error("🔥 CRITICAL WORKER ERROR:", err.message);
+    return { error: err.message };
   }
 }
 
@@ -2517,10 +2520,10 @@ app.get('/api/cron/publish', async (req, res) => {
   
   console.log('⏰ [CRON] Vercel Cron Job triggered scheduling check...');
   const startTime = Date.now();
-  await runSchedulingWorker();
+  const workerResult = await runSchedulingWorker();
   const elapsed = Date.now() - startTime;
   console.log(`✅ [CRON] Worker finished in ${elapsed}ms`);
-  res.json({ success: true, message: 'Scheduling check completed', elapsed });
+  res.json({ success: true, message: 'Scheduling check completed', elapsed, workerResult });
 });
 
 // ── Public Testimonials & Reviews API (Supabase Postgres Database) ──────────
