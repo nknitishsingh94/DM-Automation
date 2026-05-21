@@ -54,7 +54,7 @@ const isUUID = (str) => {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 };
 
-const convertObjectIDToUUID = (id) => {
+export const convertObjectIDToUUID = (id) => {
   if (typeof id !== 'string') return id;
   if (id.length === 24 && /^[0-9a-f]{24}$/i.test(id)) {
     return `${id.substring(0, 8)}-${id.substring(8, 12)}-${id.substring(12, 16)}-${id.substring(16, 20)}-${id.substring(20, 24)}00000000`;

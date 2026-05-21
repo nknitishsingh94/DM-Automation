@@ -1667,9 +1667,9 @@ app.get('/api/captions', verifyToken, async (req, res) => {
 
 app.post('/api/captions', verifyToken, async (req, res) => {
   try {
-    const { supabase } = await import('./utils/supabase.js');
+    const { supabase, convertObjectIDToUUID } = await import('./utils/supabase.js');
     const { title, content } = req.body;
-    const userId = req.user.userId;
+    const userId = convertObjectIDToUUID(req.user.userId);
 
     console.log('📝 Saving caption for user:', userId, '| title:', title);
 
