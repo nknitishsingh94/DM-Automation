@@ -746,8 +746,8 @@ app.post('/api/webhook', async (req, res) => {
         console.log(`📩 Messaging detected from ${senderId}`);
 
         // 1.1 Handle Messages (Text/Story)
-        if (messaging.message?.text || messaging.message?.story) {
-          const isStoryMention = !!messaging.message?.story;
+        if (messaging.message?.text || messaging.message?.story || messaging.message?.reply_to?.story) {
+          const isStoryMention = !!(messaging.message?.story || messaging.message?.reply_to?.story);
           const messageText = messaging.message?.text || (isStoryMention ? "[Story Mention]" : "");
 
           console.log(`📬 INCOMING DM: ${isStoryMention ? 'Story' : 'DM'} | Sender: ${senderId} | Msg: ${messageText}`);
