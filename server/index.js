@@ -366,11 +366,14 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
          try {
            const { generateAIResponse } = await import('./utils/aiHandler.js');
            const generated = await generateAIResponse(match.userId, `User just confirmed they want the link. Warmly deliver the content for "${match.triggerKeyword || match.trigger}".`);
-           if (generated) finalResponse = generated;
+           if (generated) {
+             if (finalResponse === "[AI Agent will generate a custom neural reply here]" || !finalResponse.trim()) {
+               finalResponse = generated;
+             } else {
+               finalResponse = generated + "\n\n" + finalResponse;
+             }
+           }
          } catch (e) {
-           finalResponse = "Here it is! Click the button below! 👇";
-         }
-      } else if (finalResponse === "[AI Agent will generate a custom neural reply here]") {
          finalResponse = "Here is your link! 👇";
       }
 
@@ -579,7 +582,11 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       try {
         const generated = await generateAIResponse(userId, text);
         if (generated) {
-          finalResponse = generated;
+          if (finalResponse === "[AI Agent will generate a custom neural reply here]" || !finalResponse.trim()) {
+            finalResponse = generated;
+          } else {
+            finalResponse = generated + "\n\n" + finalResponse;
+          }
         }
       } catch (aiErr) {
         console.error("🔥 Campaign AI generation failed, falling back to static response:", aiErr);
@@ -876,7 +883,11 @@ app.post('/api/webhook', async (req, res) => {
                      // Note: We use a descriptive prompt for the AI since there's no user text for a button click
                      const generated = await generateAIResponse(match.userId, `User just clicked the button to get the link for campaign "${match.trigger}". Give a very warm, short, friendly one-sentence reply handing them the link.`);
                      if (generated) {
-                       finalResponse = generated;
+                       if (finalResponse === "[AI Agent will generate a custom neural reply here]" || !finalResponse.trim()) {
+                         finalResponse = generated;
+                       } else {
+                         finalResponse = generated + "\n\n" + finalResponse;
+                       }
                      }
                    } catch (aiErr) {
                      console.error("🔥 Postback AI generation failed:", aiErr);
@@ -945,9 +956,14 @@ app.post('/api/webhook', async (req, res) => {
                    try {
                      const { generateAIResponse } = await import('./utils/aiHandler.js');
                      const generated = await generateAIResponse(match.userId, `User just confirmed they want the link. Warmly deliver the content for "${match.trigger}".`);
-                     if (generated) finalResponse = generated;
+                     if (generated) {
+                       if (finalResponse === "[AI Agent will generate a custom neural reply here]" || !finalResponse.trim()) {
+                         finalResponse = generated;
+                       } else {
+                         finalResponse = generated + "\n\n" + finalResponse;
+                       }
+                     }
                    } catch (e) {
-                     finalResponse = "Here it is! Click the button below! 👇";
                    }
                 } else if (finalResponse === "[AI Agent will generate a custom neural reply here]") {
                    finalResponse = "Here is your link! 👇";
@@ -2334,7 +2350,7 @@ async function runSchedulingWorker() {
         }
 
         // If the media URL is a local path, convert it to a public URL
-        const SERVER_PUBLIC_URL = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 5001}`;
+        const SERVER_PUBLIC_URL = process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
         
         if (finalMedia && finalMedia.startsWith('/uploads/')) {
           finalMedia = `${SERVER_PUBLIC_URL}${finalMedia}`;
