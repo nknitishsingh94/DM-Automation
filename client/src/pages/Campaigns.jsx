@@ -23,7 +23,7 @@ export default function Campaigns() {
     videoUrl: '', 
     linkUrl: '',
     requireFollow: false,
-    unfollowedResponse: '',
+    unfollowedResponse: 'Hey! To get the link, please follow our page first! 😊',
     isUniversal: false
   });
   
@@ -183,7 +183,7 @@ export default function Campaigns() {
           videoUrl: '', 
           linkUrl: '',
           requireFollow: false,
-          unfollowedResponse: '',
+          unfollowedResponse: 'Hey! To get the link, please follow our page first! 😊',
           isUniversal: false
         });
         setFormStep(1);
