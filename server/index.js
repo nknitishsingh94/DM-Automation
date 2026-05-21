@@ -1657,20 +1657,24 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
 app.get('/api/captions', verifyToken, async (req, res) => {
   try {
     const captions = await Caption.find({ userId: req.user.userId }).sort({ createdAt: -1 });
-    res.json(captions);
+    res.json(captions || []);
   } catch (err) {
-    console.error('❌ CAPTIONS FETCH ERROR:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error('❌ CAPTIONS FETCH ERROR:', err.message, err.code, err.details, err.hint);
+    // Return empty array instead of 500 so UI doesn't crash
+    res.json([]);
   }
 });
 
 app.post('/api/captions', verifyToken, async (req, res) => {
   try {
+    console.log('📝 Saving caption for user:', req.user.userId, 'Body:', req.body);
     const newCaption = new Caption({ ...req.body, userId: req.user.userId });
     await newCaption.save();
+    console.log('✅ Caption saved:', newCaption);
     res.json(newCaption);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('❌ CAPTIONS SAVE ERROR:', err.message, err.code, err.details, err.hint);
+    res.status(500).json({ error: err.message, details: err.details, hint: err.hint });
   }
 });
 
