@@ -903,9 +903,10 @@ app.post('/api/webhook', async (req, res) => {
                   await Contact.findOneAndUpdate({ chatId: senderId, userId: match.userId }, { $unset: { pendingCampaignId: 1 } });
 
                   // 2. Send the "Send me the link" intermediate button
-                  const followSuccessText = "Verified! Awesome. Click below to receive your link instantly. 🚀";
+                  const followSuccessText = match.openingMessageText || "Verified! Awesome. Click below to receive your link instantly. 🚀";
+                  const sendLinkButtonText = match.openingMessageButton || "Send me the link! 🔗";
                   const sendLinkPayload = `SEND_LINK_${match._id}`;
-                  await sendMessageToInstagram(platform, senderId, followSuccessText, '', match.userId, "Send me the link! 🔗", activeToken, [], sendLinkPayload);
+                  await sendMessageToInstagram(platform, senderId, followSuccessText, '', match.userId, sendLinkButtonText, activeToken, [], sendLinkPayload);
                 } else {
                   console.log(`🚫 STILL NOT FOLLOWING: ${senderId}`);
                   const retryText = "It looks like you haven't followed yet! Please follow our profile and then click the button again. 😊";
