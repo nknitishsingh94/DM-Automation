@@ -215,12 +215,11 @@ function convertIncoming(doc, tableName) {
         const valStr = newDoc.response.slice(startIdx + '__IS_AI__:'.length, endIdx);
         newDoc.isAI = valStr === 'true';
         newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_IS_AI__'.length);
-      }
     } else {
       newDoc.isAI = false;
     }
   }
-  if (tableName === 'captions') {
+  if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.user_id) {
       newDoc.userId = newDoc.user_id;
       delete newDoc.user_id;
@@ -259,7 +258,7 @@ function convertOutgoing(doc, tableName) {
     delete newDoc.name;
     delete newDoc.isAI;
   }
-  if (tableName === 'captions') {
+  if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.userId) {
       newDoc.user_id = newDoc.userId;
       delete newDoc.userId;
