@@ -1639,6 +1639,26 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
     const newPost = new ScheduledPost(postData);
     try {
       await newPost.save();
+
+      // OPTIMIZATION: Trigger the scheduling worker immediately if scheduled for now/past
+      const isDue = !newPost.scheduledFor || new Date(newPost.scheduledFor) <= new Date();
+      if (isDue) {
+        console.log(`🚀 [Scheduling] Post ${newPost.id || newPost._id} is due immediately. Triggering worker...`);
+        
+        // 1. Local in-process execution (async, non-blocking)
+        setImmediate(() => {
+          runSchedulingWorker().catch(err => {
+            console.error("❌ Error in background in-process worker:", err.message);
+          });
+        });
+
+        // 2. External self-ping to prevent Vercel container freezing (fire and forget)
+        const SERVER_PUBLIC_URL = process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
+        axios.get(`${SERVER_PUBLIC_URL}/api/cron/publish`).catch(err => {
+          console.warn(`⚠️ Background API ping warning:`, err.message);
+        });
+      }
+
       res.json(newPost);
     } catch (saveErr) {
       console.error('❌ SUPABASE SAVE ERROR (ScheduledPost):', saveErr.message || saveErr);
@@ -1826,6 +1846,26 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
       }
     } catch (campaignErr) {
       console.error('⚠️ Campaign Sync Error (Non-critical):', campaignErr.message);
+    }
+    
+    // OPTIMIZATION: Trigger the scheduling worker immediately if scheduled for now/past
+    const isDue = (updatedPost.status === 'Scheduled' || updatedPost.status === 'Retrying') &&
+                  (!updatedPost.scheduledFor || new Date(updatedPost.scheduledFor) <= new Date());
+    if (isDue) {
+      console.log(`🚀 [Scheduling] Post ${updatedPost.id || updatedPost._id} is updated and due immediately. Triggering worker...`);
+      
+      // 1. Local in-process execution (async, non-blocking)
+      setImmediate(() => {
+        runSchedulingWorker().catch(err => {
+          console.error("❌ Error in background in-process worker:", err.message);
+        });
+      });
+
+      // 2. External self-ping to prevent Vercel container freezing (fire and forget)
+      const SERVER_PUBLIC_URL = process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
+      axios.get(`${SERVER_PUBLIC_URL}/api/cron/publish`).catch(err => {
+        console.warn(`⚠️ Background API ping warning:`, err.message);
+      });
     }
     
     res.json(updatedPost);
