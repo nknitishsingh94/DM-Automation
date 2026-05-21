@@ -2450,18 +2450,9 @@ console.log('⏰ Scheduling worker started (20s interval).');
 // Vercel Cron/Webhook Route to trigger scheduler
 // This is the PRIMARY trigger on Vercel (serverless = no persistent setInterval)
 app.get('/api/cron/publish', async (req, res) => {
-  const isVercelCron = req.headers['x-vercel-cron'] === '1';
-  const authHeader = req.headers.authorization;
-  const hasSecret = !!process.env.CRON_SECRET;
-  
-  // Allow Vercel internal cron OR a valid CRON_SECRET OR an authenticated user
-  const isAuthorized = isVercelCron || 
-                      (hasSecret && authHeader === `Bearer ${process.env.CRON_SECRET}`) ||
-                      (!hasSecret && authHeader); // If no secret, any auth token works
-  
-  if (!isAuthorized) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+  // Authorization check removed to allow external ping services like cron-job.org
+  // to trigger the scheduler without needing special headers.
+  // The worker only processes posts that are already due in the database.
   
   console.log('⏰ [CRON] Vercel Cron Job triggered scheduling check...');
   const startTime = Date.now();
