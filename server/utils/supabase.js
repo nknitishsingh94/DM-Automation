@@ -607,13 +607,28 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
 
   ModelInstance.updateMany = async function (query, updateData, options = {}) {
     if (!supabase) return { acknowledged: true, modifiedCount: 0 };
+    
+    // Check if we are using complex Mongo operators
+    const hasOperators = Object.keys(updateData).some(k => k.startsWith('$'));
+    
+    if (!hasOperators) {
+      // FAST PATH: Bulk update directly!
+      let q = supabase.from(tableName).update(convertOutgoing(updateData, tableName));
+      q = parseFilter(q, query, tableName);
+      const { data, error } = await q.select('id');
+      if (error) throw error;
+      return { acknowledged: true, modifiedCount: data ? data.length : 0 };
+    }
+
+    // SLOW PATH: Mongo operators ($set, $inc, etc)
     let q = supabase.from(tableName).select('*');
     q = parseFilter(q, query, tableName);
     const { data, error } = await q;
     if (error) throw error;
     if (data && data.length > 0) {
       let modifiedCount = 0;
-      for (const existing of data) {
+      
+      const updatePromises = data.map(async (existing) => {
         let finalUpdate = { ...updateData };
         if (updateData.$set) {
           finalUpdate = { ...finalUpdate, ...updateData.$set };
@@ -635,8 +650,10 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
         const cleanUpdate = convertOutgoing(merged, tableName);
         const { error: upErr } = await supabase.from(tableName).update(cleanUpdate).eq('id', existing.id);
         if (upErr) throw upErr;
-        modifiedCount++;
-      }
+      });
+
+      await Promise.all(updatePromises);
+      modifiedCount = data.length;
       return { acknowledged: true, modifiedCount };
     }
     return { acknowledged: true, modifiedCount: 0 };
