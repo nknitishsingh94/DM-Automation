@@ -339,7 +339,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         const profileUrl = igUsername ? `https://www.instagram.com/${igUsername.replace('@', '')}/` : `https://www.instagram.com/`;
         
         const followButtons = [
-          { text: 'Follow Us 👤', url: profileUrl },
+          { text: 'View Profile', url: profileUrl },
           { text: "I've Followed! ✅", payload: checkFollowPayload }
         ];
         await sendMessageToInstagram(platform, chatId, followText, '', userId, '', activeToken, followButtons, '');
@@ -498,7 +498,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
         // Always send TWO buttons: Visit Profile (URL) + I've Followed (postback)
         const followButtons = [
-          { text: 'Follow Us 👤', url: profileUrl },
+          { text: 'View Profile', url: profileUrl },
           { text: "I've Followed! ✅", payload: checkFollowPayload }
         ];
         console.log(`📎 Profile URL for follow gate: ${profileUrl}`);
