@@ -82,7 +82,7 @@ function parseFilter(q, queryObj, tableName) {
   }
 
   const fieldMap = {
-    'userId': (tableName === 'captions' || tableName === 'scheduled_posts') ? 'user_id' : 'userId',
+    'userId': (tableName === 'captions' || tableName === 'scheduled_posts' || tableName === 'campaigns') ? 'user_id' : 'userId',
     'createdAt': (tableName === 'scheduled_posts' || tableName === 'captions') ? 'created_at' : 'createdAt',
     'updatedAt': (tableName === 'scheduled_posts' || tableName === 'captions') ? 'updated_at' : 'updatedAt',
     'scheduledFor': (tableName === 'scheduled_posts') ? 'scheduled_for' : 'scheduledFor',
@@ -125,7 +125,10 @@ function parseFilter(q, queryObj, tableName) {
         let subVal = subValRaw instanceof Date ? subValRaw.toISOString() : subValRaw;
         let subParsedKey = subKey === '_id' || subKey === 'id' ? 'id' : subKey;
         if (subKey === 'userId') {
-          subParsedKey = (tableName === 'captions') ? 'user_id' : 'userId';
+          subParsedKey = (tableName === 'captions' || tableName === 'scheduled_posts' || tableName === 'campaigns') ? 'user_id' : 'userId';
+        }
+        if (subKey === 'scheduledFor') {
+          subParsedKey = (tableName === 'scheduled_posts') ? 'scheduled_for' : 'scheduledFor';
         }
         
         // Map ObjectID queries to UUID queries for UUID columns in $or
@@ -195,6 +198,7 @@ function convertIncoming(doc, tableName) {
   if (newDoc.userId) newDoc.userId = convertUUIDToObjectID(newDoc.userId);
   if (doc.created_at) newDoc.createdAt = doc.created_at;
   if (doc.updated_at) newDoc.updatedAt = doc.updated_at;
+  if (doc.scheduled_for) newDoc.scheduledFor = doc.scheduled_for;
   if (doc.scheduledFor) newDoc.scheduledFor = doc.scheduledFor;
   if (doc.automation_status) newDoc.automationStatus = doc.automation_status;
 
