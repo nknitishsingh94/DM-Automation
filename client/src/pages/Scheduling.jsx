@@ -331,9 +331,39 @@ export default function Scheduling() {
     // Auto-refresh post list every 20s so status updates (Scheduled → Posted) show live
     const refreshInterval = setInterval(fetchPosts, 20000);
 
+    // ── Supabase Realtime Subscription ───────────────────────────────────
+    // Listen for real-time updates to scheduled_posts status
+    const channel = supabase
+      .channel('scheduled_posts_changes')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'scheduled_posts' },
+        (payload) => {
+          console.log('🔔 [Realtime] Post Update Received:', payload.new);
+          setPosts(currentPosts => 
+            currentPosts.map(post => 
+              (post._id === payload.new.id || post.id === payload.new.id) 
+                ? { ...post, ...payload.new, _id: payload.new.id } 
+                : post
+            )
+          );
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'scheduled_posts' },
+        (payload) => {
+          console.log('🔔 [Realtime] New Post Inserted:', payload.new);
+          // Only add if it belongs to current user (though table level RLS should handle this)
+          fetchPosts(); 
+        }
+      )
+      .subscribe();
+
     return () => {
       clearInterval(cronInterval);
       clearInterval(refreshInterval);
+      supabase.removeChannel(channel);
     };
   }, []);
 
@@ -806,12 +836,12 @@ export default function Scheduling() {
                   <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                     {/* Status Badge */}
                     <div style={{
-                      background: post.status === 'Posted' ? '#10b981' : post.status === 'Failed' ? '#ef4444' : '#7c3aed',
+                      background: post.status === 'Posted' ? '#10b981' : (post.status === 'Failed' ? '#ef4444' : (post.status === 'Processing' ? '#3b82f6' : '#7c3aed')),
                       color: 'white', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px',
                       fontSize: '0.65rem', fontWeight: '800', boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                     }}>
-                      {post.status === 'Retrying' ? (
-                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', border: '1.5px solid white', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
+                      {(post.status === 'Retrying' || post.status === 'Processing') ? (
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', border: '1.5px solid white', borderTopColor: 'transparent', animation: 'spin 1s linear infinite' }} />
                       ) : (
                         <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'white' }} />
                       )}
