@@ -43,7 +43,16 @@ router.get('/facebook/callback', async (req, res) => {
   const isFromOnboarding = state && state.includes('_onboarding');
   const isInstagram = state && state.includes('_instagram');
   const isFacebook = state && state.includes('_facebook');
-  let userId = state ? state.replace('_onboarding', '').replace('_instagram', '').replace('_facebook', '') : '';
+  const isWhatsApp = state && state.includes('_whatsapp');
+  const isThreads = state && state.includes('_threads');
+  let userId = state
+    ? state
+        .replace('_onboarding', '')
+        .replace('_instagram', '')
+        .replace('_facebook', '')
+        .replace('_whatsapp', '')
+        .replace('_threads', '')
+    : '';
 
   if (error) {
     console.error("OAuth Error:", error);
@@ -126,10 +135,42 @@ router.get('/facebook/callback', async (req, res) => {
       }
     }
 
-    // 4. (WhatsApp Discovery Removed - Instagram Only Flow)
+    // 4. WhatsApp Business Account discovery (only if connecting WhatsApp)
     let whatsappPhoneId = '';
     let whatsappName = '';
-    let whatsappDiscoveryError = '';
+    let whatsappBusinessAccountId = '';
+
+    if (isWhatsApp) {
+      try {
+        console.log('📱 Attempting WhatsApp Business Account discovery...');
+        const wabaUrl = `https://graph.facebook.com/v19.0/me/whatsapp_business_accounts?access_token=${longToken}`;
+        const wabaRes = await axios.get(wabaUrl);
+        const wabaList = wabaRes.data?.data || [];
+        if (wabaList.length > 0) {
+          const waba = wabaList[0];
+          whatsappBusinessAccountId = waba.id;
+          // Fetch phone numbers under this WABA
+          try {
+            const phoneUrl = `https://graph.facebook.com/v19.0/${waba.id}/phone_numbers?fields=id,display_phone_number,verified_name&access_token=${longToken}`;
+            const phoneRes = await axios.get(phoneUrl);
+            const phones = phoneRes.data?.data || [];
+            if (phones.length > 0) {
+              whatsappPhoneId = phones[0].id;
+              whatsappName = phones[0].verified_name || phones[0].display_phone_number || 'WhatsApp Business';
+              console.log(`✅ WhatsApp Phone Number found: ${whatsappPhoneId} (${whatsappName})`);
+            } else {
+              console.warn('⚠️ WABA found but no phone numbers configured yet.');
+            }
+          } catch (phoneErr) {
+            console.warn('⚠️ Could not fetch WABA phone numbers:', phoneErr.message);
+          }
+        } else {
+          console.warn('⚠️ No WhatsApp Business Accounts found for this user.');
+        }
+      } catch (wabaErr) {
+        console.warn('⚠️ WhatsApp Business Account discovery failed:', wabaErr.response?.data || wabaErr.message);
+      }
+    }
 
     // 4.5. AUTOMATICALLY SUBSCRIBE APP TO PAGE WEBHOOKS (CRITICAL FOR RECEIVING MESSAGES)
     if (pageId && pageAccessToken) {
@@ -146,28 +187,44 @@ router.get('/facebook/callback', async (req, res) => {
       }
     }
 
-    // 5. Save to Database
+    // 5. Save to Database — save only the relevant platform fields
     const updateData = { lastTestedAt: new Date() };
 
-    if (isInstagram) {
+    if (isThreads) {
+      // Serialize Threads data into connectedPageName TEXT column (no extra schema needed)
+      const threadsData = {
+        isThreadsConnected: true,
+        threadsAccessToken: pageAccessToken || longToken,
+        threadsPageId: pageId || '',
+        connectedThreadsName: accountName || 'Threads Account'
+      };
+      updateData.connectedPageName = JSON.stringify(threadsData);
+      console.log(`✅ Threads: Serialized connection for user ${userId}.`);
+    } else if (isWhatsApp) {
+      updateData.isWhatsAppConnected = !!whatsappPhoneId;
+      if (whatsappPhoneId) {
+        updateData.whatsappToken = longToken;
+        updateData.whatsappPhoneNumberId = whatsappPhoneId;
+        updateData.whatsappBusinessAccountId = whatsappBusinessAccountId;
+        updateData.isWhatsAppConnected = true;
+        console.log(`✅ WhatsApp: Saved Phone ID ${whatsappPhoneId} for user ${userId}.`);
+      } else {
+        console.warn('⚠️ WhatsApp connected but no phone number ID found. Marking as connected without phone ID.');
+        updateData.isWhatsAppConnected = false;
+      }
+    } else if (isInstagram) {
       updateData.instagramAccessToken = pageAccessToken;
       updateData.instagramPageId = pageId;
       updateData.businessAccountId = businessAccountId;
       updateData.isAccountConnected = !!businessAccountId;
       updateData.connectedInstagramName = accountName;
-      
-      // Explicitly ensure Facebook is not marked connected
-      updateData.isFacebookConnected = false;
-      updateData.facebookPageId = null;
-      updateData.facebookAccessToken = null;
-      updateData.connectedFacebookName = null;
     } else if (isFacebook) {
       updateData.facebookAccessToken = pageAccessToken;
       updateData.facebookPageId = pageId;
       updateData.isFacebookConnected = !!pageId;
       updateData.connectedFacebookName = accountName;
     } else {
-      // General flow: try to fill everything only if no platform was explicitly specified
+      // Default/general flow — fill Instagram + Facebook fields
       updateData.instagramAccessToken = pageAccessToken;
       updateData.facebookAccessToken = pageAccessToken;
       updateData.instagramPageId = pageId;
@@ -175,27 +232,15 @@ router.get('/facebook/callback', async (req, res) => {
       updateData.facebookPageId = pageId;
       updateData.connectedInstagramName = accountName;
       updateData.connectedFacebookName = accountName;
-
       updateData.isFacebookConnected = !!pageId;
       updateData.isAccountConnected = !!businessAccountId;
     }
 
-    updateData.isWhatsAppConnected = !!whatsappPhoneId;
-
-    if (whatsappPhoneId) {
-      updateData.whatsappToken = longToken;
-      updateData.whatsappPhoneNumberId = whatsappPhoneId;
-      updateData.isWhatsAppConnected = !!whatsappPhoneId;
-      updateData.connectedWhatsAppName = whatsappName;
+    // Non-WhatsApp flows: don't overwrite whatsapp fields
+    if (!isWhatsApp && !isThreads) {
+      // Only touch WhatsApp fields if it was explicitly a WhatsApp connection
+      // (Leave whatsapp* columns untouched for Instagram/Facebook flows)
     }
-
-    // CRITICAL: Ensure the overall connection flag is true if ANYTHING is connected
-    // This prevents the Dashboard from redirecting back to onboarding
-    if (updateData.isAccountConnected || updateData.isFacebookConnected || updateData.isWhatsAppConnected) {
-      console.log("💎 Connection established. Overriding error states.");
-    }
-    delete updateData.whatsappError;
-    delete updateData.whatsappDiscoveryError;
 
     /*
     // Strict Single-Owner Mapping: Clean up other settings rows that might be linked to this page/account

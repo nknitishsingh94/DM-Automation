@@ -46,18 +46,18 @@ export default function Settings() {
   const platformsList = [
     { name: 'TikTok', icon: MusicIcon, color: '#000000', enabled: false },
     { name: 'Instagram', icon: Instagram, color: '#ec4899', enabled: true },
-    { name: 'Facebook', icon: Facebook, color: '#1877f2', enabled: false },
+    { name: 'Facebook', icon: Facebook, color: '#1877f2', enabled: true },
     { name: 'YouTube', icon: Youtube, color: '#ff0000', enabled: false },
     { name: 'LinkedIn', icon: Linkedin, color: '#0077b5', enabled: false },
     { name: 'Twitter/X', icon: Twitter, color: '#0f1419', enabled: false },
-    { name: 'Threads', icon: ThreadsIcon, color: '#000000', enabled: false },
+    { name: 'Threads', icon: ThreadsIcon, color: '#000000', enabled: true },
     { name: 'Bluesky', icon: Globe, color: '#0a7aff', enabled: false },
     { name: 'Pinterest', icon: Save, color: '#bd081c', enabled: false },
     { name: 'Reddit', icon: Globe, color: '#ff4500', enabled: false },
     { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: false },
     { name: 'Telegram', icon: Send, color: '#0088cc', enabled: false },
     { name: 'Discord', icon: MessageSquare, color: '#5865f2', enabled: false },
-    { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: false }
+    { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: true }
   ];
 
   useEffect(() => {
@@ -75,11 +75,21 @@ export default function Settings() {
         }
 
         const data = await res.json();
-        // Ensure connection flags are cleanly isolated
+        // Parse Threads info from the connectedPageName JSON blob
+        let threadsInfo = {};
+        if (data.connectedPageName) {
+          try { threadsInfo = JSON.parse(data.connectedPageName); } catch (e) {}
+        }
+        // Derive connection flags from real data
         const derivedData = {
           ...data,
           isAccountConnected: !!data.instagramAccessToken && !!data.businessAccountId,
-          isFacebookConnected: false // Keep Facebook inactive per request
+          isFacebookConnected: !!data.facebookAccessToken && !!data.facebookPageId,
+          isWhatsAppConnected: !!data.whatsappToken && !!data.whatsappPhoneNumberId,
+          isThreadsConnected: !!threadsInfo.isThreadsConnected,
+          threadsAccessToken: threadsInfo.threadsAccessToken || null,
+          threadsPageId: threadsInfo.threadsPageId || null,
+          connectedThreadsName: threadsInfo.connectedThreadsName || null
         };
         setSettings(s => ({ ...s, ...derivedData }));
         setLoading(false);
@@ -131,10 +141,19 @@ export default function Settings() {
         setMessage({ type: 'error', text: data.error || 'Connection failed.' });
         notify(data.error || 'Connection failed.', 'error');
       } else {
+        let threadsInfo = {};
+        if (data.connectedPageName) {
+          try { threadsInfo = JSON.parse(data.connectedPageName); } catch (e) {}
+        }
         const derivedData = {
           ...data,
           isAccountConnected: !!data.instagramAccessToken && !!data.businessAccountId,
-          isFacebookConnected: false
+          isFacebookConnected: !!data.facebookAccessToken && !!data.facebookPageId,
+          isWhatsAppConnected: !!data.whatsappToken && !!data.whatsappPhoneNumberId,
+          isThreadsConnected: !!threadsInfo.isThreadsConnected,
+          threadsAccessToken: threadsInfo.threadsAccessToken || null,
+          threadsPageId: threadsInfo.threadsPageId || null,
+          connectedThreadsName: threadsInfo.connectedThreadsName || null
         };
         setSettings(s => ({ ...s, ...derivedData }));
         if (e) {
@@ -190,9 +209,34 @@ export default function Settings() {
     }
   };
 
-  const triggerConnect = () => {
+  const triggerConnect = (platformName = 'instagram') => {
     setRedirectingInsta(true);
-    window.location.href = `${API_BASE_URL}/api/oauth/facebook?connectType=instagram&token=${localStorage.getItem('insta_agent_token')}`;
+    const connectType = platformName.toLowerCase() === 'facebook' ? 'facebook'
+      : platformName.toLowerCase() === 'whatsapp' ? 'whatsapp'
+      : platformName.toLowerCase() === 'threads' ? 'threads'
+      : 'instagram';
+    window.location.href = `${API_BASE_URL}/api/oauth/facebook?connectType=${connectType}&token=${localStorage.getItem('insta_agent_token')}`;
+  };
+
+  const handleDisconnectFacebook = () => {
+    if (!window.confirm('Facebook disconnect karna chahte hain? Facebook automation ruk jayega.')) return;
+    const cleared = { ...settings, facebookAccessToken: null, facebookPageId: null, connectedFacebookName: null, isFacebookConnected: false };
+    setSettings(cleared);
+    handleSaveSettings(null, cleared);
+  };
+
+  const handleDisconnectWhatsApp = () => {
+    if (!window.confirm('WhatsApp disconnect karna chahte hain? WhatsApp automation ruk jayega.')) return;
+    const cleared = { ...settings, whatsappToken: null, whatsappPhoneNumberId: null, whatsappBusinessAccountId: null, isWhatsAppConnected: false };
+    setSettings(cleared);
+    handleSaveSettings(null, cleared);
+  };
+
+  const handleDisconnectThreads = () => {
+    if (!window.confirm('Threads disconnect karna chahte hain?')) return;
+    const cleared = { ...settings, connectedPageName: null, isThreadsConnected: false, threadsAccessToken: null, threadsPageId: null, connectedThreadsName: null };
+    setSettings(cleared);
+    handleSaveSettings(null, { ...cleared, connectedPageName: null });
   };
 
   if (loading) return (
@@ -348,198 +392,135 @@ export default function Settings() {
         padding: '24px'
       }}>
         
-        {settings.isAccountConnected && 
-         (statusFilter === 'All statuses' || statusFilter === 'Connected') && 
-         (platformFilter === 'All platforms' || platformFilter === 'Instagram') ? (
-          /* Active Integration Card Grid View - Replicates user screenshot perfectly */
+        {/* Check if ANY channel is connected based on active filters */}
+        {(
+          (settings.isAccountConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Instagram')) ||
+          (settings.isFacebookConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Facebook')) ||
+          (settings.isWhatsAppConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'WhatsApp')) ||
+          (settings.isThreadsConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Threads'))
+        ) ? (
+          /* Active Integration Card Grid View */
           <div className="connection-card-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'flex-start' }}>
-            
-            <div className="connection-card" style={{ 
-              width: '240px',
-              border: '1px solid #e5e7eb',
-              borderRadius: '12px',
-              padding: '16px',
-              background: '#ffffff',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-              position: 'relative'
-            }}>
-              {/* Header Row */}
+
+            {/* ---- INSTAGRAM CARD ---- */}
+            {settings.isAccountConnected && (platformFilter === 'All platforms' || platformFilter === 'Instagram') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            <div className="connection-card" style={{ width: '240px', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  {/* Rounded image avatar with tiny pink instagram overlay icon */}
                   <div style={{ position: 'relative', width: '42px', height: '42px' }}>
-                    <img 
-                      src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&auto=format&fit=crop&q=60" 
-                      alt="Instagram Avatar" 
-                      style={{ width: '42px', height: '42px', borderRadius: '8px', objectFit: 'cover' }}
-                    />
-                    <div style={{ 
-                      position: 'absolute', bottom: '-2px', right: '-2px', 
-                      width: '16px', height: '16px', borderRadius: '50%', 
-                      background: '#ec4899', display: 'flex', alignItems: 'center', 
-                      justifyContent: 'center', border: '1.5px solid white' 
-                    }}>
-                      <Instagram size={10} color="white" />
+                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Instagram size={22} color="white" />
                     </div>
                   </div>
                   <div>
                     <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Instagram</h4>
-                    <span style={{ 
-                      display: 'inline-block', background: '#ccfbf1', color: '#0f766e', 
-                      fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', 
-                      borderRadius: '4px', marginTop: '2px' 
-                    }}>
-                      connected
-                    </span>
+                    <span style={{ display: 'inline-block', background: '#ccfbf1', color: '#0f766e', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
                   </div>
                 </div>
-                
-                {/* Details Circle button */}
-                <Info 
-                  size={16} 
-                  color="#9ca3af" 
-                  style={{ cursor: 'pointer' }} 
-                  onClick={() => notify(`Instagram Integration: Page ID ${settings.instagramPageId || 'N/A'}`, "info")}
-                />
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Instagram: Page ID ${settings.instagramPageId || 'N/A'}`, 'info')} />
               </div>
-
-              {/* Username with Copy Icon */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                <span style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>
-                  @{settings.connectedInstagramName || 'monster__pk_8795'}
-                </span>
-                <span 
-                  style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
-                  onClick={() => {
-                    navigator.clipboard.writeText(settings.connectedInstagramName || 'monster__pk_8795');
-                    notify("Username copied to clipboard!", "success");
-                  }}
-                  title="Copy Username"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                  </svg>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>@{settings.connectedInstagramName || 'unknown'}</span>
+                <span style={{ cursor: 'pointer' }} onClick={() => { navigator.clipboard.writeText(settings.connectedInstagramName || ''); notify('Username copied!', 'success'); }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 </span>
               </div>
-
-              {/* Date */}
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>
-                {settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : '5/18/2026'}
-              </div>
-
-              {/* Default Badge */}
-              <div>
-                <span style={{ 
-                  display: 'inline-flex', alignItems: 'center', gap: '4px', 
-                  background: '#f3f4f6', color: '#4b5563', fontSize: '0.72rem', 
-                  fontWeight: '600', padding: '3px 8px', borderRadius: '4px' 
-                }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f97316' }}></span>
-                  Default
-                </span>
-              </div>
-
-              {/* AI Auto-Replies Toggle */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #f3f4f6', paddingTop: '8px', marginTop: '4px' }}>
+              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : ''}</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #f3f4f6', paddingTop: '8px' }}>
                 <span style={{ fontSize: '0.78rem', color: '#4b5563', fontWeight: '600' }}>AI auto-replies</span>
                 <label className="switch">
-                  <input 
-                    type="checkbox" 
-                    checked={settings.instagramAutomationEnabled}
-                    onChange={(e) => {
-                      const newVal = e.target.checked;
-                      setSettings(s => ({ ...s, instagramAutomationEnabled: newVal }));
-                      handleSaveSettings(null, { ...settings, instagramAutomationEnabled: newVal });
-                    }}
-                  />
+                  <input type="checkbox" checked={settings.instagramAutomationEnabled}
+                    onChange={(e) => { const v = e.target.checked; setSettings(s => ({ ...s, instagramAutomationEnabled: v })); handleSaveSettings(null, { ...settings, instagramAutomationEnabled: v }); }} />
                   <span className="slider round"></span>
                 </label>
               </div>
-
-              {/* Disconnect Button */}
-              <button 
-                onClick={() => {
-                  if(window.confirm("Are you sure you want to disconnect Instagram? Automation will stop immediately.")) {
-                    const clearedSettings = {
-                      ...settings,
-                      instagramAccessToken: null,
-                      instagramPageId: null,
-                      businessAccountId: null,
-                      connectedInstagramName: null,
-                      isAccountConnected: false
-                    };
-                    setSettings(clearedSettings);
-                    handleSaveSettings(null, clearedSettings);
-                  }
-                }}
-                style={{ 
-                  marginTop: '8px',
-                  width: '100%',
-                  padding: '8px',
-                  background: '#ffffff',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  color: '#374151',
-                  fontSize: '0.85rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  transition: 'all 0.15s'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = '#fef2f2';
-                  e.currentTarget.style.borderColor = '#fca5a5';
-                  e.currentTarget.style.color = '#ef4444';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = '#ffffff';
-                  e.currentTarget.style.borderColor = '#d1d5db';
-                  e.currentTarget.style.color = '#374151';
-                }}
-              >
-                Disconnect
-              </button>
-
-              {/* Profile Button */}
-              <button 
-                onClick={() => {
-                  const username = settings.connectedInstagramName || 'monster__pk_8795';
-                  window.open(`https://instagram.com/${username.replace(/^@/, '')}`, '_blank');
-                }}
-                style={{ 
-                  marginTop: '8px',
-                  width: '100%',
-                  padding: '8px',
-                  background: '#f9fafb',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '6px',
-                  color: '#374151',
-                  fontSize: '0.85rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  transition: 'all 0.15s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = '#f3f4f6';
-                  e.currentTarget.style.borderColor = '#d1d5db';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = '#f9fafb';
-                  e.currentTarget.style.borderColor = '#e5e7eb';
-                }}
-              >
-                Profile
-              </button>
+              <button onClick={() => { if(window.confirm('Instagram disconnect karna chahte hain?')) { const c = { ...settings, instagramAccessToken: null, instagramPageId: null, businessAccountId: null, connectedInstagramName: null, isAccountConnected: false }; setSettings(c); handleSaveSettings(null, c); } }}
+                style={{ width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+              >Disconnect</button>
+              <button onClick={() => window.open(`https://instagram.com/${(settings.connectedInstagramName || '').replace(/^@/, '')}`, '_blank')}
+                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+              >Profile</button>
             </div>
+            )}
+
+            {/* ---- FACEBOOK CARD ---- */}
+            {settings.isFacebookConnected && (platformFilter === 'All platforms' || platformFilter === 'Facebook') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            <div className="connection-card" style={{ width: '240px', border: '1px solid #dbeafe', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#1877f2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Facebook size={22} color="white" />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Facebook</h4>
+                    <span style={{ display: 'inline-block', background: '#dbeafe', color: '#1d4ed8', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+                  </div>
+                </div>
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Facebook: Page ID ${settings.facebookPageId || 'N/A'}`, 'info')} />
+              </div>
+              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedFacebookName || 'Facebook Page'}</div>
+              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : ''}</div>
+              <button onClick={handleDisconnectFacebook}
+                style={{ width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+              >Disconnect</button>
+            </div>
+            )}
+
+            {/* ---- WHATSAPP CARD ---- */}
+            {settings.isWhatsAppConnected && (platformFilter === 'All platforms' || platformFilter === 'WhatsApp') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            <div className="connection-card" style={{ width: '240px', border: '1px solid #d1fae5', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#25d366', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <MessageSquare size={22} color="white" />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>WhatsApp</h4>
+                    <span style={{ display: 'inline-block', background: '#d1fae5', color: '#065f46', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+                  </div>
+                </div>
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`WhatsApp: Phone ID ${settings.whatsappPhoneNumberId || 'N/A'}`, 'info')} />
+              </div>
+              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedWhatsAppName || 'WhatsApp Business'}</div>
+              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : ''}</div>
+              <button onClick={handleDisconnectWhatsApp}
+                style={{ width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+              >Disconnect</button>
+            </div>
+            )}
+
+            {/* ---- THREADS CARD ---- */}
+            {settings.isThreadsConnected && (platformFilter === 'All platforms' || platformFilter === 'Threads') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            <div className="connection-card" style={{ width: '240px', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <ThreadsIcon size={22} color="white" />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Threads</h4>
+                    <span style={{ display: 'inline-block', background: '#f3f4f6', color: '#374151', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+                  </div>
+                </div>
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Threads: ${settings.connectedThreadsName || 'N/A'}`, 'info')} />
+              </div>
+              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedThreadsName || 'Threads Account'}</div>
+              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : ''}</div>
+              <button onClick={handleDisconnectThreads}
+                style={{ width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+              >Disconnect</button>
+            </div>
+            )}
 
           </div>
         ) : (
@@ -661,7 +642,7 @@ export default function Settings() {
 
             <h3 style={{ fontSize: '1.4rem', fontWeight: '700', color: '#111827', margin: '0 0 6px 0' }}>Connect Account</h3>
             <p style={{ color: '#6b7280', fontSize: '0.88rem', margin: '0 0 28px 0', lineHeight: '1.5' }}>
-              Choose a messaging channel to integrate. Only Instagram is fully active per settings configuration.
+              Choose a messaging channel to integrate. Instagram, Facebook, WhatsApp, and Threads are available.
             </p>
 
             {/* Grid of Platforms */}
@@ -672,7 +653,7 @@ export default function Settings() {
                   onClick={() => {
                     if (platform.enabled) {
                       setShowConnectModal(false);
-                      triggerConnect();
+                      triggerConnect(platform.name);
                     } else {
                       notify(`${platform.name} integration is coming soon!`, "info");
                     }
