@@ -1339,6 +1339,7 @@ app.post('/api/campaigns/sync-from-post', verifyToken, async (req, res) => {
       await campaign.save();
     }
     
+    await refreshGlobalCache(); // Instant Sync
     res.json({ message: 'Automation synced successfully', campaign });
   } catch (err) {
     res.status(500).json({ message: 'Error syncing automation' });
@@ -1432,6 +1433,57 @@ app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
   }
 });
 
+// Helper to deserialize all advanced automation settings from mediaUrl JSON metadata
+function parseScheduledPost(post) {
+  if (!post) return post;
+  const p = post.toObject ? post.toObject() : { ...post };
+  
+  let instagramMediaId = null;
+  let cachedLiveMediaUrl = null;
+  let localImage = p.mediaUrl;
+  let parsedMeta = null;
+
+  if (p.mediaUrl && p.mediaUrl.startsWith('{')) {
+    try {
+      parsedMeta = JSON.parse(p.mediaUrl);
+      p.type = parsedMeta.type || p.type;
+      p.carouselItems = parsedMeta.carouselItems || [];
+      p.buttons = parsedMeta.buttons || [];
+      p.requireFollow = parsedMeta.requireFollow !== undefined ? parsedMeta.requireFollow : false;
+      p.unfollowedResponse = parsedMeta.unfollowedResponse || '';
+      p.publicReply = parsedMeta.publicReply || '';
+      p.automationStatus = parsedMeta.automationStatus || 'Active';
+      p.anyKeyword = parsedMeta.anyKeyword !== undefined ? parsedMeta.anyKeyword : false;
+      p.openingMessage = parsedMeta.openingMessage !== undefined ? parsedMeta.openingMessage : false;
+      p.openingMessageText = parsedMeta.openingMessageText || '';
+      p.openingMessageButton = parsedMeta.openingMessageButton || '';
+      
+      instagramMediaId = parsedMeta.instagramMediaId || null;
+      cachedLiveMediaUrl = parsedMeta.cachedLiveMediaUrl || null;
+      localImage = parsedMeta.mediaUrl || (p.carouselItems.length > 0 ? p.carouselItems[0] : '');
+      p.mediaUrl = localImage;
+    } catch (e) {
+      console.warn("⚠️ Metadata parse failed:", e.message);
+    }
+  } else if (p.mediaUrl && p.mediaUrl.startsWith('[')) {
+    try {
+      p.carouselItems = JSON.parse(p.mediaUrl);
+      p.mediaUrl = p.carouselItems[0];
+      localImage = p.mediaUrl;
+    } catch (e) {
+      console.warn("⚠️ Carousel items parse failed:", e.message);
+    }
+  }
+
+  // Attach internal tracking attributes for live URL resolutions
+  p._instagramMediaId = instagramMediaId;
+  p._cachedLiveMediaUrl = cachedLiveMediaUrl;
+  p._localImage = localImage;
+  p._parsedMeta = parsedMeta;
+
+  return p;
+}
+
 // Scheduling API
 app.get('/api/scheduling', verifyToken, async (req, res) => {
   try {
@@ -1443,37 +1495,18 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
 
     // Handle serialized metadata and fetch live image for Posted status
     const processedPosts = await Promise.all(posts.map(async (post) => {
-      const p = post.toObject ? post.toObject() : { ...post };
+      const p = parseScheduledPost(post);
       
-      let instagramMediaId = null;
-      let cachedLiveMediaUrl = null;
-      let localImage = p.mediaUrl;
-      let parsedMeta = null;
+      const instagramMediaId = p._instagramMediaId;
+      const cachedLiveMediaUrl = p._cachedLiveMediaUrl;
+      const localImage = p._localImage;
+      const parsedMeta = p._parsedMeta;
 
-      if (p.mediaUrl && p.mediaUrl.startsWith('{')) {
-        try {
-          parsedMeta = JSON.parse(p.mediaUrl);
-          p.type = parsedMeta.type || p.type;
-          p.carouselItems = parsedMeta.carouselItems || [];
-          p.buttons = parsedMeta.buttons || [];
-          p.requireFollow = parsedMeta.requireFollow !== undefined ? parsedMeta.requireFollow : false;
-          p.unfollowedResponse = parsedMeta.unfollowedResponse || '';
-          p.publicReply = parsedMeta.publicReply || '';
-          p.automationStatus = parsedMeta.automationStatus || 'Active';
-          p.anyKeyword = parsedMeta.anyKeyword !== undefined ? parsedMeta.anyKeyword : false;
-          p.mediaUrl = parsedMeta.mediaUrl || (p.carouselItems.length > 0 ? p.carouselItems[0] : '');
-          
-          instagramMediaId = parsedMeta.instagramMediaId || null;
-          cachedLiveMediaUrl = parsedMeta.cachedLiveMediaUrl || null;
-          localImage = p.mediaUrl;
-        } catch (e) {}
-      } else if (p.mediaUrl && p.mediaUrl.startsWith('[')) {
-        try {
-          p.carouselItems = JSON.parse(p.mediaUrl);
-          p.mediaUrl = p.carouselItems[0];
-          localImage = p.mediaUrl;
-        } catch (e) {}
-      }
+      // Clean up temp properties
+      delete p._instagramMediaId;
+      delete p._cachedLiveMediaUrl;
+      delete p._localImage;
+      delete p._parsedMeta;
 
       // --- EXPECTED FLOW IMPLEMENTATION ---
       if (p.status === 'Posted') {
@@ -1659,7 +1692,7 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
         });
       }
 
-      res.json(newPost);
+      res.json(parseScheduledPost(newPost));
     } catch (saveErr) {
       console.error('❌ SUPABASE SAVE ERROR (ScheduledPost):', saveErr.message || saveErr);
       if (saveErr.details) console.error('🔍 Error Details:', saveErr.details);
@@ -1843,6 +1876,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
           },
           { upsert: true, new: true }
         );
+        await refreshGlobalCache(); // Instant Sync
       }
     } catch (campaignErr) {
       console.error('⚠️ Campaign Sync Error (Non-critical):', campaignErr.message);
@@ -1868,7 +1902,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
       });
     }
     
-    res.json(updatedPost);
+    res.json(parseScheduledPost(updatedPost));
   } catch (err) {
     console.error('❌ CRITICAL UPDATE ERROR:', err);
     if (err.details) console.error('🔍 DB Details:', err.details);
@@ -1904,6 +1938,7 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
           userId: req.user.userId,
           postId: { $in: postIds }
         });
+        await refreshGlobalCache(); // Instant Sync
       }
       
       await ScheduledPost.findByIdAndDelete(req.params.id);
@@ -2536,6 +2571,7 @@ async function runSchedulingWorker() {
             buttons
           });
           await campaign.save();
+          await refreshGlobalCache(); // Instant Sync
         }
 
         const updatedMediaUrl = JSON.stringify({ 
