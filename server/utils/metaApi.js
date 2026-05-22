@@ -305,9 +305,22 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
       }
     }
 
-    // Check if ready
+    // Check if ready (with a retry loop to poll for readiness immediately)
     console.log(`📦 Checking readiness for container: ${finalCreationId}`);
-    const isReady = await checkMediaReadiness(finalCreationId, accessToken);
+    let isReady = false;
+    let attempts = 0;
+    const maxAttempts = 4; // Check up to 4 times (around 7.5 seconds total)
+    
+    while (attempts < maxAttempts) {
+      isReady = await checkMediaReadiness(finalCreationId, accessToken);
+      if (isReady) break;
+      
+      attempts++;
+      if (attempts < maxAttempts) {
+        console.log(`⏳ Container ${finalCreationId} not ready yet. Waiting 2.5 seconds (Attempt ${attempts}/${maxAttempts})...`);
+        await new Promise(resolve => setTimeout(resolve, 2500));
+      }
+    }
     
     if (!isReady) {
       return { status: 'IG_PROCESSING', containerId: finalCreationId };

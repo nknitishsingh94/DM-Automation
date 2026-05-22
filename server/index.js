@@ -2783,6 +2783,23 @@ app.use((err, req, res, next) => {
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🔒 Security: Rate limiting, Helmet CSP, CORS whitelist, NoSQL sanitization, XSS protection active`);
+
+  // Start persistent local cron runner if not running in serverless (Vercel) environment
+  if (!process.env.VERCEL) {
+    console.log('⏰ [Scheduler] Running in persistent environment. Starting local 60s checker...');
+    // Run immediately on startup
+    setImmediate(() => {
+      runSchedulingWorker().catch(err => {
+        console.error("❌ Error in initial startup local scheduler:", err.message);
+      });
+    });
+    // Then run every 60 seconds
+    setInterval(() => {
+      runSchedulingWorker().catch(err => {
+        console.error("❌ Error in persistent local scheduler:", err.message);
+      });
+    }, 60 * 1000);
+  }
 });
 
 
