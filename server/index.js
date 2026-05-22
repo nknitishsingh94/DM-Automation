@@ -472,13 +472,18 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     let postMatch = true;
     if (source === 'comment') {
       if (c.postId && c.postId !== 'any' && c.postId !== '') {
-        postMatch = (mediaId && c.postId === mediaId);
+        postMatch = !!(mediaId && String(c.postId) === String(mediaId));
+        console.log(`[processAutoReply DEBUG] Campaign: "${c.name}", c.postId="${c.postId}" (${typeof c.postId}), mediaId="${mediaId}" (${typeof mediaId}) -> postMatch=${postMatch}`);
       } else {
-        postMatch = c.isUniversal || c.isAnyPost || !c.postId;
+        postMatch = !!(c.isUniversal || c.isAnyPost || !c.postId);
+        console.log(`[processAutoReply DEBUG] Campaign: "${c.name}", c.postId="${c.postId}", isUniversal=${c.isUniversal}, isAnyPost=${c.isAnyPost} -> postMatch=${postMatch}`);
       }
     }
 
-    return platformMatch && sourceMatch && keywordMatch && postMatch;
+    const isMatched = !!(platformMatch && sourceMatch && keywordMatch && postMatch);
+    console.log(`[processAutoReply DEBUG] Evaluation for "${c.name}": platformMatch=${platformMatch}, sourceMatch=${sourceMatch}, keywordMatch=${keywordMatch}, postMatch=${postMatch} -> isMatched=${isMatched}`);
+
+    return isMatched;
   });
 
   if (match) {
@@ -1000,6 +1005,7 @@ app.post('/api/webhook', async (req, res) => {
           const senderId = val.from?.id;
           const commentId = val.id || val.comment_id;
           const mediaId = val.media?.id || val.post_id || val.video_id;
+          console.log(`[webhook DEBUG] Extracted comment values: text="${text}", senderId="${senderId}", commentId="${commentId}", mediaId="${mediaId}" (from val.media?.id="${val.media?.id}", val.post_id="${val.post_id}", val.video_id="${val.video_id}")`);
 
           // Handle all interaction types (Comment, Post, Video, etc.)
           console.log(`🎯 [REEL DEBUG] Processing interaction from ${change.field}. Item: ${val.item || 'N/A'}`);
