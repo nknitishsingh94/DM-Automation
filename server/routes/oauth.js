@@ -99,7 +99,8 @@ router.get('/facebook/callback', async (req, res) => {
     let pageId = '';
     let pageAccessToken = longToken; // ✅ Will be replaced with real Page Token below
     let businessAccountId = '';
-    let accountName = '';
+    let facebookPageName = '';
+    let instagramAccountName = '';
 
     const pages = pagesRes.data.data;
     console.log(`🔍 Meta Discovery: User has ${pages?.length || 0} pages.`);
@@ -112,7 +113,8 @@ router.get('/facebook/callback', async (req, res) => {
         // ✅ CRITICAL: Use PAGE-LEVEL token — required for Instagram Messaging API
         pageAccessToken = pageWithInsta.access_token || longToken;
         businessAccountId = pageWithInsta.instagram_business_account.id;
-        accountName = pageWithInsta.name;
+        facebookPageName = pageWithInsta.name;
+        instagramAccountName = pageWithInsta.name; // fallback to page name
 
         console.log(`📄 Found FB Page: ${pageId}, Page Token prefix: ${pageAccessToken.substring(0, 10)}...`);
 
@@ -121,8 +123,8 @@ router.get('/facebook/callback', async (req, res) => {
           const igUrl = `https://graph.facebook.com/v19.0/${businessAccountId}?fields=username,name&access_token=${pageAccessToken}`;
           const igRes = await axios.get(igUrl);
           if (igRes.data && igRes.data.username) {
-            accountName = igRes.data.username;
-            console.log(`📸 Found Instagram Account: @${accountName}`);
+            instagramAccountName = igRes.data.username;
+            console.log(`📸 Found Instagram Account: @${instagramAccountName}`);
           }
         } catch (igErr) {
           console.warn("⚠️ Could not fetch IG username, using page name instead.");
@@ -130,7 +132,8 @@ router.get('/facebook/callback', async (req, res) => {
       } else {
         pageId = pages[0].id;
         pageAccessToken = pages[0].access_token || longToken;
-        accountName = pages[0].name;
+        facebookPageName = pages[0].name;
+        instagramAccountName = pages[0].name;
         console.warn("⚠️ No Instagram Business Account found linked to these pages.");
       }
     }
@@ -196,7 +199,7 @@ router.get('/facebook/callback', async (req, res) => {
         isThreadsConnected: true,
         threadsAccessToken: pageAccessToken || longToken,
         threadsPageId: pageId || '',
-        connectedThreadsName: accountName || 'Threads Account'
+        connectedThreadsName: instagramAccountName || facebookPageName || 'Threads Account'
       };
       updateData.connectedPageName = JSON.stringify(threadsData);
       console.log(`✅ Threads: Serialized connection for user ${userId}.`);
@@ -223,13 +226,13 @@ router.get('/facebook/callback', async (req, res) => {
       updateData.instagramPageId = pageId;
       updateData.businessAccountId = businessAccountId;
       updateData.isAccountConnected = !!businessAccountId;
-      updateData.connectedInstagramName = accountName;
+      updateData.connectedInstagramName = instagramAccountName;
     } else if (isFacebook) {
       // ✅ Only update Facebook fields — do NOT touch Instagram, WhatsApp, or Threads
       updateData.facebookAccessToken = pageAccessToken;
       updateData.facebookPageId = pageId;
       updateData.isFacebookConnected = !!pageId;
-      updateData.connectedFacebookName = accountName;
+      updateData.connectedFacebookName = facebookPageName;
     } else {
       // Default/general flow — fill Instagram + Facebook fields
       updateData.instagramAccessToken = pageAccessToken;
@@ -237,8 +240,8 @@ router.get('/facebook/callback', async (req, res) => {
       updateData.instagramPageId = pageId;
       updateData.businessAccountId = businessAccountId;
       updateData.facebookPageId = pageId;
-      updateData.connectedInstagramName = accountName;
-      updateData.connectedFacebookName = accountName;
+      updateData.connectedInstagramName = instagramAccountName;
+      updateData.connectedFacebookName = facebookPageName;
       updateData.isFacebookConnected = !!pageId;
       updateData.isAccountConnected = !!businessAccountId;
     }
