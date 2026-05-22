@@ -437,12 +437,40 @@ export default function Scheduling() {
           content: newPost.caption
         })
       });
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        notify("Caption saved!", "success");
-        fetchCaptions();
+        if (data.alreadySaved) {
+          notify(data.message || "Already caption is saved", "warning");
+        } else {
+          notify("Caption saved!", "success");
+          fetchCaptions();
+        }
+      } else {
+        notify(data.error || "Failed to save caption", "error");
       }
     } catch (err) {
       notify("Failed to save caption", "error");
+    }
+  };
+
+  const handleDeleteCaption = async (id) => {
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/captions/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        notify("Caption deleted successfully", "success");
+        fetchCaptions();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        notify(data.error || "Failed to delete caption", "error");
+      }
+    } catch (err) {
+      notify("Error deleting caption", "error");
     }
   };
 
@@ -1460,12 +1488,51 @@ export default function Scheduling() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '400px', overflowY: 'auto' }}>
               {savedCaptions.length === 0 ? <p style={{ color: '#64748b', textAlign: 'center' }}>No saved captions found.</p> : savedCaptions.map(cap => (
                 <div
-                  key={cap._id}
+                  key={cap._id || cap.id}
                   onClick={() => { setNewPost({ ...newPost, caption: cap.content }); setShowCaptionsModal(false); }}
-                  style={{ padding: '16px', borderRadius: '12px', border: '1px solid #f1f5f9', cursor: 'pointer' }}
+                  style={{ 
+                    padding: '16px', 
+                    borderRadius: '12px', 
+                    border: '1px solid #f1f5f9', 
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: '12px',
+                    position: 'relative',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.background = '#f8fafc'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#f1f5f9'; e.currentTarget.style.background = 'transparent'; }}
                 >
-                  <div style={{ fontWeight: '700', marginBottom: '4px' }}>{cap.title}</div>
-                  <p style={{ fontSize: '0.85rem', color: '#64748b' }}>{cap.content}</p>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: '700', marginBottom: '4px', color: '#1e1b4b', fontSize: '0.95rem' }}>{cap.title}</div>
+                    <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0, whiteSpace: 'pre-wrap' }}>{cap.content}</p>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (window.confirm("Are you sure you want to delete this caption?")) {
+                        handleDeleteCaption(cap._id || cap.id);
+                      }
+                    }}
+                    style={{
+                      border: 'none',
+                      background: 'none',
+                      color: '#94a3b8',
+                      cursor: 'pointer',
+                      padding: '4px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.background = '#fee2e2'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.background = 'none'; }}
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               ))}
             </div>

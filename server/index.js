@@ -1728,6 +1728,20 @@ app.post('/api/captions', verifyToken, async (req, res) => {
 
     if (!supabase) return res.status(500).json({ error: 'Database not connected' });
 
+    // Enforce duplicate check
+    const cleanContent = (content || '').trim();
+    const { data: existing, error: checkError } = await supabase
+      .from('captions')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('content', cleanContent);
+
+    if (checkError) {
+      console.error('❌ CAPTIONS CHECK ERROR:', checkError.message);
+    } else if (existing && existing.length > 0) {
+      return res.status(200).json({ alreadySaved: true, message: 'Already caption is saved' });
+    }
+
     const { data, error } = await supabase
       .from('captions')
       .insert({ title: title || '', content: content || '', user_id: userId })

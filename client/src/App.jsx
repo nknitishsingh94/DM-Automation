@@ -70,9 +70,18 @@ const Toast = ({ message, type, onClose }) => {
     return () => clearTimeout(timer);
   }, [onClose, message]);
 
+  const getEmoji = () => {
+    switch (type) {
+      case 'success': return '✅';
+      case 'warning': return '⚠️';
+      case 'info': return 'ℹ️';
+      default: return '❌';
+    }
+  };
+
   return (
     <div className={`toast toast-${type}`}>
-      {type === 'success' ? '✅' : '❌'} {message}
+      {getEmoji()} {message}
     </div>
   );
 };

@@ -2327,6 +2327,8 @@ tr:hover {
 }
 
 .toast-success { border-left: 4px solid #10b981; }
+.toast-warning { border-left: 4px solid #f59e0b; }
+.toast-info { border-left: 4px solid #3b82f6; }
 .toast-error { border-left: 4px solid #ef4444; }
 
 @keyframes toastSlideIn {
