@@ -81,6 +81,36 @@ async function refreshGlobalCache() {
 }
 refreshGlobalCache();
 
+// Helper to get all user IDs sharing the same connected page details
+function getSharedUserIdsSync(userId) {
+  if (!userId) return [];
+  const uidStr = userId.toString();
+  const settings = settingsCache.get(uidStr);
+  if (!settings) return [uidStr];
+  
+  const bId = settings.businessAccountId;
+  const iId = settings.instagramPageId;
+  const fId = settings.facebookPageId;
+  const wId = settings.whatsappPhoneNumberId;
+  
+  if (!bId && !iId && !fId && !wId) {
+    return [uidStr];
+  }
+  
+  const uids = new Set([uidStr]);
+  for (const [uid, s] of settingsCache.entries()) {
+    if (
+      (bId && s.businessAccountId === bId) ||
+      (iId && s.instagramPageId === iId) ||
+      (fId && s.facebookPageId === fId) ||
+      (wId && s.whatsappPhoneNumberId === wId)
+    ) {
+      uids.add(uid);
+    }
+  }
+  return Array.from(uids);
+}
+
 // --- MULTER SETUP (Media Uploads - Using Memory Storage for Serverless compatibility) ---
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -387,11 +417,21 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   }
 
   // 1. Fetch Active Flows and Keyword Campaigns in parallel (Advanced Automation)
-  // 1. Fetch Active Flows and Keyword Campaigns (Use cache)
-  const cachedCampaigns = campaignsCache.get(userId.toString());
+  const sharedUids = getSharedUserIdsSync(userId);
+  let cachedCampaignsMerged = [];
+  let allCached = true;
+  for (const uid of sharedUids) {
+    const cached = campaignsCache.get(uid);
+    if (cached) {
+      cachedCampaignsMerged.push(...cached);
+    } else {
+      allCached = false;
+    }
+  }
+
   const [activeFlows, activeCampaignsRaw] = await Promise.all([
-    Flow.find({ userId, status: 'Active' }),
-    cachedCampaigns ? Promise.resolve(cachedCampaigns) : Campaign.find({ userId, status: 'Active' })
+    Flow.find({ userId: { $in: sharedUids }, status: 'Active' }),
+    allCached ? Promise.resolve(cachedCampaignsMerged) : Campaign.find({ userId: { $in: sharedUids }, status: 'Active' })
   ]);
 
   const matchedFlow = activeFlows.find(f => {
@@ -628,7 +668,10 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         Campaign.findByIdAndUpdate(match._id, { $inc: { dmsSent: 1 } }).catch(dbErr => console.error("⚠️ Failed to increment dmsSent:", dbErr.message))
       ]);
 
-      io.to(userId.toString()).emit('new_message', autoReply);
+      const sharedUids = getSharedUserIdsSync(userId);
+      sharedUids.forEach(uid => {
+        io.to(uid).emit('new_message', autoReply);
+      });
       console.log(`🚀 REPLY DISPATCHED to ${chatId}`);
       return { reply: autoReply };
     } else {
@@ -659,7 +702,10 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
               timestamp: new Date()
             });
             await autoReply.save();
-            io.to(userId.toString()).emit('new_message', autoReply);
+            const sharedUids = getSharedUserIdsSync(userId);
+            sharedUids.forEach(uid => {
+              io.to(uid).emit('new_message', autoReply);
+            });
           } catch (dbErr) {
             console.error("⚠️ Failed to save AI response to DB:", dbErr.message);
           }
@@ -841,12 +887,19 @@ app.post('/api/webhook', async (req, res) => {
             // 2. Log in background
             const saveAndEmitPromise = (async () => {
               try {
+                const sharedUids = getSharedUserIdsSync(targetUserId);
+                const contact = await Contact.findOne({ userId: { $in: sharedUids }, chatId: senderId });
+                const contactUserId = contact ? contact.userId : targetUserId;
+
                 const incoming = new Message({
-                  userId: targetUserId, chatId: senderId, sender: 'user', text: messageText,
+                  userId: contactUserId, chatId: senderId, sender: 'user', text: messageText,
                   type: 'received', platform, timestamp: new Date()
                 });
                 incoming.save(); // Don't await the save for speed
-                io.to(targetUserId.toString()).emit('new_message', incoming);
+
+                sharedUids.forEach(uid => {
+                  io.to(uid).emit('new_message', incoming);
+                });
               } catch (dbErr) {
                 console.error("⚠️ Background logging failed:", dbErr.message);
               }
@@ -1061,12 +1114,19 @@ app.post('/api/webhook', async (req, res) => {
 
               const saveAndEmitPromise = (async () => {
                 try {
+                  const sharedUids = getSharedUserIdsSync(targetUserId);
+                  const contact = await Contact.findOne({ userId: { $in: sharedUids }, chatId: senderId });
+                  const contactUserId = contact ? contact.userId : targetUserId;
+
                   const incoming = new Message({
-                    userId: targetUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
+                    userId: contactUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
                     type: 'received', platform, timestamp: new Date()
                   });
                   await incoming.save();
-                  io.to(targetUserId.toString()).emit('new_message', incoming);
+
+                  sharedUids.forEach(uid => {
+                    io.to(uid).emit('new_message', incoming);
+                  });
                 } catch (dbErr) {
                   console.error("⚠️ Failed to save incoming comment to DB:", dbErr.message);
                 }
@@ -1157,8 +1217,12 @@ app.post('/api/webhook', async (req, res) => {
 
               if (targetUserId) {
                 try {
+                  const sharedUids = getSharedUserIdsSync(targetUserId);
+                  const contact = await Contact.findOne({ userId: { $in: sharedUids }, chatId: senderPhone });
+                  const contactUserId = contact ? contact.userId : targetUserId;
+
                   const incoming = new Message({
-                    userId: targetUserId,
+                    userId: contactUserId,
                     chatId: senderPhone,
                     sender: 'user',
                     text: text,
@@ -1167,7 +1231,10 @@ app.post('/api/webhook', async (req, res) => {
                     timestamp: new Date()
                   });
                   await incoming.save();
-                  io.to(targetUserId.toString()).emit('new_message', incoming);
+                  
+                  sharedUids.forEach(uid => {
+                    io.to(uid).emit('new_message', incoming);
+                  });
                 } catch (dbErr) {
                   console.error("⚠️ Failed to save incoming WhatsApp message to DB:", dbErr.message);
                 }
@@ -1217,7 +1284,8 @@ app.post('/api/upload', verifyToken, upload.single('media'), async (req, res) =>
 // --- Contacts API (Tagging & Notes) ---
 app.get('/api/contacts', verifyToken, async (req, res) => {
   try {
-    const contacts = await Contact.find({ userId: req.user.userId }).sort({ lastActive: -1 });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const contacts = await Contact.find({ userId: { $in: sharedUserIds } }).sort({ lastActive: -1 });
     res.json(contacts);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1226,8 +1294,9 @@ app.get('/api/contacts', verifyToken, async (req, res) => {
 
 app.put('/api/contacts/:id', verifyToken, async (req, res) => {
   try {
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
     const contact = await Contact.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user.userId },
+      { _id: req.params.id, userId: { $in: sharedUserIds } },
       { ...req.body },
       { new: true }
     );
@@ -1242,7 +1311,8 @@ const PORT = process.env.PORT || 5001;
 // --- AI Studio Studio / Test Playground routes ---
 app.get('/api/chats', verifyToken, async (req, res) => {
   try {
-    const messages = await ChatMessage.find({ userId: req.user.userId }).sort({ createdAt: 1 }).limit(50);
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const messages = await ChatMessage.find({ userId: { $in: sharedUserIds } }).sort({ createdAt: 1 }).limit(50);
     res.json(messages);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1271,7 +1341,8 @@ app.post('/api/chat', verifyToken, async (req, res) => {
 
 app.delete('/api/chats', verifyToken, async (req, res) => {
   try {
-    await ChatMessage.deleteMany({ userId: req.user.userId });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    await ChatMessage.deleteMany({ userId: { $in: sharedUserIds } });
     res.json({ success: true, message: 'Chat history cleared' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1282,13 +1353,14 @@ app.delete('/api/chats', verifyToken, async (req, res) => {
 app.get('/api/stats', verifyToken, async (req, res) => {
   try {
     const userId = req.user.userId;
+    const sharedUserIds = getSharedUserIdsSync(userId);
 
     // Fetch real metrics dynamically from the database for this specific user
     const [sentMessages, receivedMessages, campaigns, contactCount] = await Promise.all([
-      Message.countDocuments({ userId, type: 'sent' }),
-      Message.countDocuments({ userId, type: 'received' }),
-      Campaign.countDocuments({ userId }),
-      Contact.countDocuments({ userId })
+      Message.countDocuments({ userId: { $in: sharedUserIds }, type: 'sent' }),
+      Message.countDocuments({ userId: { $in: sharedUserIds }, type: 'received' }),
+      Campaign.countDocuments({ userId: { $in: sharedUserIds } }),
+      Contact.countDocuments({ userId: { $in: sharedUserIds } })
     ]);
 
     const totalDMs = sentMessages + receivedMessages;
@@ -1324,7 +1396,8 @@ app.post('/api/campaigns/sync-from-post', verifyToken, async (req, res) => {
     
     // Find if a campaign already exists for this post
     // Note: verifyToken sets req.user.userId
-    let campaign = await Campaign.findOne({ userId: req.user.userId, postId });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    let campaign = await Campaign.findOne({ userId: { $in: sharedUserIds }, postId });
 
     if (campaign) {
       campaign.triggerKeyword = triggerKeyword;
@@ -1355,8 +1428,9 @@ app.post('/api/campaigns/sync-from-post', verifyToken, async (req, res) => {
 // Campaigns API
 app.get('/api/campaigns', verifyToken, async (req, res) => {
   try {
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
     const campaigns = await Campaign.find({
-      userId: req.user.userId
+      userId: { $in: sharedUserIds }
     }).sort({ createdAt: -1 });
     res.json(campaigns);
   } catch (err) {
@@ -1394,8 +1468,9 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
 app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
     const updateData = { ...req.body };
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
     const campaign = await Campaign.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user.userId },
+      { _id: req.params.id, userId: { $in: sharedUserIds } },
       { $set: updateData },
       { new: true }
     );
@@ -1409,9 +1484,10 @@ app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
     const result = await Campaign.findOneAndDelete({
       _id: req.params.id,
-      userId: req.user.userId
+      userId: { $in: sharedUserIds }
     });
 
     if (!result) {
@@ -1429,8 +1505,9 @@ app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
 // Campaign Logs Endpoint
 app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
   try {
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
     const logs = await Message.find({
-      userId: req.user.userId,
+      userId: { $in: sharedUserIds },
       campaignId: req.params.id
     }).sort({ timestamp: -1 });
     res.json(logs);
@@ -1493,10 +1570,14 @@ function parseScheduledPost(post) {
 // Scheduling API
 app.get('/api/scheduling', verifyToken, async (req, res) => {
   try {
-    const posts = await ScheduledPost.find({ userId: req.user.userId }).sort({ scheduledFor: 1 });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const posts = await ScheduledPost.find({ userId: { $in: sharedUserIds } }).sort({ scheduledFor: 1 });
     
     // Fetch user settings once to use across posts
-    const userSettings = await Settings.findOne({ userId: req.user.userId });
+    const userSettings = await Settings.findOne({ 
+      userId: { $in: sharedUserIds },
+      instagramAccessToken: { $ne: null }
+    }) || await Settings.findOne({ userId: req.user.userId });
     const accessToken = userSettings?.instagramAccessToken;
 
     // Handle serialized metadata and fetch live image for Posted status
@@ -1715,7 +1796,8 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
 // Captions API
 app.get('/api/captions', verifyToken, async (req, res) => {
   try {
-    const captions = await Caption.find({ userId: req.user.userId }).sort({ createdAt: -1 });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const captions = await Caption.find({ userId: { $in: sharedUserIds } }).sort({ createdAt: -1 });
     res.json(captions || []);
   } catch (err) {
     console.error('❌ CAPTIONS FETCH ERROR:', err.message, err.code, err.details, err.hint);
@@ -1734,12 +1816,14 @@ app.post('/api/captions', verifyToken, async (req, res) => {
 
     if (!supabase) return res.status(500).json({ error: 'Database not connected' });
 
-    // Enforce duplicate check
+    // Enforce duplicate check across all shared user IDs
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const sharedUuids = sharedUserIds.map(uid => convertObjectIDToUUID(uid));
     const cleanContent = (content || '').trim();
     const { data: existing, error: checkError } = await supabase
       .from('captions')
       .select('id')
-      .eq('user_id', userId)
+      .in('user_id', sharedUuids)
       .eq('content', cleanContent);
 
     if (checkError) {
@@ -1770,7 +1854,8 @@ app.post('/api/captions', verifyToken, async (req, res) => {
 
 app.delete('/api/captions/:id', verifyToken, async (req, res) => {
   try {
-    await Caption.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    await Caption.findOneAndDelete({ _id: req.params.id, userId: { $in: sharedUserIds } });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1779,7 +1864,8 @@ app.delete('/api/captions/:id', verifyToken, async (req, res) => {
 
 app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
   try {
-    const postToUpdate = await ScheduledPost.findOne({ _id: req.params.id, userId: req.user.userId });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const postToUpdate = await ScheduledPost.findOne({ _id: req.params.id, userId: { $in: sharedUserIds } });
     if (!postToUpdate) return res.status(404).json({ error: 'Post not found' });
 
     const updateData = { ...req.body };
@@ -1822,7 +1908,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     delete updateData.automationStatus;
 
     const updatedPost = await ScheduledPost.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user.userId },
+      { _id: req.params.id, userId: { $in: sharedUserIds } },
       updateData,
       { new: true }
     );
@@ -1873,9 +1959,9 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
         console.log(`🔄 Syncing Campaign for post IDs ${postIds}. Paused status: ${isPaused}`);
 
         await Campaign.findOneAndUpdate(
-          { userId: req.user.userId, postId: { $in: postIds } },
+          { userId: { $in: sharedUserIds }, postId: { $in: postIds } },
           { 
-            userId: req.user.userId,
+            userId: updatedPost.userId || req.user.userId,
             postId: igMediaId || updatedPost.postId || postIds[0],
             name: `Auto: ${(updatedPost.caption || '').substring(0, 20)}...`,
             isAnyPost: false,
@@ -1937,7 +2023,8 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
 app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
   try {
     console.log(`🗑️ DELETE scheduled post requested. ID: ${req.params.id}, User: ${req.user.userId}`);
-    const postToDelete = await ScheduledPost.findOne({ _id: req.params.id, userId: req.user.userId });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const postToDelete = await ScheduledPost.findOne({ _id: req.params.id, userId: { $in: sharedUserIds } });
     
     if (postToDelete) {
       let igMediaId = null;
@@ -1955,7 +2042,7 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
       if (postIds.length > 0) {
         console.log(`🗑️ Deleting associated campaigns for scheduled post IDs:`, postIds);
         await Campaign.deleteMany({
-          userId: req.user.userId,
+          userId: { $in: sharedUserIds },
           postId: { $in: postIds }
         });
         await refreshGlobalCache(); // Instant Sync
@@ -1976,15 +2063,17 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
 
 // Messages API (Inbox)
 app.get('/api/messages', verifyToken, async (req, res) => {
-  const messages = await Message.find({ userId: req.user.userId }).sort({ timestamp: 1 });
+  const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+  const messages = await Message.find({ userId: { $in: sharedUserIds } }).sort({ timestamp: 1 });
   res.json(messages);
 });
 
 // Optimized route for Audience Manager history
 app.get('/api/messages/contact/:chatId', verifyToken, async (req, res) => {
   try {
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
     const messages = await Message.find({
-      userId: req.user.userId,
+      userId: { $in: sharedUserIds },
       chatId: req.params.chatId
     }).sort({ timestamp: -1 }).limit(100);
     res.json(messages);
@@ -1996,9 +2085,14 @@ app.get('/api/messages/contact/:chatId', verifyToken, async (req, res) => {
 app.post('/api/messages', verifyToken, async (req, res) => {
   try {
     const { sender, text, type, chatId, platform } = req.body;
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+
+    // Find if there is an existing contact under any of the shared user IDs to avoid creating duplicate contacts
+    const existingContact = await Contact.findOne({ userId: { $in: sharedUserIds }, chatId: chatId || 'default' });
+    const targetUserId = existingContact ? existingContact.userId : req.user.userId;
 
     const newMessage = new Message({
-      userId: req.user.userId,
+      userId: targetUserId,
       sender,
       text,
       type: type || 'sent',
@@ -2009,10 +2103,10 @@ app.post('/api/messages', verifyToken, async (req, res) => {
 
     await newMessage.save();
 
-    // Auto-Upsert Contact Metadata
+    // Auto-Upsert Contact Metadata under targetUserId
     try {
       await Contact.findOneAndUpdate(
-        { userId: req.user.userId, chatId: chatId || 'default' },
+        { userId: targetUserId, chatId: chatId || 'default' },
         {
           $set: { lastActive: new Date(), platform: platform || 'instagram' },
           $inc: { totalMessages: 1 },
@@ -2026,11 +2120,13 @@ app.post('/api/messages', verifyToken, async (req, res) => {
       );
     } catch (contactErr) {}
 
-    io.to(req.user.userId).emit('new_message', newMessage);
+    sharedUserIds.forEach(uid => {
+      io.to(uid).emit('new_message', newMessage);
+    });
 
     // AI Auto-Reply Logic
     if (sender === 'user') {
-      processAutoReply(req.user.userId, platform || 'instagram', chatId, text).catch(e => console.error(e));
+      processAutoReply(targetUserId, platform || 'instagram', chatId, text).catch(e => console.error(e));
     }
 
     res.json(newMessage);
@@ -2054,7 +2150,8 @@ app.post('/api/ai/generate', verifyToken, async (req, res) => {
 
 app.delete('/api/messages/all', verifyToken, async (req, res) => {
   try {
-    await Message.deleteMany({ userId: req.user.userId });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    await Message.deleteMany({ userId: { $in: sharedUserIds } });
     res.json({ message: 'All messages deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -2063,7 +2160,8 @@ app.delete('/api/messages/all', verifyToken, async (req, res) => {
 
 app.delete('/api/messages/:id', verifyToken, async (req, res) => {
   try {
-    await Message.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    await Message.findOneAndDelete({ _id: req.params.id, userId: { $in: sharedUserIds } });
     res.json({ message: 'Message deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -2095,18 +2193,25 @@ app.get('/api/settings', verifyToken, async (req, res) => {
 
 app.get('/api/instagram/media', verifyToken, async (req, res) => {
   try {
-    const settings = await Settings.findOne({ userId: req.user.userId });
-    if (!settings || !settings.instagramAccessToken || !settings.businessAccountId) {
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const settings = await Settings.findOne({ 
+      userId: { $in: sharedUserIds }, 
+      instagramAccessToken: { $ne: null }, 
+      businessAccountId: { $ne: null } 
+    });
+    const activeSettings = settings || await Settings.findOne({ userId: req.user.userId });
+
+    if (!activeSettings || !activeSettings.instagramAccessToken || !activeSettings.businessAccountId) {
       return res.status(400).json({ error: 'Instagram account not fully connected' });
     }
 
     const { type } = req.query; // 'media' or 'stories'
     const endpoint = type === 'stories' ? 'stories' : 'media';
 
-    const response = await axios.get(`https://graph.facebook.com/v19.0/${settings.businessAccountId}/${endpoint}`, {
+    const response = await axios.get(`https://graph.facebook.com/v19.0/${activeSettings.businessAccountId}/${endpoint}`, {
       params: {
         fields: 'id,media_type,media_url,thumbnail_url,timestamp,permalink',
-        access_token: settings.instagramAccessToken
+        access_token: activeSettings.instagramAccessToken
       }
     });
 
@@ -2268,7 +2373,8 @@ app.get('/api/settings/whatsapp/qr', verifyToken, async (req, res) => {
 // --- FLOWS API ---
 app.get('/api/flows', verifyToken, async (req, res) => {
   try {
-    const flows = await Flow.find({ userId: req.user.userId });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const flows = await Flow.find({ userId: { $in: sharedUserIds } });
     res.json(flows);
   } catch (err) {
     console.error("❌ FLOWS FETCH ERROR (Full):", JSON.stringify(err, null, 2));
@@ -2282,7 +2388,8 @@ app.get('/api/flows', verifyToken, async (req, res) => {
 
 app.get('/api/flows/:id', verifyToken, async (req, res) => {
   try {
-    const flow = await Flow.findOne({ _id: req.params.id, userId: req.user.userId });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const flow = await Flow.findOne({ _id: req.params.id, userId: { $in: sharedUserIds } });
     if (!flow) return res.status(404).json({ error: 'Flow not found' });
     res.json(flow);
   } catch (err) {
@@ -2292,8 +2399,9 @@ app.get('/api/flows/:id', verifyToken, async (req, res) => {
 
 app.post('/api/flows', verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId);
-    if (!user || user.plan !== 'pro') {
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const proUser = await User.findOne({ _id: { $in: sharedUserIds }, plan: 'pro' });
+    if (!proUser) {
       return res.status(403).json({ error: 'Pro plan required to create advanced flows.' });
     }
     const newFlow = new Flow({ ...req.body, userId: req.user.userId });
@@ -2306,12 +2414,13 @@ app.post('/api/flows', verifyToken, async (req, res) => {
 
 app.put('/api/flows/:id', verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId);
-    if (!user || user.plan !== 'pro') {
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const proUser = await User.findOne({ _id: { $in: sharedUserIds }, plan: 'pro' });
+    if (!proUser) {
       return res.status(403).json({ error: 'Pro plan required to update advanced flows.' });
     }
     const flow = await Flow.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user.userId },
+      { _id: req.params.id, userId: { $in: sharedUserIds } },
       { ...req.body, updatedAt: new Date() },
       { new: true }
     );
@@ -2323,11 +2432,12 @@ app.put('/api/flows/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/flows/:id', verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId);
-    if (!user || user.plan !== 'pro') {
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const proUser = await User.findOne({ _id: { $in: sharedUserIds }, plan: 'pro' });
+    if (!proUser) {
       return res.status(403).json({ error: 'Pro plan required to delete advanced flows.' });
     }
-    await Flow.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+    await Flow.findOneAndDelete({ _id: req.params.id, userId: { $in: sharedUserIds } });
     res.json({ message: 'Flow deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -2343,19 +2453,20 @@ app.post('/api/broadcasts', verifyToken, async (req, res) => {
 
   try {
     const results = { success: 0, failed: 0 };
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
 
     for (const contactId of contactIds) {
-      const contact = await Contact.findOne({ _id: contactId, userId: req.user.userId });
+      const contact = await Contact.findOne({ _id: contactId, userId: { $in: sharedUserIds } });
       if (!contact) {
         results.failed++;
         continue;
       }
 
-      const sent = await sendMessageToInstagram(platform || contact.platform || 'instagram', contact.chatId, text, '', req.user.userId);
+      const sent = await sendMessageToInstagram(platform || contact.platform || 'instagram', contact.chatId, text, '', contact.userId);
 
       if (sent) {
         const msg = new Message({
-          userId: req.user.userId,
+          userId: contact.userId,
           chatId: contact.chatId,
           sender: 'admin',
           text: text,
@@ -2365,7 +2476,10 @@ app.post('/api/broadcasts', verifyToken, async (req, res) => {
           timestamp: new Date()
         });
         await msg.save();
-        io.to(req.user.userId.toString()).emit('new_message', msg);
+        
+        sharedUserIds.forEach(uid => {
+          io.to(uid.toString()).emit('new_message', msg);
+        });
         results.success++;
       } else {
         results.failed++;

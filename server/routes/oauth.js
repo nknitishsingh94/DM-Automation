@@ -197,6 +197,7 @@ router.get('/facebook/callback', async (req, res) => {
     delete updateData.whatsappError;
     delete updateData.whatsappDiscoveryError;
 
+    /*
     // Strict Single-Owner Mapping: Clean up other settings rows that might be linked to this page/account
     if (pageId || businessAccountId) {
       const cleanupQuery = [];
@@ -252,6 +253,7 @@ router.get('/facebook/callback', async (req, res) => {
         );
       }
     }
+    */
 
     const updatedSettings = await Settings.findOneAndUpdate(
       { userId: userId },
@@ -372,6 +374,7 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
       updateData.businessAccountId = businessAccountId;
     }
 
+    /*
     // Strict Single-Owner Mapping: Clean up other settings rows that might be linked to this page/account
     if (pageId || businessAccountId) {
       const cleanupQuery = [];
@@ -427,6 +430,7 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
         );
       }
     }
+    */
 
     const settings = await Settings.findOneAndUpdate(
       { userId: req.user.userId },
