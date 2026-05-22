@@ -23,6 +23,7 @@ export default function Settings() {
     isWhatsAppConnected: false,
     isThreadsConnected: false,
     instagramAutomationEnabled: true,
+    facebookAutomationEnabled: true,
     connectedInstagramName: '',
     connectedFacebookName: '',
     connectedInstagramId: '',
@@ -59,14 +60,14 @@ export default function Settings() {
     { name: 'YouTube', icon: Youtube, color: '#ff0000', enabled: false },
     { name: 'LinkedIn', icon: Linkedin, color: '#0077b5', enabled: false },
     { name: 'Twitter/X', icon: Twitter, color: '#0f1419', enabled: false },
-    { name: 'Threads', icon: ThreadsIcon, color: '#000000', enabled: true },
+    { name: 'Threads', icon: ThreadsIcon, color: '#000000', enabled: false },
     { name: 'Bluesky', icon: Globe, color: '#0a7aff', enabled: false },
     { name: 'Pinterest', icon: Save, color: '#bd081c', enabled: false },
     { name: 'Reddit', icon: Globe, color: '#ff4500', enabled: false },
     { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: false },
     { name: 'Telegram', icon: Send, color: '#0088cc', enabled: false },
     { name: 'Discord', icon: MessageSquare, color: '#5865f2', enabled: false },
-    { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: true }
+    { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: false }
   ];
 
   useEffect(() => {
@@ -92,6 +93,8 @@ export default function Settings() {
         // Derive connection flags from real data
         const derivedData = {
           ...data,
+          instagramAutomationEnabled: data.instagramAutomationEnabled ?? true,
+          facebookAutomationEnabled: data.facebookAutomationEnabled ?? true,
           isAccountConnected: !!data.instagramAccessToken && !!data.businessAccountId,
           isFacebookConnected: !!data.facebookAccessToken && !!data.facebookPageId,
           isWhatsAppConnected: !!data.whatsappToken && !!data.whatsappPhoneNumberId,
@@ -129,7 +132,7 @@ export default function Settings() {
     }
   }, []);
 
-  const handleSaveSettings = async (e, overrideSettings = null) => {
+  const handleSaveSettings = async (e, overrideSettings = null, platform = 'instagram') => {
     if (e) e.preventDefault();
     setSavingSettings(true);
     setMessage({ type: '', text: '' });
@@ -143,7 +146,7 @@ export default function Settings() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ ...payload, _platform: 'instagram' })
+        body: JSON.stringify({ ...payload, _platform: platform })
       });
       const data = await res.json();
       
@@ -157,6 +160,8 @@ export default function Settings() {
         }
         const derivedData = {
           ...data,
+          instagramAutomationEnabled: data.instagramAutomationEnabled ?? true,
+          facebookAutomationEnabled: data.facebookAutomationEnabled ?? true,
           isAccountConnected: !!data.instagramAccessToken && !!data.businessAccountId,
           isFacebookConnected: !!data.facebookAccessToken && !!data.facebookPageId,
           isWhatsAppConnected: !!data.whatsappToken && !!data.whatsappPhoneNumberId,
@@ -233,21 +238,21 @@ export default function Settings() {
     if (!window.confirm('Facebook disconnect karna chahte hain? Facebook automation ruk jayega.')) return;
     const cleared = { ...settings, facebookAccessToken: null, facebookPageId: null, connectedFacebookName: null, isFacebookConnected: false };
     setSettings(cleared);
-    handleSaveSettings(null, cleared);
+    handleSaveSettings(null, cleared, 'facebook');
   };
 
   const handleDisconnectWhatsApp = () => {
     if (!window.confirm('WhatsApp disconnect karna chahte hain? WhatsApp automation ruk jayega.')) return;
     const cleared = { ...settings, whatsappToken: null, whatsappPhoneNumberId: null, whatsappBusinessAccountId: null, isWhatsAppConnected: false };
     setSettings(cleared);
-    handleSaveSettings(null, cleared);
+    handleSaveSettings(null, cleared, 'whatsapp');
   };
 
   const handleDisconnectThreads = () => {
     if (!window.confirm('Threads disconnect karna chahte hain?')) return;
     const cleared = { ...settings, connectedPageName: null, isThreadsConnected: false, threadsAccessToken: null, threadsPageId: null, connectedThreadsName: null };
     setSettings(cleared);
-    handleSaveSettings(null, { ...cleared, connectedPageName: null });
+    handleSaveSettings(null, { ...cleared, connectedPageName: null }, 'threads');
   };
 
   if (loading) return (
@@ -328,7 +333,7 @@ export default function Settings() {
             {showPlatformDropdown && (
               <div className="filter-dropdown" style={{ right: 0, left: 'auto', maxHeight: '320px', overflowY: 'auto', width: '200px' }}>
                 <div onClick={() => { setPlatformFilter('All platforms'); setShowPlatformDropdown(false); }} className="filter-item" style={{ fontWeight: 'bold' }}>All platforms</div>
-                {platformsList.map(plat => (
+                {platformsList.filter(plat => plat.name !== 'WhatsApp' && plat.name !== 'Threads').map(plat => (
                   <div 
                     key={plat.name} 
                     onClick={() => { setPlatformFilter(plat.name); setShowPlatformDropdown(false); }} 
@@ -406,9 +411,7 @@ export default function Settings() {
         {/* Check if ANY channel is connected based on active filters */}
         {(
           (settings.isAccountConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Instagram')) ||
-          (settings.isFacebookConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Facebook')) ||
-          (settings.isWhatsAppConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'WhatsApp')) ||
-          (settings.isThreadsConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Threads'))
+          (settings.isFacebookConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Facebook'))
         ) ? (
           /* Active Integration Card Grid View */
           <div className="connection-card-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'flex-start' }}>
@@ -441,11 +444,11 @@ export default function Settings() {
                 <span style={{ fontSize: '0.78rem', color: '#4b5563', fontWeight: '600' }}>AI auto-replies</span>
                 <label className="switch">
                   <input type="checkbox" checked={settings.instagramAutomationEnabled}
-                    onChange={(e) => { const v = e.target.checked; setSettings(s => ({ ...s, instagramAutomationEnabled: v })); handleSaveSettings(null, { ...settings, instagramAutomationEnabled: v }); }} />
+                    onChange={(e) => { const v = e.target.checked; setSettings(s => ({ ...s, instagramAutomationEnabled: v })); handleSaveSettings(null, { ...settings, instagramAutomationEnabled: v }, 'instagram'); }} />
                   <span className="slider round"></span>
                 </label>
               </div>
-              <button onClick={() => { if(window.confirm('Instagram disconnect karna chahte hain?')) { const c = { ...settings, instagramAccessToken: null, instagramPageId: null, businessAccountId: null, connectedInstagramName: null, isAccountConnected: false }; setSettings(c); handleSaveSettings(null, c); } }}
+              <button onClick={() => { if(window.confirm('Instagram disconnect karna chahte hain?')) { const c = { ...settings, instagramAccessToken: null, instagramPageId: null, businessAccountId: null, connectedInstagramName: null, isAccountConnected: false }; setSettings(c); handleSaveSettings(null, c, 'instagram'); } }}
                 style={{ width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
                 onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
                 onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
@@ -475,61 +478,24 @@ export default function Settings() {
               </div>
               <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedFacebookName || 'Facebook Page'}</div>
               <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : ''}</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #f3f4f6', paddingTop: '8px' }}>
+                <span style={{ fontSize: '0.78rem', color: '#4b5563', fontWeight: '600' }}>AI auto-replies</span>
+                <label className="switch">
+                  <input type="checkbox" checked={settings.facebookAutomationEnabled}
+                    onChange={(e) => { const v = e.target.checked; setSettings(s => ({ ...s, facebookAutomationEnabled: v })); handleSaveSettings(null, { ...settings, facebookAutomationEnabled: v }, 'facebook'); }} />
+                  <span className="slider round"></span>
+                </label>
+              </div>
               <button onClick={handleDisconnectFacebook}
                 style={{ width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
                 onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
                 onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
               >Disconnect</button>
-            </div>
-            )}
-
-            {/* ---- WHATSAPP CARD ---- */}
-            {settings.isWhatsAppConnected && (platformFilter === 'All platforms' || platformFilter === 'WhatsApp') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '240px', border: '1px solid #d1fae5', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#25d366', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <MessageSquare size={22} color="white" />
-                  </div>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>WhatsApp</h4>
-                    <span style={{ display: 'inline-block', background: '#d1fae5', color: '#065f46', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
-                  </div>
-                </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`WhatsApp: Phone ID ${settings.whatsappPhoneNumberId || 'N/A'}`, 'info')} />
-              </div>
-              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.whatsappDisplayName || settings.whatsappPhoneNumberId || 'WhatsApp Business'}</div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : ''}</div>
-              <button onClick={handleDisconnectWhatsApp}
-                style={{ width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
-              >Disconnect</button>
-            </div>
-            )}
-
-            {/* ---- THREADS CARD ---- */}
-            {settings.isThreadsConnected && (platformFilter === 'All platforms' || platformFilter === 'Threads') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '240px', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <ThreadsIcon size={22} color="white" />
-                  </div>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Threads</h4>
-                    <span style={{ display: 'inline-block', background: '#f3f4f6', color: '#374151', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
-                  </div>
-                </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Threads: ${settings.connectedThreadsName || 'N/A'}`, 'info')} />
-              </div>
-              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedThreadsName || 'Threads Account'}</div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : ''}</div>
-              <button onClick={handleDisconnectThreads}
-                style={{ width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
-              >Disconnect</button>
+              <button onClick={() => window.open(`https://facebook.com/${settings.facebookPageId}`, '_blank')}
+                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+              >Profile</button>
             </div>
             )}
 
@@ -658,7 +624,7 @@ export default function Settings() {
 
             {/* Grid of Platforms */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '12px', maxHeight: '380px', overflowY: 'auto', padding: '4px' }}>
-              {platformsList.map(platform => (
+              {platformsList.filter(plat => plat.name !== 'WhatsApp' && plat.name !== 'Threads').map(platform => (
                 <div 
                   key={platform.name}
                   onClick={() => {

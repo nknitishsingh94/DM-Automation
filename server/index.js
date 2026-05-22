@@ -681,7 +681,11 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   }
 
   // 3. AI Studio Fallback (Only if enabled)
-  if (userSettings?.isAiEnabled) {
+  const isAiEnabledForPlatform = platform === 'facebook'
+    ? (userSettings?.facebookAutomationEnabled ?? true)
+    : (userSettings?.instagramAutomationEnabled ?? true);
+
+  if (isAiEnabledForPlatform) {
     console.log(`😴 NO KEYWORD MATCH: Falling back to AI Studio...`);
     try {
       const aiResponse = await generateAIResponse(userId, text);

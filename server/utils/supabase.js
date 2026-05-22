@@ -197,6 +197,25 @@ function convertIncoming(doc, tableName) {
       }
     }
   });
+
+  if (tableName === 'settings') {
+    // Unpack virtual settings fields from connectedPageName JSON string if present
+    if (doc.connectedPageName) {
+      try {
+        const extra = JSON.parse(doc.connectedPageName);
+        if (extra && typeof extra === 'object') {
+          for (const [key, val] of Object.entries(extra)) {
+            if (newDoc[key] === undefined) {
+              newDoc[key] = val;
+            }
+          }
+        }
+      } catch (e) {
+        // Ignore parsing errors for legacy non-JSON connectedPageName values
+      }
+    }
+  }
+
   if (tableName === 'campaigns') {
     if (newDoc.response && newDoc.response.includes('__CAMP_NAME__:')) {
       const startIdx = newDoc.response.indexOf('__CAMP_NAME__:');
@@ -246,6 +265,60 @@ function convertOutgoing(doc, tableName) {
   
   if (newDoc.automationStatus) {
     delete newDoc.automation_status;
+  }
+
+  if (tableName === 'settings') {
+    // Pack virtual settings fields into connectedPageName JSON string
+    const VIRTUAL_SETTINGS_FIELDS = [
+      'instagramAutomationEnabled',
+      'facebookAutomationEnabled',
+      'whatsappAutomationEnabled',
+      'telegramToken', 'isTelegramConnected', 'telegramAutomationEnabled',
+      'twitterApiKey', 'isTwitterConnected', 'twitterAutomationEnabled',
+      'youtubeApiKey', 'isYouTubeConnected', 'youtubeAutomationEnabled',
+      'linkedinAccessToken', 'isLinkedInConnected', 'linkedinAutomationEnabled',
+      'aiFallbackMessage', 'aiName', 'aiTone', 'aiKnowledgeBase', 'aiTemperature'
+    ];
+    
+    let extra = {};
+    if (newDoc.connectedPageName) {
+      try {
+        extra = JSON.parse(newDoc.connectedPageName);
+        if (!extra || typeof extra !== 'object') {
+          extra = { legacyPageName: newDoc.connectedPageName };
+        }
+      } catch (e) {
+        extra = { legacyPageName: newDoc.connectedPageName };
+      }
+    }
+    
+    // Merge virtual fields from doc into extra
+    for (const key of VIRTUAL_SETTINGS_FIELDS) {
+      if (newDoc[key] !== undefined) {
+        extra[key] = newDoc[key];
+        delete newDoc[key]; // Delete from newDoc so it's not sent as separate column
+      }
+    }
+    
+    newDoc.connectedPageName = JSON.stringify(extra);
+
+    // Also delete any other fields not in allowed DB schema to prevent 500 Column Not Found errors
+    const allowedDbColumns = [
+      'id', 'userId', 'instagramAccessToken', 'instagramPageId', 'businessAccountId', 
+      'facebookAccessToken', 'facebookPageId', 'isAccountConnected', 'whatsappToken', 
+      'whatsappPhoneNumberId', 'whatsappBusinessAccountId', 'aiEnabled', 'aiModel', 
+      'aiPersonality', 'createdAt', 'connectedInstagramName', 'connectedInstagramId', 
+      'connectedPageName', 'isFacebookConnected', 'isWhatsAppConnected', 
+      'connectedFacebookName', 'lastTestedAt'
+    ];
+    
+    for (const key of Object.keys(newDoc)) {
+      if (!allowedDbColumns.includes(key) && key !== 'id' && key !== 'userId' && key !== 'createdAt') {
+        if (key !== 'toObject' && key !== 'save' && key !== 'comparePassword') {
+          delete newDoc[key];
+        }
+      }
+    }
   }
 
   if (tableName === 'campaigns') {
