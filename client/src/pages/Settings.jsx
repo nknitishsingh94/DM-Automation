@@ -20,7 +20,16 @@ export default function Settings() {
     facebookPageId: '',
     isAccountConnected: false,
     isFacebookConnected: false,
-    instagramAutomationEnabled: true
+    isWhatsAppConnected: false,
+    isThreadsConnected: false,
+    instagramAutomationEnabled: true,
+    connectedInstagramName: '',
+    connectedFacebookName: '',
+    connectedInstagramId: '',
+    connectedPageName: null,
+    whatsappPhoneNumberId: '',
+    whatsappToken: '',
+    whatsappDisplayName: 'WhatsApp Business'
   });
   
   const [loading, setLoading] = useState(true);
@@ -89,7 +98,8 @@ export default function Settings() {
           isThreadsConnected: !!threadsInfo.isThreadsConnected,
           threadsAccessToken: threadsInfo.threadsAccessToken || null,
           threadsPageId: threadsInfo.threadsPageId || null,
-          connectedThreadsName: threadsInfo.connectedThreadsName || null
+          connectedThreadsName: threadsInfo.connectedThreadsName || null,
+          whatsappDisplayName: data.connectedInstagramId || data.whatsappPhoneNumberId || 'WhatsApp Business'
         };
         setSettings(s => ({ ...s, ...derivedData }));
         setLoading(false);
@@ -153,7 +163,8 @@ export default function Settings() {
           isThreadsConnected: !!threadsInfo.isThreadsConnected,
           threadsAccessToken: threadsInfo.threadsAccessToken || null,
           threadsPageId: threadsInfo.threadsPageId || null,
-          connectedThreadsName: threadsInfo.connectedThreadsName || null
+          connectedThreadsName: threadsInfo.connectedThreadsName || null,
+          whatsappDisplayName: data.connectedInstagramId || data.whatsappPhoneNumberId || 'WhatsApp Business'
         };
         setSettings(s => ({ ...s, ...derivedData }));
         if (e) {
@@ -487,7 +498,7 @@ export default function Settings() {
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`WhatsApp: Phone ID ${settings.whatsappPhoneNumberId || 'N/A'}`, 'info')} />
               </div>
-              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedWhatsAppName || 'WhatsApp Business'}</div>
+              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.whatsappDisplayName || settings.whatsappPhoneNumberId || 'WhatsApp Business'}</div>
               <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : ''}</div>
               <button onClick={handleDisconnectWhatsApp}
                 style={{ width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}

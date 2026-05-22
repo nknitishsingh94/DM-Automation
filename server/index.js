@@ -2236,8 +2236,9 @@ app.post('/api/settings', verifyToken, async (req, res) => {
       'twitterApiKey', 'isTwitterConnected', 'twitterAutomationEnabled',
       'youtubeApiKey', 'isYouTubeConnected', 'youtubeAutomationEnabled',
       'linkedinAccessToken', 'isLinkedInConnected', 'linkedinAutomationEnabled',
-      'connectionError', 'lastTestedAt',
-      'aiFallbackMessage', 'aiName', 'aiTone', 'aiKnowledgeBase', 'aiTemperature'
+      'lastTestedAt',
+      'aiFallbackMessage', 'aiName', 'aiTone', 'aiKnowledgeBase', 'aiTemperature',
+      'connectedPageName', 'whatsappBusinessAccountId'
     ];
 
     const data = {};
@@ -2254,7 +2255,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
           const testRes = await axios.get(`https://graph.facebook.com/v19.0/me?access_token=${data.instagramAccessToken}`);
           if (testRes.data && testRes.data.id) {
             data.isAccountConnected = true;
-            data.connectionError = '';
             data.connectedInstagramName = testRes.data.name || testRes.data.id;
             data.lastTestedAt = new Date();
             console.log('✅ Instagram token validated:', data.connectedInstagramName);
@@ -2262,7 +2262,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
         } catch (metaErr) {
           data.isAccountConnected = false;
           const errMsg = metaErr.response?.data?.error?.message || 'Invalid Access Token';
-          data.connectionError = errMsg;
           return res.status(400).json({
             error: `Instagram connection failed: ${errMsg}`,
             isAccountConnected: false
@@ -2275,7 +2274,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
         data.instagramPageId = null;
         data.businessAccountId = null;
         data.connectedInstagramName = null;
-        data.connectionError = null;
       }
     }
 
@@ -2285,7 +2283,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
           const testRes = await axios.get(`https://graph.facebook.com/v19.0/${data.facebookPageId}?access_token=${data.facebookAccessToken}`);
           if (testRes.data && testRes.data.id) {
             data.isFacebookConnected = true;
-            data.connectionError = '';
             data.connectedFacebookName = testRes.data.name || testRes.data.id;
             data.lastTestedAt = new Date();
             console.log('✅ Facebook token validated:', data.connectedFacebookName);
@@ -2293,7 +2290,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
         } catch (metaErr) {
           data.isFacebookConnected = false;
           const errMsg = metaErr.response?.data?.error?.message || 'Invalid Access Token or Page ID';
-          data.connectionError = errMsg;
           return res.status(400).json({
             error: `Facebook connection failed: ${errMsg}`,
             isFacebookConnected: false
@@ -2310,7 +2306,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
           const testRes = await axios.get(`https://graph.facebook.com/v19.0/${data.whatsappPhoneNumberId}?access_token=${data.whatsappToken}`);
           if (testRes.data && testRes.data.id) {
             data.isWhatsAppConnected = true;
-            data.connectionError = '';
             data.connectedWhatsAppName = testRes.data.verified_name || testRes.data.display_phone_number || testRes.data.id;
             data.lastTestedAt = new Date();
             console.log('✅ WhatsApp token validated:', data.connectedWhatsAppName);
@@ -2318,7 +2313,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
         } catch (metaErr) {
           data.isWhatsAppConnected = false;
           const errMsg = metaErr.response?.data?.error?.message || 'Invalid Access Token or Phone Number ID';
-          data.connectionError = errMsg;
           return res.status(400).json({
             error: `WhatsApp connection failed: ${errMsg}`,
             isWhatsAppConnected: false
@@ -2328,6 +2322,14 @@ app.post('/api/settings', verifyToken, async (req, res) => {
         data.isWhatsAppConnected = false;
       }
     }
+
+    // Safety: remove any unknown columns before saving
+    delete data.connectionError;
+    delete data._platform;
+    delete data.isThreadsConnected;
+    delete data.threadsAccessToken;
+    delete data.threadsPageId;
+    delete data.connectedThreadsName;
 
     const settings = await Settings.findOneAndUpdate(
       { userId: req.user.userId },

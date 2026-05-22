@@ -207,18 +207,25 @@ router.get('/facebook/callback', async (req, res) => {
         updateData.whatsappPhoneNumberId = whatsappPhoneId;
         updateData.whatsappBusinessAccountId = whatsappBusinessAccountId;
         updateData.isWhatsAppConnected = true;
-        console.log(`✅ WhatsApp: Saved Phone ID ${whatsappPhoneId} for user ${userId}.`);
+        // Store name in connectedPageName JSON alongside potential Threads data —
+        // but use a dedicated field so Threads and WhatsApp coexist.
+        // We store WhatsApp name in connectedInstagramId repurposed field or just rely on phone ID.
+        updateData.connectedInstagramId = whatsappName; // reuse unused column for WhatsApp display name
+        console.log(`✅ WhatsApp: Saved Phone ID ${whatsappPhoneId} (${whatsappName}) for user ${userId}.`);
       } else {
-        console.warn('⚠️ WhatsApp connected but no phone number ID found. Marking as connected without phone ID.');
+        console.warn('⚠️ WhatsApp connected but no phone number ID found. Marking disconnected.');
         updateData.isWhatsAppConnected = false;
       }
+      // ⚠️ Do NOT touch connectedPageName (Threads) or Instagram/Facebook fields
     } else if (isInstagram) {
+      // ✅ Only update Instagram fields — do NOT touch Facebook, WhatsApp, or Threads
       updateData.instagramAccessToken = pageAccessToken;
       updateData.instagramPageId = pageId;
       updateData.businessAccountId = businessAccountId;
       updateData.isAccountConnected = !!businessAccountId;
       updateData.connectedInstagramName = accountName;
     } else if (isFacebook) {
+      // ✅ Only update Facebook fields — do NOT touch Instagram, WhatsApp, or Threads
       updateData.facebookAccessToken = pageAccessToken;
       updateData.facebookPageId = pageId;
       updateData.isFacebookConnected = !!pageId;
@@ -236,11 +243,10 @@ router.get('/facebook/callback', async (req, res) => {
       updateData.isAccountConnected = !!businessAccountId;
     }
 
-    // Non-WhatsApp flows: don't overwrite whatsapp fields
-    if (!isWhatsApp && !isThreads) {
-      // Only touch WhatsApp fields if it was explicitly a WhatsApp connection
-      // (Leave whatsapp* columns untouched for Instagram/Facebook flows)
-    }
+    // Safety: never send unknown columns to Supabase
+    delete updateData.whatsappError;
+    delete updateData.whatsappDiscoveryError;
+    delete updateData.connectionError;
 
     /*
     // Strict Single-Owner Mapping: Clean up other settings rows that might be linked to this page/account
