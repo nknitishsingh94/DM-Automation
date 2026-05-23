@@ -114,6 +114,7 @@ function Sidebar({ isMobileOpen, onClose }) {
   const [activeWorkspace, setActiveWorkspace] = useState(null);
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
+  const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
 
   // Fetch workspaces
   const fetchWorkspaces = async () => {
@@ -203,6 +204,36 @@ function Sidebar({ isMobileOpen, onClose }) {
     }
   };
 
+  const handleToggleSelectWorkspace = (id) => {
+    setSelectedWorkspaces(prev => 
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
+  const handleDeleteSelectedWorkspaces = async () => {
+    if (selectedWorkspaces.length === 0) return;
+    if (!window.confirm(`Are you sure you want to delete the ${selectedWorkspaces.length} selected workspaces? This action cannot be undone.`)) {
+      return;
+    }
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const deletePromises = selectedWorkspaces.map(id => 
+        fetch(`${API_BASE_URL}/api/workspaces/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+      );
+      await Promise.all(deletePromises);
+      setSelectedWorkspaces([]);
+      fetchWorkspaces();
+    } catch (err) {
+      console.error('Error deleting selected workspaces:', err);
+      alert('Error deleting selected workspaces');
+    }
+  };
+
   return (
     <>
       <div 
@@ -255,8 +286,36 @@ function Sidebar({ isMobileOpen, onClose }) {
                   background: 'white', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
                   border: '1px solid #f1f5f9', zIndex: 100, padding: '8px'
                 }}>
-                  <div style={{ padding: '4px 12px 8px', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b', fontWeight: '700' }}>
-                    Workspaces
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 12px 8px' }}>
+                    <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b', fontWeight: '700' }}>
+                      Workspaces
+                    </span>
+                    {selectedWorkspaces.length > 0 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteSelectedWorkspaces();
+                        }}
+                        style={{
+                          background: '#fee2e2',
+                          border: 'none',
+                          color: '#ef4444',
+                          fontSize: '10px',
+                          fontWeight: '800',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          padding: '2px 8px',
+                          borderRadius: '6px',
+                          transition: 'background 0.2s'
+                        }}
+                        onMouseOver={e => e.currentTarget.style.background = '#fca5a5'}
+                        onMouseOut={e => e.currentTarget.style.background = '#fee2e2'}
+                      >
+                        <Trash2 size={10} /> Delete ({selectedWorkspaces.length})
+                      </button>
+                    )}
                   </div>
                   
                   <div style={{ maxHeight: '200px', overflowY: 'auto', marginBottom: '8px' }}>
@@ -278,65 +337,60 @@ function Sidebar({ isMobileOpen, onClose }) {
                             padding: '8px 12px',
                             borderRadius: '8px',
                             cursor: 'pointer',
-                            gap: '4px'
+                            gap: '8px'
                           }}
                           onClick={() => handleSwitchWorkspace(w.id)}
                         >
-                          <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, minWidth: 0 }}>
-                            <span style={{ 
-                              overflow: 'hidden', 
-                              textOverflow: 'ellipsis', 
-                              whiteSpace: 'nowrap',
-                              fontWeight: w.id === activeWorkspace?.id ? '700' : '500',
-                              color: '#1e293b',
-                              fontSize: '13px'
-                            }}>
-                              {w.name}
-                            </span>
-                            {connectionLabel && (
-                              <span style={{ 
-                                fontSize: '10px', 
-                                color: '#64748b', 
-                                fontWeight: 'normal',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                marginTop: '2px'
-                              }}>
-                                {connectionLabel}
-                              </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexGrow: 1, minWidth: 0 }}>
+                            {w.name !== 'Default Workspace' && w.id !== activeWorkspace?.id && (
+                              <input
+                                type="checkbox"
+                                checked={selectedWorkspaces.includes(w.id)}
+                                onChange={(e) => {
+                                  e.stopPropagation();
+                                  handleToggleSelectWorkspace(w.id);
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                                style={{
+                                  width: '14px',
+                                  height: '14px',
+                                  cursor: 'pointer',
+                                  accentColor: '#ef4444',
+                                  flexShrink: 0
+                                }}
+                              />
                             )}
+                            <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                              <span style={{ 
+                                overflow: 'hidden', 
+                                textOverflow: 'ellipsis', 
+                                whiteSpace: 'nowrap',
+                                fontWeight: w.id === activeWorkspace?.id ? '700' : '500',
+                                color: '#1e293b',
+                                fontSize: '13px'
+                              }}>
+                                {w.name}
+                              </span>
+                              {connectionLabel && (
+                                <span style={{ 
+                                  fontSize: '10px', 
+                                  color: '#64748b', 
+                                  fontWeight: 'normal',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  marginTop: '2px'
+                                }}>
+                                  {connectionLabel}
+                                </span>
+                              )}
+                            </div>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
                             {w.id === activeWorkspace?.id && (
                               <span style={{ fontSize: '10px', background: '#8b5cf6', color: 'white', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
                                 Active
                               </span>
-                            )}
-                            {w.name !== 'Default Workspace' && w.id !== activeWorkspace?.id && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteWorkspace(w.id, w.name);
-                                }}
-                                style={{
-                                  background: 'transparent',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  padding: '4px',
-                                  borderRadius: '4px',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  transition: 'background 0.2s'
-                                }}
-                                className="trash-btn"
-                                title="Delete Workspace"
-                                onMouseOver={e => e.currentTarget.style.background = '#fee2e2'}
-                                onMouseOut={e => e.currentTarget.style.background = 'transparent'}
-                              >
-                                <Trash2 size={13} color="#ef4444" />
-                              </button>
                             )}
                           </div>
                         </div>
