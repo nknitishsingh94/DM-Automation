@@ -52,35 +52,35 @@ BEGIN
         -- Migrate data that does not have workspaceId/workspace_id set
         UPDATE public.settings
         SET "workspaceId" = def_workspace_id
-        WHERE "userId" = user_rec.id AND "workspaceId" IS NULL;
+        WHERE "userId"::text = user_rec.id::text AND "workspaceId" IS NULL;
 
         UPDATE public.campaigns
         SET "workspaceId" = def_workspace_id
-        WHERE "userId" = user_rec.id AND "workspaceId" IS NULL;
+        WHERE "userId"::text = user_rec.id::text AND "workspaceId" IS NULL;
 
         UPDATE public.contacts
         SET "workspaceId" = def_workspace_id
-        WHERE "userId" = user_rec.id AND "workspaceId" IS NULL;
+        WHERE "userId"::text = user_rec.id::text AND "workspaceId" IS NULL;
 
         UPDATE public.messages
         SET "workspaceId" = def_workspace_id
-        WHERE "userId" = user_rec.id AND "workspaceId" IS NULL;
+        WHERE "userId"::text = user_rec.id::text AND "workspaceId" IS NULL;
 
         UPDATE public.flows
         SET "workspaceId" = def_workspace_id
-        WHERE "userId" = user_rec.id AND "workspaceId" IS NULL;
+        WHERE "userId"::text = user_rec.id::text AND "workspaceId" IS NULL;
 
         UPDATE public.chat_messages
         SET "workspaceId" = def_workspace_id
-        WHERE "userId" = user_rec.id AND "workspaceId" IS NULL;
+        WHERE "userId"::text = user_rec.id::text AND "workspaceId" IS NULL;
 
         UPDATE public.scheduled_posts
         SET "workspace_id" = def_workspace_id
-        WHERE ("userId" = user_rec.id OR user_id = user_rec.id) AND "workspace_id" IS NULL;
+        WHERE ("userId"::text = user_rec.id::text OR user_id::text = user_rec.id::text) AND "workspace_id" IS NULL;
 
         UPDATE public.captions
         SET "workspace_id" = def_workspace_id
-        WHERE user_id = user_rec.id AND "workspace_id" IS NULL;
+        WHERE user_id::text = user_rec.id::text AND "workspace_id" IS NULL;
     END LOOP;
 END $$;
 
