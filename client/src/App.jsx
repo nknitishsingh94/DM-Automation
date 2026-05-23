@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate } from 'react-router-dom';
-import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar } from 'lucide-react';
+import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2 } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config';
@@ -179,6 +179,30 @@ function Sidebar({ isMobileOpen, onClose }) {
     }
   };
 
+  const handleDeleteWorkspace = async (workspaceId, name) => {
+    if (!window.confirm(`Are you sure you want to delete the workspace "${name}"? This action cannot be undone.`)) {
+      return;
+    }
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/workspaces/${workspaceId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        fetchWorkspaces();
+      } else {
+        const errData = await res.json();
+        alert(errData.error || 'Failed to delete workspace');
+      }
+    } catch (err) {
+      console.error('Error deleting workspace:', err);
+      alert('Error deleting workspace');
+    }
+  };
+
   return (
     <>
       <div 
@@ -235,22 +259,89 @@ function Sidebar({ isMobileOpen, onClose }) {
                     Workspaces
                   </div>
                   
-                  <div style={{ maxHeight: '160px', overflowY: 'auto', marginBottom: '8px' }}>
-                    {workspaces.map(w => (
-                      <button 
-                        key={w.id} 
-                        onClick={() => handleSwitchWorkspace(w.id)}
-                        className="dropdown-item" 
-                        style={{ 
-                          justifyContent: 'space-between',
-                          background: w.id === activeWorkspace?.id ? '#f1f5f9' : 'transparent',
-                          fontWeight: w.id === activeWorkspace?.id ? '700' : 'normal'
-                        }}
-                      >
-                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{w.name}</span>
-                        {w.id === activeWorkspace?.id && <span style={{ fontSize: '10px', background: '#8b5cf6', color: 'white', padding: '2px 6px', borderRadius: '4px' }}>Active</span>}
-                      </button>
-                    ))}
+                  <div style={{ maxHeight: '200px', overflowY: 'auto', marginBottom: '8px' }}>
+                    {workspaces.map(w => {
+                      const parts = [];
+                      if (w.isInstagramConnected && w.connectedInstagramName) parts.push(`IG: @${w.connectedInstagramName}`);
+                      if (w.isFacebookConnected && w.connectedFacebookName) parts.push(`FB: ${w.connectedFacebookName}`);
+                      const connectionLabel = parts.join(', ');
+
+                      return (
+                        <div 
+                          key={w.id} 
+                          className="dropdown-item" 
+                          style={{ 
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            background: w.id === activeWorkspace?.id ? '#f1f5f9' : 'transparent',
+                            padding: '8px 12px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            gap: '4px'
+                          }}
+                          onClick={() => handleSwitchWorkspace(w.id)}
+                        >
+                          <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, minWidth: 0 }}>
+                            <span style={{ 
+                              overflow: 'hidden', 
+                              textOverflow: 'ellipsis', 
+                              whiteSpace: 'nowrap',
+                              fontWeight: w.id === activeWorkspace?.id ? '700' : '500',
+                              color: '#1e293b',
+                              fontSize: '13px'
+                            }}>
+                              {w.name}
+                            </span>
+                            {connectionLabel && (
+                              <span style={{ 
+                                fontSize: '10px', 
+                                color: '#64748b', 
+                                fontWeight: 'normal',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                marginTop: '2px'
+                              }}>
+                                {connectionLabel}
+                              </span>
+                            )}
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
+                            {w.id === activeWorkspace?.id && (
+                              <span style={{ fontSize: '10px', background: '#8b5cf6', color: 'white', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
+                                Active
+                              </span>
+                            )}
+                            {w.name !== 'Default Workspace' && w.id !== activeWorkspace?.id && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteWorkspace(w.id, w.name);
+                                }}
+                                style={{
+                                  background: 'transparent',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  padding: '4px',
+                                  borderRadius: '4px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  transition: 'background 0.2s'
+                                }}
+                                className="trash-btn"
+                                title="Delete Workspace"
+                                onMouseOver={e => e.currentTarget.style.background = '#fee2e2'}
+                                onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+                              >
+                                <Trash2 size={13} color="#ef4444" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                   
                   <button onClick={() => { setShowWorkspaceModal(true); setShowProfileMenu(false); }} className="dropdown-item">

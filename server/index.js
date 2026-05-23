@@ -2271,7 +2271,30 @@ app.get('/api/workspaces', verifyToken, async (req, res) => {
     const { convertObjectIDToUUID } = await import('./utils/supabase.js');
     const userId = convertObjectIDToUUID(req.user.userId);
     const workspaces = await Workspace.find({ userId });
-    res.json(workspaces || []);
+    
+    // Fetch settings for each workspace to get connected account names
+    let enrichedWorkspaces = [];
+    try {
+      enrichedWorkspaces = await Promise.all(workspaces.map(async (ws) => {
+        const wsJson = ws.toJSON ? ws.toJSON() : { ...ws };
+        try {
+          const settings = await Settings.findOne({ userId, workspaceId: ws.id });
+          if (settings) {
+            wsJson.connectedInstagramName = settings.connectedInstagramName || null;
+            wsJson.connectedFacebookName = settings.connectedFacebookName || null;
+            wsJson.isInstagramConnected = settings.isAccountConnected || (!!settings.instagramAccessToken && !!settings.businessAccountId);
+            wsJson.isFacebookConnected = settings.isFacebookConnected || (!!settings.facebookAccessToken && !!settings.facebookPageId);
+          }
+        } catch (settingsErr) {
+          // If query fails (e.g. column doesn't exist), just log and proceed without settings details
+          console.warn(`⚠️ Settings lookup failed for workspace ${ws.id}:`, settingsErr.message);
+        }
+        return wsJson;
+      }));
+    } catch (err) {
+      enrichedWorkspaces = workspaces;
+    }
+    res.json(enrichedWorkspaces || []);
   } catch (err) {
     console.warn("⚠️ Error fetching workspaces, returning empty array for safety:", err.message || err);
     res.json([]);
@@ -2286,9 +2309,25 @@ app.post('/api/workspaces', verifyToken, async (req, res) => {
     if (!name) {
       return res.status(400).json({ error: 'Workspace name is required' });
     }
+
+    let finalName = name.trim();
+    let counter = 1;
+    
+    // Find all workspaces for this user to check for duplicates
+    const existingWorkspaces = await Workspace.find({ userId });
+    const existingNames = existingWorkspaces.map(w => w.name.toLowerCase());
+    
+    // If the name already exists, append a counter suffix (e.g. "facebook 2")
+    let tempName = finalName;
+    while (existingNames.includes(tempName.toLowerCase())) {
+      counter++;
+      tempName = `${finalName} ${counter}`;
+    }
+    finalName = tempName;
+
     const newWorkspace = await Workspace.create({
       userId,
-      name
+      name: finalName
     });
     // Initialize empty Settings for this new workspace
     const newSettings = new Settings({
@@ -2310,6 +2349,33 @@ app.post('/api/workspaces', verifyToken, async (req, res) => {
     if (err.message && (err.message.includes('relation') || err.message.includes('does not exist') || err.code === '42P01')) {
       return res.status(400).json({ error: 'Workspaces table does not exist. Please run the Supabase database migration script first.' });
     }
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/workspaces/:id', verifyToken, async (req, res) => {
+  try {
+    const { convertObjectIDToUUID } = await import('./utils/supabase.js');
+    const userId = convertObjectIDToUUID(req.user.userId);
+    const workspaceId = convertObjectIDToUUID(req.params.id);
+
+    // Find the workspace
+    const workspace = await Workspace.findOne({ id: workspaceId, userId });
+    if (!workspace) {
+      return res.status(404).json({ error: 'Workspace not found' });
+    }
+    if (workspace.name === 'Default Workspace') {
+      return res.status(400).json({ error: 'Default Workspace cannot be deleted.' });
+    }
+
+    // Delete the workspace (ON DELETE CASCADE in Postgres will delete settings/campaigns/etc.)
+    await Workspace.findOneAndDelete({ id: workspaceId, userId });
+    
+    // Refresh global cache so it is immediately updated
+    await refreshGlobalCache();
+    
+    res.json({ success: true, message: 'Workspace deleted successfully' });
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });

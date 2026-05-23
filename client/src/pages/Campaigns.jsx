@@ -13,6 +13,8 @@ export default function Campaigns() {
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'universal', 'linked'
+  const [platformFilter, setPlatformFilter] = useState('all');
+  const [logPlatformFilter, setLogPlatformFilter] = useState('all');
   const [formStep, setFormStep] = useState(1);
   const [newCamp, setNewCamp] = useState({ 
     name: '', 
@@ -293,6 +295,7 @@ export default function Campaigns() {
 
   const viewLogs = async (campaign) => {
     setSelectedCampaign(campaign);
+    setLogPlatformFilter('all');
     setLoadingLogs(true);
     const token = localStorage.getItem('insta_agent_token');
     try {
@@ -311,8 +314,11 @@ export default function Campaigns() {
   if (loading || loadingFlows) return <div style={{ color: 'var(--text-muted)', padding: '40px', textAlign: 'center' }}>Loading automations...</div>;
 
   const filteredCampaigns = campaigns.filter(c => {
-    if (activeTab === 'universal') return c.isUniversal;
-    if (activeTab === 'linked') return !c.isUniversal;
+    if (activeTab === 'universal' && !c.isUniversal) return false;
+    if (activeTab === 'linked' && c.isUniversal) return false;
+    if (platformFilter !== 'all') {
+      return c.platform === 'all' || c.platform === platformFilter;
+    }
     return true;
   });
 
@@ -415,6 +421,52 @@ export default function Campaigns() {
           </button>
         ))}
       </div>
+
+      {/* Platform Filters */}
+      {(() => {
+        const isIgConnected = connectedSettings?.isAccountConnected || (!!connectedSettings?.instagramAccessToken && !!connectedSettings?.businessAccountId);
+        const isFbConnected = connectedSettings?.isFacebookConnected || (!!connectedSettings?.facebookAccessToken && !!connectedSettings?.facebookPageId);
+        const isWaConnected = connectedSettings?.isWhatsAppConnected || (!!connectedSettings?.whatsappToken && !!connectedSettings?.whatsappPhoneNumberId);
+
+        const connectedPlatforms = [];
+        if (isIgConnected) connectedPlatforms.push({ id: 'instagram', label: 'Instagram', icon: <Instagram size={14} /> });
+        if (isFbConnected) connectedPlatforms.push({ id: 'facebook', label: 'Facebook Messenger', icon: <MessageCircle size={14} /> });
+        if (isWaConnected) connectedPlatforms.push({ id: 'whatsapp', label: 'WhatsApp', icon: <MessageSquare size={14} /> });
+
+        if (connectedPlatforms.length <= 1) return null;
+
+        return (
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#64748b', marginRight: '8px' }}>Filter by Platform:</span>
+            <button
+              onClick={() => setPlatformFilter('all')}
+              style={{
+                padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.85rem', fontWeight: '700', cursor: 'pointer',
+                background: platformFilter === 'all' ? '#1e1b4b' : 'white',
+                color: platformFilter === 'all' ? 'white' : '#64748b',
+                transition: 'all 0.2s'
+              }}
+            >
+              All
+            </button>
+            {connectedPlatforms.map(p => (
+              <button
+                key={p.id}
+                onClick={() => setPlatformFilter(p.id)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.85rem', fontWeight: '700', cursor: 'pointer',
+                  background: platformFilter === p.id ? '#1e1b4b' : 'white',
+                  color: platformFilter === p.id ? 'white' : '#64748b',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {p.icon} {p.label}
+              </button>
+            ))}
+          </div>
+        );
+      })()}
 
       {message.text && (
         <div style={{ padding: '12px', background: message.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: message.type === 'success' ? '#34d399' : '#f87171', borderRadius: '8px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -563,8 +615,99 @@ export default function Campaigns() {
       {selectedCampaign && (
         <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setSelectedCampaign(null)}>
           <div className="table-card" style={{ width: '90%', maxWidth: '700px', maxHeight: '85vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
-            <div style={{ padding: '24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><div><h3 style={{ fontSize: '1.2rem', fontWeight: '700' }}>Process History: {selectedCampaign.name}</h3><p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Real-time logs for keyword: "{selectedCampaign.trigger}"</p></div><button onClick={() => setSelectedCampaign(null)} style={{ color: 'var(--text-muted)' }}><X size={24} /></button></div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>{loadingLogs ? (<div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Fetching latest logs...</div>) : logs.length === 0 ? (<div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No messages processed yet for this campaign.</div>) : (<div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>{logs.map((log) => (<div key={log._id} style={{ padding: '16px', borderRadius: '12px', border: '1px solid var(--border-subtle)', background: 'rgba(255,255,255,0.3)', position: 'relative' }}><div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--accent-color)' }}>{log.platform || 'instagram'}</span><span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(log.timestamp).toLocaleString()}</span></div><div style={{ fontSize: '0.9rem', marginBottom: '4px' }}><span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>Recipient:</span> {log.chatId}</div><div style={{ fontSize: '0.9rem' }}><span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>AI Sent:</span> "{log.text}"</div>{log.linkUrl && (<div style={{ marginTop: '8px', fontSize: '0.8rem', color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '4px' }}><LinkIcon size={14} /> Attached Link: {log.linkUrl}</div>)}</div>))}</div>)}</div>
+            <div style={{ padding: '24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: '700' }}>Process History: {selectedCampaign.name}</h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Real-time logs for keyword: "{selectedCampaign.trigger}"</p>
+              </div>
+              <button onClick={() => setSelectedCampaign(null)} style={{ color: 'var(--text-muted)' }}><X size={24} /></button>
+            </div>
+            
+            {/* Modal Platform Filters */}
+            {(() => {
+              const isIgConnected = connectedSettings?.isAccountConnected || (!!connectedSettings?.instagramAccessToken && !!connectedSettings?.businessAccountId);
+              const isFbConnected = connectedSettings?.isFacebookConnected || (!!connectedSettings?.facebookAccessToken && !!connectedSettings?.facebookPageId);
+              const isWaConnected = connectedSettings?.isWhatsAppConnected || (!!connectedSettings?.whatsappToken && !!connectedSettings?.whatsappPhoneNumberId);
+
+              const connectedPlatforms = [];
+              if (isIgConnected) connectedPlatforms.push({ id: 'instagram', label: 'Instagram' });
+              if (isFbConnected) connectedPlatforms.push({ id: 'facebook', label: 'Facebook Messenger' });
+              if (isWaConnected) connectedPlatforms.push({ id: 'whatsapp', label: 'WhatsApp' });
+
+              if (connectedPlatforms.length <= 1) return null;
+
+              return (
+                <div style={{ display: 'flex', gap: '8px', padding: '12px 24px 0', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b' }}>Platform:</span>
+                  <button
+                    onClick={() => setLogPlatformFilter('all')}
+                    style={{
+                      padding: '4px 10px', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer',
+                      background: logPlatformFilter === 'all' ? '#1e1b4b' : 'white',
+                      color: logPlatformFilter === 'all' ? 'white' : '#64748b'
+                    }}
+                  >
+                    All
+                  </button>
+                  {connectedPlatforms.map(p => (
+                    <button
+                      key={p.id}
+                      onClick={() => setLogPlatformFilter(p.id)}
+                      style={{
+                        padding: '4px 10px', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer',
+                        background: logPlatformFilter === p.id ? '#1e1b4b' : 'white',
+                        color: logPlatformFilter === p.id ? 'white' : '#64748b'
+                      }}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              );
+            })()}
+
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+              {loadingLogs ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Fetching latest logs...</div>
+              ) : logs.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No messages processed yet for this campaign.</div>
+              ) : (() => {
+                const filteredLogs = logs.filter(log => {
+                  if (logPlatformFilter !== 'all') {
+                    return (log.platform || 'instagram') === logPlatformFilter;
+                  }
+                  return true;
+                });
+
+                if (filteredLogs.length === 0) {
+                  return <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No logs match this platform filter.</div>;
+                }
+
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {filteredLogs.map((log) => (
+                      <div key={log._id} style={{ padding: '16px', borderRadius: '12px', border: '1px solid var(--border-subtle)', background: 'rgba(255,255,255,0.3)', position: 'relative' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--accent-color)' }}>{log.platform || 'instagram'}</span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(log.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div style={{ fontSize: '0.9rem', marginBottom: '4px' }}>
+                          <span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>Recipient:</span> {log.chatId}
+                        </div>
+                        <div style={{ fontSize: '0.9rem' }}>
+                          <span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>AI Sent:</span> "{log.text}"
+                        </div>
+                        {log.linkUrl && (
+                          <div style={{ marginTop: '8px', fontSize: '0.8rem', color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <LinkIcon size={14} /> Attached Link: {log.linkUrl}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
           </div>
         </div>
       )}
