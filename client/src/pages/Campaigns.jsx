@@ -747,6 +747,26 @@ export default function Campaigns() {
                 />
               </div>
 
+              <div>
+                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Target Platform</label>
+                <select 
+                  value={newCamp.platform} 
+                  onChange={e => setNewCamp({...newCamp, platform: e.target.value})}
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', background: 'white' }}
+                >
+                  <option value="all">All Connected Platforms</option>
+                  {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
+                    <option value="instagram">Instagram</option>
+                  )}
+                  {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
+                    <option value="facebook">Facebook Messenger</option>
+                  )}
+                  {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && (
+                    <option value="whatsapp">WhatsApp</option>
+                  )}
+                </select>
+              </div>
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: newCamp.isUniversal ? 'rgba(14, 165, 233, 0.05)' : '#f8fafc', borderRadius: '10px', border: newCamp.isUniversal ? '1px solid #0ea5e9' : '1px solid #e2e8f0' }}>
                 <input 
                   type="checkbox" 
