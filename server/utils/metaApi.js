@@ -229,7 +229,7 @@ export const checkMediaReadiness = async (mediaId, accessToken) => {
       return true;
     }
     
-    if (statusCode === 'FINISHED') {
+    if (statusCode === 'FINISHED' || statusCode === 'PUBLISHED') {
       return true;
     } else if (statusCode === 'ERROR') {
       // If it failed, try to get video_status for more details
@@ -245,12 +245,18 @@ export const checkMediaReadiness = async (mediaId, accessToken) => {
       } catch (e) {
         throw new Error(`Meta Processing Error: ${statusCode}`);
       }
+    } else if (statusCode === 'EXPIRED') {
+      throw new Error(`Meta Processing Error: Container Expired`);
     }
     
     return false; // Still processing
   } catch (err) {
     if (err.message?.includes('Meta Processing')) throw err;
-    return false;
+    if (err.response) {
+      console.error(`❌ Meta API Error in checkMediaReadiness:`, err.response.data);
+      throw new Error(`Meta API Error: ${err.response.data.error?.message || err.message}`);
+    }
+    throw err;
   }
 };
 
