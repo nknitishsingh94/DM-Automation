@@ -2904,7 +2904,7 @@ async function runSchedulingWorker() {
 
         if (publishResult && publishResult.status === 'IG_PROCESSING') {
           // Meta is still thinking. Save the containerId and try again in the next cron run
-          console.log(`⏳ Meta is still processing Post ${post._id}. Container: ${publishResult.containerId}`);
+          console.log(`⏳ Meta is still processing Post ${postId}. Container: ${publishResult.containerId}`);
 
           let updatedMeta = {};
           try {
@@ -2912,6 +2912,25 @@ async function runSchedulingWorker() {
               updatedMeta = JSON.parse(post.mediaUrl);
             }
           } catch (e) {}
+
+          // Add polling timeout logic
+          if (!updatedMeta.pollingStartedAt) {
+            // If it's already an old post stuck in processing, backdate the start time to trigger failure immediately
+            const scheduledAt = new Date(post.scheduledFor || Date.now());
+            const minsSince = (Date.now() - scheduledAt.getTime()) / 60000;
+            if (minsSince > 10 && updatedMeta.igContainerId) {
+               updatedMeta.pollingStartedAt = new Date(Date.now() - 11 * 60000).toISOString(); 
+            } else {
+               updatedMeta.pollingStartedAt = new Date().toISOString();
+            }
+          }
+
+          const pollingMins = (Date.now() - new Date(updatedMeta.pollingStartedAt).getTime()) / 60000;
+          if (pollingMins > 10) {
+             console.error(`⏳ Meta has been processing Post ${postId} for over 10 minutes! Aborting container.`);
+             await safeUpdate(postId, { status: 'Failed', lastError: 'Meta processing timeout. Instagram took too long to process the media container. Please try again.' });
+             return;
+          }
 
           updatedMeta.igContainerId = publishResult.containerId;
           updatedMeta.type = finalType;
