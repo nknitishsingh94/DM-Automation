@@ -2682,7 +2682,7 @@ async function runSchedulingWorker() {
     
     const duePosts = await ScheduledPost.find({
       scheduledFor: { $lte: nowISO },
-      status: { $in: ['Scheduled', 'Retrying'] }
+      status: { $in: ['Scheduled', 'Retrying', 'Processing'] }
     });
 
     console.log(`📡 [Worker] Query returned ${duePosts?.length || 0} posts.`);
@@ -2747,13 +2747,13 @@ async function runSchedulingWorker() {
 
         // Atomic claim: directly update status to 'Processing'
         const postId = post.id || post._id;
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+        const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
 
         const { data: claimData, error: claimErr } = await _sb
           .from('scheduled_posts')
           .update({ status: 'Processing', updatedAt: new Date().toISOString() })
           .eq('id', postId)
-          .or(`status.in.(Scheduled,Retrying),and(status.eq.Processing,updatedAt.lt.${fiveMinutesAgo})`)
+          .or(`status.in.(Scheduled,Retrying),and(status.eq.Processing,updatedAt.lt.${twoMinutesAgo})`)
           .select()
           .limit(1);
 
