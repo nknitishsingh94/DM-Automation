@@ -2758,42 +2758,71 @@ async function runSchedulingWorker() {
   try {
     const now = new Date();
     const nowISO = now.toISOString();
-    
+
     console.log(`📡 [Worker] Checking posts due before: ${nowISO}`);
-    
+
     const duePosts = await ScheduledPost.find({
       scheduledFor: { $lte: nowISO },
       status: { $in: ['Scheduled', 'Retrying', 'Processing'] }
     });
 
-    console.log(`📡 [Worker] Query returned ${duePosts?.length || 0} posts.`);
+    console.log(`🔥 [Worker] Processing ${duePosts.length} posts...`);
+    const { publishInstagramContent } = await import('./utils/metaApi.js');
 
-    if (!duePosts || duePosts.length === 0) {
-      // Diagnostic: check if ANY scheduled posts exist at all
-      const anyPost = await ScheduledPost.findOne({ status: 'Scheduled' });
-      if (anyPost) {
-        console.log(`🔍 [Worker] Found a future post: ID ${anyPost.id}, scheduled for ${anyPost.scheduledFor}`);
-        return { message: 'No due posts found. Future post exists.', anyPost, nowISO };
-      } else {
-        const allPosts = await ScheduledPost.find({});
-        console.log(`🔍 [Worker] No posts with status "Scheduled" found in database.`);
-        return { message: 'No scheduled posts found in database.', nowISO, allPosts };
+    // Pre-load Supabase client and safeUpdate before touching DB state
+    const { supabase: _sb } = await import('./utils/supabase.js');
+    const _updatePost = async (id, fields) => _sb.from('scheduled_posts').update({ ...fields, updatedAt: new Date().toISOString() }).eq('id', id);
+
+    // ── Safety net: reset any "Processing" posts that have been orphaned ──
+    // If a post has been in "Processing" for > 10 minutes it is almost
+    // certainly stuck. The 2-min cooldown gate inside the atomic claim would
+    // otherwise block the worker from ever touching it again.
+    {
+      const STUCK_THRESHOLD_MINUTES = 10;
+      const stuckBoundary = new Date(Date.now() - STUCK_THRESHOLD_MINUTES * 60 * 1000).toISOString();
+      try {
+        const { data: stuckData, error: stuckErr } = await _sb
+          .from('scheduled_posts')
+          .update({ status: 'Retrying', updatedAt: new Date().toISOString() })
+          .eq('status', 'Processing')
+          .lt('updatedAt', stuckBoundary)
+          .select('id');
+        if (stuckErr) {
+          console.warn('⚠️ [Worker] Safety-net reset failed:', stuckErr.message);
+        } else if (stuckData && stuckData.length > 0) {
+          console.log(`🚑 [Worker] Safety-net reset ${stuckData.length} stuck "Processing" post(s) back to "Retrying".`);
+        }
+      } catch (resetErr) {
+        console.warn('⚠️ [Worker] Safety-net reset error:', resetErr.message);
       }
     }
 
-    console.log(`🔥 [Worker] Processing ${duePosts.length} posts...`);
-    const { publishInstagramContent } = await import('./utils/metaApi.js');
+    // ── Safe post updater ─────────────────────────────────────────────────
+    // All _updatePost calls go through this wrapper: any exception is caught
+    // and logged but never propagated — so a single DB-write failure can never
+    // kill the worker or leave a post stranded in "Processing".
+    const safeUpdate = async (id, fields) => {
+      try {
+        await _updatePost(id, fields);
+      } catch (upErr) {
+        console.error(`⚠️ [Worker] _updatePost silently failed for post ${id}:`, upErr.message || upErr);
+      }
+    };
+
+    // If the media URL is a local path, convert it to a public URL
+    const SERVER_PUBLIC_URL = process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
 
     // Process all due posts in parallel to avoid one slow Reel blocking others
     const processPromises = duePosts.map(async (post) => {
       try {
-        console.log(`🔄 EXECUTION: Processing Post ${post._id} for User ${post.userId}`);
+        const postId = post.id || post._id;
+        console.log(`🔄 EXECUTION: Processing Post ${postId} for User ${post.userId}`);
 
         // Deserialize metadata
         let finalMedia = post.mediaUrl;
         let finalType = post.type || 'image';
         let finalCarousel = [];
-        
+
         if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
           try {
             const meta = JSON.parse(post.mediaUrl);
@@ -2806,28 +2835,21 @@ async function runSchedulingWorker() {
         }
 
         // If the media URL is a local path, convert it to a public URL
-        const SERVER_PUBLIC_URL = process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
-        
         if (finalMedia && finalMedia.startsWith('/uploads/')) {
           finalMedia = `${SERVER_PUBLIC_URL}${finalMedia}`;
         }
-        
+
         if (finalCarousel && finalCarousel.length > 0) {
           finalCarousel = finalCarousel.map(item => (item && item.startsWith('/uploads/')) ? `${SERVER_PUBLIC_URL}${item}` : item);
         }
-        
-        // Validation
-        const { supabase: _sb } = await import('./utils/supabase.js');
-        const _updatePost = async (id, fields) => _sb.from('scheduled_posts').update({ ...fields, updatedAt: new Date().toISOString() }).eq('id', id);
 
         if (!finalMedia || finalMedia.includes('127.0.0.1') || finalMedia.includes('localhost')) {
           console.error(`❌ No publicly accessible media URL for post ${post._id}.`);
-          await _updatePost(post.id || post._id, { status: 'Failed', lastError: 'No public media URL. Use Supabase Storage or a public image URL.' });
+          await safeUpdate(postId, { status: 'Failed', lastError: 'No public media URL. Use Supabase Storage or a public image URL.' });
           return;
         }
 
         // Atomic claim: directly update status to 'Processing'
-        const postId = post.id || post._id;
         const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
 
         const { data: claimData, error: claimErr } = await _sb
@@ -2845,8 +2867,6 @@ async function runSchedulingWorker() {
           return;
         }
 
-
-        // --- STEP 1: Metadata Check (Check if we already started with Meta) ---
         let existingContainerId = null;
         if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
           try {
@@ -2876,30 +2896,34 @@ async function runSchedulingWorker() {
           }, post.workspaceId);
         }
 
-        if (publishResult.status === 'IG_PROCESSING') {
+        if (publishResult && publishResult.status === 'IG_PROCESSING') {
           // Meta is still thinking. Save the containerId and try again in the next cron run
           console.log(`⏳ Meta is still processing Post ${post._id}. Container: ${publishResult.containerId}`);
-          
+
           let updatedMeta = {};
           try {
             if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
               updatedMeta = JSON.parse(post.mediaUrl);
             }
           } catch (e) {}
-          
+
           updatedMeta.igContainerId = publishResult.containerId;
           updatedMeta.type = finalType;
           updatedMeta.mediaUrl = finalMedia;
           updatedMeta.carouselItems = finalCarousel;
 
-          await _updatePost(postId, { status: 'Processing', mediaUrl: JSON.stringify(updatedMeta) });
+          await safeUpdate(postId, { status: 'Processing', mediaUrl: JSON.stringify(updatedMeta) });
+
+          // ── Safety refresh: always bump updatedAt at the end so the 2-min cooldown
+          //     gate is freshly reset even if the DB write above had a soft failure.
+          await safeUpdate(postId, {});
           return;
         }
 
         // --- STEP 3: Success Logic ---
         const publishedId = publishResult.id;
         const liveUrl = publishResult.url;
-        
+
         // Deserialize automation options
         let requireFollow = false, unfollowedResponse = '', publicReply = '', automationStatus = 'Active';
         let openingMessage = false, openingMessageText = '', openingMessageButton = '', buttons = [];
@@ -2938,31 +2962,35 @@ async function runSchedulingWorker() {
             openingMessageButton,
             buttons
           });
-          await campaign.save();
-          await refreshGlobalCache(); // Instant Sync
+          try {
+            await campaign.save();
+            await refreshGlobalCache(); // Instant Sync
+          } catch (saveErr) {
+            console.error(`⚠️ [Worker] Campaign save failed for post ${postId}:`, saveErr.message);
+          }
         }
 
-        const updatedMediaUrl = JSON.stringify({ 
+        const updatedMediaUrl = JSON.stringify({
           mediaUrl: liveUrl, // Official path
-          localMediaUrl: finalMedia, 
-          [post.platform === 'facebook' ? 'facebookPostId' : 'instagramMediaId']: publishedId 
+          localMediaUrl: finalMedia,
+          [post.platform === 'facebook' ? 'facebookPostId' : 'instagramMediaId']: publishedId
         });
 
-        await _updatePost(postId, { status: 'Posted', mediaUrl: updatedMediaUrl });
+        await safeUpdate(postId, { status: 'Posted', mediaUrl: updatedMediaUrl });
         console.log(`✅ SUCCESS: Post ${postId} is now LIVE on ${post.platform === 'facebook' ? 'Facebook' : 'Instagram'}.`);
 
       } catch (postErr) {
         console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);
         const currentRetryCount = (post.retryCount || 0) + 1;
         const MAX_RETRIES = 5;
-        const MAX_RETRY_WINDOW = 2880; 
+        const MAX_RETRY_WINDOW = 2880;
         const scheduledAt = new Date(post.scheduledFor);
         const minutesSinceScheduled = (Date.now() - scheduledAt.getTime()) / 60000;
 
         if (currentRetryCount <= MAX_RETRIES && minutesSinceScheduled < MAX_RETRY_WINDOW) {
-          await _updatePost(postId, { status: 'Retrying', lastError: postErr.message, retryCount: currentRetryCount });
+          await safeUpdate(postId, { status: 'Retrying', lastError: postErr.message, retryCount: currentRetryCount });
         } else {
-          await _updatePost(postId, { status: 'Failed', lastError: postErr.message });
+          await safeUpdate(postId, { status: 'Failed', lastError: postErr.message });
         }
       }
     });

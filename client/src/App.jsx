@@ -49,6 +49,8 @@ const About = lazyRetry(() => import('./pages/About'));
 const Resources = lazyRetry(() => import('./pages/Resources'));
 const Blog = lazyRetry(() => import('./pages/Blog'));
 const BlogPost = lazyRetry(() => import('./pages/BlogPost'));
+const Workplace = lazyRetry(() => import('./pages/Workplace'));
+import { InstagramWorkbench, FacebookWorkbench } from './pages/Workplace';
 const Privacy = lazyRetry(() => import('./pages/Privacy'));
 const Terms = lazyRetry(() => import('./pages/Terms'));
 const Cookies = lazyRetry(() => import('./pages/Cookies'));
@@ -668,6 +670,9 @@ function MainLayout() {
               <Route path="/dm-automation-editor" element={<ProtectedRoute><DmAutomationEditor /></ProtectedRoute>} />
               <Route path="/audiences" element={<ProtectedRoute><Audiences /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+              <Route path="/workplace" element={<ProtectedRoute><Workplace /></ProtectedRoute>} />
+              <Route path="/workplace/instagram" element={<ProtectedRoute><InstagramWorkbench /></ProtectedRoute>} />
+              <Route path="/workplace/facebook" element={<ProtectedRoute><FacebookWorkbench /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/upgrade" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
               <Route path="/ai-studio" element={<ProtectedRoute><AIStudio /></ProtectedRoute>} />
