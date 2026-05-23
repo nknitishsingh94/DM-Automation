@@ -2271,14 +2271,10 @@ app.get('/api/workspaces', verifyToken, async (req, res) => {
     const { convertObjectIDToUUID } = await import('./utils/supabase.js');
     const userId = convertObjectIDToUUID(req.user.userId);
     const workspaces = await Workspace.find({ userId });
-    res.json(workspaces);
+    res.json(workspaces || []);
   } catch (err) {
-    console.warn("⚠️ Error fetching workspaces:", err.message);
-    // If the database table does not exist (before migration), return empty array for compatibility
-    if (err.message && (err.message.includes('relation') || err.message.includes('does not exist') || err.code === '42P01')) {
-      return res.json([]);
-    }
-    res.status(500).json({ error: err.message });
+    console.warn("⚠️ Error fetching workspaces, returning empty array for safety:", err.message || err);
+    res.json([]);
   }
 });
 
