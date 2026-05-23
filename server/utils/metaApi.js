@@ -274,13 +274,14 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
       settings = await Settings.findOne({ userId });
     }
     if (!settings || !settings.instagramAccessToken || !settings.businessAccountId) {
-      console.log(`⚠️ Settings missing for user ${userId}. Attempting fallback to any active connected settings in DB...`);
+      console.log(`⚠️ Settings missing for user ${userId}. Attempting fallback to any active connected settings for this user...`);
       settings = await Settings.findOne({ 
+        userId: userId,
         instagramAccessToken: { $ne: null }, 
         businessAccountId: { $ne: null } 
       });
       if (!settings) {
-        throw new Error('Meta credentials missing for publishing');
+        throw new Error('Meta credentials missing for publishing. Please reconnect your Instagram account.');
       }
     }
 
@@ -386,13 +387,14 @@ export const publishFacebookContent = async (userId, { type, mediaUrl, caption =
       settings = await Settings.findOne({ userId });
     }
     if (!settings || !settings.facebookAccessToken || !settings.facebookPageId) {
-      console.log(`⚠️ Settings missing for user ${userId}. Attempting fallback to any active connected settings in DB...`);
+      console.log(`⚠️ Settings missing for user ${userId}. Attempting fallback to any active connected settings for this user...`);
       settings = await Settings.findOne({ 
+        userId: userId,
         facebookAccessToken: { $ne: null }, 
         facebookPageId: { $ne: null } 
       });
       if (!settings) {
-        throw new Error('Meta credentials missing for Facebook publishing');
+        throw new Error('Meta credentials missing for Facebook publishing. Please reconnect your Facebook account.');
       }
     }
 
