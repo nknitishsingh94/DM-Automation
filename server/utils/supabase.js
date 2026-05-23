@@ -90,6 +90,9 @@ function parseFilter(q, queryObj, tableName) {
 
   for (const [key, v] of Object.entries(queryObj)) {
     let val = v;
+    if ((key === 'workspaceId' || key === 'workspace_id') && (val === null || val === undefined)) {
+      continue;
+    }
     if (val instanceof Date) {
       val = val.toISOString();
     }
@@ -263,6 +266,13 @@ function convertOutgoing(doc, tableName) {
   if (newDoc._id) {
     newDoc.id = newDoc._id;
     delete newDoc._id;
+  }
+  
+  if (newDoc.workspaceId === null || newDoc.workspaceId === undefined) {
+    delete newDoc.workspaceId;
+  }
+  if (newDoc.workspace_id === null || newDoc.workspace_id === undefined) {
+    delete newDoc.workspace_id;
   }
   
   // Per-table mapping based on verified schema

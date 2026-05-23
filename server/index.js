@@ -1895,12 +1895,17 @@ app.post('/api/captions', verifyToken, async (req, res) => {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const sharedUuids = sharedUserIds.map(uid => convertObjectIDToUUID(uid));
     const cleanContent = (content || '').trim();
-    const { data: existing, error: checkError } = await supabase
+    let checkQuery = supabase
       .from('captions')
       .select('id')
       .in('user_id', sharedUuids)
-      .eq('workspace_id', workspaceId)
       .eq('content', cleanContent);
+
+    if (workspaceId) {
+      checkQuery = checkQuery.eq('workspace_id', workspaceId);
+    }
+
+    const { data: existing, error: checkError } = await checkQuery;
 
     if (checkError) {
       console.error('❌ CAPTIONS CHECK ERROR:', checkError.message);
@@ -1908,9 +1913,14 @@ app.post('/api/captions', verifyToken, async (req, res) => {
       return res.status(200).json({ alreadySaved: true, message: 'Already caption is saved' });
     }
 
+    const insertPayload = { title: title || '', content: content || '', user_id: userId };
+    if (workspaceId) {
+      insertPayload.workspace_id = workspaceId;
+    }
+
     const { data, error } = await supabase
       .from('captions')
-      .insert({ title: title || '', content: content || '', user_id: userId, workspace_id: workspaceId })
+      .insert(insertPayload)
       .select()
       .limit(1);
 
