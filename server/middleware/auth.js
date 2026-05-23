@@ -34,29 +34,30 @@ const verifyToken = async (req, res, next) => {
     
     let activeWorkspace = null;
     
-    if (workspaceId) {
-      const uuidWorkspaceId = convertObjectIDToUUID(workspaceId);
-      activeWorkspace = await Workspace.findOne({ id: uuidWorkspaceId, userId: uuidUserId });
-    }
-    
-    if (!activeWorkspace) {
-      activeWorkspace = await Workspace.findOne({ userId: uuidUserId });
-    }
-    
-    if (!activeWorkspace) {
-      try {
+    try {
+      if (workspaceId) {
+        const uuidWorkspaceId = convertObjectIDToUUID(workspaceId);
+        activeWorkspace = await Workspace.findOne({ id: uuidWorkspaceId, userId: uuidUserId });
+      }
+      
+      if (!activeWorkspace) {
+        activeWorkspace = await Workspace.findOne({ userId: uuidUserId });
+      }
+      
+      if (!activeWorkspace) {
         activeWorkspace = await Workspace.create({
           userId: uuidUserId,
           name: 'Default Workspace'
         });
         console.log(`Created Default Workspace ${activeWorkspace.id} for user ${uuidUserId}`);
-      } catch (err) {
-        console.error('Error auto-creating default workspace:', err.message);
-        return res.status(500).json({ message: 'Failed to initialize workspace' });
       }
+      
+      req.workspaceId = activeWorkspace?.id || null;
+    } catch (dbErr) {
+      console.warn("⚠️ Workspaces table does not exist or database error. Falling back to default mode:", dbErr.message);
+      req.workspaceId = null;
     }
     
-    req.workspaceId = activeWorkspace.id;
     next();
   } catch (err) {
     if (process.env.NODE_ENV !== 'production') {
