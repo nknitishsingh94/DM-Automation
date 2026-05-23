@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Nav
 import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { API_BASE_URL } from './config';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -119,7 +120,7 @@ function Sidebar({ isMobileOpen, onClose }) {
     try {
       const token = localStorage.getItem('insta_agent_token');
       if (!token) return;
-      const res = await fetch('/api/workspaces', {
+      const res = await fetch(`${API_BASE_URL}/api/workspaces`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -158,7 +159,7 @@ function Sidebar({ isMobileOpen, onClose }) {
     if (!newWorkspaceName.trim()) return;
     try {
       const token = localStorage.getItem('insta_agent_token');
-      const res = await fetch('/api/workspaces', {
+      const res = await fetch(`${API_BASE_URL}/api/workspaces`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
