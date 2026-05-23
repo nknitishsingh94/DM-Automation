@@ -335,10 +335,15 @@ router.get('/facebook/callback', async (req, res) => {
     );
 
     console.log(`✅ OAuth Success: Linked Pages for user ${userId}. Page Token prefix: ${pageAccessToken.substring(0, 10)}...`);
+    let platformParam = 'instagram';
+    if (isFacebook) platformParam = 'facebook';
+    else if (isWhatsApp) platformParam = 'whatsapp';
+    else if (isThreads) platformParam = 'threads';
+
     if (isFromOnboarding) {
-      res.redirect(`${frontendUrl}/onboarding?oauth_success=true`);
+      res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=${platformParam}`);
     } else {
-      res.redirect(`${frontendUrl}/settings?oauth_success=true`);
+      res.redirect(`${frontendUrl}/settings?oauth_success=true&platform=${platformParam}`);
     }
 
   } catch (err) {

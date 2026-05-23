@@ -117,7 +117,13 @@ export default function Settings() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('oauth_success')) {
       loadSettings();
-      notify("🚀 Instagram profile linked successfully! Opening dashboard...", "success");
+      const platform = params.get('platform') || 'instagram';
+      let platformLabel = 'Instagram profile';
+      if (platform === 'facebook') platformLabel = 'Facebook page';
+      else if (platform === 'whatsapp') platformLabel = 'WhatsApp Business account';
+      else if (platform === 'threads') platformLabel = 'Threads profile';
+
+      notify(`🚀 ${platformLabel} linked successfully! Opening dashboard...`, "success");
       window.history.replaceState({}, document.title, window.location.pathname);
       setTimeout(() => {
         navigate('/campaigns?setup=true');
