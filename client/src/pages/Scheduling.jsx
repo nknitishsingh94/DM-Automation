@@ -381,7 +381,18 @@ export default function Scheduling() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
-      if (data) setSettings(data);
+      if (data) {
+        setSettings(data);
+        const isIgConnected = data.isAccountConnected || (!!data.instagramAccessToken && !!data.businessAccountId);
+        const isFbConnected = data.isFacebookConnected || (!!data.facebookAccessToken && !!data.facebookPageId);
+        if (isIgConnected) {
+          setNewPost(prev => ({ ...prev, platform: 'instagram' }));
+        } else if (isFbConnected) {
+          setNewPost(prev => ({ ...prev, platform: 'facebook' }));
+        } else {
+          setNewPost(prev => ({ ...prev, platform: '' }));
+        }
+      }
     } catch (err) {
       console.error("Error fetching settings:", err);
     }
@@ -1060,31 +1071,34 @@ export default function Scheduling() {
                         const isFbConnected = settings?.isFacebookConnected || (!!settings?.facebookAccessToken && !!settings?.facebookPageId);
                         const isIgConnected = settings?.isAccountConnected || (!!settings?.instagramAccessToken && !!settings?.businessAccountId);
                         
-                        return [
+                        const platforms = [
                           { id: 'instagram', label: 'Instagram', icon: <Instagram size={18} />, activeColor: '#e1306c', activeBg: '#fff0f5', isConnected: isIgConnected },
                           { id: 'facebook', label: 'Facebook', icon: <Facebook size={18} />, activeColor: '#1877f2', activeBg: '#e8f4ff', isConnected: isFbConnected }
-                        ].map(plat => (
+                        ].filter(plat => plat.isConnected);
+
+                        if (platforms.length === 0) {
+                          return (
+                            <span style={{ fontSize: '0.88rem', color: '#ef4444', fontWeight: '700', padding: '12px', background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: '12px', width: '100%', display: 'block', textAlign: 'center' }}>
+                              ⚠️ No connected channels. Please link a Facebook page or Instagram account in Settings first.
+                            </span>
+                          );
+                        }
+
+                        return platforms.map(plat => (
                           <button
                             key={plat.id}
                             type="button"
-                            onClick={() => {
-                              if (!plat.isConnected) {
-                                notify(`⚠️ ${plat.label} is not connected. Please go to Connections Settings to link your account first.`, "error");
-                                return;
-                              }
-                              setNewPost(prev => ({ ...prev, platform: plat.id }));
-                            }}
+                            onClick={() => setNewPost(prev => ({ ...prev, platform: plat.id }))}
                             style={{
                               flex: 1, padding: '12px', borderRadius: '12px', 
                               border: newPost.platform === plat.id ? `2px solid ${plat.activeColor}` : '1px solid #e2e8f0',
                               background: newPost.platform === plat.id ? plat.activeBg : 'white',
                               color: newPost.platform === plat.id ? plat.activeColor : '#64748b',
-                              opacity: plat.isConnected ? 1 : 0.45,
                               fontWeight: '700', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer',
                               transition: 'all 0.2s ease'
                             }}
                           >
-                            {plat.icon} {plat.label} {!plat.isConnected && ' (Not Connected)'}
+                            {plat.icon} {plat.label}
                           </button>
                         ));
                       })()}

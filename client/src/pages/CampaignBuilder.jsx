@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
@@ -18,6 +18,8 @@ export default function CampaignBuilder() {
   const [submitting, setSubmitting] = useState(false);
   const [mediaMode, setMediaMode] = useState('link');
   const [uploading, setUploading] = useState(false);
+  const [settings, setSettings] = useState(null);
+  const [loading, setLoading] = useState(true);
   
   const [newCamp, setNewCamp] = useState({ 
     name: '', 
@@ -32,6 +34,37 @@ export default function CampaignBuilder() {
     unfollowedResponse: 'Hi! Please follow our page first to unlock this content! 🙏',
     isUniversal: false
   });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const token = localStorage.getItem('insta_agent_token');
+        const res = await fetch(`${API_BASE_URL}/api/settings`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (res.ok && data) {
+          setSettings(data);
+          
+          const isIg = data.isAccountConnected || (!!data.instagramAccessToken && !!data.businessAccountId);
+          const isFb = data.isFacebookConnected || (!!data.facebookAccessToken && !!data.facebookPageId);
+          const isWa = data.isWhatsAppConnected || (!!data.whatsappToken && !!data.whatsappPhoneNumberId);
+
+          let defaultPlatform = 'all';
+          if (isIg && !isFb && !isWa) defaultPlatform = 'instagram';
+          else if (isFb && !isIg && !isWa) defaultPlatform = 'facebook';
+          else if (isWa && !isIg && !isFb) defaultPlatform = 'whatsapp';
+          
+          setNewCamp(prev => ({ ...prev, platform: defaultPlatform }));
+        }
+      } catch (err) {
+        console.error("Error loading settings in builder:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
@@ -93,6 +126,14 @@ export default function CampaignBuilder() {
     }
   };
 
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 80px)', color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: '600' }}>
+        Loading channel configurations...
+      </div>
+    );
+  }
+
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 80px)', padding: '20px' }}>
       {/* Header */}
@@ -152,17 +193,38 @@ export default function CampaignBuilder() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                     <div className="input-group">
                       <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', fontWeight: '700' }}>Platform</label>
-                      <select 
-                        required
-                        value={newCamp.platform}
-                        onChange={(e) => setNewCamp({...newCamp, platform: e.target.value})}
-                        style={{ width: '100%', padding: '14px', background: '#f8fafc', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '10px', outline: 'none', fontSize: '1rem' }}
-                      >
-                        <option value="all">All Platforms</option>
-                        <option value="instagram">Instagram</option>
-                        <option value="facebook">Facebook Messenger</option>
-                        <option value="whatsapp">WhatsApp</option>
-                      </select>
+                      {(() => {
+                        const isIg = settings?.isAccountConnected || (!!settings?.instagramAccessToken && !!settings?.businessAccountId);
+                        const isFb = settings?.isFacebookConnected || (!!settings?.facebookAccessToken && !!settings?.facebookPageId);
+                        const isWa = settings?.isWhatsAppConnected || (!!settings?.whatsappToken && !!settings?.whatsappPhoneNumberId);
+
+                        const options = [];
+                        if (isIg) options.push({ value: 'instagram', label: 'Instagram' });
+                        if (isFb) options.push({ value: 'facebook', label: 'Facebook Messenger' });
+                        if (isWa) options.push({ value: 'whatsapp', label: 'WhatsApp' });
+
+                        if (options.length === 0) {
+                          return (
+                            <div style={{ color: '#ef4444', fontSize: '0.9rem', fontWeight: '700', padding: '12px', background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: '10px' }}>
+                              ⚠️ No connected messaging channels. Please connect Instagram, Facebook or WhatsApp in Settings first.
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <select 
+                            required
+                            value={newCamp.platform}
+                            onChange={(e) => setNewCamp({...newCamp, platform: e.target.value})}
+                            style={{ width: '100%', padding: '14px', background: '#f8fafc', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', borderRadius: '10px', outline: 'none', fontSize: '1rem' }}
+                          >
+                            {options.length > 1 && <option value="all">All Platforms</option>}
+                            {options.map(opt => (
+                              <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            ))}
+                          </select>
+                        );
+                      })()}
                     </div>
                     <div className="input-group">
                       <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', fontWeight: '700' }}>Trigger Source</label>
