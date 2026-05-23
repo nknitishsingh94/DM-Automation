@@ -2273,6 +2273,11 @@ app.get('/api/workspaces', verifyToken, async (req, res) => {
     const workspaces = await Workspace.find({ userId });
     res.json(workspaces);
   } catch (err) {
+    console.warn("⚠️ Error fetching workspaces:", err.message);
+    // If the database table does not exist (before migration), return empty array for compatibility
+    if (err.message && (err.message.includes('relation') || err.message.includes('does not exist') || err.code === '42P01')) {
+      return res.json([]);
+    }
     res.status(500).json({ error: err.message });
   }
 });
@@ -2305,6 +2310,10 @@ app.post('/api/workspaces', verifyToken, async (req, res) => {
     
     res.json(newWorkspace);
   } catch (err) {
+    console.warn("⚠️ Error creating workspace:", err.message);
+    if (err.message && (err.message.includes('relation') || err.message.includes('does not exist') || err.code === '42P01')) {
+      return res.status(400).json({ error: 'Workspaces table does not exist. Please run the Supabase database migration script first.' });
+    }
     res.status(500).json({ error: err.message });
   }
 });
