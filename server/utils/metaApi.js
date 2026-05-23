@@ -327,7 +327,7 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
     console.log(`📦 Checking readiness for container: ${finalCreationId}`);
     let isReady = false;
     let attempts = 0;
-    const maxAttempts = 4; // Check up to 4 times (around 7.5 seconds total)
+    const maxAttempts = 2; // Reduced from 4 to 2 to prevent Vercel 10s timeout
     
     while (attempts < maxAttempts) {
       isReady = await checkMediaReadiness(finalCreationId, accessToken);

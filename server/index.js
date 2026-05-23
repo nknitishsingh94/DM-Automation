@@ -2812,8 +2812,14 @@ async function runSchedulingWorker() {
     // If the media URL is a local path, convert it to a public URL
     const SERVER_PUBLIC_URL = process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
 
-    // Process all due posts in parallel to avoid one slow Reel blocking others
-    const processPromises = duePosts.map(async (post) => {
+    // Limit to 3 posts per run to prevent Vercel 10-second timeout
+    const postsToProcess = duePosts.slice(0, 3);
+    if (duePosts.length > 3) {
+      console.log(`⚠️ Limit hit: Processing 3 out of ${duePosts.length} due posts to prevent timeout. The rest will be processed on the next ping.`);
+    }
+
+    // Process due posts in parallel
+    const processPromises = postsToProcess.map(async (post) => {
       try {
         const postId = post.id || post._id;
         console.log(`🔄 EXECUTION: Processing Post ${postId} for User ${post.userId}`);
