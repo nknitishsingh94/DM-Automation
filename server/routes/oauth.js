@@ -25,7 +25,10 @@ router.get('/facebook', verifyToken, (req, res) => {
 
   const redirectUri = encodeURIComponent(`${baseUrl}/api/oauth/facebook/callback`);
   const scope = 'instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_messages,pages_show_list,pages_manage_metadata,pages_messaging,whatsapp_business_management,whatsapp_business_messaging,business_management';
-  const state = req.user.userId + (req.query.onboarding === 'true' ? '_onboarding' : '') + (req.query.connectType ? `_${req.query.connectType}` : '');
+  const state = req.user.userId + 
+                (req.query.onboarding === 'true' ? '_onboarding' : '') + 
+                (req.query.connectType ? `_${req.query.connectType}` : '') +
+                (req.workspaceId ? `_ws_${req.workspaceId}` : '');
 
   if (!appId) {
     return res.status(500).json({ error: "Missing META_APP_ID in environment variables" });
@@ -45,6 +48,13 @@ router.get('/facebook/callback', async (req, res) => {
   const isFacebook = state && state.includes('_facebook');
   const isWhatsApp = state && state.includes('_whatsapp');
   const isThreads = state && state.includes('_threads');
+  
+  let workspaceId = '';
+  const wsMatch = state && state.match(/_ws_([a-f0-9-]{36})/i);
+  if (wsMatch) {
+    workspaceId = wsMatch[1];
+  }
+
   let userId = state
     ? state
         .replace('_onboarding', '')
@@ -52,6 +62,7 @@ router.get('/facebook/callback', async (req, res) => {
         .replace('_facebook', '')
         .replace('_whatsapp', '')
         .replace('_threads', '')
+        .replace(new RegExp(`_ws_${workspaceId}`, 'i'), '')
     : '';
 
   if (error) {
@@ -192,6 +203,9 @@ router.get('/facebook/callback', async (req, res) => {
 
     // 5. Save to Database — save only the relevant platform fields
     const updateData = { lastTestedAt: new Date() };
+    if (workspaceId) {
+      updateData.workspaceId = workspaceId;
+    }
 
     if (isThreads) {
       // Serialize Threads data into connectedPageName TEXT column (no extra schema needed)
@@ -309,8 +323,13 @@ router.get('/facebook/callback', async (req, res) => {
     }
     */
 
+    const settingsQuery = { userId: userId };
+    if (workspaceId) {
+      settingsQuery.workspaceId = workspaceId;
+    }
+
     const updatedSettings = await Settings.findOneAndUpdate(
-      { userId: userId },
+      settingsQuery,
       updateData,
       { upsert: true, new: true }
     );
@@ -335,7 +354,7 @@ router.get('/facebook/callback', async (req, res) => {
 // Zorcha Exact Flow: Get available Facebook Pages & their linked Instagram accounts
 router.get('/facebook/pages', verifyToken, async (req, res) => {
   try {
-    const settings = await Settings.findOne({ userId: req.user.userId });
+    const settings = await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
     const token = settings?.facebookAccessToken || settings?.instagramAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
     if (!token) {
@@ -416,6 +435,7 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
       instagramPageId: pageId,
       isAccountConnected: !!businessAccountId,
       connectedInstagramName: instagramUsername || 'Connected Instagram',
+      workspaceId: req.workspaceId,
       
       // Explicitly isolate from Facebook:
       facebookAccessToken: null,
@@ -487,7 +507,7 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
     */
 
     const settings = await Settings.findOneAndUpdate(
-      { userId: req.user.userId },
+      { userId: req.user.userId, workspaceId: req.workspaceId },
       updateData,
       { upsert: true, new: true }
     );

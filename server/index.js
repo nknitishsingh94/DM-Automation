@@ -51,6 +51,7 @@ import oauthRoutes from './routes/oauth.js';
 import supportRoutes from './routes/support.js';
 import { generateAIResponse } from './utils/aiHandler.js';
 import { supabase } from './utils/supabase.js';
+import Workspace from './models/Workspace.js';
 
 // --- GLOBAL CACHE (Nitro Speed) ---
 const settingsCache = new Map();
@@ -65,27 +66,46 @@ async function refreshGlobalCache() {
     ]);
     
     settingsCache.clear();
-    allSettings.forEach(s => settingsCache.set(s.userId?.toString(), s));
+    allSettings.forEach(s => {
+      if (s.userId && s.workspaceId) {
+        const key = `${s.userId.toString()}_${s.workspaceId.toString()}`;
+        settingsCache.set(key, s);
+      }
+    });
     
     campaignsCache.clear();
     allCampaigns.forEach(c => {
-      const uid = c.userId?.toString();
-      if (!campaignsCache.has(uid)) campaignsCache.set(uid, []);
-      campaignsCache.get(uid).push(c);
+      if (c.userId && c.workspaceId) {
+        const key = `${c.userId.toString()}_${c.workspaceId.toString()}`;
+        if (!campaignsCache.has(key)) campaignsCache.set(key, []);
+        campaignsCache.get(key).push(c);
+      }
     });
     
-    console.log(`⚡ [NITRO] Cache Refreshed: ${settingsCache.size} users, ${allCampaigns.length} active campaigns.`);
+    console.log(`⚡ [NITRO] Cache Refreshed: ${settingsCache.size} settings, ${allCampaigns.length} active campaigns.`);
   } catch (err) {
     console.warn("⚠️ NITRO Cache Refresh Failed:", err.message);
   }
 }
 refreshGlobalCache();
 
-// Helper to get all user IDs sharing the same connected page details
-function getSharedUserIdsSync(userId) {
+// Helper to get all user IDs sharing the same connected page details within a workspace
+function getSharedUserIdsSync(userId, workspaceId = null) {
   if (!userId) return [];
   const uidStr = userId.toString();
-  const settings = settingsCache.get(uidStr);
+  
+  // Find settings in cache
+  let settings = null;
+  if (workspaceId) {
+    settings = settingsCache.get(`${uidStr}_${workspaceId}`);
+  } else {
+    for (const [key, s] of settingsCache.entries()) {
+      if (key.startsWith(`${uidStr}_`)) {
+        settings = s;
+        break;
+      }
+    }
+  }
   if (!settings) return [uidStr];
   
   const bId = settings.businessAccountId;
@@ -98,14 +118,16 @@ function getSharedUserIdsSync(userId) {
   }
   
   const uids = new Set([uidStr]);
-  for (const [uid, s] of settingsCache.entries()) {
+  for (const [key, s] of settingsCache.entries()) {
     if (
       (bId && s.businessAccountId === bId) ||
       (iId && s.instagramPageId === iId) ||
       (fId && s.facebookPageId === fId) ||
       (wId && s.whatsappPhoneNumberId === wId)
     ) {
-      uids.add(uid);
+      if (s.userId) {
+        uids.add(s.userId.toString());
+      }
     }
   }
   return Array.from(uids);
@@ -305,17 +327,36 @@ const checkFollowerStatus = async (platform, chatId, userId, preloadedSettings =
 };
 
 // Reusable Auto-Reply Logic
-const processAutoReply = async (userId, platform, chatId, text, source = 'dm', commentId = null, passedToken = null, mediaId = null) => {
+const processAutoReply = async (userId, platform, chatId, text, source = 'dm', commentId = null, passedToken = null, mediaId = null, workspaceId = null) => {
   const queryUserId = userId;
   
   // Ensure text is a string to prevent crashing on null/undefined
   text = typeof text === 'string' ? text : '';
-  // Load settings and contact in parallel
+  
+  // Resolve settings and contact by workspaceId if provided
+  let userSettingsQuery = { userId };
+  let contactQuery = { userId, chatId };
+  if (workspaceId) {
+    userSettingsQuery.workspaceId = workspaceId;
+    contactQuery.workspaceId = workspaceId;
+  }
+  
   // Load settings and contact in parallel (Use cache if available)
-  const cachedSettings = settingsCache.get(userId.toString());
+  let cachedSettings = null;
+  if (workspaceId) {
+    cachedSettings = settingsCache.get(`${userId.toString()}_${workspaceId.toString()}`);
+  } else {
+    for (const [key, s] of settingsCache.entries()) {
+      if (key.startsWith(`${userId.toString()}_`)) {
+        cachedSettings = s;
+        break;
+      }
+    }
+  }
+
   const [contact, userSettings] = await Promise.all([
-    Contact.findOne({ userId, chatId }),
-    cachedSettings ? Promise.resolve(cachedSettings) : Settings.findOne({ userId })
+    Contact.findOne(contactQuery),
+    cachedSettings ? Promise.resolve(cachedSettings) : Settings.findOne(userSettingsQuery)
   ]);
 
   if (contact && contact.isBotMuted) {
@@ -339,7 +380,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       
       if (isFollowing) {
         console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} has now followed! Triggering pending campaign.`);
-        await Contact.findOneAndUpdate({ userId, chatId }, { $unset: { pendingCampaignId: 1 } });
+        await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
         
         if (match.openingMessage && match.openingMessageText) {
           console.log(`📩 Sending OPENING MESSAGE after follow for ${match.name}`);
@@ -349,7 +390,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
           const openingSent = await sendMessageToInstagram(platform, chatId, match.openingMessageText, '', userId, btnText, activeToken, [], payload);
           if (openingSent) {
             await Contact.findOneAndUpdate(
-              { userId, chatId },
+              contactQuery,
               { pendingCampaignId: `OPENING:${match._id}`, lastActive: new Date() },
               { upsert: true }
             );
@@ -385,7 +426,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     const pendingId = contact.pendingCampaignId.replace('OPENING:', '');
     
     // Clear pending status
-    await Contact.findOneAndUpdate({ userId, chatId }, { $unset: { pendingCampaignId: 1 } });
+    await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
     
     const match = await Campaign.findById(pendingId);
     if (match && match.status === 'Active') {
@@ -395,7 +436,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       if (match.isAI) {
          try {
            const { generateAIResponse } = await import('./utils/aiHandler.js');
-           const generated = await generateAIResponse(match.userId, `User just confirmed they want the link. Warmly deliver the content for "${match.triggerKeyword || match.trigger}".`);
+           const generated = await generateAIResponse(match.userId, `User just confirmed they want the link. Warmly deliver the content for "${match.triggerKeyword || match.trigger}".`, workspaceId);
            if (generated) {
              if (finalResponse === "[AI Agent will generate a custom neural reply here]" || !finalResponse.trim()) {
                finalResponse = generated;
@@ -417,11 +458,12 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   }
 
   // 1. Fetch Active Flows and Keyword Campaigns in parallel (Advanced Automation)
-  const sharedUids = getSharedUserIdsSync(userId);
+  const sharedUids = getSharedUserIdsSync(userId, workspaceId);
   let cachedCampaignsMerged = [];
   let allCached = true;
   for (const uid of sharedUids) {
-    const cached = campaignsCache.get(uid);
+    const key = workspaceId ? `${uid}_${workspaceId}` : uid;
+    const cached = campaignsCache.get(key);
     if (cached) {
       cachedCampaignsMerged.push(...cached);
     } else {
@@ -429,9 +471,14 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
   }
 
+  const flowQuery = { userId: { $in: sharedUids }, status: 'Active' };
+  if (workspaceId) flowQuery.workspaceId = workspaceId;
+  const campaignQuery = { userId: { $in: sharedUids }, status: 'Active' };
+  if (workspaceId) campaignQuery.workspaceId = workspaceId;
+
   const [activeFlows, activeCampaignsRaw] = await Promise.all([
-    Flow.find({ userId: { $in: sharedUids }, status: 'Active' }),
-    allCached ? Promise.resolve(cachedCampaignsMerged) : Campaign.find({ userId: { $in: sharedUids }, status: 'Active' })
+    Flow.find(flowQuery),
+    allCached ? Promise.resolve(cachedCampaignsMerged) : Campaign.find(campaignQuery)
   ]);
 
   const matchedFlow = activeFlows.find(f => {
@@ -444,12 +491,11 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
   if (matchedFlow) {
     console.log(`🌊 FLOW MATCH: Triggering Flow "${matchedFlow.name}" for Sender: ${chatId}`);
-    await runFlow(userId, matchedFlow._id, chatId, platform, text, commentId);
+    await runFlow(userId, matchedFlow._id, chatId, platform, text, commentId, workspaceId);
 
     // NEW: Also send a public reply to the comment for matched visual flows!
     if (source === 'comment' && commentId) {
       console.log(`💬 Sending public comment reply for matched flow to ${commentId}`);
-      const userSettings = await Settings.findOne({ userId });
       const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
       
       let nodesArray = matchedFlow.nodes;
@@ -582,7 +628,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
         // Store this campaign as 'pending' for when they follow
         await Contact.findOneAndUpdate(
-          { userId, chatId },
+          contactQuery,
           { pendingCampaignId: match._id, lastActive: new Date() },
           { upsert: true }
         );
@@ -611,7 +657,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       if (openingSent) {
         // Track that this user is waiting for an opening message confirmation (using pendingCampaignId with OPENING: prefix)
         await Contact.findOneAndUpdate(
-          { userId, chatId },
+          contactQuery,
           { pendingCampaignId: `OPENING:${match._id}`, lastActive: new Date() },
           { upsert: true }
         );
@@ -628,7 +674,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     if (match.isAI) {
       console.log(`🤖 Campaign has AI response enabled. Generating dynamic response...`);
       try {
-        const generated = await generateAIResponse(userId, text);
+        const generated = await generateAIResponse(userId, text, workspaceId);
         if (generated) {
           if (finalResponse === "[AI Agent will generate a custom neural reply here]" || !finalResponse.trim()) {
             finalResponse = generated;
@@ -660,6 +706,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     if (sent) {
       const autoReply = new Message({
         userId: userId,
+        workspaceId: workspaceId,
         chatId: chatId || 'default', sender: 'AI Agent', text: finalResponse, type: 'sent', platform, isAI: true, campaignId: match._id, timestamp: new Date()
       });
       
@@ -668,7 +715,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         Campaign.findByIdAndUpdate(match._id, { $inc: { dmsSent: 1 } }).catch(dbErr => console.error("⚠️ Failed to increment dmsSent:", dbErr.message))
       ]);
 
-      const sharedUids = getSharedUserIdsSync(userId);
+      const sharedUids = getSharedUserIdsSync(userId, workspaceId);
       sharedUids.forEach(uid => {
         io.to(uid).emit('new_message', autoReply);
       });
@@ -688,7 +735,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   if (isAiEnabledForPlatform) {
     console.log(`😴 NO KEYWORD MATCH: Falling back to AI Studio...`);
     try {
-      const aiResponse = await generateAIResponse(userId, text);
+      const aiResponse = await generateAIResponse(userId, text, workspaceId);
 
       if (aiResponse) {
         const sent = await sendMessageToInstagram(platform, chatId, aiResponse, '', userId, '', null, [], '', commentId);
@@ -697,6 +744,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
           try {
             const autoReply = new Message({
               userId: userId,
+              workspaceId: workspaceId,
               chatId: chatId || 'default',
               sender: 'AI Agent',
               text: aiResponse,
@@ -706,7 +754,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
               timestamp: new Date()
             });
             await autoReply.save();
-            const sharedUids = getSharedUserIdsSync(userId);
+            const sharedUids = getSharedUserIdsSync(userId, workspaceId);
             sharedUids.forEach(uid => {
               io.to(uid).emit('new_message', autoReply);
             });
@@ -882,22 +930,24 @@ app.post('/api/webhook', async (req, res) => {
           }
 
           const targetUserId = userSettings?.userId;
+          const targetWorkspaceId = userSettings?.workspaceId;
           if (targetUserId) {
-            console.log(`✅ [ID MATCH]: Processing message for User ${targetUserId}`);
+            console.log(`✅ [ID MATCH]: Processing message for User ${targetUserId} in workspace ${targetWorkspaceId}`);
             // 1. Send Reply FIRST (Nitro Speed)
-            const replyPromise = processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm")
+            const replyPromise = processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm", null, null, null, targetWorkspaceId)
               .catch(err => console.error("🔥 Nitro Reply error:", err));
 
             // 2. Log in background
             const saveAndEmitPromise = (async () => {
               try {
-                const sharedUids = getSharedUserIdsSync(targetUserId);
-                const contact = await Contact.findOne({ userId: { $in: sharedUids }, chatId: senderId });
+                const sharedUids = getSharedUserIdsSync(targetUserId, targetWorkspaceId);
+                const contact = await Contact.findOne({ userId: { $in: sharedUids }, chatId: senderId, workspaceId: targetWorkspaceId });
                 const contactUserId = contact ? contact.userId : targetUserId;
 
                 const incoming = new Message({
                   userId: contactUserId, chatId: senderId, sender: 'user', text: messageText,
-                  type: 'received', platform, timestamp: new Date()
+                  type: 'received', platform, timestamp: new Date(),
+                  workspaceId: targetWorkspaceId
                 });
                 incoming.save(); // Don't await the save for speed
 
@@ -1103,28 +1153,31 @@ app.post('/api/webhook', async (req, res) => {
               }
             }
 
-            const targetUserId = userSettings?.userId;
+            let targetUserId = userSettings?.userId;
+            let targetWorkspaceId = userSettings?.workspaceId;
 
             if (!targetUserId) {
               console.warn(`🚨 [ID MISMATCH]: No user settings found for ID ${pageId}. Trying fallback...`);
               const fallback = await User.findOne();
               targetUserId = fallback?._id;
+              if (fallback) targetWorkspaceId = fallback.workspaceId; // or null if fallback doesn't have it
               if (targetUserId) console.log(`🩹 [FALLBACK]: Using User ID ${targetUserId} as catch-all.`);
             }
 
             if (targetUserId) {
-              console.log(`✅ [MATCH FOUND]: Processing comment for User ${targetUserId}`);
+              console.log(`✅ [MATCH FOUND]: Processing comment for User ${targetUserId} in workspace ${targetWorkspaceId}`);
               const accessToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
               const saveAndEmitPromise = (async () => {
                 try {
-                  const sharedUids = getSharedUserIdsSync(targetUserId);
-                  const contact = await Contact.findOne({ userId: { $in: sharedUids }, chatId: senderId });
+                  const sharedUids = getSharedUserIdsSync(targetUserId, targetWorkspaceId);
+                  const contact = await Contact.findOne({ userId: { $in: sharedUids }, chatId: senderId, workspaceId: targetWorkspaceId });
                   const contactUserId = contact ? contact.userId : targetUserId;
 
                   const incoming = new Message({
                     userId: contactUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
-                    type: 'received', platform, timestamp: new Date()
+                    type: 'received', platform, timestamp: new Date(),
+                    workspaceId: targetWorkspaceId
                   });
                   await incoming.save();
 
@@ -1138,7 +1191,7 @@ app.post('/api/webhook', async (req, res) => {
 
               const replyPromise = (async () => {
                 try {
-                  await processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId, accessToken, mediaId);
+                  await processAutoReply(targetUserId.toString(), platform, senderId, text, 'comment', commentId, accessToken, mediaId, targetWorkspaceId);
                 } catch (err) {
                   console.error("🔥 Comment Reply error:", err);
                 }
@@ -1161,25 +1214,29 @@ app.post('/api/webhook', async (req, res) => {
             const senderId = val.from_id || val.id;
             const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
 
-            // Find if this user has a pending automation
-            const contact = await Contact.findOne({ chatId: senderId });
+            // Find if this user has a pending automation under any workspace
+            const contacts = await Contact.find({ chatId: senderId, pendingCampaignId: { $ne: null } });
 
-            if (contact && contact.pendingCampaignId && !contact.pendingCampaignId.startsWith('OPENING:')) {
-              console.log(`🎯 AUTO-TRIGGER: User ${senderId} followed! Sending pending campaign ${contact.pendingCampaignId}`);
+            for (const contact of contacts) {
+              if (contact.pendingCampaignId.startsWith('OPENING:')) continue;
+              console.log(`🎯 AUTO-TRIGGER: User ${senderId} followed! Sending pending campaign ${contact.pendingCampaignId} in workspace ${contact.workspaceId}`);
 
               const targetUserId = contact.userId;
               const campaignId = contact.pendingCampaignId;
+              const targetWorkspaceId = contact.workspaceId;
 
               // Clear pending status so it doesn't repeat
-              await Contact.findByIdAndUpdate(contact._id, { $unset: { pendingCampaignId: 1 } });
+              await Contact.findByIdAndUpdate(contact._id || contact.id, { $unset: { pendingCampaignId: 1 } });
 
               const match = await Campaign.findById(campaignId);
               if (match && match.status === 'Active') {
-                const userSettings = await Settings.findOne({ userId: targetUserId });
+                const userSettingsQuery = { userId: targetUserId };
+                if (targetWorkspaceId) userSettingsQuery.workspaceId = targetWorkspaceId;
+                const userSettings = await Settings.findOne(userSettingsQuery);
                 const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
                 try {
-                  await processAutoReply(targetUserId.toString(), platform, senderId, "[FOLLOW_TRIGGER]", 'dm', null, activeToken);
+                  await processAutoReply(targetUserId.toString(), platform, senderId, "[FOLLOW_TRIGGER]", 'dm', null, activeToken, null, targetWorkspaceId);
                 } catch (err) {
                   console.error("🔥 Follow Auto-Trigger error:", err);
                 }
@@ -1211,22 +1268,28 @@ app.post('/api/webhook', async (req, res) => {
               // Find user by WhatsApp Phone Number ID
               const userSettings = await Settings.findOne({ whatsappPhoneNumberId: phoneNumberId });
               let targetUserId;
+              let targetWorkspaceId = null;
 
               if (userSettings) {
                 targetUserId = userSettings.userId;
+                targetWorkspaceId = userSettings.workspaceId;
               } else {
                 const fallbackUser = await User.findOne();
-                if (fallbackUser) targetUserId = fallbackUser._id;
+                if (fallbackUser) {
+                  targetUserId = fallbackUser._id;
+                  targetWorkspaceId = fallbackUser.workspaceId;
+                }
               }
 
               if (targetUserId) {
                 try {
-                  const sharedUids = getSharedUserIdsSync(targetUserId);
-                  const contact = await Contact.findOne({ userId: { $in: sharedUids }, chatId: senderPhone });
+                  const sharedUids = getSharedUserIdsSync(targetUserId, targetWorkspaceId);
+                  const contact = await Contact.findOne({ userId: { $in: sharedUids }, chatId: senderPhone, workspaceId: targetWorkspaceId });
                   const contactUserId = contact ? contact.userId : targetUserId;
 
                   const incoming = new Message({
                     userId: contactUserId,
+                    workspaceId: targetWorkspaceId,
                     chatId: senderPhone,
                     sender: 'user',
                     text: text,
@@ -1244,7 +1307,7 @@ app.post('/api/webhook', async (req, res) => {
                 }
 
                 // Auto-reply
-                await processAutoReply(targetUserId.toString(), 'whatsapp', senderPhone, text);
+                await processAutoReply(targetUserId.toString(), 'whatsapp', senderPhone, text, 'dm', null, null, null, targetWorkspaceId);
               }
             }
           }
@@ -1288,8 +1351,8 @@ app.post('/api/upload', verifyToken, upload.single('media'), async (req, res) =>
 // --- Contacts API (Tagging & Notes) ---
 app.get('/api/contacts', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    const contacts = await Contact.find({ userId: { $in: sharedUserIds } }).sort({ lastActive: -1 });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
+    const contacts = await Contact.find({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId }).sort({ lastActive: -1 });
     res.json(contacts);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1298,9 +1361,9 @@ app.get('/api/contacts', verifyToken, async (req, res) => {
 
 app.put('/api/contacts/:id', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const contact = await Contact.findOneAndUpdate(
-      { _id: req.params.id, userId: { $in: sharedUserIds } },
+      { _id: req.params.id, userId: { $in: sharedUserIds }, workspaceId: req.workspaceId },
       { ...req.body },
       { new: true }
     );
@@ -1316,7 +1379,7 @@ const PORT = process.env.PORT || 5001;
 app.get('/api/chats', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    const messages = await ChatMessage.find({ userId: { $in: sharedUserIds } }).sort({ createdAt: 1 }).limit(50);
+    const messages = await ChatMessage.find({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId }).sort({ createdAt: 1 }).limit(50);
     res.json(messages);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1325,7 +1388,7 @@ app.get('/api/chats', verifyToken, async (req, res) => {
 
 app.post('/api/chats', verifyToken, async (req, res) => {
   try {
-    const newMessage = new ChatMessage({ ...req.body, userId: req.user.userId });
+    const newMessage = new ChatMessage({ ...req.body, userId: req.user.userId, workspaceId: req.workspaceId });
     await newMessage.save();
     res.json(newMessage);
   } catch (err) {
@@ -1346,7 +1409,7 @@ app.post('/api/chat', verifyToken, async (req, res) => {
 app.delete('/api/chats', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    await ChatMessage.deleteMany({ userId: { $in: sharedUserIds } });
+    await ChatMessage.deleteMany({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId });
     res.json({ success: true, message: 'Chat history cleared' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1357,14 +1420,14 @@ app.delete('/api/chats', verifyToken, async (req, res) => {
 app.get('/api/stats', verifyToken, async (req, res) => {
   try {
     const userId = req.user.userId;
-    const sharedUserIds = getSharedUserIdsSync(userId);
+    const sharedUserIds = getSharedUserIdsSync(userId, req.workspaceId);
 
     // Fetch real metrics dynamically from the database for this specific user
     const [sentMessages, receivedMessages, campaigns, contactCount] = await Promise.all([
-      Message.countDocuments({ userId: { $in: sharedUserIds }, type: 'sent' }),
-      Message.countDocuments({ userId: { $in: sharedUserIds }, type: 'received' }),
-      Campaign.countDocuments({ userId: { $in: sharedUserIds } }),
-      Contact.countDocuments({ userId: { $in: sharedUserIds } })
+      Message.countDocuments({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId, type: 'sent' }),
+      Message.countDocuments({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId, type: 'received' }),
+      Campaign.countDocuments({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId }),
+      Contact.countDocuments({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId })
     ]);
 
     const totalDMs = sentMessages + receivedMessages;
@@ -1400,8 +1463,8 @@ app.post('/api/campaigns/sync-from-post', verifyToken, async (req, res) => {
     
     // Find if a campaign already exists for this post
     // Note: verifyToken sets req.user.userId
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    let campaign = await Campaign.findOne({ userId: { $in: sharedUserIds }, postId });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
+    let campaign = await Campaign.findOne({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId, postId });
 
     if (campaign) {
       campaign.triggerKeyword = triggerKeyword;
@@ -1411,6 +1474,7 @@ app.post('/api/campaigns/sync-from-post', verifyToken, async (req, res) => {
     } else {
       campaign = new Campaign({
         userId: req.user.userId,
+        workspaceId: req.workspaceId,
         name: `Auto-Campaign: ${postId}`,
         triggerKeyword,
         autoResponse,
@@ -1432,9 +1496,10 @@ app.post('/api/campaigns/sync-from-post', verifyToken, async (req, res) => {
 // Campaigns API
 app.get('/api/campaigns', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const campaigns = await Campaign.find({
-      userId: { $in: sharedUserIds }
+      userId: { $in: sharedUserIds },
+      workspaceId: req.workspaceId
     }).sort({ createdAt: -1 });
     res.json(campaigns);
   } catch (err) {
@@ -1458,7 +1523,8 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
 
     const newCampaign = new Campaign({
       ...req.body,
-      userId: req.user.userId
+      userId: req.user.userId,
+      workspaceId: req.workspaceId
     });
     await newCampaign.save();
     refreshGlobalCache(); // Instant Sync
@@ -1472,9 +1538,9 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
 app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
     const updateData = { ...req.body };
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const campaign = await Campaign.findOneAndUpdate(
-      { _id: req.params.id, userId: { $in: sharedUserIds } },
+      { _id: req.params.id, userId: { $in: sharedUserIds }, workspaceId: req.workspaceId },
       { $set: updateData },
       { new: true }
     );
@@ -1488,10 +1554,11 @@ app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const result = await Campaign.findOneAndDelete({
       _id: req.params.id,
-      userId: { $in: sharedUserIds }
+      userId: { $in: sharedUserIds },
+      workspaceId: req.workspaceId
     });
 
     if (!result) {
@@ -1512,6 +1579,7 @@ app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId);
     const logs = await Message.find({
       userId: { $in: sharedUserIds },
+      workspaceId: req.workspaceId,
       campaignId: req.params.id
     }).sort({ timestamp: -1 });
     res.json(logs);
@@ -1574,14 +1642,15 @@ function parseScheduledPost(post) {
 // Scheduling API
 app.get('/api/scheduling', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    const posts = await ScheduledPost.find({ userId: { $in: sharedUserIds } }).sort({ scheduledFor: 1 });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
+    const posts = await ScheduledPost.find({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId }).sort({ scheduledFor: 1 });
     
     // Fetch user settings once to use across posts
     const userSettings = await Settings.findOne({ 
       userId: { $in: sharedUserIds },
+      workspaceId: req.workspaceId,
       instagramAccessToken: { $ne: null }
-    }) || await Settings.findOne({ userId: req.user.userId });
+    }) || await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
     const accessToken = userSettings?.instagramAccessToken;
 
     // Handle serialized metadata and fetch live image for Posted status
@@ -1743,6 +1812,7 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
       ...req.body,
       scheduledFor: scheduledDate,
       userId: req.user.userId,
+      workspaceId: req.workspaceId,
       mediaUrl: finalMediaUrl,
       status: 'Scheduled'
     };
@@ -1800,8 +1870,8 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
 // Captions API
 app.get('/api/captions', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    const captions = await Caption.find({ userId: { $in: sharedUserIds } }).sort({ createdAt: -1 });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
+    const captions = await Caption.find({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId }).sort({ createdAt: -1 });
     res.json(captions || []);
   } catch (err) {
     console.error('❌ CAPTIONS FETCH ERROR:', err.message, err.code, err.details, err.hint);
@@ -1815,19 +1885,21 @@ app.post('/api/captions', verifyToken, async (req, res) => {
     const { supabase, convertObjectIDToUUID } = await import('./utils/supabase.js');
     const { title, content } = req.body;
     const userId = convertObjectIDToUUID(req.user.userId);
+    const workspaceId = convertObjectIDToUUID(req.workspaceId);
 
-    console.log('📝 Saving caption for user:', userId, '| title:', title);
+    console.log('📝 Saving caption for user:', userId, '| workspace:', workspaceId, '| title:', title);
 
     if (!supabase) return res.status(500).json({ error: 'Database not connected' });
 
     // Enforce duplicate check across all shared user IDs
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const sharedUuids = sharedUserIds.map(uid => convertObjectIDToUUID(uid));
     const cleanContent = (content || '').trim();
     const { data: existing, error: checkError } = await supabase
       .from('captions')
       .select('id')
       .in('user_id', sharedUuids)
+      .eq('workspace_id', workspaceId)
       .eq('content', cleanContent);
 
     if (checkError) {
@@ -1838,7 +1910,7 @@ app.post('/api/captions', verifyToken, async (req, res) => {
 
     const { data, error } = await supabase
       .from('captions')
-      .insert({ title: title || '', content: content || '', user_id: userId })
+      .insert({ title: title || '', content: content || '', user_id: userId, workspace_id: workspaceId })
       .select()
       .limit(1);
 
@@ -1858,8 +1930,8 @@ app.post('/api/captions', verifyToken, async (req, res) => {
 
 app.delete('/api/captions/:id', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    await Caption.findOneAndDelete({ _id: req.params.id, userId: { $in: sharedUserIds } });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
+    await Caption.findOneAndDelete({ _id: req.params.id, userId: { $in: sharedUserIds }, workspaceId: req.workspaceId });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1869,7 +1941,11 @@ app.delete('/api/captions/:id', verifyToken, async (req, res) => {
 app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    const postToUpdate = await ScheduledPost.findOne({ _id: req.params.id, userId: { $in: sharedUserIds } });
+    const postToUpdate = await ScheduledPost.findOne({ 
+      _id: req.params.id, 
+      userId: { $in: sharedUserIds },
+      workspaceId: req.workspaceId
+    });
     if (!postToUpdate) return res.status(404).json({ error: 'Post not found' });
 
     const updateData = { ...req.body };
@@ -2028,7 +2104,11 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
   try {
     console.log(`🗑️ DELETE scheduled post requested. ID: ${req.params.id}, User: ${req.user.userId}`);
     const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    const postToDelete = await ScheduledPost.findOne({ _id: req.params.id, userId: { $in: sharedUserIds } });
+    const postToDelete = await ScheduledPost.findOne({ 
+      _id: req.params.id, 
+      userId: { $in: sharedUserIds },
+      workspaceId: req.workspaceId
+    });
     
     if (postToDelete) {
       let igMediaId = null;
@@ -2047,6 +2127,7 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
         console.log(`🗑️ Deleting associated campaigns for scheduled post IDs:`, postIds);
         await Campaign.deleteMany({
           userId: { $in: sharedUserIds },
+          workspaceId: req.workspaceId,
           postId: { $in: postIds }
         });
         await refreshGlobalCache(); // Instant Sync
@@ -2067,18 +2148,19 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
 
 // Messages API (Inbox)
 app.get('/api/messages', verifyToken, async (req, res) => {
-  const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-  const messages = await Message.find({ userId: { $in: sharedUserIds } }).sort({ timestamp: 1 });
+  const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
+  const messages = await Message.find({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId }).sort({ timestamp: 1 });
   res.json(messages);
 });
 
 // Optimized route for Audience Manager history
 app.get('/api/messages/contact/:chatId', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const messages = await Message.find({
       userId: { $in: sharedUserIds },
-      chatId: req.params.chatId
+      chatId: req.params.chatId,
+      workspaceId: req.workspaceId
     }).sort({ timestamp: -1 }).limit(100);
     res.json(messages);
   } catch (err) {
@@ -2089,14 +2171,15 @@ app.get('/api/messages/contact/:chatId', verifyToken, async (req, res) => {
 app.post('/api/messages', verifyToken, async (req, res) => {
   try {
     const { sender, text, type, chatId, platform } = req.body;
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
 
     // Find if there is an existing contact under any of the shared user IDs to avoid creating duplicate contacts
-    const existingContact = await Contact.findOne({ userId: { $in: sharedUserIds }, chatId: chatId || 'default' });
+    const existingContact = await Contact.findOne({ userId: { $in: sharedUserIds }, chatId: chatId || 'default', workspaceId: req.workspaceId });
     const targetUserId = existingContact ? existingContact.userId : req.user.userId;
 
     const newMessage = new Message({
       userId: targetUserId,
+      workspaceId: req.workspaceId,
       sender,
       text,
       type: type || 'sent',
@@ -2110,9 +2193,9 @@ app.post('/api/messages', verifyToken, async (req, res) => {
     // Auto-Upsert Contact Metadata under targetUserId
     try {
       await Contact.findOneAndUpdate(
-        { userId: targetUserId, chatId: chatId || 'default' },
+        { userId: targetUserId, chatId: chatId || 'default', workspaceId: req.workspaceId },
         {
-          $set: { lastActive: new Date(), platform: platform || 'instagram' },
+          $set: { lastActive: new Date(), platform: platform || 'instagram', workspaceId: req.workspaceId },
           $inc: { totalMessages: 1 },
           $setOnInsert: {
             name: sender !== 'AI Agent' && sender !== 'admin' ? sender : (chatId || 'default'),
@@ -2130,7 +2213,7 @@ app.post('/api/messages', verifyToken, async (req, res) => {
 
     // AI Auto-Reply Logic
     if (sender === 'user') {
-      processAutoReply(targetUserId, platform || 'instagram', chatId, text).catch(e => console.error(e));
+      processAutoReply(targetUserId, platform || 'instagram', chatId, text, 'dm', null, null, null, req.workspaceId).catch(e => console.error(e));
     }
 
     res.json(newMessage);
@@ -2144,7 +2227,7 @@ app.post('/api/ai/generate', verifyToken, async (req, res) => {
   try {
     const { prompt } = req.body;
     const { generateAIResponse } = await import('./utils/aiHandler.js');
-    const response = await generateAIResponse(req.user.userId, prompt);
+    const response = await generateAIResponse(req.user.userId, prompt, req.workspaceId);
     res.json({ response });
   } catch (err) {
     console.error('❌ AI GENERATION ERROR:', err.message);
@@ -2154,8 +2237,8 @@ app.post('/api/ai/generate', verifyToken, async (req, res) => {
 
 app.delete('/api/messages/all', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    await Message.deleteMany({ userId: { $in: sharedUserIds } });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
+    await Message.deleteMany({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId });
     res.json({ message: 'All messages deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -2164,9 +2247,53 @@ app.delete('/api/messages/all', verifyToken, async (req, res) => {
 
 app.delete('/api/messages/:id', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    await Message.findOneAndDelete({ _id: req.params.id, userId: { $in: sharedUserIds } });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
+    await Message.findOneAndDelete({ _id: req.params.id, userId: { $in: sharedUserIds }, workspaceId: req.workspaceId });
     res.json({ message: 'Message deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Workspaces API ---
+app.get('/api/workspaces', verifyToken, async (req, res) => {
+  try {
+    const { convertObjectIDToUUID } = await import('./utils/supabase.js');
+    const userId = convertObjectIDToUUID(req.user.userId);
+    const workspaces = await Workspace.find({ userId });
+    res.json(workspaces);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/workspaces', verifyToken, async (req, res) => {
+  try {
+    const { convertObjectIDToUUID } = await import('./utils/supabase.js');
+    const userId = convertObjectIDToUUID(req.user.userId);
+    const { name } = req.body;
+    if (!name) {
+      return res.status(400).json({ error: 'Workspace name is required' });
+    }
+    const newWorkspace = await Workspace.create({
+      userId,
+      name
+    });
+    // Initialize empty Settings for this new workspace
+    const newSettings = new Settings({
+      userId,
+      workspaceId: newWorkspace.id,
+      aiEnabled: false,
+      isAccountConnected: false,
+      isFacebookConnected: false,
+      isWhatsAppConnected: false
+    });
+    await newSettings.save();
+    
+    // Refresh global cache so it is immediately registered
+    await refreshGlobalCache();
+    
+    res.json(newWorkspace);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -2175,12 +2302,12 @@ app.delete('/api/messages/:id', verifyToken, async (req, res) => {
 // Settings API
 app.get('/api/settings', verifyToken, async (req, res) => {
   try {
-    console.log(`🔍 SETTINGS LOOKUP: Fetching for userId: ${req.user.userId}`);
-    let settings = await Settings.findOne({ userId: req.user.userId });
+    console.log(`🔍 SETTINGS LOOKUP: Fetching for userId: ${req.user.userId}, workspaceId: ${req.workspaceId}`);
+    let settings = await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
     
     if (!settings) {
-      console.warn(`⚠️ SETTINGS NOT FOUND for userId: ${req.user.userId}. Creating default.`);
-      settings = new Settings({ userId: req.user.userId });
+      console.warn(`⚠️ SETTINGS NOT FOUND for userId: ${req.user.userId}, workspaceId: ${req.workspaceId}. Creating default.`);
+      settings = new Settings({ userId: req.user.userId, workspaceId: req.workspaceId });
       await settings.save();
     }
     
@@ -2200,10 +2327,11 @@ app.get('/api/instagram/media', verifyToken, async (req, res) => {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId);
     const settings = await Settings.findOne({ 
       userId: { $in: sharedUserIds }, 
+      workspaceId: req.workspaceId,
       instagramAccessToken: { $ne: null }, 
       businessAccountId: { $ne: null } 
     });
-    const activeSettings = settings || await Settings.findOne({ userId: req.user.userId });
+    const activeSettings = settings || await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
 
     if (!activeSettings || !activeSettings.instagramAccessToken || !activeSettings.businessAccountId) {
       return res.status(400).json({ error: 'Instagram account not fully connected' });
@@ -2336,8 +2464,8 @@ app.post('/api/settings', verifyToken, async (req, res) => {
     delete data.connectedThreadsName;
 
     const settings = await Settings.findOneAndUpdate(
-      { userId: req.user.userId },
-      data,
+      { userId: req.user.userId, workspaceId: req.workspaceId },
+      { ...data, workspaceId: req.workspaceId },
       { upsert: true, new: true }
     );
     refreshGlobalCache(); // Instant Sync
@@ -2350,13 +2478,14 @@ app.post('/api/settings', verifyToken, async (req, res) => {
 app.post('/api/settings/whatsapp/connect-qr', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOneAndUpdate(
-      { userId: req.user.userId },
+      { userId: req.user.userId, workspaceId: req.workspaceId },
       {
         isWhatsAppConnected: true,
         connectedWhatsAppName: 'WhatsApp QR Connected',
         whatsappToken: 'mock_qr_token',
         whatsappPhoneNumberId: 'mock_qr_id',
-        lastTestedAt: new Date()
+        lastTestedAt: new Date(),
+        workspaceId: req.workspaceId
       },
       { upsert: true, new: true }
     );
@@ -2379,8 +2508,8 @@ app.get('/api/settings/whatsapp/qr', verifyToken, async (req, res) => {
 // --- FLOWS API ---
 app.get('/api/flows', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    const flows = await Flow.find({ userId: { $in: sharedUserIds } });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
+    const flows = await Flow.find({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId });
     res.json(flows);
   } catch (err) {
     console.error("❌ FLOWS FETCH ERROR (Full):", JSON.stringify(err, null, 2));
@@ -2394,8 +2523,8 @@ app.get('/api/flows', verifyToken, async (req, res) => {
 
 app.get('/api/flows/:id', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    const flow = await Flow.findOne({ _id: req.params.id, userId: { $in: sharedUserIds } });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
+    const flow = await Flow.findOne({ _id: req.params.id, userId: { $in: sharedUserIds }, workspaceId: req.workspaceId });
     if (!flow) return res.status(404).json({ error: 'Flow not found' });
     res.json(flow);
   } catch (err) {
@@ -2405,12 +2534,12 @@ app.get('/api/flows/:id', verifyToken, async (req, res) => {
 
 app.post('/api/flows', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const proUser = await User.findOne({ _id: { $in: sharedUserIds }, plan: 'pro' });
     if (!proUser) {
       return res.status(403).json({ error: 'Pro plan required to create advanced flows.' });
     }
-    const newFlow = new Flow({ ...req.body, userId: req.user.userId });
+    const newFlow = new Flow({ ...req.body, userId: req.user.userId, workspaceId: req.workspaceId });
     await newFlow.save();
     res.json(newFlow);
   } catch (err) {
@@ -2420,14 +2549,14 @@ app.post('/api/flows', verifyToken, async (req, res) => {
 
 app.put('/api/flows/:id', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const proUser = await User.findOne({ _id: { $in: sharedUserIds }, plan: 'pro' });
     if (!proUser) {
       return res.status(403).json({ error: 'Pro plan required to update advanced flows.' });
     }
     const flow = await Flow.findOneAndUpdate(
-      { _id: req.params.id, userId: { $in: sharedUserIds } },
-      { ...req.body, updatedAt: new Date() },
+      { _id: req.params.id, userId: { $in: sharedUserIds }, workspaceId: req.workspaceId },
+      { ...req.body, updatedAt: new Date(), workspaceId: req.workspaceId },
       { new: true }
     );
     res.json(flow);
@@ -2438,12 +2567,12 @@ app.put('/api/flows/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/flows/:id', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const proUser = await User.findOne({ _id: { $in: sharedUserIds }, plan: 'pro' });
     if (!proUser) {
       return res.status(403).json({ error: 'Pro plan required to delete advanced flows.' });
     }
-    await Flow.findOneAndDelete({ _id: req.params.id, userId: { $in: sharedUserIds } });
+    await Flow.findOneAndDelete({ _id: req.params.id, userId: { $in: sharedUserIds }, workspaceId: req.workspaceId });
     res.json({ message: 'Flow deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -2462,7 +2591,11 @@ app.post('/api/broadcasts', verifyToken, async (req, res) => {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId);
 
     for (const contactId of contactIds) {
-      const contact = await Contact.findOne({ _id: contactId, userId: { $in: sharedUserIds } });
+      const contact = await Contact.findOne({ 
+        _id: contactId, 
+        userId: { $in: sharedUserIds },
+        workspaceId: req.workspaceId 
+      });
       if (!contact) {
         results.failed++;
         continue;
@@ -2473,6 +2606,7 @@ app.post('/api/broadcasts', verifyToken, async (req, res) => {
       if (sent) {
         const msg = new Message({
           userId: contact.userId,
+          workspaceId: req.workspaceId,
           chatId: contact.chatId,
           sender: 'admin',
           text: text,
@@ -2641,13 +2775,25 @@ async function runSchedulingWorker() {
         }
 
         // --- STEP 2: Publish (Using state-machine logic) ---
-        const publishResult = await publishInstagramContent(post.userId, {
-          type: finalType,
-          mediaUrl: finalMedia,
-          caption: post.caption,
-          carouselItems: finalCarousel,
-          containerId: existingContainerId
-        });
+        let publishResult = null;
+        if (post.platform === 'facebook') {
+          const { publishFacebookContent } = await import('./utils/metaApi.js');
+          publishResult = await publishFacebookContent(post.userId, {
+            type: finalType,
+            mediaUrl: finalMedia,
+            caption: post.caption,
+            carouselItems: finalCarousel
+          }, post.workspaceId);
+        } else {
+          // Default to instagram
+          publishResult = await publishInstagramContent(post.userId, {
+            type: finalType,
+            mediaUrl: finalMedia,
+            caption: post.caption,
+            carouselItems: finalCarousel,
+            containerId: existingContainerId
+          }, post.workspaceId);
+        }
 
         if (publishResult.status === 'IG_PROCESSING') {
           // Meta is still thinking. Save the containerId and try again in the next cron run
@@ -2694,13 +2840,14 @@ async function runSchedulingWorker() {
         if (post.triggerKeyword && post.autoResponse && automationStatus === 'Active') {
           const campaign = new Campaign({
             userId: post.userId,
+            workspaceId: post.workspaceId,
             name: `Auto: ${post.caption.substring(0, 20)}...`,
             trigger: post.triggerKeyword,
             response: post.autoResponse,
             status: 'Active',
             isAnyPost: false,
             postId: publishedId,
-            platform: 'instagram',
+            platform: post.platform || 'instagram',
             triggerOnComments: true,
             requireFollow,
             unfollowedResponse,
@@ -2717,11 +2864,11 @@ async function runSchedulingWorker() {
         const updatedMediaUrl = JSON.stringify({ 
           mediaUrl: liveUrl, // Official path
           localMediaUrl: finalMedia, 
-          instagramMediaId: publishedId 
+          [post.platform === 'facebook' ? 'facebookPostId' : 'instagramMediaId']: publishedId 
         });
 
         await _updatePost(postId, { status: 'Posted', mediaUrl: updatedMediaUrl });
-        console.log(`✅ SUCCESS: Post ${postId} is now LIVE on Instagram.`);
+        console.log(`✅ SUCCESS: Post ${postId} is now LIVE on ${post.platform === 'facebook' ? 'Facebook' : 'Instagram'}.`);
 
       } catch (postErr) {
         console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);

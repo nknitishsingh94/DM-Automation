@@ -251,10 +251,16 @@ export const checkMediaReadiness = async (mediaId, accessToken) => {
 /**
  * Meta Content Publishing API: Post Image, Reel, Story, or Carousel
  */
-export const publishInstagramContent = async (userId, { type, mediaUrl, caption = '', carouselItems = [], containerId = null }) => {
+export const publishInstagramContent = async (userId, { type, mediaUrl, caption = '', carouselItems = [], containerId = null }, workspaceId = null) => {
   try {
-    console.log(`📡 [Meta API] Start Publishing for User: ${userId}. Type: ${type}, Container: ${containerId || 'NEW'}`);
-    let settings = await Settings.findOne({ userId });
+    console.log(`📡 [Meta API] Start Publishing for User: ${userId}. Type: ${type}, Container: ${containerId || 'NEW'}, Workspace: ${workspaceId || 'NONE'}`);
+    let settings = null;
+    if (workspaceId) {
+      settings = await Settings.findOne({ userId, workspaceId });
+    }
+    if (!settings) {
+      settings = await Settings.findOne({ userId });
+    }
     if (!settings || !settings.instagramAccessToken || !settings.businessAccountId) {
       console.log(`⚠️ Settings missing for user ${userId}. Attempting fallback to any active connected settings in DB...`);
       settings = await Settings.findOne({ 
@@ -350,6 +356,126 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
     const metaError = err.response?.data?.error;
     const errorMessage = metaError ? `${metaError.message} (Code: ${metaError.code})` : err.message;
     console.error("❌ Meta Publishing Error:", JSON.stringify(err.response?.data || err.message, null, 2));
+    throw new Error(errorMessage);
+  }
+};
+
+/**
+ * Meta Content Publishing API: Post Image, Video, or Carousel to Facebook Page Feed
+ */
+export const publishFacebookContent = async (userId, { type, mediaUrl, caption = '', carouselItems = [] }, workspaceId = null) => {
+  try {
+    console.log(`📡 [Meta API] Start FB Feed Publishing for User: ${userId}. Type: ${type}, Workspace: ${workspaceId || 'NONE'}`);
+    let settings = null;
+    if (workspaceId) {
+      settings = await Settings.findOne({ userId, workspaceId });
+    }
+    if (!settings) {
+      settings = await Settings.findOne({ userId });
+    }
+    if (!settings || !settings.facebookAccessToken || !settings.facebookPageId) {
+      console.log(`⚠️ Settings missing for user ${userId}. Attempting fallback to any active connected settings in DB...`);
+      settings = await Settings.findOne({ 
+        facebookAccessToken: { $ne: null }, 
+        facebookPageId: { $ne: null } 
+      });
+      if (!settings) {
+        throw new Error('Meta credentials missing for Facebook publishing');
+      }
+    }
+
+    const accessToken = settings.facebookAccessToken;
+    const pageId = settings.facebookPageId;
+    
+    let publishRes = null;
+    let publishedId = null;
+
+    if (type === 'carousel' && carouselItems && carouselItems.length > 0) {
+      console.log(`🎬 Publishing Carousel to FB Page for user ${userId}`);
+      const childPromises = carouselItems.map(async (itemUrl) => {
+        const isVideo = itemUrl.match(/\.(mp4|mov|webm)/i);
+        if (isVideo) {
+          const childRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/videos`, null, {
+            params: {
+              access_token: accessToken,
+              file_url: itemUrl,
+              published: false
+            }
+          });
+          return { media_fbid: childRes.data.id };
+        } else {
+          const childRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/photos`, null, {
+            params: {
+              access_token: accessToken,
+              url: itemUrl,
+              published: false
+            }
+          });
+          return { media_fbid: childRes.data.id };
+        }
+      });
+      const attachedMedia = await Promise.all(childPromises);
+      publishRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, null, {
+        params: {
+          access_token: accessToken,
+          message: caption,
+          attached_media: JSON.stringify(attachedMedia)
+        }
+      });
+      publishedId = publishRes.data.id;
+    } else if (mediaUrl) {
+      const isVideo = mediaUrl.match(/\.(mp4|mov|webm)/i) || type === 'video' || type === 'reel';
+      if (isVideo) {
+        console.log(`🎬 Publishing Video to FB Page for user ${userId}`);
+        publishRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/videos`, null, {
+          params: {
+            access_token: accessToken,
+            file_url: mediaUrl,
+            description: caption
+          }
+        });
+        publishedId = publishRes.data.id;
+      } else {
+        console.log(`🎬 Publishing Photo to FB Page for user ${userId}`);
+        publishRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/photos`, null, {
+          params: {
+            access_token: accessToken,
+            url: mediaUrl,
+            message: caption
+          }
+        });
+        publishedId = publishRes.data.post_id || publishRes.data.id;
+      }
+    } else {
+      console.log(`🎬 Publishing Text Post to FB Page for user ${userId}`);
+      publishRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, null, {
+        params: {
+          access_token: accessToken,
+          message: caption
+        }
+      });
+      publishedId = publishRes.data.id;
+    }
+
+    console.log(`✅ [Meta API] FB Feed Published Successfully! Post ID: ${publishedId}`);
+    
+    // Fetch Official URL
+    let liveUrl = `https://www.facebook.com/${publishedId}`;
+    try {
+      const postInfoRes = await axios.get(`https://graph.facebook.com/v19.0/${publishedId}`, {
+        params: { fields: 'permalink_url', access_token: accessToken }
+      });
+      liveUrl = postInfoRes.data.permalink_url || liveUrl;
+      console.log(`🔗 [Meta API] FB Official URL Fetched: ${liveUrl}`);
+    } catch (e) {
+      console.warn(`⚠️ [Meta API] Could not fetch FB live URL info: ${e.message}`);
+    }
+
+    return { id: publishedId, url: liveUrl, status: 'PUBLISHED' };
+  } catch (err) {
+    const metaError = err.response?.data?.error;
+    const errorMessage = metaError ? `${metaError.message} (Code: ${metaError.code})` : err.message;
+    console.error("❌ Meta FB Feed Publishing Error:", JSON.stringify(err.response?.data || err.message, null, 2));
     throw new Error(errorMessage);
   }
 };

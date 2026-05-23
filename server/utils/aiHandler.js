@@ -7,13 +7,18 @@ import Settings from '../models/Settings.js';
  * @param {string} userMessage - The text received from the customer
  * @returns {Promise<string>} - The AI generated response text
  */
-export const generateAIResponse = async (userId, userMessage) => {
+export const generateAIResponse = async (userId, userMessage, workspaceId = null) => {
   // Force reload env for robustness
   const dotenvModule = await import('dotenv');
   dotenvModule.default.config();
 
+  const settingsQuery = { userId };
+  if (workspaceId) {
+    settingsQuery.workspaceId = workspaceId;
+  }
+
   try {
-    const userSettings = await Settings.findOne({ userId });
+    const userSettings = await Settings.findOne(settingsQuery);
     
     const groqKey = process.env.GROQ_API_KEY;
     const openaiKey = process.env.OPENAI_API_KEY;
@@ -135,7 +140,7 @@ export const generateAIResponse = async (userId, userMessage) => {
     console.error("❌ AI API Error:", err.message);
     
     // Fetch fallback message again in catch block
-    const finalSettings = await Settings.findOne({ userId });
+    const finalSettings = await Settings.findOne(settingsQuery);
     return finalSettings?.aiFallbackMessage || "I'm currently busy, please try again in a bit! 😊";
   }
 };

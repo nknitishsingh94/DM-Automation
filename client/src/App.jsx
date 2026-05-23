@@ -109,10 +109,74 @@ function Sidebar({ isMobileOpen, onClose }) {
   const { logout, user } = useAuth();
   const location = useLocation();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [workspaces, setWorkspaces] = useState([]);
+  const [activeWorkspace, setActiveWorkspace] = useState(null);
+  const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
+  const [newWorkspaceName, setNewWorkspaceName] = useState('');
+
+  // Fetch workspaces
+  const fetchWorkspaces = async () => {
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      if (!token) return;
+      const res = await fetch('/api/workspaces', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setWorkspaces(data);
+        const storedWorkspaceId = localStorage.getItem('active_workspace_id');
+        let current = data.find(w => w.id === storedWorkspaceId);
+        if (!current && data.length > 0) {
+          current = data[0];
+          localStorage.setItem('active_workspace_id', current.id);
+        }
+        setActiveWorkspace(current);
+      }
+    } catch (err) {
+      console.error('Error fetching workspaces:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchWorkspaces();
+  }, []);
 
   useEffect(() => {
     if (isMobileOpen) onClose();
   }, [location.pathname]);
+
+  const handleSwitchWorkspace = (workspaceId) => {
+    localStorage.setItem('active_workspace_id', workspaceId);
+    window.location.reload();
+  };
+
+  const handleCreateWorkspace = async (e) => {
+    e.preventDefault();
+    if (!newWorkspaceName.trim()) return;
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch('/api/workspaces', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name: newWorkspaceName })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('active_workspace_id', data.id);
+        setShowWorkspaceModal(false);
+        setNewWorkspaceName('');
+        window.location.reload();
+      }
+    } catch (err) {
+      console.error('Error creating workspace:', err);
+    }
+  };
 
   return (
     <>
@@ -128,7 +192,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                <div 
                  onClick={() => setShowProfileMenu(!showProfileMenu)}
                  className="profile-hover"
-                 style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '6px 8px', margin: '-6px -8px', borderRadius: '8px', transition: 'background 0.2s' }}
+                 style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '6px 8px', margin: '-6px -8px', borderRadius: '8px', transition: 'background 0.2s', width: '100%', maxWidth: 'calc(100% - 30px)' }}
                >
                 <div style={{ 
                   width: '32px', 
@@ -141,6 +205,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                   fontSize: '14px',
                   fontWeight: '700',
                   color: 'white',
+                  flexShrink: 0,
                   overflow: 'hidden'
                 }}>
                   {user.profilePhoto ? (
@@ -149,9 +214,12 @@ function Sidebar({ isMobileOpen, onClose }) {
                     user.username.charAt(0).toUpperCase()
                   )}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                   <span style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     {user.username} <ChevronDown size={14} color="#94a3b8" />
+                  </span>
+                  <span style={{ fontSize: '11px', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {activeWorkspace?.name || 'Loading...'}
                   </span>
                 </div>
               </div>
@@ -162,14 +230,29 @@ function Sidebar({ isMobileOpen, onClose }) {
                   background: 'white', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
                   border: '1px solid #f1f5f9', zIndex: 100, padding: '8px'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 12px', marginBottom: '8px' }}>
-                    <div style={{ width: '26px', height: '26px', borderRadius: '6px', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '700', color: 'white', overflow: 'hidden' }}>
-                      {user.profilePhoto ? <img src={user.profilePhoto} alt="Nk" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : user.username.charAt(0).toUpperCase()}
-                    </div>
-                    <span style={{ fontSize: '14px', fontWeight: '600', color: '#1e293b' }}>{user.username}</span>
+                  <div style={{ padding: '4px 12px 8px', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b', fontWeight: '700' }}>
+                    Workspaces
                   </div>
                   
-                  <button className="dropdown-item">
+                  <div style={{ maxHeight: '160px', overflowY: 'auto', marginBottom: '8px' }}>
+                    {workspaces.map(w => (
+                      <button 
+                        key={w.id} 
+                        onClick={() => handleSwitchWorkspace(w.id)}
+                        className="dropdown-item" 
+                        style={{ 
+                          justifyContent: 'space-between',
+                          background: w.id === activeWorkspace?.id ? '#f1f5f9' : 'transparent',
+                          fontWeight: w.id === activeWorkspace?.id ? '700' : 'normal'
+                        }}
+                      >
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{w.name}</span>
+                        {w.id === activeWorkspace?.id && <span style={{ fontSize: '10px', background: '#8b5cf6', color: 'white', padding: '2px 6px', borderRadius: '4px' }}>Active</span>}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  <button onClick={() => { setShowWorkspaceModal(true); setShowProfileMenu(false); }} className="dropdown-item">
                     <PlusSquare size={16} color="#64748b" /> Add New Workspace
                   </button>
                   
@@ -178,11 +261,6 @@ function Sidebar({ isMobileOpen, onClose }) {
                   <Link to="/help" onClick={() => setShowProfileMenu(false)} className="dropdown-item">
                     <FileText size={16} color="#64748b" /> Help Center
                   </Link>
-                  <button className="dropdown-item">
-                    <Headphones size={16} color="#64748b" /> Chat with Us
-                  </button>
-
-                  <div style={{ height: '1px', background: '#f1f5f9', margin: '4px 0' }}></div>
                   
                   <button onClick={() => { logout(); setShowProfileMenu(false); }} className="dropdown-item">
                     <LogOut size={16} color="#64748b" /> Sign out
@@ -311,6 +389,55 @@ function Sidebar({ isMobileOpen, onClose }) {
             </NavLink>
           </div>
         </div>
+
+        {showWorkspaceModal && (
+          <div style={{
+            position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+            background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+          }}>
+            <div style={{
+              background: 'white', padding: '32px', borderRadius: '24px', width: '90%', maxWidth: '400px',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
+            }}>
+              <h3 style={{ fontSize: '20px', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>Create Workspace</h3>
+              <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '20px' }}>Organize your settings, campaigns, messages, and contacts under a new workspace.</p>
+              
+              <form onSubmit={handleCreateWorkspace}>
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '8px', textTransform: 'uppercase' }}>Workspace Name</label>
+                  <input 
+                    type="text" 
+                    value={newWorkspaceName}
+                    onChange={(e) => setNewWorkspaceName(e.target.value)}
+                    placeholder="e.g. Acme Marketing"
+                    required
+                    style={{
+                      width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1',
+                      fontSize: '14px', outline: 'none', transition: 'border-color 0.2s'
+                    }}
+                  />
+                </div>
+                
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                  <button 
+                    type="button" 
+                    onClick={() => { setShowWorkspaceModal(false); setNewWorkspaceName(''); }}
+                    style={{ padding: '10px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', background: 'transparent', fontSize: '14px', fontWeight: '600', color: '#475569', cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    style={{ padding: '10px 20px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', fontSize: '14px', fontWeight: '600', color: 'white', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(139, 92, 246, 0.3)' }}
+                  >
+                    Create
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </aside>
     </>
   );

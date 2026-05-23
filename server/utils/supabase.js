@@ -98,9 +98,12 @@ function parseFilter(q, queryObj, tableName) {
     if ((tableName === 'captions' || tableName === 'scheduled_posts') && key === 'userId') {
       parsedKey = 'user_id';
     }
+    if ((tableName === 'captions' || tableName === 'scheduled_posts') && key === 'workspaceId') {
+      parsedKey = 'workspace_id';
+    }
     
     // UUID Safety Check: Prevents Postgres from crashing on invalid UUID syntax
-    const uuidColumns = ['id', 'userId', 'user_id'];
+    const uuidColumns = ['id', 'userId', 'user_id', 'workspaceId', 'workspace_id'];
     
     // Map ObjectID queries to UUID queries for UUID columns
     if (uuidColumns.includes(parsedKey) && val && typeof val === 'string' && val.length === 24 && /^[0-9a-f]{24}$/i.test(val)) {
@@ -244,6 +247,10 @@ function convertIncoming(doc, tableName) {
       newDoc.userId = newDoc.user_id;
       delete newDoc.user_id;
     }
+    if (newDoc.workspace_id) {
+      newDoc.workspaceId = newDoc.workspace_id;
+      delete newDoc.workspace_id;
+    }
   }
 
   newDoc.toObject = () => newDoc;
@@ -304,7 +311,7 @@ function convertOutgoing(doc, tableName) {
 
     // Also delete any other fields not in allowed DB schema to prevent 500 Column Not Found errors
     const allowedDbColumns = [
-      'id', 'userId', 'instagramAccessToken', 'instagramPageId', 'businessAccountId', 
+      'id', 'userId', 'workspaceId', 'instagramAccessToken', 'instagramPageId', 'businessAccountId', 
       'facebookAccessToken', 'facebookPageId', 'isAccountConnected', 'whatsappToken', 
       'whatsappPhoneNumberId', 'whatsappBusinessAccountId', 'aiEnabled', 'aiModel', 
       'aiPersonality', 'createdAt', 'connectedInstagramName', 'connectedInstagramId', 
@@ -336,6 +343,10 @@ function convertOutgoing(doc, tableName) {
     if (newDoc.userId) {
       newDoc.user_id = newDoc.userId;
       delete newDoc.userId;
+    }
+    if (newDoc.workspaceId) {
+      newDoc.workspace_id = newDoc.workspaceId;
+      delete newDoc.workspaceId;
     }
   }
 

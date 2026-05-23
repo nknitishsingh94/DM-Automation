@@ -1,10 +1,12 @@
 import jwt from 'jsonwebtoken';
+import Workspace from '../models/Workspace.js';
+import { convertObjectIDToUUID } from '../utils/supabase.js';
 
 if (!process.env.JWT_SECRET) {
   console.error('❌ FATAL: JWT_SECRET is not set in environment variables. Server cannot start securely.');
 }
 
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
   let token = req.headers.authorization?.split(' ')[1];
   
   // For OAuth redirects that use window.location.href, the token is passed in the query
@@ -25,6 +27,36 @@ const verifyToken = (req, res, next) => {
     }
 
     req.user = decoded;
+    
+    // Resolve workspace context
+    let workspaceId = req.headers['x-workspace-id'] || req.query.workspaceId;
+    const uuidUserId = convertObjectIDToUUID(decoded.userId);
+    
+    let activeWorkspace = null;
+    
+    if (workspaceId) {
+      const uuidWorkspaceId = convertObjectIDToUUID(workspaceId);
+      activeWorkspace = await Workspace.findOne({ id: uuidWorkspaceId, userId: uuidUserId });
+    }
+    
+    if (!activeWorkspace) {
+      activeWorkspace = await Workspace.findOne({ userId: uuidUserId });
+    }
+    
+    if (!activeWorkspace) {
+      try {
+        activeWorkspace = await Workspace.create({
+          userId: uuidUserId,
+          name: 'Default Workspace'
+        });
+        console.log(`Created Default Workspace ${activeWorkspace.id} for user ${uuidUserId}`);
+      } catch (err) {
+        console.error('Error auto-creating default workspace:', err.message);
+        return res.status(500).json({ message: 'Failed to initialize workspace' });
+      }
+    }
+    
+    req.workspaceId = activeWorkspace.id;
     next();
   } catch (err) {
     if (process.env.NODE_ENV !== 'production') {
@@ -35,3 +67,4 @@ const verifyToken = (req, res, next) => {
 };
 
 export default verifyToken;
+

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
   Plus, Calendar, Clock, Video, Image as ImageIcon, Send, X, Check, ChevronLeft, ChevronRight,
   Trash2, Globe, Lock, AlertCircle, Info, Sparkles, Volume2, VolumeX, Zap,
-  ArrowLeft, Heart, MessageCircle, Home, Layout, Instagram, Target, ArrowRight, Film, Copy,
+  ArrowLeft, Heart, MessageCircle, Home, Layout, Instagram, Facebook, Target, ArrowRight, Film, Copy,
   Save, Layers, UploadCloud, Eye, FileText, Loader2, Bookmark, MessageSquare, Key, Smartphone,
   Link as LinkIcon, Pencil
 } from 'lucide-react';
@@ -282,6 +282,7 @@ export default function Scheduling() {
   const fileInputRef = useRef(null);
 
   const [newPost, setNewPost] = useState({
+    platform: 'instagram',
     caption: '',
     scheduledFor: '',
     mediaUrl: '',
@@ -574,7 +575,8 @@ export default function Scheduling() {
         openingMessage: newPost.openingMessage,
         openingMessageText: newPost.openingMessageText,
         openingMessageButton: newPost.openingMessageButton,
-        buttons: JSON.stringify(newPost.buttons || [])
+        buttons: JSON.stringify(newPost.buttons || []),
+        platform: newPost.platform || 'instagram'
       };
 
       const res = await fetch(`${API_BASE_URL}/api/scheduling`, {
@@ -595,6 +597,7 @@ export default function Scheduling() {
         }, 100);
 
         setNewPost({ 
+          platform: 'instagram',
           caption: '', scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', 
           triggerKeyword: '', autoResponse: '', coverUrl: '',
           requireFollow: true, unfollowedResponse: "Hey! Please follow our account first to get the link! 😊",
@@ -876,6 +879,19 @@ export default function Scheduling() {
                       <span>{post.status === 'Retrying' ? `Retrying` : (post.status || 'SCHEDULED')}</span>
                     </div>
 
+                    {/* Platform Badge */}
+                    <div style={{
+                      fontSize: '0.65rem', fontWeight: '800', 
+                      color: 'white',
+                      background: (post.platform === 'facebook') ? '#1877f2' : '#e1306c',
+                      padding: '4px 8px', borderRadius: '8px',
+                      display: 'flex', alignItems: 'center', gap: '4px',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                    }}>
+                      {post.platform === 'facebook' ? <Facebook size={10} fill="white" /> : <Instagram size={10} />}
+                      <span>{post.platform === 'facebook' ? 'FACEBOOK' : 'INSTAGRAM'}</span>
+                    </div>
+
                     {/* Post Type Badge */}
                     <div style={{
                       fontSize: '0.65rem', fontWeight: '800', color: '#1e293b', textTransform: 'uppercase',
@@ -1035,6 +1051,32 @@ export default function Scheduling() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '32px' }}>
                 {/* Left Side: Form */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+
+                  {/* Platform Selector */}
+                  <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '16px' }}>Target Platform</label>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      {[
+                        { id: 'instagram', label: 'Instagram', icon: <Instagram size={18} />, activeColor: '#e1306c', activeBg: '#fff0f5' },
+                        { id: 'facebook', label: 'Facebook', icon: <Facebook size={18} />, activeColor: '#1877f2', activeBg: '#e8f4ff' }
+                      ].map(plat => (
+                        <button
+                          key={plat.id}
+                          onClick={() => setNewPost(prev => ({ ...prev, platform: plat.id }))}
+                          style={{
+                            flex: 1, padding: '12px', borderRadius: '12px', 
+                            border: newPost.platform === plat.id ? `2px solid ${plat.activeColor}` : '1px solid #e2e8f0',
+                            background: newPost.platform === plat.id ? plat.activeBg : 'white',
+                            color: newPost.platform === plat.id ? plat.activeColor : '#64748b',
+                            fontWeight: '700', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          {plat.icon} {plat.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
                   {/* Post Type Selector */}
                   <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
@@ -1343,7 +1385,7 @@ export default function Scheduling() {
                       </div>
                     </div>
 
-                    {/* Instagram Header */}
+                    {/* Platform Header */}
                     <div style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '10px', background: '#000', zIndex: 10, borderBottom: '1px solid #1a1a1a' }}>
                       <ChevronLeft size={20} color="white" />
                       <div style={{ 
@@ -1351,8 +1393,18 @@ export default function Scheduling() {
                         background: user?.profilePhoto ? `url(${user.profilePhoto})` : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
                         backgroundSize: 'cover', backgroundPosition: 'center', flexShrink: 0
                       }}></div>
-                      <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>
-                        {settings?.connectedInstagramName || user?.username || 'instagram_user'}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0 }}>
+                        <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          {newPost.platform === 'facebook' ? <Facebook size={12} fill="#1877f2" color="#1877f2" /> : <Instagram size={12} color="#e1306c" />}
+                          <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                            {newPost.platform === 'facebook' 
+                              ? (settings?.connectedFacebookName || user?.username || 'facebook_page') 
+                              : (settings?.connectedInstagramName || user?.username || 'instagram_user')}
+                          </span>
+                        </div>
+                        <span style={{ color: '#64748b', fontSize: '0.6rem', fontWeight: '600' }}>
+                          {newPost.platform === 'facebook' ? 'Facebook Page' : 'Instagram Business'}
+                        </span>
                       </div>
                     </div>
 

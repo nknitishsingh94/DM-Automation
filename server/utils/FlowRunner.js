@@ -9,9 +9,11 @@ import { sendMessageToInstagram, sendPrivateReply } from './metaApi.js';
  * FlowRunner Engine
  * Interprets and executes node-based automation graphs
  */
-export const runFlow = async (userId, flowId, contactId, platform, initialText = '', commentId = null) => {
+export const runFlow = async (userId, flowId, contactId, platform, initialText = '', commentId = null, workspaceId = null) => {
   try {
-    const flow = await Flow.findOne({ id: flowId, userId });
+    const flowQuery = { id: flowId, userId };
+    if (workspaceId) flowQuery.workspaceId = workspaceId;
+    const flow = await Flow.findOne(flowQuery);
     if (!flow || flow.status !== 'Active') return;
 
     // Premium Check: Visual Flows only work for PRO subscribers
@@ -21,7 +23,9 @@ export const runFlow = async (userId, flowId, contactId, platform, initialText =
       return;
     }
 
-    const contact = await Contact.findOne({ chatId: contactId, userId });
+    const contactQuery = { chatId: contactId, userId };
+    if (workspaceId) contactQuery.workspaceId = workspaceId;
+    const contact = await Contact.findOne(contactQuery);
     if (contact && contact.isBotMuted) return;
 
     // 1. Identify starting point
@@ -58,14 +62,15 @@ export const runFlow = async (userId, flowId, contactId, platform, initialText =
         // Save AI response to DB
         const aiMsg = new Message({
           userId: userId,
-          chatId: contactId, sender: 'AI Agent', text, type: 'sent', platform, isAI: true, timestamp: new Date()
+          chatId: contactId, sender: 'AI Agent', text, type: 'sent', platform, isAI: true, timestamp: new Date(),
+          workspaceId: workspaceId
         });
         await aiMsg.save();
       }
 
       if (currentNode.type === 'ai') {
         // Generate Dynamic AI Response
-        const responseText = await generateAIResponse(userId, initialText || "Continue Conversation");
+        const responseText = await generateAIResponse(userId, initialText || "Continue Conversation", workspaceId);
         
         if (commentId) {
           await sendPrivateReply(platform, commentId, responseText, userId);
@@ -75,7 +80,8 @@ export const runFlow = async (userId, flowId, contactId, platform, initialText =
 
         const aiMsg = new Message({
           userId: userId,
-          chatId: contactId, sender: 'AI Agent', text: responseText, type: 'sent', platform, isAI: true, timestamp: new Date()
+          chatId: contactId, sender: 'AI Agent', text: responseText, type: 'sent', platform, isAI: true, timestamp: new Date(),
+          workspaceId: workspaceId
         });
         await aiMsg.save();
       }
