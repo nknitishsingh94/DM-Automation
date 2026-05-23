@@ -1056,25 +1056,38 @@ export default function Scheduling() {
                   <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '16px' }}>Target Platform</label>
                     <div style={{ display: 'flex', gap: '12px' }}>
-                      {[
-                        { id: 'instagram', label: 'Instagram', icon: <Instagram size={18} />, activeColor: '#e1306c', activeBg: '#fff0f5' },
-                        { id: 'facebook', label: 'Facebook', icon: <Facebook size={18} />, activeColor: '#1877f2', activeBg: '#e8f4ff' }
-                      ].map(plat => (
-                        <button
-                          key={plat.id}
-                          onClick={() => setNewPost(prev => ({ ...prev, platform: plat.id }))}
-                          style={{
-                            flex: 1, padding: '12px', borderRadius: '12px', 
-                            border: newPost.platform === plat.id ? `2px solid ${plat.activeColor}` : '1px solid #e2e8f0',
-                            background: newPost.platform === plat.id ? plat.activeBg : 'white',
-                            color: newPost.platform === plat.id ? plat.activeColor : '#64748b',
-                            fontWeight: '700', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer',
-                            transition: 'all 0.2s ease'
-                          }}
-                        >
-                          {plat.icon} {plat.label}
-                        </button>
-                      ))}
+                      {(() => {
+                        const isFbConnected = settings?.isFacebookConnected || (!!settings?.facebookAccessToken && !!settings?.facebookPageId);
+                        const isIgConnected = settings?.isAccountConnected || (!!settings?.instagramAccessToken && !!settings?.businessAccountId);
+                        
+                        return [
+                          { id: 'instagram', label: 'Instagram', icon: <Instagram size={18} />, activeColor: '#e1306c', activeBg: '#fff0f5', isConnected: isIgConnected },
+                          { id: 'facebook', label: 'Facebook', icon: <Facebook size={18} />, activeColor: '#1877f2', activeBg: '#e8f4ff', isConnected: isFbConnected }
+                        ].map(plat => (
+                          <button
+                            key={plat.id}
+                            type="button"
+                            onClick={() => {
+                              if (!plat.isConnected) {
+                                notify(`⚠️ ${plat.label} is not connected. Please go to Connections Settings to link your account first.`, "error");
+                                return;
+                              }
+                              setNewPost(prev => ({ ...prev, platform: plat.id }));
+                            }}
+                            style={{
+                              flex: 1, padding: '12px', borderRadius: '12px', 
+                              border: newPost.platform === plat.id ? `2px solid ${plat.activeColor}` : '1px solid #e2e8f0',
+                              background: newPost.platform === plat.id ? plat.activeBg : 'white',
+                              color: newPost.platform === plat.id ? plat.activeColor : '#64748b',
+                              opacity: plat.isConnected ? 1 : 0.45,
+                              fontWeight: '700', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            {plat.icon} {plat.label} {!plat.isConnected && ' (Not Connected)'}
+                          </button>
+                        ));
+                      })()}
                     </div>
                   </div>
 

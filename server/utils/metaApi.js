@@ -223,6 +223,12 @@ export const checkMediaReadiness = async (mediaId, accessToken) => {
     
     const statusCode = statusRes.data.status_code;
     
+    // If status_code is not returned at all (e.g. image container), it is ready immediately
+    if (statusCode === undefined || statusCode === null) {
+      console.log(`ℹ️ [Meta API] Container ${mediaId} has no status_code (likely an image). Marking ready immediately.`);
+      return true;
+    }
+    
     if (statusCode === 'FINISHED') {
       return true;
     } else if (statusCode === 'ERROR') {
