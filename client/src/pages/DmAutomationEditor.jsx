@@ -172,7 +172,7 @@ export default function DmAutomationEditor() {
 
       if (res.ok) {
         notify('âœ… Automation created successfully!', 'success');
-        navigate('/campaigns');
+        navigate(selectedPlatform && selectedPlatform !== 'all' ? `/platform/${selectedPlatform}` : '/hub');
       } else {
         const data = await res.json();
         notify(data.error || 'Failed to create automation', 'error');

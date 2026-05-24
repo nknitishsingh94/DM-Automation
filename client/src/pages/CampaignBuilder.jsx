@@ -115,7 +115,7 @@ export default function CampaignBuilder() {
       const data = await res.json();
       if (res.ok) {
         notify('Campaign deployed successfully! ⚡', 'success');
-        navigate('/campaigns');
+        navigate('/hub');
       } else {
         notify(data.error || 'Failed to create campaign', 'error');
       }
@@ -139,7 +139,7 @@ export default function CampaignBuilder() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
         <button 
-          onClick={() => navigate('/campaigns')}
+          onClick={() => navigate('/hub')}
           style={{ background: 'white', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
           <ArrowLeft size={20} color="var(--text-main)" />

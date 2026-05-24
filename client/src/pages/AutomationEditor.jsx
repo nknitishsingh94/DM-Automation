@@ -219,7 +219,7 @@ export default function AutomationEditor() {
 
       if (res.ok) {
         notify('✅ Automation created successfully!', 'success');
-        navigate('/campaigns');
+        navigate(selectedPlatform && selectedPlatform !== 'all' ? `/platform/${selectedPlatform}` : '/hub');
       } else {
         const data = await res.json();
         notify(data.error || 'Failed to create automation', 'error');
