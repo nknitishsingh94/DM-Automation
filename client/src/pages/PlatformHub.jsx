@@ -59,6 +59,8 @@ const PlatformHub = () => {
     );
   }
 
+  const connectedPlatforms = platforms.filter(p => p.isConnected);
+
   return (
     <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
       <div style={{ marginBottom: '40px', textAlign: 'center' }}>
@@ -73,79 +75,80 @@ const PlatformHub = () => {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
-        {platforms.map((platform) => (
-          <div 
-            key={platform.id}
-            onClick={() => {
-              if (platform.isConnected) {
-                navigate(`/platform/${platform.id}`);
-              } else {
-                navigate('/settings');
-              }
-            }}
-            style={{ 
-              background: '#ffffff',
-              borderRadius: '24px',
-              border: platform.isConnected ? `1px solid ${platform.color}40` : '1px solid #e2e8f0',
-              padding: '32px',
-              cursor: 'pointer',
-              position: 'relative',
-              overflow: 'hidden',
-              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-              boxShadow: platform.isConnected ? `0 10px 40px -10px ${platform.color}30` : '0 10px 30px -10px rgba(0,0,0,0.05)',
-              transform: 'translateY(0)',
-              filter: platform.isConnected ? 'none' : 'grayscale(100%) opacity(0.7)'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-              e.currentTarget.style.boxShadow = platform.isConnected ? `0 20px 40px -10px ${platform.color}40` : '0 20px 30px -10px rgba(0,0,0,0.1)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = platform.isConnected ? `0 10px 40px -10px ${platform.color}30` : '0 10px 30px -10px rgba(0,0,0,0.05)';
-            }}
+      {connectedPlatforms.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '60px 20px', background: 'white', borderRadius: '24px', border: '1px dashed #cbd5e1' }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#f1f5f9', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <SettingsIcon size={28} />
+          </div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>No Platforms Connected</h2>
+          <p style={{ color: '#64748b', marginBottom: '24px', maxWidth: '400px', margin: '0 auto 24px' }}>
+            You haven't connected any social media accounts yet. Head over to settings to connect Instagram or Facebook to get started.
+          </p>
+          <button 
+            onClick={() => navigate('/settings')}
+            style={{ padding: '12px 24px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)' }}
           >
-            {/* Background Glow */}
-            {platform.isConnected && (
+            Connect Account Now
+          </button>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
+          {connectedPlatforms.map((platform) => (
+            <div 
+              key={platform.id}
+              onClick={() => navigate(`/platform/${platform.id}`)}
+              style={{ 
+                background: '#ffffff',
+                borderRadius: '24px',
+                border: `1px solid ${platform.color}40`,
+                padding: '32px',
+                cursor: 'pointer',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: `0 10px 40px -10px ${platform.color}30`,
+                transform: 'translateY(0)'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-8px)';
+                e.currentTarget.style.boxShadow = `0 20px 40px -10px ${platform.color}40`;
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = `0 10px 40px -10px ${platform.color}30`;
+              }}
+            >
+              {/* Background Glow */}
               <div style={{ 
                 position: 'absolute', top: '-50px', right: '-50px', width: '150px', height: '150px', 
                 background: platform.gradient, opacity: 0.1, borderRadius: '50%', filter: 'blur(30px)' 
               }}></div>
-            )}
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', position: 'relative', zIndex: 2 }}>
-              <div style={{ 
-                width: '64px', height: '64px', borderRadius: '20px', 
-                background: platform.isConnected ? platform.gradient : '#f1f5f9', 
-                color: platform.isConnected ? 'white' : '#94a3b8',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: platform.isConnected ? `0 10px 20px -5px ${platform.color}50` : 'none'
-              }}>
-                {platform.icon}
-              </div>
-              
-              {platform.isConnected ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', position: 'relative', zIndex: 2 }}>
+                <div style={{ 
+                  width: '64px', height: '64px', borderRadius: '20px', 
+                  background: platform.gradient, 
+                  color: 'white',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: `0 10px 20px -5px ${platform.color}50`
+                }}>
+                  {platform.icon}
+                </div>
+                
                 <div style={{ padding: '6px 12px', background: `${platform.color}15`, color: platform.color, borderRadius: '50px', fontSize: '0.75rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: platform.color }}></div>
                   Connected
                 </div>
-              ) : (
-                <div style={{ padding: '6px 12px', background: '#f1f5f9', color: '#64748b', borderRadius: '50px', fontSize: '0.75rem', fontWeight: '800' }}>
-                  Not Connected
-                </div>
-              )}
-            </div>
+              </div>
 
-            <div style={{ position: 'relative', zIndex: 2 }}>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>
-                {platform.name}
-              </h2>
-              <p style={{ fontSize: '0.95rem', color: '#64748b', lineHeight: '1.5', marginBottom: '24px' }}>
-                {platform.description}
-              </p>
+              <div style={{ position: 'relative', zIndex: 2 }}>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>
+                  {platform.name}
+                </h2>
+                <p style={{ fontSize: '0.95rem', color: '#64748b', lineHeight: '1.5', marginBottom: '24px' }}>
+                  {platform.description}
+                </p>
 
-              {platform.isConnected ? (
                 <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase' }}>Active Account</span>
@@ -153,18 +156,11 @@ const PlatformHub = () => {
                   </div>
                   <ArrowRight size={20} color={platform.color} />
                 </div>
-              ) : (
-                <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px dashed #cbd5e1' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontWeight: '700', fontSize: '0.9rem' }}>
-                    <SettingsIcon size={18} /> Connect in Settings
-                  </div>
-                  <ArrowRight size={20} color="#94a3b8" />
-                </div>
-              )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
