@@ -614,31 +614,52 @@ export default function AutomationEditor() {
                  <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Target Platform</h3>
               </div>
               <div style={{ padding: '16px 20px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-                 <select
-                    value={selectedPlatform}
-                    onChange={(e) => setSelectedPlatform(e.target.value)}
-                    style={{
+                  {channel && channel !== 'all' ? (
+                    <div style={{
                       width: '100%',
                       padding: '12px 16px',
                       borderRadius: '12px',
                       border: '1.5px solid #e2e8f0',
-                      outline: 'none',
+                      background: '#f1f5f9',
                       fontSize: '0.95rem',
                       fontWeight: '700',
-                      color: '#1e1b4b',
-                      background: '#fff',
-                      cursor: 'pointer'
-                    }}
-                 >
-                    <option value="all">🌐 All Connected Platforms</option>
-                    {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
-                      <option value="instagram">📸 Instagram</option>
-                    )}
-                    {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
-                      <option value="facebook">💬 Facebook Messenger</option>
-                    )}
-                 </select>
-                 <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.8rem', fontWeight: '500' }}>Only connected platforms are shown here.</p>
+                      color: '#475569',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}>
+                      {channel === 'facebook' ? '💬 Facebook Messenger' : '📸 Instagram'}
+                    </div>
+                  ) : (
+                    <select 
+                      value={selectedPlatform}
+                      onChange={(e) => {
+                        setSelectedPlatform(e.target.value);
+                        setSelectedContentId(null); // Reset content selection on platform change
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        border: '1.5px solid #e2e8f0',
+                        outline: 'none',
+                        fontSize: '0.95rem',
+                        fontWeight: '700',
+                        color: '#1e1b4b',
+                        background: '#fff',
+                        cursor: 'pointer'
+                      }}
+                   >
+                      <option value="all">🌐 All Connected Platforms</option>
+                      {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
+                        <option value="instagram">📸 Instagram</option>
+                      )}
+                      {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
+                        <option value="facebook">💬 Facebook Messenger</option>
+                      )}
+                   </select>
+                  )}
+                  {!channel && <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.8rem', fontWeight: '500' }}>Only connected platforms are shown here.</p>}
               </div>
            </div>
 
