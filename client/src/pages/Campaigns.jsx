@@ -826,6 +826,29 @@ export default function Campaigns() {
                     <option value="story_mention">📸 Story Mention</option>
                   </select>
                 </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Target Platform</label>
+                  <div style={{ position: 'relative' }}>
+                    <select 
+                      value={editForm.platform} 
+                      onChange={e => setEditForm({...editForm, platform: e.target.value})}
+                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
+                      onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                    >
+                      <option value="all">🌐 {getConnectedPlatformsText()}</option>
+                      {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
+                        <option value="instagram">📸 Instagram</option>
+                      )}
+                      {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
+                        <option value="facebook">💬 Facebook Messenger</option>
+                      )}
+                      {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && (
+                        <option value="whatsapp">🟩 WhatsApp</option>
+                      )}
+                    </select>
+                  </div>
+                </div>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: editForm.isUniversal ? 'rgba(14, 165, 233, 0.08)' : '#f8fafc', borderRadius: '12px', border: editForm.isUniversal ? '1px solid rgba(14, 165, 233, 0.3)' : '1px solid #e2e8f0', transition: 'all 0.3s' }}>
                   <input type="checkbox" id="editIsUniversal" checked={editForm.isUniversal} onChange={e => setEditForm({...editForm, isUniversal: e.target.checked})} style={{ width: '18px', height: '18px', accentColor: '#0ea5e9', cursor: 'pointer' }} />
