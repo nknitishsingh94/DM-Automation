@@ -31,6 +31,7 @@ export default function DmAutomationEditor() {
   const template = params.get('template') || 'all_dms';
 
   // State
+  const [selectedPlatform, setSelectedPlatform] = useState(channel);
   const [anyKeyword, setAnyKeyword] = useState(false);
   const [keywords, setKeywords] = useState([]);
   const [keywordInput, setKeywordInput] = useState('');
@@ -154,7 +155,7 @@ export default function DmAutomationEditor() {
           buttons: buttons,
           postId: '',
           isAnyPost: true,
-          platform: channel,
+          platform: selectedPlatform,
           requireFollow: requireFollow,
           unfollowedResponse: unfollowedMessage,
           openingMessage: openingMessage,
@@ -401,6 +402,44 @@ export default function DmAutomationEditor() {
                     <div style={{ position: 'absolute', bottom: -4, left: 0, width: '40px', height: '3px', background: '#7c3aed', borderRadius: '2px' }}></div>
                  </div>
                  <Pencil size={18} color="#cbd5e1" style={{ marginTop: '8px' }} />
+              </div>
+           </div>
+
+           {/* Step 0: Target Platform */}
+           <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#f59e0b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(245, 158, 11, 0.15)' }}>0</div>
+                 <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Target Platform</h3>
+              </div>
+              <div style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', border: '1.5px solid #e2e8f0', borderRadius: '20px', padding: '18px 22px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.04)' }}>
+                 <select
+                    value={selectedPlatform}
+                    onChange={(e) => setSelectedPlatform(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '12px',
+                      border: '1.5px solid #e2e8f0',
+                      outline: 'none',
+                      fontSize: '0.95rem',
+                      fontWeight: '700',
+                      color: '#1e1b4b',
+                      background: '#f8fafc',
+                      cursor: 'pointer'
+                    }}
+                 >
+                    <option value="all">🌐 All Connected Platforms</option>
+                    {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
+                      <option value="instagram">📸 Instagram</option>
+                    )}
+                    {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
+                      <option value="facebook">💬 Facebook Messenger</option>
+                    )}
+                    {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && (
+                      <option value="whatsapp">🟩 WhatsApp</option>
+                    )}
+                 </select>
+                 <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.8rem', fontWeight: '500' }}>Only connected platforms are shown here.</p>
               </div>
            </div>
 

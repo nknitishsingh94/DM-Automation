@@ -34,6 +34,7 @@ export default function AutomationEditor() {
   const channel = params.get('channel');
 
   // State
+  const [selectedPlatform, setSelectedPlatform] = useState(channel || 'instagram');
   const [anyStory, setAnyStory] = useState(true);
   const [anyKeyword, setAnyKeyword] = useState(false);
   const [keywords, setKeywords] = useState([]);
@@ -200,7 +201,7 @@ export default function AutomationEditor() {
           buttons: buttons,
           postId: selectedContentId || '',
           isAnyPost: anyStory,
-          platform: channel || 'instagram',
+          platform: selectedPlatform,
           requireFollow: requireFollow,
           unfollowedResponse: unfollowedMessage,
           openingMessage: openingMessage,
@@ -604,6 +605,45 @@ export default function AutomationEditor() {
               />
               <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>Click to rename your automation</p>
             </div>
+
+            {/* Step 0: Target Platform */}
+            <div style={{ position: 'relative', zIndex: 1, marginBottom: '18px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                 <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#f59e0b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>0</div>
+                 <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Target Platform</h3>
+              </div>
+              <div style={{ padding: '16px 20px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+                 <select
+                    value={selectedPlatform}
+                    onChange={(e) => setSelectedPlatform(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '12px',
+                      border: '1.5px solid #e2e8f0',
+                      outline: 'none',
+                      fontSize: '0.95rem',
+                      fontWeight: '700',
+                      color: '#1e1b4b',
+                      background: '#fff',
+                      cursor: 'pointer'
+                    }}
+                 >
+                    <option value="all">🌐 All Connected Platforms</option>
+                    {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
+                      <option value="instagram">📸 Instagram</option>
+                    )}
+                    {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
+                      <option value="facebook">💬 Facebook Messenger</option>
+                    )}
+                    {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && (
+                      <option value="whatsapp">🟩 WhatsApp</option>
+                    )}
+                 </select>
+                 <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.8rem', fontWeight: '500' }}>Only connected platforms are shown here.</p>
+              </div>
+           </div>
+
             {/* Step 1: Follower Growth Gating (NEW PRIORITY) */}
             <div style={{ marginBottom: '18px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
