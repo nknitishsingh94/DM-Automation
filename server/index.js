@@ -2851,13 +2851,14 @@ async function runSchedulingWorker() {
         }
 
         // Atomic claim: directly update status to 'Processing'
-        const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
+        // Reduced cooldown from 2 minutes to 20 seconds so videos/reels post MUCH faster
+        const twentySecondsAgo = new Date(Date.now() - 20 * 1000).toISOString();
 
         const { data: claimData, error: claimErr } = await _sb
           .from('scheduled_posts')
           .update({ status: 'Processing', updatedAt: new Date().toISOString() })
           .eq('id', postId)
-          .or(`status.in.(Scheduled,Retrying),and(status.eq.Processing,updatedAt.lt.${twoMinutesAgo})`)
+          .or(`status.in.(Scheduled,Retrying),and(status.eq.Processing,updatedAt.lt.${twentySecondsAgo})`)
           .select()
           .limit(1);
 
