@@ -636,9 +636,6 @@ export default function AutomationEditor() {
                     {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
                       <option value="facebook">💬 Facebook Messenger</option>
                     )}
-                    {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && (
-                      <option value="whatsapp">🟩 WhatsApp</option>
-                    )}
                  </select>
                  <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.8rem', fontWeight: '500' }}>Only connected platforms are shown here.</p>
               </div>
@@ -722,11 +719,6 @@ export default function AutomationEditor() {
                         🎨 Open Canva Story Templates
                       </a>
                     </div>
-                ) : selectedPlatform === 'facebook' || selectedPlatform === 'whatsapp' ? (
-                  <div style={{ textAlign: 'center', padding: '16px', color: '#64748b', fontSize: '0.85rem', fontWeight: '600', background: '#f8fafc', borderRadius: '12px' }}>
-                     🌐 Universal Triggers Only<br/>
-                     <span style={{ fontSize: '0.75rem', fontWeight: '500' }}>(Applies to all {selectedPlatform === 'facebook' ? 'Facebook' : 'WhatsApp'} posts)</span>
-                  </div>
                 ) : (
                   <>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: !anyStory ? '10px' : '0' }}>

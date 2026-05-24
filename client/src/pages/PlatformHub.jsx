@@ -48,16 +48,6 @@ const PlatformHub = () => {
       gradient: 'linear-gradient(135deg, #3b82f6, #0ea5e9)',
       isConnected: settings && (settings.isFacebookConnected || (settings.facebookAccessToken && settings.facebookPageId)),
       accountName: settings?.connectedFacebookName || 'Facebook Page'
-    },
-    {
-      id: 'whatsapp',
-      name: 'WhatsApp Business',
-      description: 'Build powerful chat flows and trigger automated responses on WhatsApp.',
-      icon: <Phone size={40} />,
-      color: '#10b981',
-      gradient: 'linear-gradient(135deg, #10b981, #059669)',
-      isConnected: settings && (settings.isWhatsAppConnected || (settings.whatsappToken && settings.whatsappPhoneNumberId)),
-      accountName: 'WhatsApp Account'
     }
   ];
 

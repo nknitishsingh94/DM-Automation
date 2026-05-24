@@ -438,9 +438,6 @@ export default function DmAutomationEditor() {
                     {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
                       <option value="facebook">💬 Facebook Messenger</option>
                     )}
-                    {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && (
-                      <option value="whatsapp">🟩 WhatsApp</option>
-                    )}
                  </select>
                  <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.8rem', fontWeight: '500' }}>Only connected platforms are shown here.</p>
               </div>
