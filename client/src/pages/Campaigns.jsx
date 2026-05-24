@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, Plus, Trash2, Power, MessageCircle, MessageSquare, Instagram, AlertCircle, CheckCircle, Video, Link as LinkIcon, History, X, Crown, Edit2, Globe, Share2, Sparkles, Brain, Bot } from 'lucide-react';
+import { Zap, Plus, Trash2, Power, MessageCircle, MessageSquare, Instagram, Facebook, AlertCircle, CheckCircle, Video, Link as LinkIcon, History, X, Crown, Edit2, Globe, Share2, Sparkles, Brain, Bot } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
@@ -537,9 +537,27 @@ export default function Campaigns() {
                   {campaign.name}
                 </h4>
                 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', marginBottom: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', marginBottom: '12px' }}>
                   <MessageCircle size={16} />
                   <span>Trigger: <strong style={{ color: '#1e1b4b' }}>{campaign.trigger === '*' ? 'Any' : campaign.trigger}</strong></span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
+                  {(!campaign.platform || campaign.platform === 'all' || campaign.platform === 'instagram') && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: '#fdf2f8', color: '#e1306c', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '800' }}>
+                      <Instagram size={14} /> Instagram
+                    </div>
+                  )}
+                  {(campaign.platform === 'all' || campaign.platform === 'facebook') && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: '#eff6ff', color: '#1877f2', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '800' }}>
+                      <Facebook size={14} fill="currentColor" /> Facebook
+                    </div>
+                  )}
+                  {(campaign.platform === 'all' || campaign.platform === 'whatsapp') && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: '#f0fdf4', color: '#25d366', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '800' }}>
+                      <MessageSquare size={14} fill="currentColor" /> WhatsApp
+                    </div>
+                  )}
                 </div>
 
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', padding: '16px', background: '#f8fafc', borderRadius: '16px' }}>
