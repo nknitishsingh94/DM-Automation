@@ -2893,6 +2893,10 @@ async function runSchedulingWorker() {
         }
 
         if (!finalMedia || finalMedia.includes('127.0.0.1') || finalMedia.includes('localhost')) {
+          if (!finalMedia) {
+             console.log(`⏭️ Post ${postId} has no media URL yet (likely still uploading). Skipping.`);
+             return;
+          }
           console.error(`❌ No publicly accessible media URL for post ${post._id}.`);
           await safeUpdate(postId, { status: 'Failed', lastError: 'No public media URL. Use Supabase Storage or a public image URL.' });
           return;

@@ -697,7 +697,7 @@ export default function Scheduling() {
         const createRes = await fetch(`${API_BASE_URL}/api/scheduling`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...initialPayload, status: 'Uploading' })
+          body: JSON.stringify({ ...initialPayload, status: 'Scheduled' })
         });
         
         const dbPost = await createRes.json();
