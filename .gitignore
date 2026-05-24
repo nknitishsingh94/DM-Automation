@@ -9,3 +9,4 @@ dist
 .claude/
 skills-lock.json
 server/migrate_data.js
+.vercel

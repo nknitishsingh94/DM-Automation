@@ -43,6 +43,58 @@ export default function Campaigns() {
   const [mediaMode, setMediaMode] = useState('link'); // 'link' or 'upload'
   const [uploading, setUploading] = useState(false);
   const [isMobile] = useState(window.innerWidth < 768);
+  const [generatingAI, setGeneratingAI] = useState(false);
+
+  const handleGenerateAI = async (isEdit = false) => {
+    const token = localStorage.getItem('insta_agent_token');
+    if (!token) return;
+
+    const campaignData = isEdit ? editForm : newCamp;
+    
+    let promptText = "Write a short, engaging, and friendly social media auto-reply message.";
+    if (campaignData.name) {
+      promptText += ` The campaign is about: ${campaignData.name}.`;
+    }
+    if (campaignData.trigger) {
+      promptText += ` The user commented the keyword: '${campaignData.trigger}'.`;
+    }
+    if (campaignData.linkUrl) {
+      promptText += ` Mention that a link has been sent to them.`;
+    }
+    promptText += " Keep it under 2 sentences, use 1-2 emojis, and make it sound natural and enthusiastic. VERY IMPORTANT: Do NOT wrap your response in quotes. Do NOT include any placeholders like [Link]. Just return the plain text.";
+
+    setGeneratingAI(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/ai/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ prompt: promptText })
+      });
+      
+      const data = await res.json();
+      if (res.ok && data.response) {
+        // Clean up quotes from the AI response if it added them
+        let cleanText = data.response.replace(/^["']|["']$/g, '').trim();
+        
+        if (isEdit) {
+          setEditForm(prev => ({ ...prev, response: cleanText }));
+        } else {
+          setNewCamp(prev => ({ ...prev, response: cleanText }));
+        }
+        notify('✨ AI generated a response for you!', 'success');
+      } else {
+        throw new Error(data.error || 'Failed to generate AI response');
+      }
+    } catch (err) {
+      console.error(err);
+      notify('Could not generate AI response. Please try again.', 'error');
+    } finally {
+      setGeneratingAI(false);
+    }
+  };
 
   const fetchCampaigns = async () => {
     const token = localStorage.getItem('insta_agent_token');
@@ -154,6 +206,17 @@ export default function Campaigns() {
   }, []);
 
   const [connectedSettings, setConnectedSettings] = useState(null);
+
+  const getConnectedPlatformsText = () => {
+    if (!connectedSettings) return 'All Connected Platforms';
+    const platforms = [];
+    if (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) platforms.push('Instagram');
+    if (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) platforms.push('Facebook');
+    if (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) platforms.push('WhatsApp');
+    
+    if (platforms.length === 0) return 'All Connected Platforms';
+    return `All Connected Platforms (${platforms.join(', ')})`;
+  };
 
   const handleBuildClick = () => {
     navigate('/campaign-builder/new');
@@ -731,110 +794,209 @@ export default function Campaigns() {
       )}
 
       {editingCampaign && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}><h3 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, color: '#1e1b4b' }}>Edit Campaign</h3><button onClick={() => setEditingCampaign(null)} style={{ background: '#f1f5f9', border: 'none', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}><X size={20} /></button></div><form onSubmit={handleEditSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}><div><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Campaign Name</label><input type="text" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required /></div><div><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Trigger Keyword</label><input type="text" value={editForm.trigger} onChange={e => setEditForm({...editForm, trigger: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required /></div><div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}><input type="checkbox" id="editIsUniversal" checked={editForm.isUniversal} onChange={e => setEditForm({...editForm, isUniversal: e.target.checked})} /><label htmlFor="editIsUniversal" style={{ fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}><Globe size={16} color="#0ea5e9" /> Make this a Universal Trigger</label></div><div><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Bot Response Message</label><textarea value={editForm.response} onChange={e => setEditForm({...editForm, response: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', minHeight: '100px', resize: 'vertical' }} required /></div><div style={{ display: 'flex', gap: '12px' }}><div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Button Text (Optional)</label><input type="text" value={editForm.buttonText} onChange={e => setEditForm({...editForm, buttonText: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} /></div><div style={{ flex: 1 }}><label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Link URL (Optional)</label><input type="url" value={editForm.linkUrl} onChange={e => setEditForm({...editForm, linkUrl: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} /></div></div><button type="submit" style={{ marginTop: '16px', padding: '14px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Save Changes</button></form></div></div>
-      )}
-
-      {showAdd && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
+          <div style={{ background: 'rgba(255, 255, 255, 0.98)', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '850px', boxShadow: '0 25px 50px -12px rgba(30, 27, 75, 0.25), 0 0 0 1px rgba(255,255,255,0.5) inset', border: '1px solid rgba(226, 232, 240, 0.8)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, color: '#1e1b4b' }}>
-                {newCamp.isUniversal ? 'New Universal Trigger' : 'New Automation'}
+              <h3 style={{ fontSize: '1.6rem', fontWeight: '900', margin: 0, background: 'linear-gradient(135deg, #1e1b4b 0%, #4f46e5 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Edit2 size={24} color="#4f46e5" /> Edit Campaign
               </h3>
-              <button onClick={() => setShowAdd(false)} style={{ background: '#f1f5f9', border: 'none', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
+              <button onClick={() => setEditingCampaign(null)} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background='#f1f5f9'} onMouseOut={e => e.currentTarget.style.background='#f8fafc'}>
                 <X size={20} />
               </button>
             </div>
             
-            <form onSubmit={handleAddSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Campaign Name</label>
-                <input 
-                  type="text" value={newCamp.name} onChange={e => setNewCamp({...newCamp, name: e.target.value})}
-                  placeholder="e.g. Summer Sale 2024"
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Trigger Keyword</label>
-                <input 
-                  type="text" value={newCamp.trigger} onChange={e => setNewCamp({...newCamp, trigger: e.target.value})}
-                  placeholder="e.g. PRICE, DISCOUNT"
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Target Platform</label>
-                <select 
-                  value={newCamp.platform} 
-                  onChange={e => setNewCamp({...newCamp, platform: e.target.value})}
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', background: 'white' }}
-                >
-                  <option value="all">All Connected Platforms</option>
-                  {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
-                    <option value="instagram">Instagram</option>
-                  )}
-                  {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
-                    <option value="facebook">Facebook Messenger</option>
-                  )}
-                  {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && (
-                    <option value="whatsapp">WhatsApp</option>
-                  )}
-                </select>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: newCamp.isUniversal ? 'rgba(14, 165, 233, 0.05)' : '#f8fafc', borderRadius: '10px', border: newCamp.isUniversal ? '1px solid #0ea5e9' : '1px solid #e2e8f0' }}>
-                <input 
-                  type="checkbox" 
-                  id="isUniversal"
-                  checked={newCamp.isUniversal} 
-                  onChange={e => setNewCamp({...newCamp, isUniversal: e.target.checked})}
-                />
-                <label htmlFor="isUniversal" style={{ fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                   <Globe size={16} color="#0ea5e9" /> Make this a Universal Trigger
-                </label>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Bot Response Message</label>
-                <textarea 
-                  value={newCamp.response} onChange={e => setNewCamp({...newCamp, response: e.target.value})}
-                  placeholder="What should the bot say?"
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', minHeight: '100px', resize: 'vertical' }} required
-                />
-              </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Button Text</label>
-                  <input 
-                    type="text" value={newCamp.buttonText} onChange={e => setNewCamp({...newCamp, buttonText: e.target.value})}
-                    placeholder="e.g. Shop Now"
-                    style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}
-                  />
+            <form onSubmit={handleEditSave} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+              {/* Left Column */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Campaign Name</label>
+                  <input type="text" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required />
                 </div>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px' }}>Link URL</label>
-                  <input 
-                    type="url" value={newCamp.linkUrl} onChange={e => setNewCamp({...newCamp, linkUrl: e.target.value})}
-                    placeholder="https://..."
-                    style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}
-                  />
+                
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Trigger Keyword</label>
+                  <input type="text" value={editForm.trigger} onChange={e => setEditForm({...editForm, trigger: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required />
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: editForm.isUniversal ? 'rgba(14, 165, 233, 0.08)' : '#f8fafc', borderRadius: '12px', border: editForm.isUniversal ? '1px solid rgba(14, 165, 233, 0.3)' : '1px solid #e2e8f0', transition: 'all 0.3s' }}>
+                  <input type="checkbox" id="editIsUniversal" checked={editForm.isUniversal} onChange={e => setEditForm({...editForm, isUniversal: e.target.checked})} style={{ width: '18px', height: '18px', accentColor: '#0ea5e9', cursor: 'pointer' }} />
+                  <label htmlFor="editIsUniversal" style={{ fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: editForm.isUniversal ? '#0284c7' : '#475569' }}>
+                    <Globe size={18} color={editForm.isUniversal ? '#0ea5e9' : '#94a3b8'} /> 
+                    Make this a Universal Trigger
+                  </label>
                 </div>
               </div>
-              <button 
-                type="submit" 
-                disabled={submitting}
-                style={{ 
-                  marginTop: '16px', padding: '14px', 
-                  background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)', 
-                  color: 'white', border: 'none', borderRadius: '12px', 
-                  fontWeight: '800', cursor: 'pointer', opacity: submitting ? 0.7 : 1 
-                }}
-              >
-                {submitting ? 'Creating...' : 'Create Automation'}
+
+              {/* Right Column */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Bot Response Message</label>
+                    <button type="button" onClick={() => handleGenerateAI(true)} disabled={generatingAI} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', color: 'white', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', opacity: generatingAI ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(236, 72, 153, 0.3)' }} onMouseOver={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1.05)')} onMouseOut={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1)')}>
+                      {generatingAI ? 'Generating...' : <><Sparkles size={12} /> Auto AI Reply</>}
+                    </button>
+                  </div>
+                  <textarea value={editForm.response} onChange={e => setEditForm({...editForm, response: e.target.value})} style={{ width: '100%', flex: 1, padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', minHeight: '120px', resize: 'vertical', transition: 'all 0.2s', fontFamily: 'inherit' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required />
+                </div>
+                
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Button Text</label>
+                    <input type="text" value={editForm.buttonText} onChange={e => setEditForm({...editForm, buttonText: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Link URL</label>
+                    <input type="url" value={editForm.linkUrl} onChange={e => setEditForm({...editForm, linkUrl: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} />
+                  </div>
+                </div>
+              </div>
+              
+              <div style={{ gridColumn: '1 / -1', marginTop: '8px' }}>
+                <button type="submit" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: '800', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(124, 58, 237, 0.4)', transition: 'all 0.3s', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
+                  <CheckCircle size={20} /> Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showAdd && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
+          <div style={{ background: 'rgba(255, 255, 255, 0.98)', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '850px', boxShadow: '0 25px 50px -12px rgba(30, 27, 75, 0.25), 0 0 0 1px rgba(255,255,255,0.5) inset', border: '1px solid rgba(226, 232, 240, 0.8)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h3 style={{ fontSize: '1.6rem', fontWeight: '900', margin: 0, background: 'linear-gradient(135deg, #1e1b4b 0%, #3b82f6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Sparkles size={24} color="#3b82f6" /> {newCamp.isUniversal ? 'New Universal Trigger' : 'New Automation'}
+              </h3>
+              <button onClick={() => setShowAdd(false)} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background='#f1f5f9'} onMouseOut={e => e.currentTarget.style.background='#f8fafc'}>
+                <X size={20} />
               </button>
+            </div>
+            
+            <form onSubmit={handleAddSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+              
+              {/* LEFT COLUMN */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Campaign Name</label>
+                  <input 
+                    type="text" value={newCamp.name} onChange={e => setNewCamp({...newCamp, name: e.target.value})}
+                    placeholder="e.g. Summer Sale 2024"
+                    style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} 
+                    onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required
+                  />
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Trigger Keyword</label>
+                  <input 
+                    type="text" value={newCamp.trigger} onChange={e => setNewCamp({...newCamp, trigger: e.target.value})}
+                    placeholder="e.g. PRICE, DISCOUNT"
+                    style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }}
+                    onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Target Platform</label>
+                  <div style={{ position: 'relative' }}>
+                    <select 
+                      value={newCamp.platform} 
+                      onChange={e => setNewCamp({...newCamp, platform: e.target.value})}
+                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
+                      onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                    >
+                      <option value="all">🌐 {getConnectedPlatformsText()}</option>
+                      {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
+                        <option value="instagram">📸 Instagram</option>
+                      )}
+                      {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
+                        <option value="facebook">💬 Facebook Messenger</option>
+                      )}
+                      {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && (
+                        <option value="whatsapp">🟩 WhatsApp</option>
+                      )}
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: newCamp.isUniversal ? 'rgba(14, 165, 233, 0.08)' : '#f8fafc', borderRadius: '12px', border: newCamp.isUniversal ? '1px solid rgba(14, 165, 233, 0.3)' : '1px solid #e2e8f0', transition: 'all 0.3s' }}>
+                  <input 
+                    type="checkbox" 
+                    id="isUniversal"
+                    checked={newCamp.isUniversal} 
+                    onChange={e => setNewCamp({...newCamp, isUniversal: e.target.checked})}
+                    style={{ width: '18px', height: '18px', accentColor: '#0ea5e9', cursor: 'pointer' }}
+                  />
+                  <label htmlFor="isUniversal" style={{ fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: newCamp.isUniversal ? '#0284c7' : '#475569' }}>
+                     <Globe size={18} color={newCamp.isUniversal ? '#0ea5e9' : '#94a3b8'} /> 
+                     Make this a Universal Trigger
+                  </label>
+                </div>
+              </div>
+
+              {/* RIGHT COLUMN */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Bot Response Message</label>
+                    <button type="button" onClick={() => handleGenerateAI(false)} disabled={generatingAI} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', color: 'white', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', opacity: generatingAI ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(236, 72, 153, 0.3)' }} onMouseOver={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1.05)')} onMouseOut={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1)')}>
+                      {generatingAI ? 'Generating...' : <><Sparkles size={12} /> Auto AI Reply</>}
+                    </button>
+                  </div>
+                  <textarea 
+                    value={newCamp.response} onChange={e => setNewCamp({...newCamp, response: e.target.value})}
+                    placeholder="What should the bot say?"
+                    style={{ width: '100%', flex: 1, padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', minHeight: '120px', resize: 'vertical', transition: 'all 0.2s', fontFamily: 'inherit' }}
+                    onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required
+                  />
+                </div>
+                
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Button Text</label>
+                    <input 
+                      type="text" value={newCamp.buttonText} onChange={e => setNewCamp({...newCamp, buttonText: e.target.value})}
+                      placeholder="e.g. Shop Now"
+                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }}
+                      onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Link URL</label>
+                    <input 
+                      type="url" value={newCamp.linkUrl} onChange={e => setNewCamp({...newCamp, linkUrl: e.target.value})}
+                      placeholder="https://..."
+                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }}
+                      onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* FULL WIDTH BUTTON */}
+              <div style={{ gridColumn: '1 / -1', marginTop: '8px' }}>
+                <button 
+                  type="submit" 
+                  disabled={submitting}
+                  style={{ 
+                    width: '100%',
+                    padding: '16px', 
+                    background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)', 
+                    color: 'white', border: 'none', borderRadius: '12px', 
+                    fontSize: '1rem', fontWeight: '800', cursor: 'pointer', 
+                    opacity: submitting ? 0.7 : 1,
+                    boxShadow: '0 10px 20px -5px rgba(59, 130, 246, 0.4)',
+                    transition: 'all 0.3s',
+                    display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px'
+                  }}
+                  onMouseOver={e => !submitting && (e.currentTarget.style.transform = 'translateY(-2px)')} 
+                  onMouseOut={e => !submitting && (e.currentTarget.style.transform = 'translateY(0)')}
+                >
+                  {submitting ? 'Creating...' : <><Zap size={20} fill="currentColor" /> Create Automation</>}
+                </button>
+              </div>
+
             </form>
           </div>
         </div>
