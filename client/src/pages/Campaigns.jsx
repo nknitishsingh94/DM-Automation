@@ -5,7 +5,7 @@ import { API_BASE_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 
-export default function Campaigns() {
+export default function Campaigns({ platformFilter: propPlatformFilter }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { notify } = useNotification();
@@ -13,7 +13,14 @@ export default function Campaigns() {
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'universal', 'linked'
-  const [platformFilter, setPlatformFilter] = useState('all');
+  const [platformFilter, setPlatformFilter] = useState(propPlatformFilter || 'all');
+  
+  useEffect(() => {
+    if (propPlatformFilter) {
+      setPlatformFilter(propPlatformFilter);
+    }
+  }, [propPlatformFilter]);
+
   const [logPlatformFilter, setLogPlatformFilter] = useState('all');
   const [formStep, setFormStep] = useState(1);
   const [newCamp, setNewCamp] = useState({ 
@@ -434,9 +441,9 @@ export default function Campaigns() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
             {[
-              { id: 'dm', title: 'DM Automation', desc: 'Trigger DMs from Keywords', icon: <Zap size={24} />, color: '#4f46e5', bg: 'rgba(79, 70, 229, 0.1)', path: '/dm-automation-editor?template=all_dms' },
-              { id: 'comment', title: 'Comment Reply', desc: 'Auto-DM on Comments', icon: <MessageSquare size={24} />, color: '#0ea5e9', bg: 'rgba(14, 165, 233, 0.1)', path: '/automation-editor?template=comments' },
-              { id: 'story', title: 'Story Trigger', desc: 'Reply to Story Mentions', icon: <Instagram size={24} />, color: '#ec4899', bg: 'rgba(236, 72, 153, 0.1)', path: '/automation-editor?template=stories' },
+              { id: 'dm', title: 'DM Automation', desc: 'Trigger DMs from Keywords', icon: <Zap size={24} />, color: '#4f46e5', bg: 'rgba(79, 70, 229, 0.1)', path: `/dm-automation-editor?template=all_dms${platformFilter !== 'all' ? '&channel='+platformFilter : ''}` },
+              { id: 'comment', title: 'Comment Reply', desc: 'Auto-DM on Comments', icon: <MessageSquare size={24} />, color: '#0ea5e9', bg: 'rgba(14, 165, 233, 0.1)', path: `/automation-editor?template=comments${platformFilter !== 'all' ? '&channel='+platformFilter : ''}` },
+              ...(platformFilter !== 'facebook' && platformFilter !== 'whatsapp' ? [{ id: 'story', title: 'Story Trigger', desc: 'Reply to Story Mentions', icon: <Instagram size={24} />, color: '#ec4899', bg: 'rgba(236, 72, 153, 0.1)', path: `/automation-editor?template=stories${platformFilter !== 'all' ? '&channel='+platformFilter : ''}` }] : []),
               { id: 'ai', title: 'AI Neural Studio', desc: 'Train your custom AI', icon: <Bot size={24} />, color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)', path: '/ai-studio' }
             ].map(item => (
               <div 
@@ -485,8 +492,8 @@ export default function Campaigns() {
         ))}
       </div>
 
-      {/* Platform Filters */}
-      {(() => {
+      {/* Platform Filters (Hidden if locked by Platform Dashboard) */}
+      {!propPlatformFilter && (() => {
         const isIgConnected = connectedSettings?.isAccountConnected || (!!connectedSettings?.instagramAccessToken && !!connectedSettings?.businessAccountId);
         const isFbConnected = connectedSettings?.isFacebookConnected || (!!connectedSettings?.facebookAccessToken && !!connectedSettings?.facebookPageId);
         const isWaConnected = connectedSettings?.isWhatsAppConnected || (!!connectedSettings?.whatsappToken && !!connectedSettings?.whatsappPhoneNumberId);

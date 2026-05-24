@@ -58,6 +58,8 @@ const ChannelSelector = lazyRetry(() => import('./pages/ChannelSelector'));
 const TemplateSelector = lazyRetry(() => import('./pages/TemplateSelector'));
 const AutomationEditor = lazyRetry(() => import('./pages/AutomationEditor'));
 const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'));
+const PlatformHub = lazyRetry(() => import('./pages/PlatformHub'));
+const PlatformDashboard = lazyRetry(() => import('./pages/PlatformDashboard'));
 const Onboarding = lazyRetry(() => import('./pages/Onboarding'));
 const UniversalTriggersFeature = lazyRetry(() => import('./pages/UniversalTriggersFeature'));
 const ScheduleFeature = lazyRetry(() => import('./pages/ScheduleFeature'));
@@ -424,9 +426,13 @@ function Sidebar({ isMobileOpen, onClose }) {
 
         <div className="sidebar-middle-scroll">
           <nav className="nav-links">
+            <NavLink to="/hub" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Zap size={18} />
+              <span>Platform Hub</span>
+            </NavLink>
             <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Home size={18} />
-              <span>Home</span>
+              <span>Overview</span>
             </NavLink>
             <NavLink to="/ai-studio" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Sparkles size={18} />
@@ -659,7 +665,9 @@ function MainLayout() {
             </div>
           }>
             <Routes>
-              <Route path="/" element={user ? <Navigate to="/onboarding" /> : <Landing />} />
+              <Route path="/" element={user ? <Navigate to="/hub" /> : <Landing />} />
+              <Route path="/hub" element={<ProtectedRoute><PlatformHub /></ProtectedRoute>} />
+              <Route path="/platform/:platformId" element={<ProtectedRoute><PlatformDashboard /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
