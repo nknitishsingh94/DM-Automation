@@ -2518,16 +2518,31 @@ app.get('/api/facebook/media', verifyToken, async (req, res) => {
       if (post.attachments && post.attachments.data && post.attachments.data.length > 0) {
         const attachment = post.attachments.data[0];
         
+        // Extract media URL from attachment if available
+        if (attachment.media) {
+          if (attachment.media.source) {
+            media_url = attachment.media.source; // Video source
+          } else if (attachment.media.image && attachment.media.image.src) {
+            media_url = attachment.media.image.src; // High-res image
+            thumbnail_url = attachment.media.image.src;
+          }
+        }
+
         // Check for Video or Reel
         if (attachment.media_type === 'video' || attachment.type === 'video_inline' || attachment.type === 'video_autoplay' || attachment.type === 'reel') {
           media_type = 'VIDEO';
-          if (attachment.media && attachment.media.source) {
-            media_url = attachment.media.source;
-          }
         } 
         // Check for Carousel / Album
         else if (attachment.subattachments && attachment.subattachments.data && attachment.subattachments.data.length > 1) {
           media_type = 'CAROUSEL_ALBUM';
+          // Use first subattachment's image as thumbnail if available
+          const firstSub = attachment.subattachments.data[0];
+          if (firstSub.media && firstSub.media.image && firstSub.media.image.src) {
+            media_url = firstSub.media.image.src;
+            thumbnail_url = firstSub.media.image.src;
+          }
+        } else if (attachment.media_type === 'photo') {
+          media_type = 'IMAGE';
         }
       }
 
