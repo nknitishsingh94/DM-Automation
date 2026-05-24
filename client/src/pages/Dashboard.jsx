@@ -77,10 +77,10 @@ export default function Dashboard() {
 
   const exploreItems = [
     {
-      title: 'Create Instagram Automation',
+      title: 'Create Platform Automation',
       desc: 'Set up auto-replies for comments, DMs, and story mentions instantly',
       cta: 'Build Automation',
-      link: '/campaigns',
+      link: '/hub',
       icon: <Zap size={18} color="#7c3aed" fill="#7c3aed" />
     },
     {
@@ -307,7 +307,7 @@ export default function Dashboard() {
                 </div>
                 <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.flowDone ? 'white' : '#94a3b8' }}>Create First Automation</span>
               </div>
-              {setupStatus.flowDone ? <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span> : <Link to="/campaigns" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>BUILD</Link>}
+              {setupStatus.flowDone ? <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span> : <Link to="/hub" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>BUILD</Link>}
             </div>
           </div>
         </div>

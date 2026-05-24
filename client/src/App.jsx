@@ -432,7 +432,7 @@ function Sidebar({ isMobileOpen, onClose }) {
             </NavLink>
             <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Home size={18} />
-              <span>Overview</span>
+              <span>Home</span>
             </NavLink>
             <NavLink to="/ai-studio" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Sparkles size={18} />
