@@ -669,7 +669,44 @@ export default function Scheduling() {
 
     // Run the actual upload in background
     (async () => {
+      let dbId = null;
       try {
+        // 1. Create a DB Placeholder immediately so it survives page reloads
+        const initialPayload = {
+          caption: payloadBase.caption,
+          scheduledFor: tempPost.scheduledFor,
+          triggerKeyword: payloadBase.triggerKeyword,
+          autoResponse: payloadBase.autoResponse,
+          type: currentType,
+          mediaUrl: payloadBase.mediaUrl || '', // Empty for now if files exist
+          carouselItems: [],
+          requireFollow: payloadBase.requireFollow,
+          unfollowedResponse: payloadBase.unfollowedResponse,
+          publicReply: payloadBase.publicReply,
+          automationStatus: payloadBase.automationStatus,
+          anyKeyword: payloadBase.anyKeyword,
+          openingMessage: payloadBase.openingMessage,
+          openingMessageText: payloadBase.openingMessageText,
+          openingMessageButton: payloadBase.openingMessageButton,
+          buttons: JSON.stringify(payloadBase.buttons || []),
+          platform: payloadBase.platform || 'instagram'
+        };
+
+        const createRes = await fetch(`${API_BASE_URL}/api/scheduling`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...initialPayload, status: 'Uploading' })
+        });
+        
+        const dbPost = await createRes.json();
+        if (!createRes.ok) throw new Error(dbPost.error || "Failed to create placeholder");
+        
+        dbId = dbPost._id || dbPost.id;
+        
+        // Update UI to use the real DB ID
+        setPosts(prev => prev.map(p => p._id === tempId ? { ...p, _id: dbId, id: dbId, isUploading: true } : p));
+
+        // 2. Upload large files securely
         let mediaUrls = [];
         if (currentFiles.length > 0) {
           const uploadPromises = currentFiles.map(async (originalFile) => {
@@ -695,43 +732,35 @@ export default function Scheduling() {
           mediaUrls = await Promise.all(uploadPromises);
         }
 
-        const payload = {
-          caption: payloadBase.caption,
-          scheduledFor: tempPost.scheduledFor,
-          triggerKeyword: payloadBase.triggerKeyword,
-          autoResponse: payloadBase.autoResponse,
-          type: currentType,
-          mediaUrl: mediaUrls.length > 0 ? mediaUrls[0] : payloadBase.mediaUrl,
-          carouselItems: mediaUrls.length > 0 ? mediaUrls : [],
-          requireFollow: payloadBase.requireFollow,
-          unfollowedResponse: payloadBase.unfollowedResponse,
-          publicReply: payloadBase.publicReply,
-          automationStatus: payloadBase.automationStatus,
-          anyKeyword: payloadBase.anyKeyword,
-          openingMessage: payloadBase.openingMessage,
-          openingMessageText: payloadBase.openingMessageText,
-          openingMessageButton: payloadBase.openingMessageButton,
-          buttons: JSON.stringify(payloadBase.buttons || []),
-          platform: payloadBase.platform || 'instagram'
-        };
-
-        const res = await fetch(`${API_BASE_URL}/api/scheduling`, {
-          method: 'POST',
+        // 3. Update the DB record with the final media URLs and set status to Scheduled
+        const finalMediaUrl = mediaUrls.length > 0 ? mediaUrls[0] : payloadBase.mediaUrl;
+        const updateRes = await fetch(`${API_BASE_URL}/api/scheduling/${dbId}`, {
+          method: 'PUT',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ mediaUrl: finalMediaUrl, carouselItems: mediaUrls, status: 'Scheduled' })
         });
-        
-        const data = await res.json();
-        if (res.ok) {
-          setPosts(prev => prev.map(p => p._id === tempId ? data : p));
+
+        const updatedData = await updateRes.json();
+        if (updateRes.ok) {
+          setPosts(prev => prev.map(p => p._id === dbId ? updatedData : p));
           notify("Post scheduled successfully!", "success");
         } else {
-          setPosts(prev => prev.map(p => p._id === tempId ? { ...p, status: 'Failed', lastError: data.error } : p));
-          notify(data.error || "Failed to schedule post", "error");
+          throw new Error(updatedData.error || "Failed to finalize post");
         }
       } catch (err) {
         console.error("Background Upload Error:", err);
-        setPosts(prev => prev.map(p => p._id === tempId ? { ...p, status: 'Failed', lastError: err.message || "Network error during background upload" } : p));
+        const targetId = dbId || tempId;
+        setPosts(prev => prev.map(p => p._id === targetId ? { ...p, status: 'Failed', lastError: err.message || "Network error during background upload", isUploading: false } : p));
+        
+        // If it failed and we have a dbId, we update it in the database to Failed
+        if (dbId) {
+           fetch(`${API_BASE_URL}/api/scheduling/${dbId}`, {
+             method: 'PUT',
+             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+             body: JSON.stringify({ status: 'Failed' })
+           }).catch(() => {});
+        }
+        
         notify(err.message || "Network error during upload", "error");
       }
     })();

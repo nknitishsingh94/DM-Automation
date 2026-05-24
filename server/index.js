@@ -1867,6 +1867,54 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
   }
 });
 
+app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { mediaUrl, status, carouselItems } = req.body;
+    
+    const { supabase } = await import('./utils/supabase.js');
+    
+    const { data: existingPost, error: fetchErr } = await supabase
+      .from('scheduled_posts')
+      .select('*')
+      .eq('id', id)
+      .single();
+      
+    if (fetchErr) throw fetchErr;
+
+    let metadata = {};
+    if (existingPost.mediaUrl && existingPost.mediaUrl.startsWith('{')) {
+      try { metadata = JSON.parse(existingPost.mediaUrl); } catch (e) {}
+    }
+    
+    if (mediaUrl) metadata.mediaUrl = mediaUrl;
+    if (carouselItems) metadata.carouselItems = carouselItems;
+
+    const finalMediaUrl = JSON.stringify(metadata);
+
+    const { data, error } = await supabase
+      .from('scheduled_posts')
+      .update({ status: status || 'Scheduled', mediaUrl: finalMediaUrl })
+      .eq('id', id)
+      .select();
+
+    if (error) throw error;
+    
+    // Trigger worker if it's now Scheduled and due
+    const isDue = !data[0].scheduledFor || new Date(data[0].scheduledFor) <= new Date();
+    if ((status === 'Scheduled' || !status) && isDue) {
+      setImmediate(() => {
+        runSchedulingWorker().catch(() => {});
+      });
+    }
+
+    res.json(data[0]);
+  } catch(err) {
+    console.error('❌ UPDATE SCHEDULING ERROR:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Captions API
 app.get('/api/captions', verifyToken, async (req, res) => {
   try {
