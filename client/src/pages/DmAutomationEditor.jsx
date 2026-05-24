@@ -43,7 +43,7 @@ export default function DmAutomationEditor() {
   const [unfollowedMessage, setUnfollowedMessage] = useState("Hey! To get the link, please follow our page first! 😊");
   const [publicReplyText, setPublicReplyText] = useState("Check your DMs! 🚀 I've sent you the info.");
   const [submitting, setSubmitting] = useState(false);
-  const [name, setName] = useState(`${template === 'stories' ? 'Story' : 'DM'} Automation #${Math.floor(Math.random() * 1000)}`);
+  const [name, setName] = useState('');
   const [connectedSettings, setConnectedSettings] = useState(null);
   const [buttons, setButtons] = useState([]);
   const [showLinkModal, setShowLinkModal] = useState(false);

@@ -46,7 +46,7 @@ export default function AutomationEditor() {
   const [requireFollow, setRequireFollow] = useState(true);
   const [unfollowedMessage, setUnfollowedMessage] = useState("Hey! To get the link, please follow our page first! 😊");
   const [submitting, setSubmitting] = useState(false);
-  const [name, setName] = useState(`${template === 'stories' ? 'Story' : (template === 'dms' ? 'DM' : 'Comment')} Automation #${Math.floor(Math.random() * 1000)}`);
+  const [name, setName] = useState('');
   const [connectedSettings, setConnectedSettings] = useState(null);
   const [realMedia, setRealMedia] = useState([]);
   const [loadingMedia, setLoadingMedia] = useState(false);
@@ -604,7 +604,6 @@ export default function AutomationEditor() {
                   padding: 0
                 }}
               />
-              <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>Click to rename your automation</p>
             </div>
 
             {/* Step 0: Target Platform */}
