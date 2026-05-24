@@ -2771,12 +2771,13 @@ async function runSchedulingWorker() {
 
     // Pre-load Supabase client and safeUpdate before touching DB state
     const { supabase: _sb } = await import('./utils/supabase.js');
-    const _updatePost = async (id, fields) => _sb.from('scheduled_posts').update({ ...fields, updatedAt: new Date().toISOString() }).eq('id', id);
+    const _updatePost = async (id, fields) => {
+      const { data, error } = await _sb.from('scheduled_posts').update({ ...fields, updatedAt: new Date().toISOString() }).eq('id', id);
+      if (error) throw new Error(error.message);
+      return data;
+    };
 
     // ── Safety net: reset any "Processing" posts that have been orphaned ──
-    // If a post has been in "Processing" for > 10 minutes it is almost
-    // certainly stuck. The 2-min cooldown gate inside the atomic claim would
-    // otherwise block the worker from ever touching it again.
     {
       const STUCK_THRESHOLD_MINUTES = 10;
       const stuckBoundary = new Date(Date.now() - STUCK_THRESHOLD_MINUTES * 60 * 1000).toISOString();
@@ -2789,18 +2790,12 @@ async function runSchedulingWorker() {
           .select('id');
         if (stuckErr) {
           console.warn('⚠️ [Worker] Safety-net reset failed:', stuckErr.message);
-        } else if (stuckData && stuckData.length > 0) {
-          console.log(`🚑 [Worker] Safety-net reset ${stuckData.length} stuck "Processing" post(s) back to "Retrying".`);
         }
       } catch (resetErr) {
         console.warn('⚠️ [Worker] Safety-net reset error:', resetErr.message);
       }
     }
 
-    // ── Safe post updater ─────────────────────────────────────────────────
-    // All _updatePost calls go through this wrapper: any exception is caught
-    // and logged but never propagated — so a single DB-write failure can never
-    // kill the worker or leave a post stranded in "Processing".
     const safeUpdate = async (id, fields) => {
       try {
         await _updatePost(id, fields);
@@ -3012,7 +3007,10 @@ async function runSchedulingWorker() {
         const scheduledAt = new Date(post.scheduledFor);
         const minutesSinceScheduled = (Date.now() - scheduledAt.getTime()) / 60000;
 
-        if (currentRetryCount <= MAX_RETRIES && minutesSinceScheduled < MAX_RETRY_WINDOW) {
+        if (postErr.message && (postErr.message.includes('Authorization Error') || postErr.message.toLowerCase().includes('credential'))) {
+          console.log(`🚫 [Worker] Fatal Auth Error. Marking Post ${postId} as Failed immediately.`);
+          await safeUpdate(postId, { status: 'Failed', lastError: postErr.message });
+        } else if (currentRetryCount <= MAX_RETRIES && minutesSinceScheduled < MAX_RETRY_WINDOW) {
           await safeUpdate(postId, { status: 'Retrying', lastError: postErr.message, retryCount: currentRetryCount });
         } else {
           await safeUpdate(postId, { status: 'Failed', lastError: postErr.message });
