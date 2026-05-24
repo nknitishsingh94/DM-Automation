@@ -428,7 +428,7 @@ function Sidebar({ isMobileOpen, onClose }) {
           <nav className="nav-links">
             <NavLink to="/hub" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Zap size={18} />
-              <span>Platform Hub</span>
+              <span>Platform Automation</span>
             </NavLink>
             <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Home size={18} />
@@ -438,10 +438,6 @@ function Sidebar({ isMobileOpen, onClose }) {
               <Sparkles size={18} />
               <span>AI Studio</span>
               <span className="sidebar-badge badge-new">NEW</span>
-            </NavLink>
-            <NavLink to="/campaigns" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Zap size={18} />
-              <span>Automation</span>
             </NavLink>
             <NavLink to="/scheduling" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Calendar size={18} />
