@@ -490,9 +490,12 @@ export default function Scheduling() {
       });
       const data = await res.json();
       if (Array.isArray(data)) {
-        setPosts(data);
+        setPosts(prevPosts => {
+          const uploadingPosts = prevPosts.filter(p => p.isUploading);
+          return [...uploadingPosts, ...data];
+        });
       } else {
-        setPosts([]);
+        setPosts(prevPosts => prevPosts.filter(p => p.isUploading));
       }
     } catch (err) {
       console.error("Error fetching scheduled posts:", err);
