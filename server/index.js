@@ -2504,21 +2504,43 @@ app.get('/api/facebook/media', verifyToken, async (req, res) => {
 
     const response = await axios.get(`https://graph.facebook.com/v19.0/${activeSettings.facebookPageId}/published_posts`, {
       params: {
-        fields: 'id,message,full_picture,created_time,permalink_url',
+        fields: 'id,message,full_picture,created_time,permalink_url,attachments{media_type,type,media,subattachments}',
         access_token: activeSettings.facebookAccessToken
       }
     });
 
     // Map Facebook post fields to match the Instagram media format for the frontend
-    const mappedData = (response.data.data || []).map(post => ({
-      id: post.id,
-      media_type: 'IMAGE', // Default to image for UI purposes
-      media_url: post.full_picture,
-      thumbnail_url: post.full_picture,
-      timestamp: post.created_time,
-      permalink: post.permalink_url,
-      caption: post.message
-    }));
+    const mappedData = (response.data.data || []).map(post => {
+      let media_type = 'IMAGE'; // Default
+      let media_url = post.full_picture;
+      let thumbnail_url = post.full_picture;
+
+      if (post.attachments && post.attachments.data && post.attachments.data.length > 0) {
+        const attachment = post.attachments.data[0];
+        
+        // Check for Video or Reel
+        if (attachment.media_type === 'video' || attachment.type === 'video_inline' || attachment.type === 'video_autoplay' || attachment.type === 'reel') {
+          media_type = 'VIDEO';
+          if (attachment.media && attachment.media.source) {
+            media_url = attachment.media.source;
+          }
+        } 
+        // Check for Carousel / Album
+        else if (attachment.subattachments && attachment.subattachments.data && attachment.subattachments.data.length > 1) {
+          media_type = 'CAROUSEL_ALBUM';
+        }
+      }
+
+      return {
+        id: post.id,
+        media_type: media_type,
+        media_url: media_url,
+        thumbnail_url: thumbnail_url,
+        timestamp: post.created_time,
+        permalink: post.permalink_url,
+        caption: post.message
+      };
+    });
 
     res.json(mappedData);
   } catch (err) {
