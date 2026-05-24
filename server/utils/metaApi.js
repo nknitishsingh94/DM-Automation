@@ -330,32 +330,30 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
       }
     }
 
-    // Check if ready (with a retry loop to poll for readiness immediately)
-    console.log(`📦 Checking readiness for container: ${finalCreationId}`);
-    let isReady = false;
-    let attempts = 0;
-    const maxAttempts = 2; // Reduced from 4 to 2 to prevent Vercel 10s timeout
+    // BYPASS `checkMediaReadiness` entirely!
+    // Meta's GET /{container_id} global node often throws "Authorization Error" 
+    // immediately after creation due to distributed database delays.
+    // However, POST /{ig_user_id}/media_publish is an edge query and works instantly.
+    // We will just try to publish immediately. If it's an image, it usually succeeds instantly!
+    console.log(`📦 Attempting immediate publish for container: ${finalCreationId}`);
     
-    while (attempts < maxAttempts) {
-      isReady = await checkMediaReadiness(finalCreationId, accessToken);
-      if (isReady) break;
-      
-      attempts++;
-      if (attempts < maxAttempts) {
-        console.log(`⏳ Container ${finalCreationId} not ready yet. Waiting 2.5 seconds (Attempt ${attempts}/${maxAttempts})...`);
-        await new Promise(resolve => setTimeout(resolve, 2500));
-      }
-    }
-    
-    if (!isReady) {
-      return { status: 'IG_PROCESSING', containerId: finalCreationId };
-    }
-
-    // Publish
     const publishUrl = `https://graph.facebook.com/v19.0/${igId}/media_publish?creation_id=${finalCreationId}&access_token=${accessToken}`;
-    console.log(`🚀 [Meta API] Final Publish Step. Container: ${finalCreationId}`);
+    let publishRes;
     
-    const publishRes = await axios.post(publishUrl);
+    try {
+      publishRes = await axios.post(publishUrl, null, { timeout: 6000 });
+    } catch (pubErr) {
+      if (pubErr.response && pubErr.response.data && pubErr.response.data.error) {
+        const errorMsg = pubErr.response.data.error.message?.toLowerCase() || '';
+        // 9007 = media not ready
+        if (pubErr.response.data.error.code === 9007 || errorMsg.includes('not ready') || errorMsg.includes('processing')) {
+          console.log(`⏳ Container ${finalCreationId} is not ready for publishing yet. Deferring to background worker.`);
+          return { status: 'IG_PROCESSING', containerId: finalCreationId };
+        }
+      }
+      throw pubErr; // If it's a real publishing error, throw it
+    }
+    console.log(`🚀 [Meta API] Successfully published container: ${finalCreationId}`);
     console.log(`✅ [Meta API] Published Successfully! Media ID: ${publishRes.data.id}`);
     
     // Fetch Official URL
