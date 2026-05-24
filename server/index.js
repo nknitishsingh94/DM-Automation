@@ -2487,6 +2487,46 @@ app.get('/api/instagram/media', verifyToken, async (req, res) => {
   }
 });
 
+app.get('/api/facebook/media', verifyToken, async (req, res) => {
+  try {
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+    const settings = await Settings.findOne({ 
+      userId: { $in: sharedUserIds }, 
+      workspaceId: req.workspaceId,
+      facebookAccessToken: { $ne: null }, 
+      facebookPageId: { $ne: null } 
+    });
+    const activeSettings = settings || await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
+
+    if (!activeSettings || !activeSettings.facebookAccessToken || !activeSettings.facebookPageId) {
+      return res.status(400).json({ error: 'Facebook account not fully connected' });
+    }
+
+    const response = await axios.get(`https://graph.facebook.com/v19.0/${activeSettings.facebookPageId}/published_posts`, {
+      params: {
+        fields: 'id,message,full_picture,created_time,permalink_url',
+        access_token: activeSettings.facebookAccessToken
+      }
+    });
+
+    // Map Facebook post fields to match the Instagram media format for the frontend
+    const mappedData = (response.data.data || []).map(post => ({
+      id: post.id,
+      media_type: 'IMAGE', // Default to image for UI purposes
+      media_url: post.full_picture,
+      thumbnail_url: post.full_picture,
+      timestamp: post.created_time,
+      permalink: post.permalink_url,
+      caption: post.message
+    }));
+
+    res.json(mappedData);
+  } catch (err) {
+    console.error("❌ Error fetching FB media:", err.response?.data || err.message);
+    res.status(500).json({ error: 'Failed to fetch Facebook posts' });
+  }
+});
+
 app.post('/api/settings', verifyToken, async (req, res) => {
   try {
     const platform = req.body._platform; // frontend sends which platform is being saved

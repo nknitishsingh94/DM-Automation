@@ -76,7 +76,8 @@ export default function AutomationEditor() {
     setLoadingMedia(true);
     try {
       const token = localStorage.getItem('insta_agent_token');
-      const res = await fetch(`${API_BASE_URL}/api/instagram/media?type=${template === 'stories' ? 'stories' : 'media'}`, {
+      const apiPath = selectedPlatform === 'facebook' ? '/api/facebook/media' : '/api/instagram/media';
+      const res = await fetch(`${API_BASE_URL}${apiPath}?type=${template === 'stories' ? 'stories' : 'media'}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -84,7 +85,7 @@ export default function AutomationEditor() {
         setRealMedia(data);
       }
     } catch (err) {
-      console.error("Failed to fetch IG media:", err);
+      console.error(`Failed to fetch ${selectedPlatform} media:`, err);
     } finally {
       setLoadingMedia(false);
     }
@@ -93,7 +94,7 @@ export default function AutomationEditor() {
   const selectedMedia = realMedia.find(m => m.id === selectedContentId);
 
   React.useEffect(() => {
-    if (!anyStory && selectedPlatform === 'instagram') {
+    if (!anyStory && (selectedPlatform === 'instagram' || selectedPlatform === 'facebook')) {
       fetchRealMedia();
     }
   }, [anyStory, template, selectedPlatform]);
