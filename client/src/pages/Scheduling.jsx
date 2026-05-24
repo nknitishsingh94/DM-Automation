@@ -621,103 +621,117 @@ export default function Scheduling() {
       return;
     }
 
-    setSubmitting(true);
+    const payloadBase = { ...newPost };
+    const currentFiles = [...selectedFiles];
+    const currentPreviews = [...previews];
+    const currentType = postType;
+    
+    // UI Reset - Close modal immediately
+    setShowCreate(false);
+    setNewPost({ 
+      platform: 'instagram',
+      caption: '', scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', 
+      triggerKeyword: '', autoResponse: '', coverUrl: '',
+      requireFollow: true, unfollowedResponse: "Hey! Please follow our account first to get the link! 😊",
+      publicReply: "Check your DMs! 🚀",
+      automationStatus: 'Active'
+    });
+    setSelectedFiles([]);
+    setPreviews([]);
+    setPostType('image');
 
-    try {
-      const token = localStorage.getItem('insta_agent_token');
-      
-      // --- STEP 1: Process Files via Signed URL (Bypasses Vercel Limit) ---
-      let mediaUrls = [];
-      if (selectedFiles.length > 0) {
-        notify(`Optimizing ${selectedFiles.length} file(s) for upload...`, "info");
-        
-        const uploadPromises = selectedFiles.map(async (originalFile) => {
-          // Compress image before upload to drastically reduce upload time
-          const file = await compressImage(originalFile);
-          
-          const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-          
-          // A. Ask backend for a Signed URL (Uses Service Key, so no RLS issues)
-          const signRes = await fetch(`${API_BASE_URL}/api/storage/sign`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fileName, contentType: file.type })
-          });
-          
-          if (!signRes.ok) throw new Error("Failed to secure upload channel.");
-          const { uploadUrl, publicUrl } = await signRes.json();
-
-          // B. Direct upload to the signed URL (No Vercel limits here!)
-          const uploadRes = await fetch(uploadUrl, {
-            method: 'PUT',
-            body: file,
-            headers: { 'Content-Type': file.type }
-          });
-
-          if (!uploadRes.ok) throw new Error(`Network failed during large file upload.`);
-          return publicUrl;
-        });
-
-        mediaUrls = await Promise.all(uploadPromises);
-      }
-
-      // --- STEP 2: Send Metadata to Backend (Lightweight JSON) ---
-      const payload = {
-        caption: newPost.caption,
-        scheduledFor: newPost.scheduledFor ? convertLocalToUTC(newPost.scheduledFor, selectedTimezone) : '',
-        triggerKeyword: newPost.triggerKeyword,
-        autoResponse: newPost.autoResponse,
-        type: postType,
-        mediaUrl: mediaUrls.length > 0 ? mediaUrls[0] : newPost.mediaUrl,
-        carouselItems: mediaUrls.length > 0 ? mediaUrls : [],
-        requireFollow: newPost.requireFollow,
-        unfollowedResponse: newPost.unfollowedResponse,
-        publicReply: newPost.publicReply,
-        automationStatus: newPost.automationStatus,
-        anyKeyword: newPost.anyKeyword,
-        openingMessage: newPost.openingMessage,
-        openingMessageText: newPost.openingMessageText,
-        openingMessageButton: newPost.openingMessageButton,
-        buttons: JSON.stringify(newPost.buttons || []),
-        platform: newPost.platform || 'instagram'
-      };
-
-      const res = await fetch(`${API_BASE_URL}/api/scheduling`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      
-      const data = await res.json();
-      if (res.ok) {
-        setShowCreate(false);
-        setPosts(prev => [data, ...prev]);
-        setCreatedPost({ ...data, anyKeyword: data.triggerKeyword === '*' });
-        
-        setTimeout(() => {
-          setShowSuccess(true);
-          fetchPosts();
-        }, 100);
-
-        setNewPost({ 
-          platform: 'instagram',
-          caption: '', scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', 
-          triggerKeyword: '', autoResponse: '', coverUrl: '',
-          requireFollow: true, unfollowedResponse: "Hey! Please follow our account first to get the link! 😊",
-          publicReply: "Check your DMs! 🚀 I've sent you the info.",
-          automationStatus: 'Active'
-        });
-        setSelectedFiles([]);
-        setPreviews([]);
-      } else {
-        notify(data.error || "Failed to schedule post", "error");
-      }
-    } catch (err) {
-      console.error("Submit Error:", err);
-      notify(err.message || "Network error during upload", "error");
-    } finally {
-      setSubmitting(false);
+    // Create a temporary post for UI
+    const tempId = 'temp-' + Date.now();
+    const tempPost = {
+      _id: tempId,
+      status: 'Uploading',
+      caption: payloadBase.caption,
+      platform: payloadBase.platform || 'instagram',
+      type: currentType,
+      scheduledFor: convertLocalToUTC(payloadBase.scheduledFor, selectedTimezone),
+      mediaUrl: JSON.stringify({
+        type: currentType,
+        mediaUrl: currentPreviews.length > 0 ? currentPreviews[0] : payloadBase.mediaUrl
+      }),
+      isUploading: true
+    };
+    
+    setPosts(prev => [tempPost, ...prev]);
+    
+    if (currentFiles.length > 0 && (currentType === 'reel' || currentType === 'video')) {
+        notify("Video upload started in background! You can continue using the app.", "info");
+    } else {
+        notify("Upload started...", "info");
     }
+
+    // Run the actual upload in background
+    (async () => {
+      try {
+        let mediaUrls = [];
+        if (currentFiles.length > 0) {
+          const uploadPromises = currentFiles.map(async (originalFile) => {
+            const file = await compressImage(originalFile);
+            const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+            
+            const signRes = await fetch(`${API_BASE_URL}/api/storage/sign`, {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ fileName, contentType: file.type })
+            });
+            if (!signRes.ok) throw new Error("Failed to secure upload channel.");
+            const { uploadUrl, publicUrl } = await signRes.json();
+
+            const uploadRes = await fetch(uploadUrl, {
+              method: 'PUT',
+              body: file,
+              headers: { 'Content-Type': file.type }
+            });
+            if (!uploadRes.ok) throw new Error(`Network failed during file upload.`);
+            return publicUrl;
+          });
+          mediaUrls = await Promise.all(uploadPromises);
+        }
+
+        const payload = {
+          caption: payloadBase.caption,
+          scheduledFor: tempPost.scheduledFor,
+          triggerKeyword: payloadBase.triggerKeyword,
+          autoResponse: payloadBase.autoResponse,
+          type: currentType,
+          mediaUrl: mediaUrls.length > 0 ? mediaUrls[0] : payloadBase.mediaUrl,
+          carouselItems: mediaUrls.length > 0 ? mediaUrls : [],
+          requireFollow: payloadBase.requireFollow,
+          unfollowedResponse: payloadBase.unfollowedResponse,
+          publicReply: payloadBase.publicReply,
+          automationStatus: payloadBase.automationStatus,
+          anyKeyword: payloadBase.anyKeyword,
+          openingMessage: payloadBase.openingMessage,
+          openingMessageText: payloadBase.openingMessageText,
+          openingMessageButton: payloadBase.openingMessageButton,
+          buttons: JSON.stringify(payloadBase.buttons || []),
+          platform: payloadBase.platform || 'instagram'
+        };
+
+        const res = await fetch(`${API_BASE_URL}/api/scheduling`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await res.json();
+        if (res.ok) {
+          setPosts(prev => prev.map(p => p._id === tempId ? data : p));
+          notify("Post scheduled successfully!", "success");
+        } else {
+          setPosts(prev => prev.map(p => p._id === tempId ? { ...p, status: 'Failed', lastError: data.error } : p));
+          notify(data.error || "Failed to schedule post", "error");
+        }
+      } catch (err) {
+        console.error("Background Upload Error:", err);
+        setPosts(prev => prev.map(p => p._id === tempId ? { ...p, status: 'Failed', lastError: err.message || "Network error during background upload" } : p));
+        notify(err.message || "Network error during upload", "error");
+      }
+    })();
   };
 
   const [previewMode, setPreviewMode] = useState('post');
