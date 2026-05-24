@@ -31,7 +31,7 @@ export default function Campaigns() {
   
   // Edit State
   const [editingCampaign, setEditingCampaign] = useState(null);
-  const [editForm, setEditForm] = useState({ name: '', trigger: '', response: '', linkUrl: '', buttonText: '', isUniversal: false });
+  const [editForm, setEditForm] = useState({ name: '', trigger: '', response: '', linkUrl: '', buttonText: '', isUniversal: false, triggerSource: 'dm' });
 
   const [message, setMessage] = useState({ type: '', text: '' });
   const [submitting, setSubmitting] = useState(false);
@@ -643,7 +643,7 @@ export default function Campaigns() {
                     <Power size={14} color={campaign.status === 'Active' ? '#10b981' : '#94a3b8'} />
                     {campaign.status === 'Active' ? 'Pause' : 'Activate'}
                   </button>
-                  <button onClick={() => { setEditingCampaign(campaign); setEditForm({ name: campaign.name || '', trigger: campaign.trigger || '', response: campaign.response || '', linkUrl: campaign.linkUrl || '', buttonText: campaign.buttonText || '', isUniversal: campaign.isUniversal || false }); }} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6', cursor: 'pointer' }}>
+                  <button onClick={() => { setEditingCampaign(campaign); setEditForm({ name: campaign.name || '', trigger: campaign.trigger || '', response: campaign.response || '', linkUrl: campaign.linkUrl || '', buttonText: campaign.buttonText || '', isUniversal: campaign.isUniversal || false, triggerSource: campaign.triggerSource || 'dm' }); }} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6', cursor: 'pointer' }}>
                     <Edit2 size={18} />
                   </button>
                   <button onClick={() => viewLogs(campaign)} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', cursor: 'pointer' }}>
@@ -818,6 +818,15 @@ export default function Campaigns() {
                   <input type="text" value={editForm.trigger} onChange={e => setEditForm({...editForm, trigger: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required />
                 </div>
                 
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Trigger Source</label>
+                  <select value={editForm.triggerSource} onChange={e => setEditForm({...editForm, triggerSource: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}>
+                    <option value="dm">💬 Direct Message (DM)</option>
+                    <option value="comment">📝 Post Comment</option>
+                    <option value="story_mention">📸 Story Mention</option>
+                  </select>
+                </div>
+                
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: editForm.isUniversal ? 'rgba(14, 165, 233, 0.08)' : '#f8fafc', borderRadius: '12px', border: editForm.isUniversal ? '1px solid rgba(14, 165, 233, 0.3)' : '1px solid #e2e8f0', transition: 'all 0.3s' }}>
                   <input type="checkbox" id="editIsUniversal" checked={editForm.isUniversal} onChange={e => setEditForm({...editForm, isUniversal: e.target.checked})} style={{ width: '18px', height: '18px', accentColor: '#0ea5e9', cursor: 'pointer' }} />
                   <label htmlFor="editIsUniversal" style={{ fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: editForm.isUniversal ? '#0284c7' : '#475569' }}>
@@ -895,6 +904,15 @@ export default function Campaigns() {
                     style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }}
                     onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required
                   />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Trigger Source</label>
+                  <select value={newCamp.triggerSource} onChange={e => setNewCamp({...newCamp, triggerSource: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}>
+                    <option value="dm">💬 Direct Message (DM)</option>
+                    <option value="comment">📝 Post Comment</option>
+                    <option value="story_mention">📸 Story Mention</option>
+                  </select>
                 </div>
 
                 <div>
