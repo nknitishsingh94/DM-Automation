@@ -254,10 +254,15 @@ export const checkMediaReadiness = async (mediaId, accessToken) => {
   } catch (err) {
     if (err.message?.includes('Meta Processing')) throw err;
     if (err.response) {
-      console.error(`❌ Meta API Error in checkMediaReadiness:`, err.response.data);
-      throw new Error(`Meta API Error: ${err.response.data.error?.message || err.message}`);
+      // Meta often returns 100 (Unsupported Get Request) or Authorization Error 
+      // if the container ID hasn't propagated to all their servers yet.
+      // Do not fail the whole process! Just return false so we retry.
+      console.warn(`⚠️ Meta API eventual consistency delay in checkMediaReadiness:`, err.response.data?.error?.message || err.message);
+      return false; 
     }
-    throw err;
+    // If it's a timeout or network error, also return false to keep polling
+    console.warn(`⚠️ Network/Timeout error in checkMediaReadiness:`, err.message);
+    return false;
   }
 };
 
