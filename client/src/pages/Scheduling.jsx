@@ -1217,17 +1217,19 @@ export default function Scheduling() {
                       const isIgConnected = settings?.isAccountConnected || (!!settings?.instagramAccessToken && !!settings?.businessAccountId);
                       
                       const allPlatforms = [
-                        { id: 'tiktok', label: 'TikTok', icon: <span style={{fontSize:'16px'}}>🎵</span>, color: '#000000', isConnected: false, supported: false },
                         { id: 'instagram', label: 'Instagram', icon: <Instagram size={18} />, color: '#e1306c', isConnected: isIgConnected, supported: true },
-                        { id: 'facebook', label: 'Facebook', icon: <Facebook size={18} />, color: '#1877f2', isConnected: isFbConnected, supported: true },
-                        { id: 'youtube', label: 'YouTube', icon: <span style={{fontSize:'16px'}}>▶️</span>, color: '#ff0000', isConnected: false, supported: false },
-                        { id: 'linkedin', label: 'LinkedIn', icon: <span style={{fontSize:'16px'}}>💼</span>, color: '#0a66c2', isConnected: false, supported: false },
-                        { id: 'twitter', label: 'Twitter/X', icon: <span style={{fontSize:'16px'}}>🐦</span>, color: '#1da1f2', isConnected: false, supported: false },
-                        { id: 'bluesky', label: 'Bluesky', icon: <span style={{fontSize:'16px'}}>🦋</span>, color: '#0085ff', isConnected: false, supported: false },
-                        { id: 'pinterest', label: 'Pinterest', icon: <span style={{fontSize:'16px'}}>📌</span>, color: '#e60023', isConnected: false, supported: false }
-                      ];
+                        { id: 'facebook', label: 'Facebook', icon: <Facebook size={18} />, color: '#1877f2', isConnected: isFbConnected, supported: true }
+                      ].filter(p => p.isConnected);
 
                       const selectedPlat = allPlatforms.find(p => p.id === newPost.platform) || null;
+
+                      if (allPlatforms.length === 0) {
+                        return (
+                          <span style={{ fontSize: '0.88rem', color: '#ef4444', fontWeight: '700', padding: '12px', background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: '12px', width: '100%', display: 'block', textAlign: 'center' }}>
+                            ⚠️ No connected channels. Please link a Facebook page or Instagram account in Settings first.
+                          </span>
+                        );
+                      }
 
                       return (
                         <div style={{ position: 'relative' }}>
