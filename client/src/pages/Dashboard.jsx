@@ -323,10 +323,17 @@ export default function Dashboard() {
               </div>
               <span style={{ fontWeight: '800', fontSize: '16px', color: '#1e293b' }}>Performance Funnel</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: '#ffffff', borderRadius: '20px', border: '1px solid #e2e8f0', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: '#ffffff', borderRadius: '20px', border: '1px solid #e2e8f0', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', position: 'relative' }} onClick={() => toggleDropdown('funnel')}>
                <Calendar size={13} color="#64748b" />
-               <span style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>Past 7 Days</span>
+               <span style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>{getFilterText()}</span>
                <ChevronDown size={14} color="#94a3b8" />
+               {activeDropdown === 'funnel' && (
+                 <div style={{ position: 'absolute', top: '110%', right: '0', background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', zIndex: 10, width: '140px', overflow: 'hidden' }}>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('7d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: '#1e293b', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 7 Days</div>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('30d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: '#1e293b', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 30 Days</div>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('all'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: '#1e293b', cursor: 'pointer' }}>All Time</div>
+                 </div>
+               )}
             </div>
           </div>
 
