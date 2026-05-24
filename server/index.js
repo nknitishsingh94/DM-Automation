@@ -1613,7 +1613,7 @@ function parseScheduledPost(post) {
       p.openingMessageText = parsedMeta.openingMessageText || '';
       p.openingMessageButton = parsedMeta.openingMessageButton || '';
       
-      instagramMediaId = parsedMeta.instagramMediaId || null;
+      instagramMediaId = parsedMeta.instagramMediaId || parsedMeta.facebookPostId || null;
       cachedLiveMediaUrl = parsedMeta.cachedLiveMediaUrl || null;
       localImage = parsedMeta.mediaUrl || (p.carouselItems.length > 0 ? p.carouselItems[0] : '');
       p.mediaUrl = localImage;
@@ -3052,7 +3052,7 @@ async function runSchedulingWorker() {
           try { updatedMetaObj = JSON.parse(post.mediaUrl); } catch(e){}
         }
 
-        updatedMetaObj.mediaUrl = liveUrl;
+        updatedMetaObj.mediaUrl = liveUrl || finalMedia;
         updatedMetaObj.localMediaUrl = finalMedia;
         updatedMetaObj.type = finalType;
         if (post.platform === 'facebook') {
