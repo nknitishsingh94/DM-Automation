@@ -130,11 +130,11 @@ const getCurrentTimeInTimezone = (targetTimezone) => {
   }
 };
 
-// Client-side image compression to drastically speed up uploads
+// Client-side image compression & aspect ratio fixer
 const compressImage = (file) => {
   return new Promise((resolve) => {
-    // Skip compression for non-images, gifs, or very small files (< 300KB)
-    if (!file.type.startsWith('image/') || file.type === 'image/gif' || file.size < 300 * 1024) {
+    // Skip compression for non-images or gifs
+    if (!file.type.startsWith('image/') || file.type === 'image/gif') {
       return resolve(file);
     }
     
@@ -145,31 +145,56 @@ const compressImage = (file) => {
       img.src = event.target.result;
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 1440; // High enough for IG, low enough to compress heavily
-        const MAX_HEIGHT = 1440;
-        let width = img.width;
-        let height = img.height;
+        
+        // Original dimensions
+        let origWidth = img.width;
+        let origHeight = img.height;
+        let ratio = origWidth / origHeight;
+        
+        let targetWidth = origWidth;
+        let targetHeight = origHeight;
+        let offsetX = 0;
+        let offsetY = 0;
 
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
+        // Enforce Instagram Aspect Ratio constraints (0.8 to 1.91)
+        // If image is too tall (ratio < 0.8), pad sides with white
+        if (ratio < 0.8) {
+          targetWidth = origHeight * 0.8;
+          offsetX = (targetWidth - origWidth) / 2;
+        } 
+        // If image is too wide (ratio > 1.91), pad top/bottom with white
+        else if (ratio > 1.91) {
+          targetHeight = origWidth / 1.91;
+          offsetY = (targetHeight - origHeight) / 2;
         }
 
-        canvas.width = width;
-        canvas.height = height;
+        // Scale down if the new dimensions are too large
+        const MAX_WIDTH = 1440;
+        const MAX_HEIGHT = 1440;
+        if (targetWidth > MAX_WIDTH || targetHeight > MAX_HEIGHT) {
+          const scale = Math.min(MAX_WIDTH / targetWidth, MAX_HEIGHT / targetHeight);
+          targetWidth *= scale;
+          targetHeight *= scale;
+          origWidth *= scale;
+          origHeight *= scale;
+          offsetX *= scale;
+          offsetY *= scale;
+        }
+
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Add White padding for any empty space
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, targetWidth, targetHeight);
+        
+        // Draw the image in the center
+        ctx.drawImage(img, offsetX, offsetY, origWidth, origHeight);
 
         canvas.toBlob((blob) => {
-          if (blob && blob.size < file.size) {
-            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+          if (blob) {
+            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + "_ig_ready.jpg", {
               type: 'image/jpeg',
               lastModified: Date.now(),
             });
@@ -177,7 +202,7 @@ const compressImage = (file) => {
           } else {
             resolve(file);
           }
-        }, 'image/jpeg', 0.85); // 85% quality JPEG gives huge space savings with minimal visual loss
+        }, 'image/jpeg', 0.85); // 85% quality JPEG
       };
       img.onerror = () => resolve(file);
     };
