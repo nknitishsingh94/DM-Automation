@@ -363,10 +363,11 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
         params: { fields: 'media_url,permalink,thumbnail_url', access_token: accessToken },
         timeout: 4000
       });
-      liveUrl = mediaInfoRes.data.media_url || mediaInfoRes.data.thumbnail_url || mediaInfoRes.data.permalink || liveUrl;
-      console.log(`🔗 [Meta API] Official URL Fetched: ${liveUrl}`);
+      if (mediaInfoRes.data && mediaInfoRes.data.permalink) {
+        liveUrl = mediaInfoRes.data.permalink;
+      }
     } catch (e) {
-      console.warn(`⚠️ [Meta API] Could not fetch live URL info: ${e.message}`);
+      // Silently continue. The post is already published.
     }
 
     return { id: publishRes.data.id, url: liveUrl, status: 'PUBLISHED' };

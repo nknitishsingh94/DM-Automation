@@ -1697,8 +1697,8 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
               p.mediaUrl = localImage; // Fallback
             }
           } catch (error) {
-            console.error(`⚠️ [Meta API Fallback] Failed to fetch live image:`, error.message);
-            p.mediaUrl = localImage; // Fallback
+            // Silently fallback if Meta API is still propagating the media URL
+            p.mediaUrl = localImage;
           }
         } else {
           p.mediaUrl = localImage; // Fallback
