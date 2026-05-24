@@ -130,6 +130,61 @@ const getCurrentTimeInTimezone = (targetTimezone) => {
   }
 };
 
+// Client-side image compression to drastically speed up uploads
+const compressImage = (file) => {
+  return new Promise((resolve) => {
+    // Skip compression for non-images, gifs, or very small files (< 300KB)
+    if (!file.type.startsWith('image/') || file.type === 'image/gif' || file.size < 300 * 1024) {
+      return resolve(file);
+    }
+    
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 1440; // High enough for IG, low enough to compress heavily
+        const MAX_HEIGHT = 1440;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob((blob) => {
+          if (blob && blob.size < file.size) {
+            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+              type: 'image/jpeg',
+              lastModified: Date.now(),
+            });
+            resolve(compressedFile);
+          } else {
+            resolve(file);
+          }
+        }, 'image/jpeg', 0.85); // 85% quality JPEG gives huge space savings with minimal visual loss
+      };
+      img.onerror = () => resolve(file);
+    };
+    reader.onerror = () => resolve(file);
+  });
+};
+
 const toUnicodeBold = (text) => {
   if (!text) return "";
   return Array.from(text).map(char => {
@@ -540,9 +595,12 @@ export default function Scheduling() {
       // --- STEP 1: Process Files via Signed URL (Bypasses Vercel Limit) ---
       let mediaUrls = [];
       if (selectedFiles.length > 0) {
-        notify(`Optimizing ${selectedFiles.length} file(s) for large upload...`, "info");
+        notify(`Optimizing ${selectedFiles.length} file(s) for upload...`, "info");
         
-        const uploadPromises = selectedFiles.map(async (file) => {
+        const uploadPromises = selectedFiles.map(async (originalFile) => {
+          // Compress image before upload to drastically reduce upload time
+          const file = await compressImage(originalFile);
+          
           const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
           
           // A. Ask backend for a Signed URL (Uses Service Key, so no RLS issues)
