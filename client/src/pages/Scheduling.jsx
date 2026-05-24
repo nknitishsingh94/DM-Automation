@@ -980,7 +980,7 @@ export default function Scheduling() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
           {posts.map(post => {
             // Smart Media Parser
-            let mediaData = { type: 'image', mediaUrl: post.mediaUrl };
+            let mediaData = { type: post.type || 'image', mediaUrl: post.mediaUrl };
             try {
               if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
                 mediaData = JSON.parse(post.mediaUrl);
