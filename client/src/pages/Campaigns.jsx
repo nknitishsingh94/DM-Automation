@@ -606,17 +606,17 @@ export default function Campaigns() {
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
-                  {(!campaign.platform || campaign.platform === 'all' || campaign.platform === 'instagram') && (
+                  {((campaign.platform || 'all') === 'instagram' || ((campaign.platform || 'all') === 'all' && connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)))) && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: '#fdf2f8', color: '#e1306c', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '800' }}>
                       <Instagram size={14} /> Instagram
                     </div>
                   )}
-                  {(campaign.platform === 'all' || campaign.platform === 'facebook') && (
+                  {((campaign.platform || 'all') === 'facebook' || ((campaign.platform || 'all') === 'all' && connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)))) && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: '#eff6ff', color: '#1877f2', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '800' }}>
                       <Facebook size={14} fill="currentColor" /> Facebook
                     </div>
                   )}
-                  {(campaign.platform === 'all' || campaign.platform === 'whatsapp') && (
+                  {((campaign.platform || 'all') === 'whatsapp' || ((campaign.platform || 'all') === 'all' && connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)))) && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: '#f0fdf4', color: '#25d366', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '800' }}>
                       <MessageSquare size={14} fill="currentColor" /> WhatsApp
                     </div>
