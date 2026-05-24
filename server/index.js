@@ -2991,11 +2991,21 @@ async function runSchedulingWorker() {
           }
         }
 
-        const updatedMediaUrl = JSON.stringify({
-          mediaUrl: liveUrl, // Official path
-          localMediaUrl: finalMedia,
-          [post.platform === 'facebook' ? 'facebookPostId' : 'instagramMediaId']: publishedId
-        });
+        let updatedMetaObj = {};
+        if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
+          try { updatedMetaObj = JSON.parse(post.mediaUrl); } catch(e){}
+        }
+
+        updatedMetaObj.mediaUrl = liveUrl;
+        updatedMetaObj.localMediaUrl = finalMedia;
+        updatedMetaObj.type = finalType;
+        if (post.platform === 'facebook') {
+          updatedMetaObj.facebookPostId = publishedId;
+        } else {
+          updatedMetaObj.instagramMediaId = publishedId;
+        }
+
+        const updatedMediaUrl = JSON.stringify(updatedMetaObj);
 
         await safeUpdate(postId, { status: 'Posted', mediaUrl: updatedMediaUrl });
         console.log(`✅ SUCCESS: Post ${postId} is now LIVE on ${post.platform === 'facebook' ? 'Facebook' : 'Instagram'}.`);
