@@ -93,10 +93,10 @@ export default function AutomationEditor() {
   const selectedMedia = realMedia.find(m => m.id === selectedContentId);
 
   React.useEffect(() => {
-    if (!anyStory) {
+    if (!anyStory && selectedPlatform === 'instagram') {
       fetchRealMedia();
     }
-  }, [anyStory, template]);
+  }, [anyStory, template, selectedPlatform]);
 
   React.useEffect(() => {
     const fetchSettings = async () => {
@@ -312,7 +312,7 @@ export default function AutomationEditor() {
                 {!user?.profilePhoto && user?.username?.charAt(0).toUpperCase()}
               </div>
               <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '700' }}>
-                {channel === 'facebook' 
+                {selectedPlatform === 'facebook' 
                   ? (connectedSettings?.connectedFacebookName || 'Facebook Page')
                   : (connectedSettings?.connectedInstagramName || user?.username || 'Instagram Account')
                 }
@@ -722,6 +722,11 @@ export default function AutomationEditor() {
                         🎨 Open Canva Story Templates
                       </a>
                     </div>
+                ) : selectedPlatform === 'facebook' || selectedPlatform === 'whatsapp' ? (
+                  <div style={{ textAlign: 'center', padding: '16px', color: '#64748b', fontSize: '0.85rem', fontWeight: '600', background: '#f8fafc', borderRadius: '12px' }}>
+                     🌐 Universal Triggers Only<br/>
+                     <span style={{ fontSize: '0.75rem', fontWeight: '500' }}>(Applies to all {selectedPlatform === 'facebook' ? 'Facebook' : 'WhatsApp'} posts)</span>
+                  </div>
                 ) : (
                   <>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: !anyStory ? '10px' : '0' }}>

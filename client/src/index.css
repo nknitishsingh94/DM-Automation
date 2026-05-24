@@ -2341,12 +2341,12 @@ tr:hover {
   to { opacity: 0; transform: scale(0.95); }
 }
 
-/* Automation Editor Responsive Layout */
 .editor-layout {
   display: flex;
   flex: 1;
   overflow: hidden;
   flex-direction: row;
+  justify-content: center;
 }
 
 .editor-preview {
@@ -2389,6 +2389,7 @@ tr:hover {
 
 .editor-config {
   flex: 1;
+  max-width: 800px;
   height: 100vh;
   overflow-y: auto;
   padding: 40px;
@@ -2415,6 +2416,7 @@ tr:hover {
     overflow-y: visible;
     padding: 24px 16px 40px;
     order: 1; /* Config first on mobile */
+    max-width: 100%;
   }
   
   /* Scale down the phone preview on very small screens */
