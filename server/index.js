@@ -1814,7 +1814,7 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
       userId: req.user.userId,
       workspaceId: req.workspaceId,
       mediaUrl: finalMediaUrl,
-      status: 'Scheduled'
+      status: req.body.status || 'Scheduled'
     };
 
     // Clean up fields that might not exist in schema

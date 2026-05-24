@@ -492,7 +492,9 @@ export default function Scheduling() {
       if (Array.isArray(data)) {
         setPosts(prevPosts => {
           const uploadingPosts = prevPosts.filter(p => p.isUploading);
-          return [...uploadingPosts, ...data];
+          const uploadingIds = new Set(uploadingPosts.map(p => p._id || p.id));
+          const filteredData = data.filter(p => !uploadingIds.has(p._id) && !uploadingIds.has(p.id));
+          return [...uploadingPosts, ...filteredData];
         });
       } else {
         setPosts(prevPosts => prevPosts.filter(p => p.isUploading));
