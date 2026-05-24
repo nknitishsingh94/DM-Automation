@@ -1623,6 +1623,7 @@ function parseScheduledPost(post) {
   } else if (p.mediaUrl && p.mediaUrl.startsWith('[')) {
     try {
       p.carouselItems = JSON.parse(p.mediaUrl);
+      p.type = 'carousel';
       p.mediaUrl = p.carouselItems[0];
       localImage = p.mediaUrl;
     } catch (e) {
