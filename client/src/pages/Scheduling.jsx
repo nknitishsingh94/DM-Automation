@@ -570,6 +570,15 @@ export default function Scheduling() {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
+    // Auto-detect post type based on file selection to prevent user errors
+    if (files.length > 1 && postType !== 'carousel') {
+      setPostType('carousel');
+    } else if (files.length === 1 && files[0].type.startsWith('video/') && postType !== 'story') {
+      setPostType('reel');
+    } else if (files.length === 1 && files[0].type.startsWith('image/') && postType === 'reel') {
+      setPostType('image');
+    }
+
     // Limit to 10 files for carousel
     const totalFiles = [...selectedFiles, ...files].slice(0, 10);
 
@@ -992,7 +1001,7 @@ export default function Scheduling() {
                       background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(4px)', padding: '4px 8px', borderRadius: '8px',
                       boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
                     }}>
-                      {post.type || 'IMAGE'}
+                      {mediaData.type || 'IMAGE'}
                     </div>
                   </div>
 
