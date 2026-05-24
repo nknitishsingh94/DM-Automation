@@ -1675,18 +1675,21 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
           p.mediaUrl = cachedLiveMediaUrl;
         } else if (instagramMediaId && accessToken) {
           try {
+            const isFb = p.platform === 'facebook';
+            const fetchToken = isFb ? (userSettings?.facebookPageAccessToken || userSettings?.facebookAccessToken || accessToken) : accessToken;
+
             // First priority: Fetch actual live image from Meta Platforms API
             console.log(`🌐 [Meta API] Fetching live image for post ${p._id} (Media ID: ${instagramMediaId})...`);
             const metaRes = await axios.get(`https://graph.facebook.com/v19.0/${instagramMediaId}`, {
               params: {
-                fields: 'media_url,thumbnail_url',
-                access_token: accessToken
+                fields: isFb ? 'full_picture,picture,source' : 'media_url,thumbnail_url',
+                access_token: fetchToken
               },
               timeout: 4000 // Fast timeout so it doesn't block frontend load
             });
 
-            if (metaRes.data && (metaRes.data.media_url || metaRes.data.thumbnail_url)) {
-              const liveUrl = metaRes.data.thumbnail_url || metaRes.data.media_url;
+            if (metaRes.data && (metaRes.data.media_url || metaRes.data.thumbnail_url || metaRes.data.full_picture || metaRes.data.source || metaRes.data.picture)) {
+              const liveUrl = metaRes.data.thumbnail_url || metaRes.data.media_url || metaRes.data.full_picture || metaRes.data.source || metaRes.data.picture;
               p.mediaUrl = liveUrl;
 
               // Cache it back to DB to optimize future API requests
@@ -2904,14 +2907,14 @@ async function runSchedulingWorker() {
         }
 
         // Atomic claim: directly update status to 'Processing'
-        // Reduced cooldown from 2 minutes to 20 seconds so videos/reels post MUCH faster
-        const twentySecondsAgo = new Date(Date.now() - 20 * 1000).toISOString();
+        // Cooldown set to 2 minutes to ensure large videos/images don't get picked up twice while uploading
+        const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
 
         const { data: claimData, error: claimErr } = await _sb
           .from('scheduled_posts')
           .update({ status: 'Processing', updatedAt: new Date().toISOString() })
           .eq('id', postId)
-          .or(`status.in.(Scheduled,Retrying),and(status.eq.Processing,updatedAt.lt.${twentySecondsAgo})`)
+          .or(`status.in.(Scheduled,Retrying),and(status.eq.Processing,updatedAt.lt.${twoMinutesAgo})`)
           .select()
           .limit(1);
 
@@ -2986,7 +2989,7 @@ async function runSchedulingWorker() {
           updatedMeta.mediaUrl = finalMedia;
           updatedMeta.carouselItems = finalCarousel;
 
-          await safeUpdate(postId, { status: 'Processing', mediaUrl: JSON.stringify(updatedMeta) });
+          await safeUpdate(postId, { status: 'Retrying', mediaUrl: JSON.stringify(updatedMeta) });
 
           // ── Safety refresh: always bump updatedAt at the end so the 2-min cooldown
           //     gate is freshly reset even if the DB write above had a soft failure.
