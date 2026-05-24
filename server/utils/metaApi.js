@@ -218,7 +218,8 @@ export const checkMediaReadiness = async (mediaId, accessToken) => {
       params: {
         fields: 'status_code',
         access_token: accessToken
-      }
+      },
+      timeout: 4000
     });
     
     const statusCode = statusRes.data.status_code;
@@ -356,7 +357,8 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
     let liveUrl = mediaUrl;
     try {
       const mediaInfoRes = await axios.get(`https://graph.facebook.com/v19.0/${publishRes.data.id}`, {
-        params: { fields: 'media_url,permalink,thumbnail_url', access_token: accessToken }
+        params: { fields: 'media_url,permalink,thumbnail_url', access_token: accessToken },
+        timeout: 4000
       });
       liveUrl = mediaInfoRes.data.media_url || mediaInfoRes.data.thumbnail_url || mediaInfoRes.data.permalink || liveUrl;
       console.log(`🔗 [Meta API] Official URL Fetched: ${liveUrl}`);
