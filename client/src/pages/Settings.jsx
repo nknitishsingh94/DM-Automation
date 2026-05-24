@@ -126,7 +126,7 @@ export default function Settings() {
       notify(`🚀 ${platformLabel} linked successfully! Opening dashboard...`, "success");
       window.history.replaceState({}, document.title, window.location.pathname);
       setTimeout(() => {
-        navigate('/campaigns?setup=true');
+        navigate('/hub');
       }, 3500);
     } else if (params.get('oauth_error')) {
       const errorType = params.get('oauth_error');
