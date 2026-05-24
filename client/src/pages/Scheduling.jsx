@@ -245,6 +245,7 @@ export default function Scheduling() {
   const [settings, setSettings] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [createdPost, setCreatedPost] = useState(null);
+  const [isPlatformDropdownOpen, setIsPlatformDropdownOpen] = useState(false);
   const { notify } = useNotification();
 
   // Settings & Timezone
@@ -1209,45 +1210,91 @@ export default function Scheduling() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
                   {/* Platform Selector */}
-                  <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0', position: 'relative' }}>
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '16px' }}>Target Platform</label>
-                    <div style={{ display: 'flex', gap: '12px' }}>
-                      {(() => {
-                        const isFbConnected = settings?.isFacebookConnected || (!!settings?.facebookAccessToken && !!settings?.facebookPageId);
-                        const isIgConnected = settings?.isAccountConnected || (!!settings?.instagramAccessToken && !!settings?.businessAccountId);
-                        
-                        const platforms = [
-                          { id: 'instagram', label: 'Instagram', icon: <Instagram size={18} />, activeColor: '#e1306c', activeBg: '#fff0f5', isConnected: isIgConnected },
-                          { id: 'facebook', label: 'Facebook', icon: <Facebook size={18} />, activeColor: '#1877f2', activeBg: '#e8f4ff', isConnected: isFbConnected }
-                        ].filter(plat => plat.isConnected);
+                    {(() => {
+                      const isFbConnected = settings?.isFacebookConnected || (!!settings?.facebookAccessToken && !!settings?.facebookPageId);
+                      const isIgConnected = settings?.isAccountConnected || (!!settings?.instagramAccessToken && !!settings?.businessAccountId);
+                      
+                      const allPlatforms = [
+                        { id: 'tiktok', label: 'TikTok', icon: <span style={{fontSize:'16px'}}>🎵</span>, color: '#000000', isConnected: false, supported: false },
+                        { id: 'instagram', label: 'Instagram', icon: <Instagram size={18} />, color: '#e1306c', isConnected: isIgConnected, supported: true },
+                        { id: 'facebook', label: 'Facebook', icon: <Facebook size={18} />, color: '#1877f2', isConnected: isFbConnected, supported: true },
+                        { id: 'youtube', label: 'YouTube', icon: <span style={{fontSize:'16px'}}>▶️</span>, color: '#ff0000', isConnected: false, supported: false },
+                        { id: 'linkedin', label: 'LinkedIn', icon: <span style={{fontSize:'16px'}}>💼</span>, color: '#0a66c2', isConnected: false, supported: false },
+                        { id: 'twitter', label: 'Twitter/X', icon: <span style={{fontSize:'16px'}}>🐦</span>, color: '#1da1f2', isConnected: false, supported: false },
+                        { id: 'bluesky', label: 'Bluesky', icon: <span style={{fontSize:'16px'}}>🦋</span>, color: '#0085ff', isConnected: false, supported: false },
+                        { id: 'pinterest', label: 'Pinterest', icon: <span style={{fontSize:'16px'}}>📌</span>, color: '#e60023', isConnected: false, supported: false }
+                      ];
 
-                        if (platforms.length === 0) {
-                          return (
-                            <span style={{ fontSize: '0.88rem', color: '#ef4444', fontWeight: '700', padding: '12px', background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: '12px', width: '100%', display: 'block', textAlign: 'center' }}>
-                              ⚠️ No connected channels. Please link a Facebook page or Instagram account in Settings first.
-                            </span>
-                          );
-                        }
+                      const selectedPlat = allPlatforms.find(p => p.id === newPost.platform) || null;
 
-                        return platforms.map(plat => (
+                      return (
+                        <div style={{ position: 'relative' }}>
                           <button
-                            key={plat.id}
                             type="button"
-                            onClick={() => setNewPost(prev => ({ ...prev, platform: plat.id }))}
+                            onClick={() => setIsPlatformDropdownOpen(!isPlatformDropdownOpen)}
                             style={{
-                              flex: 1, padding: '12px', borderRadius: '12px', 
-                              border: newPost.platform === plat.id ? `2px solid ${plat.activeColor}` : '1px solid #e2e8f0',
-                              background: newPost.platform === plat.id ? plat.activeBg : 'white',
-                              color: newPost.platform === plat.id ? plat.activeColor : '#64748b',
-                              fontWeight: '700', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer',
-                              transition: 'all 0.2s ease'
+                              width: '100%', padding: '14px 16px', borderRadius: '12px', border: '1px solid #e2e8f0',
+                              background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                              fontSize: '0.95rem', fontWeight: '600', color: '#1e293b', cursor: 'pointer',
+                              boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
                             }}
                           >
-                            {plat.icon} {plat.label}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              {selectedPlat && selectedPlat.supported && selectedPlat.isConnected ? <span style={{color: selectedPlat.color, display: 'flex', alignItems:'center'}}>{selectedPlat.icon}</span> : null}
+                              <span>{selectedPlat && selectedPlat.supported && selectedPlat.isConnected ? selectedPlat.label : "Select Platform"}</span>
+                            </div>
+                            <ChevronRight size={18} style={{ transform: isPlatformDropdownOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: '0.2s', color: '#94a3b8' }} />
                           </button>
-                        ));
-                      })()}
-                    </div>
+
+                          {isPlatformDropdownOpen && (
+                            <div style={{
+                              position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '8px',
+                              background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0',
+                              boxShadow: '0 10px 25px rgba(0,0,0,0.1)', zIndex: 50, overflow: 'hidden'
+                            }}>
+                              {allPlatforms.map((plat, idx) => {
+                                const isClickable = plat.supported && plat.isConnected;
+                                return (
+                                  <div
+                                    key={plat.id}
+                                    onClick={() => {
+                                      if (isClickable) {
+                                        setNewPost(prev => ({ ...prev, platform: plat.id }));
+                                        setIsPlatformDropdownOpen(false);
+                                      }
+                                    }}
+                                    style={{
+                                      padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                      background: newPost.platform === plat.id && isClickable ? '#f8fafc' : 'white',
+                                      cursor: isClickable ? 'pointer' : 'not-allowed',
+                                      opacity: isClickable ? 1 : 0.7,
+                                      borderBottom: idx !== allPlatforms.length - 1 ? '1px solid #f1f5f9' : 'none',
+                                      transition: 'background 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => { if(isClickable) e.currentTarget.style.background = '#f1f5f9'; }}
+                                    onMouseLeave={(e) => { if(isClickable) e.currentTarget.style.background = newPost.platform === plat.id ? '#f8fafc' : 'white'; }}
+                                  >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                      <span style={{ color: plat.color, display: 'flex', alignItems: 'center', width: '20px', justifyContent: 'center' }}>{plat.icon}</span>
+                                      <span style={{ fontWeight: '600', color: '#334155' }}>{plat.label}</span>
+                                    </div>
+                                    {!plat.supported ? (
+                                      <span style={{ fontSize: '0.65rem', fontWeight: '800', background: '#f1f5f9', color: '#94a3b8', padding: '4px 8px', borderRadius: '6px' }}>locked</span>
+                                    ) : !plat.isConnected ? (
+                                      <span style={{ fontSize: '0.65rem', fontWeight: '800', background: '#fee2e2', color: '#ef4444', padding: '4px 8px', borderRadius: '6px' }}>Not Connected</span>
+                                    ) : (
+                                      newPost.platform === plat.id && <Check size={16} color="#10b981" />
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
 
                   {/* Post Type Selector */}
