@@ -387,7 +387,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
     if (activeTab === 'universal' && !c.isUniversal) return false;
     if (activeTab === 'linked' && c.isUniversal) return false;
     if (platformFilter !== 'all') {
-      return c.platform === 'all' || c.platform === platformFilter;
+      return c.platform === platformFilter;
     }
     return true;
   });
