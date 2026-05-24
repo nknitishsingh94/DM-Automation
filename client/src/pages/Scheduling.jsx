@@ -1135,7 +1135,12 @@ export default function Scheduling() {
                   disabled={submitting}
                   style={{ padding: '10px 32px', borderRadius: '12px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)', display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
-                  {submitting ? <Loader2 className="animate-spin" size={18} /> : 'Schedule'}
+                  {submitting ? (
+                    <>
+                      <Loader2 className="animate-spin" size={18} />
+                      {postType === 'reel' ? 'Uploading Video...' : 'Scheduling...'}
+                    </>
+                  ) : 'Schedule'}
                 </button>
               </div>
             </div>
