@@ -2004,6 +2004,8 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     if (updateData.openingMessage !== undefined) currentMetadata.openingMessage = updateData.openingMessage;
     if (updateData.openingMessageText !== undefined) currentMetadata.openingMessageText = updateData.openingMessageText;
     if (updateData.openingMessageButton !== undefined) currentMetadata.openingMessageButton = updateData.openingMessageButton;
+    if (updateData.triggerKeyword !== undefined) currentMetadata.triggerKeyword = updateData.triggerKeyword;
+    if (updateData.autoResponse !== undefined) currentMetadata.autoResponse = updateData.autoResponse;
 
     updateData.mediaUrl = JSON.stringify(currentMetadata);
 
@@ -2019,6 +2021,8 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     delete updateData.unfollowedResponse;
     delete updateData.publicReply;
     delete updateData.automationStatus;
+    delete updateData.triggerKeyword;
+    delete updateData.autoResponse;
 
     const updatedPost = await ScheduledPost.findOneAndUpdate(
       { _id: req.params.id, userId: { $in: sharedUserIds } },
