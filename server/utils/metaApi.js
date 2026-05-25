@@ -340,18 +340,30 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
     const publishUrl = `https://graph.facebook.com/v19.0/${igId}/media_publish?creation_id=${finalCreationId}&access_token=${accessToken}`;
     let publishRes;
     
-    try {
-      publishRes = await axios.post(publishUrl, null, { timeout: 6000 });
-    } catch (pubErr) {
-      if (pubErr.response && pubErr.response.data && pubErr.response.data.error) {
-        const errorMsg = pubErr.response.data.error.message?.toLowerCase() || '';
-        // 9007 = media not ready
-        if (pubErr.response.data.error.code === 9007 || errorMsg.includes('not ready') || errorMsg.includes('processing')) {
-          console.log(`⏳ Container ${finalCreationId} is not ready for publishing yet. Deferring to background worker.`);
-          return { status: 'IG_PROCESSING', containerId: finalCreationId };
+    let retryCount = 0;
+    const MAX_RETRIES = 5;
+    
+    while (retryCount < MAX_RETRIES) {
+      try {
+        publishRes = await axios.post(publishUrl, null, { timeout: 6000 });
+        break; // Success! Break out of the loop
+      } catch (pubErr) {
+        if (pubErr.response && pubErr.response.data && pubErr.response.data.error) {
+          const errorMsg = pubErr.response.data.error.message?.toLowerCase() || '';
+          // 9007 = media not ready
+          if (pubErr.response.data.error.code === 9007 || errorMsg.includes('not ready') || errorMsg.includes('processing')) {
+            retryCount++;
+            if (retryCount >= MAX_RETRIES) {
+              console.log(`⏳ Container ${finalCreationId} is not ready after ${MAX_RETRIES} attempts. Deferring to background worker.`);
+              return { status: 'IG_PROCESSING', containerId: finalCreationId };
+            }
+            console.log(`⏳ Container ${finalCreationId} not ready. Waiting 2.5s before retry ${retryCount}...`);
+            await new Promise(resolve => setTimeout(resolve, 2500));
+            continue;
+          }
         }
+        throw pubErr; // If it's a real publishing error, throw it
       }
-      throw pubErr; // If it's a real publishing error, throw it
     }
     console.log(`🚀 [Meta API] Successfully published container: ${finalCreationId}`);
     console.log(`✅ [Meta API] Published Successfully! Media ID: ${publishRes.data.id}`);

@@ -3354,12 +3354,12 @@ httpServer.listen(PORT, () => {
         console.error("❌ Error in initial startup local scheduler:", err.message);
       });
     });
-    // Then run every 60 seconds
+    // Then run every 15 seconds
     setInterval(() => {
       runSchedulingWorker().catch(err => {
         console.error("❌ Error in persistent local scheduler:", err.message);
       });
-    }, 60 * 1000);
+    }, 15 * 1000);
   }
 });
 
