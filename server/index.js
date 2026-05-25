@@ -1523,6 +1523,7 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
 
     const newCampaign = new Campaign({
       ...req.body,
+      status: req.body.status || 'Active',
       userId: req.user.userId,
       workspaceId: req.workspaceId
     });
@@ -2048,6 +2049,9 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
         let openMsgBtn = '';
         let btns = [];
 
+        let triggerKeyword = updatedPost.triggerKeyword;
+        let autoResponse = updatedPost.autoResponse;
+
         if (updatedPost.mediaUrl && updatedPost.mediaUrl.startsWith('{')) {
           try {
             const meta = JSON.parse(updatedPost.mediaUrl);
@@ -2059,10 +2063,12 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
             openMsgText = meta.openingMessageText || '';
             openMsgBtn = meta.openingMessageButton || '';
             btns = meta.buttons || [];
+            if (meta.triggerKeyword) triggerKeyword = meta.triggerKeyword;
+            if (meta.autoResponse) autoResponse = meta.autoResponse;
           } catch (e) {}
         }
 
-        const isPaused = (automationStatus === 'Paused') || !updatedPost.triggerKeyword || !updatedPost.autoResponse;
+        const isPaused = (automationStatus === 'Paused') || !triggerKeyword || !autoResponse;
 
         console.log(`🔄 Syncing Campaign for post IDs ${postIds}. Paused status: ${isPaused}`);
 
@@ -2073,8 +2079,8 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
             postId: igMediaId || updatedPost.postId || postIds[0],
             name: `Auto: ${(updatedPost.caption || '').substring(0, 20)}...`,
             isAnyPost: false,
-            trigger: updatedPost.triggerKeyword || '*', 
-            response: updatedPost.autoResponse || '',
+            trigger: triggerKeyword || '*', 
+            response: autoResponse || '',
             publicReplyText: pubReply,
             status: isPaused ? 'Paused' : 'Active',
             platform: 'instagram',
@@ -3066,6 +3072,9 @@ async function runSchedulingWorker() {
         let requireFollow = false, unfollowedResponse = '', publicReply = '', automationStatus = 'Active';
         let openingMessage = false, openingMessageText = '', openingMessageButton = '', buttons = [];
 
+        let triggerKeyword = post.triggerKeyword;
+        let autoResponse = post.autoResponse;
+
         if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
           try {
             const meta = JSON.parse(post.mediaUrl);
@@ -3077,16 +3086,18 @@ async function runSchedulingWorker() {
             openingMessageText = meta.openingMessageText || '';
             openingMessageButton = meta.openingMessageButton || '';
             buttons = meta.buttons || [];
+            if (meta.triggerKeyword) triggerKeyword = meta.triggerKeyword;
+            if (meta.autoResponse) autoResponse = meta.autoResponse;
           } catch (e) {}
         }
 
-        if (post.triggerKeyword && post.autoResponse && automationStatus === 'Active') {
+        if (triggerKeyword && autoResponse && automationStatus === 'Active') {
           const campaign = new Campaign({
             userId: post.userId,
             workspaceId: post.workspaceId,
             name: `Auto: ${post.caption.substring(0, 20)}...`,
-            trigger: post.triggerKeyword,
-            response: post.autoResponse,
+            trigger: triggerKeyword,
+            response: autoResponse,
             status: 'Active',
             isAnyPost: false,
             postId: publishedId,
