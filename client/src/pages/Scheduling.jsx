@@ -376,7 +376,7 @@ export default function Scheduling() {
     openingMessage: false,
     openingMessageText: "Hey there! I'm so happy you're here, thanks so much for your interest 😊\n\nClick below and I'll send you the link in just a sec 🚀",
     openingMessageButton: "click the button",
-    buttons: [{ text: 'click the button', url: '' }],
+    buttons: [],
     anyKeyword: false,
     publicReply: "Check your DMs! 🚀 I've sent you the info."
   });
@@ -1896,7 +1896,7 @@ export default function Scheduling() {
                       }}></div>
                     </div>
                     <span style={{ fontSize: '0.8rem', fontWeight: '800', color: createdPost.automationStatus === 'Active' ? '#10b981' : '#64748b' }}>
-                      Automation {createdPost.automationStatus === 'Active' ? 'Enabled' : 'Disabled'}
+                      Automation {createdPost.automationStatus === 'Active' ? 'Active' : 'Paused'}
                     </span>
                   </div>
                 </div>
