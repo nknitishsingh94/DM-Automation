@@ -2087,6 +2087,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
           { userId: { $in: sharedUserIds }, postId: { $in: postIds } },
           { 
             userId: updatedPost.userId || req.user.userId,
+            workspaceId: updatedPost.workspaceId || req.workspaceId,
             postId: igMediaId || updatedPost.postId || postIds[0],
             name: `Auto: ${(updatedPost.caption || '').substring(0, 20)}...`,
             isAnyPost: false,
