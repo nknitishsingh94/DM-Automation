@@ -240,6 +240,9 @@ export default function Scheduling() {
   // High-level States
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTabImage, setActiveTabImage] = useState('SCHEDULED');
+  const [activeTabReel, setActiveTabReel] = useState('SCHEDULED');
+  const [activeTabCarousel, setActiveTabCarousel] = useState('SCHEDULED');
   const [showCreate, setShowCreate] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [settings, setSettings] = useState(null);
