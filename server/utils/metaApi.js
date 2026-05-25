@@ -502,17 +502,19 @@ export const publishFacebookContent = async (userId, { type, mediaUrl, caption =
     
     // Fetch Official URL
     let liveUrl = `https://www.facebook.com/${publishedId}`;
+    let metaMediaUrl = null;
     try {
       const postInfoRes = await axios.get(`https://graph.facebook.com/v19.0/${publishedId}`, {
-        params: { fields: 'permalink_url', access_token: accessToken }
+        params: { fields: 'permalink_url,full_picture', access_token: accessToken }
       });
       liveUrl = postInfoRes.data.permalink_url || liveUrl;
+      metaMediaUrl = postInfoRes.data.full_picture || null;
       console.log(`🔗 [Meta API] FB Official URL Fetched: ${liveUrl}`);
     } catch (e) {
       console.warn(`⚠️ [Meta API] Could not fetch FB live URL info: ${e.message}`);
     }
 
-    return { id: publishedId, url: liveUrl, status: 'PUBLISHED' };
+    return { id: publishedId, url: liveUrl, media_url: metaMediaUrl, status: 'PUBLISHED' };
   } catch (err) {
     const metaError = err.response?.data?.error;
     const errorMessage = metaError ? `${metaError.message} (Code: ${metaError.code})` : err.message;
