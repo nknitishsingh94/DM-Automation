@@ -27,7 +27,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     }
 
     // ✅ Use 'me/messages' endpoint for all platforms
-    const url = `https://graph.facebook.com/v19.0/me/messages?access_token=${accessToken}`;
+    let url = `https://graph.facebook.com/v19.0/me/messages?access_token=${accessToken}`;
 
     // Ensure bare 'www.' links in text get 'https://' prefix for Desktop compatibility
     let safeText = text || '';
@@ -39,7 +39,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
 
     // Meta API STRICT RULE: Private replies (using comment_id) CANNOT contain buttons or templates.
     // If we try to send a button, it will throw an API error and drop the message.
-    const isPrivateReply = !!(platform === 'instagram' && commentId);
+    const isPrivateReply = !!commentId;
     let effectiveButtons = isPrivateReply ? [] : (buttons || []);
     let effectiveButtonText = isPrivateReply ? null : buttonText;
 
@@ -48,7 +48,11 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
       safeText = safeText + `\n\n👉 (Reply "Yes" to receive it!)`;
     }
 
-    if (effectiveButtons.length > 0) {
+    if (platform === 'facebook' && commentId) {
+      // Facebook private replies MUST be sent to /{comment_id}/private_replies
+      url = `https://graph.facebook.com/v19.0/${commentId}/private_replies?access_token=${accessToken}`;
+      payload = { message: safeText };
+    } else if (effectiveButtons.length > 0) {
       payload = {
         recipient,
         messaging_type: "RESPONSE",

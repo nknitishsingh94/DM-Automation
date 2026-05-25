@@ -2083,7 +2083,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
             response: autoResponse || '',
             publicReplyText: pubReply,
             status: isPaused ? 'Paused' : 'Active',
-            platform: 'instagram',
+            platform: updatedPost.platform || 'instagram',
             triggerOnComments: true,
             triggerOnDms: false,
             triggerOnStories: false,
