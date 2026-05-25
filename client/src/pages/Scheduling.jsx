@@ -4,7 +4,7 @@ import {
   Trash2, Globe, Lock, AlertCircle, Info, Sparkles, Volume2, VolumeX, Zap,
   ArrowLeft, Heart, MessageCircle, Home, Layout, Instagram, Facebook, Target, ArrowRight, Film, Copy,
   Save, Layers, UploadCloud, Eye, FileText, Loader2, Bookmark, MessageSquare, Key, Smartphone,
-  Link as LinkIcon, Pencil, MoreVertical, Settings, CheckCircle, Rocket
+  Link as LinkIcon, Pencil
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
@@ -240,9 +240,6 @@ export default function Scheduling() {
   // High-level States
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTabImage, setActiveTabImage] = useState('SCHEDULED');
-  const [activeTabReel, setActiveTabReel] = useState('SCHEDULED');
-  const [activeTabCarousel, setActiveTabCarousel] = useState('SCHEDULED');
   const [showCreate, setShowCreate] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [settings, setSettings] = useState(null);
@@ -887,231 +884,292 @@ export default function Scheduling() {
   if (loading) return <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading your schedule...</div>;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0b0a0f', padding: '40px', fontFamily: 'Inter, sans-serif' }}>
-      
-      {/* Header Section */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '40px', maxWidth: '1400px', margin: '0 auto 40px auto' }}>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', animation: 'fadeIn 0.4s ease-out' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', flexWrap: 'wrap', gap: '20px' }}>
         <div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: 'white', marginBottom: '8px', letterSpacing: '-0.5px', display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span style={{ color: '#ffffff' }}>SMART</span><span style={{ color: '#7c3aed' }}>10X</span>
-            <span style={{ color: '#4b5563', fontWeight: '300' }}>–</span>
-            <span style={{ color: '#fbbf24' }}>SCHEDULING LISTS</span>
+          <h1 style={{ fontSize: '2.4rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '8px', letterSpacing: '-0.5px' }}>
+            Content <span style={{ color: '#7c3aed' }}>Scheduler</span>
           </h1>
-          <p style={{ color: '#9ca3af', fontSize: '1.1rem', fontWeight: '500' }}>
-            All your content scheduled smartly, automatically and separately.
+          <p style={{ color: '#64748b', fontSize: '1.05rem', fontWeight: '500' }}>
+            Plan, Manage and Automate your Instagram content effortlessly.
           </p>
         </div>
-        
-        {/* Features Box */}
-        <div style={{ background: '#111111', border: '1px solid #1f2937', padding: '16px 24px', borderRadius: '16px', display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <div>
-            <h4 style={{ color: '#7c3aed', fontSize: '0.85rem', fontWeight: '800', letterSpacing: '1px', marginBottom: '8px', textTransform: 'uppercase' }}>FEATURES</h4>
-            <ul style={{ color: '#9ca3af', fontSize: '0.85rem', margin: 0, paddingLeft: '16px', lineHeight: '1.6' }}>
-              <li>Separate Lists for Each Content Type</li>
-              <li>Schedule – Processing – Posted Tracking</li>
-              <li>Real-time Status Update</li>
-              <li>Easy Management & Quick Actions</li>
-            </ul>
-          </div>
-          <Calendar size={48} color="#7c3aed" />
+        <button
+          onClick={() => setShowCreate(true)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', padding: '16px 28px', borderRadius: '16px',
+            fontWeight: '800', border: 'none', cursor: 'pointer', boxShadow: '0 10px 25px rgba(124,58,237,0.3)',
+            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)', fontSize: '0.95rem'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-3px)';
+            e.currentTarget.style.boxShadow = '0 15px 30px rgba(124,58,237,0.4)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 10px 25px rgba(124,58,237,0.3)';
+          }}
+        >
+          <Plus size={20} strokeWidth={2.5} />
+          <span>Schedule New Post</span>
+        </button>
+      </div>
+
+      {/* Timezone Switcher */}
+      <div style={{
+        background: 'white', padding: '16px 24px', borderRadius: '20px',
+        border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.01)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Globe size={18} color="#7c3aed" />
+          <span style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b' }}>Display Timezone:</span>
+        </div>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {[
+            { value: 'browser', label: '🌍 Local' },
+            { value: 'Asia/Kolkata', label: '🇮🇳 India' },
+            { value: 'America/New_York', label: '🇺🇸 New York' },
+            { value: 'America/Los_Angeles', label: '🇺🇸 Los Angeles' },
+            { value: 'Asia/Dubai', label: '🇦🇪 Dubai' },
+            { value: 'Asia/Singapore', label: '🇸🇬 Singapore' }
+          ].map(tz => (
+            <button
+              key={tz.value}
+              onClick={() => setDisplayTimezone(tz.value)}
+              style={{
+                padding: '8px 16px', borderRadius: '12px',
+                border: displayTimezone === tz.value ? '2px solid #7c3aed' : '1px solid #e2e8f0',
+                background: displayTimezone === tz.value ? '#f5f3ff' : 'white',
+                color: displayTimezone === tz.value ? '#7c3aed' : '#64748b',
+                fontWeight: '800', fontSize: '0.85rem', cursor: 'pointer', transition: 'all 0.2s'
+              }}
+            >
+              {tz.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Main 3 Columns */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', maxWidth: '1400px', margin: '0 auto' }}>
-        
-        {/* Helper function to render a column */}
-        {[
-          {
-            type: 'image', title: 'IMAGE POSTS', desc: 'Manage all your image posts in one place.',
-            icon: <ImageIcon size={24} color="white" />, color: '#7c3aed', bg: '#5b21b6',
-            activeTab: activeTabImage, setTab: setActiveTabImage
-          },
-          {
-            type: 'reel', title: 'REELS', desc: 'Manage all your reels in one place.',
-            icon: <Film size={24} color="white" />, color: '#f43f5e', bg: '#be123c',
-            activeTab: activeTabReel, setTab: setActiveTabReel
-          },
-          {
-            type: 'carousel', title: 'CAROUSELS', desc: 'Manage all your carousel posts in one place.',
-            icon: <Copy size={24} color="white" />, color: '#10b981', bg: '#047857',
-            activeTab: activeTabCarousel, setTab: setActiveTabCarousel
-          }
-        ].map(col => {
-          
-          // Filter posts for this column
-          const colPosts = posts.filter(p => {
-            let mediaData = { type: p.type || 'image' };
-            try { if (p.mediaUrl && p.mediaUrl.startsWith('{')) mediaData = JSON.parse(p.mediaUrl); } catch(e){}
-            return mediaData.type === col.type;
-          });
+      {posts.length === 0 ? (
+        <div style={{
+          textAlign: 'center',
+          padding: '100px 40px',
+          background: 'white',
+          borderRadius: '32px',
+          border: '2px dashed #e2e8f0',
+          animation: 'slideUp 0.6s ease-out'
+        }}>
+          <div style={{ width: '80px', height: '80px', background: '#f5f3ff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto' }}>
+            <Calendar size={40} color="#7c3aed" />
+          </div>
+          <h3 style={{ fontSize: '1.6rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '12px' }}>No content in the queue</h3>
+          <p style={{ color: '#64748b', marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px auto' }}>Plan your marketing strategy ahead of time. Schedule your first post now!</p>
+          <button
+            onClick={() => setShowCreate(true)}
+            style={{
+              background: '#0f172a', color: 'white', padding: '16px 40px', borderRadius: '16px',
+              fontWeight: '800', border: 'none', cursor: 'pointer', boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
+            }}
+          >
+            Start Scheduling
+          </button>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+          {posts.map(post => {
+            // Smart Media Parser
+            let mediaData = { type: post.type || 'image', mediaUrl: post.mediaUrl };
+            try {
+              if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
+                mediaData = JSON.parse(post.mediaUrl);
+              }
+            } catch (e) { }
 
-          // Count stats
-          const scheduledCount = colPosts.filter(p => p.status !== 'Posted' && p.status !== 'Processing' && p.status !== 'Failed').length;
-          const processingCount = colPosts.filter(p => p.status === 'Processing' || p.status === 'Retrying').length;
-          const postedCount = colPosts.filter(p => p.status === 'Posted').length;
+            // Prefer localMediaUrl or carouselItems[0] (which are raw image/video URLs) over mediaUrl (which might be a Facebook permalink/HTML page)
+            const rawMediaSource = mediaData.localMediaUrl || (mediaData.carouselItems && mediaData.carouselItems.length > 0 ? mediaData.carouselItems[0] : null) || mediaData.mediaUrl;
 
-          // Filter by active tab
-          const displayPosts = colPosts.filter(p => {
-            if (col.activeTab === 'SCHEDULED') return p.status !== 'Posted' && p.status !== 'Processing' && p.status !== 'Failed';
-            if (col.activeTab === 'PROCESSING') return p.status === 'Processing' || p.status === 'Retrying';
-            if (col.activeTab === 'POSTED') return p.status === 'Posted';
-            return true;
-          });
+            const finalMediaUrl = rawMediaSource && rawMediaSource.startsWith('http')
+              ? rawMediaSource
+              : (rawMediaSource ? `${API_BASE_URL}${rawMediaSource}` : '/placeholder-ig.png');
 
-          return (
-            <div key={col.type} style={{ background: '#111111', border: '1px solid #1f2937', borderRadius: '24px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              
-              {/* Column Header */}
-              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: col.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {col.icon}
-                </div>
-                <div>
-                  <h3 style={{ color: col.color, fontSize: '1.4rem', fontWeight: '900', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{col.title}</h3>
-                  <p style={{ color: '#9ca3af', fontSize: '0.9rem', margin: 0 }}>{col.desc}</p>
-                </div>
-              </div>
+            return (
+              <div
+                key={post._id}
+                className="scheduling-card"
+                style={{
+                  background: 'white', borderRadius: '24px', padding: '16px',
+                  border: '1.5px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
+                  transition: 'all 0.3s ease', display: 'flex', flexDirection: 'column', gap: '16px'
+                }}
+              >
+                {/* Image/Video Preview Header (takes full width of card) */}
+                <div style={{ width: '100%', height: '180px', borderRadius: '16px', background: '#f8fafc', overflow: 'hidden', position: 'relative' }}>
+                  {mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i)) ? (
+                    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                      <video src={finalMediaUrl} muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)' }}>
+                        <Film size={28} color="white" />
+                      </div>
+                    </div>
+                  ) : (
+                    <img src={finalMediaUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  )}
 
-              {/* Stats Row */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-                {[
-                  { label: 'SCHEDULED', count: scheduledCount, color: '#3b82f6' },
-                  { label: 'PROCESSING', count: processingCount, color: '#f59e0b' },
-                  { label: 'POSTED', count: postedCount, color: '#10b981' }
-                ].map(stat => (
-                  <div key={stat.label} style={{ background: '#0a0a0a', border: '1px solid #1f2937', borderRadius: '12px', padding: '12px', textAlign: 'center' }}>
-                    <div style={{ color: stat.color, fontSize: '1.5rem', fontWeight: '900', marginBottom: '4px' }}>{stat.count}</div>
-                    <div style={{ color: '#6b7280', fontSize: '0.65rem', fontWeight: '800', letterSpacing: '1px' }}>{stat.label}</div>
+                  {/* Overlays inside media preview */}
+                  <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                    {/* Status Badge */}
+                    <div style={{
+                      background: post.status === 'Posted' ? '#10b981' : (post.status === 'Failed' ? '#ef4444' : (post.status === 'Processing' ? '#3b82f6' : '#7c3aed')),
+                      color: 'white', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px',
+                      fontSize: '0.65rem', fontWeight: '800', boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                    }}>
+                      {(post.status === 'Retrying' || post.status === 'Processing') ? (
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', border: '1.5px solid white', borderTopColor: 'transparent', animation: 'spin 1s linear infinite' }} />
+                      ) : (
+                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'white' }} />
+                      )}
+                      <span>{post.status === 'Retrying' ? `Retrying` : (post.status || 'SCHEDULED')}</span>
+                    </div>
+
+                    {/* Platform Badge */}
+                    <div style={{
+                      fontSize: '0.65rem', fontWeight: '800', 
+                      color: 'white',
+                      background: (post.platform === 'facebook') ? '#1877f2' : '#e1306c',
+                      padding: '4px 8px', borderRadius: '8px',
+                      display: 'flex', alignItems: 'center', gap: '4px',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                    }}>
+                      {post.platform === 'facebook' ? <Facebook size={10} fill="white" /> : <Instagram size={10} />}
+                      <span>{post.platform === 'facebook' ? 'FACEBOOK' : 'INSTAGRAM'}</span>
+                    </div>
+
+                    {/* Post Type Badge */}
+                    <div style={{
+                      fontSize: '0.65rem', fontWeight: '800', color: '#1e293b', textTransform: 'uppercase',
+                      background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(4px)', padding: '4px 8px', borderRadius: '8px',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
+                    }}>
+                      {mediaData.type || 'IMAGE'}
+                    </div>
                   </div>
-                ))}
-              </div>
 
-              {/* Tabs */}
-              <div style={{ display: 'flex', background: '#0a0a0a', border: '1px solid #1f2937', borderRadius: '12px', overflow: 'hidden' }}>
-                {['SCHEDULED', 'PROCESSING', 'POSTED'].map(tab => {
-                  const isActive = col.activeTab === tab;
-                  return (
-                    <button
-                      key={tab}
-                      onClick={() => col.setTab(tab)}
-                      style={{
-                        flex: 1, padding: '12px 0', border: 'none', background: 'transparent',
-                        color: isActive ? 'white' : '#6b7280', fontWeight: '800', fontSize: '0.85rem', cursor: 'pointer',
-                        borderBottom: isActive ? `2px solid ${col.color}` : '2px solid transparent',
-                        transition: 'all 0.2s'
-                      }}
-                    >
-                      {tab.charAt(0) + tab.slice(1).toLowerCase()}
-                    </button>
-                  );
-                })}
-              </div>
+                  {/* Automation Toggle Overlay on Bottom-Right */}
+                  {(post.autoResponse || post.triggerKeyword) && (
+                    <div style={{ position: 'absolute', bottom: '10px', right: '10px' }}>
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const newStatus = post.automationStatus === 'Paused' ? 'Active' : 'Paused';
+                          toggleAutomationStatus(post._id, newStatus);
+                        }}
+                        style={{
+                          background: post.automationStatus === 'Paused' ? 'rgba(241, 245, 249, 0.95)' : 'rgba(16, 185, 129, 0.95)',
+                          color: post.automationStatus === 'Paused' ? '#64748b' : 'white',
+                          padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px',
+                          cursor: 'pointer', fontSize: '0.65rem', fontWeight: '800', boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                          backdropFilter: 'blur(4px)'
+                        }}
+                        title="Toggle Automation"
+                      >
+                        <Zap size={10} fill={post.automationStatus === 'Paused' ? 'none' : 'white'} />
+                        <span>{post.automationStatus === 'Paused' ? 'Paused' : 'Active'}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
-              {/* List of Posts */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', minHeight: '300px' }}>
-                {displayPosts.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '40px 20px', color: '#4b5563', fontSize: '0.9rem', fontWeight: '600' }}>
-                    No {col.activeTab.toLowerCase()} posts found.
-                  </div>
-                ) : (
-                  displayPosts.map(post => {
-                    let mediaData = { type: post.type || 'image', mediaUrl: post.mediaUrl };
-                    try { if (post.mediaUrl && post.mediaUrl.startsWith('{')) mediaData = JSON.parse(post.mediaUrl); } catch(e){}
-                    
-                    const rawMediaSource = mediaData.localMediaUrl || (mediaData.carouselItems && mediaData.carouselItems.length > 0 ? mediaData.carouselItems[0] : null) || mediaData.mediaUrl;
-                    const finalMediaUrl = rawMediaSource && rawMediaSource.startsWith('http') ? rawMediaSource : (rawMediaSource ? `${API_BASE_URL}${rawMediaSource}` : '/placeholder-ig.png');
+                {/* Details Section */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, minWidth: 0 }}>
+                  <h4 style={{
+                    fontSize: '0.9rem', fontWeight: '800', color: '#1e1b4b', margin: 0,
+                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden', height: '36px', lineHeight: '1.25'
+                  }}>
+                    {post.caption || 'No caption provided.'}
+                  </h4>
 
-                    // Status Badge Color
-                    let badgeColor = '#3b82f6';
-                    if (post.status === 'Processing' || post.status === 'Retrying') badgeColor = '#f59e0b';
-                    if (post.status === 'Posted') badgeColor = '#10b981';
-                    if (post.status === 'Failed') badgeColor = '#ef4444';
-
+                  {(() => {
                     const tzData = formatInTimezone(post.scheduledFor, displayTimezone);
-
                     return (
-                      <div key={post._id} style={{ display: 'flex', alignItems: 'center', gap: '16px', background: '#0a0a0a', border: '1px solid #1f2937', borderRadius: '12px', padding: '12px', position: 'relative' }}>
-                        
-                        {/* Thumbnail */}
-                        <div style={{ width: '56px', height: '56px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0, background: '#111' }}>
-                          {mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i)) ? (
-                            <video src={finalMediaUrl} muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          ) : (
-                            <img src={finalMediaUrl} alt="Thumbnail" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          )}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontSize: '0.75rem', fontWeight: '600', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Calendar size={12} />
+                          <span>{tzData.date}</span>
                         </div>
-
-                        {/* Title & Time */}
-                        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                          <h4 style={{ color: 'white', fontSize: '0.9rem', fontWeight: '700', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {post.caption || 'No caption'}
-                          </h4>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#9ca3af', fontSize: '0.75rem' }}>
-                            <Calendar size={12} />
-                            <span>{tzData.date}, {tzData.time}</span>
-                          </div>
+                        <span>•</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Clock size={12} />
+                          <span>{tzData.time}</span>
                         </div>
-
-                        {/* Status Badge */}
-                        <div style={{ color: badgeColor, fontSize: '0.7rem', fontWeight: '900', letterSpacing: '0.5px', textTransform: 'uppercase', background: `${badgeColor}15`, padding: '4px 8px', borderRadius: '6px' }}>
-                          {post.status || 'SCHEDULED'}
-                        </div>
-
-                        {/* Actions Menu */}
-                        <div 
-                          style={{ color: '#6b7280', cursor: 'pointer', padding: '4px' }}
-                          onClick={() => {
-                            if (window.confirm("Are you sure you want to delete this post?")) {
-                              deletePost(post._id);
-                            }
-                          }}
-                        >
-                          <Trash2 size={16} color="#ef4444" />
-                        </div>
+                        {tzData.abbr && (
+                          <>
+                            <span>•</span>
+                            <span style={{ color: '#7c3aed', background: '#f5f3ff', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '800' }}>
+                              {tzData.abbr}
+                            </span>
+                          </>
+                        )}
                       </div>
                     );
-                  })
-                )}
-              </div>
+                  })()}
+                </div>
 
-            </div>
-          );
-        })}
-      </div>
-      
-      {/* Footer Info Box */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '20px', maxWidth: '1400px', margin: '40px auto 0 auto', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center', background: '#111111', padding: '20px', borderRadius: '16px', flex: 1, border: '1px solid #1f2937', minWidth: '250px' }}>
-          <Calendar size={40} color="#3b82f6" />
-          <div>
-            <h4 style={{ color: '#3b82f6', margin: '0 0 4px 0', fontSize: '1rem', fontWeight: '800' }}>SCHEDULED</h4>
-            <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.85rem' }}>Content is scheduled and will be posted at the set time.</p>
-          </div>
+                {/* Action Buttons */}
+                <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', borderTop: '1px solid #f1f5f9', paddingTop: '12px' }}>
+                  <button
+                    onClick={() => {
+                      let loadedButtons = mediaData.buttons || [];
+                      if (loadedButtons.length === 1 && loadedButtons[0].text === 'click the button' && loadedButtons[0].url === '') {
+                        loadedButtons = [];
+                      }
+                      setCreatedPost({
+                        ...post,
+                        ...mediaData,
+                        buttons: loadedButtons,
+                        anyKeyword: post.triggerKeyword === '*',
+                        automationStatus: post.automationStatus || 'Active'
+                      });
+                      setShowAdvanced(true);
+                    }}
+                    style={{
+                      flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                      padding: '10px 14px', borderRadius: '12px', border: '1px solid #f5f3ff',
+                      background: '#f5f3ff', color: '#7c3aed', fontWeight: '800', cursor: 'pointer',
+                      transition: 'all 0.2s', fontSize: '0.8rem'
+                    }}
+                  >
+                    <Zap size={14} /> <span>Automation</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setDeleteConfirmId(post._id);
+                    }}
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      width: '38px', height: '38px', borderRadius: '12px', border: '1px solid #fee2e2',
+                      background: 'white', color: '#ef4444', cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'white'}
+                    title="Cancel/Delete Post"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center', background: '#111111', padding: '20px', borderRadius: '16px', flex: 1, border: '1px solid #1f2937', minWidth: '250px' }}>
-          <Settings size={40} color="#f59e0b" />
-          <div>
-            <h4 style={{ color: '#f59e0b', margin: '0 0 4px 0', fontSize: '1rem', fontWeight: '800' }}>PROCESSING</h4>
-            <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.85rem' }}>Content is being processed and will be posted soon.</p>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center', background: '#111111', padding: '20px', borderRadius: '16px', flex: 1, border: '1px solid #1f2937', minWidth: '250px' }}>
-          <CheckCircle size={40} color="#10b981" />
-          <div>
-            <h4 style={{ color: '#10b981', margin: '0 0 4px 0', fontSize: '1rem', fontWeight: '800' }}>POSTED</h4>
-            <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.85rem' }}>Content has been successfully posted.</p>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center', background: '#111111', padding: '20px', borderRadius: '16px', flex: 1, border: '1px solid #1f2937', minWidth: '250px' }}>
-          <Rocket size={40} color="#7c3aed" />
-          <div>
-            <h4 style={{ color: '#7c3aed', margin: '0 0 4px 0', fontSize: '1rem', fontWeight: '800' }}>Smart Scheduling.</h4>
-            <p style={{ color: '#9ca3af', margin: 0, fontSize: '0.85rem' }}>Better Engagement.<br/>More Growth.</p>
-          </div>
-        </div>
-      </div>
-      
+      )}
 
       {/* --- CREATE MODAL (NEW) --- */}
       {showCreate && (
