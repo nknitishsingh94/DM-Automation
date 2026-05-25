@@ -217,14 +217,18 @@ router.post('/google_custom', async (req, res) => {
 router.post('/facebook', async (req, res) => {
   try {
     const { accessToken, userId, mode } = req.body;
-    if (!accessToken || !userId) return res.status(400).json({ message: 'Access token and userId are required.' });
+    if (!accessToken) return res.status(400).json({ message: 'Access token is required.' });
 
     const fbRes = await fetch(`https://graph.facebook.com/me?access_token=${accessToken}&fields=id,name,email,picture`);
     const fbData = await fbRes.json();
 
-    // SECURITY: Verify that the token belongs to the claimed userId
-    if (!fbData.id || fbData.id !== userId) {
+    if (!fbData.id) {
       return res.status(400).json({ message: 'Invalid Facebook token.' });
+    }
+    
+    // SECURITY: If frontend provided userId, verify it matches
+    if (userId && fbData.id !== userId) {
+      return res.status(400).json({ message: 'Invalid Facebook token mismatch.' });
     }
 
     const email = fbData.email || `${fbData.id}@facebook.com`;

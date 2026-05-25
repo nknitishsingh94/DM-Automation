@@ -173,15 +173,23 @@ export default function Signup() {
     }
   };
 
-  const handleFacebookLogin = () => {
-    if (!window.FB) {
-      setError('Facebook SDK not loaded. Please check your internet or App ID.');
-      return;
+  useEffect(() => {
+    // Process Facebook OAuth Redirect Token
+    if (window.location.hash.includes('access_token')) {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      if (accessToken) {
+        window.history.replaceState(null, null, window.location.pathname);
+        processFacebookLogin({ accessToken });
+      }
     }
-    window.FB.login((response) => {
-      if (response.authResponse) processFacebookLogin(response.authResponse);
-      else setError('Facebook login was cancelled or failed. If popup was blocked, please allow popups.');
-    }, { scope: 'public_profile,email' });
+  }, []);
+
+  const handleFacebookLogin = () => {
+    const clientId = '1512161870699295';
+    const redirectUri = encodeURIComponent(window.location.origin + '/signup');
+    const authUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=public_profile,email&response_type=token`;
+    window.location.href = authUrl;
   };
 
 
