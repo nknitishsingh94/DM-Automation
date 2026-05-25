@@ -988,9 +988,12 @@ export default function Scheduling() {
               }
             } catch (e) { }
 
-            const finalMediaUrl = mediaData.mediaUrl && mediaData.mediaUrl.startsWith('http')
-              ? mediaData.mediaUrl
-              : (mediaData.mediaUrl ? `${API_BASE_URL}${mediaData.mediaUrl}` : '/placeholder-ig.png');
+            // Prefer localMediaUrl or carouselItems[0] (which are raw image/video URLs) over mediaUrl (which might be a Facebook permalink/HTML page)
+            const rawMediaSource = mediaData.localMediaUrl || (mediaData.carouselItems && mediaData.carouselItems.length > 0 ? mediaData.carouselItems[0] : null) || mediaData.mediaUrl;
+
+            const finalMediaUrl = rawMediaSource && rawMediaSource.startsWith('http')
+              ? rawMediaSource
+              : (rawMediaSource ? `${API_BASE_URL}${rawMediaSource}` : '/placeholder-ig.png');
 
             return (
               <div
