@@ -1121,6 +1121,7 @@ export default function Scheduling() {
                     onClick={() => {
                       setCreatedPost({
                         ...post,
+                        ...mediaData,
                         anyKeyword: post.triggerKeyword === '*',
                         automationStatus: post.automationStatus || 'Active'
                       });
