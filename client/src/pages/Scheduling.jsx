@@ -924,7 +924,7 @@ export default function Scheduling() {
         {[
           {
             type: 'image', title: 'IMAGE POSTS', desc: 'Manage all your image posts in one place.',
-            icon: <Image size={24} color="white" />, color: '#7c3aed', bg: '#5b21b6',
+            icon: <ImageIcon size={24} color="white" />, color: '#7c3aed', bg: '#5b21b6',
             activeTab: activeTabImage, setTab: setActiveTabImage
           },
           {
