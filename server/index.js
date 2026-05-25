@@ -1967,6 +1967,10 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
 
     const updateData = { ...req.body };
     
+    if (updateData.response !== undefined && updateData.autoResponse === undefined) {
+      updateData.autoResponse = updateData.response;
+    }
+    
     // 1. Handle Schema-Safe Metadata (Serialize all advanced options into mediaUrl JSON)
     let currentMetadata = {};
     try {
@@ -2027,16 +2031,19 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     // 2. Sync to Active Campaign if already posted (Defensive)
     try {
       let igMediaId = null;
+      let fbPostId = null;
       if (updatedPost.mediaUrl && updatedPost.mediaUrl.startsWith('{')) {
         try {
           const meta = JSON.parse(updatedPost.mediaUrl);
           igMediaId = meta.instagramMediaId;
+          fbPostId = meta.facebookPostId;
         } catch (e) {}
       }
 
       const postIds = [];
       if (updatedPost.postId) postIds.push(updatedPost.postId);
       if (igMediaId) postIds.push(igMediaId);
+      if (fbPostId) postIds.push(fbPostId);
 
       if (postIds.length > 0) {
         // Parse current metadata to get automationStatus and advanced options
