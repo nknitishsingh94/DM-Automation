@@ -118,9 +118,12 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     } else {
       payload = {
         recipient,
-        messaging_type: "RESPONSE",
         message: { text: safeText }
       };
+      
+      if (!isPrivateReply) {
+        payload.messaging_type = "RESPONSE";
+      }
     }
 
     if (payload) {
