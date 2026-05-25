@@ -883,6 +883,15 @@ export default function Scheduling() {
 
   if (loading) return <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading your schedule...</div>;
 
+  const isFbConnected = settings?.isFacebookConnected || (!!settings?.facebookAccessToken && !!settings?.facebookPageId);
+  const isIgConnected = settings?.isAccountConnected || (!!settings?.instagramAccessToken && !!settings?.businessAccountId);
+  
+  const visiblePosts = posts.filter(post => {
+    if (post.platform === 'facebook') return isFbConnected;
+    if (post.platform === 'instagram' || !post.platform) return isIgConnected;
+    return true;
+  });
+
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', animation: 'fadeIn 0.4s ease-out' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', flexWrap: 'wrap', gap: '20px' }}>
@@ -953,7 +962,7 @@ export default function Scheduling() {
         </div>
       </div>
 
-      {posts.length === 0 ? (
+      {visiblePosts.length === 0 ? (
         <div style={{
           textAlign: 'center',
           padding: '100px 40px',
@@ -979,7 +988,7 @@ export default function Scheduling() {
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' }}>
-          {posts.map(post => {
+          {visiblePosts.map(post => {
             // Smart Media Parser
             let mediaData = { type: post.type || 'image', mediaUrl: post.mediaUrl };
             try {
