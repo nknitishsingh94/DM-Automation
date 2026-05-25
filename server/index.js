@@ -1335,12 +1335,13 @@ app.post('/api/upload', verifyToken, upload.single('media'), async (req, res) =>
     
     let fileBuffer = req.file.buffer;
 
-    // Check user plan to determine if we should apply watermark
-    const user = await User.findById(req.user.userId);
-    const isFreePlan = !user || !user.plan || user.plan.toLowerCase() === 'free';
+    // Apply watermark to ALL users for now (as requested by user)
+    // const user = await User.findById(req.user.userId);
+    // const isFreePlan = !user || !user.plan || user.plan.toLowerCase() === 'free';
+    const applyWatermark = true;
 
-    // Apply watermark ONLY if user is Free and it's an image
-    if (isFreePlan && req.file.mimetype.startsWith('image/')) {
+    // Apply watermark if it's an image
+    if (applyWatermark && req.file.mimetype.startsWith('image/')) {
       try {
         const sharp = (await import('sharp')).default;
         
