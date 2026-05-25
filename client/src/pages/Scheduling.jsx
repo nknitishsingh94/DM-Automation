@@ -4,7 +4,7 @@ import {
   Trash2, Globe, Lock, AlertCircle, Info, Sparkles, Volume2, VolumeX, Zap,
   ArrowLeft, Heart, MessageCircle, Home, Layout, Instagram, Facebook, Target, ArrowRight, Film, Copy,
   Save, Layers, UploadCloud, Eye, FileText, Loader2, Bookmark, MessageSquare, Key, Smartphone,
-  Link as LinkIcon, Pencil
+  Link as LinkIcon, Pencil, MoreVertical, Settings, CheckCircle, Rocket
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
