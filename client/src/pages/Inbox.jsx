@@ -510,11 +510,11 @@ export default function Inbox() {
         </div>
         
         <div className="chat-messages">
-          {messages.length === 0 ? (
+          {messages.filter(m => (m.platform || 'instagram') === selectedPlatform).length === 0 ? (
             <div style={{ textAlign: 'center', color: '#666', marginTop: '40px', fontWeight: '500' }}>
               No messages here. Type below to start!
             </div>
-          ) : messages.map((msg, index) => {
+          ) : messages.filter(m => (m.platform || 'instagram') === selectedPlatform).map((msg, index) => {
             const isSentByMe = msg.sender === 'admin' || msg.sender === 'AI Agent';
             return (
               <div key={msg._id || index} 

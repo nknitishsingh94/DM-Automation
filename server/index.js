@@ -2673,6 +2673,24 @@ app.post('/api/settings', verifyToken, async (req, res) => {
     delete data.threadsPageId;
     delete data.connectedThreadsName;
 
+    const oldSettings = await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
+    const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
+
+    if (platform === 'instagram' && data.isAccountConnected && oldSettings) {
+      if (oldSettings.businessAccountId && oldSettings.businessAccountId !== data.businessAccountId) {
+        console.log(`🧹 Instagram account changed from ${oldSettings.businessAccountId} to ${data.businessAccountId}. Clearing old IG history.`);
+        await Message.deleteMany({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId, platform: 'instagram' });
+        await ChatMessage.deleteMany({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId });
+      }
+    }
+
+    if (platform === 'facebook' && data.isFacebookConnected && oldSettings) {
+      if (oldSettings.facebookPageId && oldSettings.facebookPageId !== data.facebookPageId) {
+        console.log(`🧹 Facebook account changed from ${oldSettings.facebookPageId} to ${data.facebookPageId}. Clearing old FB history.`);
+        await Message.deleteMany({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId, platform: 'facebook' });
+      }
+    }
+
     const settings = await Settings.findOneAndUpdate(
       { userId: req.user.userId, workspaceId: req.workspaceId },
       { ...data, workspaceId: req.workspaceId },
