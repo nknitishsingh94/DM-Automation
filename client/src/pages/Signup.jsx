@@ -179,12 +179,9 @@ export default function Signup() {
       return;
     }
     window.FB.login((response) => {
-      if (response.authResponse) {
-        processFacebookLogin(response.authResponse);
-      } else {
-        setError('Facebook login was cancelled or failed.');
-      }
-    }, { scope: 'openid,email' });
+      if (response.authResponse) processFacebookLogin(response.authResponse);
+      else setError('Facebook login was cancelled or failed. If popup was blocked, please allow popups.');
+    }, { scope: 'public_profile,email' });
   };
 
 

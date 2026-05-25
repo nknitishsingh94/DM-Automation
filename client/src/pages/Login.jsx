@@ -508,8 +508,8 @@ export default function Login() {
     }
     window.FB.login((response) => {
       if (response.authResponse) processFacebookLogin(response.authResponse);
-      else setError('Facebook login was cancelled or failed.');
-    }, { scope: 'openid,email' });
+      else setError('Facebook login was cancelled or failed. If popup was blocked, please allow popups.');
+    }, { scope: 'public_profile,email' });
   };
 
   const processFacebookLogin = async (authResponse) => {
