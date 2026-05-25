@@ -1333,8 +1333,47 @@ app.post('/api/upload', verifyToken, upload.single('media'), async (req, res) =>
     const { uploadToSupabase } = await import('./utils/supabase.js');
     const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(req.file.originalname)}`;
     
+    let fileBuffer = req.file.buffer;
+
+    // Check user plan to determine if we should apply watermark
+    const user = await User.findById(req.user.userId);
+    const isFreePlan = !user || !user.plan || user.plan.toLowerCase() === 'free';
+
+    // Apply watermark ONLY if user is Free and it's an image
+    if (isFreePlan && req.file.mimetype.startsWith('image/')) {
+      try {
+        const sharp = (await import('sharp')).default;
+        
+        // Exact styling based on the user's screenshot
+        const watermarkSvg = `
+          <svg width="340" height="70" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="340" height="70" rx="35" fill="#0f172a" fill-opacity="0.9" stroke="#3b82f6" stroke-width="2"/>
+            <circle cx="35" cy="35" r="24" fill="#ffffff" />
+            <text x="35" y="42" font-family="Arial, sans-serif" font-size="20" font-weight="900" fill="#4f46e5" text-anchor="middle">10X</text>
+            <text x="75" y="32" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">Powered by SMART10X</text>
+            <text x="75" y="52" font-family="Arial, sans-serif" font-size="14" fill="#cbd5e1">www.smart10x.in</text>
+          </svg>
+        `;
+
+        // We resize the image slightly if it's too small for the watermark, 
+        // but typically social media images are large enough (1080x1080).
+        fileBuffer = await sharp(req.file.buffer)
+          .composite([
+            {
+              input: Buffer.from(watermarkSvg),
+              gravity: 'southeast'
+            }
+          ])
+          .toBuffer();
+          
+        console.log(`🖌️ Applied SMART10X Watermark for Free user ${req.user.userId}`);
+      } catch (watermarkErr) {
+        console.error('⚠️ Watermark application failed (uploading original image):', watermarkErr.message);
+      }
+    }
+    
     console.log(`📤 Uploading file to Supabase Storage: ${uniqueName}...`);
-    const publicUrl = await uploadToSupabase(req.file.buffer, uniqueName, req.file.mimetype);
+    const publicUrl = await uploadToSupabase(fileBuffer, uniqueName, req.file.mimetype);
     
     if (!publicUrl) {
       throw new Error("Failed to upload file to Supabase Storage");
