@@ -3136,7 +3136,8 @@ async function runSchedulingWorker() {
           try { updatedMetaObj = JSON.parse(post.mediaUrl); } catch(e){}
         }
 
-        updatedMetaObj.mediaUrl = liveUrl || finalMedia;
+        updatedMetaObj.mediaUrl = publishResult.media_url || finalMedia;
+        updatedMetaObj.liveUrl = liveUrl || '';
         updatedMetaObj.localMediaUrl = finalMedia;
         updatedMetaObj.type = finalType;
         if (post.platform === 'facebook') {

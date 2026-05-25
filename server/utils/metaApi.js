@@ -377,19 +377,21 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
     
     // Fetch Official URL
     let liveUrl = mediaUrl;
+    let metaMediaUrl = null;
     try {
       const mediaInfoRes = await axios.get(`https://graph.facebook.com/v19.0/${publishRes.data.id}`, {
         params: { fields: 'media_url,permalink,thumbnail_url', access_token: accessToken },
         timeout: 4000
       });
-      if (mediaInfoRes.data && mediaInfoRes.data.permalink) {
-        liveUrl = mediaInfoRes.data.permalink;
+      if (mediaInfoRes.data) {
+        if (mediaInfoRes.data.permalink) liveUrl = mediaInfoRes.data.permalink;
+        if (mediaInfoRes.data.media_url) metaMediaUrl = mediaInfoRes.data.media_url;
       }
     } catch (e) {
       // Silently continue. The post is already published.
     }
 
-    return { id: publishRes.data.id, url: liveUrl, status: 'PUBLISHED' };
+    return { id: publishRes.data.id, url: liveUrl, media_url: metaMediaUrl, status: 'PUBLISHED' };
   } catch (err) {
     const metaError = err.response?.data?.error;
     const errorMessage = metaError ? `${metaError.message} (Code: ${metaError.code})` : err.message;
