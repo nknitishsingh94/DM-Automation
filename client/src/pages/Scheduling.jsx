@@ -978,7 +978,7 @@ export default function Scheduling() {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' }}>
           {posts.map(post => {
             // Smart Media Parser
             let mediaData = { type: post.type || 'image', mediaUrl: post.mediaUrl };
