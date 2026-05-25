@@ -1119,9 +1119,14 @@ export default function Scheduling() {
                 <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', borderTop: '1px solid #f1f5f9', paddingTop: '12px' }}>
                   <button
                     onClick={() => {
+                      let loadedButtons = mediaData.buttons || [];
+                      if (loadedButtons.length === 1 && loadedButtons[0].text === 'click the button' && loadedButtons[0].url === '') {
+                        loadedButtons = [];
+                      }
                       setCreatedPost({
                         ...post,
                         ...mediaData,
+                        buttons: loadedButtons,
                         anyKeyword: post.triggerKeyword === '*',
                         automationStatus: post.automationStatus || 'Active'
                       });
