@@ -64,6 +64,7 @@ const PlatformDashboard = lazyRetry(() => import('./pages/PlatformDashboard'));
 const Onboarding = lazyRetry(() => import('./pages/Onboarding'));
 const UniversalTriggersFeature = lazyRetry(() => import('./pages/UniversalTriggersFeature'));
 const ScheduleFeature = lazyRetry(() => import('./pages/ScheduleFeature'));
+const AllReviews = lazyRetry(() => import('./pages/AllReviews'));
 const Scheduling = lazyRetry(() => import('./pages/Scheduling'));
 const Contact = lazyRetry(() => import('./pages/Contact'));
 
@@ -645,7 +646,7 @@ function MainLayout() {
   const { user } = useAuth();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const isPublic = ['/', '/public-home', '/login', '/signup', '/help', '/about', '/resources', '/blog'].includes(location.pathname) || location.pathname.startsWith('/blog/');
+  const isPublic = ['/', '/public-home', '/login', '/signup', '/help', '/about', '/resources', '/blog', '/reviews'].includes(location.pathname) || location.pathname.startsWith('/blog/');
   const isEditor = ['/dm-automation-editor', '/automation-editor'].includes(location.pathname);
   const hideSidebar = isPublic || location.pathname === '/onboarding' || isEditor;
   const hideTopBar = hideSidebar || isEditor;
@@ -702,6 +703,7 @@ function MainLayout() {
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/cookies" element={<Cookies />} />
+              <Route path="/reviews" element={<AllReviews />} />
               <Route path="/features/universal-triggers" element={<UniversalTriggersFeature />} />
               <Route path="/features/scheduling" element={<ScheduleFeature />} />
               <Route path="/scheduling" element={<ProtectedRoute><Scheduling /></ProtectedRoute>} />

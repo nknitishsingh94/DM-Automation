@@ -50,7 +50,7 @@ import formRoutes from './routes/forms.js';
 import oauthRoutes from './routes/oauth.js';
 import supportRoutes from './routes/support.js';
 import { generateAIResponse } from './utils/aiHandler.js';
-import { supabase } from './utils/supabase.js';
+import { supabase, convertObjectIDToUUID } from './utils/supabase.js';
 import Workspace from './models/Workspace.js';
 
 // --- GLOBAL CACHE (Nitro Speed) ---
@@ -3318,6 +3318,12 @@ const DEFAULT_REVIEWS = [
 ];
 
 app.get('/api/reviews', async (req, res) => {
+  // Disable all caching so new reviews always appear immediately
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.set('Surrogate-Control', 'no-store');
+  
   try {
     const reviews = await Review.find({}).sort({ createdAt: -1 });
     
@@ -3332,34 +3338,88 @@ app.get('/api/reviews', async (req, res) => {
     
     res.json(allReviews);
   } catch (err) {
-    console.error("Error reading reviews from Supabase:", err.message);
+    console.error("Error reading reviews from DB:", err.message);
     res.json(DEFAULT_REVIEWS);
   }
 });
 
-app.post('/api/reviews', async (req, res) => {
+app.post('/api/reviews', verifyToken, async (req, res) => {
   try {
     const { name, handle, role, rating, text, platform, avatarUrl } = req.body;
     if (!name || !text) {
       return res.status(400).json({ error: 'Name and review text are required.' });
     }
 
-    const newReview = new Review({
-      name: xss(name),
-      handle: handle ? xss(handle) : '',
-      role: role ? xss(role) : 'Verified Creator',
-      rating: Number(rating) || 5,
-      text: xss(text),
-      platform: platform || 'instagram',
-      avatarUrl: avatarUrl ? xss(avatarUrl) : null,
-      verified: true
-    });
+    const uuidUserId = convertObjectIDToUUID(req.user.userId);
 
-    await newReview.save();
-    res.status(201).json(newReview);
+    // Enforce 1 review per person
+    // Check 1: By ID (user's unique UUID)
+    const { data: existingReview, error: checkError } = await supabase
+      .from('reviews')
+      .select('id')
+      .eq('id', uuidUserId)
+      .maybeSingle();
+
+    if (checkError) {
+      console.warn("⚠️ Error checking existing review by ID:", checkError.message);
+    }
+
+    if (existingReview) {
+      return res.status(400).json({ error: 'You have already submitted a review.' });
+    }
+
+    // Check 2: By Name (case-insensitive)
+    const { data: existingByName, error: checkNameError } = await supabase
+      .from('reviews')
+      .select('id')
+      .ilike('name', name.trim())
+      .limit(1);
+
+    if (checkNameError) {
+      console.warn("⚠️ Error checking existing review by name:", checkNameError.message);
+    }
+
+    if (existingByName && existingByName.length > 0) {
+      return res.status(400).json({ error: 'A review with this name has already been submitted.' });
+    }
+
+    // Insert new review with user ID as primary key to prevent duplicate entries at DB level
+    const { data: inserted, error: insertError } = await supabase
+      .from('reviews')
+      .insert({
+        id: uuidUserId,
+        name: xss(name),
+        handle: handle ? xss(handle) : '',
+        role: role ? xss(role) : 'Verified Creator',
+        rating: Number(rating) || 5,
+        text: xss(text),
+        platform: platform || 'instagram',
+        avatarUrl: avatarUrl ? xss(avatarUrl) : null,
+        verified: true,
+        createdAt: new Date().toISOString()
+      })
+      .select();
+
+    if (insertError) {
+      throw insertError;
+    }
+
+    const savedReview = inserted && inserted.length > 0 ? inserted[0] : {
+      id: uuidUserId,
+      name,
+      handle,
+      role,
+      rating,
+      text,
+      platform,
+      avatarUrl,
+      verified: true
+    };
+
+    res.status(201).json(savedReview);
   } catch (err) {
     console.error("Error saving review to Supabase:", err.message);
-    res.status(500).json({ error: 'Failed to save review to database' });
+    res.status(500).json({ error: 'Failed to save review to database: ' + err.message });
   }
 });
 

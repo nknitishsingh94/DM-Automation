@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sparkles, Star, MessageSquare, Image as ImageIcon, Instagram, Facebook, MessageCircle } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import { API_BASE_URL } from '../config';

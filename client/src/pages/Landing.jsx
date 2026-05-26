@@ -409,15 +409,15 @@ export default function Landing() {
                 <div className="stat-label">Response Accuracy</div>
               </div>
             </div>
-            <button className="write-review-trigger-btn" onClick={() => setModalOpen(true)}>
+            <Link className="write-review-trigger-btn" to="/write-review" style={{ textDecoration: 'none' }}>
               <MessageSquare size={18} /> Write a Review
-            </button>
+            </Link>
           </div>
 
           {/* Reviews Grid */}
           <div className="reviews-grid">
-            {reviews.map((review) => (
-              <div key={review.id} className="review-card">
+            {reviews.slice(0, 4).map((review) => (
+              <div key={review.id || review._id || Math.random()} className="review-card">
                 <div className="review-card-top">
                   <div className="review-stars">
                     {[...Array(5)].map((_, i) => (
@@ -462,6 +462,42 @@ export default function Landing() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* See All Reviews Button */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '40px' }}>
+            <Link 
+              to="/reviews" 
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '14px 32px',
+                borderRadius: '50px',
+                border: '2px solid #7c3aed',
+                color: '#7c3aed',
+                fontWeight: '800',
+                fontSize: '1rem',
+                background: 'transparent',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.05)',
+                textDecoration: 'none'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(135deg, #7c3aed, #6d28d9)';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(124, 58, 237, 0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.color = '#7c3aed';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.05)';
+              }}
+            >
+              See all Reviews &rarr;
+            </Link>
           </div>
         </div>
       </section>
