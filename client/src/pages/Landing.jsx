@@ -102,7 +102,12 @@ export default function Landing() {
     // Fetch persistent reviews from backend
     const fetchReviews = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/reviews`);
+        const response = await fetch(`${API_BASE_URL}/api/reviews?t=${new Date().getTime()}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
         if (response.ok) {
           const data = await response.json();
           if (Array.isArray(data)) {

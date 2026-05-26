@@ -3320,10 +3320,17 @@ const DEFAULT_REVIEWS = [
 app.get('/api/reviews', async (req, res) => {
   try {
     const reviews = await Review.find({}).sort({ createdAt: -1 });
+    
+    // Merge database reviews with the default marketing reviews
+    let allReviews = [];
     if (reviews && reviews.length > 0) {
-      return res.json(reviews);
+      allReviews = [...reviews];
     }
-    res.json(DEFAULT_REVIEWS);
+    
+    // Add default reviews at the end
+    allReviews = [...allReviews, ...DEFAULT_REVIEWS];
+    
+    res.json(allReviews);
   } catch (err) {
     console.error("Error reading reviews from Supabase:", err.message);
     res.json(DEFAULT_REVIEWS);
