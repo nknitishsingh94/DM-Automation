@@ -644,7 +644,7 @@ function MainLayout() {
   const { user } = useAuth();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const isPublic = ['/', '/login', '/signup', '/help', '/about', '/resources', '/blog'].includes(location.pathname) || location.pathname.startsWith('/blog/');
+  const isPublic = ['/', '/public-home', '/login', '/signup', '/help', '/about', '/resources', '/blog'].includes(location.pathname) || location.pathname.startsWith('/blog/');
   const isEditor = ['/dm-automation-editor', '/automation-editor'].includes(location.pathname);
   const hideSidebar = isPublic || location.pathname === '/onboarding' || isEditor;
   const hideTopBar = hideSidebar || isEditor;
