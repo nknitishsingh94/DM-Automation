@@ -1325,6 +1325,27 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/oauth', oauthRoutes);
 app.use('/api/forms', formRoutes);
 
+// --- AVATAR UPLOAD ROUTE ---
+app.post('/api/upload/avatar', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+    const { uploadToSupabase } = await import('./utils/supabase.js');
+    const uniqueName = `avatar-${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(req.file.originalname)}`;
+    
+    const publicUrl = await uploadToSupabase(req.file.buffer, uniqueName, req.file.mimetype);
+    
+    if (!publicUrl) {
+      return res.status(500).json({ error: 'Failed to upload avatar to storage' });
+    }
+    
+    res.json({ url: publicUrl });
+  } catch (err) {
+    console.error('Avatar upload error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // --- MEDIA UPLOAD ROUTE ---
 app.post('/api/upload', verifyToken, upload.single('media'), async (req, res) => {
   try {
