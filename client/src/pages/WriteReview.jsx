@@ -9,8 +9,32 @@ const WriteReview = () => {
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
 
   useEffect(() => {
+    const checkReviewStatus = async () => {
+      try {
+        const token = localStorage.getItem('insta_agent_token');
+        if (!token) return;
+
+        const response = await fetch(`${API_BASE_URL}/api/reviews/check`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.exists) {
+            setAlreadyReviewed(true);
+            localStorage.setItem('smart10x_reviewed', 'true');
+          }
+        }
+      } catch (err) {
+        console.error("Failed to check review status from server:", err);
+      }
+    };
+
     if (localStorage.getItem('smart10x_reviewed')) {
       setAlreadyReviewed(true);
+    } else {
+      checkReviewStatus();
     }
   }, []);
   

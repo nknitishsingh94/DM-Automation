@@ -251,7 +251,7 @@ export default function AllReviews() {
                       <img src={review.avatarUrl} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
                       <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.9rem' }}>
-                        {(review.name || 'U').split(' ').map(n => n[0]).join('')}
+                        {(review.name || 'U').split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase()}
                       </div>
                     )}
                     {review.verified && (

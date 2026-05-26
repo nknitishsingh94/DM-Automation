@@ -3343,6 +3343,23 @@ app.get('/api/reviews', async (req, res) => {
   }
 });
 
+app.get('/api/reviews/check', verifyToken, async (req, res) => {
+  try {
+    const uuidUserId = convertObjectIDToUUID(req.user.userId);
+    const { data: existing, error } = await supabase
+      .from('reviews')
+      .select('id')
+      .eq('id', uuidUserId)
+      .maybeSingle();
+
+    if (error) throw error;
+    res.json({ exists: !!existing });
+  } catch (err) {
+    console.error("Error checking review status:", err.message);
+    res.status(500).json({ error: 'Failed to check review status' });
+  }
+});
+
 app.post('/api/reviews', verifyToken, async (req, res) => {
   try {
     const { name, handle, role, rating, text, platform, avatarUrl } = req.body;

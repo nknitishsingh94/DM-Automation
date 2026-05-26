@@ -445,7 +445,7 @@ export default function Landing() {
                       <img src={review.avatarUrl} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                     ) : (
                       <div className="reviewer-avatar-fallback">
-                        {(review.name || 'User').split(' ').map(n => n[0]).join('')}
+                        {(review.name || 'User').split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase()}
                       </div>
                     )}
                     {review.verified && (
