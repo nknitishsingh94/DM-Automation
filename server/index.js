@@ -3325,7 +3325,14 @@ app.get('/api/reviews', async (req, res) => {
   res.set('Surrogate-Control', 'no-store');
   
   try {
-    const reviews = await Review.find({}).sort({ createdAt: -1 });
+    const { data: reviews, error } = await supabase
+      .from('reviews')
+      .select('*')
+      .order('createdAt', { ascending: false });
+
+    if (error) {
+      throw error;
+    }
     
     // Merge database reviews with the default marketing reviews
     let allReviews = [];
