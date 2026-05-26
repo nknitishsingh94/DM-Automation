@@ -466,6 +466,11 @@ function Sidebar({ isMobileOpen, onClose }) {
               <Settings size={18} />
               <span>Settings</span>
             </NavLink>
+            
+            <a href="/public-home#reviews" target="_blank" rel="noopener noreferrer" className="nav-item" style={{ borderTop: '1px solid #f1f5f9', marginTop: '8px', paddingTop: '16px' }}>
+              <MessageSquare size={18} />
+              <span>Write a Review</span>
+            </a>
           </nav>
         </div>
 
@@ -662,6 +667,7 @@ function MainLayout() {
           }>
             <Routes>
               <Route path="/" element={user ? <Navigate to="/hub" /> : <Landing />} />
+              <Route path="/public-home" element={<Landing />} />
               <Route path="/hub" element={<ProtectedRoute><PlatformHub /></ProtectedRoute>} />
               <Route path="/platform/:platformId" element={<ProtectedRoute><PlatformDashboard /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
