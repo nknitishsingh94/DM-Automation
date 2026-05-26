@@ -6,7 +6,9 @@ import { API_BASE_URL } from '../config';
 const WriteReview = () => {
   const [submitting, setSubmitting] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const [alreadyReviewed, setAlreadyReviewed] = useState(false);
+  const [alreadyReviewed, setAlreadyReviewed] = useState(
+    localStorage.getItem('smart10x_reviewed') === 'true'
+  );
 
   useEffect(() => {
     const checkReviewStatus = async () => {
@@ -24,6 +26,9 @@ const WriteReview = () => {
           if (data.exists) {
             setAlreadyReviewed(true);
             localStorage.setItem('smart10x_reviewed', 'true');
+          } else {
+            setAlreadyReviewed(false);
+            localStorage.removeItem('smart10x_reviewed');
           }
         }
       } catch (err) {
@@ -31,11 +36,7 @@ const WriteReview = () => {
       }
     };
 
-    if (localStorage.getItem('smart10x_reviewed')) {
-      setAlreadyReviewed(true);
-    } else {
-      checkReviewStatus();
-    }
+    checkReviewStatus();
   }, []);
   
   const [newReview, setNewReview] = useState({
