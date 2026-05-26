@@ -3328,7 +3328,7 @@ app.get('/api/reviews', async (req, res) => {
     const { data: reviews, error } = await supabase
       .from('reviews')
       .select('*')
-      .order('createdAt', { ascending: false });
+      .order('created_at', { ascending: false });
 
     if (error) {
       throw error;
@@ -3420,7 +3420,7 @@ app.post('/api/reviews', verifyToken, async (req, res) => {
         platform: platform || 'instagram',
         avatarUrl: avatarUrl ? xss(avatarUrl) : null,
         verified: true,
-        createdAt: new Date().toISOString()
+        created_at: new Date().toISOString()
       })
       .select();
 
