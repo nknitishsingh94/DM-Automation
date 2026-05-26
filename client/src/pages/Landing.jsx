@@ -59,10 +59,44 @@ export default function Landing() {
     role: '',
     rating: 5,
     text: '',
-    platform: 'instagram'
+    platform: 'instagram',
+    avatarUrl: ''
   });
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingAvatar(true);
+    const formData = new FormData();
+    formData.append('media', file);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // May be needed if /api/upload requires auth
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setNewReview(prev => ({ ...prev, avatarUrl: data.uploadUrl || data.url || data.publicUrl }));
+        toast.success('Image uploaded successfully!');
+      } else {
+        toast.error('Failed to upload image. You must be logged in.');
+      }
+    } catch (err) {
+      console.error('Avatar upload error:', err);
+      toast.error('Connection error while uploading.');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   useEffect(() => {
     // Fetch persistent reviews from backend
@@ -402,9 +436,13 @@ export default function Landing() {
                 
                 <div className="review-user-info">
                   <div className="reviewer-avatar-container">
-                    <div className="reviewer-avatar-fallback">
-                      {review.name.split(' ').map(n => n[0]).join('')}
-                    </div>
+                    {review.avatarUrl ? (
+                      <img src={review.avatarUrl} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                    ) : (
+                      <div className="reviewer-avatar-fallback">
+                        {review.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                    )}
                     {review.verified && (
                       <span className="verified-indicator" title="Verified Purchase">
                         <Check size={10} strokeWidth={4} />
@@ -463,7 +501,8 @@ export default function Landing() {
                       role: formattedRole,
                       rating: newReview.rating,
                       text: newReview.text,
-                      platform: newReview.platform
+                      platform: newReview.platform,
+                      avatarUrl: newReview.avatarUrl
                     })
                   })
                   .then(async (res) => {
@@ -481,7 +520,8 @@ export default function Landing() {
                         role: '',
                         rating: 5,
                         text: '',
-                        platform: 'instagram'
+                        platform: 'instagram',
+                        avatarUrl: ''
                       });
                     } else {
                       throw new Error('Failed to save review');
@@ -566,6 +606,24 @@ export default function Landing() {
                   />
                 </div>
 
+                {/* Profile Picture Upload */}
+                <div className="form-group">
+                  <label className="form-label">Profile Picture (Optional)</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    {newReview.avatarUrl && (
+                      <img src={newReview.avatarUrl} alt="Avatar Preview" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarUpload}
+                      disabled={uploadingAvatar}
+                      style={{ fontSize: '14px' }}
+                    />
+                    {uploadingAvatar && <span style={{ fontSize: '12px', color: '#64748b' }}>Uploading...</span>}
+                  </div>
+                </div>
+
                 {/* Platform select fields */}
                 <div className="form-group">
                   <label className="form-label">Which channel do you automate? *</label>
@@ -629,7 +687,8 @@ export default function Landing() {
                       role: '',
                       rating: 5,
                       text: '',
-                      platform: 'instagram'
+                      platform: 'instagram',
+                      avatarUrl: ''
                     });
                   }}
                 >

@@ -3299,7 +3299,7 @@ app.get('/api/reviews', async (req, res) => {
 
 app.post('/api/reviews', async (req, res) => {
   try {
-    const { name, handle, role, rating, text, platform } = req.body;
+    const { name, handle, role, rating, text, platform, avatarUrl } = req.body;
     if (!name || !text) {
       return res.status(400).json({ error: 'Name and review text are required.' });
     }
@@ -3311,6 +3311,7 @@ app.post('/api/reviews', async (req, res) => {
       rating: Number(rating) || 5,
       text: xss(text),
       platform: platform || 'instagram',
+      avatarUrl: avatarUrl ? xss(avatarUrl) : null,
       verified: true
     });
 
