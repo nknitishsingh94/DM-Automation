@@ -468,7 +468,7 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>Settings</span>
             </NavLink>
             
-            <NavLink to="/write-review" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`} style={{ borderTop: '1px solid #f1f5f9', marginTop: '8px', paddingTop: '16px' }}>
+            <NavLink to="/write-review" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <MessageSquare size={18} />
               <span>Write a Review</span>
             </NavLink>
