@@ -58,6 +58,7 @@ const ChannelSelector = lazyRetry(() => import('./pages/ChannelSelector'));
 const TemplateSelector = lazyRetry(() => import('./pages/TemplateSelector'));
 const AutomationEditor = lazyRetry(() => import('./pages/AutomationEditor'));
 const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'));
+const WriteReview = lazyRetry(() => import('./pages/WriteReview'));
 const PlatformHub = lazyRetry(() => import('./pages/PlatformHub'));
 const PlatformDashboard = lazyRetry(() => import('./pages/PlatformDashboard'));
 const Onboarding = lazyRetry(() => import('./pages/Onboarding'));
