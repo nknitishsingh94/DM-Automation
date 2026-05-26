@@ -6,6 +6,13 @@ import { API_BASE_URL } from '../config';
 const WriteReview = () => {
   const [submitting, setSubmitting] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [alreadyReviewed, setAlreadyReviewed] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem('smart10x_reviewed')) {
+      setAlreadyReviewed(true);
+    }
+  }, []);
   
   const [newReview, setNewReview] = useState({
     name: '',
@@ -77,6 +84,8 @@ const WriteReview = () => {
       
       if (response.ok) {
         toast.success('Review submitted successfully! Thank you.');
+        localStorage.setItem('smart10x_reviewed', 'true');
+        setAlreadyReviewed(true);
         // Reset form
         setNewReview({
           name: '',
@@ -134,9 +143,22 @@ const WriteReview = () => {
           </p>
         </div>
 
-        <form onSubmit={submitReview} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+        {alreadyReviewed ? (
+          <div style={{ textAlign: 'center', padding: '40px 20px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'inline-flex', padding: '16px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '50%', color: '#22c55e', marginBottom: '20px' }}>
+              <Star size={32} fill="#22c55e" />
+            </div>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>
+              Thank You for Your Review!
+            </h2>
+            <p style={{ color: '#64748b', fontSize: '1rem', maxWidth: '400px', margin: '0 auto', lineHeight: '1.6' }}>
+              We really appreciate you taking the time to share your experience with smart10X. Your review helps us grow!
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={submitReview} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Your Name <span style={{color: '#ef4444'}}>*</span></label>
               <input 
@@ -302,6 +324,7 @@ const WriteReview = () => {
             )}
           </button>
         </form>
+        )}
       </div>
     </div>
   );
