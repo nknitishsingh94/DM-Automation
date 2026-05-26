@@ -100,56 +100,119 @@ const WriteReview = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', padding: '60px 20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div style={{ minHeight: '100%', padding: '40px 20px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
       <Toaster position="bottom-right" />
-      <div style={{ background: '#ffffff', width: '100%', maxWidth: '600px', borderRadius: '24px', padding: '40px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
+      
+      <div style={{ 
+        background: '#ffffff', 
+        width: '100%', 
+        maxWidth: '650px', 
+        borderRadius: '24px', 
+        padding: '40px', 
+        boxShadow: '0 20px 40px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)', 
+        border: '1px solid rgba(226, 232, 240, 0.8)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Decorative Top Gradient */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '6px', background: 'linear-gradient(90deg, #7c3aed, #ec4899, #3b82f6)' }}></div>
         
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{ display: 'inline-flex', padding: '12px', background: 'linear-gradient(135deg, rgba(124,58,237,0.1), rgba(14,165,233,0.1))', borderRadius: '50%', color: '#7c3aed', marginBottom: '16px' }}>
-            <MessageSquare size={32} />
+        <div style={{ textAlign: 'center', marginBottom: '40px', position: 'relative' }}>
+          <div style={{ 
+            display: 'inline-flex', padding: '16px', 
+            background: 'linear-gradient(135deg, rgba(124,58,237,0.1), rgba(236,72,153,0.1))', 
+            borderRadius: '20px', color: '#7c3aed', marginBottom: '20px',
+            boxShadow: 'inset 0 0 0 1px rgba(124,58,237,0.1)'
+          }}>
+            <Sparkles size={32} />
           </div>
-          <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>Share Your Experience</h1>
-          <p style={{ color: '#64748b' }}>Your feedback helps us improve and helps others make the right choice.</p>
+          <h1 style={{ fontSize: '2.2rem', fontWeight: '900', color: '#0f172a', marginBottom: '12px', letterSpacing: '-0.5px' }}>
+            We'd love your feedback!
+          </h1>
+          <p style={{ color: '#64748b', fontSize: '1.05rem', maxWidth: '450px', margin: '0 auto', lineHeight: '1.6' }}>
+            Share your smart10X experience to help other creators and brands discover the power of DM automation.
+          </p>
         </div>
 
-        <form onSubmit={submitReview} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <form onSubmit={submitReview} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontWeight: '600', fontSize: '0.9rem', color: '#334155' }}>Your Name *</label>
+              <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Your Name <span style={{color: '#ef4444'}}>*</span></label>
               <input 
                 type="text" 
                 required
                 value={newReview.name}
                 onChange={(e) => setNewReview({...newReview, name: e.target.value})}
-                placeholder="John Doe"
-                style={{ padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #cbd5e1', outline: 'none' }}
+                placeholder="e.g. Alex Johnson"
+                style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: '#f8fafc', fontSize: '1rem', transition: 'all 0.2s', focus: { borderColor: '#7c3aed', background: '#fff' } }}
+                onFocus={(e) => { e.target.style.borderColor = '#7c3aed'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
+                onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
               />
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontWeight: '600', fontSize: '0.9rem', color: '#334155' }}>Social Handle (Optional)</label>
+              <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Social Handle</label>
               <input 
                 type="text" 
                 value={newReview.handle}
                 onChange={(e) => setNewReview({...newReview, handle: e.target.value})}
-                placeholder="@johndoe"
-                style={{ padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #cbd5e1', outline: 'none' }}
+                placeholder="e.g. @alex_creates"
+                style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: '#f8fafc', fontSize: '1rem', transition: 'all 0.2s' }}
+                onFocus={(e) => { e.target.style.borderColor = '#7c3aed'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
+                onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
               />
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontWeight: '600', fontSize: '0.9rem', color: '#334155' }}>Profile Picture (Optional)</label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px solid #cbd5e1' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Role / Company</label>
+              <input 
+                type="text" 
+                value={newReview.role}
+                onChange={(e) => setNewReview({...newReview, role: e.target.value})}
+                placeholder="e.g. Fitness Coach"
+                style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: '#f8fafc', fontSize: '1rem', transition: 'all 0.2s' }}
+                onFocus={(e) => { e.target.style.borderColor = '#7c3aed'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
+                onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Rating</label>
+              <div style={{ display: 'flex', gap: '6px', padding: '10px 0' }}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setNewReview({...newReview, rating: star})}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'transform 0.2s' }}
+                    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
+                    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                  >
+                    <Star 
+                      size={32} 
+                      fill={star <= newReview.rating ? "#fbbf24" : "none"} 
+                      stroke={star <= newReview.rating ? "none" : "#cbd5e1"} 
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '20px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+            <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Profile Picture</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '2px dashed #cbd5e1', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
                 {newReview.avatarUrl ? (
                   <img src={newReview.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
-                  <ImageIcon size={24} color="#94a3b8" />
+                  <ImageIcon size={28} color="#94a3b8" />
                 )}
               </div>
-              <div>
+              <div style={{ flex: 1 }}>
                 <input 
                   type="file" 
                   id="avatar-upload" 
@@ -159,88 +222,84 @@ const WriteReview = () => {
                 />
                 <label 
                   htmlFor="avatar-upload" 
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#f1f5f9', color: '#475569', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', border: '1px solid #e2e8f0', transition: 'all 0.2s' }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: '#ffffff', color: '#475569', borderRadius: '10px', fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', border: '1px solid #cbd5e1', transition: 'all 0.2s', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
+                  onMouseOver={(e) => { e.currentTarget.style.borderColor = '#7c3aed'; e.currentTarget.style.color = '#7c3aed'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.color = '#475569'; }}
                 >
-                  {uploadingAvatar ? 'Uploading...' : 'Upload Image'}
+                  {uploadingAvatar ? (
+                    <><div className="animate-spin" style={{ width: '16px', height: '16px', border: '2px solid #7c3aed', borderTopColor: 'transparent', borderRadius: '50%' }}></div> Uploading...</>
+                  ) : (
+                    <><ImageIcon size={16} /> Choose Image</>
+                  )}
                 </label>
-                <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '6px' }}>JPG, PNG under 2MB</p>
+                <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '8px', margin: 0 }}>Square images work best (JPG, PNG)</p>
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontWeight: '600', fontSize: '0.9rem', color: '#334155' }}>Your Role / Company (Optional)</label>
-            <input 
-              type="text" 
-              value={newReview.role}
-              onChange={(e) => setNewReview({...newReview, role: e.target.value})}
-              placeholder="e.g. Content Creator"
-              style={{ padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #cbd5e1', outline: 'none' }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontWeight: '600', fontSize: '0.9rem', color: '#334155' }}>Rating</label>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() => setNewReview({...newReview, rating: star})}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Which platform do you use the most?</label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+              {['instagram', 'facebook', 'whatsapp'].map(platform => (
+                <div 
+                  key={platform}
+                  onClick={() => setNewReview({...newReview, platform})}
+                  style={{ 
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 12px', 
+                    borderRadius: '16px', cursor: 'pointer', fontWeight: '700', fontSize: '0.9rem', textTransform: 'capitalize',
+                    border: `2px solid ${newReview.platform === platform ? '#7c3aed' : '#e2e8f0'}`, 
+                    background: newReview.platform === platform ? 'rgba(124,58,237,0.04)' : '#ffffff', 
+                    color: newReview.platform === platform ? '#7c3aed' : '#64748b',
+                    transition: 'all 0.2s',
+                    boxShadow: newReview.platform === platform ? '0 4px 12px rgba(124,58,237,0.1)' : 'none'
+                  }}
+                  onMouseOver={(e) => { if(newReview.platform !== platform) e.currentTarget.style.borderColor = '#cbd5e1'; }}
+                  onMouseOut={(e) => { if(newReview.platform !== platform) e.currentTarget.style.borderColor = '#e2e8f0'; }}
                 >
-                  <Star 
-                    size={28} 
-                    fill={star <= newReview.rating ? "#fbbf24" : "none"} 
-                    stroke={star <= newReview.rating ? "none" : "#cbd5e1"} 
-                  />
-                </button>
+                  {platform === 'instagram' && <Instagram size={24} />}
+                  {platform === 'facebook' && <Facebook size={24} />}
+                  {platform === 'whatsapp' && <MessageCircle size={24} />}
+                  {platform}
+                </div>
               ))}
             </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontWeight: '600', fontSize: '0.9rem', color: '#334155' }}>Primary Platform</label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-              <div 
-                onClick={() => setNewReview({...newReview, platform: 'instagram'})}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px', borderRadius: '12px', border: `2px solid ${newReview.platform === 'instagram' ? '#7c3aed' : '#cbd5e1'}`, background: newReview.platform === 'instagram' ? 'rgba(124,58,237,0.05)' : '#fafafa', cursor: 'pointer', fontWeight: '600', color: newReview.platform === 'instagram' ? '#7c3aed' : '#64748b' }}
-              >
-                <Instagram size={20} /> Instagram
-              </div>
-              <div 
-                onClick={() => setNewReview({...newReview, platform: 'facebook'})}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px', borderRadius: '12px', border: `2px solid ${newReview.platform === 'facebook' ? '#7c3aed' : '#cbd5e1'}`, background: newReview.platform === 'facebook' ? 'rgba(124,58,237,0.05)' : '#fafafa', cursor: 'pointer', fontWeight: '600', color: newReview.platform === 'facebook' ? '#7c3aed' : '#64748b' }}
-              >
-                <Facebook size={20} /> Facebook
-              </div>
-              <div 
-                onClick={() => setNewReview({...newReview, platform: 'whatsapp'})}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px', borderRadius: '12px', border: `2px solid ${newReview.platform === 'whatsapp' ? '#7c3aed' : '#cbd5e1'}`, background: newReview.platform === 'whatsapp' ? 'rgba(124,58,237,0.05)' : '#fafafa', cursor: 'pointer', fontWeight: '600', color: newReview.platform === 'whatsapp' ? '#7c3aed' : '#64748b' }}
-              >
-                <MessageCircle size={20} /> WhatsApp
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontWeight: '600', fontSize: '0.9rem', color: '#334155' }}>Your Review *</label>
+            <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Your Review <span style={{color: '#ef4444'}}>*</span></label>
             <textarea 
               required
               value={newReview.text}
               onChange={(e) => setNewReview({...newReview, text: e.target.value})}
-              placeholder="How has smart10X helped you?"
-              rows={4}
-              style={{ padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #cbd5e1', outline: 'none', resize: 'vertical' }}
+              placeholder="How has smart10X helped you save time or grow your business?"
+              rows={5}
+              style={{ padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', background: '#f8fafc', fontSize: '1rem', resize: 'vertical', transition: 'all 0.2s', lineHeight: '1.5' }}
+              onFocus={(e) => { e.target.style.borderColor = '#7c3aed'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
+              onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
             />
           </div>
 
           <button 
             type="submit" 
             disabled={submitting}
-            style={{ marginTop: '10px', width: '100%', padding: '16px', background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', color: 'white', borderRadius: '12px', fontWeight: '800', fontSize: '1.05rem', border: 'none', cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1, boxShadow: '0 4px 14px rgba(124, 58, 237, 0.3)' }}
+            style={{ 
+              marginTop: '16px', width: '100%', padding: '18px', 
+              background: 'linear-gradient(135deg, #7c3aed, #db2777)', 
+              color: 'white', borderRadius: '16px', fontWeight: '800', fontSize: '1.1rem', 
+              border: 'none', cursor: submitting ? 'not-allowed' : 'pointer', 
+              opacity: submitting ? 0.8 : 1, 
+              boxShadow: '0 8px 20px rgba(124, 58, 237, 0.3)',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+            }}
+            onMouseOver={(e) => { if(!submitting) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 25px rgba(124, 58, 237, 0.4)'; } }}
+            onMouseOut={(e) => { if(!submitting) { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(124, 58, 237, 0.3)'; } }}
           >
-            {submitting ? 'Submitting...' : 'Submit Review'}
+            {submitting ? (
+              <><div className="animate-spin" style={{ width: '20px', height: '20px', border: '3px solid #fff', borderTopColor: 'transparent', borderRadius: '50%' }}></div> Submitting...</>
+            ) : (
+              <><MessageSquare size={20} /> Submit Review</>
+            )}
           </button>
         </form>
       </div>
