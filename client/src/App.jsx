@@ -467,10 +467,10 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>Settings</span>
             </NavLink>
             
-            <a href="/public-home#reviews" target="_blank" rel="noopener noreferrer" className="nav-item" style={{ borderTop: '1px solid #f1f5f9', marginTop: '8px', paddingTop: '16px' }}>
+            <NavLink to="/write-review" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`} style={{ borderTop: '1px solid #f1f5f9', marginTop: '8px', paddingTop: '16px' }}>
               <MessageSquare size={18} />
               <span>Write a Review</span>
-            </a>
+            </NavLink>
           </nav>
         </div>
 
@@ -675,9 +675,9 @@ function MainLayout() {
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
               <Route path="/campaign-builder/new" element={<ProtectedRoute><CampaignBuilder /></ProtectedRoute>} />
-              <Route path="/campaign-builder/new" element={<ProtectedRoute><CampaignBuilder /></ProtectedRoute>} />
               <Route path="/automation-editor" element={<ProtectedRoute><AutomationEditor /></ProtectedRoute>} />
               <Route path="/dm-automation-editor" element={<ProtectedRoute><DmAutomationEditor /></ProtectedRoute>} />
+              <Route path="/write-review" element={<ProtectedRoute><WriteReview /></ProtectedRoute>} />
               <Route path="/audiences" element={<ProtectedRoute><Audiences /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
               <Route path="/workplace" element={<ProtectedRoute><Workplace /></ProtectedRoute>} />

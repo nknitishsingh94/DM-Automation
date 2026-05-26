@@ -70,9 +70,10 @@ const PlatformHub = () => {
         <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#0f172a', marginBottom: '16px', letterSpacing: '-1px' }}>
           Platform Hub
         </h1>
-        <p style={{ fontSize: '1.1rem', color: '#64748b', maxWidth: '600px', margin: '0 auto', lineHeight: '1.6' }}>
-          Select a connected platform to access its dedicated automation workspace and analytics.
-        </p>
+        <a href="/public-home#reviews" target="_blank" rel="noopener noreferrer" style={{ display: 'none' }}></a>
+        <button onClick={() => navigate('/write-review')} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #7c3aed, #ec4899)', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '50px', fontWeight: '800', fontSize: '1rem', cursor: 'pointer', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.4)', margin: '0 auto 30px' }}>
+          <MessageSquare size={18} /> Write a Review
+        </button>
       </div>
 
       {connectedPlatforms.length === 0 ? (
