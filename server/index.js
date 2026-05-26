@@ -3239,6 +3239,18 @@ app.get('/api/cron/publish', async (req, res) => {
 
 const DEFAULT_REVIEWS = [
   {
+    id: "review-new-1",
+    name: "Priya Sharma",
+    handle: "@priya_creates",
+    role: "Digital Marketer",
+    rating: 5,
+    text: "Ye tool sach mein amazing hai! Maine apne client ke liye Instagram DM automation set kiya aur pehle hi din 50+ qualified leads generate ho gaye. Setup bahut hi aasan tha aur ab manual reply karne ki zaroorat nahi padti.",
+    platform: "instagram",
+    avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
+    verified: true,
+    createdAt: new Date().toISOString()
+  },
+  {
     id: "review-1",
     name: "Sarah Jenkins",
     handle: "@sarah_fitsocial",
