@@ -63,7 +63,7 @@ export default function Landing() {
     const fetchReviews = async () => {
       setReviewsLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/reviews?t=${new Date().getTime()}`);
+        const response = await fetch(`${API_BASE_URL}/api/user-feedback?t=${new Date().getTime()}`);
         if (response.ok) {
           const data = await response.json();
           if (Array.isArray(data) && data.length > 0) {
@@ -500,7 +500,7 @@ export default function Landing() {
                   const formattedHandle = newReview.handle ? (newReview.handle.startsWith('@') ? newReview.handle : '@' + newReview.handle) : '@' + newReview.name.toLowerCase().replace(/\s+/g, '');
                   const formattedRole = newReview.role || 'smart10X Creator';
 
-                  fetch(`${API_BASE_URL}/api/reviews`, {
+                  fetch(`${API_BASE_URL}/api/user-feedback`, {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json'
@@ -781,6 +781,7 @@ export default function Landing() {
 }
 
 // Trigger vercel deployment
+
 
 
 

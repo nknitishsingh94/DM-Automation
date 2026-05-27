@@ -3317,7 +3317,7 @@ const DEFAULT_REVIEWS = [
   }
 ];
 
-app.get('/api/reviews', async (req, res) => {
+app.get('/api/user-feedback', async (req, res) => {
   // Disable all caching so new reviews always appear immediately
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.set('Pragma', 'no-cache');
@@ -3350,7 +3350,7 @@ app.get('/api/reviews', async (req, res) => {
   }
 });
 
-app.get('/api/reviews/check', verifyToken, async (req, res) => {
+app.get('/api/user-feedback/check', verifyToken, async (req, res) => {
   try {
     const uuidUserId = convertObjectIDToUUID(req.user.userId);
     const { data: existing, error } = await supabase
@@ -3367,7 +3367,7 @@ app.get('/api/reviews/check', verifyToken, async (req, res) => {
   }
 });
 
-app.post('/api/reviews', verifyToken, async (req, res) => {
+app.post('/api/user-feedback', verifyToken, async (req, res) => {
   try {
     const { name, handle, role, rating, text, platform, avatarUrl } = req.body;
     if (!name || !text) {
@@ -3520,3 +3520,4 @@ httpServer.listen(PORT, () => {
 
 
 export default app;
+

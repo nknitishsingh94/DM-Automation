@@ -16,7 +16,7 @@ const WriteReview = () => {
         const token = localStorage.getItem('insta_agent_token');
         if (!token) return;
 
-        const response = await fetch(`${API_BASE_URL}/api/reviews/check`, {
+        const response = await fetch(`${API_BASE_URL}/api/user-feedback/check`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -98,7 +98,7 @@ const WriteReview = () => {
     try {
       const token = localStorage.getItem('insta_agent_token') || '';
       
-      const response = await fetch(`${API_BASE_URL}/api/reviews`, {
+      const response = await fetch(`${API_BASE_URL}/api/user-feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -356,3 +356,4 @@ const WriteReview = () => {
 };
 
 export default WriteReview;
+

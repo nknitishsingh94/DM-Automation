@@ -12,7 +12,7 @@ export default function AllReviews() {
     window.scrollTo(0, 0);
     const fetchAllReviews = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/reviews?t=${new Date().getTime()}`);
+        const response = await fetch(`${API_BASE_URL}/api/user-feedback?t=${new Date().getTime()}`);
         if (response.ok) {
           const data = await response.json();
           if (Array.isArray(data)) {
@@ -285,3 +285,4 @@ export default function AllReviews() {
     </div>
   );
 }
+
