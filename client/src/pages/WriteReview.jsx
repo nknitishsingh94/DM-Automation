@@ -109,21 +109,21 @@ const WriteReview = () => {
         body: JSON.stringify(newReview)
       });
       
-       if (response.ok) {
-         toast.success('Review submitted successfully! Thank you.');
-         localStorage.setItem('smart10x_reviewed', 'true');
-         setAlreadyReviewed(true);
-         navigate('/');
-         // Reset form
-         setNewReview({
-           name: '',
-           handle: '',
-           role: '',
-           rating: 5,
-           text: '',
-           platform: 'instagram',
-           avatarUrl: ''
-         });
+        if (response.ok) {
+          toast.success('Review submitted successfully! Thank you.');
+          localStorage.setItem('smart10x_reviewed', 'true');
+          setAlreadyReviewed(true);
+          navigate('/public-home');
+          // Reset form
+          setNewReview({
+            name: '',
+            handle: '',
+            role: '',
+            rating: 5,
+            text: '',
+            platform: 'instagram',
+            avatarUrl: ''
+          });
       } else {
         const errorData = await response.json();
         toast.error(errorData.error || 'Failed to submit review');
