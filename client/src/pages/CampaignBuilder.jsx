@@ -13,6 +13,7 @@ export default function CampaignBuilder() {
   
   const params = new URLSearchParams(location.search);
   const initialTriggerSource = params.get('triggerSource') || 'dm';
+  const initialChannel = params.get('channel');
   
   const [formStep, setFormStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
@@ -26,7 +27,7 @@ export default function CampaignBuilder() {
     trigger: '', 
     triggerSource: initialTriggerSource,
     response: '', 
-    platform: 'all', 
+    platform: initialChannel || 'all', 
     videoUrl: '', 
     linkUrl: '',
     buttonText: '',
@@ -48,12 +49,16 @@ export default function CampaignBuilder() {
           
           const isIg = data.isAccountConnected || (!!data.instagramAccessToken && !!data.businessAccountId);
           const isFb = data.isFacebookConnected || (!!data.facebookAccessToken && !!data.facebookPageId);
-          const isWa = data.isWhatsAppConnected || (!!data.whatsappToken && !!data.whatsappPhoneNumberId);
 
           let defaultPlatform = 'all';
-          if (isIg && !isFb && !isWa) defaultPlatform = 'instagram';
-          else if (isFb && !isIg && !isWa) defaultPlatform = 'facebook';
-          else if (isWa && !isIg && !isFb) defaultPlatform = 'whatsapp';
+          const urlChannel = new URLSearchParams(window.location.search).get('channel');
+          if (urlChannel && (urlChannel === 'instagram' && isIg || urlChannel === 'facebook' && isFb)) {
+             defaultPlatform = urlChannel;
+          } else if (isIg && !isFb) {
+             defaultPlatform = 'instagram';
+          } else if (isFb && !isIg) {
+             defaultPlatform = 'facebook';
+          }
           
           setNewCamp(prev => ({ ...prev, platform: defaultPlatform }));
         }
@@ -196,12 +201,14 @@ export default function CampaignBuilder() {
                       {(() => {
                         const isIg = settings?.isAccountConnected || (!!settings?.instagramAccessToken && !!settings?.businessAccountId);
                         const isFb = settings?.isFacebookConnected || (!!settings?.facebookAccessToken && !!settings?.facebookPageId);
-                        const isWa = settings?.isWhatsAppConnected || (!!settings?.whatsappToken && !!settings?.whatsappPhoneNumberId);
 
-                        const options = [];
+                        let options = [];
                         if (isIg) options.push({ value: 'instagram', label: 'Instagram' });
                         if (isFb) options.push({ value: 'facebook', label: 'Facebook Messenger' });
-                        if (isWa) options.push({ value: 'whatsapp', label: 'WhatsApp' });
+
+                        if (initialChannel && options.some(opt => opt.value === initialChannel)) {
+                          options = options.filter(opt => opt.value === initialChannel);
+                        }
 
                         if (options.length === 0) {
                           return (
