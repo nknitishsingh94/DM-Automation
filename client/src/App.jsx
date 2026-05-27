@@ -457,11 +457,7 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>Post</span>
               <span className="sidebar-badge badge-new">HOT</span>
             </NavLink>
-            <div className="nav-item" style={{ opacity: 0.6, cursor: 'not-allowed' }} title="Coming Soon">
-              <MessageSquare size={18} />
-              <span>Forms</span>
-              <span className="sidebar-badge badge-new" style={{ background: '#cbd5e1', color: '#475569' }}>SOON</span>
-            </div>
+
             <NavLink to="/audiences" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Users size={18} />
               <span>Contacts</span>
