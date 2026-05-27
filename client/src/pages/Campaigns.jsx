@@ -994,52 +994,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
         </div>
       )}
 
-      {/* Universal Template Picker Modal */}
-      {showUniversalPicker && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '24px', width: '100%', maxWidth: '800px', padding: '40px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', animation: 'modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-              <div>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Globe size={24} color="#0ea5e9" /> Select Universal Trigger Type
-                </h2>
-                <p style={{ color: '#64748b', fontSize: '0.95rem', margin: 0 }}>Choose how you want to automate across all your posts and reels.</p>
-              </div>
-              <button onClick={() => setShowUniversalPicker(false)} style={{ background: '#f1f5f9', border: 'none', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', cursor: 'pointer', transition: 'all 0.2s' }}>
-                <X size={18} />
-              </button>
-            </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
-              {[
-                { id: 'dm', title: 'DM Automation', desc: 'Trigger DMs from Keywords anywhere', icon: <Zap size={24} />, color: '#4f46e5', bg: 'rgba(79, 70, 229, 0.1)', path: `/dm-automation-editor?template=all_dms&isUniversal=true${platformFilter !== 'all' ? '&channel='+platformFilter : ''}` },
-                { id: 'comment', title: 'Comment Reply', desc: 'Auto-DM on all Comments', icon: <MessageSquare size={24} />, color: '#0ea5e9', bg: 'rgba(14, 165, 233, 0.1)', path: `/automation-editor?template=comments&isUniversal=true${platformFilter !== 'all' ? '&channel='+platformFilter : ''}` },
-                { id: 'story', title: 'Story Trigger', desc: 'Reply to all Story Mentions', icon: <Instagram size={24} />, color: '#ec4899', bg: 'rgba(236, 72, 153, 0.1)', path: `/automation-editor?template=stories&isUniversal=true${platformFilter !== 'all' ? '&channel='+platformFilter : ''}` }
-              ].map(item => (
-                <div 
-                  key={item.id}
-                  onClick={() => navigate(item.path)}
-                  style={{ 
-                    background: 'white', padding: '24px', borderRadius: '20px', border: '2px solid #f1f5f9', 
-                    cursor: 'pointer', transition: 'all 0.3s', display: 'flex', flexDirection: 'column', gap: '16px',
-                    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)'
-                  }}
-                  onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 20px -5px rgba(0,0,0,0.08)'; e.currentTarget.style.borderColor = item.color; }}
-                  onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)'; e.currentTarget.style.borderColor = '#f1f5f9'; }}
-                >
-                  <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: item.bg, color: item.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {item.icon}
-                  </div>
-                  <div>
-                    <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '4px' }}>{item.title}</h3>
-                    <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );
