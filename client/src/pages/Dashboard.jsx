@@ -24,6 +24,7 @@ export default function Dashboard() {
     metaDone: false,
     flowDone: false,
     instagramConnected: false,
+    facebookConnected: false,
     whatsAppConnected: false
   });
 
@@ -50,13 +51,15 @@ export default function Dashboard() {
         if (statsData) setStats(statsData);
         
         const isInstagramConnected = !!(settingsData?.isAccountConnected || settingsData?.instagramAccessToken);
+        const isFacebookConnected = !!(settingsData?.isFacebookConnected || (settingsData?.facebookAccessToken && settingsData?.facebookPageId));
         const isWhatsAppConnected = !!(settingsData?.isWhatsAppConnected || settingsData?.whatsappToken);
         
         setSetupStatus({
           profileDone: true, 
-          metaDone: isInstagramConnected, // Launch readiness setup complete if Instagram is connected
+          metaDone: isInstagramConnected || isFacebookConnected || isWhatsAppConnected, // Launch readiness setup complete if at least one is connected
           flowDone: Array.isArray(flowsData) && flowsData.length > 0,
           instagramConnected: isInstagramConnected,
+          facebookConnected: isFacebookConnected,
           whatsAppConnected: isWhatsAppConnected
         });
 
@@ -240,7 +243,7 @@ export default function Dashboard() {
               {setupStatus.profileDone && <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>}
             </div>
 
-            {/* 2. Connect IG/WhatsApp */}
+            {/* 2. Connect Platforms */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -248,21 +251,13 @@ export default function Dashboard() {
                     <Users size={14} color="white" />
                   </div>
                   <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.metaDone ? 'white' : '#94a3b8' }}>
-                    {setupStatus.whatsAppConnected ? 'Connect IG/WhatsApp' : 'Connect Instagram'}
+                    {setupStatus.metaDone ? 'Platforms Connected' : 'Connect Platforms'}
                   </span>
                 </div>
-                {setupStatus.whatsAppConnected ? (
-                  (setupStatus.instagramConnected && setupStatus.whatsAppConnected) ? (
-                    <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>ALL DONE</span>
-                  ) : (
-                    <span style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700' }}>PARTIAL</span>
-                  )
+                {setupStatus.metaDone ? (
+                  <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>
                 ) : (
-                  setupStatus.instagramConnected ? (
-                    <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>
-                  ) : (
-                    <Link to="/settings" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT</Link>
-                  )
+                  <Link to="/settings" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT</Link>
                 )}
               </div>
               
@@ -276,22 +271,37 @@ export default function Dashboard() {
                 gap: '8px',
                 marginTop: '4px'
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
-                  <span style={{ color: setupStatus.instagramConnected ? '#fff' : '#64748b', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: setupStatus.instagramConnected ? '#10b981' : '#64748b' }}></span>
-                    📸 Instagram Account
-                  </span>
-                  {setupStatus.instagramConnected ? (
+                {!setupStatus.metaDone && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                    <span style={{ color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#64748b' }}></span>
+                      No accounts connected yet
+                    </span>
+                  </div>
+                )}
+                {setupStatus.instagramConnected && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                    <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
+                      📸 Instagram Account
+                    </span>
                     <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
-                  ) : (
-                    <Link to="/settings" style={{ fontSize: '11px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>CONNECT</Link>
-                  )}
-                </div>
+                  </div>
+                )}
+                {setupStatus.facebookConnected && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                    <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
+                      💬 Facebook Messenger
+                    </span>
+                    <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
+                  </div>
+                )}
                 {setupStatus.whatsAppConnected && (
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
                     <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
-                      💬 WhatsApp Business
+                      🟩 WhatsApp Business
                     </span>
                     <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
                   </div>
