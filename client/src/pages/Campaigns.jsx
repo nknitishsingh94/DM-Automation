@@ -501,7 +501,6 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
         const connectedPlatforms = [];
         if (isIgConnected) connectedPlatforms.push({ id: 'instagram', label: 'Instagram', icon: <Instagram size={14} /> });
         if (isFbConnected) connectedPlatforms.push({ id: 'facebook', label: 'Facebook Messenger', icon: <MessageCircle size={14} /> });
-        if (isWaConnected) connectedPlatforms.push({ id: 'whatsapp', label: 'WhatsApp', icon: <MessageSquare size={14} /> });
 
         if (connectedPlatforms.length <= 1) return null;
 
@@ -1053,3 +1052,5 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
     </div>
   );
 }
+
+
