@@ -1,4 +1,6 @@
 import 'dotenv/config';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
@@ -3424,7 +3426,7 @@ app.post('/api/user-feedback', async (req, res) => {
     const { data: inserted, error: insertError } = await supabase
       .from('reviews')
       .insert({
-        id: uuidUserId || require('crypto').randomUUID(),
+        id: uuidUserId || crypto.randomUUID(),
         name: xss(name),
         handle: handle ? xss(handle) : '',
         role: role ? xss(role) : (uuidUserId ? 'Verified Creator' : 'Guest'),
@@ -3442,7 +3444,7 @@ app.post('/api/user-feedback', async (req, res) => {
     }
 
     const savedReview = inserted && inserted.length > 0 ? inserted[0] : {
-      id: uuidUserId || require('crypto').randomUUID(),
+      id: uuidUserId || crypto.randomUUID(),
       name,
       handle,
       role,
@@ -3533,6 +3535,7 @@ httpServer.listen(PORT, () => {
 
 
 export default app;
+
 
 
 
