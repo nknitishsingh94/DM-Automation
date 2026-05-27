@@ -207,7 +207,12 @@ export default function CampaignBuilder() {
                         if (isFb) options.push({ value: 'facebook', label: 'Facebook Messenger' });
 
                         if (initialChannel && options.some(opt => opt.value === initialChannel)) {
-                          options = options.filter(opt => opt.value === initialChannel);
+                          const lockedLabel = options.find(opt => opt.value === initialChannel).label;
+                          return (
+                            <div style={{ width: '100%', padding: '14px', background: '#f1f5f9', color: '#64748b', border: '1px solid var(--border-subtle)', borderRadius: '10px', fontSize: '1rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'not-allowed' }}>
+                              🔒 {lockedLabel} (Locked)
+                            </div>
+                          );
                         }
 
                         if (options.length === 0) {
