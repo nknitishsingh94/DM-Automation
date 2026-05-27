@@ -3367,32 +3367,45 @@ app.get('/api/user-feedback/check', verifyToken, async (req, res) => {
   }
 });
 
-app.post('/api/user-feedback', verifyToken, async (req, res) => {
+app.post('/api/user-feedback', async (req, res) => {
   try {
     const { name, handle, role, rating, text, platform, avatarUrl } = req.body;
     if (!name || !text) {
       return res.status(400).json({ error: 'Name and review text are required.' });
     }
 
-    const uuidUserId = convertObjectIDToUUID(req.user.userId);
-
-    // Enforce 1 review per person
-    // Check 1: By ID (user's unique UUID)
-    const { data: existingReview, error: checkError } = await supabase
-      .from('reviews')
-      .select('id')
-      .eq('id', uuidUserId)
-      .maybeSingle();
-
-    if (checkError) {
-      console.warn("⚠️ Error checking existing review by ID:", checkError.message);
+    const authHeader = req.headers.authorization;
+    let uuidUserId = null;
+    
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split('Bearer ')[1];
+      try {
+        const jwt = require('jsonwebtoken');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        uuidUserId = convertObjectIDToUUID(decoded.userId);
+      } catch (err) {
+        console.warn("Invalid token for review submission, treating as anonymous");
+      }
     }
 
-    if (existingReview) {
-      return res.status(400).json({ error: 'You have already submitted a review.' });
+    if (uuidUserId) {
+      // Enforce 1 review per person by ID
+      const { data: existingReview, error: checkError } = await supabase
+        .from('reviews')
+        .select('id')
+        .eq('id', uuidUserId)
+        .maybeSingle();
+  
+      if (checkError) {
+        console.warn("Error checking existing review by ID:", checkError.message);
+      }
+  
+      if (existingReview) {
+        return res.status(400).json({ error: 'You have already submitted a review.' });
+      }
     }
 
-    // Check 2: By Name (case-insensitive)
+    // Check 2: By Name (case-insensitive) - for both guests and logged-in users
     const { data: existingByName, error: checkNameError } = await supabase
       .from('reviews')
       .select('id')

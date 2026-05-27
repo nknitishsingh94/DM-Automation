@@ -503,7 +503,8 @@ export default function Landing() {
                   fetch(`${API_BASE_URL}/api/user-feedback`, {
                     method: 'POST',
                     headers: {
-                      'Content-Type': 'application/json'
+                      'Content-Type': 'application/json',
+                      ...(localStorage.getItem('token') ? { 'Authorization': `Bearer ${localStorage.getItem('token')}` } : {})
                     },
                     body: JSON.stringify({
                       name: newReview.name,
