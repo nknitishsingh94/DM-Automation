@@ -58,26 +58,26 @@ export default function Landing() {
     }
   };
 
-  useEffect(() => {
-    // Always fetch reviews fresh from backend API
-    const fetchReviews = async () => {
-      setReviewsLoading(true);
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/user-feedback?t=${new Date().getTime()}`);
-        if (response.ok) {
-          const data = await response.json();
-          if (Array.isArray(data) && data.length > 0) {
-            setReviews(data);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load reviews from API:", err);
-      } finally {
-        setReviewsLoading(false);
-      }
-    };
-    fetchReviews();
-  }, []);
+   const fetchReviews = async () => {
+     setReviewsLoading(true);
+     try {
+       const response = await fetch(`${API_BASE_URL}/api/user-feedback?t=${new Date().getTime()}`);
+       if (response.ok) {
+         const data = await response.json();
+         if (Array.isArray(data) && data.length > 0) {
+           setReviews(data);
+         }
+       }
+     } catch (err) {
+       console.error("Failed to load reviews from API:", err);
+     } finally {
+       setReviewsLoading(false);
+     }
+   };
+
+   useEffect(() => {
+     fetchReviews();
+   }, []);
 
   useEffect(() => {
     if (window.location.hash) {
@@ -515,28 +515,27 @@ export default function Landing() {
                       avatarUrl: newReview.avatarUrl
                     })
                   })
-                  .then(async (res) => {
-                    if (res.ok) {
-                      const saved = await res.json();
-                      setReviews((prev) => [saved, ...prev]);
-                      setSubmitting(false);
-                      setSuccess(true);
-                      toast.success('Thank you! Your review was successfully saved.');
-                      
-                      // Reset form inputs
-                      setNewReview({
-                        name: '',
-                        handle: '',
-                        role: '',
-                        rating: 5,
-                        text: '',
-                        platform: 'instagram',
-                        avatarUrl: ''
-                      });
-                    } else {
-                      throw new Error('Failed to save review');
-                    }
-                  })
+                   .then(async (res) => {
+                     if (res.ok) {
+                       // const saved = await res.json(); // not needed
+                       setSubmitting(false);
+                       setSuccess(true);
+                       toast.success('Thank you! Your review was successfully saved.');
+                       await fetchReviews();
+                       // Reset form inputs
+                       setNewReview({
+                         name: '',
+                         handle: '',
+                         role: '',
+                         rating: 5,
+                         text: '',
+                         platform: 'instagram',
+                         avatarUrl: ''
+                       });
+                     } else {
+                       throw new Error('Failed to save review');
+                     }
+                   })
                   .catch((err) => {
                     console.error("Error submitting review to backend:", err);
                     // Resilient fallback: Add to local state so the demo always succeeds

@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Sparkles, Star, MessageSquare, Image as ImageIcon, Instagram, Facebook, MessageCircle } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import { API_BASE_URL } from '../config';
+import { useNavigate } from 'react-router-dom';
 
 const WriteReview = () => {
   const [submitting, setSubmitting] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const [alreadyReviewed, setAlreadyReviewed] = useState(
-    localStorage.getItem('smart10x_reviewed') === 'true'
-  );
+   const [alreadyReviewed, setAlreadyReviewed] = useState(
+     localStorage.getItem('smart10x_reviewed') === 'true'
+   );
+   const navigate = useNavigate();
 
-  useEffect(() => {
+   useEffect(() => {
     const checkReviewStatus = async () => {
       try {
         const token = localStorage.getItem('insta_agent_token');
@@ -107,20 +109,21 @@ const WriteReview = () => {
         body: JSON.stringify(newReview)
       });
       
-      if (response.ok) {
-        toast.success('Review submitted successfully! Thank you.');
-        localStorage.setItem('smart10x_reviewed', 'true');
-        setAlreadyReviewed(true);
-        // Reset form
-        setNewReview({
-          name: '',
-          handle: '',
-          role: '',
-          rating: 5,
-          text: '',
-          platform: 'instagram',
-          avatarUrl: ''
-        });
+       if (response.ok) {
+         toast.success('Review submitted successfully! Thank you.');
+         localStorage.setItem('smart10x_reviewed', 'true');
+         setAlreadyReviewed(true);
+         navigate('/');
+         // Reset form
+         setNewReview({
+           name: '',
+           handle: '',
+           role: '',
+           rating: 5,
+           text: '',
+           platform: 'instagram',
+           avatarUrl: ''
+         });
       } else {
         const errorData = await response.json();
         toast.error(errorData.error || 'Failed to submit review');
