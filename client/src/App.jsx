@@ -8,6 +8,7 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import CookieBanner from './components/CookieBanner';
+import UniversalTriggers from './pages/UniversalTriggers';
 
 // Helper to handle lazy loading retries (Fixes 'Failed to fetch dynamically imported module')
 const lazyRetry = (componentImport) => {
@@ -428,23 +429,23 @@ function Sidebar({ isMobileOpen, onClose }) {
 
         <div className="sidebar-middle-scroll">
           <nav className="nav-links">
+            <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Home size={18} />
+              <span>Home</span>
+            </NavLink>
             <NavLink 
               to="/hub" 
-              className={() => `nav-item ${location.pathname === '/hub' && !location.search.includes('tab=universal') ? 'active' : ''}`}
+              className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}
             >
               <Zap size={18} />
               <span>Platform Automation</span>
             </NavLink>
             <NavLink 
-              to="/hub?tab=universal" 
-              className={() => `nav-item ${location.pathname === '/hub' && location.search.includes('tab=universal') ? 'active' : ''}`}
+              to="/universal-triggers" 
+              className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}
             >
               <Globe size={18} />
               <span>Universal Triggers</span>
-            </NavLink>
-            <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Home size={18} />
-              <span>Home</span>
             </NavLink>
             <NavLink to="/ai-studio" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Sparkles size={18} />
@@ -687,6 +688,7 @@ function MainLayout() {
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
+              <Route path="/universal-triggers" element={<ProtectedRoute><UniversalTriggers /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
               <Route path="/campaign-builder/new" element={<ProtectedRoute><CampaignBuilder /></ProtectedRoute>} />
               <Route path="/automation-editor" element={<ProtectedRoute><AutomationEditor /></ProtectedRoute>} />

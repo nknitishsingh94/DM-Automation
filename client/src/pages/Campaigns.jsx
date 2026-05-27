@@ -11,13 +11,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
   const { user, logout } = useAuth();
   const { notify } = useNotification();
   
-  const params = new URLSearchParams(location.search);
-
-  const [campaigns, setCampaigns] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
-  const [showUniversalPicker, setShowUniversalPicker] = useState(false);
-  const [activeTab, setActiveTab] = useState(params.get('tab') || 'all'); // 'all', 'universal', 'linked'
   const [platformFilter, setPlatformFilter] = useState(propPlatformFilter || 'all');
   
   useEffect(() => {
@@ -108,13 +102,6 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
     }
   };
 
-  // Add effect to update tab when URL changes
-  useEffect(() => {
-    const p = new URLSearchParams(location.search);
-    if (p.get('tab')) {
-      setActiveTab(p.get('tab'));
-    }
-  }, [location.search]);
 
   const fetchCampaigns = async () => {
     const token = localStorage.getItem('insta_agent_token');
@@ -397,8 +384,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
   if (loading || loadingFlows) return <div style={{ color: 'var(--text-muted)', padding: '40px', textAlign: 'center' }}>Loading automations...</div>;
 
   const filteredCampaigns = campaigns.filter(c => {
-    if (activeTab === 'universal' && !c.isUniversal) return false;
-    if (activeTab === 'linked' && c.isUniversal) return false;
+    if (c.isUniversal) return false;
     if (platformFilter !== 'all') {
       return c.platform === platformFilter;
     }
@@ -413,41 +399,9 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
           <h1 style={{ fontSize: '2.2rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '8px', letterSpacing: '-1px' }}>Automations</h1>
           <p style={{ color: '#64748b', fontWeight: '500' }}>Manage your AI-powered social media triggers</p>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-           <button 
-            onClick={() => {
-              setShowUniversalPicker(true);
-            }} 
-            style={{ 
-              display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', 
-              borderRadius: '14px', background: 'rgba(14, 165, 233, 0.1)', color: '#0ea5e9', 
-              border: '1px solid rgba(14, 165, 233, 0.2)', fontWeight: '800', cursor: 'pointer', transition: 'all 0.3s' 
-            }}
-            onMouseOver={e => e.currentTarget.style.background = 'rgba(14, 165, 233, 0.15)'}
-            onMouseOut={e => e.currentTarget.style.background = 'rgba(14, 165, 233, 0.1)'}
-          >
-            <Globe size={18} /> New Universal Trigger
-          </button>
-          <button 
-            onClick={() => {
-              setNewCamp({...newCamp, isUniversal: false});
-              setShowAdd(true);
-            }} 
-            style={{ 
-              display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', 
-              borderRadius: '14px', background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)', 
-              color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(59, 130, 246, 0.4)', transition: 'all 0.3s' 
-            }}
-            onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-            onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            <Plus size={20} /> Create New
-          </button>
-        </div>
       </div>
 
-      {activeTab === 'all' && (
-        <div style={{ marginBottom: '40px' }}>
+      <div style={{ marginBottom: '40px' }}>
           <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
              <Sparkles size={18} color="#7c3aed" /> Quick Start Templates
           </h2>
@@ -480,29 +434,6 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
             ))}
           </div>
         </div>
-      )}
-
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', padding: '6px', background: '#f1f5f9', borderRadius: '16px', width: 'fit-content' }}>
-        {[
-          { id: 'all', label: 'All Automations', icon: <Zap size={16} /> },
-          { id: 'universal', label: 'Universal Triggers', icon: <Globe size={16} /> },
-          { id: 'linked', label: 'Linked Posts', icon: <Share2 size={16} /> }
-        ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '12px',
-              border: 'none', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s',
-              background: activeTab === tab.id ? 'white' : 'transparent',
-              color: activeTab === tab.id ? '#1e1b4b' : '#64748b',
-              boxShadow: activeTab === tab.id ? '0 4px 6px -1px rgba(0,0,0,0.1)' : 'none'
-            }}
-          >
-            {tab.icon} {tab.label}
-          </button>
-        ))}
-      </div>
 
       {/* Platform Filters (Hidden if locked by Platform Dashboard) */}
       {!propPlatformFilter && (() => {
@@ -680,8 +611,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
         <div style={{ textAlign: 'center', padding: '60px', background: '#f8fafc', borderRadius: '24px', border: '1px dashed #e2e8f0', marginTop: '32px' }}>
           <Zap size={48} color="#94a3b8" style={{ marginBottom: '16px' }} />
           <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px' }}>No automations found</h3>
-          <p style={{ color: '#64748b', marginBottom: '24px' }}>{activeTab === 'universal' ? "No universal triggers created yet." : "No linked post automations found."}</p>
-          <button onClick={() => activeTab === 'universal' ? setShowUniversalPicker(true) : handleBuildClick()} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Create One Now</button>
+          <p style={{ color: '#64748b', marginBottom: '24px' }}>No platform automations found.</p>
+          <button onClick={() => setShowAdd(true)} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Create One Now</button>
         </div>
       )}
 
