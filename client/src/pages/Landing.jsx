@@ -91,6 +91,9 @@ export default function Landing() {
 
   return (
     <div className="landing-container">
+      <div style={{ backgroundColor: 'red', color: 'white', padding: '20px', textAlign: 'center', fontSize: '24px', fontWeight: 'bold', zIndex: 9999, position: 'relative' }}>
+        DEBUG: LIVE CODE IS ACTIVE!
+      </div>
       <header className="landing-header">
         <div className="header-content">
           <div className="header-left">
@@ -335,13 +338,13 @@ export default function Landing() {
       </section>
 
       {/* ==================== REVIEW SYSTEM SECTION ==================== */}
-      <section id="reviews" className="reviews-section">
-        <div className="reviews-container">
+      <section id="reviews" className="feedback-zone">
+        <div className="feedback-wrap">
           
           {/* Header */}
-          <div className="reviews-header">
-            <span className="reviews-badge">
-              <Sparkles size={14} style={{ marginRight: '4px' }} /> Testimonials
+          <div className="feedback-top">
+            <span className="feedback-label">
+              <Sparkles size={14} style={{ marginRight: '4px' }} /> Wall of Love
             </span>
             <h2>Loved by <span>1,200+ Creators</span> & Brands</h2>
             <p>
@@ -350,7 +353,7 @@ export default function Landing() {
           </div>
 
           {/* Stats Bar */}
-          <div className="reviews-stats-bar">
+          <div className="feedback-metrics">
             <div className="stats-group">
               <div className="stat-item">
                 <div className="stat-number" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -367,7 +370,7 @@ export default function Landing() {
                 <div className="stat-label">Response Accuracy</div>
               </div>
             </div>
-            <Link className="write-review-trigger-btn" to="/write-review" style={{ textDecoration: 'none' }}>
+            <Link className="add-feedback-btn" to="/write-review" style={{ textDecoration: 'none' }}>
               <MessageSquare size={18} /> Write a Review
             </Link>
           </div>
@@ -383,11 +386,11 @@ export default function Landing() {
               <p>No reviews yet. Be the first to share your experience!</p>
             </div>
           ) : (
-            <div className="reviews-grid">
+            <div className="feedback-layout">
               {reviews.slice(0, 4).map((review) => (
-                <div key={review.id || review._id || Math.random()} className="review-card">
-                  <div className="review-card-top">
-                    <div className="review-stars">
+                <div key={review.id || review._id || Math.random()} className="feedback-item">
+                  <div className="feedback-item-top">
+                    <div className="feedback-rating">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
@@ -405,14 +408,14 @@ export default function Landing() {
                     </span>
                   </div>
                   
-                  <p className="review-text">"{review.text}"</p>
+                  <p className="feedback-msg">"{review.text}"</p>
                   
-                  <div className="review-user-info">
-                    <div className="reviewer-avatar-container">
+                  <div className="feedback-author">
+                    <div className="feedback-user-img">
                       {review.avatarUrl ? (
                         <img src={review.avatarUrl} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                       ) : (
-                        <div className="reviewer-avatar-fallback">
+                        <div className="feedback-user-initial">
                           {(review.name || 'User').split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase()}
                         </div>
                       )}
@@ -422,10 +425,10 @@ export default function Landing() {
                         </span>
                       )}
                     </div>
-                    <div className="reviewer-details">
-                      <span className="reviewer-name">{review.name}</span>
-                      <span className="reviewer-handle">{review.handle}</span>
-                      <span className="reviewer-role">{review.role}</span>
+                    <div className="feedback-user-info">
+                      <span className="feedback-user-name">{review.name}</span>
+                      <span className="feedback-user-tag">{review.handle}</span>
+                      <span className="feedback-user-job">{review.role}</span>
                     </div>
                   </div>
                 </div>
@@ -781,3 +784,6 @@ export default function Landing() {
 }
 
 // Trigger vercel deployment
+
+
+
