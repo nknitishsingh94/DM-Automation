@@ -3382,8 +3382,7 @@ app.post('/api/user-feedback', async (req, res) => {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split('Bearer ')[1];
       try {
-        const jwt = require('jsonwebtoken');
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+const decoded = jwt.verify(token, process.env.JWT_SECRET);
         uuidUserId = convertObjectIDToUUID(decoded.userId);
       } catch (err) {
         console.warn("Invalid token for review submission, treating as anonymous");
@@ -3535,6 +3534,7 @@ httpServer.listen(PORT, () => {
 
 
 export default app;
+
 
 
 
