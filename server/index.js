@@ -3424,10 +3424,10 @@ app.post('/api/user-feedback', async (req, res) => {
     const { data: inserted, error: insertError } = await supabase
       .from('reviews')
       .insert({
-        id: uuidUserId,
+        id: uuidUserId || require('crypto').randomUUID(),
         name: xss(name),
         handle: handle ? xss(handle) : '',
-        role: role ? xss(role) : 'Verified Creator',
+        role: role ? xss(role) : (uuidUserId ? 'Verified Creator' : 'Guest'),
         rating: Number(rating) || 5,
         text: xss(text),
         platform: platform || 'instagram',
@@ -3442,7 +3442,7 @@ app.post('/api/user-feedback', async (req, res) => {
     }
 
     const savedReview = inserted && inserted.length > 0 ? inserted[0] : {
-      id: uuidUserId,
+      id: uuidUserId || require('crypto').randomUUID(),
       name,
       handle,
       role,
@@ -3533,5 +3533,7 @@ httpServer.listen(PORT, () => {
 
 
 export default app;
+
+
 
 
