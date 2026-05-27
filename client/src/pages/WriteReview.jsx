@@ -113,7 +113,7 @@ const WriteReview = () => {
           toast.success('Review submitted successfully! Thank you.');
           localStorage.setItem('smart10x_reviewed', 'true');
           setAlreadyReviewed(true);
-          navigate('/public-home#reviews');
+          
           // Reset form
           setNewReview({
             name: '',
@@ -359,5 +359,6 @@ const WriteReview = () => {
 };
 
 export default WriteReview;
+
 
 
