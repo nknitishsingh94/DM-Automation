@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate } from 'react-router-dom';
-import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2 } from 'lucide-react';
+import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config';
@@ -428,9 +428,19 @@ function Sidebar({ isMobileOpen, onClose }) {
 
         <div className="sidebar-middle-scroll">
           <nav className="nav-links">
-            <NavLink to="/hub" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink 
+              to="/hub" 
+              className={() => `nav-item ${location.pathname === '/hub' && !location.search.includes('tab=universal') ? 'active' : ''}`}
+            >
               <Zap size={18} />
               <span>Platform Automation</span>
+            </NavLink>
+            <NavLink 
+              to="/hub?tab=universal" 
+              className={() => `nav-item ${location.pathname === '/hub' && location.search.includes('tab=universal') ? 'active' : ''}`}
+            >
+              <Globe size={18} />
+              <span>Universal Triggers</span>
             </NavLink>
             <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Home size={18} />

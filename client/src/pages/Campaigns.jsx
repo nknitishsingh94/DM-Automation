@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Zap, Plus, Trash2, Power, MessageCircle, MessageSquare, Instagram, Facebook, AlertCircle, CheckCircle, Video, Link as LinkIcon, History, X, Crown, Edit2, Globe, Share2, Sparkles, Brain, Bot } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 
 export default function Campaigns({ platformFilter: propPlatformFilter }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
   const { notify } = useNotification();
+  
+  const params = new URLSearchParams(location.search);
+
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [showUniversalPicker, setShowUniversalPicker] = useState(false);
-  const [activeTab, setActiveTab] = useState('all'); // 'all', 'universal', 'linked'
+  const [activeTab, setActiveTab] = useState(params.get('tab') || 'all'); // 'all', 'universal', 'linked'
   const [platformFilter, setPlatformFilter] = useState(propPlatformFilter || 'all');
   
   useEffect(() => {
@@ -103,6 +107,14 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
       setGeneratingAI(false);
     }
   };
+
+  // Add effect to update tab when URL changes
+  useEffect(() => {
+    const p = new URLSearchParams(location.search);
+    if (p.get('tab')) {
+      setActiveTab(p.get('tab'));
+    }
+  }, [location.search]);
 
   const fetchCampaigns = async () => {
     const token = localStorage.getItem('insta_agent_token');
