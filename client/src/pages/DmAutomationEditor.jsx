@@ -29,6 +29,7 @@ export default function DmAutomationEditor() {
   const params = new URLSearchParams(location.search);
   const channel = params.get('channel') || 'instagram';
   const template = params.get('template') || 'all_dms';
+  const isUniversal = params.get('isUniversal') === 'true';
 
   // State
   const [selectedPlatform, setSelectedPlatform] = useState(channel);
@@ -164,6 +165,7 @@ export default function DmAutomationEditor() {
           triggerOnDms: true,
           triggerOnComments: false,
           triggerOnStories: false,
+          isUniversal: isUniversal,
           publicReplyText: publicReplyText,
           isAI: isAI,
           status: 'Active'
@@ -399,12 +401,17 @@ export default function DmAutomationEditor() {
                       type="text" 
                       value={name} 
                       onChange={(e) => setName(e.target.value)} 
-                      placeholder="Automation Name"
+                      placeholder={isUniversal ? "Universal Automation Name" : "Automation Name"}
                       style={{ fontSize: '1.8rem', fontWeight: '900', color: '#1e1b4b', border: 'none', outline: 'none', background: 'transparent', padding: 0, width: 'auto', letterSpacing: '-0.02em' }} 
                     />
                     <div style={{ position: 'absolute', bottom: -4, left: 0, width: '40px', height: '3px', background: '#7c3aed', borderRadius: '2px' }}></div>
                  </div>
                  <Pencil size={18} color="#cbd5e1" style={{ marginTop: '8px' }} />
+                 {isUniversal && (
+                   <div style={{ background: 'rgba(14, 165, 233, 0.1)', color: '#0ea5e9', padding: '6px 12px', borderRadius: '10px', fontSize: '0.8rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px', marginLeft: '12px' }}>
+                     <Globe size={14} /> Universal Trigger
+                   </div>
+                 )}
               </div>
            </div>
 

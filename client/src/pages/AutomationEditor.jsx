@@ -32,10 +32,11 @@ export default function AutomationEditor() {
   const params = new URLSearchParams(location.search);
   const template = params.get('template');
   const channel = params.get('channel');
+  const isUniversal = params.get('isUniversal') === 'true';
 
   // State
   const [selectedPlatform, setSelectedPlatform] = useState(channel || 'instagram');
-  const [anyStory, setAnyStory] = useState(true);
+  const [anyStory, setAnyStory] = useState(isUniversal ? true : true);
   const [anyKeyword, setAnyKeyword] = useState(false);
   const [keywords, setKeywords] = useState([]);
   const [keywordInput, setKeywordInput] = useState('');
@@ -212,6 +213,7 @@ export default function AutomationEditor() {
           triggerOnDms,
           triggerOnComments,
           triggerOnStories,
+          isUniversal: isUniversal,
           isAI: isAI,
           status: 'Active'
         })
@@ -592,7 +594,7 @@ export default function AutomationEditor() {
                 type="text" 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Name your automation..."
+                placeholder={isUniversal ? "Universal Automation Name" : "Automation Name..."}
                 style={{
                   fontSize: '1.8rem',
                   fontWeight: '800',
@@ -713,7 +715,7 @@ export default function AutomationEditor() {
               </div>
             </div>
                {/* Step 2: Select a Post (Restored) */}
-            {template !== 'dms' && (
+            {template !== 'dms' && !isUniversal && (
               <div style={{ marginBottom: '18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                   <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>2</div>
