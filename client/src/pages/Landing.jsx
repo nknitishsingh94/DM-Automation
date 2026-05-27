@@ -8,49 +8,9 @@ import Footer from '../components/Footer';
 export default function Landing() {
   const [featuresOpen, setFeaturesOpen] = useState(false);
 
-  // Interactive reviews state
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      name: 'Sarah Jenkins',
-      handle: '@sarahj_creative',
-      role: 'Fashion Influencer (240k+ followers)',
-      rating: 5,
-      text: 'Our comment-to-DM conversion rate went from 2% to 18% in less than 3 days. This tool is a literal goldmine! Deploying our custom AI agent to reply to Reel comments has automated our lead gen completely.',
-      platform: 'instagram',
-      verified: true
-    },
-    {
-      id: 2,
-      name: 'Michael Chen',
-      handle: '@mchen_ecommerce',
-      role: 'E-Commerce Marketing Director',
-      rating: 5,
-      text: 'The visual flow builder is exceptionally easy to use. Setting up automated follow-ups for our Facebook ads increased our overall customer ROI by 35% in just a single campaign. Highly recommend!',
-      platform: 'facebook',
-      verified: true
-    },
-    {
-      id: 3,
-      name: 'Elena Rostova',
-      handle: '@elena_fitness',
-      role: 'Personal Fitness Coach',
-      rating: 5,
-      text: 'I love the Story Mention auto-reply! Being able to thank my followers and instantly DM them my training program link has doubled my monthly course sales while saving me hours of manual replying.',
-      platform: 'instagram',
-      verified: true
-    },
-    {
-      id: 4,
-      name: 'Marcus Aurelius',
-      handle: '@marcus_support',
-      role: 'Customer Support Lead',
-      rating: 5,
-      text: 'An absolute game-changer for high-volume customer inquiries. Connecting the AI support agent to our WhatsApp Business API solved 80% of our repetitive questions and let our team focus on closing big sales.',
-      platform: 'whatsapp',
-      verified: true
-    }
-  ]);
+  // Reviews fetched from API
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [newReview, setNewReview] = useState({
@@ -78,7 +38,7 @@ export default function Landing() {
       const response = await fetch(`${API_BASE_URL}/api/upload`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}` // May be needed if /api/upload requires auth
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: formData
       });
@@ -99,18 +59,21 @@ export default function Landing() {
   };
 
   useEffect(() => {
-    // Fetch persistent reviews from backend
+    // Always fetch reviews fresh from backend API
     const fetchReviews = async () => {
+      setReviewsLoading(true);
       try {
         const response = await fetch(`${API_BASE_URL}/api/reviews?t=${new Date().getTime()}`);
         if (response.ok) {
           const data = await response.json();
-          if (Array.isArray(data)) {
+          if (Array.isArray(data) && data.length > 0) {
             setReviews(data);
           }
         }
       } catch (err) {
         console.error("Failed to load reviews from API:", err);
+      } finally {
+        setReviewsLoading(false);
       }
     };
     fetchReviews();
@@ -410,54 +373,65 @@ export default function Landing() {
           </div>
 
           {/* Reviews Grid */}
-          <div className="reviews-grid">
-            {reviews.slice(0, 4).map((review) => (
-              <div key={review.id || review._id || Math.random()} className="review-card">
-                <div className="review-card-top">
-                  <div className="review-stars">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        size={16}
-                        fill={i < review.rating ? "#fbbf24" : "none"}
-                        stroke={i < review.rating ? "none" : "#fbbf24"}
-                      />
-                    ))}
+          {reviewsLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '60px 0', gap: '16px' }}>
+              <div style={{ width: '36px', height: '36px', border: '3.5px solid #e2e8f0', borderTopColor: '#7c3aed', borderRadius: '50%' }} className="animate-spin"></div>
+              <span style={{ color: '#64748b', fontWeight: '600' }}>Loading reviews...</span>
+            </div>
+          ) : reviews.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
+              <p>No reviews yet. Be the first to share your experience!</p>
+            </div>
+          ) : (
+            <div className="reviews-grid">
+              {reviews.slice(0, 4).map((review) => (
+                <div key={review.id || review._id || Math.random()} className="review-card">
+                  <div className="review-card-top">
+                    <div className="review-stars">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          size={16}
+                          fill={i < review.rating ? "#fbbf24" : "none"}
+                          stroke={i < review.rating ? "none" : "#fbbf24"}
+                        />
+                      ))}
+                    </div>
+                    <span className={`platform-badge ${review.platform}`}>
+                      {review.platform === 'instagram' && <Instagram size={12} style={{ marginRight: '4px' }} />}
+                      {review.platform === 'facebook' && <Facebook size={12} style={{ marginRight: '4px' }} />}
+                      {review.platform === 'whatsapp' && <MessageCircle size={12} style={{ marginRight: '4px' }} />}
+                      {review.platform}
+                    </span>
                   </div>
-                  <span className={`platform-badge ${review.platform}`}>
-                    {review.platform === 'instagram' && <Instagram size={12} style={{ marginRight: '4px' }} />}
-                    {review.platform === 'facebook' && <Facebook size={12} style={{ marginRight: '4px' }} />}
-                    {review.platform === 'whatsapp' && <MessageCircle size={12} style={{ marginRight: '4px' }} />}
-                    {review.platform}
-                  </span>
+                  
+                  <p className="review-text">"{review.text}"</p>
+                  
+                  <div className="review-user-info">
+                    <div className="reviewer-avatar-container">
+                      {review.avatarUrl ? (
+                        <img src={review.avatarUrl} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                      ) : (
+                        <div className="reviewer-avatar-fallback">
+                          {(review.name || 'User').split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase()}
+                        </div>
+                      )}
+                      {review.verified && (
+                        <span className="verified-indicator" title="Verified Purchase">
+                          <Check size={10} strokeWidth={4} />
+                        </span>
+                      )}
+                    </div>
+                    <div className="reviewer-details">
+                      <span className="reviewer-name">{review.name}</span>
+                      <span className="reviewer-handle">{review.handle}</span>
+                      <span className="reviewer-role">{review.role}</span>
+                    </div>
+                  </div>
                 </div>
-                
-                <p className="review-text">"{review.text}"</p>
-                
-                <div className="review-user-info">
-                  <div className="reviewer-avatar-container">
-                    {review.avatarUrl ? (
-                      <img src={review.avatarUrl} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-                    ) : (
-                      <div className="reviewer-avatar-fallback">
-                        {(review.name || 'User').split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase()}
-                      </div>
-                    )}
-                    {review.verified && (
-                      <span className="verified-indicator" title="Verified Purchase">
-                        <Check size={10} strokeWidth={4} />
-                      </span>
-                    )}
-                  </div>
-                  <div className="reviewer-details">
-                    <span className="reviewer-name">{review.name}</span>
-                    <span className="reviewer-handle">{review.handle}</span>
-                    <span className="reviewer-role">{review.role}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* See All Reviews Button */}
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '40px' }}>
