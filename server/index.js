@@ -3328,7 +3328,7 @@ app.get('/api/user-feedback', async (req, res) => {
     const { data: reviews, error } = await supabase
       .from('reviews')
       .select('*')
-      .order('id', { ascending: false });
+      .order('created_at', { ascending: false });
 
     if (error) {
       throw error;
