@@ -65,7 +65,7 @@ export default function Onboarding() {
   const [modalStep, setModalStep] = useState('login'); // login, business_check, permissions, loading
   const [igPassword, setIgPassword] = useState('');
 
-  // Zorcha State Additions
+  // Smart10X State Additions
   const [availablePages, setAvailablePages] = useState(null);
   const [isLinking, setIsLinking] = useState(false);
   const [linkingError, setLinkingError] = useState('');
