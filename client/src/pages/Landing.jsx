@@ -32,13 +32,13 @@ export default function Landing() {
 
     setUploadingAvatar(true);
     const formData = new FormData();
-    formData.append('media', file);
+    formData.append('file', file);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/upload`, {
+      const response = await fetch(`${API_BASE_URL}/api/upload/avatar`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}`
         },
         body: formData
       });
@@ -504,7 +504,7 @@ export default function Landing() {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
-                      ...(localStorage.getItem('token') ? { 'Authorization': `Bearer ${localStorage.getItem('token')}` } : {})
+                      ...(localStorage.getItem('insta_agent_token') ? { 'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}` } : {})
                     },
                     body: JSON.stringify({
                       name: newReview.name,
