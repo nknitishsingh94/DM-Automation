@@ -469,10 +469,12 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>Settings</span>
             </NavLink>
             
-            <NavLink to="/write-review" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <MessageSquare size={18} />
-              <span>Write a Review</span>
-            </NavLink>
+            {localStorage.getItem('smart10x_reviewed') !== 'true' && (
+              <NavLink to="/write-review" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+                <MessageSquare size={18} />
+                <span>Write a Review</span>
+              </NavLink>
+            )}
           </nav>
         </div>
 
@@ -747,3 +749,5 @@ function App() {
 }
 
 export default App;
+
+
