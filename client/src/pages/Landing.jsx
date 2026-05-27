@@ -91,9 +91,6 @@ export default function Landing() {
 
   return (
     <div className="landing-container">
-      <div style={{ backgroundColor: 'red', color: 'white', padding: '20px', textAlign: 'center', fontSize: '24px', fontWeight: 'bold', zIndex: 9999, position: 'relative' }}>
-        DEBUG: LIVE CODE IS ACTIVE!
-      </div>
       <header className="landing-header">
         <div className="header-content">
           <div className="header-left">
