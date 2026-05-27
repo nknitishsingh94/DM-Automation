@@ -11,6 +11,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
   const { user, logout } = useAuth();
   const { notify } = useNotification();
   
+  const [campaigns, setCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [platformFilter, setPlatformFilter] = useState(propPlatformFilter || 'all');
   
