@@ -93,8 +93,8 @@ export default function Settings() {
         // Derive connection flags from real data
         const derivedData = {
           ...data,
-          instagramAutomationEnabled: data.instagramAutomationEnabled ?? true,
-          facebookAutomationEnabled: data.facebookAutomationEnabled ?? true,
+          instagramAutomationEnabled: data.instagramAutomationEnabled ?? false,
+          facebookAutomationEnabled: data.facebookAutomationEnabled ?? false,
           isAccountConnected: !!data.instagramAccessToken && !!data.businessAccountId,
           isFacebookConnected: !!data.facebookAccessToken && !!data.facebookPageId,
           isWhatsAppConnected: !!data.whatsappToken && !!data.whatsappPhoneNumberId,
@@ -166,8 +166,8 @@ export default function Settings() {
         }
         const derivedData = {
           ...data,
-          instagramAutomationEnabled: data.instagramAutomationEnabled ?? true,
-          facebookAutomationEnabled: data.facebookAutomationEnabled ?? true,
+          instagramAutomationEnabled: data.instagramAutomationEnabled ?? false,
+          facebookAutomationEnabled: data.facebookAutomationEnabled ?? false,
           isAccountConnected: !!data.instagramAccessToken && !!data.businessAccountId,
           isFacebookConnected: !!data.facebookAccessToken && !!data.facebookPageId,
           isWhatsAppConnected: !!data.whatsappToken && !!data.whatsappPhoneNumberId,

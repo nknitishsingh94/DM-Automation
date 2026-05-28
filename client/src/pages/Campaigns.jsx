@@ -614,14 +614,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
           })}
           </div>
         </div>
-      ) : (
-        <div style={{ textAlign: 'center', padding: '60px', background: '#f8fafc', borderRadius: '24px', border: '1px dashed #e2e8f0', marginTop: '32px' }}>
-          <Zap size={48} color="#94a3b8" style={{ marginBottom: '16px' }} />
-          <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px' }}>No automations found</h3>
-          <p style={{ color: '#64748b', marginBottom: '24px' }}>No platform automations found.</p>
-          <button onClick={() => setShowAdd(true)} style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Create One Now</button>
-        </div>
-      )}
+      ) : null}
 
       {flows.length > 0 && (
         <div style={{ marginTop: '64px' }}>
