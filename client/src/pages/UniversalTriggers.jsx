@@ -115,7 +115,7 @@ export default function UniversalTriggers() {
   
   const [topTriggers, setTopTriggers] = useState([]);
   const [triggerType, setTriggerType] = useState('Keyword');
-  const [keywords, setKeywords] = useState(['price', 'pricing', 'cost']);
+  const [keywords, setKeywords] = useState([]);
   const [keywordInput, setKeywordInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
