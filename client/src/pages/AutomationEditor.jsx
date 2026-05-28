@@ -35,7 +35,7 @@ export default function AutomationEditor() {
   const isUniversal = params.get('isUniversal') === 'true';
 
   // State
-  const [selectedPlatform, setSelectedPlatform] = useState(channel || 'instagram');
+  const [selectedPlatform, setSelectedPlatform] = useState(isUniversal ? 'all' : (channel || 'instagram'));
   const [anyStory, setAnyStory] = useState(isUniversal ? true : true);
   const [anyKeyword, setAnyKeyword] = useState(false);
   const [keywords, setKeywords] = useState([]);
@@ -609,6 +609,7 @@ export default function AutomationEditor() {
             </div>
 
             {/* Step 0: Target Platform */}
+            {!isUniversal && (
             <div style={{ position: 'relative', zIndex: 1, marginBottom: '18px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#f59e0b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>0</div>
@@ -663,6 +664,7 @@ export default function AutomationEditor() {
                   {!channel && <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.8rem', fontWeight: '500' }}>Only connected platforms are shown here.</p>}
               </div>
            </div>
+           )}
 
             {/* Step 1: Follower Growth Gating (NEW PRIORITY) */}
             <div style={{ marginBottom: '18px' }}>

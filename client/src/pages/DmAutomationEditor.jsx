@@ -32,7 +32,7 @@ export default function DmAutomationEditor() {
   const isUniversal = params.get('isUniversal') === 'true';
 
   // State
-  const [selectedPlatform, setSelectedPlatform] = useState(channel);
+  const [selectedPlatform, setSelectedPlatform] = useState(isUniversal ? 'all' : channel);
   const [anyKeyword, setAnyKeyword] = useState(false);
   const [keywords, setKeywords] = useState([]);
   const [keywordInput, setKeywordInput] = useState('');
@@ -416,6 +416,7 @@ export default function DmAutomationEditor() {
            </div>
 
            {/* Step 0: Target Platform */}
+           {!isUniversal && (
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#f59e0b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(245, 158, 11, 0.15)' }}>0</div>
@@ -467,6 +468,7 @@ export default function DmAutomationEditor() {
                   {!params.get('channel') && <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.8rem', fontWeight: '500' }}>Only connected platforms are shown here.</p>}
               </div>
            </div>
+           )}
 
            {/* Step 1: Follower Growth Gating */}
            <div style={{ position: 'relative', zIndex: 1 }}>
