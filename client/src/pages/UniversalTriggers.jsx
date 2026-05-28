@@ -205,7 +205,7 @@ export default function UniversalTriggers() {
       {/* Top Header */}
       <div style={{ padding: '16px 24px', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button onClick={() => navigate('/campaigns')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b' }}><ArrowLeft size={20} /></button>
+          <button onClick={() => navigate('/hub')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b' }}><ArrowLeft size={20} /></button>
           <div>
             <h1 style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', margin: 0 }}>Universal Trigger Engine</h1>
             <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0 0' }}>Create once, run everywhere</p>
