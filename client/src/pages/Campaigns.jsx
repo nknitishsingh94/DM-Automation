@@ -776,33 +776,15 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Trigger Source</label>
-                  <select value={editForm.triggerSource} onChange={e => setEditForm({...editForm, triggerSource: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}>
-                    <option value="dm">💬 Direct Message (DM)</option>
-                    <option value="comment">📝 Post Comment</option>
-                    <option value="story_mention">📸 Story Mention</option>
-                  </select>
+                  <div style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f1f5f9', border: '1px solid #e2e8f0', color: '#64748b', fontSize: '0.95rem', fontWeight: '600' }}>
+                    {editForm.triggerSource === 'dm' ? '💬 Direct Message (DM)' : editForm.triggerSource === 'comment' ? '📝 Post Comment' : editForm.triggerSource === 'story_mention' ? '📸 Story Mention' : editForm.triggerSource}
+                  </div>
                 </div>
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Target Platform</label>
-                  <div style={{ position: 'relative' }}>
-                    <select 
-                      value={editForm.platform} 
-                      onChange={e => setEditForm({...editForm, platform: e.target.value})}
-                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
-                      onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
-                    >
-                      <option value="all">🌐 {getConnectedPlatformsText()}</option>
-                      {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
-                        <option value="instagram">📸 Instagram</option>
-                      )}
-                      {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
-                        <option value="facebook">💬 Facebook Messenger</option>
-                      )}
-                      {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && (
-                        <option value="whatsapp">🟩 WhatsApp</option>
-                      )}
-                    </select>
+                  <div style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f1f5f9', border: '1px solid #e2e8f0', color: '#64748b', fontSize: '0.95rem', fontWeight: '600' }}>
+                    {editForm.platform === 'instagram' ? '📸 Instagram' : editForm.platform === 'facebook' ? '💬 Facebook Messenger' : editForm.platform === 'whatsapp' ? '🟩 WhatsApp' : `🌐 ${getConnectedPlatformsText()}`}
                   </div>
                 </div>
               </div>
