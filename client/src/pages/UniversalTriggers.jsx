@@ -285,7 +285,7 @@ export default function UniversalTriggers() {
             <span style={{ background: '#e2e8f0', color: '#475569', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: '700' }}>Draft</span>
           </div>
           
-          <div style={{ position: 'absolute', top: 60, left: 16, zIndex: 5, background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', padding: '8px 0' }}>
+          <div style={{ position: 'absolute', top: 60, left: 16, zIndex: 50, background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', padding: '8px 0' }}>
             {[
               { id: 'Pointer', icon: MousePointer2 },
               { id: 'Plus', icon: Plus },
@@ -299,7 +299,7 @@ export default function UniversalTriggers() {
                 <div 
                   key={i} 
                   onClick={() => setActiveTool(btn.id)}
-                  style={{ padding: '10px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRight: isActive ? '2px solid #4f46e5' : '2px solid transparent', color: isActive ? '#4f46e5' : '#64748b' }}
+                  style={{ padding: '10px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: isActive ? '#f8fafc' : 'transparent', borderRight: isActive ? '3px solid #4f46e5' : '3px solid transparent', color: isActive ? '#4f46e5' : '#64748b' }}
                 >
                   <btn.icon size={18} />
                 </div>
