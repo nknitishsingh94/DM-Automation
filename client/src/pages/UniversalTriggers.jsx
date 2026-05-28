@@ -114,6 +114,8 @@ export default function UniversalTriggers() {
   
   const [topTriggers, setTopTriggers] = useState([]);
   const [triggerType, setTriggerType] = useState('Keyword');
+  const [keywords, setKeywords] = useState(['price', 'pricing', 'cost']);
+  const [keywordInput, setKeywordInput] = useState('');
 
   useEffect(() => {
     fetchRealData();
@@ -281,13 +283,30 @@ export default function UniversalTriggers() {
             <div style={{ marginBottom: '24px' }}>
               <label style={{ fontSize: '12px', fontWeight: '700', color: '#1e293b', display: 'block', marginBottom: '10px' }}>Keywords</label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
-                {['price', 'pricing', 'cost'].map((kw, i) => (
+                {keywords.map((kw, i) => (
                   <span key={i} style={{ padding: '4px 8px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '11px', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    {kw} <span style={{ cursor: 'pointer', color: '#94a3b8' }}>×</span>
+                    {kw} 
+                    <span 
+                      onClick={() => setKeywords(keywords.filter((_, index) => index !== i))} 
+                      style={{ cursor: 'pointer', color: '#94a3b8' }}>
+                      ×
+                    </span>
                   </span>
                 ))}
               </div>
-              <input type="text" placeholder="Add keyword..." style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none' }} />
+              <input 
+                type="text" 
+                placeholder="Add keyword..." 
+                value={keywordInput}
+                onChange={(e) => setKeywordInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && keywordInput.trim() !== '') {
+                    setKeywords([...keywords, keywordInput.trim()]);
+                    setKeywordInput('');
+                  }
+                }}
+                style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none' }} 
+              />
               <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '6px' }}>Press Enter to add more keywords</div>
             </div>
 
