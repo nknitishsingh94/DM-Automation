@@ -666,8 +666,8 @@ function MainLayout() {
       <main className="main-content">
         {!hideTopBar && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
         <div className="page-container" style={{ 
-          padding: (isPublic || location.pathname === '/inbox') ? '0' : undefined,
-          overflow: (location.pathname === '/inbox') ? 'hidden' : 'auto',
+          padding: (isPublic || location.pathname === '/inbox' || location.pathname === '/universal-triggers') ? '0' : undefined,
+          overflow: (location.pathname === '/inbox' || location.pathname === '/universal-triggers') ? 'hidden' : 'auto',
           display: 'flex',
           flexDirection: 'column'
         }}>
