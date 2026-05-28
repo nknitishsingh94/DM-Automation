@@ -119,6 +119,7 @@ export default function UniversalTriggers() {
   const [keywords, setKeywords] = useState([]);
   const [keywordInput, setKeywordInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [activeTool, setActiveTool] = useState('Pointer');
 
   useEffect(() => {
     fetchRealData();
@@ -286,17 +287,24 @@ export default function UniversalTriggers() {
           
           <div style={{ position: 'absolute', top: 60, left: 16, zIndex: 5, background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', padding: '8px 0' }}>
             {[
-              { icon: MousePointer2, active: true },
-              { icon: Plus, active: false },
-              { icon: LayoutGrid, active: false },
-              { icon: Link, active: false },
-              { icon: Settings, active: false },
-              { icon: Type, active: false }
-            ].map((btn, i) => (
-              <div key={i} style={{ padding: '10px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: btn.active ? '#4f46e5' : '#64748b' }}>
-                <btn.icon size={18} />
-              </div>
-            ))}
+              { id: 'Pointer', icon: MousePointer2 },
+              { id: 'Plus', icon: Plus },
+              { id: 'Grid', icon: LayoutGrid },
+              { id: 'Link', icon: Link },
+              { id: 'Settings', icon: Settings },
+              { id: 'Text', icon: Type }
+            ].map((btn, i) => {
+              const isActive = activeTool === btn.id;
+              return (
+                <div 
+                  key={i} 
+                  onClick={() => setActiveTool(btn.id)}
+                  style={{ padding: '10px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRight: isActive ? '2px solid #4f46e5' : '2px solid transparent', color: isActive ? '#4f46e5' : '#64748b' }}
+                >
+                  <btn.icon size={18} />
+                </div>
+              );
+            })}
           </div>
 
           <div style={{ flex: 1 }}>
