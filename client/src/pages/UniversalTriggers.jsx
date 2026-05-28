@@ -278,8 +278,9 @@ export default function UniversalTriggers() {
         
         {/* Main Canvas Area */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
-          <div style={{ position: 'absolute', top: 16, left: 16, zIndex: 5, background: '#e0e7ff', color: '#4f46e5', padding: '4px 10px', borderRadius: '4px', fontSize: '11px', fontWeight: '700' }}>
-            Workflow Builder <span style={{ background: '#c7d2fe', padding: '2px 6px', borderRadius: '10px', marginLeft: '6px' }}>Draft</span>
+          <div style={{ position: 'absolute', top: 16, left: 16, zIndex: 5, display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>Workflow Builder</span>
+            <span style={{ background: '#e2e8f0', color: '#475569', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: '700' }}>Draft</span>
           </div>
           
           <div style={{ flex: 1 }}>
