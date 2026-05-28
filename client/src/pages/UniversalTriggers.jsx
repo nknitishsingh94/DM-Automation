@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
+import { API_BASE_URL } from '../config';
 
 // Custom Nodes Matching the Screenshot
 const BaseNode = ({ icon: Icon, title, subtitle, color, bgColor, borderColor }) => (
@@ -208,32 +209,44 @@ export default function UniversalTriggers() {
       alert("Please add at least one keyword.");
       return;
     }
-    const workspaceId = localStorage.getItem('active_workspace_id');
-    if (!workspaceId) {
-      alert("No active workspace found.");
+    const token = localStorage.getItem('insta_agent_token');
+    if (!token) {
+      alert("No authentication token found. Please login again.");
       return;
     }
     
     setIsSaving(true);
     try {
-      const { error } = await supabase.from('campaigns').insert([{
-        workspaceId: workspaceId,
-        isUniversal: true,
-        trigger: keywords.join(','),
-        triggerType: triggerType,
-        status: 'active'
-      }]);
+      const res = await fetch(`${API_BASE_URL}/api/campaigns`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: 'Universal Trigger - ' + triggerType,
+          trigger: keywords.join(', '),
+          response: 'Visual Workflow Configured',
+          isAnyPost: true,
+          platform: 'all',
+          triggerOnDms: true,
+          triggerOnComments: true,
+          status: 'active',
+          isUniversal: true,
+          triggerType: triggerType
+        })
+      });
       
-      if (error) {
-        console.error(error);
-        alert("Error saving trigger: " + error.message);
-      } else {
-        alert("Universal Trigger saved successfully!");
-        fetchRealData(); // Refresh the workflow stats
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to save trigger');
       }
+
+      alert("Universal Trigger saved successfully!");
+      fetchRealData(); // Refresh the workflow stats
     } catch (err) {
       console.error(err);
-      alert("An unexpected error occurred.");
+      alert("Error saving trigger: " + err.message);
     } finally {
       setIsSaving(false);
     }
