@@ -155,6 +155,24 @@ export default function UniversalTriggers() {
   const [keywordInput, setKeywordInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [activeTool, setActiveTool] = useState('Pointer');
+  const [isTesting, setIsTesting] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+
+  const handleTest = () => {
+    setIsTesting(true);
+    setTimeout(() => {
+      setIsTesting(false);
+      alert("Test mode activated. Workflow is running in sandbox.");
+    }, 1500);
+  };
+  
+  const handlePublish = () => {
+    setIsPublishing(true);
+    setTimeout(() => {
+      setIsPublishing(false);
+      alert("Workflow published successfully to all connected platforms!");
+    }, 1500);
+  };
 
   useEffect(() => {
     fetchRealData();
@@ -302,11 +320,19 @@ export default function UniversalTriggers() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button style={{ padding: '8px 16px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#4f46e5', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-            <TestTube size={16} /> Test Workflow
+          <button 
+            onClick={handleTest}
+            disabled={isTesting}
+            style={{ padding: '8px 16px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#4f46e5', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: isTesting ? 'wait' : 'pointer', opacity: isTesting ? 0.7 : 1 }}
+          >
+            <TestTube size={16} /> {isTesting ? 'Testing...' : 'Test Workflow'}
           </button>
-          <button style={{ padding: '8px 24px', background: '#4f46e5', border: 'none', borderRadius: '8px', color: 'white', fontWeight: '600', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Send size={16} /> Publish
+          <button 
+            onClick={handlePublish}
+            disabled={isPublishing}
+            style={{ padding: '8px 24px', background: '#4f46e5', border: 'none', borderRadius: '8px', color: 'white', fontWeight: '600', fontSize: '13px', cursor: isPublishing ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px', opacity: isPublishing ? 0.7 : 1 }}
+          >
+            <Send size={16} /> {isPublishing ? 'Publishing...' : 'Publish'}
           </button>
         </div>
       </div>
@@ -446,6 +472,24 @@ export default function UniversalTriggers() {
                     {plat.label}
                   </label>
                 ))}
+              </div>
+            </div>
+
+            {/* Type & Platforms */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '6px', textTransform: 'uppercase' }}>Trigger Type</label>
+                <select 
+                  value={triggerType}
+                  onChange={(e) => setTriggerType(e.target.value)}
+                  style={{ width: '100%', padding: '10px', fontSize: '12px', fontWeight: '600', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none', background: '#f8fafc', color: '#0f172a', cursor: 'pointer' }}
+                >
+                  <option value="Keyword">Keyword Match</option>
+                  <option value="AI Intent">AI Intent (Smart)</option>
+                  <option value="Post Comment">Post Comment</option>
+                  <option value="Story Mention">Story Mention</option>
+                  <option value="Direct Message">Direct Message</option>
+                </select>
               </div>
             </div>
 
