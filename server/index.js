@@ -913,7 +913,7 @@ app.post('/api/webhook', async (req, res) => {
           const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
           let allMatchingSettings = await Settings.find({
             $or: [{ instagramPageId: pageId }, { businessAccountId: pageId }, { facebookPageId: pageId }]
-          }).sort({ updatedAt: -1 });
+          }).sort({ createdAt: -1 });
 
           if (!allMatchingSettings || allMatchingSettings.length === 0) {
             console.warn(`🛑 UNKNOWN PAGE: ID ${pageId} is not linked to any user.`);
