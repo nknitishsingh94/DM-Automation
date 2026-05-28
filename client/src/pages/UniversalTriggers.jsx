@@ -113,6 +113,7 @@ export default function UniversalTriggers() {
   });
   
   const [topTriggers, setTopTriggers] = useState([]);
+  const [triggerType, setTriggerType] = useState('Keyword');
 
   useEffect(() => {
     fetchRealData();
@@ -257,21 +258,21 @@ export default function UniversalTriggers() {
             <div style={{ marginBottom: '24px' }}>
               <label style={{ fontSize: '12px', fontWeight: '700', color: '#1e293b', display: 'block', marginBottom: '10px' }}>Trigger Type</label>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                <div style={{ border: '2px solid #e0e7ff', background: '#f8fafc', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                  <Type size={18} color="#4f46e5" />
-                  <span style={{ fontSize: '11px', fontWeight: '600', color: '#4f46e5' }}>Keyword</span>
+                <div onClick={() => setTriggerType('Keyword')} style={{ border: triggerType === 'Keyword' ? '2px solid #e0e7ff' : '1px solid #e2e8f0', background: triggerType === 'Keyword' ? '#f8fafc' : 'white', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                  <Type size={18} color={triggerType === 'Keyword' ? "#4f46e5" : "#64748b"} />
+                  <span style={{ fontSize: '11px', fontWeight: '600', color: triggerType === 'Keyword' ? "#4f46e5" : "#64748b" }}>Keyword</span>
                 </div>
-                <div style={{ border: '1px solid #e2e8f0', background: 'white', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                  <BrainCircuit size={18} color="#64748b" />
-                  <span style={{ fontSize: '11px', fontWeight: '600', color: '#64748b' }}>AI Intent</span>
+                <div onClick={() => setTriggerType('AI Intent')} style={{ border: triggerType === 'AI Intent' ? '2px solid #e0e7ff' : '1px solid #e2e8f0', background: triggerType === 'AI Intent' ? '#f8fafc' : 'white', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                  <BrainCircuit size={18} color={triggerType === 'AI Intent' ? "#4f46e5" : "#64748b"} />
+                  <span style={{ fontSize: '11px', fontWeight: '600', color: triggerType === 'AI Intent' ? "#4f46e5" : "#64748b" }}>AI Intent</span>
                 </div>
-                <div style={{ border: '1px solid #e2e8f0', background: 'white', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                  <MessageSquare size={18} color="#64748b" />
-                  <span style={{ fontSize: '11px', fontWeight: '600', color: '#64748b' }}>Comment</span>
+                <div onClick={() => setTriggerType('Comment')} style={{ border: triggerType === 'Comment' ? '2px solid #e0e7ff' : '1px solid #e2e8f0', background: triggerType === 'Comment' ? '#f8fafc' : 'white', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                  <MessageSquare size={18} color={triggerType === 'Comment' ? "#4f46e5" : "#64748b"} />
+                  <span style={{ fontSize: '11px', fontWeight: '600', color: triggerType === 'Comment' ? "#4f46e5" : "#64748b" }}>Comment</span>
                 </div>
-                <div style={{ border: '1px solid #e2e8f0', background: 'white', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                  <Heart size={18} color="#64748b" />
-                  <span style={{ fontSize: '11px', fontWeight: '600', color: '#64748b' }}>Reaction</span>
+                <div onClick={() => setTriggerType('Reaction')} style={{ border: triggerType === 'Reaction' ? '2px solid #e0e7ff' : '1px solid #e2e8f0', background: triggerType === 'Reaction' ? '#f8fafc' : 'white', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                  <Heart size={18} color={triggerType === 'Reaction' ? "#4f46e5" : "#64748b"} />
+                  <span style={{ fontSize: '11px', fontWeight: '600', color: triggerType === 'Reaction' ? "#4f46e5" : "#64748b" }}>Reaction</span>
                 </div>
               </div>
             </div>
