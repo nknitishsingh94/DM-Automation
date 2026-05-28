@@ -37,7 +37,10 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
     isUniversal: false
   });
   
-  // Edit state removed in favor of navigating to the builders
+  // Edit State
+  const [editingCampaign, setEditingCampaign] = useState(null);
+  const [editForm, setEditForm] = useState({ name: '', trigger: '', response: '', linkUrl: '', buttonText: '', isUniversal: false, triggerSource: 'dm' });
+
   const [message, setMessage] = useState({ type: '', text: '' });
   const [submitting, setSubmitting] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
@@ -50,11 +53,11 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
   const [isMobile] = useState(window.innerWidth < 768);
   const [generatingAI, setGeneratingAI] = useState(false);
 
-  const handleGenerateAI = async () => {
+  const handleGenerateAI = async (isEdit = false) => {
     const token = localStorage.getItem('insta_agent_token');
     if (!token) return;
 
-    const campaignData = newCamp;
+    const campaignData = isEdit ? editForm : newCamp;
     
     let promptText = "Write a short, engaging, and friendly social media auto-reply message.";
     if (campaignData.name) {
@@ -84,7 +87,11 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
         // Clean up quotes from the AI response if it added them
         let cleanText = data.response.replace(/^["']|["']$/g, '').trim();
         
-        setNewCamp(prev => ({ ...prev, response: cleanText }));
+        if (isEdit) {
+          setEditForm(prev => ({ ...prev, response: cleanText }));
+        } else {
+          setNewCamp(prev => ({ ...prev, response: cleanText }));
+        }
         notify('✨ AI generated a response for you!', 'success');
       } else {
         throw new Error(data.error || 'Failed to generate AI response');
@@ -290,6 +297,34 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
     }
   };
 
+  const handleEditSave = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('insta_agent_token');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/campaigns/${editingCampaign._id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...editForm,
+          buttons: editingCampaign.buttons && editingCampaign.buttons.length > 0 
+            ? [{ text: editForm.buttonText, url: editForm.linkUrl }, ...editingCampaign.buttons.slice(1)]
+            : editForm.buttonText ? [{ text: editForm.buttonText, url: editForm.linkUrl }] : []
+        })
+      });
+      if (res.ok) {
+        notify("Campaign updated successfully!", "success");
+        setEditingCampaign(null);
+        fetchCampaigns();
+      } else {
+        notify("Failed to update campaign", "error");
+      }
+    } catch (err) {
+      notify("Connection error during update", "error");
+    }
+  };
 
   const deleteCampaign = async (id) => {
     const previousCampaigns = [...campaigns];
@@ -564,18 +599,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                     <Power size={14} color={campaign.status === 'Active' ? '#10b981' : '#94a3b8'} />
                     {campaign.status === 'Active' ? 'Pause' : 'Activate'}
                   </button>
-                  <button onClick={() => {
-                    const isAllThree = campaign.triggerOnDms && campaign.triggerOnComments && campaign.triggerOnStories;
-                    const isStory = (campaign.triggerOnStories || campaign.triggerSource === 'story_mention') && !isAllThree;
-                    const isComment = (campaign.triggerOnComments || campaign.triggerSource === 'comment') && !isAllThree;
-                    if (isStory) {
-                      navigate(`/automation-editor/${campaign._id}?template=stories`);
-                    } else if (isComment) {
-                      navigate(`/automation-editor/${campaign._id}?template=comments`);
-                    } else {
-                      navigate(`/dm-automation-editor/${campaign._id}?template=all_dms`);
-                    }
-                  }} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6', cursor: 'pointer' }}>
+                  <button onClick={() => { setEditingCampaign(campaign); setEditForm({ name: campaign.name || '', trigger: campaign.trigger || '', response: campaign.response || '', linkUrl: campaign.linkUrl || (campaign.buttons && campaign.buttons.length > 0 ? campaign.buttons[0].url : ''), buttonText: campaign.buttonText || (campaign.buttons && campaign.buttons.length > 0 ? campaign.buttons[0].text : ''), isUniversal: campaign.isUniversal || false, triggerSource: campaign.triggerSource || 'dm' }); }} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6', cursor: 'pointer' }}>
                     <Edit2 size={18} />
                   </button>
                   <button onClick={() => viewLogs(campaign)} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', cursor: 'pointer' }}>
@@ -725,6 +749,105 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
         </div>
       )}
 
+      {editingCampaign && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
+          <div style={{ background: 'rgba(255, 255, 255, 0.98)', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '850px', boxShadow: '0 25px 50px -12px rgba(30, 27, 75, 0.25), 0 0 0 1px rgba(255,255,255,0.5) inset', border: '1px solid rgba(226, 232, 240, 0.8)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h3 style={{ fontSize: '1.6rem', fontWeight: '900', margin: 0, background: 'linear-gradient(135deg, #1e1b4b 0%, #4f46e5 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Edit2 size={24} color="#4f46e5" /> Edit Campaign
+              </h3>
+              <button onClick={() => setEditingCampaign(null)} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background='#f1f5f9'} onMouseOut={e => e.currentTarget.style.background='#f8fafc'}>
+                <X size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleEditSave} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+              {/* Left Column */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Campaign Name</label>
+                  <input type="text" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required />
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Trigger Keyword</label>
+                  <input type="text" value={editForm.trigger} onChange={e => setEditForm({...editForm, trigger: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required />
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Trigger Source</label>
+                  <select value={editForm.triggerSource} onChange={e => setEditForm({...editForm, triggerSource: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}>
+                    <option value="dm">💬 Direct Message (DM)</option>
+                    <option value="comment">📝 Post Comment</option>
+                    <option value="story_mention">📸 Story Mention</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Target Platform</label>
+                  <div style={{ position: 'relative' }}>
+                    <select 
+                      value={editForm.platform} 
+                      onChange={e => setEditForm({...editForm, platform: e.target.value})}
+                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
+                      onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                    >
+                      <option value="all">🌐 {getConnectedPlatformsText()}</option>
+                      {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
+                        <option value="instagram">📸 Instagram</option>
+                      )}
+                      {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
+                        <option value="facebook">💬 Facebook Messenger</option>
+                      )}
+                      {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && (
+                        <option value="whatsapp">🟩 WhatsApp</option>
+                      )}
+                    </select>
+                  </div>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: editForm.isUniversal ? 'rgba(14, 165, 233, 0.08)' : '#f8fafc', borderRadius: '12px', border: editForm.isUniversal ? '1px solid rgba(14, 165, 233, 0.3)' : '1px solid #e2e8f0', transition: 'all 0.3s' }}>
+                  <input type="checkbox" id="editIsUniversal" checked={editForm.isUniversal} onChange={e => setEditForm({...editForm, isUniversal: e.target.checked})} style={{ width: '18px', height: '18px', accentColor: '#0ea5e9', cursor: 'pointer' }} />
+                  <label htmlFor="editIsUniversal" style={{ fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: editForm.isUniversal ? '#0284c7' : '#475569' }}>
+                    <Globe size={18} color={editForm.isUniversal ? '#0ea5e9' : '#94a3b8'} /> 
+                    Make this a Universal Trigger
+                  </label>
+                </div>
+              </div>
+
+              {/* Right Column */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Bot Response Message</label>
+                    <button type="button" onClick={() => handleGenerateAI(true)} disabled={generatingAI} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', color: 'white', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', opacity: generatingAI ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(236, 72, 153, 0.3)' }} onMouseOver={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1.05)')} onMouseOut={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1)')}>
+                      {generatingAI ? 'Generating...' : <><Sparkles size={12} /> Auto AI Reply</>}
+                    </button>
+                  </div>
+                  <textarea value={editForm.response} onChange={e => setEditForm({...editForm, response: e.target.value})} style={{ width: '100%', flex: 1, padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', minHeight: '120px', resize: 'vertical', transition: 'all 0.2s', fontFamily: 'inherit' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required />
+                </div>
+                
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Button Text</label>
+                    <input type="text" value={editForm.buttonText} onChange={e => setEditForm({...editForm, buttonText: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Link URL</label>
+                    <input type="url" value={editForm.linkUrl} onChange={e => setEditForm({...editForm, linkUrl: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} />
+                  </div>
+                </div>
+              </div>
+              
+              <div style={{ gridColumn: '1 / -1', marginTop: '8px' }}>
+                <button type="submit" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: '800', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(124, 58, 237, 0.4)', transition: 'all 0.3s', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
+                  <CheckCircle size={20} /> Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {showAdd && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
