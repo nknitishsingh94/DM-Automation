@@ -989,6 +989,10 @@ app.post('/api/webhook', async (req, res) => {
 
               if (match && match.status === 'Active') {
                 console.log(`🚀 TRIGGERING MAIN RESPONSE for Campaign: ${match.name}`);
+                
+                // Clear the pending state so future triggers work properly!
+                await Contact.findOneAndUpdate({ chatId: senderId, userId: match.userId }, { $unset: { pendingCampaignId: 1 } });
+                
                 const userSettings = await Settings.findOne({ userId: match.userId });
                 const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
@@ -1065,6 +1069,10 @@ app.post('/api/webhook', async (req, res) => {
               const match = await Campaign.findById(campaignId);
               if (match && match.status === 'Active') {
                 console.log(`🚀 FINAL DELIVERY: Delivering content for campaign ${match.name}`);
+                
+                // Clear the pending state so future triggers work properly!
+                await Contact.findOneAndUpdate({ chatId: senderId, userId: match.userId }, { $unset: { pendingCampaignId: 1 } });
+                
                 const userSettings = await Settings.findOne({ userId: match.userId });
                 const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
