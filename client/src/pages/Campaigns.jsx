@@ -805,14 +805,6 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                     </select>
                   </div>
                 </div>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: editForm.isUniversal ? 'rgba(14, 165, 233, 0.08)' : '#f8fafc', borderRadius: '12px', border: editForm.isUniversal ? '1px solid rgba(14, 165, 233, 0.3)' : '1px solid #e2e8f0', transition: 'all 0.3s' }}>
-                  <input type="checkbox" id="editIsUniversal" checked={editForm.isUniversal} onChange={e => setEditForm({...editForm, isUniversal: e.target.checked})} style={{ width: '18px', height: '18px', accentColor: '#0ea5e9', cursor: 'pointer' }} />
-                  <label htmlFor="editIsUniversal" style={{ fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: editForm.isUniversal ? '#0284c7' : '#475569' }}>
-                    <Globe size={18} color={editForm.isUniversal ? '#0ea5e9' : '#94a3b8'} /> 
-                    Make this a Universal Trigger
-                  </label>
-                </div>
               </div>
 
               {/* Right Column */}
