@@ -90,7 +90,7 @@ const initialEdges = [
   
   // Converge edges
   { id: 'e4a-5', source: '4a', target: '5', style: { stroke: '#94a3b8', strokeWidth: 1.5 }, type: 'smoothstep' },
-  { id: 'e4b-5', source: '4b', target: '5', style: { stroke: '#94a3b8', strokeWidth: 1.5 }, type: 'smoothstep' },
+  { id: 'e4b-7', source: '4b', target: '7', style: { stroke: '#94a3b8', strokeWidth: 1.5 }, type: 'smoothstep' },
   
   { id: 'e5-6', source: '5', target: '6', animated: true, style: { stroke: '#94a3b8', strokeWidth: 1.5 } },
   { id: 'e6-7', source: '6', target: '7', animated: true, style: { stroke: '#94a3b8', strokeWidth: 1.5 } },
