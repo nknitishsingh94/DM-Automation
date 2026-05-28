@@ -346,9 +346,7 @@ export default function UniversalTriggers() {
             <span style={{ background: '#e2e8f0', color: '#475569', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: '700' }}>Draft</span>
           </div>
 
-          <div style={{ position: 'absolute', top: 16, left: '50%', transform: 'translateX(-50%)', zIndex: 50, background: 'white', border: '1.5px solid #c7d2fe', padding: '6px 16px', borderRadius: '20px', color: '#4f46e5', fontSize: '11px', fontWeight: '800', letterSpacing: '0.5px' }}>
-            WORKFLOW EXECUTION FLOW
-          </div>
+
           
           <div style={{ position: 'absolute', top: 60, left: 16, zIndex: 50, background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', padding: '8px 0' }}>
             {[
