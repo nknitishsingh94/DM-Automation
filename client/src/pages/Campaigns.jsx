@@ -408,39 +408,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
         </div>
       </div>
 
-      <div style={{ marginBottom: '40px' }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-             <Sparkles size={18} color="#7c3aed" /> Quick Start Templates
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
-            {[
-              { id: 'dm', title: 'DM Automation', desc: 'Trigger DMs from Keywords', icon: <Zap size={24} />, color: '#4f46e5', bg: 'rgba(79, 70, 229, 0.1)', path: `/dm-automation-editor?template=all_dms${platformFilter !== 'all' ? '&channel='+platformFilter : ''}` },
-              { id: 'comment', title: 'Comment Reply', desc: 'Auto-DM on Comments', icon: <MessageSquare size={24} />, color: '#0ea5e9', bg: 'rgba(14, 165, 233, 0.1)', path: `/automation-editor?template=comments${platformFilter !== 'all' ? '&channel='+platformFilter : ''}` },
-              { id: 'story', title: 'Story Trigger', desc: 'Reply to Story Mentions', icon: <Instagram size={24} />, color: '#ec4899', bg: 'rgba(236, 72, 153, 0.1)', path: `/automation-editor?template=stories${platformFilter !== 'all' ? '&channel='+platformFilter : ''}` },
-              { id: 'ai', title: 'AI Neural Studio', desc: 'Train your custom AI', icon: <Bot size={24} />, color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)', path: '/ai-studio' }
-            ].map(item => (
-              <div 
-                key={item.id}
-                onClick={() => navigate(item.path)}
-                style={{ 
-                  background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #f1f5f9', 
-                  cursor: 'pointer', transition: 'all 0.3s', display: 'flex', flexDirection: 'column', gap: '16px',
-                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)'
-                }}
-                onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 20px -5px rgba(0,0,0,0.08)'; e.currentTarget.style.borderColor = item.color; }}
-                onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)'; e.currentTarget.style.borderColor = '#f1f5f9'; }}
-              >
-                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: item.bg, color: item.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {item.icon}
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '4px' }}>{item.title}</h3>
-                  <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+
 
       {/* Platform Filters (Hidden if locked by Platform Dashboard) */}
       {!propPlatformFilter && (() => {
