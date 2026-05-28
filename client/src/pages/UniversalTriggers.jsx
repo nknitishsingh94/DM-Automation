@@ -116,6 +116,7 @@ export default function UniversalTriggers() {
   const [triggerType, setTriggerType] = useState('Keyword');
   const [keywords, setKeywords] = useState(['price', 'pricing', 'cost']);
   const [keywordInput, setKeywordInput] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     fetchRealData();
@@ -161,7 +162,7 @@ export default function UniversalTriggers() {
       const { data: campaigns } = await supabase
         .from('campaigns')
         .select('*')
-        .eq('workspace_id', workspaceId)
+        .eq('workspaceId', workspaceId)
         .eq('isUniversal', true);
         
       if (campaigns && campaigns.length > 0) {
@@ -199,6 +200,42 @@ export default function UniversalTriggers() {
       
     } catch (err) {
       console.error("Error fetching real data:", err);
+    }
+  };
+
+  const handleSaveTrigger = async () => {
+    if (keywords.length === 0) {
+      alert("Please add at least one keyword.");
+      return;
+    }
+    const workspaceId = localStorage.getItem('active_workspace_id');
+    if (!workspaceId) {
+      alert("No active workspace found.");
+      return;
+    }
+    
+    setIsSaving(true);
+    try {
+      const { error } = await supabase.from('campaigns').insert([{
+        workspaceId: workspaceId,
+        isUniversal: true,
+        trigger: keywords.join(','),
+        triggerType: triggerType,
+        status: 'active'
+      }]);
+      
+      if (error) {
+        console.error(error);
+        alert("Error saving trigger: " + error.message);
+      } else {
+        alert("Universal Trigger saved successfully!");
+        fetchRealData(); // Refresh the workflow stats
+      }
+    } catch (err) {
+      console.error(err);
+      alert("An unexpected error occurred.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -347,10 +384,14 @@ export default function UniversalTriggers() {
             
           </div>
           
-          <div style={{ padding: '16px', borderTop: '1px solid #e2e8f0' }}>
-             <button style={{ width: '100%', padding: '12px', background: '#4f46e5', border: 'none', borderRadius: '8px', color: 'white', fontWeight: '700', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                <Send size={16} /> Save Trigger
-             </button>
+          <div style={{ padding: '20px', borderTop: '1px solid #e2e8f0', background: '#f8fafc' }}>
+            <button 
+              onClick={handleSaveTrigger}
+              disabled={isSaving}
+              style={{ width: '100%', padding: '12px', background: isSaving ? '#94a3b8' : '#4f46e5', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '700', fontSize: '13px', cursor: isSaving ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+            >
+              <Check size={16} /> {isSaving ? 'Saving...' : 'Save Trigger'}
+            </button>
           </div>
 
         </div>
