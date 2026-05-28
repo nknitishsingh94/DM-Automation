@@ -401,12 +401,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
   return (
     <div style={{ maxWidth: '1200px' }}>
       
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '20px' }}>
-        <div>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '8px', letterSpacing: '-1px' }}>Automations</h1>
-          <p style={{ color: '#64748b', fontWeight: '500' }}>Manage your AI-powered social media triggers</p>
-        </div>
-      </div>
+
 
       <div style={{ marginBottom: '40px' }}>
           <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -442,50 +437,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
           </div>
         </div>
 
-      {/* Platform Filters (Hidden if locked by Platform Dashboard) */}
-      {!propPlatformFilter && (() => {
-        const isIgConnected = connectedSettings?.isAccountConnected || (!!connectedSettings?.instagramAccessToken && !!connectedSettings?.businessAccountId);
-        const isFbConnected = connectedSettings?.isFacebookConnected || (!!connectedSettings?.facebookAccessToken && !!connectedSettings?.facebookPageId);
-        const isWaConnected = connectedSettings?.isWhatsAppConnected || (!!connectedSettings?.whatsappToken && !!connectedSettings?.whatsappPhoneNumberId);
 
-        const connectedPlatforms = [];
-        if (isIgConnected) connectedPlatforms.push({ id: 'instagram', label: 'Instagram', icon: <Instagram size={14} /> });
-        if (isFbConnected) connectedPlatforms.push({ id: 'facebook', label: 'Facebook Messenger', icon: <MessageCircle size={14} /> });
-
-        if (connectedPlatforms.length <= 1) return null;
-
-        return (
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#64748b', marginRight: '8px' }}>Filter by Platform:</span>
-            <button
-              onClick={() => setPlatformFilter('all')}
-              style={{
-                padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.85rem', fontWeight: '700', cursor: 'pointer',
-                background: platformFilter === 'all' ? '#1e1b4b' : 'white',
-                color: platformFilter === 'all' ? 'white' : '#64748b',
-                transition: 'all 0.2s'
-              }}
-            >
-              All
-            </button>
-            {connectedPlatforms.map(p => (
-              <button
-                key={p.id}
-                onClick={() => setPlatformFilter(p.id)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                  padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.85rem', fontWeight: '700', cursor: 'pointer',
-                  background: platformFilter === p.id ? '#1e1b4b' : 'white',
-                  color: platformFilter === p.id ? 'white' : '#64748b',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {p.icon} {p.label}
-              </button>
-            ))}
-          </div>
-        );
-      })()}
 
       {message.text && (
         <div style={{ padding: '12px', background: message.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: message.type === 'success' ? '#34d399' : '#f87171', borderRadius: '8px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
