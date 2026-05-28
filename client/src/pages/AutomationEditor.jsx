@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { 
   ArrowLeft, 
   ChevronLeft, 
@@ -33,6 +33,7 @@ export default function AutomationEditor() {
   const template = params.get('template');
   const channel = params.get('channel');
   const isUniversal = params.get('isUniversal') === 'true';
+  const { id } = useParams();
 
   // State
   const [selectedPlatform, setSelectedPlatform] = useState(isUniversal ? 'all' : (channel || 'instagram'));
@@ -63,6 +64,49 @@ export default function AutomationEditor() {
   const [triggerOnStories, setTriggerOnStories] = useState(template === 'stories');
   const [previewMode, setPreviewMode] = useState(template === 'comments' ? 'comment' : 'dm');
   const [isAI, setIsAI] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(!!id);
+  const [isEditMode, setIsEditMode] = useState(!!id);
+
+  React.useEffect(() => {
+    if (id) {
+      const fetchCampaign = async () => {
+        try {
+          const token = localStorage.getItem('insta_agent_token');
+          const res = await fetch(`${API_BASE_URL}/api/campaigns/${id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setIsEditMode(true);
+            setName(data.name || '');
+            if (data.trigger === '*') setAnyKeyword(true);
+            else setKeywords(data.trigger && data.trigger !== '*' ? data.trigger.split(',').map(k => k.trim()) : []);
+            setMessage(data.response || '');
+            setButtons(data.buttons || []);
+            setOpeningMessage(data.openingMessage || false);
+            setOpeningMessageText(data.openingMessageText || "Hey there! Thanks for your interest. 👇");
+            setOpeningMessageButton(data.openingMessageButton || "Send me the link!");
+            setRequireFollow(data.requireFollow || false);
+            setUnfollowedMessage(data.unfollowedResponse || "Hey! To get the link, please follow our page first! 😊");
+            setSelectedPlatform(data.platform || 'all');
+            setPublicReply(data.publicReplyText || '');
+            if (data.triggerOnDms !== undefined) setTriggerOnDms(data.triggerOnDms);
+            if (data.triggerOnComments !== undefined) setTriggerOnComments(data.triggerOnComments);
+            if (data.triggerOnStories !== undefined) setTriggerOnStories(data.triggerOnStories);
+            if (data.isAI !== undefined) setIsAI(data.isAI);
+            if (data.isAnyPost !== undefined) setAnyStory(data.isAnyPost);
+            if (data.postId) setSelectedContentId(data.postId);
+          }
+        } catch (error) {
+          console.error("Error fetching campaign:", error);
+          notify("Failed to load campaign data", "error");
+        } finally {
+          setLoadingEdit(false);
+        }
+      };
+      fetchCampaign();
+    }
+  }, [id, notify]);
 
   const isValidUrl = (url) => {
     try {
@@ -190,8 +234,10 @@ export default function AutomationEditor() {
     const token = localStorage.getItem('insta_agent_token');
     
     try {
-      const res = await fetch(`${API_BASE_URL}/api/campaigns`, {
-        method: 'POST',
+      const url = isEditMode ? `${API_BASE_URL}/api/campaigns/${id}` : `${API_BASE_URL}/api/campaigns`;
+      const method = isEditMode ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method: method,
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -220,11 +266,11 @@ export default function AutomationEditor() {
       });
 
       if (res.ok) {
-        notify('✅ Automation created successfully!', 'success');
-        navigate(selectedPlatform && selectedPlatform !== 'all' ? `/platform/${selectedPlatform}` : '/hub');
+        notify(`✅ Automation ${isEditMode ? 'updated' : 'created'} successfully!`, 'success');
+        navigate('/campaigns');
       } else {
         const data = await res.json();
-        notify(data.error || 'Failed to create automation', 'error');
+        notify(data.error || `Failed to ${isEditMode ? 'update' : 'create'} automation`, 'error');
       }
     } catch (err) {
       notify('Connection error. Please try again.', 'error');
@@ -232,6 +278,14 @@ export default function AutomationEditor() {
       setSubmitting(false);
     }
   };
+
+  if (loadingEdit) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#f8fafc' }}>
+        <Loader2 className="animate-spin" size={40} color="#7c3aed" />
+      </div>
+    );
+  }
 
   return (
     <div style={{ 
@@ -1168,7 +1222,7 @@ export default function AutomationEditor() {
                 if (!submitting) e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              {submitting ? <Loader2 className="animate-spin" size={20} /> : <><Zap size={20} fill="white" /> Create Automation</>}
+              {submitting ? <Loader2 className="animate-spin" size={20} /> : <><Zap size={20} fill="white" /> {isEditMode ? 'Update Automation' : 'Create Automation'}</>}
             </button>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { 
   ArrowLeft, 
   ChevronLeft,
@@ -30,6 +30,7 @@ export default function DmAutomationEditor() {
   const channel = params.get('channel') || 'instagram';
   const template = params.get('template') || 'all_dms';
   const isUniversal = params.get('isUniversal') === 'true';
+  const { id } = useParams();
 
   // State
   const [selectedPlatform, setSelectedPlatform] = useState(isUniversal ? 'all' : channel);
@@ -53,6 +54,47 @@ export default function DmAutomationEditor() {
   const [tempLinkUrl, setTempLinkUrl] = useState('https://');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [isAI, setIsAI] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(!!id);
+  const [isEditMode, setIsEditMode] = useState(!!id);
+
+  useEffect(() => {
+    if (id) {
+      const fetchCampaign = async () => {
+        try {
+          const token = localStorage.getItem('insta_agent_token');
+          const res = await fetch(`${API_BASE_URL}/api/campaigns/${id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setIsEditMode(true);
+            setName(data.name || '');
+            if (data.trigger === '*') setAnyKeyword(true);
+            else setKeywords(data.trigger && data.trigger !== '*' ? data.trigger.split(',').map(k => k.trim()) : []);
+            setMessage(data.response || '');
+            setButtons(data.buttons || []);
+            if (data.buttons && data.buttons.length === 0 && data.buttonText && data.linkUrl) {
+                setButtons([{ text: data.buttonText, url: data.linkUrl }]);
+            }
+            setOpeningMessage(data.openingMessage || false);
+            setOpeningMessageText(data.openingMessageText || "Hey there! Thanks for your interest. 👇");
+            setOpeningMessageButton(data.openingMessageButton || "Send me the link!");
+            setRequireFollow(data.requireFollow || false);
+            setUnfollowedMessage(data.unfollowedResponse || "Hey! To get the link, please follow our page first! 😊");
+            setSelectedPlatform(data.platform || 'all');
+            setPublicReplyText(data.publicReplyText || '');
+            if (data.isAI !== undefined) setIsAI(data.isAI);
+          }
+        } catch (error) {
+          console.error("Error fetching campaign:", error);
+          notify("Failed to load campaign data", "error");
+        } finally {
+          setLoadingEdit(false);
+        }
+      };
+      fetchCampaign();
+    }
+  }, [id, notify]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -143,8 +185,10 @@ export default function DmAutomationEditor() {
     const token = localStorage.getItem('insta_agent_token');
     
     try {
-      const res = await fetch(`${API_BASE_URL}/api/campaigns`, {
-        method: 'POST',
+      const url = isEditMode ? `${API_BASE_URL}/api/campaigns/${id}` : `${API_BASE_URL}/api/campaigns`;
+      const method = isEditMode ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method: method,
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -173,11 +217,11 @@ export default function DmAutomationEditor() {
       });
 
       if (res.ok) {
-        notify('âœ… Automation created successfully!', 'success');
-        navigate(selectedPlatform && selectedPlatform !== 'all' ? `/platform/${selectedPlatform}` : '/hub');
+        notify(`✅ Automation ${isEditMode ? 'updated' : 'created'} successfully!`, 'success');
+        navigate('/campaigns');
       } else {
         const data = await res.json();
-        notify(data.error || 'Failed to create automation', 'error');
+        notify(data.error || `Failed to ${isEditMode ? 'update' : 'create'} automation`, 'error');
       }
     } catch (err) {
       notify('Connection error. Please try again.', 'error');
@@ -185,6 +229,14 @@ export default function DmAutomationEditor() {
       setSubmitting(false);
     }
   };
+
+  if (loadingEdit) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#f8fafc' }}>
+        <div style={{ width: '40px', height: '40px', border: '3px solid #e2e8f0', borderTopColor: '#7c3aed', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ 
@@ -717,7 +769,7 @@ export default function DmAutomationEditor() {
                   'Launching...'
                 ) : (
                   <>
-                    <Zap size={20} fill="white" /> Launch Automation
+                    <Zap size={20} fill="white" /> {isEditMode ? 'Update Automation' : 'Launch Automation'}
                   </>
                 )}
               </button>

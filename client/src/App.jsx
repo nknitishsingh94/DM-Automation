@@ -687,8 +687,8 @@ function MainLayout() {
               <Route path="/universal-triggers" element={<ProtectedRoute><UniversalTriggers /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
               <Route path="/campaign-builder/new" element={<ProtectedRoute><CampaignBuilder /></ProtectedRoute>} />
-              <Route path="/automation-editor" element={<ProtectedRoute><AutomationEditor /></ProtectedRoute>} />
-              <Route path="/dm-automation-editor" element={<ProtectedRoute><DmAutomationEditor /></ProtectedRoute>} />
+              <Route path="/automation-editor/:id?" element={<ProtectedRoute><AutomationEditor /></ProtectedRoute>} />
+              <Route path="/dm-automation-editor/:id?" element={<ProtectedRoute><DmAutomationEditor /></ProtectedRoute>} />
               <Route path="/write-review" element={<ProtectedRoute><WriteReview /></ProtectedRoute>} />
               <Route path="/audiences" element={<ProtectedRoute><Audiences /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
