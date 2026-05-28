@@ -3141,7 +3141,7 @@ async function runSchedulingWorker() {
           updatedMeta.mediaUrl = finalMedia;
           updatedMeta.carouselItems = finalCarousel;
 
-          await safeUpdate(postId, { status: 'Retrying', mediaUrl: JSON.stringify(updatedMeta) });
+          await safeUpdate(postId, { status: 'Scheduled', mediaUrl: JSON.stringify(updatedMeta) });
 
           // ── Safety refresh: always bump updatedAt at the end so the 2-min cooldown
           //     gate is freshly reset even if the DB write above had a soft failure.
