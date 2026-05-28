@@ -517,6 +517,20 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
       { upsert: true, new: true }
     );
 
+    // 🚀 CRITICAL FIX: Subscribe the selected page to webhooks!
+    if (pageId && pageAccessToken) {
+      try {
+        console.log(`🔌 Attempting to subscribe App to Page Webhooks for selected page ${pageId}...`);
+        const subscribeUrl = `https://graph.facebook.com/v19.0/${pageId}/subscribed_apps?subscribed_fields=messages,messaging_postbacks,feed&access_token=${pageAccessToken}`;
+        const subRes = await axios.post(subscribeUrl);
+        if (subRes.data && subRes.data.success) {
+          console.log(`✅ Webhook Subscription Successful for Selected Page ${pageId}!`);
+        }
+      } catch (subErr) {
+        console.error(`❌ Webhook Subscription Failed for selected page:`, subErr.response?.data || subErr.message);
+      }
+    }
+
     res.json({ success: true, settings });
   } catch (err) {
     res.status(500).json({ error: err.message });
