@@ -559,12 +559,14 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     // Otherwise, if it has no postId, it can match any post if isAnyPost or isUniversal is true.
     let postMatch = true;
     if (source === 'comment') {
-      if (c.postId && c.postId !== 'any' && c.postId !== '') {
+      const isPostIdValid = c.postId && c.postId !== 'any' && c.postId !== '' && String(c.postId) !== 'undefined' && String(c.postId) !== 'null';
+      if (isPostIdValid) {
         postMatch = !!(mediaId && String(c.postId) === String(mediaId));
         console.log(`[processAutoReply DEBUG] Campaign: "${c.name}", c.postId="${c.postId}" (${typeof c.postId}), mediaId="${mediaId}" (${typeof mediaId}) -> postMatch=${postMatch}`);
       } else {
-        postMatch = !!(c.isUniversal || c.isAnyPost || !c.postId);
-        console.log(`[processAutoReply DEBUG] Campaign: "${c.name}", c.postId="${c.postId}", isUniversal=${c.isUniversal}, isAnyPost=${c.isAnyPost} -> postMatch=${postMatch}`);
+        const hasNoSpecificPost = !c.postId || String(c.postId) === 'undefined' || String(c.postId) === 'null' || String(c.postId) === 'any' || String(c.postId) === '';
+        postMatch = !!(c.isUniversal || c.isAnyPost || hasNoSpecificPost);
+        console.log(`[processAutoReply DEBUG] Campaign: "${c.name}", c.postId="${c.postId}", isUniversal=${c.isUniversal}, isAnyPost=${c.isAnyPost}, hasNoSpecificPost=${hasNoSpecificPost} -> postMatch=${postMatch}`);
       }
     }
 
