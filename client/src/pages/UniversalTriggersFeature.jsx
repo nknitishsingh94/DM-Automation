@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sparkles, Globe, Zap, CheckCircle2, MessageSquare, Share2 } from 'lucide-react';
+import { ArrowLeft, Sparkles, Globe, Zap, CheckCircle2, MessageSquare, Share2, Webhook, Workflow, Database, Bot, Clock, Send, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import LandingHeader from '../components/LandingHeader';
 import Footer from '../components/Footer';
@@ -186,6 +186,98 @@ export default function UniversalTriggersFeature() {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Architecture Pipeline Section */}
+          <div style={{ marginTop: isMobile ? '80px' : '120px', padding: isMobile ? '40px 0' : '80px 0', borderTop: '1px solid #f1f5f9' }}>
+            <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 16px',
+                background: 'rgba(99, 102, 241, 0.08)',
+                color: '#4f46e5',
+                borderRadius: '50px',
+                fontSize: '0.85rem',
+                fontWeight: '700',
+                marginBottom: '16px'
+              }}>
+                <Workflow size={14} /> System Architecture
+              </div>
+              <h3 style={{ fontSize: isMobile ? '1.5rem' : '2.2rem', fontWeight: '800', color: '#0f172a' }}>How The Engine Works</h3>
+              <p style={{ color: '#64748b', maxWidth: '600px', margin: '16px auto 0', lineHeight: '1.6' }}>
+                Your unified connection between Meta's platforms and our powerful intelligent auto-reply system.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', justifyContent: 'center', gap: isMobile ? '16px' : '24px', flexWrap: 'wrap' }}>
+              
+              {/* Step 1 */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: isMobile ? '100%' : '140px' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', color: '#0ea5e9', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 10px 25px rgba(14, 165, 233, 0.15)', border: '1px solid #bae6fd' }}>
+                  <MessageSquare size={28} />
+                </div>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b', textAlign: 'center' }}>Instagram / Facebook</h4>
+                <p style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>Incoming DM or Comment</p>
+              </div>
+
+              {isMobile ? <ArrowRight size={24} color="#cbd5e1" style={{ transform: 'rotate(90deg)' }} /> : <ArrowRight size={24} color="#cbd5e1" />}
+
+              {/* Step 2 */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: isMobile ? '100%' : '140px' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: '#f8fafc', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', border: '1px dashed #cbd5e1' }}>
+                  <Webhook size={28} />
+                </div>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b', textAlign: 'center' }}>Webhook</h4>
+                <p style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>Real-time listener</p>
+              </div>
+
+              {isMobile ? <ArrowRight size={24} color="#cbd5e1" style={{ transform: 'rotate(90deg)' }} /> : <ArrowRight size={24} color="#cbd5e1" />}
+
+              {/* Step 3 */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: isMobile ? '100%' : '140px' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%)', color: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 10px 25px rgba(79, 70, 229, 0.15)', border: '1px solid #c7d2fe' }}>
+                  <Zap size={28} />
+                </div>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b', textAlign: 'center' }}>Universal Trigger Engine</h4>
+                <p style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>Keyword matching</p>
+              </div>
+
+              {isMobile ? <ArrowRight size={24} color="#cbd5e1" style={{ transform: 'rotate(90deg)' }} /> : <ArrowRight size={24} color="#cbd5e1" />}
+
+              {/* Step 4 */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: isMobile ? '100%' : '140px' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', color: '#8b5cf6', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 10px 25px rgba(139, 92, 246, 0.15)', border: '1px solid #ddd6fe' }}>
+                  <Workflow size={28} />
+                </div>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b', textAlign: 'center' }}>Workflow Executor</h4>
+                <p style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>Node traversal</p>
+              </div>
+
+              {isMobile ? <ArrowRight size={24} color="#cbd5e1" style={{ transform: 'rotate(90deg)' }} /> : <ArrowRight size={24} color="#cbd5e1" />}
+
+              {/* Step 5 */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: isMobile ? '100%' : '160px' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', color: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 10px 25px rgba(245, 158, 11, 0.15)', border: '1px solid #fde68a', gap: '4px' }}>
+                  <Database size={16} /> <Bot size={16} /> <Clock size={16} />
+                </div>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b', textAlign: 'center' }}>Database + AI + Scheduler</h4>
+                <p style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>Process & generate</p>
+              </div>
+
+              {isMobile ? <ArrowRight size={24} color="#cbd5e1" style={{ transform: 'rotate(90deg)' }} /> : <ArrowRight size={24} color="#cbd5e1" />}
+
+              {/* Step 6 */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: isMobile ? '100%' : '140px' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 10px 25px rgba(16, 185, 129, 0.15)', border: '1px solid #a7f3d0' }}>
+                  <Send size={28} />
+                </div>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b', textAlign: 'center' }}>Auto Reply Sent</h4>
+                <p style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>User receives DM</p>
+              </div>
+
             </div>
           </div>
 
