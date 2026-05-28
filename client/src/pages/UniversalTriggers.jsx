@@ -493,6 +493,7 @@ export default function UniversalTriggers() {
             ))}
           </div>
         </div>
+        </div>
         
         {/* Bottom Panel Area */}
         <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', background: '#f8fafc' }}>
