@@ -348,7 +348,7 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
     let publishRes;
     
     let retryCount = 0;
-    const MAX_RETRIES = 5;
+    const MAX_RETRIES = 1;
     
     while (retryCount < MAX_RETRIES) {
       try {

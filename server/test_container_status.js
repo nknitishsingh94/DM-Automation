@@ -12,7 +12,7 @@ async function checkStatus() {
   }
   
   const accessToken = settings.instagramAccessToken;
-  const containerId = '18079122281539795';
+  const containerId = process.argv[2] || '18083056475180977';
   
   console.log('Querying Meta API for status_code only...');
   try {

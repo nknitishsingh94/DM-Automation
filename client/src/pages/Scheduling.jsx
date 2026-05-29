@@ -1031,16 +1031,16 @@ export default function Scheduling() {
                   <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                     {/* Status Badge */}
                     <div style={{
-                      background: post.status === 'Posted' ? '#10b981' : (post.status === 'Failed' ? '#ef4444' : (post.status === 'Processing' ? '#3b82f6' : '#7c3aed')),
+                      background: post.status === 'Posted' ? '#10b981' : (post.status === 'Failed' ? '#ef4444' : ((post.status === 'Processing' || (post.status === 'Scheduled' && mediaData.igContainerId)) ? '#3b82f6' : '#7c3aed')),
                       color: 'white', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px',
                       fontSize: '0.65rem', fontWeight: '800', boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                     }}>
-                      {(post.status === 'Retrying' || post.status === 'Processing') ? (
+                      {(post.status === 'Retrying' || post.status === 'Processing' || (post.status === 'Scheduled' && mediaData.igContainerId)) ? (
                         <div style={{ width: '8px', height: '8px', borderRadius: '50%', border: '1.5px solid white', borderTopColor: 'transparent', animation: 'spin 1s linear infinite' }} />
                       ) : (
                         <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'white' }} />
                       )}
-                      <span>{post.status === 'Retrying' ? `Retrying` : (post.status || 'SCHEDULED')}</span>
+                      <span>{post.status === 'Retrying' ? `Retrying` : ((post.status === 'Scheduled' && mediaData.igContainerId) ? 'Processing' : (post.status || 'SCHEDULED'))}</span>
                     </div>
 
                     {/* Platform Badge */}
