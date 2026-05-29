@@ -532,7 +532,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   console.log(`🔍 DEBUG: Checking ${activeCampaigns.length} active campaigns for user ${userId}. Message: "${text}"`);
 
   const match = activeCampaigns.find(c => {
-    const platformMatch = c.platform === 'all' || c.platform === (platform || 'instagram');
+    const platformMatch = !c.platform || c.platform === 'all' || c.platform === (platform || 'instagram');
     // Legacy support: If new booleans are missing, fallback to the old triggerSource string
     const triggerDms = c.triggerOnDms ?? (c.triggerSource === 'dm' || !c.triggerSource);
     const triggerComments = c.triggerOnComments ?? (c.triggerSource === 'comment');

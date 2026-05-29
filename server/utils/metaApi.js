@@ -536,7 +536,8 @@ export const sendPublicComment = async (platform, commentId, text, userId = null
     if (!accessToken) accessToken = process.env.META_PAGE_ACCESS_TOKEN;
     if (!accessToken) return false;
 
-    const url = `https://graph.facebook.com/v19.0/${commentId}/replies?access_token=${accessToken}`;
+    const endpoint = platform === 'facebook' ? 'comments' : 'replies';
+    const url = `https://graph.facebook.com/v19.0/${commentId}/${endpoint}?access_token=${accessToken}`;
     const response = await axios.post(url, { message: text });
     return true;
   } catch (err) {
