@@ -1018,7 +1018,7 @@ export default function Scheduling() {
                 <div style={{ width: '100%', height: '180px', borderRadius: '16px', background: '#f8fafc', overflow: 'hidden', position: 'relative' }}>
                   {mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i)) ? (
                     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-                      <video src={finalMediaUrl} muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <video src={finalMediaUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)' }}>
                         <Film size={28} color="white" />
                       </div>
@@ -1536,7 +1536,7 @@ export default function Scheduling() {
                           {previews.map((src, idx) => (
                             <div key={idx} style={{ aspectRatio: '1/1', borderRadius: '12px', overflow: 'hidden', border: '1px solid #f1f5f9', position: 'relative' }}>
                               {selectedFiles[idx]?.type.startsWith('video') ? (
-                                <video src={src} muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <video src={src} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                               ) : (
                                 <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                               )}
