@@ -553,10 +553,9 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
   const match = activeCampaigns.find(c => {
     const platformMatch = !c.platform || c.platform === 'all' || c.platform === (platform || 'instagram');
-    // Legacy support: If new booleans are missing, fallback to the old triggerSource string
-    const triggerDms = c.triggerOnDms ?? (c.triggerSource === 'dm' || !c.triggerSource);
-    const triggerComments = c.triggerOnComments ?? (c.triggerSource === 'comment');
-    const triggerStories = c.triggerOnStories ?? (c.triggerSource === 'story_mention');
+    const triggerDms = c.triggerOnDms === true || c.triggerSource === 'dm' || !c.triggerSource;
+    const triggerComments = c.triggerOnComments === true || c.triggerSource === 'comment';
+    const triggerStories = c.triggerOnStories === true || c.triggerSource === 'story_mention';
 
     const sourceMatch = (source === 'dm' && triggerDms) ||
       (source === 'comment' && triggerComments) ||
@@ -591,7 +590,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     }
 
     const isMatched = !!(platformMatch && sourceMatch && keywordMatch && postMatch);
-    console.log(`[processAutoReply DEBUG] Evaluation for "${c.name}": platformMatch=${platformMatch}, sourceMatch=${sourceMatch}, keywordMatch=${keywordMatch}, postMatch=${postMatch} -> isMatched=${isMatched}`);
+    console.log(`[processAutoReply DEBUG] Evaluation for "${c.name}" (trigger="${c.trigger}", platform=${c.platform}, triggerOnComments=${c.triggerOnComments}, triggerSource=${c.triggerSource}): platformMatch=${platformMatch}, sourceMatch=${sourceMatch}, keywordMatch=${keywordMatch}, postMatch=${postMatch} -> isMatched=${isMatched}`);
 
     return isMatched;
   });
