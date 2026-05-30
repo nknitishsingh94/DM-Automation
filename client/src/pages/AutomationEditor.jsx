@@ -267,7 +267,7 @@ export default function AutomationEditor() {
 
       if (res.ok) {
         notify(`✅ Automation ${isEditMode ? 'updated' : 'created'} successfully!`, 'success');
-        navigate('/campaigns');
+        navigate(`/campaigns?platform=${selectedPlatform}`);
       } else {
         const data = await res.json();
         notify(data.error || `Failed to ${isEditMode ? 'update' : 'create'} automation`, 'error');

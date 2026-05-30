@@ -183,7 +183,8 @@ export default function Settings() {
           setTimeout(() => setMessage({ type: '', text: '' }), 5000);
           notify('Settings updated successfully!', 'success');
         } else {
-          notify('Instagram status updated successfully!', 'success');
+          const platName = platform.charAt(0).toUpperCase() + platform.slice(1);
+          notify(`${platName} status updated successfully!`, 'success');
         }
       }
     } catch (err) {

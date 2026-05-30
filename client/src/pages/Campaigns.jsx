@@ -14,7 +14,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
-  const [platformFilter, setPlatformFilter] = useState(propPlatformFilter || 'all');
+  const queryPlatform = new URLSearchParams(location.search).get('platform');
+  const [platformFilter, setPlatformFilter] = useState(queryPlatform || propPlatformFilter || 'all');
   
   useEffect(() => {
     if (propPlatformFilter) {
