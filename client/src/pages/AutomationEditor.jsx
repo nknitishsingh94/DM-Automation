@@ -706,7 +706,7 @@ export default function AutomationEditor() {
                         cursor: 'pointer'
                       }}
                    >
-                      <option value="all">🌐 All Connected Platforms</option>
+                      {template === 'dms' && <option value="all">🌐 All Connected Platforms</option>}
                       {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
                         <option value="instagram">📸 Instagram</option>
                       )}

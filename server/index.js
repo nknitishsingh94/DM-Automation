@@ -443,7 +443,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       const incomingText = (text || '').toLowerCase().trim();
       const cleanBtnText = btnText.replace(/[\u1F600-\u1F64F\u2702-\u27B0]/g, '').trim();
 
-      if (incomingText === btnText || (cleanBtnText && incomingText.includes(cleanBtnText)) || incomingText.includes('link') || incomingText.includes('send') || incomingText.includes('yes')) {
+      if (incomingText === btnText || (cleanBtnText && incomingText === cleanBtnText)) {
         console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied correctly to Opening Message. Triggering final response.`);
         await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
 
@@ -1742,6 +1742,8 @@ function parseScheduledPost(post) {
       p.openingMessage = parsedMeta.openingMessage !== undefined ? parsedMeta.openingMessage : false;
       p.openingMessageText = parsedMeta.openingMessageText || '';
       p.openingMessageButton = parsedMeta.openingMessageButton || '';
+      p.triggerKeyword = parsedMeta.triggerKeyword || p.triggerKeyword || '';
+      p.autoResponse = parsedMeta.autoResponse || p.autoResponse || '';
       
       instagramMediaId = parsedMeta.instagramMediaId || parsedMeta.facebookPostId || null;
       cachedLiveMediaUrl = parsedMeta.cachedLiveMediaUrl || null;
