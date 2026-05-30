@@ -740,7 +740,11 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         "I've sent the details to your inbox! Thanks for reaching out! 🔥",
         "Check your DMs! I just sent it over. Thanks! ✨"
       ];
-      const replyText = match.publicReplyText || thanksReplies[Math.floor(Math.random() * thanksReplies.length)];
+      let replyText = match.publicReplyText || thanksReplies[Math.floor(Math.random() * thanksReplies.length)];
+      // Anti-Spam: Facebook blocks identical rapid public replies. Append a random ID.
+      if (platform === 'facebook') {
+        replyText += ` [ID: ${Math.floor(Math.random() * 10000)}]`;
+      }
       commentPromise = sendPublicComment(platform, commentId, replyText, userId, activeToken);
     }
 
@@ -1176,11 +1180,17 @@ app.post('/api/webhook', async (req, res) => {
           console.log('💎 [DEEP DATA] Interaction Detected! Field:', change.field);
           console.log('📦 Value:', JSON.stringify(val, null, 2));
 
+          // CRITICAL: For Facebook 'feed' webhooks, only process actual comments, not posts/likes/reactions/shares
+          if (change.field === 'feed' && val.item && val.item !== 'comment') {
+            console.log(`⏭️ Skipping non-comment feed event. item="${val.item}", verb="${val.verb || 'N/A'}"`);
+            continue;
+          }
+
           const text = val.text || val.message;
           const senderId = val.from?.id;
           const commentId = val.comment_id || val.id;
           const mediaId = val.media?.id || val.post_id || val.video_id;
-          console.log(`[webhook DEBUG] Extracted comment values: text="${text}", senderId="${senderId}", commentId="${commentId}", mediaId="${mediaId}" (from val.media?.id="${val.media?.id}", val.post_id="${val.post_id}", val.video_id="${val.video_id}")`);
+          console.log(`[webhook DEBUG] Extracted comment values: text="${text}", senderId="${senderId}", commentId="${commentId}", mediaId="${mediaId}", item="${val.item || 'N/A'}" (from val.media?.id="${val.media?.id}", val.post_id="${val.post_id}", val.video_id="${val.video_id}")`);
 
           // Handle all interaction types (Comment, Post, Video, etc.)
           console.log(`🎯 [REEL DEBUG] Processing interaction from ${change.field}. Item: ${val.item || 'N/A'}`);
@@ -1234,7 +1244,9 @@ app.post('/api/webhook', async (req, res) => {
 
             if (targetUserId) {
               console.log(`✅ [MATCH FOUND]: Processing comment for User ${targetUserId} in workspace ${targetWorkspaceId}`);
-              const accessToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+              const accessToken = platform === 'facebook'
+                ? (userSettings?.facebookAccessToken || userSettings?.instagramAccessToken || process.env.META_PAGE_ACCESS_TOKEN)
+                : (userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN);
 
               const saveAndEmitPromise = (async () => {
                 try {
