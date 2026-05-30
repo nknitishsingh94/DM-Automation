@@ -543,7 +543,15 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   let activeCampaigns = activeCampaignsRaw;
 
   // SORT: Specific keywords first, Wildcards (*) last
+  // SORT: Specific Posts first, then Specific Keywords, Wildcards (*) last
   activeCampaigns = activeCampaigns.sort((a, b) => {
+    // 1. Prioritize specific posts over "Any Post"
+    const aSpecificPost = a.postId && a.postId !== 'any' && a.postId !== '' && String(a.postId) !== 'undefined' && String(a.postId) !== 'null';
+    const bSpecificPost = b.postId && b.postId !== 'any' && b.postId !== '' && String(b.postId) !== 'undefined' && String(b.postId) !== 'null';
+    if (aSpecificPost && !bSpecificPost) return -1;
+    if (!aSpecificPost && bSpecificPost) return 1;
+
+    // 2. Prioritize specific keywords over wildcards
     if (a.trigger === '*' && b.trigger !== '*') return 1;
     if (a.trigger !== '*' && b.trigger === '*') return -1;
     return 0;
