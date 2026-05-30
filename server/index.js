@@ -600,8 +600,16 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
     const campaignName = match.name || `Automation (${match.trigger})`;
     console.log(`🎯 MATCH FOUND! Campaign: "${campaignName}" | Trigger: "${match.trigger}" | Platform: ${platform} | Source: ${source}`);
 
-    // Determine the best token to use
-    const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+    // Determine the best token to use based on platform
+    let activeToken = passedToken;
+    if (!activeToken) {
+      if (platform === 'facebook') {
+        activeToken = userSettings?.facebookAccessToken || userSettings?.instagramAccessToken;
+      } else {
+        activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken;
+      }
+      activeToken = activeToken || process.env.META_PAGE_ACCESS_TOKEN;
+    }
 
     // GATING: Follower Check (Now universal for ALL sources)
     if (match.requireFollow) {
@@ -1067,7 +1075,13 @@ app.post('/api/webhook', async (req, res) => {
                 }
 
                 const userSettings = await Settings.findOne({ userId: match.userId });
-                const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+                let activeToken;
+                if (platform === 'facebook') {
+                  activeToken = userSettings?.facebookAccessToken || userSettings?.instagramAccessToken;
+                } else {
+                  activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken;
+                }
+                activeToken = activeToken || process.env.META_PAGE_ACCESS_TOKEN;
 
                 if (isFollowing) {
                   console.log(`✅ VERIFIED! Sending "Send me the link" button for ${match.name}`);
@@ -1103,7 +1117,13 @@ app.post('/api/webhook', async (req, res) => {
                 await Contact.findOneAndUpdate({ chatId: senderId, userId: match.userId }, { $unset: { pendingCampaignId: 1 } });
                 
                 const userSettings = await Settings.findOne({ userId: match.userId });
-                const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+                let activeToken;
+                if (platform === 'facebook') {
+                  activeToken = userSettings?.facebookAccessToken || userSettings?.instagramAccessToken;
+                } else {
+                  activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken;
+                }
+                activeToken = activeToken || process.env.META_PAGE_ACCESS_TOKEN;
 
                 let finalResponse = match.response;
                 if (match.isAI) {
