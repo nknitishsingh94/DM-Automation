@@ -304,7 +304,7 @@ app.get('/api/ping', (req, res) => res.send('pong'));
 // (Messaging helpers moved to utils/metaApi.js for cleaner architecture)
 
 const checkFollowerStatus = async (platform, chatId, userId, preloadedSettings = null) => {
-  if (platform !== 'instagram') return true; // Follow check currently only for Instagram
+  if (platform !== 'instagram') return false; // Force false for Facebook so they get the Follow prompt
 
   try {
     const userSettings = preloadedSettings || await Settings.findOne({ userId });
@@ -372,7 +372,12 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   // (who can't see the "I Followed" button) to just follow and send ANY message to continue.
   if (contact && contact.pendingCampaignId && !contact.pendingCampaignId.startsWith('OPENING:')) {
     console.log(`📡 [DESKTOP FALLBACK] User ${chatId} has pending campaign ${contact.pendingCampaignId}. Checking follow status...`);
-    const isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
+    let isFollowing = false;
+    if (platform === 'facebook') {
+      isFollowing = true; // Trust-based bypass for Facebook since we can't verify
+    } else {
+      isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
+    }
     
     const pendingId = contact.pendingCampaignId;
     const match = await Campaign.findById(pendingId);
@@ -1046,7 +1051,12 @@ app.post('/api/webhook', async (req, res) => {
 
               if (match && match.status === 'Active') {
                 console.log(`🛡️ VERIFYING FOLLOW on button click for ${senderId}...`);
-                const isFollowing = await checkFollowerStatus(platform, senderId, match.userId);
+                let isFollowing = false;
+                if (platform === 'facebook') {
+                  isFollowing = true; // Trust-based bypass for Facebook
+                } else {
+                  isFollowing = await checkFollowerStatus(platform, senderId, match.userId);
+                }
 
                 const userSettings = await Settings.findOne({ userId: match.userId });
                 const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
