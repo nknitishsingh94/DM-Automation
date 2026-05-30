@@ -656,7 +656,13 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
             "I've sent the details to your inbox! Thanks for reaching out! 🔥",
             "Check your DMs! I just sent it over. Thanks! ✨"
           ];
-          const publicGated = match.publicReplyText || thanksReplies[Math.floor(Math.random() * thanksReplies.length)];
+          let publicGated = match.publicReplyText || thanksReplies[Math.floor(Math.random() * thanksReplies.length)];
+          
+          // Anti-Spam: Facebook blocks identical rapid public replies. Append a tiny invisible/random char or ID.
+          if (platform === 'facebook') {
+             publicGated += ` [ID: ${Math.floor(Math.random() * 10000)}]`;
+          }
+          
           await sendPublicComment(platform, commentId, publicGated, userId, activeToken);
         }
 
@@ -680,7 +686,10 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       // Fire the public comment FIRST so it always happens, even if the DM button is rejected by Meta
       if (source === 'comment' && commentId) {
         console.log(`💬 Sending CUSTOM public comment reply to ${commentId} (Opening Message)`);
-        const replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
+        let replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
+        if (platform === 'facebook') {
+           replyText += ` [ID: ${Math.floor(Math.random() * 10000)}]`;
+        }
         await sendPublicComment(platform, commentId, replyText, userId, activeToken).catch(e => console.error("Public comment failed:", e));
       }
 
@@ -1169,7 +1178,7 @@ app.post('/api/webhook', async (req, res) => {
 
           const text = val.text || val.message;
           const senderId = val.from?.id;
-          const commentId = val.id || val.comment_id;
+          const commentId = val.comment_id || val.id;
           const mediaId = val.media?.id || val.post_id || val.video_id;
           console.log(`[webhook DEBUG] Extracted comment values: text="${text}", senderId="${senderId}", commentId="${commentId}", mediaId="${mediaId}" (from val.media?.id="${val.media?.id}", val.post_id="${val.post_id}", val.video_id="${val.video_id}")`);
 
