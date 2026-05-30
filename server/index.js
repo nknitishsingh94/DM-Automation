@@ -412,8 +412,14 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         console.log(`🚫 [DESKTOP FAIL] User ${chatId} still not following. Sending buttons!`);
         const followText = match.unfollowedResponse || "It looks like you haven't followed us yet! Please follow our profile and then click the button below. 😊";
         const checkFollowPayload = `CHECK_FOLLOW_${match._id}`;
-        const igUsername = userSettings?.connectedInstagramName || userSettings?.instagramUsername;
-        const profileUrl = igUsername ? `https://www.instagram.com/${igUsername.replace('@', '')}/` : `https://www.instagram.com/`;
+        let profileUrl;
+        if (platform === 'facebook') {
+          const fbId = userSettings?.facebookPageId;
+          profileUrl = fbId ? `https://www.facebook.com/${fbId}` : `https://www.facebook.com/`;
+        } else {
+          const igUsername = userSettings?.connectedInstagramName || userSettings?.instagramUsername;
+          profileUrl = igUsername ? `https://www.instagram.com/${igUsername.replace('@', '')}/` : `https://www.instagram.com/`;
+        }
         
         const followButtons = [
           { text: 'View Profile', url: profileUrl },
@@ -609,18 +615,20 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         const followText = match.unfollowedResponse || "Hey! Please follow our account first to get the link! 😊";
         const checkFollowPayload = `CHECK_FOLLOW_${match._id}`;
 
-        // Build the profile URL from the connected Instagram username (with multi-level fallback)
-        const igUsername = userSettings?.connectedInstagramName || userSettings?.instagramUsername;
-        // Try username first, then fallback to a profile ID-based URL, then a generic search
         let profileUrl;
-        if (igUsername) {
-          profileUrl = `https://www.instagram.com/${igUsername.replace('@', '')}/`;
-        } else if (userSettings?.businessAccountId || userSettings?.instagramPageId) {
-          // Fallback: use numeric ID (still opens a valid IG page)
-          const igId = userSettings?.businessAccountId || userSettings?.instagramPageId;
-          profileUrl = `https://www.instagram.com/accounts/login/?next=/${igId}/`;
+        if (platform === 'facebook') {
+          const fbId = userSettings?.facebookPageId;
+          profileUrl = fbId ? `https://www.facebook.com/${fbId}` : `https://www.facebook.com/`;
         } else {
-          profileUrl = `https://www.instagram.com/`;
+          const igUsername = userSettings?.connectedInstagramName || userSettings?.instagramUsername;
+          if (igUsername) {
+            profileUrl = `https://www.instagram.com/${igUsername.replace('@', '')}/`;
+          } else if (userSettings?.businessAccountId || userSettings?.instagramPageId) {
+            const igId = userSettings?.businessAccountId || userSettings?.instagramPageId;
+            profileUrl = `https://www.instagram.com/accounts/login/?next=/${igId}/`;
+          } else {
+            profileUrl = `https://www.instagram.com/`;
+          }
         }
 
         // Always send TWO buttons: Visit Profile (URL) + I've Followed (postback)
