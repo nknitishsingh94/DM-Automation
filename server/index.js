@@ -424,38 +424,47 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
   // If the user was sent an "Opening Message" (Double opt-in), and they reply with text,
   // we treat it as if they clicked the button.
   if (contact && contact.pendingCampaignId && contact.pendingCampaignId.startsWith('OPENING:')) {
-    console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied to Opening Message. Triggering final response.`);
     const pendingId = contact.pendingCampaignId.replace('OPENING:', '');
-    
-    // Clear pending status
-    await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
-    
     const match = await Campaign.findById(pendingId);
-    if (match && match.status === 'Active') {
-      const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
-      
-      let finalResponse = match.response;
-      if (match.isAI) {
-         try {
-           const { generateAIResponse } = await import('./utils/aiHandler.js');
-           const generated = await generateAIResponse(match.userId, `User just confirmed they want the link. Warmly deliver the content for "${match.triggerKeyword || match.trigger}".`, workspaceId);
-           if (generated) {
-             if (finalResponse === "[AI Agent will generate a custom neural reply here]" || !finalResponse.trim()) {
-               finalResponse = generated;
-             } else {
-               finalResponse = generated + "\n\n" + finalResponse;
-             }
-           }
-         } catch (e) {
-           finalResponse = "Here it is! Click the button below! 👇";
-         }
-      } else if (finalResponse === "[AI Agent will generate a custom neural reply here]") {
-         finalResponse = "Here is your link! 👇";
-      }
 
-      await sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
-      await Campaign.findByIdAndUpdate(pendingId, { $inc: { dmsSent: 1 } });
-      return { opening_triggered: true };
+    if (match && match.status === 'Active') {
+      const btnText = (match.openingMessageButton || "Send me the link!").toLowerCase().trim();
+      const incomingText = (text || '').toLowerCase().trim();
+      const cleanBtnText = btnText.replace(/[\u1F600-\u1F64F\u2702-\u27B0]/g, '').trim();
+
+      if (incomingText === btnText || (cleanBtnText && incomingText.includes(cleanBtnText)) || incomingText.includes('link') || incomingText.includes('send') || incomingText.includes('yes')) {
+        console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied correctly to Opening Message. Triggering final response.`);
+        await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
+
+        const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+        
+        let finalResponse = match.response;
+        if (match.isAI) {
+           try {
+             const { generateAIResponse } = await import('./utils/aiHandler.js');
+             const generated = await generateAIResponse(match.userId, `User just confirmed they want the link. Warmly deliver the content for "${match.triggerKeyword || match.trigger}".`, workspaceId);
+             if (generated) {
+               if (finalResponse === "[AI Agent will generate a custom neural reply here]" || !finalResponse.trim()) {
+                 finalResponse = generated;
+               } else {
+                 finalResponse = generated + "\n\n" + finalResponse;
+               }
+             }
+           } catch (e) {
+             finalResponse = "Here it is! Click the button below! 👇";
+           }
+        } else if (finalResponse === "[AI Agent will generate a custom neural reply here]") {
+           finalResponse = "Here is your link! 👇";
+        }
+
+        await sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
+        await Campaign.findByIdAndUpdate(pendingId, { $inc: { dmsSent: 1 } });
+        return { opening_triggered: true };
+      } else {
+        console.log(`🚫 [DESKTOP FAIL] User ${chatId} replied with "${text}" instead of button click. Cancelling pending opening trigger.`);
+        await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
+        // Let it fall through to normal keyword processing
+      }
     }
   }
 
