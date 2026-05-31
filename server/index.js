@@ -2428,6 +2428,8 @@ app.post('/api/ai/generate', verifyToken, async (req, res) => {
   } catch (err) {
     console.error('❌ AI GENERATION ERROR:', err.message);
     res.status(500).json({ error: err.message });
+  }
+});
 
 
 app.delete('/api/messages/all', verifyToken, async (req, res) => {
@@ -3620,9 +3622,3 @@ httpServer.listen(PORT, () => {
 
 
 export default app;
-
-
-
-
-
-
