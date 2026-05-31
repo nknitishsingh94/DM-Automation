@@ -477,6 +477,25 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         // Let it fall through to normal keyword processing
       }
     }
+  } else if (contact && contact.pendingCampaignId && !contact.pendingCampaignId.includes(':')) {
+    // --- DESKTOP FALLBACK: Follow Gate Re-check ---
+    const incomingText = (text || '').toLowerCase().trim();
+    if (incomingText === 'yes' || incomingText === "i've followed" || incomingText === "ive followed") {
+      const match = await Campaign.findById(contact.pendingCampaignId);
+      if (match && match.status === 'Active') {
+        console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied correctly to Follow Gate. Triggering final response directly.`);
+        await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
+        const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+        
+        let finalResponse = match.response;
+        if (match.isAI) {
+           finalResponse = "Here is your link! 👇"; // Simplified fallback for AI here
+        }
+        await sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
+        await Campaign.findByIdAndUpdate(match._id, { $inc: { dmsSent: 1 } });
+        return { follow_triggered: true };
+      }
+    }
   }
 
   // 1. Fetch Active Flows and Keyword Campaigns in parallel (Advanced Automation)
