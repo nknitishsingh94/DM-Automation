@@ -8,52 +8,105 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-// System Prompt: AI ko batana ki woh smart10X ka support agent hai
-const SYSTEM_PROMPT = `You are the smart10X AI Support Assistant. 
-Your goal is to help users with their Instagram DM automation, AI Studio, and Flow Builder questions.
-Be professional, friendly, and helpful. 
-
-Key info about smart10X:
-- It's an Instagram automation platform.
-- Features: DM Automation, AI Studio (AI replies), Flow Builder (visual editor), Broadcasts, and Audiences.
-- Support Email: smart10x.support@gmail.com
-- Pricing tiers: Free, Pro, and Business.
-
-If you don't know the answer, ask them to email support. Keep responses concise.`;
-
 router.post('/chat', async (req, res) => {
     try {
-        // Validate OpenAI API key presence
-        if (!process.env.OPENAI_API_KEY) {
-            console.error('❌ OPENAI_API_KEY not set in environment');
-            return res.status(500).json({ error: 'AI service is not configured. Please contact support.' });
-        }
         const { message, history = [] } = req.body;
+        if (!message) return res.status(400).json({ error: 'Message is required' });
 
-        if (!message) {
-            return res.status(400).json({ error: 'Message is required' });
+        const dotenvModule = await import('dotenv');
+        dotenvModule.default.config();
+
+        const geminiKey = process.env.GEMINI_API_KEY;
+        const groqKey = process.env.GROQ_API_KEY;
+
+        const systemPrompt = `You are the smart10X AI Support Assistant. You help users with questions about smart10X — a social media automation platform for Instagram and Facebook.
+
+Key features of smart10X:
+- Comment-to-DM automation
+- DM automation with keyword triggers
+- AI-powered auto-replies
+- Post scheduling
+- Visual Flow Builder
+- Universal Triggers
+- Audience/Contact management
+- AI Studio for customizing AI agent
+
+Common setup steps:
+1. Sign up and create a workspace
+2. Go to Settings > Connect Instagram/Facebook via Meta OAuth
+3. Create automations in Platform Automation or Universal Triggers
+4. Set trigger keywords and response messages
+5. Enable AI replies in AI Studio
+
+If you don't know the answer, suggest emailing smart10x.support@gmail.com or visiting the Help Center.
+Keep replies short, friendly, and helpful. Use emojis occasionally. Reply in the same language the user writes in.`;
+
+        let reply = null;
+
+        // Try Gemini first
+        if (geminiKey) {
+            try {
+                const axiosModule = await import('axios');
+                const axiosClient = axiosModule.default;
+                const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+                
+                for (const model of models) {
+                    try {
+                        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`;
+                        const chatHistory = (history || []).map(m => ({
+                            parts: [{ text: m.content }],
+                            role: m.role === 'assistant' ? 'model' : 'user'
+                        }));
+                        
+                        const response = await axiosClient.post(url, {
+                            contents: [
+                                ...chatHistory,
+                                { parts: [{ text: message }], role: 'user' }
+                            ],
+                            systemInstruction: { parts: [{ text: systemPrompt }] },
+                            generationConfig: { temperature: 0.7, maxOutputTokens: 500 }
+                        }, { timeout: 10000 });
+                        
+                        reply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (reply) break;
+                    } catch (e) {
+                        console.warn(`Support chat Gemini ${model} failed:`, e.response?.data?.error?.message || e.message);
+                    }
+                }
+            } catch (e) {
+                console.warn('Support chat Gemini failed:', e.message);
+            }
         }
 
-        const messages = [
-            { role: "system", content: SYSTEM_PROMPT },
-            ...history,
-            { role: "user", content: message }
-        ];
+        // Fallback to Groq
+        if (!reply && groqKey) {
+            try {
+                const groq = new OpenAI({ apiKey: groqKey.trim(), baseURL: "https://api.groq.com/openai/v1" });
+                const chatMessages = [
+                    { role: 'system', content: systemPrompt },
+                    ...(history || []).map(m => ({ role: m.role, content: m.content })),
+                    { role: 'user', content: message }
+                ];
+                const response = await groq.chat.completions.create({
+                    model: 'llama-3.3-70b-versatile',
+                    messages: chatMessages,
+                    temperature: 0.7,
+                    max_tokens: 500,
+                });
+                reply = response.choices[0]?.message?.content;
+            } catch (e) {
+                console.warn('Support chat Groq failed:', e.message);
+            }
+        }
 
-        const completion = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: messages,
-            max_tokens: 500
-        });
+        if (!reply) {
+            reply = "I'm having a bit of trouble right now! 😅 Please email us at smart10x.support@gmail.com and we'll get back to you quickly!";
+        }
 
-        const aiResponse = completion.choices[0].message.content;
-        res.json({ response: aiResponse });
+        res.json({ response: reply });
     } catch (error) {
         console.error('Support AI Error:', error.message);
-        res.status(500).json({
-            error: 'Failed to get AI response',
-            details: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+        res.json({ response: "Sorry, I'm experiencing technical difficulties. Please email smart10x.support@gmail.com for help! 🙏" });
     }
 });
 
