@@ -443,7 +443,7 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       const incomingText = (text || '').toLowerCase().trim();
       const cleanBtnText = btnText.replace(/[\u1F600-\u1F64F\u2702-\u27B0]/g, '').trim();
 
-      if (incomingText === btnText || (cleanBtnText && incomingText === cleanBtnText)) {
+      if (incomingText === btnText || (cleanBtnText && incomingText === cleanBtnText) || incomingText === 'yes') {
         console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied correctly to Opening Message. Triggering final response.`);
         await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
 
