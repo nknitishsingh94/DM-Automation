@@ -774,13 +774,20 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
       commentPromise = sendPublicComment(platform, commentId, replyText, userId, activeToken);
     }
 
-    const [sent, commentSent] = await Promise.all([dmPromise, commentPromise]);
+    const [sent, commentResult] = await Promise.all([dmPromise, commentPromise]);
+    const commentSent = commentResult?.success !== false; // handle both boolean (true from older code) and object {success: false}
+
+    if (!commentSent && source === 'comment') {
+      console.error(`⚠️ PUBLIC COMMENT FAILED for ${chatId}. Reason:`, commentResult?.error);
+      // We don't abort the DM if the public comment fails, but we should log it
+    }
 
     if (sent) {
       const autoReply = new Message({
         userId: userId,
         workspaceId: workspaceId,
-        chatId: chatId || 'default', sender: 'AI Agent', text: finalResponse, type: 'sent', platform, isAI: true, campaignId: match._id, timestamp: new Date()
+        chatId: chatId || 'default', sender: 'AI Agent', text: finalResponse, type: 'sent', platform, isAI: true, campaignId: match._id, timestamp: new Date(),
+        metadata: { publicCommentSent: commentSent, publicCommentError: commentResult?.error } // Save status for debugging in DB!
       });
       
       await Promise.all([

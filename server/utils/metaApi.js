@@ -539,9 +539,10 @@ export const sendPublicComment = async (platform, commentId, text, userId = null
     const endpoint = platform === 'facebook' ? 'comments' : 'replies';
     const url = `https://graph.facebook.com/v19.0/${commentId}/${endpoint}?access_token=${accessToken}`;
     const response = await axios.post(url, { message: text });
-    return true;
+    return { success: true };
   } catch (err) {
-    console.error("❌ Public Comment Error:", JSON.stringify(err.response?.data || err.message, null, 2));
-    return false;
+    const errorData = err.response?.data || err.message;
+    console.error("❌ Public Comment Error:", JSON.stringify(errorData, null, 2));
+    return { success: false, error: errorData };
   }
 };
