@@ -466,11 +466,7 @@ function Sidebar({ isMobileOpen, onClose }) {
               <CreditCard size={18} />
               <span>Billing</span>
             </NavLink>
-            <div className="nav-item" style={{ opacity: 0.6, cursor: 'not-allowed' }} title="Coming Soon">
-              <Users size={18} />
-              <span>Refer & Earn</span>
-              <span className="sidebar-badge badge-new" style={{ background: '#cbd5e1', color: '#475569' }}>SOON</span>
-            </div>
+
             <NavLink to="/settings" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Settings size={18} />
               <span>Settings</span>
@@ -525,15 +521,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                  </span>
                  <span style={{ color: '#f8fafc', fontWeight: '800' }}>Infinite</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontWeight: '600' }}>
-                 <span style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                   <div style={{ padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                     <FileText size={12} color="#3b82f6" />
-                   </div>
-                   Forms
-                 </span>
-                 <span style={{ color: '#f8fafc', fontWeight: '800' }}>Infinite</span>
-              </div>
+
             </div>
 
             <NavLink to="/upgrade" className="upgrade-btn-zoom" style={{ 
