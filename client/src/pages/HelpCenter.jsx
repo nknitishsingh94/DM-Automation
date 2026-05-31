@@ -92,28 +92,28 @@ export default function HelpCenter() {
         </div>
 
         <div className="help-grid">
-          <Link to="#" className="help-grid-card">
+          <Link to="/blog" className="help-grid-card">
             <div className="help-card-icon"><BookOpen size={24} /></div>
             <h3>Getting Started</h3>
             <p>Get started with the essentials and learn the core features in minutes</p>
             <span className="help-article-count">1 article</span>
           </Link>
 
-          <Link to="#" className="help-grid-card">
+          <Link to="/hub" className="help-grid-card">
             <div className="help-card-icon"><GitBranch size={24} /></div>
             <h3>Automations</h3>
             <p>Understand how to set up and manage DM automation</p>
             <span className="help-article-count">5 articles</span>
           </Link>
 
-          <Link to="#" className="help-grid-card">
+          <Link to="/contact" className="help-grid-card">
             <div className="help-card-icon"><AlertCircle size={24} /></div>
             <h3>Troubleshooting Common Issues</h3>
             <p>Step-by-step solutions for the most frequent problems users face</p>
             <span className="help-article-count">12 articles</span>
           </Link>
 
-          <Link to="#" className="help-grid-card">
+          <Link to="/blog" className="help-grid-card">
             <div className="help-card-icon"><Sparkles size={24} /></div>
             <h3>What's New</h3>
             <p>See the latest features, improvements, & updates shipped</p>
