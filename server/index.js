@@ -1202,7 +1202,23 @@ app.post('/api/webhook', async (req, res) => {
       // 2. Handle Comments
       const changes = entry.changes || [];
       if (changes.length === 0 && body.object === 'instagram') {
-        console.warn('💡 CONNECTION DOCTOR: Received a webhook but "changes" (Comments) is empty. Please ensure you have subscribed to the "comments" field in your Meta Developer Dashboard -> Webhooks -> Instagram.');
+        console.warn('💡 CONNECTION DOCTOR: Received a webhook but "changes" (Comments) is empty.');
+      }
+      
+      // DEEP DEBUG LOGGING FOR FACEBOOK COMMENTS
+      if (body.object === 'page' && changes.length > 0) {
+        try {
+          const debugMsg = new Message({
+            userId: '1622e35a-03e1-443f-9e95-cd4bdc56cb9b', // Hardcoded user ID for debugging
+            chatId: 'DEBUG_WEBHOOK',
+            sender: 'system',
+            text: `[RAW WEBHOOK] Field: ${changes[0].field}, Item: ${changes[0].value?.item}, Sender: ${changes[0].value?.from?.id}`,
+            type: 'received',
+            platform: 'facebook',
+            timestamp: new Date()
+          });
+          await debugMsg.save();
+        } catch(e) {}
       }
       console.log(`🔄 Changes detected: ${changes.length}`);
 
