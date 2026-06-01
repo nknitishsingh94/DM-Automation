@@ -689,7 +689,16 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
              publicGated += ` [ID: ${Math.floor(Math.random() * 10000)}]`;
           }
           
-          await sendPublicComment(platform, commentId, publicGated, userId, activeToken);
+          const commentResult = await sendPublicComment(platform, commentId, publicGated, userId, activeToken);
+          if (commentResult?.success === false) {
+             console.error(`⚠️ GATED PUBLIC COMMENT FAILED for ${commentId}. Reason:`, commentResult?.error);
+             try {
+                const debugMsg = new Message({
+                  userId: userId, chatId: chatId, sender: 'system', text: `[ERROR] Public Reply Failed: ${JSON.stringify(commentResult.error)}`, type: 'sent', platform, timestamp: new Date()
+                });
+                await debugMsg.save();
+             } catch(e) {}
+          }
         }
 
         // Store this campaign as 'pending' for when they follow
