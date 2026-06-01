@@ -531,13 +531,20 @@ export const sendPublicComment = async (platform, commentId, text, userId = null
     let accessToken = manualToken;
     if (!accessToken && userId) {
       const userSettings = await Settings.findOne({ userId });
-      if (userSettings) { accessToken = platform === 'facebook' ? userSettings.facebookAccessToken : userSettings.instagramAccessToken; }
+      accessToken = platform === 'facebook' ? userSettings?.facebookAccessToken : userSettings?.instagramAccessToken;
     }
-    if (!accessToken) accessToken = process.env.META_PAGE_ACCESS_TOKEN;
-    if (!accessToken) return false;
+    accessToken = accessToken || process.env.META_PAGE_ACCESS_TOKEN;
+
+    if (!accessToken || !commentId || !text) return { success: false, error: 'Missing parameters' };
+
+    let safeCommentId = commentId;
+    // Facebook often sends comment_id as "postId_commentId". The Graph API sometimes rejects this compound ID for threaded replies.
+    if (platform === 'facebook' && typeof safeCommentId === 'string' && safeCommentId.includes('_')) {
+      safeCommentId = safeCommentId.split('_')[1];
+    }
 
     const endpoint = platform === 'facebook' ? 'comments' : 'replies';
-    const url = `https://graph.facebook.com/v19.0/${commentId}/${endpoint}?access_token=${accessToken}`;
+    const url = `https://graph.facebook.com/v19.0/${safeCommentId}/${endpoint}?access_token=${accessToken}`;
     const response = await axios.post(url, { message: text });
     return { success: true };
   } catch (err) {
