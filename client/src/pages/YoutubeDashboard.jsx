@@ -7,6 +7,7 @@ import {
   MoreVertical, ThumbsUp, Eye, FileVideo
 } from 'lucide-react';
 import { useNotification } from '../App';
+import Campaigns from './Campaigns';
 
 export default function YoutubeDashboard() {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ export default function YoutubeDashboard() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '20px', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%', padding: '20px', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
       
       {/* HEADER */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', paddingBottom: '20px', borderBottom: '1px solid #e2e8f0' }}>
@@ -115,7 +116,7 @@ export default function YoutubeDashboard() {
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div style={{ flex: 1 }}>
         {activeTab === 'library' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -167,6 +168,12 @@ export default function YoutubeDashboard() {
             <button onClick={() => notify('Thumbnail generator initializing...', 'info')} style={{ background: '#ea580c', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)' }}>
               <Sparkles size={18} /> Generate Thumbnails
             </button>
+          </div>
+        )}
+
+        {activeTab === 'automation' && (
+          <div style={{ marginTop: '20px' }}>
+            <Campaigns platformFilter="youtube" />
           </div>
         )}
       </div>
