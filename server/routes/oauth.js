@@ -663,5 +663,125 @@ router.get('/youtube/callback', async (req, res) => {
     }
   }
 });
+// ==========================================
+// LINKEDIN OAUTH FLOW
+// ==========================================
+
+// Step 1: Redirect to LinkedIn OAuth
+router.get('/linkedin', verifyToken, (req, res) => {
+  const clientId = process.env.LINKEDIN_CLIENT_ID;
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+  if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+  const redirectUri = `${baseUrl}/api/oauth/linkedin/callback`;
+  
+  const state = req.user.userId + 
+                (req.query.onboarding === 'true' ? '_onboarding' : '') + 
+                (req.workspaceId ? `_ws_${req.workspaceId}` : '');
+
+  if (!clientId) {
+    return res.status(500).json({ error: "Missing LINKEDIN_CLIENT_ID in environment variables" });
+  }
+
+  const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=openid%20profile%20w_member_social%20email`;
+  res.redirect(authUrl);
+});
+
+// Step 2: Handle LinkedIn OAuth Callback
+router.get('/linkedin/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+  const isFromOnboarding = state && state.includes('_onboarding');
+  
+  let workspaceId = '';
+  const wsMatch = state && state.match(/_ws_([a-f0-9-]{36})/i);
+  if (wsMatch) {
+    workspaceId = wsMatch[1];
+  }
+
+  let userId = state
+    ? state
+        .replace('_onboarding', '')
+        .replace(new RegExp(`_ws_${workspaceId}`, 'i'), '')
+    : '';
+
+  if (error) {
+    console.error("LinkedIn OAuth Error:", error);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=declined`);
+  }
+
+  if (!code || !state) {
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=missing_parameters`);
+  }
+
+  try {
+    const clientId = process.env.LINKEDIN_CLIENT_ID;
+    const clientSecret = process.env.LINKEDIN_CLIENT_SECRET;
+    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5001');
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/oauth/linkedin/callback`;
+
+    // 1. Exchange code for access token
+    const tokenRes = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', null, {
+      params: {
+        grant_type: 'authorization_code',
+        code: code,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri
+      },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+
+    const accessToken = tokenRes.data.access_token;
+    
+    // 2. Fetch User Profile
+    let profileName = 'LinkedIn Member';
+    try {
+      const profileRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      if (profileRes.data && profileRes.data.name) {
+        profileName = profileRes.data.name;
+      }
+    } catch (profileErr) {
+      console.warn("Could not fetch LinkedIn profile name:", profileErr.response?.data || profileErr.message);
+    }
+
+    // 3. Save to DB
+    const settingsQuery = { userId: userId };
+    if (workspaceId) {
+      settingsQuery.workspaceId = workspaceId;
+    }
+
+    const updateData = {
+      isLinkedInConnected: true,
+      connectedLinkedInName: profileName,
+      linkedinAccessToken: accessToken
+    };
+
+    await Settings.findOneAndUpdate(
+      settingsQuery,
+      updateData,
+      { upsert: true, new: true }
+    );
+
+    console.log(`✅ LinkedIn OAuth Success for user ${userId}. Profile: ${profileName}`);
+    
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=linkedin`);
+    } else {
+      res.redirect(`${frontendUrl}/settings?oauth_success=true&platform=linkedin`);
+    }
+
+  } catch (err) {
+    console.error("LinkedIn Exchange Failed:", err.response?.data || err.message);
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
+    } else {
+      res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
+    }
+  }
+});
 
 export default router;
