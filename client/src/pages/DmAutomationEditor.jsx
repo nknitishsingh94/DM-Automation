@@ -283,6 +283,7 @@ export default function DmAutomationEditor() {
                       : selectedPlatform === 'linkedin' ? 'LinkedIn Profile'
                       : selectedPlatform === 'twitter' ? 'Twitter Account'
                       : selectedPlatform === 'pinterest' ? 'Pinterest Board'
+                      : selectedPlatform === 'google_business' ? 'Google Business Profile'
                       : (connectedSettings?.connectedInstagramName || user?.username || 'Instagram Account')
                     }
                   </div>
@@ -523,6 +524,7 @@ export default function DmAutomationEditor() {
                       <option value="linkedin">💼 LinkedIn</option>
                       <option value="twitter">🐦 Twitter/X</option>
                       <option value="pinterest">📌 Pinterest</option>
+                      <option value="google_business">📍 Google Business</option>
                    </select>
                   )}
                   {!params.get('channel') && <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.8rem', fontWeight: '500' }}>Only connected platforms are shown here.</p>}
