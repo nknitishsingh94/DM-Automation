@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare } from 'lucide-react';
+import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 
@@ -48,6 +48,26 @@ const PlatformHub = () => {
       gradient: 'linear-gradient(135deg, #3b82f6, #0ea5e9)',
       isConnected: settings && (settings.isFacebookConnected || (settings.facebookAccessToken && settings.facebookPageId)),
       accountName: settings?.connectedFacebookName || 'Facebook Page'
+    },
+    {
+      id: 'youtube',
+      name: 'YouTube',
+      description: 'Automate uploads and manage your YouTube channel content.',
+      icon: <Youtube size={40} />,
+      color: '#ff0000',
+      gradient: 'linear-gradient(135deg, #ff0000, #dc2626)',
+      isConnected: settings && settings.isYouTubeConnected,
+      accountName: settings?.connectedYouTubeName || 'YouTube Channel'
+    },
+    {
+      id: 'linkedin',
+      name: 'LinkedIn',
+      description: 'Automate posts and engagement on your LinkedIn profile.',
+      icon: <Linkedin size={40} />,
+      color: '#0077b5',
+      gradient: 'linear-gradient(135deg, #0077b5, #0284c7)',
+      isConnected: settings && settings.isLinkedInConnected,
+      accountName: settings?.connectedLinkedInName || 'LinkedIn Member'
     }
   ];
 
