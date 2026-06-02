@@ -279,6 +279,10 @@ export default function DmAutomationEditor() {
                   <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>
                     {selectedPlatform === 'facebook' 
                       ? (connectedSettings?.connectedFacebookName || 'Facebook Page')
+                      : selectedPlatform === 'youtube' ? 'YouTube Channel'
+                      : selectedPlatform === 'linkedin' ? 'LinkedIn Profile'
+                      : selectedPlatform === 'twitter' ? 'Twitter Account'
+                      : selectedPlatform === 'pinterest' ? 'Pinterest Board'
                       : (connectedSettings?.connectedInstagramName || user?.username || 'Instagram Account')
                     }
                   </div>
@@ -515,6 +519,10 @@ export default function DmAutomationEditor() {
                       {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
                         <option value="facebook">💬 Facebook Messenger</option>
                       )}
+                      <option value="youtube">▶️ YouTube</option>
+                      <option value="linkedin">💼 LinkedIn</option>
+                      <option value="twitter">🐦 Twitter/X</option>
+                      <option value="pinterest">📌 Pinterest</option>
                    </select>
                   )}
                   {!params.get('channel') && <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.8rem', fontWeight: '500' }}>Only connected platforms are shown here.</p>}
