@@ -1,7 +1,8 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Instagram, MessageCircle, Phone, ArrowLeft, Bot } from 'lucide-react';
+import { Instagram, MessageCircle, Phone, ArrowLeft, Bot, Youtube } from 'lucide-react';
 import Campaigns from './Campaigns';
+import YoutubeDashboard from './YoutubeDashboard';
 
 const PlatformDashboard = () => {
   const { platformId } = useParams();
@@ -19,6 +20,10 @@ const PlatformDashboard = () => {
         return { name: 'AI Studio', icon: <Bot size={28} />, color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' };
     }
   };
+
+  if (platformId === 'youtube') {
+    return <YoutubeDashboard />;
+  }
 
   const details = getPlatformDetails();
 

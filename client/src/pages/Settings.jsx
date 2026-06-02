@@ -493,7 +493,7 @@ export default function Settings() {
 
             {/* ---- INSTAGRAM CARD ---- */}
             {settings.isAccountConnected && (platformFilter === 'All platforms' || platformFilter === 'Instagram') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '240px', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ position: 'relative', width: '42px', height: '42px' }}>
@@ -524,7 +524,7 @@ export default function Settings() {
                 </label>
               </div>
               <button onClick={() => { if(window.confirm('Instagram disconnect karna chahte hain?')) { const c = { ...settings, instagramAccessToken: null, instagramPageId: null, businessAccountId: null, connectedInstagramName: null, isAccountConnected: false }; setSettings(c); handleSaveSettings(null, c, 'instagram'); } }}
-                style={{ width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
                 onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
                 onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
               >Disconnect</button>
@@ -538,7 +538,7 @@ export default function Settings() {
 
             {/* ---- FACEBOOK CARD ---- */}
             {settings.isFacebookConnected && (platformFilter === 'All platforms' || platformFilter === 'Facebook') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '240px', border: '1px solid #dbeafe', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #dbeafe', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#1877f2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -562,7 +562,7 @@ export default function Settings() {
                 </label>
               </div>
               <button onClick={handleDisconnectFacebook}
-                style={{ width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
                 onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
                 onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
               >Disconnect</button>
@@ -576,7 +576,7 @@ export default function Settings() {
 
             {/* ---- YOUTUBE CARD ---- */}
             {settings.isYouTubeConnected && (platformFilter === 'All platforms' || platformFilter === 'YouTube') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '240px', border: '1px solid #fecaca', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #fecaca', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#ff0000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -606,7 +606,7 @@ export default function Settings() {
 
             {/* ---- LINKEDIN CARD ---- */}
             {settings.isLinkedInConnected && (platformFilter === 'All platforms' || platformFilter === 'LinkedIn') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '240px', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#0077b5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -636,7 +636,7 @@ export default function Settings() {
 
             {/* ---- GOOGLE BUSINESS CARD ---- */}
             {settings.isGoogleBusinessConnected && (platformFilter === 'All platforms' || platformFilter === 'Google Business') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '240px', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#4285f4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -666,7 +666,7 @@ export default function Settings() {
 
             {/* ---- TWITTER CARD ---- */}
             {settings.isTwitterConnected && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '240px', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#0f1419', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

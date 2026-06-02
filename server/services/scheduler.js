@@ -1,6 +1,6 @@
 import ScheduledPost from '../models/ScheduledPost.js';
 import Settings from '../models/Settings.js';
-import { publishInstagramContent } from '../utils/metaApi.js';
+import { publishInstagramContent, publishFacebookContent } from '../utils/metaApi.js';
 import { supabase } from '../utils/supabase.js';
 
 export async function runSchedulingWorker() {
@@ -57,10 +57,10 @@ export async function runSchedulingWorker() {
       console.log(`⚙️ [Worker] Processing Post ID: ${post._id}`);
       
       try {
-        if (!post.platform || post.platform !== 'instagram') {
-          console.log(`⏭️ [Worker] Skipping post ${post._id} - Platform is not instagram (${post.platform})`);
-          await safeUpdate(post.id, { status: 'Failed', errorLog: 'Only Instagram is supported via this worker.' });
-          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', errorLog: 'Only Instagram is supported.' });
+        if (!post.platform || (post.platform !== 'instagram' && post.platform !== 'facebook')) {
+          console.log(`⏭️ [Worker] Skipping post ${post._id} - Platform is not supported (${post.platform})`);
+          await safeUpdate(post.id, { status: 'Failed', errorLog: 'Only Instagram and Facebook are supported via this worker.' });
+          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', errorLog: 'Unsupported platform.' });
           continue;
         }
 
@@ -86,13 +86,24 @@ export async function runSchedulingWorker() {
             if (isReady) {
               console.log(`🚀 [Worker] Container ${post.containerId} is READY. Publishing now...`);
               try {
-                const publishRes = await publishInstagramContent(post.userId, { 
-                  type: post.type, 
-                  mediaUrl: post.mediaUrl, 
-                  caption: post.caption, 
-                  carouselItems: post.carouselItems || [],
-                  containerId: post.containerId 
-                }, post.workspaceId);
+                let publishRes;
+                if (post.platform === 'facebook') {
+                  publishRes = await publishFacebookContent(post.userId, { 
+                    type: post.type, 
+                    mediaUrl: post.mediaUrl, 
+                    caption: post.caption, 
+                    carouselItems: post.carouselItems || [],
+                    containerId: post.containerId 
+                  }, post.workspaceId);
+                } else {
+                  publishRes = await publishInstagramContent(post.userId, { 
+                    type: post.type, 
+                    mediaUrl: post.mediaUrl, 
+                    caption: post.caption, 
+                    carouselItems: post.carouselItems || [],
+                    containerId: post.containerId 
+                  }, post.workspaceId);
+                }
                 
                 if (publishRes && publishRes.status === 'PUBLISHED') {
                   const finalLiveUrl = publishRes.url || post.mediaUrl;
@@ -131,16 +142,26 @@ export async function runSchedulingWorker() {
         }
 
         // --- Standard Publishing Flow (New Posts) ---
-        console.log(`🎬 [Worker] Starting initial publish sequence for ${post._id}...`);
+        console.log(`🎬 [Worker] Starting initial publish sequence for ${post._id} on ${post.platform}...`);
         await safeUpdate(post.id, { status: 'Processing' });
         await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Processing' });
 
-        const result = await publishInstagramContent(post.userId, {
-          type: post.type,
-          mediaUrl: post.mediaUrl,
-          caption: post.caption,
-          carouselItems: post.carouselItems || []
-        }, post.workspaceId);
+        let result;
+        if (post.platform === 'facebook') {
+          result = await publishFacebookContent(post.userId, {
+            type: post.type,
+            mediaUrl: post.mediaUrl,
+            caption: post.caption,
+            carouselItems: post.carouselItems || []
+          }, post.workspaceId);
+        } else {
+          result = await publishInstagramContent(post.userId, {
+            type: post.type,
+            mediaUrl: post.mediaUrl,
+            caption: post.caption,
+            carouselItems: post.carouselItems || []
+          }, post.workspaceId);
+        }
 
         if (result && result.status === 'PUBLISHED') {
           const finalLiveUrl = result.url || post.mediaUrl;
