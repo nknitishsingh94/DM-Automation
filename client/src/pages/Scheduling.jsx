@@ -378,7 +378,11 @@ export default function Scheduling() {
     openingMessageButton: "click the button",
     buttons: [],
     anyKeyword: false,
-    publicReply: "Check your DMs! 🚀 I've sent you the info."
+    publicReply: "Check your DMs! 🚀 I've sent you the info.",
+    youtubeFirstComment: '',
+    youtubeVisibility: 'Public',
+    youtubeTitle: '',
+    youtubeTags: ''
   });
 
   const chatRef = useRef(null);
@@ -1066,6 +1070,105 @@ export default function Scheduling() {
                     </div>
                   </div>
 
+                  {/* YouTube Specific UI Block */}
+                  {newPost.platform === 'youtube' && (
+                    <div style={{ marginTop: '20px', background: '#f8fafc', padding: '20px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                        <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#ff0000', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Video size={16} />
+                        </div>
+                        <h4 style={{ margin: 0, color: '#1e293b', fontWeight: '800', fontSize: '1.05rem' }}>YouTube Options</h4>
+                      </div>
+
+                      {/* YouTube Custom Thumbnail */}
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', color: '#475569', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>youtube thumbnail (optional)</label>
+                        <p style={{ color: '#64748b', fontSize: '0.75rem', marginBottom: '10px' }}>Upload a custom thumbnail for your YouTube video. Recommended: 1280x720, max 2MB, JPG/PNG/GIF</p>
+                        
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <button type="button" style={{ background: 'white', border: '1.5px solid #cbd5e1', padding: '8px 16px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                            <UploadCloud size={16} /> Upload Thumbnail
+                          </button>
+                          <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>No file chosen</span>
+                        </div>
+
+                        <div style={{ background: '#fffbeb', border: '1px solid #fef3c7', padding: '10px', borderRadius: '8px', marginTop: '12px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                          <AlertCircle size={16} color="#d97706" style={{ flexShrink: 0, marginTop: '2px' }} />
+                          <p style={{ margin: 0, fontSize: '0.75rem', color: '#92400e', lineHeight: '1.4' }}>
+                            <strong>⚠️ Note:</strong> Custom thumbnails require a verified YouTube channel with good standing. If your channel lacks permissions, your video will upload successfully with an auto-generated thumbnail.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* YouTube First Comment */}
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', color: '#475569', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>youtube first comment (optional)</label>
+                        <p style={{ color: '#64748b', fontSize: '0.75rem', marginBottom: '8px' }}>Add an automatic first comment to your YouTube video. Great for engagement, calls-to-action, or questions for your audience.</p>
+                        <textarea
+                          value={newPost.youtubeFirstComment}
+                          onChange={e => setNewPost({ ...newPost, youtubeFirstComment: e.target.value })}
+                          placeholder="What did you think of this video? Don't forget to like and subscribe! 🎥"
+                          style={{ width: '100%', height: '80px', padding: '12px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', resize: 'none' }}
+                        />
+                        <p style={{ color: '#94a3b8', fontSize: '0.7rem', marginTop: '6px', textAlign: 'right' }}>YouTube comments can be up to 10,000 characters</p>
+                      </div>
+
+                      {/* YouTube Visibility */}
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', color: '#475569', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>youtube visibility</label>
+                        <p style={{ color: '#64748b', fontSize: '0.75rem', marginBottom: '10px' }}>Choose who can see your video on YouTube.</p>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                          {['Public', 'Unlisted', 'Private'].map(vis => (
+                            <label key={vis} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: '#334155', cursor: 'pointer', background: newPost.youtubeVisibility === vis ? '#eff6ff' : 'white', padding: '8px 12px', borderRadius: '8px', border: `1px solid ${newPost.youtubeVisibility === vis ? '#3b82f6' : '#e2e8f0'}` }}>
+                              <input type="radio" name="ytVisibility" value={vis} checked={newPost.youtubeVisibility === vis} onChange={e => setNewPost({ ...newPost, youtubeVisibility: e.target.value })} style={{ accentColor: '#3b82f6' }} />
+                              {vis === 'Public' ? '🌍' : vis === 'Unlisted' ? '🔗' : '🔒'} {vis}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* YouTube Title */}
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', color: '#475569', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>youtube title (optional)</label>
+                        <p style={{ color: '#64748b', fontSize: '0.75rem', marginBottom: '8px' }}>Custom title for your YouTube video. If not provided, the main content will be used.</p>
+                        <input
+                          type="text"
+                          value={newPost.youtubeTitle}
+                          onChange={e => setNewPost({ ...newPost, youtubeTitle: e.target.value })}
+                          placeholder="Enter a custom title for your YouTube video..."
+                          maxLength={100}
+                          style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem' }}
+                        />
+                        <p style={{ color: '#94a3b8', fontSize: '0.7rem', marginTop: '6px', textAlign: 'right' }}>{newPost.youtubeTitle?.length || 0}/100 characters</p>
+                      </div>
+
+                      {/* YouTube Tags */}
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', color: '#475569', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>youtube tags (optional)</label>
+                        <p style={{ color: '#64748b', fontSize: '0.75rem', marginBottom: '8px' }}>Add relevant keywords to help people find your video. Press Enter or comma to add tags.</p>
+                        <input
+                          type="text"
+                          value={newPost.youtubeTags}
+                          onChange={e => setNewPost({ ...newPost, youtubeTags: e.target.value })}
+                          placeholder="programming, tutorial, coding, javascript..."
+                          style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem' }}
+                        />
+                      </div>
+
+                      {/* Shorts Note */}
+                      <div style={{ background: '#f1f5f9', padding: '12px', borderRadius: '8px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                        <Info size={16} color="#64748b" style={{ flexShrink: 0, marginTop: '2px' }} />
+                        <div>
+                          <p style={{ margin: '0 0 4px 0', fontSize: '0.8rem', fontWeight: '700', color: '#334155' }}>YouTube will automatically detect Shorts</p>
+                          <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '0.75rem', color: '#64748b', lineHeight: '1.5' }}>
+                            <li>Videos ≤ 3 minutes → YouTube Short</li>
+                            <li>Videos &gt; 3 minutes → Regular video</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Automation Toggle Overlay on Bottom-Right */}
                   {(post.autoResponse || post.triggerKeyword) && (
                     <div style={{ position: 'absolute', bottom: '10px', right: '10px' }}>
@@ -1571,12 +1674,114 @@ export default function Scheduling() {
                     ) : (
                       <>
                         <UploadCloud size={32} color="#7c3aed" style={{ marginBottom: '12px' }} />
-                        <p style={{ fontSize: '0.9rem', fontWeight: '700' }}>
+                        <p style={{ fontSize: '0.9rem', fontWeight: '700', marginBottom: '4px' }}>
                           {postType === 'story' ? 'Click or drag to upload image or video for story' : 'Click to upload media'}
+                        </p>
+                        <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
+                          images/videos/PDFs up to 5GB each (LinkedIn PDFs ≤ 100MB)
                         </p>
                       </>
                     )}
                   </div>
+
+                  {/* YouTube Specific UI Block */}
+                  {newPost.platform === 'youtube' && (
+                    <div style={{ marginTop: '20px', background: '#f8fafc', padding: '20px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                        <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#ff0000', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Video size={16} />
+                        </div>
+                        <h4 style={{ margin: 0, color: '#1e293b', fontWeight: '800', fontSize: '1.05rem' }}>YouTube Options</h4>
+                      </div>
+
+                      {/* YouTube Custom Thumbnail */}
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', color: '#475569', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>youtube thumbnail (optional)</label>
+                        <p style={{ color: '#64748b', fontSize: '0.75rem', marginBottom: '10px' }}>Upload a custom thumbnail for your YouTube video. Recommended: 1280x720, max 2MB, JPG/PNG/GIF</p>
+                        
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <button type="button" style={{ background: 'white', border: '1.5px solid #cbd5e1', padding: '8px 16px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                            <UploadCloud size={16} /> Upload Thumbnail
+                          </button>
+                          <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>No file chosen</span>
+                        </div>
+
+                        <div style={{ background: '#fffbeb', border: '1px solid #fef3c7', padding: '10px', borderRadius: '8px', marginTop: '12px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                          <AlertCircle size={16} color="#d97706" style={{ flexShrink: 0, marginTop: '2px' }} />
+                          <p style={{ margin: 0, fontSize: '0.75rem', color: '#92400e', lineHeight: '1.4' }}>
+                            <strong>⚠️ Note:</strong> Custom thumbnails require a verified YouTube channel with good standing. If your channel lacks permissions, your video will upload successfully with an auto-generated thumbnail.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* YouTube First Comment */}
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', color: '#475569', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>youtube first comment (optional)</label>
+                        <p style={{ color: '#64748b', fontSize: '0.75rem', marginBottom: '8px' }}>Add an automatic first comment to your YouTube video. Great for engagement, calls-to-action, or questions for your audience.</p>
+                        <textarea
+                          value={newPost.youtubeFirstComment}
+                          onChange={e => setNewPost({ ...newPost, youtubeFirstComment: e.target.value })}
+                          placeholder="What did you think of this video? Don't forget to like and subscribe! 🎥"
+                          style={{ width: '100%', height: '80px', padding: '12px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', resize: 'none' }}
+                        />
+                        <p style={{ color: '#94a3b8', fontSize: '0.7rem', marginTop: '6px', textAlign: 'right' }}>YouTube comments can be up to 10,000 characters</p>
+                      </div>
+
+                      {/* YouTube Visibility */}
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', color: '#475569', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>youtube visibility</label>
+                        <p style={{ color: '#64748b', fontSize: '0.75rem', marginBottom: '10px' }}>Choose who can see your video on YouTube.</p>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                          {['Public', 'Unlisted', 'Private'].map(vis => (
+                            <label key={vis} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: '#334155', cursor: 'pointer', background: newPost.youtubeVisibility === vis ? '#eff6ff' : 'white', padding: '8px 12px', borderRadius: '8px', border: `1px solid ${newPost.youtubeVisibility === vis ? '#3b82f6' : '#e2e8f0'}` }}>
+                              <input type="radio" name="ytVisibility" value={vis} checked={newPost.youtubeVisibility === vis} onChange={e => setNewPost({ ...newPost, youtubeVisibility: e.target.value })} style={{ accentColor: '#3b82f6' }} />
+                              {vis === 'Public' ? '🌍' : vis === 'Unlisted' ? '🔗' : '🔒'} {vis}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* YouTube Title */}
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', color: '#475569', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>youtube title (optional)</label>
+                        <p style={{ color: '#64748b', fontSize: '0.75rem', marginBottom: '8px' }}>Custom title for your YouTube video. If not provided, the main content will be used.</p>
+                        <input
+                          type="text"
+                          value={newPost.youtubeTitle}
+                          onChange={e => setNewPost({ ...newPost, youtubeTitle: e.target.value })}
+                          placeholder="Enter a custom title for your YouTube video..."
+                          maxLength={100}
+                          style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem' }}
+                        />
+                        <p style={{ color: '#94a3b8', fontSize: '0.7rem', marginTop: '6px', textAlign: 'right' }}>{newPost.youtubeTitle?.length || 0}/100 characters</p>
+                      </div>
+
+                      {/* YouTube Tags */}
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', color: '#475569', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>youtube tags (optional)</label>
+                        <p style={{ color: '#64748b', fontSize: '0.75rem', marginBottom: '8px' }}>Add relevant keywords to help people find your video. Press Enter or comma to add tags.</p>
+                        <input
+                          type="text"
+                          value={newPost.youtubeTags}
+                          onChange={e => setNewPost({ ...newPost, youtubeTags: e.target.value })}
+                          placeholder="programming, tutorial, coding, javascript..."
+                          style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem' }}
+                        />
+                      </div>
+
+                      {/* Shorts Note */}
+                      <div style={{ background: '#f1f5f9', padding: '12px', borderRadius: '8px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                        <Info size={16} color="#64748b" style={{ flexShrink: 0, marginTop: '2px' }} />
+                        <div>
+                          <p style={{ margin: '0 0 4px 0', fontSize: '0.8rem', fontWeight: '700', color: '#334155' }}>YouTube will automatically detect Shorts</p>
+                          <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '0.75rem', color: '#64748b', lineHeight: '1.5' }}>
+                            <li>Videos ≤ 3 minutes → YouTube Short</li>
+                            <li>Videos &gt; 3 minutes → Regular video</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Right Side: Premium Simulation Preview */}
