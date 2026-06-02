@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin } from 'lucide-react';
+import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin, MapPin } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 
@@ -68,6 +68,16 @@ const PlatformHub = () => {
       gradient: 'linear-gradient(135deg, #0077b5, #0284c7)',
       isConnected: settings && settings.isLinkedInConnected,
       accountName: settings?.connectedLinkedInName || 'LinkedIn Member'
+    },
+    {
+      id: 'google-business',
+      name: 'Google Business',
+      description: 'Manage reviews and automate your Google Business Profile.',
+      icon: <MapPin size={40} />,
+      color: '#4285f4',
+      gradient: 'linear-gradient(135deg, #4285f4, #3b82f6)',
+      isConnected: settings && settings.isGoogleBusinessConnected,
+      accountName: settings?.connectedGoogleBusinessName || 'Google Profile'
     }
   ];
 

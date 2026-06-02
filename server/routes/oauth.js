@@ -783,5 +783,121 @@ router.get('/linkedin/callback', async (req, res) => {
     }
   }
 });
+// ==========================================
+// GOOGLE BUSINESS OAUTH FLOW
+// ==========================================
+
+// Step 1: Redirect to Google OAuth for Business Profile
+router.get('/google-business', verifyToken, (req, res) => {
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+  if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+  const redirectUri = `${baseUrl}/api/oauth/google-business/callback`;
+  
+  const oauth2Client = getGoogleClient(redirectUri);
+
+  const state = req.user.userId + 
+                (req.query.onboarding === 'true' ? '_onboarding' : '') + 
+                (req.workspaceId ? `_ws_${req.workspaceId}` : '');
+
+  const authUrl = oauth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: [
+      'https://www.googleapis.com/auth/business.manage',
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email'
+    ],
+    state: state,
+    prompt: 'consent' // Force to get refresh token
+  });
+
+  res.redirect(authUrl);
+});
+
+// Step 2: Handle Google Business OAuth Callback
+router.get('/google-business/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+  const isFromOnboarding = state && state.includes('_onboarding');
+  
+  let workspaceId = '';
+  const wsMatch = state && state.match(/_ws_([a-f0-9-]{36})/i);
+  if (wsMatch) {
+    workspaceId = wsMatch[1];
+  }
+
+  let userId = state
+    ? state
+        .replace('_onboarding', '')
+        .replace(new RegExp(`_ws_${workspaceId}`, 'i'), '')
+    : '';
+
+  if (error) {
+    console.error("Google Business OAuth Error:", error);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=declined`);
+  }
+
+  if (!code || !state) {
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=missing_parameters`);
+  }
+
+  try {
+    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5001');
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/oauth/google-business/callback`;
+
+    const oauth2Client = getGoogleClient(redirectUri);
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+
+    // Fetch Google Business Account Name
+    let businessName = 'Google Business Account';
+    try {
+      const accountsRes = await axios.get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', {
+        headers: { Authorization: `Bearer ${tokens.access_token}` }
+      });
+      if (accountsRes.data && accountsRes.data.accounts && accountsRes.data.accounts.length > 0) {
+        businessName = accountsRes.data.accounts[0].accountName || accountsRes.data.accounts[0].name;
+      }
+    } catch (gbErr) {
+      console.warn("Could not fetch Google Business account name:", gbErr.message);
+    }
+
+    const settingsQuery = { userId: userId };
+    if (workspaceId) {
+      settingsQuery.workspaceId = workspaceId;
+    }
+
+    const settings = await Settings.findOne(settingsQuery);
+    const updateData = {
+      isGoogleBusinessConnected: true,
+      connectedGoogleBusinessName: businessName,
+      googleBusinessAccessToken: tokens.access_token,
+      googleBusinessRefreshToken: tokens.refresh_token || (settings?.googleBusinessRefreshToken || null)
+    };
+
+    await Settings.findOneAndUpdate(
+      settingsQuery,
+      updateData,
+      { upsert: true, new: true }
+    );
+
+    console.log(`✅ Google Business OAuth Success for user ${userId}. Account: ${businessName}`);
+    
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=google-business`);
+    } else {
+      res.redirect(`${frontendUrl}/settings?oauth_success=true&platform=google-business`);
+    }
+
+  } catch (err) {
+    console.error("Google Business Exchange Failed:", err.message);
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
+    } else {
+      res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
+    }
+  }
+});
 
 export default router;
