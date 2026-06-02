@@ -455,7 +455,7 @@ export default function Settings() {
           (settings.isLinkedInConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'LinkedIn'))
         ) ? (
           /* Active Integration Card Grid View */
-          <div className="connection-card-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'flex-start' }}>
+          <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', alignItems: 'stretch' }}>
 
             {/* ---- INSTAGRAM CARD ---- */}
             {settings.isAccountConnected && (platformFilter === 'All platforms' || platformFilter === 'Instagram') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
@@ -562,6 +562,11 @@ export default function Settings() {
                 onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
                 onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
               >Disconnect</button>
+              <button onClick={() => window.open(`https://youtube.com/`, '_blank')}
+                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+              >Profile</button>
             </div>
             )}
 
@@ -587,6 +592,11 @@ export default function Settings() {
                 onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
                 onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
               >Disconnect</button>
+              <button onClick={() => window.open(`https://linkedin.com/`, '_blank')}
+                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+              >Profile</button>
             </div>
             )}
 
