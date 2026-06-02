@@ -1,5 +1,6 @@
 import express from 'express';
 import axios from 'axios';
+import crypto from 'crypto';
 import Settings from '../models/Settings.js';
 import User from '../models/User.js';
 import verifyToken from '../middleware/auth.js';
@@ -897,6 +898,139 @@ router.get('/google-business/callback', async (req, res) => {
     } else {
       res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
     }
+  }
+});
+// ==========================================
+// TWITTER / X OAUTH FLOW (OAuth 2.0 PKCE)
+// ==========================================
+
+// Helper: Generate base64url encoded string
+const base64URLEncode = (str) => {
+  return str.toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
+};
+
+// Helper: Generate SHA256 hash
+const sha256 = (buffer) => {
+  return crypto.createHash('sha256').update(buffer).digest();
+};
+
+// Step 1: Redirect to Twitter OAuth
+router.get('/twitter', verifyToken, (req, res) => {
+  const clientId = process.env.TWITTER_CLIENT_ID;
+  if (!clientId) {
+    return res.status(500).json({ error: "Missing TWITTER_CLIENT_ID in environment variables" });
+  }
+
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+  if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+  const redirectUri = `${baseUrl}/api/oauth/twitter/callback`;
+  
+  const codeVerifier = base64URLEncode(crypto.randomBytes(32));
+  const codeChallenge = base64URLEncode(sha256(codeVerifier));
+
+  const stateObj = {
+    userId: req.user.userId,
+    workspaceId: req.workspaceId || '',
+    isFromOnboarding: req.query.onboarding === 'true',
+    codeVerifier: codeVerifier
+  };
+  
+  const state = Buffer.from(JSON.stringify(stateObj)).toString('base64');
+
+  const authUrl = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=tweet.read%20tweet.write%20users.read%20offline.access&state=${encodeURIComponent(state)}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+  
+  res.redirect(authUrl);
+});
+
+// Step 2: Handle Twitter OAuth Callback
+router.get('/twitter/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+  if (error || !code || !state) {
+    return res.redirect(`${frontendUrl}/settings?oauth_error=declined`);
+  }
+
+  try {
+    const stateObj = JSON.parse(Buffer.from(state, 'base64').toString('utf8'));
+    const { userId, workspaceId, isFromOnboarding, codeVerifier } = stateObj;
+
+    const clientId = process.env.TWITTER_CLIENT_ID;
+    const clientSecret = process.env.TWITTER_CLIENT_SECRET;
+    
+    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5001');
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/oauth/twitter/callback`;
+
+    const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
+    const tokenRes = await axios.post('https://api.twitter.com/2/oauth2/token', 
+      new URLSearchParams({
+        code: code,
+        grant_type: 'authorization_code',
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        code_verifier: codeVerifier
+      }).toString(),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${credentials}`
+        }
+      }
+    );
+
+    const { access_token, refresh_token } = tokenRes.data;
+
+    // Fetch User Profile
+    let profileName = 'Twitter User';
+    let profileId = '';
+    try {
+      const profileRes = await axios.get('https://api.twitter.com/2/users/me', {
+        headers: { Authorization: `Bearer ${access_token}` }
+      });
+      if (profileRes.data && profileRes.data.data) {
+        profileName = `@${profileRes.data.data.username}`;
+        profileId = profileRes.data.data.id;
+      }
+    } catch (profileErr) {
+      console.warn("Could not fetch Twitter profile name:", profileErr.response?.data || profileErr.message);
+    }
+
+    const settingsQuery = { userId: userId };
+    if (workspaceId) {
+      settingsQuery.workspaceId = workspaceId;
+    }
+
+    const settings = await Settings.findOne(settingsQuery);
+    const updateData = {
+      isTwitterConnected: true,
+      connectedTwitterName: profileName,
+      twitterAccessToken: access_token,
+      twitterRefreshToken: refresh_token || (settings?.twitterRefreshToken || null),
+      connectedTwitterId: profileId
+    };
+
+    await Settings.findOneAndUpdate(
+      settingsQuery,
+      updateData,
+      { upsert: true, new: true }
+    );
+
+    console.log(`✅ Twitter OAuth Success for user ${userId}. Profile: ${profileName}`);
+    
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=twitter`);
+    } else {
+      res.redirect(`${frontendUrl}/settings?oauth_success=true&platform=twitter`);
+    }
+
+  } catch (err) {
+    console.error("Twitter Exchange Failed:", err.response?.data || err.message);
+    res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
   }
 });
 

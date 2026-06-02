@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin, MapPin } from 'lucide-react';
+import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin, MapPin, Twitter } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 
@@ -78,6 +78,16 @@ const PlatformHub = () => {
       gradient: 'linear-gradient(135deg, #4285f4, #3b82f6)',
       isConnected: settings && settings.isGoogleBusinessConnected,
       accountName: settings?.connectedGoogleBusinessName || 'Google Profile'
+    },
+    {
+      id: 'twitter',
+      name: 'Twitter / X',
+      description: 'Automate tweets and engage with your audience on X.',
+      icon: <Twitter size={40} />,
+      color: '#0f1419',
+      gradient: 'linear-gradient(135deg, #0f1419, #334155)',
+      isConnected: settings && settings.isTwitterConnected,
+      accountName: settings?.connectedTwitterName || 'Twitter User'
     }
   ];
 
