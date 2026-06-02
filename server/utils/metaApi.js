@@ -1,3 +1,7 @@
+import { sendWhatsAppMessage } from '../services/platforms/whatsapp.js';
+import { publishInstagramContent } from '../services/platforms/instagram.js';
+import { publishFacebookContent, checkMediaReadiness } from '../services/platforms/facebook.js';
+
 import axios from 'axios';
 import Settings from '../models/Settings.js';
 
@@ -26,30 +30,21 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
       return true;
     }
 
-    // ✅ Use 'me/messages' endpoint for all platforms
     let url = `https://graph.facebook.com/v19.0/me/messages?access_token=${accessToken}`;
-
-    // Ensure bare 'www.' links in text get 'https://' prefix for Desktop compatibility
     let safeText = text || '';
     safeText = safeText.replace(/(^|\s)(www\.[^\s]+)/g, '$1https://$2');
 
-    // Dynamic Recipient Builder for Private Replies on Instagram Comments
     const recipient = (platform === 'instagram' && commentId) ? { comment_id: commentId } : { id: recipientId };
     let payload = null;
-
-    // Meta API STRICT RULE: Private replies (using comment_id) CANNOT contain buttons or templates.
-    // If we try to send a button, it will throw an API error and drop the message.
     const isPrivateReply = !!commentId;
     let effectiveButtons = isPrivateReply ? [] : (buttons || []);
     let effectiveButtonText = isPrivateReply ? null : buttonText;
 
     if (isPrivateReply && (buttonText || (buttons && buttons.length > 0))) {
-      // Append a fallback instruction since we had to strip the button
       safeText = safeText + `\n\n👉 (Reply "Yes" to receive it!)`;
     }
 
     if (platform === 'facebook' && commentId) {
-      // Facebook private replies MUST be sent to /{comment_id}/private_replies
       url = `https://graph.facebook.com/v19.0/${commentId}/private_replies?access_token=${accessToken}`;
       payload = { message: safeText };
     } else if (effectiveButtons.length > 0) {
@@ -127,13 +122,10 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     }
 
     if (payload) {
-      console.log("📦 Sending Payload:", JSON.stringify(payload, null, 2));
-      const res = await axios.post(url, payload);
-      
+      await axios.post(url, payload);
       return true;
     }
 
-    console.log(`✅ SEND SUCCESS: Message delivered to ${recipientId} via ${platform}`);
     return true;
   } catch (err) {
     const errorData = err.response?.data || err.message;
@@ -142,55 +134,9 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
   }
 };
 
-/**
- * WhatsApp Cloud API: Send Message
- */
-export const sendWhatsAppMessage = async (recipientPhone, text, userId = null) => {
-  try {
-    let accessToken = '';
-    let phoneNumberId = '';
-
-    if (userId) {
-      const userSettings = await Settings.findOne({ userId });
-      if (userSettings && userSettings.whatsappToken && userSettings.whatsappPhoneNumberId) {
-        accessToken = userSettings.whatsappToken;
-        phoneNumberId = userSettings.whatsappPhoneNumberId;
-      }
-    }
-
-    if (!accessToken || !phoneNumberId) {
-      console.warn("⚠️ WhatsApp not configured. Skipping.");
-      return false;
-    }
-
-    const url = `https://graph.facebook.com/v19.0/${phoneNumberId}/messages`;
-    const payload = {
-      messaging_product: "whatsapp",
-      to: recipientPhone,
-      type: "text",
-      text: { body: text }
-    };
-
-    const response = await axios.post(url, payload, {
-      headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' }
-    });
-    console.log("✅ WhatsApp message sent:", response.data);
-    return true;
-  } catch (err) {
-    console.error("❌ WhatsApp API Error:", err.response?.data || err.message);
-    return false;
-  }
-};
-
-/**
- * Meta Private Reply: Respond to a Comment with a DM
- */
 export const sendPrivateReply = async (platform, commentId, text, userId = null) => {
   try {
     if (platform === 'instagram') {
-      // Instagram private replies MUST be sent via the standard messages endpoint
-      // using comment_id in the recipient field!
-      console.log(`💬 Instagram Private Reply: Routing through sendMessageToInstagram for comment ${commentId}...`);
       return await sendMessageToInstagram(platform, '', text, '', userId, '', null, [], '', commentId);
     }
 
@@ -205,351 +151,31 @@ export const sendPrivateReply = async (platform, commentId, text, userId = null)
     if (!accessToken) return false;
 
     const url = `https://graph.facebook.com/v19.0/${commentId}/private_replies?access_token=${accessToken}`;
-    const response = await axios.post(url, { message: text });
-    console.log("✅ Private reply sent:", response.data);
+    await axios.post(url, { message: text });
     return true;
   } catch (err) {
-    const errorData = err.response?.data || err.message;
-    console.error("❌ Private Reply Error:", JSON.stringify(errorData, null, 2));
     return false;
   }
 };
 
-/**
- * Meta Utility: Check if a media container is ready (Single Check for Vercel compatibility)
- */
-export const checkMediaReadiness = async (mediaId, accessToken) => {
+export const sendPublicComment = async (platform, commentId, text, userId = null) => {
   try {
-    // Try to get status_code first (supported by all media types)
-    const statusRes = await axios.get(`https://graph.facebook.com/v19.0/${mediaId}`, {
-      params: {
-        fields: 'status_code',
-        access_token: accessToken
-      },
-      timeout: 4000
-    });
-    
-    const statusCode = statusRes.data.status_code;
-    
-    // If status_code is not returned at all (e.g. image container), it is ready immediately
-    if (statusCode === undefined || statusCode === null) {
-      console.log(`ℹ️ [Meta API] Container ${mediaId} has no status_code (likely an image). Marking ready immediately.`);
-      return true;
-    }
-    
-    if (statusCode === 'FINISHED' || statusCode === 'PUBLISHED') {
-      return true;
-    } else if (statusCode === 'ERROR') {
-      // If it failed, try to get video_status for more details
-      try {
-        const videoStatusRes = await axios.get(`https://graph.facebook.com/v19.0/${mediaId}`, {
-          params: {
-            fields: 'video_status',
-            access_token: accessToken
-          }
-        });
-        const videoStatus = videoStatusRes.data.video_status || {};
-        throw new Error(`Meta Processing Error: ${videoStatus.message || statusCode}`);
-      } catch (e) {
-        throw new Error(`Meta Processing Error: ${statusCode}`);
-      }
-    } else if (statusCode === 'EXPIRED') {
-      throw new Error(`Meta Processing Error: Container Expired`);
-    }
-    
-    return false; // Still processing
-  } catch (err) {
-    if (err.message?.includes('Meta Processing')) throw err;
-    if (err.response) {
-      // Meta often returns 100 (Unsupported Get Request) or Authorization Error 
-      // if the container ID hasn't propagated to all their servers yet.
-      // Do not fail the whole process! Just return false so we retry.
-      console.warn(`⚠️ Meta API eventual consistency delay in checkMediaReadiness:`, err.response.data?.error?.message || err.message);
-      return false; 
-    }
-    // If it's a timeout or network error, also return false to keep polling
-    console.warn(`⚠️ Network/Timeout error in checkMediaReadiness:`, err.message);
-    return false;
-  }
-};
-
-/**
- * Meta Content Publishing API: Post Image, Reel, Story, or Carousel
- */
-export const publishInstagramContent = async (userId, { type, mediaUrl, caption = '', carouselItems = [], containerId = null }, workspaceId = null) => {
-  try {
-    console.log(`📡 [Meta API] Start Publishing for User: ${userId}. Type: ${type}, Container: ${containerId || 'NEW'}, Workspace: ${workspaceId || 'NONE'}`);
-    let settings = null;
-    if (workspaceId) {
-      settings = await Settings.findOne({ userId, workspaceId });
-    }
-    if (!settings) {
-      settings = await Settings.findOne({ userId });
-    }
-    if (!settings || !settings.instagramAccessToken || !settings.businessAccountId) {
-      console.log(`⚠️ Settings missing for user ${userId}. Attempting fallback to any active connected settings for this user...`);
-      settings = await Settings.findOne({ 
-        userId: userId,
-        instagramAccessToken: { $ne: null }, 
-        businessAccountId: { $ne: null } 
-      });
-      if (!settings) {
-        throw new Error('Meta credentials missing for publishing. Please reconnect your Instagram account.');
-      }
-    }
-
-    const accessToken = settings.instagramAccessToken;
-    const igId = settings.businessAccountId;
-    
-    let finalCreationId = containerId;
-
-    if (!finalCreationId) {
-      console.log(`🎬 Starting Meta Container Creation [${type.toUpperCase()}] for user ${userId}`);
-
-      if (type === 'carousel' && carouselItems.length > 0) {
-        const childPromises = carouselItems.map(async (itemUrl) => {
-          const isVideo = itemUrl.match(/\.(mp4|mov|webm)/i);
-          const childParams = { access_token: accessToken, is_carousel_item: true };
-          if (isVideo) { childParams.media_type = 'VIDEO'; childParams.video_url = itemUrl; }
-          else { childParams.image_url = itemUrl; }
-          const childRes = await axios.post(`https://graph.facebook.com/v19.0/${igId}/media`, null, { params: childParams, timeout: 6000 });
-          return childRes.data.id;
-        });
-        const childrenIds = await Promise.all(childPromises);
-        
-        // Note: For carousels on Vercel, we might need a more complex state, 
-        // but for now let's hope children process fast or use the same logic
-        const carouselParams = { access_token: accessToken, media_type: 'CAROUSEL', children: childrenIds.join(','), caption };
-        const carouselRes = await axios.post(`https://graph.facebook.com/v19.0/${igId}/media`, null, { params: carouselParams, timeout: 6000 });
-        finalCreationId = carouselRes.data.id;
-      } else {
-        let containerUrl = `https://graph.facebook.com/v19.0/${igId}/media?access_token=${accessToken}`;
-        const params = { caption };
-        if (type === 'reel') { params.media_type = 'REELS'; params.video_url = mediaUrl; params.share_to_feed = true; }
-        else if (type === 'story') { 
-          params.media_type = 'STORIES'; 
-          if (mediaUrl.match(/\.(mp4|mov|webm)/i)) params.video_url = mediaUrl; 
-          else params.image_url = mediaUrl;
-        } else { params.image_url = mediaUrl; }
-
-        const containerRes = await axios.post(containerUrl, params, { timeout: 6000 });
-        finalCreationId = containerRes.data.id;
-      }
-    }
-
-    // BYPASS `checkMediaReadiness` entirely!
-    // Meta's GET /{container_id} global node often throws "Authorization Error" 
-    // immediately after creation due to distributed database delays.
-    // However, POST /{ig_user_id}/media_publish is an edge query and works instantly.
-    // We will just try to publish immediately. If it's an image, it usually succeeds instantly!
-    console.log(`📦 Attempting immediate publish for container: ${finalCreationId}`);
-    
-    const publishUrl = `https://graph.facebook.com/v19.0/${igId}/media_publish?creation_id=${finalCreationId}&access_token=${accessToken}`;
-    let publishRes;
-    
-    let retryCount = 0;
-    const MAX_RETRIES = 1;
-    
-    while (retryCount < MAX_RETRIES) {
-      try {
-        publishRes = await axios.post(publishUrl, null, { timeout: 6000 });
-        break; // Success! Break out of the loop
-      } catch (pubErr) {
-        if (pubErr.response && pubErr.response.data && pubErr.response.data.error) {
-          const errorMsg = pubErr.response.data.error.message?.toLowerCase() || '';
-          // 9007 = media not ready
-          if (pubErr.response.data.error.code === 9007 || errorMsg.includes('not ready') || errorMsg.includes('processing')) {
-            retryCount++;
-            if (retryCount >= MAX_RETRIES) {
-              console.log(`⏳ Container ${finalCreationId} is not ready after ${MAX_RETRIES} attempts. Deferring to background worker.`);
-              return { status: 'IG_PROCESSING', containerId: finalCreationId };
-            }
-            console.log(`⏳ Container ${finalCreationId} not ready. Waiting 2.5s before retry ${retryCount}...`);
-            await new Promise(resolve => setTimeout(resolve, 2500));
-            continue;
-          }
-        }
-        throw pubErr; // If it's a real publishing error, throw it
-      }
-    }
-    console.log(`🚀 [Meta API] Successfully published container: ${finalCreationId}`);
-    console.log(`✅ [Meta API] Published Successfully! Media ID: ${publishRes.data.id}`);
-    
-    // Fetch Official URL
-    let liveUrl = mediaUrl;
-    let metaMediaUrl = null;
-    try {
-      const mediaInfoRes = await axios.get(`https://graph.facebook.com/v19.0/${publishRes.data.id}`, {
-        params: { fields: 'media_url,permalink,thumbnail_url', access_token: accessToken },
-        timeout: 4000
-      });
-      if (mediaInfoRes.data) {
-        if (mediaInfoRes.data.permalink) liveUrl = mediaInfoRes.data.permalink;
-        if (mediaInfoRes.data.media_url) metaMediaUrl = mediaInfoRes.data.media_url;
-      }
-    } catch (e) {
-      // Silently continue. The post is already published.
-    }
-
-    return { id: publishRes.data.id, url: liveUrl, media_url: metaMediaUrl, status: 'PUBLISHED' };
-  } catch (err) {
-    const metaError = err.response?.data?.error;
-    const errorMessage = metaError ? `${metaError.message} (Code: ${metaError.code})` : err.message;
-    console.error("❌ Meta Publishing Error:", JSON.stringify(err.response?.data || err.message, null, 2));
-    throw new Error(errorMessage);
-  }
-};
-
-/**
- * Meta Content Publishing API: Post Image, Video, or Carousel to Facebook Page Feed
- */
-export const publishFacebookContent = async (userId, { type, mediaUrl, caption = '', carouselItems = [] }, workspaceId = null) => {
-  try {
-    console.log(`📡 [Meta API] Start FB Feed Publishing for User: ${userId}. Type: ${type}, Workspace: ${workspaceId || 'NONE'}`);
-    let settings = null;
-    if (workspaceId) {
-      settings = await Settings.findOne({ userId, workspaceId });
-    }
-    if (!settings) {
-      settings = await Settings.findOne({ userId });
-    }
-    if (!settings || !settings.facebookAccessToken || !settings.facebookPageId) {
-      console.log(`⚠️ Settings missing for user ${userId}. Attempting fallback to any active connected settings for this user...`);
-      settings = await Settings.findOne({ 
-        userId: userId,
-        facebookAccessToken: { $ne: null }, 
-        facebookPageId: { $ne: null } 
-      });
-      if (!settings) {
-        throw new Error('Meta credentials missing for Facebook publishing. Please reconnect your Facebook account.');
-      }
-    }
-
-    const accessToken = settings.facebookAccessToken;
-    const pageId = settings.facebookPageId;
-    
-    let publishRes = null;
-    let publishedId = null;
-
-    if (type === 'carousel' && carouselItems && carouselItems.length > 0) {
-      console.log(`🎬 Publishing Carousel to FB Page for user ${userId}`);
-      const childPromises = carouselItems.map(async (itemUrl) => {
-        const isVideo = itemUrl.match(/\.(mp4|mov|webm)/i);
-        if (isVideo) {
-          const childRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/videos`, null, {
-            params: {
-              access_token: accessToken,
-              file_url: itemUrl,
-              published: false
-            }
-          });
-          return { media_fbid: childRes.data.id };
-        } else {
-          const childRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/photos`, null, {
-            params: {
-              access_token: accessToken,
-              url: itemUrl,
-              published: false
-            }
-          });
-          return { media_fbid: childRes.data.id };
-        }
-      });
-      const attachedMedia = await Promise.all(childPromises);
-      publishRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, null, {
-        params: {
-          access_token: accessToken,
-          message: caption,
-          attached_media: JSON.stringify(attachedMedia)
-        }
-      });
-      publishedId = publishRes.data.id;
-    } else if (mediaUrl) {
-      const isVideo = mediaUrl.match(/\.(mp4|mov|webm)/i) || type === 'video' || type === 'reel';
-      if (isVideo) {
-        console.log(`🎬 Publishing Video to FB Page for user ${userId}`);
-        publishRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/videos`, null, {
-          params: {
-            access_token: accessToken,
-            file_url: mediaUrl,
-            description: caption
-          }
-        });
-        publishedId = publishRes.data.id;
-      } else {
-        console.log(`🎬 Publishing Photo to FB Page for user ${userId}`);
-        publishRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/photos`, null, {
-          params: {
-            access_token: accessToken,
-            url: mediaUrl,
-            message: caption
-          }
-        });
-        publishedId = publishRes.data.post_id || publishRes.data.id;
-      }
-    } else {
-      console.log(`🎬 Publishing Text Post to FB Page for user ${userId}`);
-      publishRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, null, {
-        params: {
-          access_token: accessToken,
-          message: caption
-        }
-      });
-      publishedId = publishRes.data.id;
-    }
-
-    console.log(`✅ [Meta API] FB Feed Published Successfully! Post ID: ${publishedId}`);
-    
-    // Fetch Official URL
-    let liveUrl = `https://www.facebook.com/${publishedId}`;
-    let metaMediaUrl = null;
-    try {
-      const postInfoRes = await axios.get(`https://graph.facebook.com/v19.0/${publishedId}`, {
-        params: { fields: 'permalink_url,full_picture', access_token: accessToken }
-      });
-      liveUrl = postInfoRes.data.permalink_url || liveUrl;
-      metaMediaUrl = postInfoRes.data.full_picture || null;
-      console.log(`🔗 [Meta API] FB Official URL Fetched: ${liveUrl}`);
-    } catch (e) {
-      console.warn(`⚠️ [Meta API] Could not fetch FB live URL info: ${e.message}`);
-    }
-
-    return { id: publishedId, url: liveUrl, media_url: metaMediaUrl, status: 'PUBLISHED' };
-  } catch (err) {
-    const metaError = err.response?.data?.error;
-    const errorMessage = metaError ? `${metaError.message} (Code: ${metaError.code})` : err.message;
-    console.error("❌ Meta FB Feed Publishing Error:", JSON.stringify(err.response?.data || err.message, null, 2));
-    throw new Error(errorMessage);
-  }
-};
-
-/**
- * Meta Public Comment Reply
- */
-export const sendPublicComment = async (platform, commentId, text, userId = null, manualToken = null) => {
-  try {
-    let accessToken = manualToken;
-    if (!accessToken && userId) {
+    let accessToken = process.env.META_PAGE_ACCESS_TOKEN;
+    if (userId) {
       const userSettings = await Settings.findOne({ userId });
-      accessToken = platform === 'facebook' ? userSettings?.facebookAccessToken : userSettings?.instagramAccessToken;
-    }
-    accessToken = accessToken || process.env.META_PAGE_ACCESS_TOKEN;
-
-    if (!accessToken || !commentId || !text) return { success: false, error: 'Missing parameters' };
-
-    let safeCommentId = commentId;
-    // Facebook often sends comment_id as "postId_commentId". The Graph API sometimes rejects this compound ID for threaded replies.
-    if (platform === 'facebook' && typeof safeCommentId === 'string' && safeCommentId.includes('_')) {
-      safeCommentId = safeCommentId.split('_')[1];
+      if (userSettings) {
+        accessToken = platform === 'facebook' ? userSettings.facebookAccessToken : userSettings.instagramAccessToken;
+      }
     }
 
-    const endpoint = platform === 'facebook' ? 'comments' : 'replies';
-    const url = `https://graph.facebook.com/v19.0/${safeCommentId}/${endpoint}?access_token=${accessToken}`;
-    const response = await axios.post(url, { message: text });
-    return { success: true };
+    if (!accessToken) return false;
+
+    const url = `https://graph.facebook.com/v19.0/${commentId}/replies`;
+    await axios.post(url, { message: text, access_token: accessToken });
+    return true;
   } catch (err) {
-    const errorData = err.response?.data || err.message;
-    console.error("❌ Public Comment Error:", JSON.stringify(errorData, null, 2));
-    return { success: false, error: errorData };
+    return false;
   }
 };
+
+export { sendWhatsAppMessage, publishInstagramContent, publishFacebookContent, checkMediaReadiness };
