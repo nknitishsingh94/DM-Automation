@@ -10,8 +10,17 @@ import Contact from '../models/Contact.js';
 import Message from '../models/Message.js';
 import ChatMessage from '../models/ChatMessage.js';
 import Caption from '../models/Caption.js';
+import { OAuth2Client } from 'google-auth-library';
 
 const router = express.Router();
+
+const getGoogleClient = (redirectUri) => {
+  return new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    redirectUri
+  );
+};
 
 // Step 1: Redirect to Facebook OAuth
 router.get('/facebook', verifyToken, (req, res) => {
@@ -534,6 +543,124 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
     res.json({ success: true, settings });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// YOUTUBE OAUTH FLOW
+// ==========================================
+
+// Step 1: Redirect to Google OAuth
+router.get('/youtube', verifyToken, (req, res) => {
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+  if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+  const redirectUri = `${baseUrl}/api/oauth/youtube/callback`;
+  
+  const oauth2Client = getGoogleClient(redirectUri);
+
+  const state = req.user.userId + 
+                (req.query.onboarding === 'true' ? '_onboarding' : '') + 
+                (req.workspaceId ? `_ws_${req.workspaceId}` : '');
+
+  const authUrl = oauth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: [
+      'https://www.googleapis.com/auth/youtube.upload',
+      'https://www.googleapis.com/auth/youtube.readonly'
+    ],
+    state: state,
+    prompt: 'consent' // Force to get refresh token
+  });
+
+  res.redirect(authUrl);
+});
+
+// Step 2: Handle Google OAuth Callback
+router.get('/youtube/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+  const isFromOnboarding = state && state.includes('_onboarding');
+  
+  let workspaceId = '';
+  const wsMatch = state && state.match(/_ws_([a-f0-9-]{36})/i);
+  if (wsMatch) {
+    workspaceId = wsMatch[1];
+  }
+
+  let userId = state
+    ? state
+        .replace('_onboarding', '')
+        .replace(new RegExp(`_ws_${workspaceId}`, 'i'), '')
+    : '';
+
+  if (error) {
+    console.error("YouTube OAuth Error:", error);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=declined`);
+  }
+
+  if (!code || !state) {
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=missing_parameters`);
+  }
+
+  try {
+    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5001');
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/oauth/youtube/callback`;
+
+    const oauth2Client = getGoogleClient(redirectUri);
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+
+    // Fetch YouTube Channel Name
+    let channelName = 'YouTube Channel';
+    try {
+      const channelRes = await axios.get('https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true', {
+        headers: { Authorization: `Bearer ${tokens.access_token}` }
+      });
+      if (channelRes.data && channelRes.data.items && channelRes.data.items.length > 0) {
+        channelName = channelRes.data.items[0].snippet.title;
+      }
+    } catch (ytErr) {
+      console.warn("Could not fetch YouTube channel name:", ytErr.message);
+    }
+
+    // Save tokens in the database metadata field since strict schema might drop new fields
+    // Actually, we can just save it. Supabase schema accepts it if it exists, or we use metadata.
+    const settingsQuery = { userId: userId };
+    if (workspaceId) {
+      settingsQuery.workspaceId = workspaceId;
+    }
+
+    const settings = await Settings.findOne(settingsQuery);
+    const updateData = {
+      isYouTubeConnected: true,
+      connectedYouTubeName: channelName,
+      youtubeAccessToken: tokens.access_token,
+      youtubeRefreshToken: tokens.refresh_token || (settings?.youtubeRefreshToken || null)
+    };
+
+    await Settings.findOneAndUpdate(
+      settingsQuery,
+      updateData,
+      { upsert: true, new: true }
+    );
+
+    console.log(`✅ YouTube OAuth Success for user ${userId}. Channel: ${channelName}`);
+    
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=youtube`);
+    } else {
+      res.redirect(`${frontendUrl}/settings?oauth_success=true&platform=youtube`);
+    }
+
+  } catch (err) {
+    console.error("YouTube Exchange Failed:", err.message);
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
+    } else {
+      res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
+    }
   }
 });
 
