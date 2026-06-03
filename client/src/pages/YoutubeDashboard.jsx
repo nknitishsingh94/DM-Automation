@@ -27,6 +27,9 @@ export default function YoutubeDashboard() {
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [videoLibrary, setVideoLibrary] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [rawVideoFile, setRawVideoFile] = useState(null);
+  const [rawThumbFile, setRawThumbFile] = useState(null);
   const [scheduleData, setScheduleData] = useState({ title: '', description: '', date: '', time: '', mediaUrl: '', thumbnail: '' });
   const fileInputRef = React.useRef(null);
   const thumbInputRef = React.useRef(null);
@@ -80,73 +83,149 @@ export default function YoutubeDashboard() {
     fetchStats();
   }, []);
 
-  const handleFileUpload = async (e, type = 'video') => {
+  const handleFileUpload = (e, type = 'video') => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setIsUploading(true);
-    notify(`Uploading ${type}...`, 'info');
-
-    const formData = new FormData();
-    formData.append(type === 'video' ? 'media' : 'file', file); // Use 'media' for video (index.js expects this)
-
-    try {
-      const token = localStorage.getItem('insta_agent_token');
-      const uploadUrl = type === 'video' ? '/api/upload' : '/api/upload/avatar'; // temp hack to upload images
-      
-      const res = await fetch(`${API_BASE_URL}${uploadUrl}`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: formData
-      });
-      
-      const data = await res.json();
-      if (res.ok) {
-        setScheduleData(s => ({ ...s, [type === 'video' ? 'mediaUrl' : 'thumbnail']: data.url || data.avatarUrl }));
-        notify(`${type} uploaded successfully!`, 'success');
-      } else {
-        notify(data.error || `Failed to upload ${type}`, 'error');
-      }
-    } catch (err) {
-      notify('Network error during upload', 'error');
-    } finally {
-      setIsUploading(false);
+    if (type === 'video') {
+      setRawVideoFile(file);
+      setScheduleData(s => ({ ...s, mediaUrl: URL.createObjectURL(file) }));
+    } else {
+      setRawThumbFile(file);
+      setScheduleData(s => ({ ...s, thumbnail: URL.createObjectURL(file) }));
     }
   };
 
   const handleScheduleSubmit = async () => {
-    if (!scheduleData.title || !scheduleData.date || !scheduleData.time || !scheduleData.mediaUrl) {
+    if (!scheduleData.title || !scheduleData.date || !scheduleData.time || (!rawVideoFile && !scheduleData.mediaUrl)) {
       return notify('Title, Date, Time, and Video are required!', 'error');
     }
 
     const scheduledDate = new Date(`${scheduleData.date}T${scheduleData.time}`).toISOString();
+    
+    // If we only have mediaUrl and no rawVideoFile, it might be a mock or already uploaded. 
+    // But for this new direct upload architecture, rawVideoFile is mandatory unless we are mocking.
+    if (!rawVideoFile) {
+      return notify('Please select a local video file to upload directly to YouTube.', 'error');
+    }
+
+    setIsUploading(true);
+    setUploadProgress(0);
 
     try {
       const token = localStorage.getItem('insta_agent_token');
-      const res = await fetch(`${API_BASE_URL}/api/youtube/schedule`, {
+      // 1. Get YouTube Access Token
+      const tokenRes = await fetch(`${API_BASE_URL}/api/youtube/access-token`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const tokenData = await tokenRes.json();
+      
+      if (!tokenRes.ok || !tokenData.accessToken) {
+        setIsUploading(false);
+        return notify('Failed to get YouTube access token. Please reconnect YouTube.', 'error');
+      }
+
+      const ytToken = tokenData.accessToken;
+
+      // 2. Initiate Resumable Upload Session
+      const initRes = await fetch('https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status', {
         method: 'POST',
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+        headers: {
+          'Authorization': `Bearer ${ytToken}`,
+          'Content-Type': 'application/json',
+          'X-Upload-Content-Length': rawVideoFile.size.toString(),
+          'X-Upload-Content-Type': rawVideoFile.type || 'video/mp4'
         },
         body: JSON.stringify({
-          title: scheduleData.title,
-          description: scheduleData.description,
-          scheduledFor: scheduledDate,
-          mediaUrl: scheduleData.mediaUrl,
-          thumbnail: scheduleData.thumbnail
+          snippet: {
+            title: scheduleData.title,
+            description: scheduleData.description,
+            categoryId: "22"
+          },
+          status: {
+            privacyStatus: 'private',
+            publishAt: scheduledDate
+          }
         })
       });
 
-      if (res.ok) {
-        notify('Video scheduled successfully!', 'success');
-        setShowScheduleModal(false);
-        setScheduleData({ title: '', description: '', date: '', time: '', mediaUrl: '', thumbnail: '' });
-      } else {
-        notify('Failed to schedule video', 'error');
+      if (!initRes.ok) {
+        setIsUploading(false);
+        console.error("Init error", await initRes.text());
+        return notify('Failed to initiate YouTube upload.', 'error');
       }
+
+      const uploadUrl = initRes.headers.get('Location');
+      if (!uploadUrl) {
+        setIsUploading(false);
+        return notify('No upload URL returned from YouTube.', 'error');
+      }
+
+      // 3. Upload actual file using XMLHttpRequest to track progress
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', uploadUrl, true);
+      xhr.setRequestHeader('Content-Type', rawVideoFile.type || 'video/mp4');
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const percentComplete = Math.round((e.loaded / e.total) * 100);
+          setUploadProgress(percentComplete);
+        }
+      };
+
+      xhr.onload = async () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const ytResponse = JSON.parse(xhr.responseText);
+          const videoId = ytResponse.id;
+
+          // 4. Upload custom thumbnail if exists
+          if (rawThumbFile || (scheduleData.thumbnail && !scheduleData.thumbnail.startsWith('blob:'))) {
+             try {
+                let thumbBlob = rawThumbFile;
+                if (!thumbBlob && scheduleData.thumbnail) {
+                   const r = await fetch(scheduleData.thumbnail);
+                   thumbBlob = await r.blob();
+                }
+                
+                if (thumbBlob) {
+                  await fetch(`https://www.googleapis.com/upload/youtube/v3/thumbnails/set?videoId=${videoId}`, {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': `Bearer ${ytToken}`,
+                      'Content-Type': thumbBlob.type || 'image/png'
+                    },
+                    body: thumbBlob
+                  });
+                }
+             } catch(err) {
+               console.error("Thumb error", err);
+             }
+          }
+
+          notify('Video Uploaded & Scheduled on YouTube!', 'success');
+          setShowScheduleModal(false);
+          setScheduleData({ title: '', description: '', date: '', time: '', mediaUrl: '', thumbnail: '' });
+          setRawVideoFile(null);
+          setRawThumbFile(null);
+          setUploadProgress(0);
+          setIsUploading(false);
+        } else {
+          setIsUploading(false);
+          notify('Error uploading video file to YouTube.', 'error');
+        }
+      };
+
+      xhr.onerror = () => {
+        setIsUploading(false);
+        notify('Network error during YouTube upload.', 'error');
+      };
+
+      xhr.send(rawVideoFile);
+
     } catch (err) {
-      notify('Network error', 'error');
+      console.error(err);
+      setIsUploading(false);
+      notify('An unexpected error occurred.', 'error');
     }
   };
 
@@ -460,8 +539,19 @@ export default function YoutubeDashboard() {
               </div>
             </div>
 
+            {isUploading && (
+              <div style={{ padding: '0 24px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.85rem', fontWeight: '600', color: '#64748b' }}>
+                  <span>Uploading directly to YouTube... Do not close tab.</span>
+                  <span style={{ color: '#ff0000' }}>{uploadProgress}%</span>
+                </div>
+                <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ width: `${uploadProgress}%`, height: '100%', background: '#ff0000', transition: 'width 0.2s ease-out' }}></div>
+                </div>
+              </div>
+            )}
             <div style={{ padding: '20px 24px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end', gap: '12px', background: '#fafaf9', borderBottomLeftRadius: '24px', borderBottomRightRadius: '24px' }}>
-              <button onClick={() => setShowScheduleModal(false)} style={{ background: 'white', border: '1px solid #cbd5e1', color: '#475569', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => setShowScheduleModal(false)} disabled={isUploading} style={{ background: 'white', border: '1px solid #cbd5e1', color: '#475569', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: isUploading ? 'not-allowed' : 'pointer' }}>Cancel</button>
               <button onClick={handleScheduleSubmit} disabled={isUploading} style={{ background: '#ff0000', border: 'none', color: 'white', padding: '10px 24px', borderRadius: '8px', fontWeight: '700', cursor: isUploading ? 'not-allowed' : 'pointer', boxShadow: '0 2px 4px rgba(255, 0, 0, 0.2)', opacity: isUploading ? 0.7 : 1 }}>
                 {isUploading ? 'Uploading...' : 'Schedule Video'}
               </button>

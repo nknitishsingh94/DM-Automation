@@ -175,33 +175,22 @@ router.post('/generate-thumbnail', verifyToken, async (req, res) => {
   }
 });
 
-// 6. Schedule Video
-router.post('/schedule', verifyToken, async (req, res) => {
+// The /schedule endpoint was removed because scheduling is now handled natively via YouTube's publishAt in the frontend.
+
+// 7. Get Access Token for Direct Uploads
+router.get('/access-token', verifyToken, async (req, res) => {
   try {
-    const { title, description, scheduledFor, mediaUrl, thumbnail } = req.body;
-    
-    if (!title || !scheduledFor || !mediaUrl) {
-      return res.status(400).json({ error: 'Title, scheduled date, and video mediaUrl are required' });
+    const settings = await Settings.findOne({ userId: req.user.id });
+    if (!settings || !settings.isYoutubeConnected || !settings.youtubeAccessToken) {
+      return res.status(400).json({ error: 'YouTube not connected' });
     }
-
-    const newPost = new ScheduledPost({
-      userId: req.user.id,
-      platform: 'youtube',
-      caption: title, // We'll use caption field for title
-      mediaUrl: JSON.stringify({ 
-        videoUrl: mediaUrl, 
-        description: description || '',
-        thumbnail: thumbnail || ''
-      }),
-      scheduledFor: new Date(scheduledFor),
-      status: 'Pending'
-    });
-
-    await newPost.save();
-    res.json({ success: true, post: newPost });
+    
+    // In a production app, we would verify the token hasn't expired 
+    // and use the refreshToken to get a new one here if needed.
+    res.json({ accessToken: settings.youtubeAccessToken });
   } catch (err) {
-    console.error('Schedule Error:', err);
-    res.status(500).json({ error: 'Failed to schedule video' });
+    console.error('Access Token Error:', err);
+    res.status(500).json({ error: 'Failed to retrieve access token' });
   }
 });
 
