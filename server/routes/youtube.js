@@ -19,13 +19,15 @@ router.get('/auth', verifyToken, async (req, res) => {
   }
 
   // Use a state parameter to pass back the userId
-  const state = req.user.id;
-  const redirectUri = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/youtube/callback`;
+  const state = req.user.userId;
+  let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? 'https://dm-automation-w9a4.vercel.app' : 'http://localhost:5001');
+  if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+  const redirectUri = `${baseUrl}/api/youtube/callback`;
   
   const scope = encodeURIComponent('https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube.upload');
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${YOUTUBE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent&state=${state}`;
 
-  res.json({ url: authUrl });
+  res.redirect(authUrl);
 });
 
 // 2. OAuth Callback
@@ -39,7 +41,9 @@ router.get('/callback', async (req, res) => {
 
   try {
     const userId = state; // We passed userId in state
-    const redirectUri = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/youtube/callback`;
+    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? 'https://dm-automation-w9a4.vercel.app' : 'http://localhost:5001');
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/youtube/callback`;
 
     const tokenRes = await axios.post('https://oauth2.googleapis.com/token', {
       client_id: process.env.YOUTUBE_CLIENT_ID,
