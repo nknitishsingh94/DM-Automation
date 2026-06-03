@@ -195,19 +195,12 @@ const ALLOWED_ORIGINS = [
   process.env.CLIENT_URL,
   process.env.FRONTEND_URL,
   process.env.API_BASE_URL,
-].filter(Boolean);
-
 app.use(cors({
-  origin: function (origin, callback) {
-    // Dynamically allow all origins to bypass CORS issues on Vercel
-    callback(null, origin || true);
-  },
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'X-Workspace-ID', 'x-workspace-id', 'Cache-Control'],
-  credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 204
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'X-Workspace-ID', 'x-workspace-id', 'Cache-Control']
 }));
+app.options('*', cors());
 
 // Explicitly handle OPTIONS preflight for all routes
 app.options('*', (req, res) => {
