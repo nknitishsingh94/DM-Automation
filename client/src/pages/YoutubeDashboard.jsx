@@ -25,6 +25,15 @@ export default function YoutubeDashboard() {
   ]);
 
   const [isLoadingStats, setIsLoadingStats] = useState(true);
+  const [videoLibrary, setVideoLibrary] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [scheduleData, setScheduleData] = useState({ title: '', description: '', date: '', time: '', mediaUrl: '', thumbnail: '' });
+  const fileInputRef = React.useRef(null);
+  const thumbInputRef = React.useRef(null);
+  
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [generatedThumb, setGeneratedThumb] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -50,8 +59,16 @@ export default function YoutubeDashboard() {
             { label: 'Avg Engagement', value: '8.4%', increase: '+0.5%', color: '#8b5cf6', icon: BarChart2 }
           ]);
         }
+        const videoRes = await fetch(`${API_BASE_URL}/api/youtube/videos`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (videoRes.ok) {
+          const videoData = await videoRes.json();
+          setVideoLibrary(videoData);
+        }
+
       } catch (err) {
-        console.error('Error fetching YouTube stats:', err);
+        console.error('Error fetching YouTube stats/videos:', err);
       } finally {
         setIsLoadingStats(false);
       }
@@ -60,12 +77,102 @@ export default function YoutubeDashboard() {
     fetchStats();
   }, []);
 
-  const videoLibrary = [
-    { id: 1, title: '10 Secrets to Master SaaS Marketing in 2026', status: 'Published', date: '2 hours ago', views: '12.5K', likes: '1.2K', comments: 342, thumbnail: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&q=80&w=400&h=225' },
-    { id: 2, title: 'How to Build an AI Agent from Scratch', status: 'Scheduled', date: 'Tomorrow, 5:00 PM', views: '-', likes: '-', comments: '-', thumbnail: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=400&h=225' },
-    { id: 3, title: 'The Ultimate Guide to React Performance', status: 'Draft', date: 'Last edited 3 days ago', views: '-', likes: '-', comments: '-', thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=400&h=225' },
-    { id: 4, title: 'Top 5 VS Code Extensions for Developers', status: 'Published', date: '1 week ago', views: '45.2K', likes: '4.8K', comments: 892, thumbnail: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=400&h=225' },
-  ];
+  const handleFileUpload = async (e, type = 'video') => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    notify(`Uploading ${type}...`, 'info');
+
+    const formData = new FormData();
+    formData.append(type === 'video' ? 'media' : 'file', file); // Use 'media' for video (index.js expects this)
+
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const uploadUrl = type === 'video' ? '/api/upload' : '/api/upload/avatar'; // temp hack to upload images
+      
+      const res = await fetch(`${API_BASE_URL}${uploadUrl}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      });
+      
+      const data = await res.json();
+      if (res.ok) {
+        setScheduleData(s => ({ ...s, [type === 'video' ? 'mediaUrl' : 'thumbnail']: data.url || data.avatarUrl }));
+        notify(`${type} uploaded successfully!`, 'success');
+      } else {
+        notify(data.error || `Failed to upload ${type}`, 'error');
+      }
+    } catch (err) {
+      notify('Network error during upload', 'error');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleScheduleSubmit = async () => {
+    if (!scheduleData.title || !scheduleData.date || !scheduleData.time || !scheduleData.mediaUrl) {
+      return notify('Title, Date, Time, and Video are required!', 'error');
+    }
+
+    const scheduledDate = new Date(`${scheduleData.date}T${scheduleData.time}`).toISOString();
+
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/youtube/schedule`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: scheduleData.title,
+          description: scheduleData.description,
+          scheduledFor: scheduledDate,
+          mediaUrl: scheduleData.mediaUrl,
+          thumbnail: scheduleData.thumbnail
+        })
+      });
+
+      if (res.ok) {
+        notify('Video scheduled successfully!', 'success');
+        setShowScheduleModal(false);
+        setScheduleData({ title: '', description: '', date: '', time: '', mediaUrl: '', thumbnail: '' });
+      } else {
+        notify('Failed to schedule video', 'error');
+      }
+    } catch (err) {
+      notify('Network error', 'error');
+    }
+  };
+
+  const generateAIThumbnail = async () => {
+    if (!aiPrompt) return notify('Please enter a video title or prompt!', 'error');
+    setIsGenerating(true);
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/youtube/generate-thumbnail`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt: aiPrompt })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setGeneratedThumb(data.imageUrl);
+        notify('Thumbnail generated!', 'success');
+      } else {
+        notify(data.error || 'Generation failed', 'error');
+      }
+    } catch (err) {
+      notify('Network error', 'error');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const handleAISuggest = () => {
     notify('AI is generating optimized metadata for your video...', 'info');
@@ -194,15 +301,38 @@ export default function YoutubeDashboard() {
         )}
 
         {activeTab === 'thumbnails' && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '400px', background: '#f8fafc', borderRadius: '16px', border: '2px dashed #cbd5e1' }}>
-            <div style={{ width: '64px', height: '64px', background: '#ffedd5', color: '#ea580c', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-              <ImageIcon size={32} />
-            </div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0' }}>AI Thumbnail Generator</h2>
-            <p style={{ color: '#64748b', maxWidth: '400px', textAlign: 'center', marginBottom: '24px' }}>Let our AI analyze your video title and generate 4 high-converting thumbnail options.</p>
-            <button onClick={() => notify('Thumbnail generator initializing...', 'info')} style={{ background: '#ea580c', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)' }}>
-              <Sparkles size={18} /> Generate Thumbnails
-            </button>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px', background: '#f8fafc', borderRadius: '16px', border: '2px dashed #cbd5e1', padding: '32px' }}>
+            {!generatedThumb ? (
+              <>
+                <div style={{ width: '64px', height: '64px', background: '#ffedd5', color: '#ea580c', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                  <ImageIcon size={32} />
+                </div>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0' }}>AI Thumbnail Generator</h2>
+                <p style={{ color: '#64748b', maxWidth: '400px', textAlign: 'center', marginBottom: '24px' }}>Let our AI analyze your video title and generate a high-converting thumbnail.</p>
+                <input 
+                  type="text" 
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  placeholder="Enter video title or idea..." 
+                  style={{ width: '100%', maxWidth: '400px', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', marginBottom: '16px' }} 
+                />
+                <button 
+                  onClick={generateAIThumbnail} 
+                  disabled={isGenerating}
+                  style={{ background: '#ea580c', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontWeight: '700', cursor: isGenerating ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)', opacity: isGenerating ? 0.7 : 1 }}
+                >
+                  <Sparkles size={18} /> {isGenerating ? 'Generating...' : 'Generate Thumbnail'}
+                </button>
+              </>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                <img src={generatedThumb} alt="Generated Thumbnail" style={{ width: '100%', maxWidth: '500px', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }} />
+                <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
+                  <button onClick={() => setGeneratedThumb('')} style={{ background: '#f1f5f9', color: '#475569', padding: '10px 20px', borderRadius: '8px', border: 'none', fontWeight: '600', cursor: 'pointer' }}>Generate Another</button>
+                  <a href={generatedThumb} download="thumbnail.png" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', background: '#10b981', color: 'white', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Download HD</a>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -228,12 +358,24 @@ export default function YoutubeDashboard() {
             <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
               {/* File Upload Area */}
-              <div style={{ border: '2px dashed #cbd5e1', borderRadius: '16px', padding: '40px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.borderColor = '#ff0000'} onMouseOut={e => e.currentTarget.style.borderColor = '#cbd5e1'}>
-                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#ff000015', color: '#ff0000', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                  <FileVideo size={28} />
+              <input type="file" ref={fileInputRef} onChange={e => handleFileUpload(e, 'video')} accept="video/*" style={{ display: 'none' }} />
+              <input type="file" ref={thumbInputRef} onChange={e => handleFileUpload(e, 'thumbnail')} accept="image/*" style={{ display: 'none' }} />
+              
+              <div 
+                onClick={() => fileInputRef.current.click()} 
+                style={{ border: scheduleData.mediaUrl ? '2px solid #10b981' : '2px dashed #cbd5e1', borderRadius: '16px', padding: '40px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', cursor: 'pointer' }}
+                onMouseOver={e => !scheduleData.mediaUrl && (e.currentTarget.style.borderColor = '#ff0000')} 
+                onMouseOut={e => !scheduleData.mediaUrl && (e.currentTarget.style.borderColor = '#cbd5e1')}
+              >
+                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: scheduleData.mediaUrl ? '#10b98115' : '#ff000015', color: scheduleData.mediaUrl ? '#10b981' : '#ff0000', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                  {scheduleData.mediaUrl ? <CheckCircle size={28} /> : <FileVideo size={28} />}
                 </div>
-                <h3 style={{ margin: '0 0 8px 0', fontSize: '1.1rem', color: '#0f172a' }}>Select video files to upload</h3>
-                <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>Your videos will be private until you publish them.</p>
+                <h3 style={{ margin: '0 0 8px 0', fontSize: '1.1rem', color: '#0f172a' }}>
+                  {isUploading ? 'Uploading...' : scheduleData.mediaUrl ? 'Video Ready for Schedule' : 'Select video files to upload'}
+                </h3>
+                <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>
+                  {scheduleData.mediaUrl ? 'You can change the video by clicking here.' : 'Your videos will be private until you publish them.'}
+                </p>
               </div>
 
               {/* Title & Description with AI button */}
@@ -245,12 +387,36 @@ export default function YoutubeDashboard() {
                       <Sparkles size={14} /> AI Assist
                     </button>
                   </div>
-                  <input type="text" placeholder="Add a title that describes your video" style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box' }} />
+                  <input 
+                    type="text" 
+                    value={scheduleData.title}
+                    onChange={e => setScheduleData({...scheduleData, title: e.target.value})}
+                    placeholder="Add a title that describes your video" 
+                    style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box' }} 
+                  />
                 </div>
 
                 <div>
                   <label style={{ fontSize: '0.95rem', fontWeight: '700', color: '#1e293b', marginBottom: '8px', display: 'block' }}>Description</label>
-                  <textarea placeholder="Tell viewers about your video" rows="4" style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box', resize: 'vertical' }} />
+                  <textarea 
+                    value={scheduleData.description}
+                    onChange={e => setScheduleData({...scheduleData, description: e.target.value})}
+                    placeholder="Tell viewers about your video" 
+                    rows="4" 
+                    style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box', resize: 'vertical' }} 
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '0.95rem', fontWeight: '700', color: '#1e293b', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    Thumbnail <span style={{ fontSize: '0.75rem', background: '#f1f5f9', color: '#64748b', padding: '2px 8px', borderRadius: '12px' }}>Optional</span>
+                  </label>
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <button onClick={() => thumbInputRef.current.click()} style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '10px 16px', borderRadius: '8px', fontWeight: '600', color: '#475569', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <ImageIcon size={16} /> {scheduleData.thumbnail ? 'Change Thumbnail' : 'Upload Thumbnail'}
+                    </button>
+                    {scheduleData.thumbnail && <div style={{ width: '40px', height: '40px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}><img src={scheduleData.thumbnail.startsWith('/uploads') ? `${API_BASE_URL}${scheduleData.thumbnail}` : scheduleData.thumbnail} alt="thumb" style={{width:'100%', height:'100%', objectFit:'cover'}} /></div>}
+                  </div>
                 </div>
               </div>
 
@@ -260,11 +426,21 @@ export default function YoutubeDashboard() {
                 <div style={{ display: 'flex', gap: '16px' }}>
                   <div style={{ flex: 1 }}>
                     <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '4px', display: 'block' }}>Date</label>
-                    <input type="date" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', boxSizing: 'border-box' }} />
+                    <input 
+                      type="date" 
+                      value={scheduleData.date}
+                      onChange={e => setScheduleData({...scheduleData, date: e.target.value})}
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', boxSizing: 'border-box' }} 
+                    />
                   </div>
                   <div style={{ flex: 1 }}>
                     <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '4px', display: 'block' }}>Time</label>
-                    <input type="time" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', boxSizing: 'border-box' }} />
+                    <input 
+                      type="time" 
+                      value={scheduleData.time}
+                      onChange={e => setScheduleData({...scheduleData, time: e.target.value})}
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', boxSizing: 'border-box' }} 
+                    />
                   </div>
                 </div>
               </div>
@@ -272,7 +448,9 @@ export default function YoutubeDashboard() {
 
             <div style={{ padding: '20px 24px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end', gap: '12px', background: '#fafaf9', borderBottomLeftRadius: '24px', borderBottomRightRadius: '24px' }}>
               <button onClick={() => setShowScheduleModal(false)} style={{ background: 'white', border: '1px solid #cbd5e1', color: '#475569', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Cancel</button>
-              <button onClick={() => { notify('Video scheduled successfully!', 'success'); setShowScheduleModal(false); }} style={{ background: '#ff0000', border: 'none', color: 'white', padding: '10px 24px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 2px 4px rgba(255, 0, 0, 0.2)' }}>Schedule Video</button>
+              <button onClick={handleScheduleSubmit} disabled={isUploading} style={{ background: '#ff0000', border: 'none', color: 'white', padding: '10px 24px', borderRadius: '8px', fontWeight: '700', cursor: isUploading ? 'not-allowed' : 'pointer', boxShadow: '0 2px 4px rgba(255, 0, 0, 0.2)', opacity: isUploading ? 0.7 : 1 }}>
+                {isUploading ? 'Uploading...' : 'Schedule Video'}
+              </button>
             </div>
           </div>
         </div>

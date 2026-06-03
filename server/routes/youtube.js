@@ -2,6 +2,12 @@ import express from 'express';
 import axios from 'axios';
 import Settings from '../models/Settings.js';
 import { authenticateToken } from './auth.js'; // Ensure this matches existing auth middleware
+import ScheduledPost from '../models/ScheduledPost.js';
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 const router = express.Router();
 
@@ -107,6 +113,95 @@ router.get('/stats', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error('YouTube Stats Error:', err.response?.data || err.message);
     res.status(500).json({ error: 'Failed to fetch YouTube stats' });
+  }
+});
+
+
+// 4. Get Latest Videos
+router.get('/videos', authenticateToken, async (req, res) => {
+  try {
+    const settings = await Settings.findOne({ userId: req.user.id });
+    if (!settings || !settings.isYoutubeConnected || !settings.youtubeAccessToken) {
+      return res.status(400).json({ error: 'YouTube not connected' });
+    }
+
+    const { youtubeAccessToken, youtubeChannelId } = settings;
+
+    const videosRes = await axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${youtubeChannelId}&maxResults=12&order=date&type=video`, {
+      headers: { Authorization: `Bearer ${youtubeAccessToken}` }
+    });
+
+    if (!videosRes.data.items) {
+      return res.json([]);
+    }
+
+    // Map to beautiful format for frontend
+    const videos = videosRes.data.items.map(item => ({
+      id: item.id.videoId,
+      title: item.snippet.title,
+      status: 'Published',
+      date: new Date(item.snippet.publishedAt).toLocaleDateString(),
+      views: '-', // Needs another API call for stats per video, keeping simple for now
+      likes: '-',
+      comments: '-',
+      thumbnail: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.default?.url
+    }));
+
+    res.json(videos);
+  } catch (err) {
+    console.error('YouTube Videos Error:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Failed to fetch YouTube videos' });
+  }
+});
+
+// 5. Generate AI Thumbnail
+router.post('/generate-thumbnail', authenticateToken, async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    if (!prompt) return res.status(400).json({ error: 'Prompt is required' });
+
+    const aiResponse = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: `A high-quality, eye-catching YouTube thumbnail for a video titled: "${prompt}". No text, just vibrant visual elements.`,
+      n: 1,
+      size: "1024x1024",
+    });
+
+    const imageUrl = aiResponse.data[0].url;
+    res.json({ imageUrl });
+  } catch (err) {
+    console.error('Thumbnail Generation Error:', err);
+    res.status(500).json({ error: 'Failed to generate thumbnail' });
+  }
+});
+
+// 6. Schedule Video
+router.post('/schedule', authenticateToken, async (req, res) => {
+  try {
+    const { title, description, scheduledFor, mediaUrl, thumbnail } = req.body;
+    
+    if (!title || !scheduledFor || !mediaUrl) {
+      return res.status(400).json({ error: 'Title, scheduled date, and video mediaUrl are required' });
+    }
+
+    const newPost = new ScheduledPost({
+      userId: req.user.id,
+      platform: 'youtube',
+      caption: title, // We'll use caption field for title
+      mediaUrl: JSON.stringify({ 
+        videoUrl: mediaUrl, 
+        description: description || '',
+        thumbnail: thumbnail || ''
+      }),
+      scheduledFor: new Date(scheduledFor),
+      status: 'Pending'
+    });
+
+    await newPost.save();
+    res.json({ success: true, post: newPost });
+  } catch (err) {
+    console.error('Schedule Error:', err);
+    res.status(500).json({ error: 'Failed to schedule video' });
   }
 });
 
