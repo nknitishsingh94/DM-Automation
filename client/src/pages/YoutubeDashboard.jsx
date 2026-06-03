@@ -256,12 +256,43 @@ export default function YoutubeDashboard() {
     }
   };
 
-  const handleAISuggest = () => {
-    notify('AI is generating optimized metadata for your video...', 'info');
-    setTimeout(() => {
-      notify('AI metadata generated successfully!', 'success');
-      setShowAIModal(false);
-    }, 2000);
+  const handleAISuggest = async () => {
+    if (!scheduleData.title) {
+      return notify('Please enter a rough title or idea first!', 'error');
+    }
+    notify('AI is analyzing and generating metadata...', 'info');
+    setIsGenerating(true);
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/youtube/generate-metadata`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          prompt: scheduleData.title,
+          options: { titles: true, description: true, tags: true }
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setScheduleData(s => ({
+          ...s,
+          title: data.titles[0], // Pick the first suggested title
+          description: data.description + '\n\n#Tags:\n' + data.tags
+        }));
+        notify('AI metadata applied successfully!', 'success');
+        setShowAIModal(false);
+      } else {
+        notify(data.error || 'Failed to generate metadata', 'error');
+      }
+    } catch (err) {
+      notify('Network error during AI generation', 'error');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (

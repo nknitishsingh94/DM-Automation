@@ -175,7 +175,43 @@ router.post('/generate-thumbnail', verifyToken, async (req, res) => {
   }
 });
 
-// The /schedule endpoint was removed because scheduling is now handled natively via YouTube's publishAt in the frontend.
+// 6. Generate AI Metadata (Title/Description)
+router.post('/generate-metadata', verifyToken, async (req, res) => {
+  try {
+    const { prompt, options } = req.body;
+    if (!prompt) return res.status(400).json({ error: 'Video context/prompt is required' });
+
+    let systemPrompt = "You are an expert YouTube SEO specialist. The user will provide a rough idea or title for a video. You must generate optimized metadata.";
+    let userPrompt = `Video idea: "${prompt}".\n\n`;
+
+    if (options?.titles) {
+      userPrompt += "- Generate 3 catchy, high-converting YouTube titles.\n";
+    }
+    if (options?.description) {
+      userPrompt += "- Generate a professional, SEO-optimized YouTube description (including timestamps placeholder if relevant).\n";
+    }
+    if (options?.tags) {
+      userPrompt += "- Generate 15-20 trending, relevant comma-separated tags.\n";
+    }
+
+    userPrompt += "\nReturn EXACTLY in this JSON format:\n{\n  \"titles\": [\"Title 1\", \"Title 2\", \"Title 3\"],\n  \"description\": \"Your generated description...\",\n  \"tags\": \"tag1, tag2, tag3\"\n}";
+
+    const aiResponse = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ],
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(aiResponse.choices[0].message.content);
+    res.json(result);
+  } catch (err) {
+    console.error('Metadata Generation Error:', err);
+    res.status(500).json({ error: 'Failed to generate metadata' });
+  }
+});
 
 // 7. Get Access Token for Direct Uploads
 router.get('/access-token', verifyToken, async (req, res) => {
