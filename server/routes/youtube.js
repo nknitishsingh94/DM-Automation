@@ -89,7 +89,7 @@ router.get('/stats', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.id });
     if (!settings || !settings.isYoutubeConnected || !settings.youtubeAccessToken) {
-      return res.status(400).json({ error: 'YouTube not connected' });
+      return res.json({ error: 'YouTube not connected', notConnected: true });
     }
 
     const { youtubeAccessToken } = settings;
@@ -122,7 +122,7 @@ router.get('/videos', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.id });
     if (!settings || !settings.isYoutubeConnected || !settings.youtubeAccessToken) {
-      return res.status(400).json({ error: 'YouTube not connected' });
+      return res.json({ error: 'YouTube not connected', notConnected: true });
     }
 
     const { youtubeAccessToken, youtubeChannelId } = settings;

@@ -329,7 +329,18 @@ export default function YoutubeDashboard() {
                 <img src={generatedThumb} alt="Generated Thumbnail" style={{ width: '100%', maxWidth: '500px', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }} />
                 <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
                   <button onClick={() => setGeneratedThumb('')} style={{ background: '#f1f5f9', color: '#475569', padding: '10px 20px', borderRadius: '8px', border: 'none', fontWeight: '600', cursor: 'pointer' }}>Generate Another</button>
-                  <a href={generatedThumb} download="thumbnail.png" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', background: '#10b981', color: 'white', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Download HD</a>
+                  <a href={generatedThumb} download="thumbnail.png" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', background: '#10b981', color: 'white', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>Download HD</a>
+                  <button 
+                    onClick={() => {
+                      setScheduleData(s => ({ ...s, thumbnail: generatedThumb }));
+                      setActiveTab('library');
+                      setShowScheduleModal(true);
+                      notify('AI Thumbnail applied! You can now schedule your video.', 'success');
+                    }} 
+                    style={{ background: '#ff0000', color: 'white', padding: '10px 20px', borderRadius: '8px', border: 'none', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 6px rgba(255, 0, 0, 0.2)' }}
+                  >
+                    <Upload size={18} /> Use for Scheduling
+                  </button>
                 </div>
               </div>
             )}
