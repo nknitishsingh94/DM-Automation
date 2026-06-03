@@ -195,6 +195,8 @@ const ALLOWED_ORIGINS = [
   process.env.CLIENT_URL,
   process.env.FRONTEND_URL,
   process.env.API_BASE_URL,
+].filter(Boolean);
+
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

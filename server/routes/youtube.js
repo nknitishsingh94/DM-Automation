@@ -1,7 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import Settings from '../models/Settings.js';
-import { authenticateToken } from './auth.js'; // Ensure this matches existing auth middleware
+import verifyToken from '../middleware/auth.js';
 import ScheduledPost from '../models/ScheduledPost.js';
 import OpenAI from 'openai';
 
@@ -12,7 +12,7 @@ const openai = new OpenAI({
 const router = express.Router();
 
 // 1. Initiate OAuth Login
-router.get('/auth', authenticateToken, async (req, res) => {
+router.get('/auth', verifyToken, async (req, res) => {
   const { YOUTUBE_CLIENT_ID } = process.env;
   if (!YOUTUBE_CLIENT_ID) {
     return res.status(500).json({ error: 'YouTube Client ID not configured on server.' });
@@ -85,7 +85,7 @@ router.get('/callback', async (req, res) => {
 });
 
 // 3. Get Channel Stats
-router.get('/stats', authenticateToken, async (req, res) => {
+router.get('/stats', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.id });
     if (!settings || !settings.isYoutubeConnected || !settings.youtubeAccessToken) {
@@ -118,7 +118,7 @@ router.get('/stats', authenticateToken, async (req, res) => {
 
 
 // 4. Get Latest Videos
-router.get('/videos', authenticateToken, async (req, res) => {
+router.get('/videos', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.id });
     if (!settings || !settings.isYoutubeConnected || !settings.youtubeAccessToken) {
@@ -155,7 +155,7 @@ router.get('/videos', authenticateToken, async (req, res) => {
 });
 
 // 5. Generate AI Thumbnail
-router.post('/generate-thumbnail', authenticateToken, async (req, res) => {
+router.post('/generate-thumbnail', verifyToken, async (req, res) => {
   try {
     const { prompt } = req.body;
     if (!prompt) return res.status(400).json({ error: 'Prompt is required' });
@@ -176,7 +176,7 @@ router.post('/generate-thumbnail', authenticateToken, async (req, res) => {
 });
 
 // 6. Schedule Video
-router.post('/schedule', authenticateToken, async (req, res) => {
+router.post('/schedule', verifyToken, async (req, res) => {
   try {
     const { title, description, scheduledFor, mediaUrl, thumbnail } = req.body;
     
