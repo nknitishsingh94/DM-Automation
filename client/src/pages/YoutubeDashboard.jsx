@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Youtube, Upload, Calendar, Search, 
@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useNotification } from '../App';
 import Campaigns from './Campaigns';
+import { API_BASE_URL } from '../config';
 
 export default function YoutubeDashboard() {
   const navigate = useNavigate();
@@ -16,14 +17,48 @@ export default function YoutubeDashboard() {
   const [activeTab, setActiveTab] = useState('library');
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
-  
-  // Dummy data for beautiful UI representation
-  const channelStats = [
-    { label: 'Subscribers', value: '45.2K', increase: '+1.2K', color: '#ff0000', icon: Youtube },
-    { label: 'Total Views', value: '1.8M', increase: '+120K', color: '#3b82f6', icon: Eye },
-    { label: 'Watch Hours', value: '12,450', increase: '+850', color: '#10b981', icon: Clock },
+  const [channelStats, setChannelStats] = useState([
+    { label: 'Subscribers', value: '0', increase: '', color: '#ff0000', icon: Youtube },
+    { label: 'Total Views', value: '0', increase: '', color: '#3b82f6', icon: Eye },
+    { label: 'Total Videos', value: '0', increase: '', color: '#10b981', icon: FileVideo },
     { label: 'Avg Engagement', value: '8.4%', increase: '+0.5%', color: '#8b5cf6', icon: BarChart2 }
-  ];
+  ]);
+
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const token = localStorage.getItem('insta_agent_token');
+        const res = await fetch(`${API_BASE_URL}/api/youtube/stats`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          // Helper to format large numbers
+          const formatNum = (num) => {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+          };
+
+          setChannelStats([
+            { label: 'Subscribers', value: formatNum(data.subscriberCount), increase: 'Live', color: '#ff0000', icon: Youtube },
+            { label: 'Total Views', value: formatNum(data.viewCount), increase: 'Live', color: '#3b82f6', icon: Eye },
+            { label: 'Total Videos', value: formatNum(data.videoCount), increase: 'Live', color: '#10b981', icon: FileVideo },
+            { label: 'Avg Engagement', value: '8.4%', increase: '+0.5%', color: '#8b5cf6', icon: BarChart2 }
+          ]);
+        }
+      } catch (err) {
+        console.error('Error fetching YouTube stats:', err);
+      } finally {
+        setIsLoadingStats(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   const videoLibrary = [
     { id: 1, title: '10 Secrets to Master SaaS Marketing in 2026', status: 'Published', date: '2 hours ago', views: '12.5K', likes: '1.2K', comments: 342, thumbnail: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&q=80&w=400&h=225' },

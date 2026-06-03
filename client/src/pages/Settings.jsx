@@ -255,7 +255,7 @@ export default function Settings() {
   const triggerConnect = (platformName = 'instagram') => {
     setRedirectingInsta(true);
     if (platformName.toLowerCase() === 'youtube') {
-      window.location.href = `${API_BASE_URL}/api/oauth/youtube?token=${localStorage.getItem('insta_agent_token')}`;
+      window.location.href = `${API_BASE_URL}/api/youtube/auth?token=${localStorage.getItem('insta_agent_token')}`;
       return;
     }
     if (platformName.toLowerCase() === 'linkedin') {

@@ -48,6 +48,7 @@ import ChatMessage from './models/ChatMessage.js';
 import Caption from './models/Caption.js';
 import Review from './models/Review.js';
 import paymentRoutes from './routes/payment.js';
+import youtubeRoutes from './routes/youtube.js';
 import formRoutes from './routes/forms.js';
 import oauthRoutes from './routes/oauth.js';
 import supportRoutes from './routes/support.js';
@@ -295,8 +296,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// ── SECURITY: HTTP Parameter Pollution Prevention ─────────────────────────────
 app.use(hpp());
+
+app.use('/api/youtube', youtubeRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', domain: req.hostname, timestamp: new Date() }));
 app.get('/api/ping', (req, res) => res.send('pong'));
