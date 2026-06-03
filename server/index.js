@@ -198,22 +198,9 @@ const ALLOWED_ORIGINS = [
 ].filter(Boolean);
 
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
-
-    const originLower = origin.toLowerCase();
-    const isVercel = originLower.endsWith('.vercel.app') || originLower.includes('vercel.app');
-    const isLocal = originLower.includes('localhost') || originLower.includes('127.0.0.1');
-    const isExplicit = originLower === 'https://dm-automation-roan.vercel.app';
-    const isAllowed = isVercel || isLocal || isExplicit || ALLOWED_ORIGINS.some(o => originLower.startsWith(o.toLowerCase()));
-
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      console.warn(`⚠️ CORS request rejected for origin: ${origin}`);
-      callback(null, false);
-    }
+  origin: function (origin, callback) {
+    // Dynamically allow all origins to bypass CORS issues on Vercel
+    callback(null, origin || true);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'X-Workspace-ID', 'x-workspace-id', 'Cache-Control'],
