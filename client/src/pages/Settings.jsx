@@ -634,6 +634,36 @@ export default function Settings() {
             </div>
             )}
 
+            {/* ---- TWITTER/X CARD ---- */}
+            {settings.isTwitterConnected && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#0f1419', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Twitter size={22} color="white" />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Twitter / X</h4>
+                    <span style={{ display: 'inline-block', background: '#e2e8f0', color: '#475569', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+                  </div>
+                </div>
+              </div>
+              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedTwitterName || 'Twitter Account'}</div>
+              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Ready for automated posts</div>
+              
+              <button onClick={handleDisconnectTwitter}
+                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+              >Disconnect</button>
+              <button onClick={() => window.open(`https://twitter.com/${(settings.connectedTwitterName || '').replace('@', '')}`, '_blank')}
+                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+              >Profile</button>
+            </div>
+            )}
+
             {/* ---- GOOGLE BUSINESS CARD ---- */}
             {settings.isGoogleBusinessConnected && (platformFilter === 'All platforms' || platformFilter === 'Google Business') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
             <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>

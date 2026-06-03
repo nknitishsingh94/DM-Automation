@@ -291,7 +291,7 @@ function convertOutgoing(doc, tableName) {
       'facebookAutomationEnabled',
       'whatsappAutomationEnabled',
       'telegramToken', 'isTelegramConnected', 'telegramAutomationEnabled',
-      'twitterApiKey', 'isTwitterConnected', 'twitterAutomationEnabled',
+      'twitterApiKey', 'isTwitterConnected', 'twitterAutomationEnabled', 'twitterAccessToken', 'twitterRefreshToken', 'connectedTwitterName',
       'youtubeApiKey', 'isYouTubeConnected', 'youtubeAutomationEnabled',
       'linkedinAccessToken', 'isLinkedInConnected', 'linkedinAutomationEnabled',
       'aiFallbackMessage', 'aiName', 'aiTone', 'aiKnowledgeBase', 'aiTemperature'

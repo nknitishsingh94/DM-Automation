@@ -175,7 +175,7 @@ router.post('/generate-thumbnail', verifyToken, async (req, res) => {
   }
 });
 
-// 6. Generate AI Metadata (Title/Description)
+// 6. Generate AI Metadata (Title/Description) 
 router.post('/generate-metadata', verifyToken, async (req, res) => {
   try {
     const { prompt, options } = req.body;

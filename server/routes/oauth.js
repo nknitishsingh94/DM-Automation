@@ -12,6 +12,7 @@ import Message from '../models/Message.js';
 import ChatMessage from '../models/ChatMessage.js';
 import Caption from '../models/Caption.js';
 import { OAuth2Client } from 'google-auth-library';
+import { TwitterApi } from 'twitter-api-v2';
 
 const router = express.Router();
 
@@ -1029,8 +1030,12 @@ router.get('/twitter/callback', async (req, res) => {
     }
 
   } catch (err) {
-    console.error("Twitter Exchange Failed:", err.response?.data || err.message);
-    res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
+    console.error("Twitter Exchange Failed:", err);
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
+    } else {
+      res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
+    }
   }
 });
 
