@@ -533,6 +533,7 @@ export default function DmAutomationEditor() {
            )}
 
            {/* Step 1: Follower Growth Gating */}
+           {selectedPlatform !== 'youtube' && (
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(16, 185, 129, 0.15)' }}>1</div>
@@ -557,6 +558,7 @@ export default function DmAutomationEditor() {
                  )}
               </div>
            </div>
+           )}
 
            {/* Step 2: Trigger Settings */}
            <div style={{ position: 'relative', zIndex: 1 }}>
@@ -592,6 +594,7 @@ export default function DmAutomationEditor() {
            </div>
 
            {/* Step 3: Advanced Automations (Opening Message) */}
+           {selectedPlatform !== 'youtube' && (
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ 
                 background: 'rgba(255, 255, 255, 0.8)', 
@@ -637,38 +640,43 @@ export default function DmAutomationEditor() {
                  )}
               </div>
            </div>
+           )}
 
            {/* Step 4: Automated DM Response */}
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>4</div>
-                 <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Automated DM Response</h3>
-              </div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>
+                    {selectedPlatform === 'youtube' ? 'Automated Comment Reply' : 'Automated DM Response'}
+                  </h3>
+               </div>
 
-              <div style={{ 
-                background: 'rgba(255, 255, 255, 0.8)', 
-                backdropFilter: 'blur(10px)',
-                border: '1.5px solid #e2e8f0', 
-                borderRadius: '20px', 
-                padding: '20px 24px',
-                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.04)'
-              }}>
-                 {/* AI Toggle Section */}
-                 <div style={{ 
-                   display: 'flex', 
-                   justifyContent: 'space-between', 
-                   alignItems: 'center', 
-                   marginBottom: '18px', 
-                   paddingBottom: '14px', 
-                   borderBottom: '1.5px solid #f1f5f9' 
-                 }}>
-                   <div>
-                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800', color: '#7c3aed', fontSize: '0.95rem' }}>
-                       <Sparkles size={14} style={{ color: '#7c3aed' }} />
-                       <span>AI Neural Studio Reply</span>
-                     </div>
-                     <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Let our AI Agent reply dynamically to DMs</span>
-                   </div>
+               <div style={{ 
+                 background: 'rgba(255, 255, 255, 0.8)', 
+                 backdropFilter: 'blur(10px)',
+                 border: '1.5px solid #e2e8f0', 
+                 borderRadius: '20px', 
+                 padding: '20px 24px',
+                 boxShadow: '0 10px 15px -3px rgba(0,0,0,0.04)'
+               }}>
+                  {/* AI Toggle Section */}
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginBottom: '18px', 
+                    paddingBottom: '14px', 
+                    borderBottom: '1.5px solid #f1f5f9' 
+                  }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800', color: '#7c3aed', fontSize: '0.95rem' }}>
+                        <Sparkles size={14} style={{ color: '#7c3aed' }} />
+                        <span>AI Neural Studio Reply</span>
+                      </div>
+                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                        {selectedPlatform === 'youtube' ? 'Let our AI Agent reply dynamically to Comments' : 'Let our AI Agent reply dynamically to DMs'}
+                      </span>
+                    </div>
                    <div 
                      onClick={() => {
                        const nextIsAi = !isAI;
