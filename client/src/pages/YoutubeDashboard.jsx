@@ -44,9 +44,10 @@ export default function YoutubeDashboard() {
         });
         const data = await res.json();
         
-        if (res.ok) {
+        if (res.ok && !data.notConnected && !data.error) {
           // Helper to format large numbers
           const formatNum = (num) => {
+            if (!num) return '0';
             if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
             if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
             return num.toString();
@@ -64,7 +65,9 @@ export default function YoutubeDashboard() {
         });
         if (videoRes.ok) {
           const videoData = await videoRes.json();
-          setVideoLibrary(videoData);
+          if (!videoData.notConnected && !videoData.error && Array.isArray(videoData)) {
+            setVideoLibrary(videoData);
+          }
         }
 
       } catch (err) {
