@@ -291,9 +291,11 @@ function convertOutgoing(doc, tableName) {
       'facebookAutomationEnabled',
       'whatsappAutomationEnabled',
       'telegramToken', 'isTelegramConnected', 'telegramAutomationEnabled',
-      'twitterApiKey', 'isTwitterConnected', 'twitterAutomationEnabled', 'twitterAccessToken', 'twitterRefreshToken', 'connectedTwitterName',
-      'youtubeApiKey', 'isYouTubeConnected', 'youtubeAutomationEnabled',
-      'linkedinAccessToken', 'isLinkedInConnected', 'linkedinAutomationEnabled',
+      'twitterApiKey', 'isTwitterConnected', 'twitterAutomationEnabled', 'twitterAccessToken', 'twitterRefreshToken', 'connectedTwitterName', 'connectedTwitterId',
+      'youtubeApiKey', 'isYouTubeConnected', 'isYoutubeConnected', 'youtubeAutomationEnabled', 'youtubeAccessToken', 'youtubeRefreshToken', 'youtubeChannelId', 'youtubeChannelName',
+      'linkedinAccessToken', 'isLinkedInConnected', 'linkedinAutomationEnabled', 'connectedLinkedInName',
+      'isGoogleBusinessConnected', 'connectedGoogleBusinessName', 'googleBusinessAccessToken', 'googleBusinessRefreshToken',
+      'isThreadsConnected', 'threadsAccessToken', 'threadsPageId', 'connectedThreadsName',
       'aiFallbackMessage', 'aiName', 'aiTone', 'aiKnowledgeBase', 'aiTemperature'
     ];
     
