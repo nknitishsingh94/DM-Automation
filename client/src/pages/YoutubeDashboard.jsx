@@ -445,6 +445,7 @@ export default function YoutubeDashboard() {
 
         {activeTab === 'thumbnails' && (
           <div 
+            onDragEnter={handleDragOverThumb}
             onDragOver={handleDragOverThumb}
             onDragLeave={handleDragLeaveThumb}
             onDrop={handleDropThumb}
@@ -453,7 +454,7 @@ export default function YoutubeDashboard() {
           >
             <input type="file" accept="image/*" ref={thumbInputRef} style={{ display: 'none' }} onChange={handleThumbFileChange} />
             {!generatedThumb ? (
-              <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '400px' }}>
+              <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '400px', pointerEvents: isDraggingThumb ? 'none' : 'auto' }}>
                 <div style={{ width: '64px', height: '64px', background: '#ffedd5', color: '#ea580c', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', cursor: 'pointer' }} onClick={() => thumbInputRef.current?.click()}>
                   <ImageIcon size={32} />
                 </div>
