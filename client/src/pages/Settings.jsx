@@ -68,10 +68,9 @@ export default function Settings() {
     { name: 'LinkedIn', icon: Linkedin, color: '#0077b5', enabled: true },
     { name: 'Twitter/X', icon: Twitter, color: '#0f1419', enabled: true },
     { name: 'Threads', icon: ThreadsIcon, color: '#000000', enabled: true },
-    { name: 'Pinterest', icon: Save, color: '#bd081c', enabled: true },
     { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: true },
-    { name: 'Telegram', icon: Send, color: '#0088cc', enabled: false },
-    { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: false }
+    { name: 'Telegram', icon: Send, color: '#0088cc', enabled: true },
+    { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: true }
   ];
 
   useEffect(() => {
@@ -267,6 +266,13 @@ export default function Settings() {
     if (platformName.toLowerCase() === 'twitter/x' || platformName.toLowerCase() === 'twitter') {
       window.location.href = `${API_BASE_URL}/api/oauth/twitter?token=${localStorage.getItem('insta_agent_token')}`;
       return;
+    if (platformName.toLowerCase() === 'telegram') {
+      const token = prompt('Enter your Telegram Bot Token:');
+      if (token) {
+        handleSaveSettings(null, { ...settings, telegramToken: token, isTelegramConnected: true }, 'telegram');
+        notify('Telegram Connected successfully!', 'success');
+      }
+      return;
     }
     const connectType = platformName.toLowerCase() === 'facebook' ? 'facebook'
       : platformName.toLowerCase() === 'whatsapp' ? 'whatsapp'
@@ -402,7 +408,7 @@ export default function Settings() {
             {showPlatformDropdown && (
               <div className="filter-dropdown" style={{ right: 0, left: 'auto', maxHeight: '320px', overflowY: 'auto', width: '200px' }}>
                 <div onClick={() => { setPlatformFilter('All platforms'); setShowPlatformDropdown(false); }} className="filter-item" style={{ fontWeight: 'bold' }}>All platforms</div>
-                {platformsList.filter(plat => plat.name !== 'WhatsApp').map(plat => (
+                {platformsList.map(plat => (
                   <div 
                     key={plat.name} 
                     onClick={() => { setPlatformFilter(plat.name); setShowPlatformDropdown(false); }} 
@@ -612,16 +618,20 @@ export default function Settings() {
             <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#0077b5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Linkedin size={22} color="white" />
-                  </div>
+                  {settings.connectedLinkedInName ? (
+                    <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(settings.connectedLinkedInName)}&background=0077b5&color=fff`} style={{ width: '42px', height: '42px', borderRadius: '8px' }} />
+                  ) : (
+                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#0077b5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Linkedin size={22} color="white" />
+                    </div>
+                  )}
                   <div>
                     <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>LinkedIn</h4>
                     <span style={{ display: 'inline-block', background: '#dbeafe', color: '#1d4ed8', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
                   </div>
                 </div>
               </div>
-              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedLinkedInName || 'LinkedIn Member'}</div>
+              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{(settings.connectedLinkedInName && settings.connectedLinkedInName !== 'LinkedIn Member') ? settings.connectedLinkedInName : 'LinkedIn Profile'}</div>
               <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Ready for automated posts</div>
               
               <button onClick={handleDisconnectLinkedIn}
@@ -892,7 +902,7 @@ export default function Settings() {
 
             {/* Grid of Platforms */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '12px', maxHeight: '380px', overflowY: 'auto', padding: '4px' }}>
-              {platformsList.filter(plat => plat.name !== 'WhatsApp').map(platform => (
+              {platformsList.map(platform => (
                 <div 
                   key={platform.name}
                   onClick={() => {
