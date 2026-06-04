@@ -351,6 +351,15 @@ router.get('/facebook/callback', async (req, res) => {
     else if (isWhatsApp) platformParam = 'whatsapp';
     else if (isThreads) platformParam = 'threads';
 
+    if (isWhatsApp && !whatsappPhoneId) {
+      if (isFromOnboarding) {
+        res.redirect(`${frontendUrl}/onboarding?oauth_error=whatsapp_not_configured`);
+      } else {
+        res.redirect(`${frontendUrl}/settings?oauth_error=whatsapp_not_configured`);
+      }
+      return;
+    }
+
     if (isFromOnboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=${platformParam}`);
     } else {
