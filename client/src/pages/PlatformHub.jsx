@@ -88,6 +88,16 @@ const PlatformHub = () => {
       gradient: 'linear-gradient(135deg, #0f1419, #334155)',
       isConnected: settings && settings.isTwitterConnected,
       accountName: settings?.connectedTwitterName || 'Twitter User'
+    },
+    {
+      id: 'threads',
+      name: 'Threads',
+      description: 'Automate replies and track mentions on your Threads profile.',
+      icon: <ThreadsIcon size={40} />,
+      color: '#000000',
+      gradient: 'linear-gradient(135deg, #111111, #444444)',
+      isConnected: settings && settings.isThreadsConnected,
+      accountName: settings?.connectedThreadsName || 'Threads Profile'
     }
   ];
 
@@ -209,6 +219,15 @@ const PlatformHub = () => {
     </div>
   );
 };
+
+function ThreadsIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2a10 10 0 1 0 10 10H12Z" />
+      <path d="M12 12a4 4 0 1 0 4 4h-4Z" />
+    </svg>
+  );
+}
 
 export default PlatformHub;
 
