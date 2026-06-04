@@ -621,7 +621,7 @@ router.get('/youtube/callback', async (req, res) => {
         headers: { Authorization: `Bearer ${tokens.access_token}` }
       });
       if (channelRes.data && channelRes.data.items && channelRes.data.items.length > 0) {
-        channelName = channelRes.data.items[0].snippet.title;
+        channelName = channelRes.data.items[0].snippet.customUrl || channelRes.data.items[0].snippet.title;
       }
     } catch (ytErr) {
       console.warn("Could not fetch YouTube channel name:", ytErr.message);
@@ -1040,3 +1040,4 @@ router.get('/twitter/callback', async (req, res) => {
 });
 
 export default router;
+
