@@ -1,6 +1,6 @@
 import express from 'express';
 import axios from 'axios';
-import { verifyToken } from './auth.js';
+import verifyToken from '../middleware/auth.js';
 import Settings from '../models/Settings.js';
 
 const router = express.Router();
