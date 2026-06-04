@@ -98,6 +98,26 @@ const PlatformHub = () => {
       gradient: 'linear-gradient(135deg, #111111, #444444)',
       isConnected: settings && settings.isThreadsConnected,
       accountName: settings?.connectedThreadsName || 'Threads Profile'
+    },
+    {
+      id: 'whatsapp',
+      name: 'WhatsApp Business',
+      description: 'Automate WhatsApp conversations and build marketing flows.',
+      icon: <MessageSquare size={40} />,
+      color: '#25d366',
+      gradient: 'linear-gradient(135deg, #25d366, #128c7e)',
+      isConnected: settings && (settings.whatsappToken && settings.whatsappPhoneNumberId),
+      accountName: settings?.whatsappDisplayName || 'WhatsApp Business'
+    },
+    {
+      id: 'telegram',
+      name: 'Telegram',
+      description: 'Automate messages and manage your Telegram bots.',
+      icon: <MessageCircle size={40} />,
+      color: '#0088cc',
+      gradient: 'linear-gradient(135deg, #0088cc, #005580)',
+      isConnected: settings && settings.isTelegramConnected,
+      accountName: settings?.connectedTelegramName || 'Telegram Bot'
     }
   ];
 

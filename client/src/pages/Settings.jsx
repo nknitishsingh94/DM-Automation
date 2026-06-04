@@ -778,6 +778,35 @@ export default function Settings() {
             </div>
             )}
 
+            {/* ---- WHATSAPP CARD ---- */}
+            {settings.isWhatsAppConnected && (platformFilter === 'All platforms' || platformFilter === 'WhatsApp') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ position: 'relative', width: '42px', height: '42px' }}>
+                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#25d366', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <MessageSquare size={22} color="white" />
+                    </div>
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>WhatsApp</h4>
+                    <span style={{ display: 'inline-block', background: '#dcfce7', color: '#166534', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.whatsappDisplayName || 'WhatsApp Business'}</span>
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Ready for automation</div>
+              
+              <button onClick={handleDisconnectWhatsApp}
+                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+              >Disconnect</button>
+            </div>
+            )}
+
           </div>
         ) : (
           /* Empty Connections slot matching screenshot exactly */
