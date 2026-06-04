@@ -8,11 +8,9 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
-import Subscription from './Subscription';
-import Profile from './Profile';
 
 export default function Connections() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [settings, setSettings] = useState({
     instagramAccessToken: '',
