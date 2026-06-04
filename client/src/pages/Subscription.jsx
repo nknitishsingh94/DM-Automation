@@ -118,24 +118,6 @@ export default function Subscription() {
           </div>
 
           <div className="pricing-grid">
-            {/* Starter Plan */}
-            <div className="pricing-card">
-              <div className="card-header">
-                <h3>Starter</h3>
-                <div className="price"><span>$</span>0<span>/mo</span></div>
-                <p>Perfect for trying out the platform.</p>
-              </div>
-              <div className="card-features">
-                <ul>
-                  <li><Check size={18} className="check-icon" /> 100 Auto-Replies / month</li>
-                  <li><Check size={18} className="check-icon" /> Basic Flow Builder</li>
-                  <li><Check size={18} className="check-icon" /> Standard Support</li>
-                </ul>
-              </div>
-              <button className="pricing-btn outline-btn">
-                Get Started Free
-              </button>
-            </div>
 
             {/* Pro Plan */}
             <div className="pricing-card pro-card">
