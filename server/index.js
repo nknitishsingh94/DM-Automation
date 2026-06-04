@@ -3210,8 +3210,16 @@ async function runSchedulingWorker() {
             caption: post.caption,
             carouselItems: finalCarousel
           }, post.workspaceId);
+        } else if (post.platform === 'threads') {
+          const { publishThreadsContent } = await import('./utils/metaApi.js');
+          publishResult = await publishThreadsContent(post.userId, {
+            type: finalType,
+            mediaUrl: finalMedia,
+            caption: post.caption
+          }, post.workspaceId);
         } else {
           // Default to instagram
+          const { publishInstagramContent } = await import('./utils/metaApi.js');
           publishResult = await publishInstagramContent(post.userId, {
             type: finalType,
             mediaUrl: finalMedia,
@@ -3330,6 +3338,8 @@ async function runSchedulingWorker() {
         updatedMetaObj.type = finalType;
         if (post.platform === 'facebook') {
           updatedMetaObj.facebookPostId = publishedId;
+        } else if (post.platform === 'threads') {
+          updatedMetaObj.threadsPostId = publishedId;
         } else {
           updatedMetaObj.instagramMediaId = publishedId;
         }

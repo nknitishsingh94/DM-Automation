@@ -1,6 +1,7 @@
 import { sendWhatsAppMessage } from '../services/platforms/whatsapp.js';
 import { publishInstagramContent } from '../services/platforms/instagram.js';
 import { publishFacebookContent, checkMediaReadiness } from '../services/platforms/facebook.js';
+import { publishThreadsContent } from '../services/platforms/threads.js';
 
 import axios from 'axios';
 import Settings from '../models/Settings.js';
@@ -178,4 +179,4 @@ export const sendPublicComment = async (platform, commentId, text, userId = null
   }
 };
 
-export { sendWhatsAppMessage, publishInstagramContent, publishFacebookContent, checkMediaReadiness };
+export { sendWhatsAppMessage, publishInstagramContent, publishFacebookContent, checkMediaReadiness, publishThreadsContent };
