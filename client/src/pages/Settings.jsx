@@ -143,9 +143,13 @@ export default function Settings() {
       }, 3500);
     } else if (params.get('oauth_error')) {
       const errorType = params.get('oauth_error');
-      let msg = "Meta integration failed.";
-      if (errorType === 'declined') msg = "Meta oauth permissions declined.";
-      if (errorType === 'exchange_failed') msg = "Token exchange failed. Reconnect Facebook Page.";
+      let msg = "Integration failed.";
+      if (errorType === 'declined') msg = "OAuth permissions declined.";
+      else if (errorType === 'exchange_failed') msg = "Failed to connect to the platform.";
+      else if (errorType === 'whatsapp_not_configured') msg = "No WhatsApp Business number found. You must configure a WhatsApp Business Account in Meta Business Manager first.";
+      else if (errorType === 'youtube_auth_failed') msg = "YouTube authorization failed. Please try again.";
+      else if (errorType === 'linkedin_auth_failed') msg = "LinkedIn authorization failed. Please try again.";
+      
       notify(msg, "error");
       window.history.replaceState({}, document.title, window.location.pathname);
     }
