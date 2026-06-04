@@ -94,23 +94,24 @@ export default function Settings() {
           try { threadsInfo = JSON.parse(data.connectedPageName); } catch (e) {}
         }
         // Derive connection flags from real data
+        const mergedData = { ...data, ...threadsInfo };
         const derivedData = {
-          ...data,
-          instagramAutomationEnabled: data.instagramAutomationEnabled ?? false,
-          facebookAutomationEnabled: data.facebookAutomationEnabled ?? false,
-          isAccountConnected: !!data.instagramAccessToken && !!data.businessAccountId,
-          isFacebookConnected: !!data.facebookAccessToken && !!data.facebookPageId,
-          isYouTubeConnected: !!data.isYouTubeConnected || !!data.isYoutubeConnected,
-          connectedYouTubeName: data.connectedYouTubeName || data.youtubeChannelName || '',
-          isLinkedInConnected: !!data.isLinkedInConnected,
-          isGoogleBusinessConnected: !!data.isGoogleBusinessConnected,
-          isTwitterConnected: !!data.isTwitterConnected,
-          isWhatsAppConnected: !!data.whatsappToken && !!data.whatsappPhoneNumberId,
-          isThreadsConnected: !!threadsInfo.isThreadsConnected,
-          threadsAccessToken: threadsInfo.threadsAccessToken || null,
-          threadsPageId: threadsInfo.threadsPageId || null,
-          connectedThreadsName: threadsInfo.connectedThreadsName || null,
-          whatsappDisplayName: data.connectedInstagramId || data.whatsappPhoneNumberId || 'WhatsApp Business'
+          ...mergedData,
+          instagramAutomationEnabled: mergedData.instagramAutomationEnabled ?? false,
+          facebookAutomationEnabled: mergedData.facebookAutomationEnabled ?? false,
+          isAccountConnected: !!mergedData.instagramAccessToken && !!mergedData.businessAccountId,
+          isFacebookConnected: !!mergedData.facebookAccessToken && !!mergedData.facebookPageId,
+          isYouTubeConnected: !!mergedData.isYouTubeConnected || !!mergedData.isYoutubeConnected,
+          connectedYouTubeName: mergedData.connectedYouTubeName || mergedData.youtubeChannelName || '',
+          isLinkedInConnected: !!mergedData.isLinkedInConnected,
+          isGoogleBusinessConnected: !!mergedData.isGoogleBusinessConnected,
+          isTwitterConnected: !!mergedData.isTwitterConnected,
+          isWhatsAppConnected: !!mergedData.whatsappToken && !!mergedData.whatsappPhoneNumberId,
+          isThreadsConnected: !!mergedData.isThreadsConnected,
+          threadsAccessToken: mergedData.threadsAccessToken || null,
+          threadsPageId: mergedData.threadsPageId || null,
+          connectedThreadsName: mergedData.connectedThreadsName || null,
+          whatsappDisplayName: mergedData.connectedInstagramId || mergedData.whatsappPhoneNumberId || 'WhatsApp Business'
         };
         setSettings(s => ({ ...s, ...derivedData }));
         setLoading(false);
