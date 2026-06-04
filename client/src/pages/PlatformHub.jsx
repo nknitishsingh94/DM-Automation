@@ -50,6 +50,16 @@ const PlatformHub = () => {
       accountName: settings?.connectedFacebookName || 'Facebook Page'
     },
     {
+      id: 'whatsapp',
+      name: 'WhatsApp',
+      description: 'Automate WhatsApp Business messages, auto-replies, and customer flows.',
+      icon: <MessageSquare size={40} />,
+      color: '#25d366',
+      gradient: 'linear-gradient(135deg, #25d366, #128C7E)',
+      isConnected: settings && (settings.isWhatsAppConnected || (settings.whatsappToken && settings.whatsappPhoneNumberId)),
+      accountName: settings?.connectedWhatsAppName || 'WhatsApp Business'
+    },
+    {
       id: 'youtube',
       name: 'YouTube',
       description: 'Automate uploads and manage your YouTube channel content.',

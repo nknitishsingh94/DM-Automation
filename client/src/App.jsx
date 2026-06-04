@@ -62,6 +62,7 @@ const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'))
 const WriteReview = lazyRetry(() => import('./pages/WriteReview'));
 const PlatformHub = lazyRetry(() => import('./pages/PlatformHub'));
 const PlatformDashboard = lazyRetry(() => import('./pages/PlatformDashboard'));
+const WhatsAppDashboard = lazyRetry(() => import('./pages/WhatsAppDashboard'));
 const Onboarding = lazyRetry(() => import('./pages/Onboarding'));
 const UniversalTriggersFeature = lazyRetry(() => import('./pages/UniversalTriggersFeature'));
 const ScheduleFeature = lazyRetry(() => import('./pages/ScheduleFeature'));
@@ -668,6 +669,7 @@ function MainLayout() {
               <Route path="/" element={user ? <Navigate to="/hub" /> : <Landing />} />
               <Route path="/public-home" element={<Landing />} />
               <Route path="/hub" element={<ProtectedRoute><PlatformHub /></ProtectedRoute>} />
+              <Route path="/platform/whatsapp" element={<ProtectedRoute><WhatsAppDashboard /></ProtectedRoute>} />
               <Route path="/platform/:platformId" element={<ProtectedRoute><PlatformDashboard /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
