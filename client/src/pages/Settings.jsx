@@ -69,12 +69,9 @@ export default function Settings() {
     { name: 'LinkedIn', icon: Linkedin, color: '#0077b5', enabled: true },
     { name: 'Twitter/X', icon: Twitter, color: '#0f1419', enabled: true },
     { name: 'Threads', icon: ThreadsIcon, color: '#000000', enabled: false },
-    { name: 'Bluesky', icon: Globe, color: '#0a7aff', enabled: false },
     { name: 'Pinterest', icon: Save, color: '#bd081c', enabled: true },
-    { name: 'Reddit', icon: Globe, color: '#ff4500', enabled: false },
     { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: true },
     { name: 'Telegram', icon: Send, color: '#0088cc', enabled: false },
-    { name: 'Discord', icon: MessageSquare, color: '#5865f2', enabled: false },
     { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: false }
   ];
 
