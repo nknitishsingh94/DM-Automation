@@ -172,7 +172,12 @@ router.post('/generate-thumbnail', verifyToken, async (req, res) => {
     });
 
     const imageUrl = aiResponse.data[0].url;
-    res.json({ imageUrl });
+    // Fetch the image to backend and convert to base64 to avoid CORS errors on frontend
+    const imgRes = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+    const base64 = Buffer.from(imgRes.data, 'binary').toString('base64');
+    const dataUri = `data:${imgRes.headers['content-type']};base64,${base64}`;
+    
+    res.json({ imageUrl: dataUri });
   } catch (err) {
     console.error('Thumbnail Generation Error:', err);
     res.status(500).json({ error: 'Failed to generate thumbnail' });
