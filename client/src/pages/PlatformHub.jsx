@@ -177,7 +177,7 @@ const PlatformHub = () => {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
           {connectedPlatforms.map((platform) => (
             <div 
               key={platform.id}
@@ -186,7 +186,7 @@ const PlatformHub = () => {
                 background: '#ffffff',
                 borderRadius: '24px',
                 border: `1px solid ${platform.color}40`,
-                padding: '32px',
+                padding: '24px',
                 cursor: 'pointer',
                 position: 'relative',
                 overflow: 'hidden',
