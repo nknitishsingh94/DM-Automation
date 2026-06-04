@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate } from 'react-router-dom';
-import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe } from 'lucide-react';
+import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2 } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config';
@@ -34,6 +34,7 @@ const lazyRetry = (componentImport) => {
 const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
 const Inbox = lazyRetry(() => import('./pages/Inbox'));
 const SettingsPage = lazyRetry(() => import('./pages/Settings'));
+const Connections = lazyRetry(() => import('./pages/Connections'));
 const Profile = lazyRetry(() => import('./pages/Profile'));
 const Campaigns = lazyRetry(() => import('./pages/Campaigns'));
 const CampaignBuilder = lazyRetry(() => import('./pages/CampaignBuilder'));
@@ -430,6 +431,10 @@ function Sidebar({ isMobileOpen, onClose }) {
 
         <div className="sidebar-middle-scroll">
           <nav className="nav-links">
+            <NavLink to="/connections" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Link2 size={18} />
+              <span>Connections</span>
+            </NavLink>
             <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Home size={18} />
               <span>Home</span>
@@ -604,6 +609,7 @@ function TopBar({ onMenuClick }) {
       case '/campaigns': return 'Automations';
       case '/campaign-builder/new': return 'Campaign Builder';
       case '/audiences': return 'Contacts';
+      case '/connections': return 'Connections';
       case '/settings': return 'Settings';
       case '/upgrade': return 'Billing';
       case '/ai-studio': return 'AI Studio';
@@ -662,9 +668,10 @@ function MainLayout() {
             </div>
           }>
             <Routes>
-              <Route path="/" element={user ? <Navigate to="/hub" /> : <Landing />} />
+              <Route path="/" element={user ? <Navigate to="/connections" /> : <Landing />} />
               <Route path="/public-home" element={<Landing />} />
               <Route path="/hub" element={<ProtectedRoute><PlatformHub /></ProtectedRoute>} />
+              <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
               <Route path="/platform/whatsapp" element={<ProtectedRoute><WhatsAppDashboard /></ProtectedRoute>} />
               <Route path="/platform/:platformId" element={<ProtectedRoute><PlatformDashboard /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
