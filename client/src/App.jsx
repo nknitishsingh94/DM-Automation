@@ -463,10 +463,6 @@ function Sidebar({ isMobileOpen, onClose }) {
               <Users size={18} />
               <span>Contacts</span>
             </NavLink>
-            <NavLink to="/upgrade" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <CreditCard size={18} />
-              <span>Billing</span>
-            </NavLink>
 
             <NavLink to="/settings" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Settings size={18} />

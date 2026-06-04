@@ -8,6 +8,8 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
+import Subscription from './Subscription';
+import Profile from './Profile';
 
 export default function Settings() {
   const { user, logout } = useAuth();
@@ -47,6 +49,9 @@ export default function Settings() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [redirectingInsta, setRedirectingInsta] = useState(false);
+  
+  // Tab Navigation State
+  const [activeTab, setActiveTab] = useState('connections'); // 'connections', 'billing', 'profile', 'danger'
   
   // Interactive UI Dropdowns & Modals
   const [showConnectModal, setShowConnectModal] = useState(false);
@@ -384,44 +389,98 @@ export default function Settings() {
   return (
     <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', padding: '0 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
       
-      {/* Header Block with top-right buttons */}
-      <div className="settings-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
+      {/* Settings Header */}
+      <div className="settings-header" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
         <div style={{ textAlign: 'left' }}>
           <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
-            Connections
+            Settings
           </h1>
           <p style={{ color: '#6b7280', fontSize: '0.95rem', fontWeight: '400', margin: 0 }}>
-            Manage profiles and platform integrations
+            Manage your profile, billing, and connections
           </p>
         </div>
 
-        {/* Buttons matching screenshot */}
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <button 
-            className="settings-header-btn"
-            onClick={() => setShowConnectModal(true)}
-            style={{ 
-              background: '#ea580c', 
-              color: 'white', 
-              padding: '10px 18px', 
-              borderRadius: '8px', 
-              fontWeight: '600', 
-              fontSize: '0.88rem',
-              border: 'none', 
-              cursor: 'pointer', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '6px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-              transition: 'background 0.2s'
-            }}
-            onMouseOver={(e) => e.currentTarget.style.background = '#c2410c'}
-            onMouseOut={(e) => e.currentTarget.style.background = '#ea580c'}
-          >
-            <Plus size={16} /> New Connection
-          </button>
+        {/* Tab Navigation */}
+        <div style={{ 
+          display: 'flex', 
+          gap: '24px', 
+          borderBottom: '1px solid #e5e7eb',
+          paddingBottom: '0px'
+        }}>
+          {[
+            { id: 'connections', label: 'Connections' },
+            { id: 'billing', label: 'Billing' },
+            { id: 'profile', label: 'Profile' },
+            { id: 'danger', label: 'Danger Zone', color: '#ef4444' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                background: 'none',
+                border: 'none',
+                borderBottom: activeTab === tab.id ? `2px solid ${tab.color || '#10b981'}` : '2px solid transparent',
+                color: activeTab === tab.id ? (tab.color || '#111827') : '#6b7280',
+                padding: '10px 4px',
+                fontSize: '0.95rem',
+                fontWeight: activeTab === tab.id ? '600' : '500',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
+
+      {activeTab === 'connections' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {/* Top-right buttons for Connections tab */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', alignItems: 'center' }}>
+            <button 
+              className="settings-header-btn"
+              onClick={() => setShowConnectModal(true)}
+              style={{ 
+                background: '#ea580c', 
+                color: 'white', 
+                padding: '10px 18px', 
+                borderRadius: '8px', 
+                fontWeight: '600', 
+                fontSize: '0.88rem',
+                border: 'none', 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '6px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                transition: 'background 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = '#c2410c'}
+              onMouseOut={(e) => e.currentTarget.style.background = '#ea580c'}
+            >
+              <Plus size={16} /> New Connection
+            </button>
+            <button 
+              style={{ 
+                background: 'white', 
+                color: '#374151', 
+                padding: '10px 18px', 
+                borderRadius: '8px', 
+                fontWeight: '600', 
+                fontSize: '0.88rem',
+                border: '1px solid #d1d5db', 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center',
+                transition: 'background 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = '#f9fafb'}
+              onMouseOut={(e) => e.currentTarget.style.background = 'white'}
+            >
+              New Profile
+            </button>
+          </div>
 
       {/* Filters Row matching screenshot */}
       <div className="settings-filters" style={{ 
@@ -539,314 +598,278 @@ export default function Settings() {
           (settings.isThreadsConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Threads'))
         ) ? (
           /* Active Integration Card Grid View */
-          <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', alignItems: 'stretch' }}>
+          <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'stretch' }}>
 
             {/* ---- INSTAGRAM CARD ---- */}
             {settings.isAccountConnected && (platformFilter === 'All platforms' || platformFilter === 'Instagram') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ position: 'relative', width: '42px', height: '42px' }}>
-                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Instagram size={22} color="white" />
-                    </div>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#fdf2f8', border: '1px solid #fce7f3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Instagram size={22} color="#ec4899" />
                   </div>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Instagram</h4>
-                    <span style={{ display: 'inline-block', background: '#ccfbf1', color: '#0f766e', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Instagram</h4>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Instagram: Page ID ${settings.instagramPageId || 'N/A'}`, 'info')} />
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Instagram connected`, 'info')} />
               </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>@{settings.connectedInstagramName || 'unknown'}</span>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
+              </div>
+              
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>@{settings.connectedInstagramName || 'unknown'}</span>
-                <span style={{ cursor: 'pointer' }} onClick={() => { navigator.clipboard.writeText(settings.connectedInstagramName || ''); notify('Username copied!', 'success'); }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                </span>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
               </div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : ''}</div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #f3f4f6', paddingTop: '8px' }}>
-                <span style={{ fontSize: '0.78rem', color: '#4b5563', fontWeight: '600' }}>AI auto-replies</span>
-                <label className="switch">
-                  <input type="checkbox" checked={settings.instagramAutomationEnabled}
-                    onChange={(e) => { const v = e.target.checked; setSettings(s => ({ ...s, instagramAutomationEnabled: v })); handleSaveSettings(null, { ...settings, instagramAutomationEnabled: v }, 'instagram'); }} />
-                  <span className="slider round"></span>
-                </label>
-              </div>
+              
               <button onClick={() => { if(window.confirm('Instagram disconnect karna chahte hain?')) { const c = { ...settings, instagramAccessToken: null, instagramPageId: null, businessAccountId: null, connectedInstagramName: null, isAccountConnected: false }; setSettings(c); handleSaveSettings(null, c, 'instagram'); } }}
-                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+                style={{ marginTop: 'auto', width: '100%', padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
               >Disconnect</button>
-              <button onClick={() => window.open(`https://instagram.com/${(settings.connectedInstagramName || '').replace(/^@/, '')}`, '_blank')}
-                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-              >Profile</button>
             </div>
             )}
 
             {/* ---- FACEBOOK CARD ---- */}
             {settings.isFacebookConnected && (platformFilter === 'All platforms' || platformFilter === 'Facebook') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #dbeafe', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#1877f2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Facebook size={22} color="white" />
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#eff6ff', border: '1px solid #dbeafe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Facebook size={22} color="#1877f2" />
                   </div>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Facebook</h4>
-                    <span style={{ display: 'inline-block', background: '#dbeafe', color: '#1d4ed8', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Facebook</h4>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Facebook: Page ID ${settings.facebookPageId || 'N/A'}`, 'info')} />
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Facebook connected`, 'info')} />
               </div>
-              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedFacebookName || 'Facebook Page'}</div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : ''}</div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #f3f4f6', paddingTop: '8px' }}>
-                <span style={{ fontSize: '0.78rem', color: '#4b5563', fontWeight: '600' }}>AI auto-replies</span>
-                <label className="switch">
-                  <input type="checkbox" checked={settings.facebookAutomationEnabled}
-                    onChange={(e) => { const v = e.target.checked; setSettings(s => ({ ...s, facebookAutomationEnabled: v })); handleSaveSettings(null, { ...settings, facebookAutomationEnabled: v }, 'facebook'); }} />
-                  <span className="slider round"></span>
-                </label>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>@{settings.connectedFacebookName || 'unknown'}</span>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
               </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+              </div>
+              
               <button onClick={handleDisconnectFacebook}
-                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+                style={{ marginTop: 'auto', width: '100%', padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
               >Disconnect</button>
-              <button onClick={() => window.open(`https://facebook.com/${settings.facebookPageId}`, '_blank')}
-                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-              >Profile</button>
             </div>
             )}
 
             {/* ---- YOUTUBE CARD ---- */}
             {settings.isYouTubeConnected && (platformFilter === 'All platforms' || platformFilter === 'YouTube') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #fecaca', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  {(settings.connectedYouTubeName || settings.youtubeChannelName) ? (
-                    <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(settings.connectedYouTubeName || settings.youtubeChannelName)}&background=ff0000&color=fff`} style={{ width: '42px', height: '42px', borderRadius: '8px' }} />
-                  ) : (
-                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#ff0000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Youtube size={22} color="white" />
-                    </div>
-                  )}
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>YouTube</h4>
-                    <span style={{ display: 'inline-block', background: '#fee2e2', color: '#dc2626', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#fef2f2', border: '1px solid #fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Youtube size={22} color="#ff0000" />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>YouTube</h4>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`YouTube: Channel ID ${settings.youtubeChannelId || 'N/A'}`, 'info')} />
               </div>
-              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedYouTubeName || settings.youtubeChannelName || 'YouTube Channel'}</div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Ready for automated uploads</div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>@{settings.connectedYouTubeName || settings.youtubeChannelName || 'automation_web'}</span>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+              </div>
               
               <button onClick={handleDisconnectYouTube}
-                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+                style={{ marginTop: 'auto', width: '100%', padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
               >Disconnect</button>
-              <button onClick={() => window.open(settings.youtubeChannelId ? `https://youtube.com/channel/${settings.youtubeChannelId}` : `https://youtube.com/`, '_blank')}
-                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-              >Profile</button>
             </div>
             )}
 
             {/* ---- LINKEDIN CARD ---- */}
             {settings.isLinkedInConnected && (platformFilter === 'All platforms' || platformFilter === 'LinkedIn') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  {settings.connectedLinkedInName ? (
-                    <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(settings.connectedLinkedInName)}&background=0077b5&color=fff`} style={{ width: '42px', height: '42px', borderRadius: '8px' }} />
-                  ) : (
-                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#0077b5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Linkedin size={22} color="white" />
-                    </div>
-                  )}
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>LinkedIn</h4>
-                    <span style={{ display: 'inline-block', background: '#dbeafe', color: '#1d4ed8', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#eff6ff', border: '1px solid #dbeafe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Linkedin size={22} color="#0077b5" />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>LinkedIn</h4>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`LinkedIn connected`, 'info')} />
               </div>
-              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{(settings.connectedLinkedInName && settings.connectedLinkedInName !== 'LinkedIn Member') ? settings.connectedLinkedInName : 'LinkedIn Profile'}</div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Ready for automated posts</div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>@{settings.connectedLinkedInName || 'unknown'}</span>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+              </div>
               
               <button onClick={handleDisconnectLinkedIn}
-                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+                style={{ marginTop: 'auto', width: '100%', padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
               >Disconnect</button>
-              <button onClick={() => window.open(`https://linkedin.com/`, '_blank')}
-                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-              >Profile</button>
             </div>
             )}
 
             {/* ---- TWITTER/X CARD ---- */}
             {settings.isTwitterConnected && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#0f1419', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Twitter size={22} color="white" />
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#f1f5f9', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Twitter size={22} color="#0f1419" />
                   </div>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Twitter / X</h4>
-                    <span style={{ display: 'inline-block', background: '#e2e8f0', color: '#475569', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Twitter / X</h4>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Twitter connected`, 'info')} />
               </div>
-              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedTwitterName || 'Twitter Account'}</div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Ready for automated posts</div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>@{settings.connectedTwitterName || 'unknown'}</span>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+              </div>
               
               <button onClick={handleDisconnectTwitter}
-                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+                style={{ marginTop: 'auto', width: '100%', padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
               >Disconnect</button>
-              <button onClick={() => window.open(`https://twitter.com/${(settings.connectedTwitterName || '').replace('@', '')}`, '_blank')}
-                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-              >Profile</button>
             </div>
             )}
 
             {/* ---- GOOGLE BUSINESS CARD ---- */}
             {settings.isGoogleBusinessConnected && (platformFilter === 'All platforms' || platformFilter === 'Google Business') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#4285f4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <MapPin size={22} color="white" />
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#eff6ff', border: '1px solid #dbeafe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <MapPin size={22} color="#3b82f6" />
                   </div>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Google Business</h4>
-                    <span style={{ display: 'inline-block', background: '#dbeafe', color: '#1d4ed8', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Google Business</h4>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Google Business connected`, 'info')} />
               </div>
-              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedGoogleBusinessName || 'Google Profile'}</div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Ready for reviews & automation</div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>@{settings.connectedGoogleBusinessName || 'smart10X'}</span>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+              </div>
               
               <button onClick={handleDisconnectGoogleBusiness}
-                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+                style={{ marginTop: 'auto', width: '100%', padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
               >Disconnect</button>
-              <button onClick={() => window.open(`https://business.google.com/`, '_blank')}
-                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-              >Profile</button>
             </div>
             )}
 
-            {/* ---- TWITTER CARD ---- */}
-            {settings.isTwitterConnected && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#0f1419', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Twitter size={22} color="white" />
-                  </div>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Twitter/X</h4>
-                    <span style={{ display: 'inline-block', background: '#e2e8f0', color: '#334155', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
-                  </div>
-                </div>
-              </div>
-              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedTwitterName || 'Twitter User'}</div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Ready for automated tweets</div>
-              
-              <button onClick={handleDisconnectTwitter}
-                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
-              >Disconnect</button>
-              <button onClick={() => window.open(`https://twitter.com/${(settings.connectedTwitterName || '').replace('@', '')}`, '_blank')}
-                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-              >Profile</button>
-            </div>
-            )}
+
 
             {/* ---- THREADS CARD ---- */}
             {settings.isThreadsConnected && (platformFilter === 'All platforms' || platformFilter === 'Threads') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  {settings.connectedThreadsName ? (
-                    <img src={`https://ui-avatars.com/api/?name=${settings.connectedThreadsName.replace(/^@/, '')}&background=000000&color=fff`} style={{ width: '42px', height: '42px', borderRadius: '8px' }} />
-                  ) : (
-                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <ThreadsIcon size={22} color="white" />
-                    </div>
-                  )}
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Threads</h4>
-                    <span style={{ display: 'inline-block', background: '#f3f4f6', color: '#374151', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#f3f4f6', border: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <ThreadsIcon size={22} color="#000000" />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Threads</h4>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Threads: Page ID ${settings.threadsPageId || 'N/A'}`, 'info')} />
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Threads connected`, 'info')} />
               </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>@{settings.connectedThreadsName || 'unknown'}</span>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
+              </div>
+              
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>@{settings.connectedThreadsName || 'unknown'}</span>
-                <span style={{ cursor: 'pointer' }} onClick={() => { navigator.clipboard.writeText(settings.connectedThreadsName || ''); notify('Username copied!', 'success'); }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                </span>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
               </div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Ready for reply monitoring</div>
               
               <button onClick={handleDisconnectThreads}
-                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+                style={{ marginTop: 'auto', width: '100%', padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
               >Disconnect</button>
-              <button onClick={() => window.open(`https://threads.net/@${(settings.connectedThreadsName || '').replace(/^@/, '')}`, '_blank')}
-                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-              >Profile</button>
             </div>
             )}
 
             {/* ---- WHATSAPP CARD ---- */}
             {settings.isWhatsAppConnected && (platformFilter === 'All platforms' || platformFilter === 'WhatsApp') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ position: 'relative', width: '42px', height: '42px' }}>
-                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#25d366', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <MessageSquare size={22} color="white" />
-                    </div>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#f0fdf4', border: '1px solid #dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <MessageSquare size={22} color="#22c55e" />
                   </div>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>WhatsApp</h4>
-                    <span style={{ display: 'inline-block', background: '#dcfce7', color: '#166534', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>WhatsApp</h4>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`WhatsApp connected`, 'info')} />
               </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>@{settings.whatsappDisplayName || 'WhatsApp Business'}</span>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
+              </div>
+              
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.whatsappDisplayName || 'WhatsApp Business'}</span>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
               </div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Ready for automation</div>
               
               <button onClick={handleDisconnectWhatsApp}
-                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+                style={{ marginTop: 'auto', width: '100%', padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
               >Disconnect</button>
             </div>
             )}
@@ -877,73 +900,77 @@ export default function Settings() {
                 transition: 'border 0.2s'
               }}
               onMouseOver={(e) => e.currentTarget.style.borderColor = '#9ca3af'}
-              onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
+onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
             >
               <Plus size={16} /> Connect an account
             </button>
           </div>
         )}
-
-      </div>
-
-      {/* Advanced Settings Drawer (Danger Zone trigger) */}
-      <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', background: 'white', overflow: 'hidden' }}>
-        <div 
-          onClick={() => setShowDangerZone(!showDangerZone)}
-          style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: '#f9fafb' }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#475569' }}>
-            <Sliders size={18} />
-            <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>Advanced Account Preferences</span>
-          </div>
-          <ChevronDown size={18} style={{ transform: showDangerZone ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
         </div>
-
-        {showDangerZone && (
-          <div style={{ padding: '24px', borderTop: '1px solid #e5e7eb', background: '#fff1f2' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#be123c', marginBottom: '12px' }}>
-              <AlertTriangle size={24} />
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', margin: 0 }}>Permanently Delete Account</h3>
-            </div>
-            
-            <p style={{ color: '#9f1239', fontSize: '0.85rem', lineHeight: '1.5', marginBottom: '20px', fontWeight: '500' }}>
-              Deleting your account is permanent. All your automated DM configurations, rules, active message counters, and connected platform credentials will be wiped from our database forever.
-            </p>
-
-            {!showDeleteConfirm ? (
-              <button 
-                onClick={() => setShowDeleteConfirm(true)}
-                style={{ 
-                  padding: '10px 20px', background: '#e11d48', color: 'white', border: 'none', 
-                  borderRadius: '8px', fontWeight: '700', fontSize: '0.82rem', cursor: 'pointer' 
-                }}
-              >
-                Delete Account
-              </button>
-            ) : (
-              <div style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1.5px solid #e11d48' }}>
-                <h4 style={{ fontWeight: '800', color: '#1e293b', marginBottom: '4px', fontSize: '0.95rem' }}>Are you absolutely sure?</h4>
-                <p style={{ color: '#64748b', fontSize: '0.8rem', marginBottom: '16px' }}>This cannot be undone. You will have to sign up again to restore access.</p>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button 
-                    onClick={handleDeleteAccount} 
-                    disabled={deleting} 
-                    style={{ flex: 1, background: '#e11d48', color: 'white', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontSize: '0.82rem' }}
-                  >
-                    {deleting ? 'Wiping Data...' : 'Yes, Delete Everything'}
-                  </button>
-                  <button 
-                    onClick={() => setShowDeleteConfirm(false)} 
-                    style={{ flex: 1, background: '#f1f5f9', color: '#475569', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontSize: '0.82rem' }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
       </div>
+      )}
+
+      {activeTab === 'billing' && (
+        <div style={{ marginTop: '20px' }}>
+          <Subscription hideSidebar={true} />
+        </div>
+      )}
+
+      {activeTab === 'profile' && (
+        <div style={{ marginTop: '20px' }}>
+          <Profile hideSidebar={true} />
+        </div>
+      )}
+
+      {activeTab === 'danger' && (
+        <div style={{ marginTop: '20px' }}>
+          <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', background: 'white', overflow: 'hidden' }}>
+            <div style={{ padding: '24px', background: '#fff1f2' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#be123c', marginBottom: '12px' }}>
+                <AlertTriangle size={24} />
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '800', margin: 0 }}>Permanently Delete Account</h3>
+              </div>
+              
+              <p style={{ color: '#9f1239', fontSize: '0.85rem', lineHeight: '1.5', marginBottom: '20px', fontWeight: '500' }}>
+                Deleting your account is permanent. All your automated DM configurations, rules, active message counters, and connected platform credentials will be wiped from our database forever.
+              </p>
+
+              {!showDeleteConfirm ? (
+                <button 
+                  onClick={() => setShowDeleteConfirm(true)}
+                  style={{ 
+                    padding: '10px 20px', background: '#e11d48', color: 'white', border: 'none', 
+                    borderRadius: '8px', fontWeight: '700', fontSize: '0.82rem', cursor: 'pointer' 
+                  }}
+                >
+                  Delete my account
+                </button>
+              ) : (
+                <div style={{ background: 'white', padding: '16px', borderRadius: '8px', border: '1px solid #fecdd3' }}>
+                  <p style={{ margin: '0 0 16px 0', fontSize: '0.85rem', fontWeight: '700', color: '#1e293b' }}>
+                    Are you absolutely sure? Type 'DELETE' to confirm.
+                  </p>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button 
+                      onClick={handleDeleteAccount} 
+                      disabled={deleting}
+                      style={{ flex: 1, background: '#e11d48', color: 'white', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: deleting ? 'not-allowed' : 'pointer', fontSize: '0.82rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+                    >
+                      {deleting ? 'Deleting...' : 'Yes, Delete Everything'}
+                    </button>
+                    <button 
+                      onClick={() => setShowDeleteConfirm(false)} 
+                      style={{ flex: 1, background: '#f1f5f9', color: '#475569', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontSize: '0.82rem' }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* STYLISH PLATFORM CONNECT MODAL */}
       {showConnectModal && (
