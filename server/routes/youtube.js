@@ -66,7 +66,7 @@ router.get('/callback', async (req, res) => {
 
     const channel = channelRes.data.items[0];
     const channelId = channel.id;
-    const channelName = channel.snippet.title;
+    const channelName = channel.snippet?.customUrl || channel.snippet.title || 'YouTube Channel';
 
     // Save to Settings
     await Settings.findOneAndUpdate(
