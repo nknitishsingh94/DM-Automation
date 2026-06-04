@@ -52,6 +52,7 @@ import youtubeRoutes from './routes/youtube.js';
 import formRoutes from './routes/forms.js';
 import oauthRoutes from './routes/oauth.js';
 import supportRoutes from './routes/support.js';
+import threadsRoutes from './routes/threads.js';
 import { generateAIResponse } from './utils/aiHandler.js';
 import { supabase, convertObjectIDToUUID } from './utils/supabase.js';
 import Workspace from './models/Workspace.js';
@@ -1446,6 +1447,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/oauth', oauthRoutes);
 app.use('/api/forms', formRoutes);
+app.use('/api/threads', threadsRoutes);
 
 // --- AVATAR UPLOAD ROUTE ---
 app.post('/api/upload/avatar', upload.single('file'), async (req, res) => {

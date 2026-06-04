@@ -234,6 +234,15 @@ const toUnicodeItalic = (text) => {
   }).join('');
 };
 
+function ThreadsIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2a10 10 0 1 0 10 10H12Z" />
+      <path d="M12 12a4 4 0 1 0 4 4h-4Z" />
+    </svg>
+  );
+}
+
 export default function Scheduling() {
   const { user } = useAuth();
   
@@ -1336,10 +1345,18 @@ export default function Scheduling() {
                     {(() => {
                       const isFbConnected = settings?.isFacebookConnected || (!!settings?.facebookAccessToken && !!settings?.facebookPageId);
                       const isIgConnected = settings?.isAccountConnected || (!!settings?.instagramAccessToken && !!settings?.businessAccountId);
+                      let isThreadsConnected = false;
+                      if (settings?.connectedPageName) {
+                        try {
+                          const parsed = JSON.parse(settings.connectedPageName);
+                          if (parsed.isThreadsConnected) isThreadsConnected = true;
+                        } catch(e) {}
+                      }
                       
                       const allPlatforms = [
                         { id: 'instagram', label: 'Instagram', icon: <Instagram size={18} />, color: '#e1306c', isConnected: isIgConnected, supported: true },
-                        { id: 'facebook', label: 'Facebook', icon: <Facebook size={18} />, color: '#1877f2', isConnected: isFbConnected, supported: true }
+                        { id: 'facebook', label: 'Facebook', icon: <Facebook size={18} />, color: '#1877f2', isConnected: isFbConnected, supported: true },
+                        { id: 'threads', label: 'Threads', icon: <ThreadsIcon size={18} />, color: '#000000', isConnected: isThreadsConnected, supported: true }
                       ].filter(p => p.isConnected);
 
                       const selectedPlat = allPlatforms.find(p => p.id === newPost.platform) || null;

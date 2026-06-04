@@ -546,6 +546,32 @@ router.post('/api/webhook', async (req, res) => {
       }
     }
     res.status(200).send('EVENT_RECEIVED');
+  } else if (body.object === 'threads') {
+    // Threads Webhook Handling
+    if (body.entry && Array.isArray(body.entry)) {
+      for (const entry of body.entry) {
+        const pageId = entry.id; // threadsPageId
+        const changes = entry.changes || [];
+        
+        for (const change of changes) {
+          if (change.field === 'replies') {
+            const value = change.value;
+            const replyText = value.text;
+            const senderId = value.from?.id;
+            const replyId = value.id;
+            
+            if (replyText && senderId) {
+              console.log(`🧵 Threads Reply from ${senderId}: ${replyText}`);
+              // Note: You would map pageId to a User Settings here, 
+              // similar to how it's done for Instagram, and trigger processAutoReply.
+              // We'll process this similarly by looking up connectedPageName
+              // For now, logging is sufficient as we need to update processAutoReply to handle threads API properly
+            }
+          }
+        }
+      }
+    }
+    res.status(200).send('EVENT_RECEIVED');
   } else {
     res.sendStatus(404);
   }

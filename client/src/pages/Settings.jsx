@@ -728,9 +728,13 @@ export default function Settings() {
             <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <ThreadsIcon size={22} color="white" />
-                  </div>
+                  {settings.connectedThreadsName ? (
+                    <img src={`https://ui-avatars.com/api/?name=${settings.connectedThreadsName.replace(/^@/, '')}&background=000000&color=fff`} style={{ width: '42px', height: '42px', borderRadius: '8px' }} />
+                  ) : (
+                    <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ThreadsIcon size={22} color="white" />
+                    </div>
+                  )}
                   <div>
                     <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Threads</h4>
                     <span style={{ display: 'inline-block', background: '#f3f4f6', color: '#374151', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
