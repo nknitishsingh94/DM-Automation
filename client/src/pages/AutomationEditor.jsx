@@ -684,7 +684,13 @@ export default function AutomationEditor() {
                       alignItems: 'center',
                       gap: '8px'
                     }}>
-                      {channel === 'facebook' ? '💬 Facebook Messenger' : '📸 Instagram'}
+                      {channel === 'facebook' ? '💬 Facebook Messenger' : 
+                       channel === 'youtube' ? '▶️ YouTube' :
+                       channel === 'linkedin' ? '💼 LinkedIn' :
+                       channel === 'threads' ? '🧵 Threads' :
+                       channel === 'telegram' ? '✈️ Telegram' :
+                       channel === 'whatsapp' ? '📱 WhatsApp' :
+                       '📸 Instagram'}
                     </div>
                   ) : (
                     <select 

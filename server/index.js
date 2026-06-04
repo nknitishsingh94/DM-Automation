@@ -56,6 +56,7 @@ import threadsRoutes from './routes/threads.js';
 import { generateAIResponse } from './utils/aiHandler.js';
 import { supabase, convertObjectIDToUUID } from './utils/supabase.js';
 import Workspace from './models/Workspace.js';
+import { processYouTubeComments } from './utils/youtube-automation.js';
 
 // --- GLOBAL CACHE (Nitro Speed) ---
 const settingsCache = new Map();
@@ -3706,6 +3707,13 @@ httpServer.listen(PORT, () => {
         console.error("❌ Error in persistent local scheduler:", err.message);
       });
     }, 15 * 1000);
+
+    // Run YouTube Comment Automation every 30 minutes
+    setInterval(() => {
+      processYouTubeComments().catch(err => {
+        console.error("❌ Error in persistent local YouTube scheduler:", err.message);
+      });
+    }, 30 * 60 * 1000);
   }
 });
 

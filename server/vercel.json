@@ -6,6 +6,16 @@
       "use": "@vercel/node"
     }
   ],
+  "crons": [
+    {
+      "path": "/api/cron/publish",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/youtube-comments",
+      "schedule": "0,30 * * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/api/(.*)",
