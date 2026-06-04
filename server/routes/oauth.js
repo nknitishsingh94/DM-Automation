@@ -635,12 +635,16 @@ router.get('/youtube/callback', async (req, res) => {
     }
 
     const settings = await Settings.findOne(settingsQuery);
-    const updateData = {
-      isYouTubeConnected: true,
-      connectedYouTubeName: channelName,
-      youtubeAccessToken: tokens.access_token,
-      youtubeRefreshToken: tokens.refresh_token || (settings?.youtubeRefreshToken || null)
-    };
+    let pageData = {};
+    if (settings && settings.connectedPageName) {
+      try { pageData = JSON.parse(settings.connectedPageName); } catch(e){}
+    }
+    pageData.isYouTubeConnected = true;
+    pageData.connectedYouTubeName = channelName;
+    pageData.youtubeAccessToken = tokens.access_token;
+    pageData.youtubeRefreshToken = tokens.refresh_token || (pageData.youtubeRefreshToken || null);
+    
+    const updateData = { connectedPageName: JSON.stringify(pageData) };
 
     await Settings.findOneAndUpdate(
       settingsQuery,
@@ -756,11 +760,16 @@ router.get('/linkedin/callback', async (req, res) => {
       settingsQuery.workspaceId = workspaceId;
     }
 
-    const updateData = {
-      isLinkedInConnected: true,
-      connectedLinkedInName: profileName,
-      linkedinAccessToken: accessToken
-    };
+    const settings = await Settings.findOne(settingsQuery);
+    let pageData = {};
+    if (settings && settings.connectedPageName) {
+      try { pageData = JSON.parse(settings.connectedPageName); } catch(e){}
+    }
+    pageData.isLinkedInConnected = true;
+    pageData.connectedLinkedInName = profileName;
+    pageData.linkedinAccessToken = accessToken;
+    
+    const updateData = { connectedPageName: JSON.stringify(pageData) };
 
     await Settings.findOneAndUpdate(
       settingsQuery,
@@ -883,12 +892,16 @@ router.get('/google-business/callback', async (req, res) => {
     }
 
     const settings = await Settings.findOne(settingsQuery);
-    const updateData = {
-      isGoogleBusinessConnected: true,
-      connectedGoogleBusinessName: businessName,
-      googleBusinessAccessToken: tokens.access_token,
-      googleBusinessRefreshToken: tokens.refresh_token || (settings?.googleBusinessRefreshToken || null)
-    };
+    let pageData = {};
+    if (settings && settings.connectedPageName) {
+      try { pageData = JSON.parse(settings.connectedPageName); } catch(e){}
+    }
+    pageData.isGoogleBusinessConnected = true;
+    pageData.connectedGoogleBusinessName = businessName;
+    pageData.googleBusinessAccessToken = tokens.access_token;
+    pageData.googleBusinessRefreshToken = tokens.refresh_token || (pageData.googleBusinessRefreshToken || null);
+    
+    const updateData = { connectedPageName: JSON.stringify(pageData) };
 
     await Settings.findOneAndUpdate(
       settingsQuery,
@@ -1019,13 +1032,17 @@ router.get('/twitter/callback', async (req, res) => {
     }
 
     const settings = await Settings.findOne(settingsQuery);
-    const updateData = {
-      isTwitterConnected: true,
-      connectedTwitterName: profileName,
-      twitterAccessToken: access_token,
-      twitterRefreshToken: refresh_token || (settings?.twitterRefreshToken || null),
-      connectedTwitterId: profileId
-    };
+    let pageData = {};
+      if (settings && settings.connectedPageName) {
+        try { pageData = JSON.parse(settings.connectedPageName); } catch(e){}
+      }
+      pageData.isTwitterConnected = true;
+      pageData.connectedTwitterName = profileName;
+      pageData.twitterAccessToken = access_token;
+      pageData.twitterRefreshToken = refresh_token || (pageData.twitterRefreshToken || null);
+      pageData.connectedTwitterId = profileId;
+      
+      const updateData = { connectedPageName: JSON.stringify(pageData) };
 
     await Settings.findOneAndUpdate(
       settingsQuery,
