@@ -81,11 +81,18 @@ function parseFilter(q, queryObj, tableName) {
     console.log(`🔍 [Supabase Query] Table: ${tableName}, Filter Keys: ${Object.keys(queryObj).join(', ')}`);
   }
 
+  // Field name mapping: JS camelCase -> Supabase snake_case
   const fieldMap = {
     'triggerKeyword': 'triggerKeyword',
     'autoResponse': 'autoResponse',
     'requireFollow': 'requireFollow',
-    'publicReply': 'publicReply'
+    'publicReply': 'publicReply',
+    // scheduled_posts specific field mappings
+    'scheduledFor': 'scheduled_for',
+    'retryCount': 'retry_count',
+    'lastError': 'last_error',
+    'updatedAt': 'updated_at',
+    'createdAt': 'created_at',
   };
 
   for (const [key, v] of Object.entries(queryObj)) {
@@ -254,6 +261,23 @@ function convertIncoming(doc, tableName) {
       newDoc.workspaceId = newDoc.workspace_id;
       delete newDoc.workspace_id;
     }
+    // Map snake_case DB columns to camelCase JS fields
+    if (newDoc.scheduled_for !== undefined) {
+      newDoc.scheduledFor = newDoc.scheduled_for;
+      delete newDoc.scheduled_for;
+    }
+    if (newDoc.retry_count !== undefined) {
+      newDoc.retryCount = newDoc.retry_count;
+      delete newDoc.retry_count;
+    }
+    if (newDoc.last_error !== undefined) {
+      newDoc.lastError = newDoc.last_error;
+      delete newDoc.last_error;
+    }
+    if (newDoc.updated_at !== undefined) {
+      newDoc.updatedAt = newDoc.updated_at;
+      delete newDoc.updated_at;
+    }
   }
 
   newDoc.toObject = () => newDoc;
@@ -359,6 +383,23 @@ function convertOutgoing(doc, tableName) {
     if (newDoc.workspaceId) {
       newDoc.workspace_id = newDoc.workspaceId;
       delete newDoc.workspaceId;
+    }
+    // Map camelCase JS fields to snake_case DB columns
+    if (newDoc.scheduledFor !== undefined) {
+      newDoc.scheduled_for = newDoc.scheduledFor;
+      delete newDoc.scheduledFor;
+    }
+    if (newDoc.retryCount !== undefined) {
+      newDoc.retry_count = newDoc.retryCount;
+      delete newDoc.retryCount;
+    }
+    if (newDoc.lastError !== undefined) {
+      newDoc.last_error = newDoc.lastError;
+      delete newDoc.lastError;
+    }
+    if (newDoc.updatedAt !== undefined) {
+      newDoc.updated_at = newDoc.updatedAt;
+      delete newDoc.updatedAt;
     }
   }
 

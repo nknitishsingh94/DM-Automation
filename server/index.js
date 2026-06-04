@@ -3035,6 +3035,47 @@ app.post('/api/broadcasts', verifyToken, async (req, res) => {
   }
 });
 
+// --- DIAGNOSTIC ENDPOINT: Check Scheduled Posts Status ---
+app.get('/api/debug/scheduled', verifyToken, async (req, res) => {
+  try {
+    const { supabase: sb } = await import('./utils/supabase.js');
+    const now = new Date().toISOString();
+
+    // Fetch ALL posts for this user (any status)
+    const { data: allPosts, error: allErr } = await sb
+      .from('scheduled_posts')
+      .select('id, platform, status, scheduledFor, lastError, mediaUrl, caption')
+      .eq('userId', req.user.userId)
+      .order('scheduledFor', { ascending: false })
+      .limit(10);
+
+    // Fetch DUE posts (should be picked up by worker)
+    const { data: duePosts, error: dueErr } = await sb
+      .from('scheduled_posts')
+      .select('id, platform, status, scheduledFor, lastError')
+      .eq('userId', req.user.userId)
+      .in('status', ['Scheduled', 'Retrying', 'Processing'])
+      .lte('scheduledFor', now);
+
+    const settings = await Settings.findOne({ userId: req.user.userId });
+
+    res.json({
+      serverTime: now,
+      allPosts: allPosts || [],
+      allErr: allErr?.message || null,
+      duePosts: duePosts || [],
+      dueErr: dueErr?.message || null,
+      credentials: {
+        instagram: !!(settings?.instagramAccessToken && settings?.businessAccountId),
+        facebook: !!(settings?.facebookAccessToken && settings?.facebookPageId),
+        threads: !!settings?.connectedPageName,
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // --- DEBUG ENDPOINT: Check saved tokens & test Meta API ---
 app.get('/api/debug/settings', verifyToken, async (req, res) => {
   try {
@@ -3091,7 +3132,12 @@ async function runSchedulingWorker() {
     // Pre-load Supabase client and safeUpdate before touching DB state
     const { supabase: _sb } = await import('./utils/supabase.js');
     const _updatePost = async (id, fields) => {
-      const { data, error } = await _sb.from('scheduled_posts').update({ ...fields, updatedAt: new Date().toISOString() }).eq('id', id);
+      // Convert camelCase fields to snake_case for direct Supabase query
+      const cleanFields = { ...fields };
+      if ('lastError' in cleanFields) { cleanFields.last_error = cleanFields.lastError; delete cleanFields.lastError; }
+      if ('retryCount' in cleanFields) { cleanFields.retry_count = cleanFields.retryCount; delete cleanFields.retryCount; }
+      if ('scheduledFor' in cleanFields) { cleanFields.scheduled_for = cleanFields.scheduledFor; delete cleanFields.scheduledFor; }
+      const { data, error } = await _sb.from('scheduled_posts').update({ ...cleanFields, updated_at: new Date().toISOString() }).eq('id', id);
       if (error) throw new Error(error.message);
       return data;
     };
@@ -3103,9 +3149,9 @@ async function runSchedulingWorker() {
       try {
         const { data: stuckData, error: stuckErr } = await _sb
           .from('scheduled_posts')
-          .update({ status: 'Retrying', updatedAt: new Date().toISOString() })
+          .update({ status: 'Retrying', updated_at: new Date().toISOString() })
           .eq('status', 'Processing')
-          .lt('updatedAt', stuckBoundary)
+          .lt('updated_at', stuckBoundary)
           .select('id');
         if (stuckErr) {
           console.warn('⚠️ [Worker] Safety-net reset failed:', stuckErr.message);
@@ -3179,9 +3225,9 @@ async function runSchedulingWorker() {
 
         const { data: claimData, error: claimErr } = await _sb
           .from('scheduled_posts')
-          .update({ status: 'Processing', updatedAt: new Date().toISOString() })
+          .update({ status: 'Processing', updated_at: new Date().toISOString() })
           .eq('id', postId)
-          .or(`status.in.(Scheduled,Retrying),and(status.eq.Processing,updatedAt.lt.${twoMinutesAgo})`)
+          .or(`status.in.(Scheduled,Retrying),and(status.eq.Processing,updated_at.lt.${twoMinutesAgo})`)
           .select()
           .limit(1);
 
