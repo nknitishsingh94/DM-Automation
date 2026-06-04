@@ -396,7 +396,7 @@ export default function Settings() {
             Settings
           </h1>
           <p style={{ color: '#6b7280', fontSize: '0.95rem', fontWeight: '400', margin: 0 }}>
-            Manage your profile, billing, and connections
+            Manage your profile and billing
           </p>
         </div>
 
