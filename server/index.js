@@ -2747,19 +2747,9 @@ app.post('/api/settings', verifyToken, async (req, res) => {
     const platform = req.body._platform; // frontend sends which platform is being saved
     
     // Explicitly allow only valid settings columns in PostgreSQL to prevent 500 Column Not Found errors
-    const allowedKeys = [
-      'id', 'userId', 
-      'instagramAccessToken', 'instagramPageId', 'businessAccountId', 'connectedInstagramName', 'isAccountConnected', 'instagramAutomationEnabled',
-      'facebookAccessToken', 'facebookPageId', 'connectedFacebookName', 'isFacebookConnected', 'facebookAutomationEnabled',
-      'whatsappToken', 'whatsappPhoneNumberId', 'connectedWhatsAppName', 'isWhatsAppConnected', 'whatsappAutomationEnabled',
-      'telegramToken', 'isTelegramConnected', 'telegramAutomationEnabled',
-      'twitterApiKey', 'twitterAutomationEnabled',
-      'youtubeApiKey', 'youtubeAutomationEnabled',
-      'linkedinAccessToken', 'linkedinAutomationEnabled',
-      'lastTestedAt',
-      'aiFallbackMessage', 'aiName', 'aiTone', 'aiKnowledgeBase', 'aiTemperature',
-      'connectedPageName', 'whatsappBusinessAccountId'
-    ];
+          const allowedKeys = [
+        'id', 'userId', 'workspaceId', 'instagramAccessToken', 'instagramPageId', 'businessAccountId', 'connectedInstagramName', 'isAccountConnected', 'instagramAutomationEnabled', 'facebookAccessToken', 'facebookPageId', 'connectedFacebookName', 'isFacebookConnected', 'facebookAutomationEnabled', 'whatsappToken', 'whatsappPhoneNumberId', 'connectedWhatsAppName', 'isWhatsAppConnected', 'whatsappAutomationEnabled', 'telegramToken', 'isTelegramConnected', 'telegramAutomationEnabled', 'twitterApiKey', 'isTwitterConnected', 'twitterAutomationEnabled', 'twitterAccessToken', 'twitterRefreshToken', 'connectedTwitterName', 'connectedTwitterId', 'youtubeApiKey', 'isYouTubeConnected', 'isYoutubeConnected', 'youtubeAutomationEnabled', 'youtubeAccessToken', 'youtubeRefreshToken', 'youtubeChannelId', 'youtubeChannelName', 'linkedinAccessToken', 'isLinkedInConnected', 'linkedinAutomationEnabled', 'connectedLinkedInName', 'isGoogleBusinessConnected', 'connectedGoogleBusinessName', 'googleBusinessAccessToken', 'googleBusinessRefreshToken', 'isThreadsConnected', 'threadsAccessToken', 'threadsPageId', 'connectedThreadsName', 'lastTestedAt', 'aiFallbackMessage', 'aiName', 'aiTone', 'aiKnowledgeBase', 'aiTemperature', 'connectedPageName', 'whatsappBusinessAccountId'
+      ];
 
     const data = {};
     for (const key of allowedKeys) {
