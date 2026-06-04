@@ -305,28 +305,67 @@ export default function Settings() {
 
   const handleDisconnectYouTube = () => {
     if (!window.confirm('YouTube disconnect karna chahte hain? YouTube par automated uploads ruk jayenge.')) return;
-    const cleared = { ...settings, youtubeAccessToken: null, youtubeRefreshToken: null, connectedYouTubeName: null, isYouTubeConnected: false };
+    
+    let pageData = {};
+    try { pageData = JSON.parse(settings.connectedPageName || '{}'); } catch(e){}
+    delete pageData.isYouTubeConnected;
+    delete pageData.isYoutubeConnected;
+    delete pageData.connectedYouTubeName;
+    delete pageData.youtubeChannelName;
+    delete pageData.youtubeAccessToken;
+    delete pageData.youtubeRefreshToken;
+    delete pageData.youtubeChannelId;
+    const newPageName = JSON.stringify(pageData);
+
+    const cleared = { ...settings, connectedPageName: newPageName, youtubeAccessToken: null, youtubeRefreshToken: null, connectedYouTubeName: null, isYouTubeConnected: false };
     setSettings(cleared);
     handleSaveSettings(null, cleared, 'youtube');
   };
 
   const handleDisconnectLinkedIn = () => {
-    if (!window.confirm('LinkedIn disconnect karna chahte hain? LinkedIn par automated posts ruk jayenge.')) return;
-    const cleared = { ...settings, linkedinAccessToken: null, connectedLinkedInName: null, isLinkedInConnected: false };
+    if (!window.confirm('LinkedIn disconnect karna chahte hain? Automated posts ruk jayenge.')) return;
+    
+    let pageData = {};
+    try { pageData = JSON.parse(settings.connectedPageName || '{}'); } catch(e){}
+    delete pageData.isLinkedInConnected;
+    delete pageData.connectedLinkedInName;
+    delete pageData.linkedinAccessToken;
+    const newPageName = JSON.stringify(pageData);
+
+    const cleared = { ...settings, connectedPageName: newPageName, linkedinAccessToken: null, connectedLinkedInName: null, isLinkedInConnected: false };
     setSettings(cleared);
     handleSaveSettings(null, cleared, 'linkedin');
   };
 
   const handleDisconnectGoogleBusiness = () => {
-    if (!window.confirm('Google Business Profile disconnect karna chahte hain?')) return;
-    const cleared = { ...settings, googleBusinessAccessToken: null, googleBusinessRefreshToken: null, connectedGoogleBusinessName: null, isGoogleBusinessConnected: false };
+    if (!window.confirm('Google Business Profile disconnect karna chahte hain? Automated replies ruk jayenge.')) return;
+    
+    let pageData = {};
+    try { pageData = JSON.parse(settings.connectedPageName || '{}'); } catch(e){}
+    delete pageData.isGoogleBusinessConnected;
+    delete pageData.connectedGoogleBusinessName;
+    delete pageData.googleBusinessAccessToken;
+    delete pageData.googleBusinessRefreshToken;
+    const newPageName = JSON.stringify(pageData);
+
+    const cleared = { ...settings, connectedPageName: newPageName, googleBusinessAccessToken: null, googleBusinessRefreshToken: null, connectedGoogleBusinessName: null, isGoogleBusinessConnected: false };
     setSettings(cleared);
     handleSaveSettings(null, cleared, 'google-business');
   };
 
   const handleDisconnectTwitter = () => {
-    if (!window.confirm('Twitter/X disconnect karna chahte hain?')) return;
-    const cleared = { ...settings, twitterAccessToken: null, twitterRefreshToken: null, connectedTwitterName: null, connectedTwitterId: null, isTwitterConnected: false };
+    if (!window.confirm('Twitter/X disconnect karna chahte hain? Automated posts ruk jayenge.')) return;
+    
+    let pageData = {};
+    try { pageData = JSON.parse(settings.connectedPageName || '{}'); } catch(e){}
+    delete pageData.isTwitterConnected;
+    delete pageData.connectedTwitterName;
+    delete pageData.twitterAccessToken;
+    delete pageData.twitterRefreshToken;
+    delete pageData.connectedTwitterId;
+    const newPageName = JSON.stringify(pageData);
+
+    const cleared = { ...settings, connectedPageName: newPageName, twitterAccessToken: null, connectedTwitterName: null, isTwitterConnected: false };
     setSettings(cleared);
     handleSaveSettings(null, cleared, 'twitter');
   };
