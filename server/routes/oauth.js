@@ -863,8 +863,8 @@ router.get('/google-business/callback', async (req, res) => {
         businessName = account.accountName || account.name;
         
         try {
-          const locationsRes = await axios.get(https://mybusinessbusinessinformation.googleapis.com/v1//locations?readMask=title, {
-            headers: { Authorization: `Bearer ` }
+          const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations?readMask=title`, {
+            headers: { Authorization: `Bearer ${tokens.access_token}` }
           });
           if (locationsRes.data && locationsRes.data.locations && locationsRes.data.locations.length > 0) {
             businessName = locationsRes.data.locations[0].title;
