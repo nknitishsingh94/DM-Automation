@@ -266,6 +266,7 @@ export default function Settings() {
     if (platformName.toLowerCase() === 'twitter/x' || platformName.toLowerCase() === 'twitter') {
       window.location.href = `${API_BASE_URL}/api/oauth/twitter?token=${localStorage.getItem('insta_agent_token')}`;
       return;
+    }
     if (platformName.toLowerCase() === 'telegram') {
       const token = prompt('Enter your Telegram Bot Token:');
       if (token) {
