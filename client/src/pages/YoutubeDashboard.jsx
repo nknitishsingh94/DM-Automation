@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Youtube, Upload, Calendar, Search, 
@@ -37,6 +37,36 @@ export default function YoutubeDashboard() {
   const [aiPrompt, setAiPrompt] = useState('');
   const [generatedThumb, setGeneratedThumb] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isDraggingThumb, setIsDraggingThumb] = useState(false);
+
+  const handleDragOverThumb = (e) => {
+    e.preventDefault();
+    setIsDraggingThumb(true);
+  };
+  const handleDragLeaveThumb = (e) => {
+    e.preventDefault();
+    setIsDraggingThumb(false);
+  };
+  const handleDropThumb = (e) => {
+    e.preventDefault();
+    setIsDraggingThumb(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleThumbFile(e.dataTransfer.files[0]);
+    }
+  };
+  const handleThumbFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      handleThumbFile(e.target.files[0]);
+    }
+  };
+  const handleThumbFile = (file) => {
+    if (file.type.startsWith('image/')) {
+      const url = URL.createObjectURL(file);
+      setGeneratedThumb(url);
+    } else {
+      notify("Please upload an image file for thumbnail", "error");
+    }
+  };
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -414,29 +444,43 @@ export default function YoutubeDashboard() {
         )}
 
         {activeTab === 'thumbnails' && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px', background: '#f8fafc', borderRadius: '16px', border: '2px dashed #cbd5e1', padding: '32px' }}>
+          <div 
+            onDragOver={handleDragOverThumb}
+            onDragLeave={handleDragLeaveThumb}
+            onDrop={handleDropThumb}
+            onClick={() => { if (!generatedThumb && !isGenerating) thumbInputRef.current?.click(); }}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px', background: isDraggingThumb ? '#eff6ff' : '#f8fafc', borderRadius: '16px', border: `2px dashed ${isDraggingThumb ? '#3b82f6' : '#cbd5e1'}`, padding: '32px', cursor: !generatedThumb ? 'pointer' : 'default', transition: 'all 0.2s ease' }}
+          >
+            <input type="file" accept="image/*" ref={thumbInputRef} style={{ display: 'none' }} onChange={handleThumbFileChange} />
             {!generatedThumb ? (
-              <>
-                <div style={{ width: '64px', height: '64px', background: '#ffedd5', color: '#ea580c', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+              <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '400px' }}>
+                <div style={{ width: '64px', height: '64px', background: '#ffedd5', color: '#ea580c', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', cursor: 'pointer' }} onClick={() => thumbInputRef.current?.click()}>
                   <ImageIcon size={32} />
                 </div>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0' }}>AI Thumbnail Generator</h2>
-                <p style={{ color: '#64748b', maxWidth: '400px', textAlign: 'center', marginBottom: '24px' }}>Let our AI analyze your video title and generate a high-converting thumbnail.</p>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0', textAlign: 'center' }}>AI Thumbnail Generator</h2>
+                <p style={{ color: '#64748b', textAlign: 'center', marginBottom: '24px' }}>Let our AI analyze your video title and generate a high-converting thumbnail, or drag and drop your own image here.</p>
                 <input 
                   type="text" 
                   value={aiPrompt}
                   onChange={(e) => setAiPrompt(e.target.value)}
                   placeholder="Enter video title or idea..." 
-                  style={{ width: '100%', maxWidth: '400px', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', marginBottom: '16px' }} 
+                  style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', marginBottom: '16px' }} 
                 />
                 <button 
-                  onClick={generateAIThumbnail} 
+                  onClick={(e) => { e.stopPropagation(); generateAIThumbnail(); }} 
                   disabled={isGenerating}
-                  style={{ background: '#ea580c', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontWeight: '700', cursor: isGenerating ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)', opacity: isGenerating ? 0.7 : 1 }}
+                  style={{ background: '#ea580c', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontWeight: '700', cursor: isGenerating ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)', opacity: isGenerating ? 0.7 : 1, width: '100%', justifyContent: 'center' }}
                 >
-                  <Sparkles size={18} /> {isGenerating ? 'Generating...' : 'Generate Thumbnail'}
+                  <Sparkles size={18} /> {isGenerating ? 'Generating...' : 'Generate AI Thumbnail'}
                 </button>
-              </>
+                <div style={{ margin: '16px 0', color: '#94a3b8', fontSize: '0.9rem', fontWeight: '600' }}>OR</div>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); thumbInputRef.current?.click(); }}
+                  style={{ background: '#f1f5f9', color: '#475569', padding: '12px 24px', borderRadius: '8px', border: '1px solid #cbd5e1', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center' }}
+                >
+                  <Upload size={18} /> Upload Custom Thumbnail
+                </button>
+              </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                 <img src={generatedThumb} alt="Generated Thumbnail" style={{ width: '100%', maxWidth: '500px', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }} />
