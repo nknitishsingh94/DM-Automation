@@ -749,7 +749,13 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
         console.error("🔥 Campaign AI generation failed, falling back to static response:", aiErr);
       }
     }
-    const dmPromise = sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons, '', commentId);
+    let dmPromise;
+    if (platform === 'whatsapp') {
+      // WhatsApp uses the Cloud API — sendMessageToInstagram won't work here
+      dmPromise = sendWhatsAppMessage(chatId, finalResponse, userId);
+    } else {
+      dmPromise = sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons, '', commentId);
+    }
 
     let commentPromise = Promise.resolve(true);
     if (source === 'comment' && commentId) {
