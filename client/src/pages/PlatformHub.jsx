@@ -56,8 +56,8 @@ const PlatformHub = () => {
       icon: <Youtube size={40} />,
       color: '#ff0000',
       gradient: 'linear-gradient(135deg, #ff0000, #dc2626)',
-      isConnected: settings && settings.isYouTubeConnected,
-      accountName: settings?.connectedYouTubeName || 'YouTube Channel'
+      isConnected: settings && (settings.isYouTubeConnected || settings.isYoutubeConnected),
+      accountName: settings?.connectedYouTubeName || settings?.youtubeChannelName || 'YouTube Channel'
     },
     {
       id: 'linkedin',

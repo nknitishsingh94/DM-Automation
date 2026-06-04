@@ -101,7 +101,8 @@ export default function Settings() {
           facebookAutomationEnabled: data.facebookAutomationEnabled ?? false,
           isAccountConnected: !!data.instagramAccessToken && !!data.businessAccountId,
           isFacebookConnected: !!data.facebookAccessToken && !!data.facebookPageId,
-          isYouTubeConnected: !!data.isYouTubeConnected,
+          isYouTubeConnected: !!data.isYouTubeConnected || !!data.isYoutubeConnected,
+          connectedYouTubeName: data.connectedYouTubeName || data.youtubeChannelName || '',
           isLinkedInConnected: !!data.isLinkedInConnected,
           isGoogleBusinessConnected: !!data.isGoogleBusinessConnected,
           isTwitterConnected: !!data.isTwitterConnected,
@@ -182,7 +183,8 @@ export default function Settings() {
           facebookAutomationEnabled: data.facebookAutomationEnabled ?? false,
           isAccountConnected: !!data.instagramAccessToken && !!data.businessAccountId,
           isFacebookConnected: !!data.facebookAccessToken && !!data.facebookPageId,
-          isYouTubeConnected: !!data.isYouTubeConnected,
+          isYouTubeConnected: !!data.isYouTubeConnected || !!data.isYoutubeConnected,
+          connectedYouTubeName: data.connectedYouTubeName || data.youtubeChannelName || '',
           isLinkedInConnected: !!data.isLinkedInConnected,
           isGoogleBusinessConnected: !!data.isGoogleBusinessConnected,
           isTwitterConnected: !!data.isTwitterConnected,
@@ -585,7 +587,7 @@ export default function Settings() {
                   </div>
                 </div>
               </div>
-              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedYouTubeName || 'YouTube Channel'}</div>
+              <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>{settings.connectedYouTubeName || settings.youtubeChannelName || 'YouTube Channel'}</div>
               <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Ready for automated uploads</div>
               
               <button onClick={handleDisconnectYouTube}
