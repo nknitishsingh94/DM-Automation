@@ -62,13 +62,12 @@ export default function Settings() {
   const { notify } = useNotification();
 
   const platformsList = [
-    { name: 'TikTok', icon: MusicIcon, color: '#000000', enabled: false },
     { name: 'Instagram', icon: Instagram, color: '#ec4899', enabled: true },
     { name: 'Facebook', icon: Facebook, color: '#1877f2', enabled: true },
     { name: 'YouTube', icon: Youtube, color: '#ff0000', enabled: true },
     { name: 'LinkedIn', icon: Linkedin, color: '#0077b5', enabled: true },
     { name: 'Twitter/X', icon: Twitter, color: '#0f1419', enabled: true },
-    { name: 'Threads', icon: ThreadsIcon, color: '#000000', enabled: false },
+    { name: 'Threads', icon: ThreadsIcon, color: '#000000', enabled: true },
     { name: 'Pinterest', icon: Save, color: '#bd081c', enabled: true },
     { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: true },
     { name: 'Telegram', icon: Send, color: '#0088cc', enabled: false },
@@ -401,7 +400,7 @@ export default function Settings() {
             {showPlatformDropdown && (
               <div className="filter-dropdown" style={{ right: 0, left: 'auto', maxHeight: '320px', overflowY: 'auto', width: '200px' }}>
                 <div onClick={() => { setPlatformFilter('All platforms'); setShowPlatformDropdown(false); }} className="filter-item" style={{ fontWeight: 'bold' }}>All platforms</div>
-                {platformsList.filter(plat => plat.name !== 'WhatsApp' && plat.name !== 'Threads').map(plat => (
+                {platformsList.filter(plat => plat.name !== 'WhatsApp').map(plat => (
                   <div 
                     key={plat.name} 
                     onClick={() => { setPlatformFilter(plat.name); setShowPlatformDropdown(false); }} 
@@ -483,7 +482,8 @@ export default function Settings() {
           (settings.isYouTubeConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'YouTube')) ||
           (settings.isLinkedInConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'LinkedIn')) ||
           (settings.isGoogleBusinessConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Google Business')) ||
-          (settings.isTwitterConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X'))
+          (settings.isTwitterConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X')) ||
+          (settings.isThreadsConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Threads'))
         ) ? (
           /* Active Integration Card Grid View */
           <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', alignItems: 'stretch' }}>
@@ -721,6 +721,42 @@ export default function Settings() {
             </div>
             )}
 
+            {/* ---- THREADS CARD ---- */}
+            {settings.isThreadsConnected && (platformFilter === 'All platforms' || platformFilter === 'Threads') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '8px', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <ThreadsIcon size={22} color="white" />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1f2937' }}>Threads</h4>
+                    <span style={{ display: 'inline-block', background: '#f3f4f6', color: '#374151', fontSize: '0.68rem', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', marginTop: '2px' }}>connected</span>
+                  </div>
+                </div>
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Threads: Page ID ${settings.threadsPageId || 'N/A'}`, 'info')} />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '0.88rem', fontWeight: '700', color: '#374151' }}>@{settings.connectedThreadsName || 'unknown'}</span>
+                <span style={{ cursor: 'pointer' }} onClick={() => { navigator.clipboard.writeText(settings.connectedThreadsName || ''); notify('Username copied!', 'success'); }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </span>
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>Ready for reply monitoring</div>
+              
+              <button onClick={handleDisconnectThreads}
+                style={{ marginTop: 'auto', width: '100%', padding: '8px', background: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#ef4444'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#d1d5db'; e.currentTarget.style.color='#374151'; }}
+              >Disconnect</button>
+              <button onClick={() => window.open(`https://threads.net/@${(settings.connectedThreadsName || '').replace(/^@/, '')}`, '_blank')}
+                style={{ width: '100%', padding: '8px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f3f4f6'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+              >Profile</button>
+            </div>
+            )}
+
           </div>
         ) : (
           /* Empty Connections slot matching screenshot exactly */
@@ -846,7 +882,7 @@ export default function Settings() {
 
             {/* Grid of Platforms */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '12px', maxHeight: '380px', overflowY: 'auto', padding: '4px' }}>
-              {platformsList.filter(plat => plat.name !== 'WhatsApp' && plat.name !== 'Threads').map(platform => (
+              {platformsList.filter(plat => plat.name !== 'WhatsApp').map(platform => (
                 <div 
                   key={platform.name}
                   onClick={() => {
