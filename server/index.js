@@ -2753,9 +2753,9 @@ app.post('/api/settings', verifyToken, async (req, res) => {
       'facebookAccessToken', 'facebookPageId', 'connectedFacebookName', 'isFacebookConnected', 'facebookAutomationEnabled',
       'whatsappToken', 'whatsappPhoneNumberId', 'connectedWhatsAppName', 'isWhatsAppConnected', 'whatsappAutomationEnabled',
       'telegramToken', 'isTelegramConnected', 'telegramAutomationEnabled',
-      'twitterApiKey', 'isTwitterConnected', 'twitterAutomationEnabled',
-      'youtubeApiKey', 'isYouTubeConnected', 'youtubeAutomationEnabled',
-      'linkedinAccessToken', 'isLinkedInConnected', 'linkedinAutomationEnabled',
+      'twitterApiKey', 'twitterAutomationEnabled',
+      'youtubeApiKey', 'youtubeAutomationEnabled',
+      'linkedinAccessToken', 'linkedinAutomationEnabled',
       'lastTestedAt',
       'aiFallbackMessage', 'aiName', 'aiTone', 'aiKnowledgeBase', 'aiTemperature',
       'connectedPageName', 'whatsappBusinessAccountId'
