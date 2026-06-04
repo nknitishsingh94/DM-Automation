@@ -859,7 +859,19 @@ router.get('/google-business/callback', async (req, res) => {
         headers: { Authorization: `Bearer ${tokens.access_token}` }
       });
       if (accountsRes.data && accountsRes.data.accounts && accountsRes.data.accounts.length > 0) {
-        businessName = accountsRes.data.accounts[0].accountName || accountsRes.data.accounts[0].name;
+        const account = accountsRes.data.accounts[0];
+        businessName = account.accountName || account.name;
+        
+        try {
+          const locationsRes = await axios.get(https://mybusinessbusinessinformation.googleapis.com/v1//locations?readMask=title, {
+            headers: { Authorization: `Bearer ` }
+          });
+          if (locationsRes.data && locationsRes.data.locations && locationsRes.data.locations.length > 0) {
+            businessName = locationsRes.data.locations[0].title;
+          }
+        } catch (locErr) {
+          console.warn('Could not fetch Google Business locations:', locErr.message);
+        }
       }
     } catch (gbErr) {
       console.warn("Could not fetch Google Business account name:", gbErr.message);
@@ -1040,4 +1052,5 @@ router.get('/twitter/callback', async (req, res) => {
 });
 
 export default router;
+
 
