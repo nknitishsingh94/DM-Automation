@@ -397,19 +397,9 @@ export default function Connections() {
 
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Filters & Actions Row */}
-      <div className="settings-filters" style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        flexWrap: 'wrap', 
-        gap: '16px',
-        padding: '8px 0',
-        borderBottom: '1px solid #f3f4f6',
-        position: 'relative'
-      }}>
-        {/* Left Action: New Connection Button */}
-        <div>
+        
+        {/* Top-right button for Connections tab */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', alignItems: 'center' }}>
           <button 
             className="settings-header-btn"
             onClick={() => setShowConnectModal(true)}
@@ -434,6 +424,18 @@ export default function Connections() {
             <Plus size={18} /> New Connection
           </button>
         </div>
+
+      {/* Filters Row */}
+      <div className="settings-filters" style={{ 
+        display: 'flex', 
+        justifyContent: 'flex-end', 
+        alignItems: 'center', 
+        flexWrap: 'wrap', 
+        gap: '16px',
+        padding: '8px 0',
+        borderBottom: '1px solid #f3f4f6',
+        position: 'relative'
+      }}>
 
         {/* Right filters: All platforms & All statuses dropdowns */}
         <div className="settings-filters-group" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
