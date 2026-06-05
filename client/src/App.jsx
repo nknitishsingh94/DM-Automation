@@ -64,7 +64,7 @@ const WriteReview = lazyRetry(() => import('./pages/WriteReview'));
 const PlatformHub = lazyRetry(() => import('./pages/PlatformHub'));
 const PlatformDashboard = lazyRetry(() => import('./pages/PlatformDashboard'));
 const WhatsAppDashboard = lazyRetry(() => import('./pages/WhatsAppDashboard'));
-const Onboarding = lazyRetry(() => import('./pages/Onboarding'));
+
 const UniversalTriggersFeature = lazyRetry(() => import('./pages/UniversalTriggersFeature'));
 const ScheduleFeature = lazyRetry(() => import('./pages/ScheduleFeature'));
 const AllReviews = lazyRetry(() => import('./pages/AllReviews'));
@@ -105,7 +105,7 @@ function ProtectedRoute({ children }) {
 
   // More robust connection check
   const isConnected = localStorage.getItem('insta_agent_connected') === 'true';
-  const isBypassPage = ['/onboarding', '/upgrade', '/settings', '/campaigns', '/dashboard'].includes(location.pathname);
+  const isBypassPage = ['/upgrade', '/settings', '/campaigns', '/dashboard'].includes(location.pathname);
   
   if (!isConnected && !isBypassPage) {
     // We'll allow them to see the dashboard for now to help debug
@@ -649,7 +649,7 @@ function MainLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isPublic = ['/', '/public-home', '/login', '/signup', '/help', '/about', '/resources', '/blog', '/reviews'].includes(location.pathname) || location.pathname.startsWith('/blog/');
   const isEditor = ['/dm-automation-editor', '/automation-editor'].includes(location.pathname);
-  const hideSidebar = isPublic || location.pathname === '/onboarding' || isEditor;
+  const hideSidebar = isPublic || isEditor;
   const hideTopBar = hideSidebar || isEditor || location.pathname === '/universal-triggers';
 
   return (
@@ -676,7 +676,7 @@ function MainLayout() {
               <Route path="/platform/whatsapp" element={<ProtectedRoute><WhatsAppDashboard /></ProtectedRoute>} />
               <Route path="/platform/:platformId" element={<ProtectedRoute><PlatformDashboard /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+              <Route path="/onboarding" element={<Navigate to="/connections" replace />} />
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
               <Route path="/universal-triggers" element={<ProtectedRoute><UniversalTriggers /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
@@ -697,8 +697,8 @@ function MainLayout() {
               <Route path="/broadcasts" element={<ProtectedRoute><Broadcasts /></ProtectedRoute>} />
               <Route path="/flow-builder/:id" element={<ProtectedRoute><FlowBuilder /></ProtectedRoute>} />
               <Route path="/refer" element={<ProtectedRoute><Referral /></ProtectedRoute>} />
-              <Route path="/login" element={user ? <Navigate to="/onboarding" /> : <Login />} />
-              <Route path="/signup" element={user ? <Navigate to="/onboarding" /> : <Signup />} />
+              <Route path="/login" element={user ? <Navigate to="/connections" /> : <Login />} />
+              <Route path="/signup" element={user ? <Navigate to="/connections" /> : <Signup />} />
               <Route path="/help" element={<HelpCenter />} />
               <Route path="/about" element={<About />} />
               <Route path="/resources" element={<Resources />} />
