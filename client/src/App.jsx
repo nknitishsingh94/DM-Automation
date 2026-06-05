@@ -435,6 +435,11 @@ function Sidebar({ isMobileOpen, onClose }) {
               <Link2 size={18} />
               <span>Connections</span>
             </NavLink>
+            <NavLink to="/scheduling" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Calendar size={18} />
+              <span>Post</span>
+              <span className="sidebar-badge badge-new">HOT</span>
+            </NavLink>
             <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Home size={18} />
               <span>Home</span>
@@ -452,11 +457,6 @@ function Sidebar({ isMobileOpen, onClose }) {
             >
               <Globe size={18} />
               <span>Universal Triggers</span>
-            </NavLink>
-            <NavLink to="/scheduling" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Calendar size={18} />
-              <span>Post</span>
-              <span className="sidebar-badge badge-new">HOT</span>
             </NavLink>
             <NavLink to="/ai-studio" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Sparkles size={18} />
