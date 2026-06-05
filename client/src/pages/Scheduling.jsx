@@ -29,21 +29,13 @@ export default function Scheduling() {
           }} onMouseOver={(e) => e.currentTarget.style.background = '#d33828'} onMouseOut={(e) => e.currentTarget.style.background = '#ea4335'}>
             <Plus size={18} /> Create post
           </button>
-          <button style={{
-            display: 'flex', alignItems: 'center', gap: '8px',
-            background: 'white', color: '#334155', border: '1px solid #cbd5e1',
-            padding: '10px 16px', borderRadius: '8px', fontWeight: '600',
-            fontSize: '0.9rem', cursor: 'pointer', transition: 'background 0.2s'
-          }} onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'} onMouseOut={(e) => e.currentTarget.style.background = 'white'}>
-            <UploadCloud size={18} /> Import CSV
-          </button>
         </div>
       </div>
 
       {/* Filters Row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          {['All posts', 'All platforms', 'All profiles', 'All users', 'All dates'].map((filter, idx) => (
+          {['All posts', 'All platforms', 'All users', 'All dates'].map((filter, idx) => (
             <button key={idx} style={{
               display: 'flex', alignItems: 'center', gap: '6px',
               background: 'white', color: '#475569', border: '1px solid #cbd5e1',
@@ -56,28 +48,6 @@ export default function Scheduling() {
           ))}
         </div>
         
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <button style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            background: 'white', color: '#475569', border: '1px solid #cbd5e1',
-            padding: '8px 12px', borderRadius: '6px', fontSize: '0.85rem',
-            fontWeight: '500', cursor: 'pointer'
-          }}>
-            <ArrowDownUp size={14} /> Scheduled (new) <ChevronDown size={14} />
-          </button>
-          
-          <div style={{ display: 'flex', border: '1px solid #cbd5e1', borderRadius: '6px', overflow: 'hidden' }}>
-            <button style={{ background: '#94a3b8', color: 'white', border: 'none', padding: '8px 10px', cursor: 'pointer' }}><Grid size={16} /></button>
-            <button style={{ background: 'white', color: '#64748b', border: 'none', borderLeft: '1px solid #cbd5e1', padding: '8px 10px', cursor: 'pointer' }}><List size={16} /></button>
-            <button style={{ background: 'white', color: '#64748b', border: 'none', borderLeft: '1px solid #cbd5e1', padding: '8px 10px', cursor: 'pointer' }}><Calendar size={16} /></button>
-          </div>
-          
-          <div style={{ display: 'flex', border: '1px solid #cbd5e1', borderRadius: '6px', overflow: 'hidden', alignItems: 'center' }}>
-            <button style={{ background: 'white', color: '#64748b', border: 'none', padding: '8px', cursor: 'pointer' }}><Minus size={14} /></button>
-            <span style={{ fontSize: '0.8rem', fontWeight: '600', color: '#475569', padding: '0 8px' }}>4</span>
-            <button style={{ background: 'white', color: '#64748b', border: 'none', padding: '8px', cursor: 'pointer' }}><Plus size={14} /></button>
-          </div>
-        </div>
       </div>
 
       {/* Empty State */}
