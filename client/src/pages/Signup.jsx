@@ -90,7 +90,7 @@ export default function Signup() {
       
       if (res.ok) {
         login(data.user, data.token);
-        navigate('/onboarding');
+        navigate('/connections');
       } else {
         // Look for message or error key from backend
         setError(data.message || data.error || 'Signup failed. Please try again.');
@@ -161,7 +161,7 @@ export default function Signup() {
       const data = await res.json();
       if (res.ok) {
         login(data.user, data.token);
-        navigate('/onboarding');
+        navigate('/connections');
       } else {
         setError(data.message || 'Google login failed');
       }
@@ -206,7 +206,7 @@ export default function Signup() {
       const data = await res.json();
       if (res.ok) {
         login(data.user, data.token);
-        navigate('/onboarding');
+        navigate('/connections');
       } else {
         setError(data.message || 'Facebook login failed');
       }
