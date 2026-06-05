@@ -2837,10 +2837,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
     // Safety: remove any unknown columns before saving
     delete data.connectionError;
     delete data._platform;
-    delete data.isThreadsConnected;
-    delete data.threadsAccessToken;
-    delete data.threadsPageId;
-    delete data.connectedThreadsName;
 
     const oldSettings = await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);

@@ -332,7 +332,7 @@ export default function Connections() {
     delete pageData.youtubeChannelId;
     const newPageName = JSON.stringify(pageData);
 
-    const cleared = { ...settings, connectedPageName: newPageName, youtubeAccessToken: null, youtubeRefreshToken: null, connectedYouTubeName: null, isYouTubeConnected: false };
+    const cleared = { ...settings, connectedPageName: newPageName, youtubeAccessToken: null, youtubeRefreshToken: null, connectedYouTubeName: null, isYouTubeConnected: false, youtubeChannelId: null, isYoutubeConnected: false, youtubeChannelName: null };
     setSettings(cleared);
     handleSaveSettings(null, cleared, 'youtube');
   };
@@ -380,7 +380,7 @@ export default function Connections() {
     delete pageData.connectedTwitterId;
     const newPageName = JSON.stringify(pageData);
 
-    const cleared = { ...settings, connectedPageName: newPageName, twitterAccessToken: null, connectedTwitterName: null, isTwitterConnected: false };
+    const cleared = { ...settings, connectedPageName: newPageName, twitterAccessToken: null, connectedTwitterName: null, isTwitterConnected: false, twitterRefreshToken: null, connectedTwitterId: null };
     setSettings(cleared);
     handleSaveSettings(null, cleared, 'twitter');
   };
