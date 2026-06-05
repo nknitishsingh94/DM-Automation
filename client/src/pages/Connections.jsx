@@ -397,37 +397,10 @@ export default function Connections() {
 
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          {/* Top-right buttons for Connections tab */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', alignItems: 'center' }}>
-            <button 
-              className="settings-header-btn"
-              onClick={() => setShowConnectModal(true)}
-              style={{ 
-                background: '#ea580c', 
-                color: 'white', 
-                padding: '10px 18px', 
-                borderRadius: '8px', 
-                fontWeight: '600', 
-                fontSize: '0.88rem',
-                border: 'none', 
-                cursor: 'pointer', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '6px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                transition: 'background 0.2s'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.background = '#c2410c'}
-              onMouseOut={(e) => e.currentTarget.style.background = '#ea580c'}
-            >
-              <Plus size={16} /> New Connection
-            </button>
-          </div>
-
-      {/* Filters Row matching screenshot */}
+      {/* Filters & Actions Row */}
       <div className="settings-filters" style={{ 
         display: 'flex', 
-        justifyContent: 'flex-end', 
+        justifyContent: 'space-between', 
         alignItems: 'center', 
         flexWrap: 'wrap', 
         gap: '16px',
@@ -435,6 +408,33 @@ export default function Connections() {
         borderBottom: '1px solid #f3f4f6',
         position: 'relative'
       }}>
+        {/* Left Action: New Connection Button */}
+        <div>
+          <button 
+            className="settings-header-btn"
+            onClick={() => setShowConnectModal(true)}
+            style={{ 
+              background: '#ea580c', 
+              color: 'white', 
+              padding: '12px 24px', 
+              borderRadius: '10px', 
+              fontWeight: '700', 
+              fontSize: '1.05rem',
+              border: 'none', 
+              cursor: 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)',
+              transition: 'background 0.2s, transform 0.2s'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = '#c2410c'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = '#ea580c'; e.currentTarget.style.transform = 'translateY(0)'; }}
+          >
+            <Plus size={18} /> New Connection
+          </button>
+        </div>
+
         {/* Right filters: All platforms & All statuses dropdowns */}
         <div className="settings-filters-group" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           
