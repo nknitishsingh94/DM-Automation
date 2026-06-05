@@ -877,6 +877,20 @@ export default function Scheduling() {
           }} onMouseOver={(e) => e.currentTarget.style.background = '#d33828'} onMouseOut={(e) => e.currentTarget.style.background = '#ea4335'}>
             <Plus size={18} /> Create post
           </button>
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            background: '#ea4335', color: 'white', border: 'none',
+            padding: '10px 16px', borderRadius: '8px', fontWeight: '600',
+            fontSize: '0.9rem', cursor: 'pointer', transition: 'background 0.2s'
+          }} onMouseOver={(e) => e.currentTarget.style.background = '#d33828'} onMouseOut={(e) => e.currentTarget.style.background = '#ea4335'}
+          onClick={() => {}}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Import CSV
+          </button>
         </div>
       </div>
 
@@ -894,6 +908,60 @@ export default function Scheduling() {
               {filter} <ChevronDown size={14} />
             </button>
           ))}
+          {/* Scheduled filter button */}
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            background: 'white', color: '#475569', border: '1px solid #cbd5e1',
+            padding: '8px 12px', borderRadius: '6px', fontSize: '0.85rem',
+            fontWeight: '500', cursor: 'pointer'
+          }}>
+            <Clock size={14} style={{ marginRight: '4px' }} />
+            Scheduled (new) <ChevronDown size={14} />
+          </button>
+        </div>
+        {/* View mode icons */}
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+          <button style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: '32px', height: '32px', borderRadius: '6px', background: '#7c3aed', color: 'white',
+            border: 'none', cursor: 'pointer'
+          }} title="Grid view">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+              <rect x="0" y="0" width="6" height="6" rx="1"/>
+              <rect x="8" y="0" width="6" height="6" rx="1"/>
+              <rect x="0" y="8" width="6" height="6" rx="1"/>
+              <rect x="8" y="8" width="6" height="6" rx="1"/>
+            </svg>
+          </button>
+          <button style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: '32px', height: '32px', borderRadius: '6px', background: 'transparent', color: '#64748b',
+            border: '1px solid #cbd5e1', cursor: 'pointer'
+          }} title="List view">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+              <rect x="0" y="0" width="14" height="3" rx="1"/>
+              <rect x="0" y="5" width="14" height="3" rx="1"/>
+              <rect x="0" y="10" width="14" height="3" rx="1"/>
+            </svg>
+          </button>
+          <button style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: '32px', height: '32px', borderRadius: '6px', background: 'transparent', color: '#64748b',
+            border: '1px solid #cbd5e1', cursor: 'pointer'
+          }} title="Calendar view">
+            <Calendar size={14} />
+          </button>
+          {/* Zoom controls */}
+          <button style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: '28px', height: '32px', borderRadius: '6px', background: 'transparent', color: '#64748b',
+            border: '1px solid #cbd5e1', borderRight: 'none', cursor: 'pointer', fontSize: '1rem'
+          }} title="Zoom out">−</button>
+          <button style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: '28px', height: '32px', borderRadius: '6px', background: 'transparent', color: '#64748b',
+            border: '1px solid #cbd5e1', cursor: 'pointer', fontSize: '1rem'
+          }} title="Zoom in">+</button>
         </div>
       </div>
 
