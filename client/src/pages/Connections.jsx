@@ -404,7 +404,7 @@ export default function Connections() {
             className="settings-header-btn"
             onClick={() => setShowConnectModal(true)}
             style={{ 
-              background: '#ea580c', 
+              background: '#7c3aed', 
               color: 'white', 
               padding: '12px 24px', 
               borderRadius: '10px', 
@@ -415,11 +415,11 @@ export default function Connections() {
               display: 'flex', 
               alignItems: 'center', 
               gap: '8px',
-              boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)',
+              boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)',
               transition: 'background 0.2s, transform 0.2s'
             }}
-            onMouseOver={(e) => { e.currentTarget.style.background = '#c2410c'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            onMouseOut={(e) => { e.currentTarget.style.background = '#ea580c'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            onMouseOver={(e) => { e.currentTarget.style.background = '#6d28d9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = '#7c3aed'; e.currentTarget.style.transform = 'translateY(0)'; }}
           >
             <Plus size={18} /> New Connection
           </button>
@@ -567,7 +567,7 @@ export default function Connections() {
               
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
-                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  onClick={(e) => { e.stopPropagation(); window.open(`https://instagram.com/${settings.connectedInstagramName || ''}`, '_blank'); }}
                   style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
                   onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
@@ -607,7 +607,7 @@ export default function Connections() {
               
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
-                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  onClick={(e) => { e.stopPropagation(); window.open(`https://facebook.com/${settings.connectedFacebookName || settings.facebookPageId || ''}`, '_blank'); }}
                   style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
                   onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
@@ -647,7 +647,7 @@ export default function Connections() {
               
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
-                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  onClick={(e) => { e.stopPropagation(); window.open(`https://youtube.com/@${settings.connectedYouTubeName || settings.youtubeChannelName || ''}`, '_blank'); }}
                   style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
                   onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
@@ -687,7 +687,7 @@ export default function Connections() {
               
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
-                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  onClick={(e) => { e.stopPropagation(); window.open(`https://linkedin.com/in/${settings.connectedLinkedInName || ''}`, '_blank'); }}
                   style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
                   onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
@@ -727,7 +727,7 @@ export default function Connections() {
               
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
-                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  onClick={(e) => { e.stopPropagation(); window.open(`https://x.com/${settings.connectedTwitterName || ''}`, '_blank'); }}
                   style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
                   onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
@@ -767,7 +767,7 @@ export default function Connections() {
               
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
-                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  onClick={(e) => { e.stopPropagation(); window.open('https://business.google.com', '_blank'); }}
                   style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
                   onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
@@ -809,7 +809,7 @@ export default function Connections() {
               
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
-                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  onClick={(e) => { e.stopPropagation(); window.open(`https://threads.net/@${settings.connectedThreadsName || settings.connectedInstagramName || ''}`, '_blank'); }}
                   style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
                   onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
@@ -849,7 +849,7 @@ export default function Connections() {
               
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
-                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  onClick={(e) => { e.stopPropagation(); window.open(`https://wa.me/${settings.whatsappPhoneNumberId || ''}`, '_blank'); }}
                   style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
                   onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
