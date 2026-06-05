@@ -860,42 +860,10 @@ export default function Scheduling() {
   });
 
   return (
-    <div style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ padding: '0', maxWidth: 'none', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100vh', display: 'flex', flexDirection: 'column' }}>
       
-      {/* Header Section */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
-        <div>
-          <h1 style={{ margin: '0 0 8px 0', fontSize: '1.75rem', fontWeight: '700', color: '#1e293b' }}>Posts</h1>
-          <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>Manage your scheduled and published content</p>
-        </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button onClick={() => setShowCreate(true)} style={{
-            display: 'flex', alignItems: 'center', gap: '8px',
-            background: '#ea4335', color: 'white', border: 'none',
-            padding: '10px 16px', borderRadius: '8px', fontWeight: '600',
-            fontSize: '0.9rem', cursor: 'pointer', transition: 'background 0.2s'
-          }} onMouseOver={(e) => e.currentTarget.style.background = '#d33828'} onMouseOut={(e) => e.currentTarget.style.background = '#ea4335'}>
-            <Plus size={18} /> Create post
-          </button>
-          <button style={{
-            display: 'flex', alignItems: 'center', gap: '8px',
-            background: '#ea4335', color: 'white', border: 'none',
-            padding: '10px 16px', borderRadius: '8px', fontWeight: '600',
-            fontSize: '0.9rem', cursor: 'pointer', transition: 'background 0.2s'
-          }} onMouseOver={(e) => e.currentTarget.style.background = '#d33828'} onMouseOut={(e) => e.currentTarget.style.background = '#ea4335'}
-          onClick={() => {}}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/>
-              <line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-            Import CSV
-          </button>
-        </div>
-      </div>
-
       {/* Filters Row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '16px', padding: '16px 24px 0 24px' }}>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           {['All posts', 'All platforms', 'All users', 'All dates'].map((filter, idx) => (
             <button key={idx} style={{
