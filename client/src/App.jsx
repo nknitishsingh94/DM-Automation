@@ -615,9 +615,10 @@ function TopBar({ onMenuClick }) {
       case '/ai-studio': return 'AI Studio';
       case '/forms': return 'Forms';
       case '/broadcasts': return 'Broadcasts';
-      case '/flow-builder/new': return 'Visual Flow Builder';
+      case '/hub': return 'Hub';
       default: 
         if (location.pathname.startsWith('/flow-builder/')) return 'Editing Flow';
+        if (location.pathname.startsWith('/platform/')) return 'Hub';
         return 'Home';
     }
   };
