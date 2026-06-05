@@ -1353,13 +1353,12 @@ tr:hover {
 .pricing-card {
   background: #fff;
   border-radius: 24px;
-  padding: 40px;
+  padding: 30px;
   border: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .pricing-card:hover {

@@ -304,9 +304,18 @@ export default function Connections() {
 
   const handleDisconnectThreads = () => {
     if (!window.confirm('Threads disconnect karna chahte hain?')) return;
-    const cleared = { ...settings, connectedPageName: null, isThreadsConnected: false, threadsAccessToken: null, threadsPageId: null, connectedThreadsName: null };
+    
+    let pageData = {};
+    try { pageData = JSON.parse(settings.connectedPageName || '{}'); } catch(e){}
+    delete pageData.isThreadsConnected;
+    delete pageData.connectedThreadsName;
+    delete pageData.threadsAccessToken;
+    delete pageData.threadsPageId;
+    const newPageName = JSON.stringify(pageData);
+
+    const cleared = { ...settings, connectedPageName: newPageName, isThreadsConnected: false, threadsAccessToken: null, threadsPageId: null, connectedThreadsName: null };
     setSettings(cleared);
-    handleSaveSettings(null, { ...cleared, connectedPageName: null }, 'threads');
+    handleSaveSettings(null, cleared, 'threads');
   };
 
   const handleDisconnectYouTube = () => {
@@ -385,17 +394,7 @@ export default function Connections() {
   return (
     <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', padding: '0 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
       
-      {/* Connections Header */}
-      <div className="settings-header" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
-        <div style={{ textAlign: 'left' }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
-            Connections
-          </h1>
-          <p style={{ color: '#6b7280', fontSize: '0.95rem', fontWeight: '400', margin: 0 }}>
-            Manage profiles and platform integrations
-          </p>
-        </div>
-      </div>
+
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* Top-right buttons for Connections tab */}
@@ -422,25 +421,6 @@ export default function Connections() {
               onMouseOut={(e) => e.currentTarget.style.background = '#ea580c'}
             >
               <Plus size={16} /> New Connection
-            </button>
-            <button 
-              style={{ 
-                background: 'white', 
-                color: '#374151', 
-                padding: '10px 18px', 
-                borderRadius: '8px', 
-                fontWeight: '600', 
-                fontSize: '0.88rem',
-                border: '1px solid #d1d5db', 
-                cursor: 'pointer', 
-                display: 'flex', 
-                alignItems: 'center',
-                transition: 'background 0.2s'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.background = '#f9fafb'}
-              onMouseOut={(e) => e.currentTarget.style.background = 'white'}
-            >
-              New Profile
             </button>
           </div>
 

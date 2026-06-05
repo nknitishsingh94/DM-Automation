@@ -44,14 +44,6 @@ export default function Settings() {
       
       {/* Settings Header */}
       <div className="settings-header" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
-        <div style={{ textAlign: 'left' }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
-            Settings
-          </h1>
-          <p style={{ color: '#6b7280', fontSize: '0.95rem', fontWeight: '400', margin: 0 }}>
-            Manage your profile and billing
-          </p>
-        </div>
 
         {/* Tab Navigation */}
         <div style={{ 

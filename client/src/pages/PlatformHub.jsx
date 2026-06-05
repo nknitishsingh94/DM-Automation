@@ -143,21 +143,7 @@ const PlatformHub = () => {
 
   return (
     <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
-      <div style={{ marginBottom: '40px', textAlign: 'center' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'rgba(124, 58, 237, 0.1)', color: '#7c3aed', borderRadius: '50px', fontSize: '0.85rem', fontWeight: '800', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-          <Zap size={16} /> Automation Suite
-        </div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#0f172a', marginBottom: '16px', letterSpacing: '-1px' }}>
-          Platform Hub
-        </h1>
-        <p style={{ fontSize: '1.1rem', color: '#64748b', maxWidth: '600px', margin: '0 auto 24px', lineHeight: '1.6' }}>
-          Select a connected platform to access its dedicated automation workspace and analytics.
-        </p>
-        {localStorage.getItem('smart10x_reviewed') !== 'true' && (
-          <button onClick={() => navigate('/write-review')} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #7c3aed, #ec4899)', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '50px', fontWeight: '800', fontSize: '1rem', cursor: 'pointer', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.4)' }}>
-            <MessageSquare size={18} /> Write a Review
-          </button>
-        )}
+      <div style={{ marginBottom: '20px' }}>
       </div>
 
       {connectedPlatforms.length === 0 ? (

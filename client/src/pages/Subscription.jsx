@@ -117,7 +117,7 @@ export default function Subscription() {
             <p>Choose the plan that's right for your business. No hidden fees.</p>
           </div>
 
-          <div className="pricing-grid">
+          <div className="pricing-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', maxWidth: '800px', margin: '0 auto', alignItems: 'start' }}>
 
             {/* Pro Plan */}
             <div className="pricing-card pro-card">
