@@ -566,8 +566,14 @@ export default function Connections() {
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
-                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
+                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                >
+                  Profile
+                </button>
               </div>
               
               <button onClick={() => { if(window.confirm('Instagram disconnect karna chahte hain?')) { const c = { ...settings, instagramAccessToken: null, instagramPageId: null, businessAccountId: null, connectedInstagramName: null, isAccountConnected: false }; setSettings(c); handleSaveSettings(null, c, 'instagram'); } }}
@@ -600,8 +606,14 @@ export default function Connections() {
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
-                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
+                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                >
+                  Profile
+                </button>
               </div>
               
               <button onClick={handleDisconnectFacebook}
@@ -634,8 +646,14 @@ export default function Connections() {
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
-                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
+                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                >
+                  Profile
+                </button>
               </div>
               
               <button onClick={handleDisconnectYouTube}
@@ -668,8 +686,14 @@ export default function Connections() {
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
-                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
+                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                >
+                  Profile
+                </button>
               </div>
               
               <button onClick={handleDisconnectLinkedIn}
@@ -702,8 +726,14 @@ export default function Connections() {
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
-                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
+                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                >
+                  Profile
+                </button>
               </div>
               
               <button onClick={handleDisconnectTwitter}
@@ -736,8 +766,14 @@ export default function Connections() {
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
-                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
+                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                >
+                  Profile
+                </button>
               </div>
               
               <button onClick={handleDisconnectGoogleBusiness}
@@ -772,8 +808,14 @@ export default function Connections() {
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
-                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
+                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                >
+                  Profile
+                </button>
               </div>
               
               <button onClick={handleDisconnectThreads}
@@ -806,8 +848,14 @@ export default function Connections() {
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></div>
-                <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>Default</span>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); navigate('/profile'); }}
+                  style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
+                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                >
+                  Profile
+                </button>
               </div>
               
               <button onClick={handleDisconnectWhatsApp}
