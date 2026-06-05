@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   Plus, Calendar, Clock, Video, Image as ImageIcon, Send, X, Check, ChevronLeft, ChevronRight,
-  Trash2, Globe, AlertCircle, Info, Sparkles, Zap, Heart, MessageCircle, Home, Instagram,
-  Facebook, Film, Save, Layers, UploadCloud, Loader2, Link as LinkIcon, Pencil
+  ChevronDown, Trash2, Globe, AlertCircle, Info, Sparkles, Zap, Heart, MessageCircle, Home,
+  Instagram, Facebook, Film, Save, Layers, UploadCloud, Loader2, Link as LinkIcon, Pencil
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
