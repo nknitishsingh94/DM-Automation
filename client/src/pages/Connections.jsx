@@ -641,13 +641,23 @@ export default function Connections() {
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>@{settings.connectedYouTubeName || settings.youtubeChannelName || 'automation_web'}</span>
+                <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>
+                  {(() => {
+                    const name = settings.connectedYouTubeName || settings.youtubeChannelName || 'automation_web';
+                    return name.startsWith('@') ? name : '@' + name;
+                  })()}
+                </span>
                 <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
               </div>
               
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
-                  onClick={(e) => { e.stopPropagation(); window.open(`https://youtube.com/@${settings.connectedYouTubeName || settings.youtubeChannelName || ''}`, '_blank'); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const name = settings.connectedYouTubeName || settings.youtubeChannelName || '';
+                    const cleanName = name.startsWith('@') ? name.substring(1) : name;
+                    window.open(`https://youtube.com/@${cleanName}`, '_blank');
+                  }}
                   style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
                   onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
