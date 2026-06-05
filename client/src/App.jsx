@@ -615,6 +615,7 @@ function TopBar({ onMenuClick }) {
       case '/ai-studio': return 'AI Studio';
       case '/forms': return 'Forms';
       case '/broadcasts': return 'Broadcasts';
+      case '/scheduling': return 'Post';
       case '/hub': return 'Hub';
       default: 
         if (location.pathname.startsWith('/flow-builder/')) return 'Editing Flow';
