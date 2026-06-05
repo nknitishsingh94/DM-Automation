@@ -18,16 +18,15 @@ export default function Scheduling() {
       {/* Header Section */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ margin: '0 0 8px 0', fontSize: '1.75rem', fontWeight: '700', color: '#1e293b' }}>Posts</h1>
           <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>Manage your scheduled and published content</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button style={{
             display: 'flex', alignItems: 'center', gap: '8px',
-            background: '#e14d2a', color: 'white', border: 'none',
+            background: '#ea4335', color: 'white', border: 'none',
             padding: '10px 16px', borderRadius: '8px', fontWeight: '600',
             fontSize: '0.9rem', cursor: 'pointer', transition: 'background 0.2s'
-          }} onMouseOver={(e) => e.currentTarget.style.background = '#d03f20'} onMouseOut={(e) => e.currentTarget.style.background = '#e14d2a'}>
+          }} onMouseOver={(e) => e.currentTarget.style.background = '#d33828'} onMouseOut={(e) => e.currentTarget.style.background = '#ea4335'}>
             <Plus size={18} /> Create post
           </button>
           <button style={{
@@ -68,7 +67,7 @@ export default function Scheduling() {
           </button>
           
           <div style={{ display: 'flex', border: '1px solid #cbd5e1', borderRadius: '6px', overflow: 'hidden' }}>
-            <button style={{ background: '#e2e8f0', color: '#334155', border: 'none', padding: '8px 10px', cursor: 'pointer' }}><Grid size={16} /></button>
+            <button style={{ background: '#94a3b8', color: 'white', border: 'none', padding: '8px 10px', cursor: 'pointer' }}><Grid size={16} /></button>
             <button style={{ background: 'white', color: '#64748b', border: 'none', borderLeft: '1px solid #cbd5e1', padding: '8px 10px', cursor: 'pointer' }}><List size={16} /></button>
             <button style={{ background: 'white', color: '#64748b', border: 'none', borderLeft: '1px solid #cbd5e1', padding: '8px 10px', cursor: 'pointer' }}><Calendar size={16} /></button>
           </div>
@@ -105,11 +104,11 @@ export default function Scheduling() {
         
         <button style={{
           display: 'flex', alignItems: 'center', gap: '8px',
-          background: '#e14d2a', color: 'white', border: 'none',
+          background: '#ea4335', color: 'white', border: 'none',
           padding: '14px 48px', borderRadius: '8px', fontWeight: '600',
           fontSize: '1rem', cursor: 'pointer', transition: 'background 0.2s',
-          width: '400px', justifyContent: 'center'
-        }} onMouseOver={(e) => e.currentTarget.style.background = '#d03f20'} onMouseOut={(e) => e.currentTarget.style.background = '#e14d2a'}>
+          width: '300px', justifyContent: 'center'
+        }} onMouseOver={(e) => e.currentTarget.style.background = '#d33828'} onMouseOut={(e) => e.currentTarget.style.background = '#ea4335'}>
           <Plus size={20} /> Create post
         </button>
       </div>
