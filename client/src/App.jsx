@@ -634,10 +634,7 @@ function TopBar({ onMenuClick }) {
         <h1 className="page-title" style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b' }}>{getTitle()}</h1>
       </div>
       <div className="topbar-actions">
-        <NavLink to="/help" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#7c3aed', fontWeight: '700', textDecoration: 'none' }}>
-          <Users size={20} />
-          <span>Support</span>
-        </NavLink>
+        {/* Support button removed */}
       </div>
     </header>
   );
