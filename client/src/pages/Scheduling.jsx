@@ -1040,14 +1040,14 @@ export default function Scheduling() {
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>content</label>
                 
-                    <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
                       <button
                         onClick={() => setPostType('image')}
                         style={{
-                          flex: 1, padding: '10px', borderRadius: '8px',
+                          flex: 1, padding: '12px', borderRadius: '8px',
                           background: postType === 'image' ? '#7c3aed' : '#f1f5f9',
                           color: postType === 'image' ? 'white' : '#64748b',
-                          border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem',
+                          border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
                           transition: 'all 0.2s',
                           boxShadow: postType === 'image' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
                         }}
@@ -1057,10 +1057,10 @@ export default function Scheduling() {
                       <button
                         onClick={() => setPostType('carousel')}
                         style={{
-                          flex: 1, padding: '10px', borderRadius: '8px',
+                          flex: 1, padding: '12px', borderRadius: '8px',
                           background: postType === 'carousel' ? '#7c3aed' : '#f1f5f9',
                           color: postType === 'carousel' ? 'white' : '#64748b',
-                          border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem',
+                          border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
                           transition: 'all 0.2s',
                           boxShadow: postType === 'carousel' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
                         }}
@@ -1068,7 +1068,7 @@ export default function Scheduling() {
                         Carousel
                       </button>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                       <select
                         onChange={(e) => {
                           if (e.target.value) {
@@ -1078,8 +1078,8 @@ export default function Scheduling() {
                           }
                         }}
                         style={{
-                          padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1',
-                          background: 'white', color: '#475569', fontSize: '0.8rem', outline: 'none', cursor: 'pointer', maxWidth: '60%'
+                          padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1',
+                          background: 'white', color: '#475569', fontSize: '0.85rem', outline: 'none', cursor: 'pointer', maxWidth: '60%'
                         }}
                       >
                         <option value="">Use saved caption...</option>
@@ -1090,8 +1090,8 @@ export default function Scheduling() {
                       <button
                         onClick={handleSaveCaption}
                         style={{
-                          padding: '6px 12px', borderRadius: '6px', background: '#e0e7ff',
-                          color: '#4338ca', border: 'none', fontWeight: '600', fontSize: '0.8rem',
+                          padding: '8px 16px', borderRadius: '8px', background: '#e0e7ff',
+                          color: '#4338ca', border: 'none', fontWeight: '600', fontSize: '0.85rem',
                           cursor: 'pointer'
                         }}
                       >
@@ -1120,7 +1120,7 @@ export default function Scheduling() {
                             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
                           }}
                           title="Add Emoji"
-                        > icon
+                        > 😀
                         </button>
                         {showEmojiPicker && (
                           <div style={{
@@ -1147,7 +1147,7 @@ export default function Scheduling() {
                     </div>
               </div>
 
-              <div style={{ marginTop: '8px' }}>
+              <div style={{ marginTop: '24px' }}>
                 <div
                   onClick={() => fileInputRef.current.click()}
                   style={{
