@@ -646,6 +646,11 @@ export default function Scheduling() {
 
     setSelectedFiles(totalFiles);
     setPreviews(newPreviews);
+    
+    // Clear the input value so the same file can be selected again if removed
+    if (e.target) {
+      e.target.value = null;
+    }
   };
 
   const removeFile = (index) => {
