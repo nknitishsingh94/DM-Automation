@@ -139,11 +139,8 @@ export default function Connections() {
       else if (platform === 'google-business') platformLabel = 'Google Business Profile';
       else if (platform === 'twitter' || platform === 'twitter/x') platformLabel = 'Twitter profile';
 
-      notify(`🚀 ${platformLabel} linked successfully! Opening dashboard...`, "success");
+      notify(`🚀 ${platformLabel} linked successfully!`, "success");
       window.history.replaceState({}, document.title, window.location.pathname);
-      setTimeout(() => {
-        navigate('/hub');
-      }, 3500);
     } else if (params.get('oauth_error')) {
       const errorType = params.get('oauth_error');
       let msg = "Integration failed.";

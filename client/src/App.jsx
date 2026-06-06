@@ -124,6 +124,7 @@ function Sidebar({ isMobileOpen, onClose }) {
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
+  const [showAutoOpsDropdown, setShowAutoOpsDropdown] = useState(false);
 
   // Fetch workspaces
   const fetchWorkspaces = async () => {
@@ -444,13 +445,29 @@ function Sidebar({ isMobileOpen, onClose }) {
               <Home size={18} />
               <span>Home</span>
             </NavLink>
-            <NavLink 
-              to="/hub" 
-              className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}
-            >
-              <Zap size={18} />
-              <span>Platform Automation</span>
-            </NavLink>
+            <div className="nav-group">
+              <div 
+                onClick={() => setShowAutoOpsDropdown(!showAutoOpsDropdown)} 
+                className={`nav-item ${location.pathname.startsWith('/hub') ? 'active' : ''}`} 
+                style={{ cursor: 'pointer', justifyContent: 'space-between' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Zap size={18} />
+                  <span>AutoOps</span>
+                </div>
+                <ChevronDown size={14} style={{ transform: showAutoOpsDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+              </div>
+              {showAutoOpsDropdown && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', paddingLeft: '32px', marginTop: '4px' }}>
+                  <NavLink to="/hub" end className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                    Automation
+                  </NavLink>
+                  <NavLink to="/hub/message-only" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                    Message only
+                  </NavLink>
+                </div>
+              )}
+            </div>
             <NavLink 
               to="/universal-triggers" 
               className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}
