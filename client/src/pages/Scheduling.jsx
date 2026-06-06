@@ -999,7 +999,7 @@ export default function Scheduling() {
           </div>
 
           {/* Body */}
-          <div style={{ padding: '0 24px 24px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+          <div style={{ padding: '0 24px 24px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'start' }}>
             
             {/* Left Column - Content & Media */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -1174,7 +1174,7 @@ export default function Scheduling() {
             </div>
 
             {/* Right Column - Settings */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', position: 'sticky', top: '24px' }}>
               
               {/* Platforms */}
               <div>
@@ -1312,34 +1312,7 @@ export default function Scheduling() {
                 return null;
               })()}
 
-              <div style={{ marginTop: 'auto', display: 'flex', gap: '12px', paddingTop: '16px' }}>
-                <button
-                  onClick={handleAddSubmit}
-                  disabled={submitting}
-                  style={{
-                    flex: 1,
-                    background: submitting ? '#94a3b8' : 'linear-gradient(135deg, #6366f1, #ec4899)',
-                    color: 'white', border: 'none', padding: '14px 24px',
-                    borderRadius: '16px', fontWeight: '700', cursor: submitting ? 'not-allowed' : 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                    boxShadow: submitting ? 'none' : '0 4px 15px rgba(99, 102, 241, 0.3)',
-                    transition: 'all 0.2s ease',
-                    fontSize: '0.95rem'
-                  }}
-                >
-                  {submitting ? (
-                    <>
-                      <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                      scheduling...
-                    </>
-                  ) : (
-                    <>
-                      <Calendar size={18} />
-                      schedule post
-                    </>
-                  )}
-                </button>
-              </div>
+
 
             </div>
           </div>
