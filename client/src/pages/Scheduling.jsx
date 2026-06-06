@@ -1176,16 +1176,6 @@ export default function Scheduling() {
             {/* Right Column - Settings */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
-              {/* Profiles */}
-              <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '4px' }}>profiles</label>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '12px' }}>Select one or more profiles to post to their connected accounts</div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#e2e8f0', padding: '6px 12px', borderRadius: '16px', fontSize: '0.8rem', fontWeight: '600', color: '#475569', cursor: 'default' }}>
-                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#cbd5e1' }}></div>
-                  Default
-                </div>
-              </div>
-
               {/* Platforms */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '12px' }}>platforms (from 1 profile)</label>
