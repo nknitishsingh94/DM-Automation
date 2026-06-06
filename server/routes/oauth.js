@@ -219,14 +219,10 @@ router.get('/facebook/callback', async (req, res) => {
     }
 
     if (isThreads) {
-      // Serialize Threads data into connectedPageName TEXT column (no extra schema needed)
-      const threadsData = {
-        isThreadsConnected: true,
-        threadsAccessToken: pageAccessToken || longToken,
-        threadsPageId: pageId || '',
-        connectedThreadsName: instagramAccountName || facebookPageName || 'Threads Account'
-      };
-      updateData.connectedPageName = JSON.stringify(threadsData);
+      updateData.isThreadsConnected = true;
+      updateData.threadsAccessToken = pageAccessToken || longToken;
+      updateData.threadsPageId = pageId || '';
+      updateData.connectedThreadsName = instagramAccountName || facebookPageName || 'Threads Account';
       console.log(`✅ Threads: Serialized connection for user ${userId}.`);
     } else if (isWhatsApp) {
       updateData.isWhatsAppConnected = !!whatsappPhoneId;
@@ -643,17 +639,11 @@ router.get('/youtube/callback', async (req, res) => {
       connectionsQuery.workspaceId = workspaceId;
     }
 
-    const connections = await Settings.findOne(connectionsQuery);
-    let pageData = {};
-    if (connections && connections.connectedPageName) {
-      try { pageData = JSON.parse(connections.connectedPageName); } catch(e){}
-    }
-    pageData.isYouTubeConnected = true;
-    pageData.connectedYouTubeName = channelName;
-    pageData.youtubeAccessToken = tokens.access_token;
-    pageData.youtubeRefreshToken = tokens.refresh_token || (pageData.youtubeRefreshToken || null);
-    
-    const updateData = { connectedPageName: JSON.stringify(pageData) };
+    const updateData = {};
+    updateData.isYouTubeConnected = true;
+    updateData.connectedYouTubeName = channelName;
+    updateData.youtubeAccessToken = tokens.access_token;
+    updateData.youtubeRefreshToken = tokens.refresh_token || null;
 
     await Settings.findOneAndUpdate(
       connectionsQuery,
@@ -769,16 +759,10 @@ router.get('/linkedin/callback', async (req, res) => {
       connectionsQuery.workspaceId = workspaceId;
     }
 
-    const connections = await Settings.findOne(connectionsQuery);
-    let pageData = {};
-    if (connections && connections.connectedPageName) {
-      try { pageData = JSON.parse(connections.connectedPageName); } catch(e){}
-    }
-    pageData.isLinkedInConnected = true;
-    pageData.connectedLinkedInName = profileName;
-    pageData.linkedinAccessToken = accessToken;
-    
-    const updateData = { connectedPageName: JSON.stringify(pageData) };
+    const updateData = {};
+    updateData.isLinkedInConnected = true;
+    updateData.connectedLinkedInName = profileName;
+    updateData.linkedinAccessToken = accessToken;
 
     await Settings.findOneAndUpdate(
       connectionsQuery,
@@ -900,17 +884,11 @@ router.get('/google-business/callback', async (req, res) => {
       connectionsQuery.workspaceId = workspaceId;
     }
 
-    const connections = await Settings.findOne(connectionsQuery);
-    let pageData = {};
-    if (connections && connections.connectedPageName) {
-      try { pageData = JSON.parse(connections.connectedPageName); } catch(e){}
-    }
-    pageData.isGoogleBusinessConnected = true;
-    pageData.connectedGoogleBusinessName = businessName;
-    pageData.googleBusinessAccessToken = tokens.access_token;
-    pageData.googleBusinessRefreshToken = tokens.refresh_token || (pageData.googleBusinessRefreshToken || null);
-    
-    const updateData = { connectedPageName: JSON.stringify(pageData) };
+    const updateData = {};
+    updateData.isGoogleBusinessConnected = true;
+    updateData.connectedGoogleBusinessName = businessName;
+    updateData.googleBusinessAccessToken = tokens.access_token;
+    updateData.googleBusinessRefreshToken = tokens.refresh_token || null;
 
     await Settings.findOneAndUpdate(
       connectionsQuery,
@@ -1040,18 +1018,12 @@ router.get('/twitter/callback', async (req, res) => {
       connectionsQuery.workspaceId = workspaceId;
     }
 
-    const connections = await Settings.findOne(connectionsQuery);
-    let pageData = {};
-      if (connections && connections.connectedPageName) {
-        try { pageData = JSON.parse(connections.connectedPageName); } catch(e){}
-      }
-      pageData.isTwitterConnected = true;
-      pageData.connectedTwitterName = profileName;
-      pageData.twitterAccessToken = access_token;
-      pageData.twitterRefreshToken = refresh_token || (pageData.twitterRefreshToken || null);
-      pageData.connectedTwitterId = profileId;
-      
-      const updateData = { connectedPageName: JSON.stringify(pageData) };
+    const updateData = {};
+    updateData.isTwitterConnected = true;
+    updateData.connectedTwitterName = profileName;
+    updateData.twitterAccessToken = access_token;
+    updateData.twitterRefreshToken = refresh_token || null;
+    updateData.connectedTwitterId = profileId;
 
     await Settings.findOneAndUpdate(
       connectionsQuery,
