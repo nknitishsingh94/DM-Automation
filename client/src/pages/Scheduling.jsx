@@ -283,6 +283,9 @@ export default function Scheduling() {
   const textareaRef = useRef(null);
   const popularEmojis = ['🔥', '🚀', '❤️', '✨', '😍', '👇', '📸', '💬', '🌟', '🎯', '💡', '👑', '🤩', '✅', '💯', '👏'];
 
+  const [threadPosts, setThreadPosts] = useState([]);
+  const [threadCustomCaption, setThreadCustomCaption] = useState('');
+
   const applyFormatting = (formatType) => {
     const textarea = textareaRef.current;
     if (!textarea) return;
@@ -350,11 +353,31 @@ export default function Scheduling() {
     }, 0);
   };
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 1024);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const addThreadPost = () => {
+    setThreadPosts(prev => [...prev, { caption: '', preview: '', file: null }]);
+  };
+
+  const removeThreadPost = (index) => {
+    setThreadPosts(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const updateThreadPost = (index, field, value) => {
+    setThreadPosts(prev => prev.map((post, i) => i === index ? { ...post, [field]: value } : post));
+  };
+
+  const handleThreadFileChange = (index, e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const preview = URL.createObjectURL(file);
+    setThreadPosts(prev => prev.map((post, i) => i === index ? { ...post, file, preview } : post));
+  };
+
+  const removeThreadMedia = (index) => {
+    setThreadPosts(prev => prev.map((post, i) => {
+      if (i === index && post.preview) URL.revokeObjectURL(post.preview);
+      return i === index ? { ...post, preview: '', file: null } : post;
+    }));
+  };
 
   // New Post State
   const [postType, setPostType] = useState('image');
@@ -376,6 +399,7 @@ export default function Scheduling() {
   const [newPost, setNewPost] = useState({
     platform: 'instagram',
     caption: '',
+    customCaption: '',
     scheduledFor: '',
     mediaUrl: '',
     triggerKeyword: '',
@@ -396,7 +420,8 @@ export default function Scheduling() {
     gmbCtaEnabled: false,
     gmbActionType: 'LEARN_MORE',
     gmbSearchUrl: '',
-    gmbCustomCaption: ''
+    gmbCustomCaption: '',
+    threadPosts: []
   });
 
   const chatRef = useRef(null);
@@ -639,11 +664,15 @@ export default function Scheduling() {
     const currentFiles = [...selectedFiles];
     const currentPreviews = [...previews];
     const currentType = postType;
+    const currentThreadPosts = threadPosts.map(p => ({
+      caption: p.caption,
+      mediaUrl: p.preview || ''
+    }));
     
     setShowCreate(false);
     setNewPost({ 
       platform: 'instagram',
-      caption: '', scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', 
+      caption: '', customCaption: '', threadPosts: [], scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', 
       triggerKeyword: '', autoResponse: '', coverUrl: '',
       requireFollow: true, unfollowedResponse: "Hey! Please follow our account first to get the link! 😍",
       publicReply: "Check your DMs! 🚀",
@@ -658,6 +687,8 @@ export default function Scheduling() {
     setPostType('image');
     setYoutubeThumbnailFile(null);
     setYoutubeThumbnailPreview(null);
+    setThreadPosts([]);
+    setThreadCustomCaption('');
 
     const tempId = 'temp-' + Date.now();
     const tempPost = {
@@ -688,6 +719,8 @@ export default function Scheduling() {
       try {
         const initialPayload = {
           caption: payloadBase.caption,
+          threadCustomCaption: threadCustomCaption,
+          threadPosts: currentThreadPosts,
           scheduledFor: tempPost.scheduledFor,
           triggerKeyword: payloadBase.triggerKeyword,
           autoResponse: payloadBase.autoResponse,
@@ -1005,21 +1038,151 @@ export default function Scheduling() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', paddingRight: '12px', height: '100%' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>content</label>
-                <div style={{ position: 'relative' }}>
-                  <textarea
-                    value={newPost.caption || ''}
-                    onChange={(e) => setNewPost({ ...newPost, caption: e.target.value })}
-                    placeholder="what's on your mind..."
-                    style={{
-                      width: '100%', height: '160px', padding: '16px', borderRadius: '12px',
-                      border: 'none', background: '#e2e8f0', outline: 'none',
-                      fontSize: '0.95rem', resize: 'none', color: '#334155'
-                    }}
-                  />
-                  <div style={{ position: 'absolute', bottom: '8px', right: '12px', fontSize: '0.75rem', color: '#64748b', fontWeight: '600' }}>
-                    {(newPost.caption || '').length} chars
+                
+                {threadPosts.length === 0 && (
+                  <div style={{
+                    width: '100%', padding: '32px 24px', border: '2px dashed #cbd5e1', borderRadius: '16px',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    gap: '12px', background: '#f8fafc', cursor: 'default'
+                  }}>
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    <div style={{ fontSize: '0.95rem', fontWeight: '600', color: '#64748b', textAlign: 'center' }}>
+                      Start your thread
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', textAlign: 'center' }}>
+                      Add posts to your thread. Each post becomes part 1, 2, 3...
+                    </div>
+                    <button
+                      onClick={addThreadPost}
+                      style={{
+                        marginTop: '8px', padding: '10px 20px', borderRadius: '10px',
+                        background: 'white', border: '1px solid #cbd5e1', color: '#334155',
+                        fontWeight: '700', cursor: 'pointer', fontSize: '0.85rem',
+                        display: 'flex', alignItems: 'center', gap: '6px'
+                      }}
+                    >
+                      <Plus size={16} /> Add post 1
+                    </button>
                   </div>
-                </div>
+                )}
+
+                {threadPosts.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {threadPosts.map((post, index) => (
+                      <div key={index} style={{
+                        background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0',
+                        overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+                      }}>
+                        <div style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                          padding: '10px 14px', borderBottom: '1px solid #f1f5f9', background: '#fafafa'
+                        }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            Post {index + 1}
+                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: '600' }}>
+                              {(post.caption || '').length}/500
+                            </span>
+                            {threadPosts.length > 1 && (
+                              <button
+                                onClick={() => removeThreadPost(index)}
+                                style={{
+                                  background: 'transparent', border: 'none', color: '#ef4444',
+                                  cursor: 'pointer', fontSize: '0.75rem', fontWeight: '700',
+                                  display: 'flex', alignItems: 'center', gap: '2px'
+                                }}
+                              >
+                                remove
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        <div style={{ padding: '12px 14px' }}>
+                          <textarea
+                            value={post.caption}
+                            onChange={(e) => {
+                              if (e.target.value.length <= 500) {
+                                updateThreadPost(index, 'caption', e.target.value);
+                              }
+                            }}
+                            placeholder="What's happening?"
+                            style={{
+                              width: '100%', minHeight: '100px', padding: '12px',
+                              borderRadius: '10px', border: '1px solid #e2e8f0',
+                              background: 'white', outline: 'none', fontSize: '0.9rem',
+                              resize: 'vertical', color: '#334155', lineHeight: '1.5'
+                            }}
+                          />
+
+                          <div style={{ marginTop: '10px' }}>
+                            {post.preview ? (
+                              <div style={{
+                                width: '100%', maxHeight: '180px', borderRadius: '10px',
+                                overflow: 'hidden', position: 'relative', border: '1px solid #e2e8f0'
+                              }}>
+                                {post.file?.type?.startsWith('video') ? (
+                                  <video src={post.preview} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                  <img src={post.preview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                )}
+                                <button
+                                  onClick={() => removeThreadMedia(index)}
+                                  style={{
+                                    position: 'absolute', top: '6px', right: '6px',
+                                    width: '24px', height: '24px', borderRadius: '50%',
+                                    background: 'rgba(255,255,255,0.95)', border: 'none',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    cursor: 'pointer', color: '#ef4444', boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                                  }}
+                                >
+                                  <X size={12} />
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  const input = document.createElement('input');
+                                  input.type = 'file';
+                                  input.accept = 'image/*,video/*';
+                                  input.onchange = (e) => handleThreadFileChange(index, e);
+                                  input.click();
+                                }}
+                                style={{
+                                  width: '100%', padding: '16px', border: '1.5px dashed #cbd5e1',
+                                  borderRadius: '10px', background: '#f8fafc', color: '#64748b',
+                                  fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                }}
+                              >
+                                <ImageIcon size={16} /> Add media
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    <button
+                      onClick={addThreadPost}
+                      style={{
+                        padding: '12px', borderRadius: '12px', background: 'white',
+                        border: '1px solid #e2e8f0', color: '#334155', fontWeight: '700',
+                        cursor: 'pointer', fontSize: '0.85rem', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center', gap: '6px',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseOver={(e) => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#cbd5e1'; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
+                    >
+                      <Plus size={16} /> Add post {threadPosts.length + 1}
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div style={{ marginTop: '8px' }}>
@@ -1170,6 +1333,68 @@ export default function Scheduling() {
                     </div>
                   </div>
                 )}
+
+                {/* Google Business Specific Settings */}
+                {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('google-business') && (
+                  <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', marginBottom: '8px' }}>
+                      <span style={{ color: '#4285f4' }}><MapPin size={18} /></span>
+                      <span style={{ fontWeight: '600', color: '#334155' }}>Google Business</span>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <input 
+                        type="checkbox" 
+                        id="gmb-cta-enable"
+                        checked={newPost.gmbCtaEnabled || false}
+                        onChange={(e) => setNewPost({ ...newPost, gmbCtaEnabled: e.target.checked })}
+                        style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: '#4f46e5' }}
+                      />
+                      <label htmlFor="gmb-cta-enable" style={{ fontSize: '0.9rem', fontWeight: '500', color: '#334155', cursor: 'pointer' }}>
+                        Add call-to-action button (optional)
+                      </label>
+                    </div>
+
+                    {newPost.gmbCtaEnabled && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>button type</label>
+                          <select 
+                            value={newPost.gmbActionType || 'LEARN_MORE'}
+                            onChange={(e) => setNewPost({ ...newPost, gmbActionType: e.target.value })}
+                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
+                          >
+                            <option value="LEARN_MORE">Learn More</option>
+                            <option value="BOOK">Book</option>
+                            <option value="ORDER">Order Online</option>
+                            <option value="SHOP">Buy</option>
+                            <option value="SIGN_UP">Sign Up</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>destination url</label>
+                          <input 
+                            value={newPost.gmbSearchUrl || ''}
+                            onChange={(e) => setNewPost({ ...newPost, gmbSearchUrl: e.target.value })}
+                            placeholder="https://example.com/book"
+                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                          />
+                          {!newPost.gmbSearchUrl && <div style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '6px' }}>URL required when CTA is enabled</div>}
+                        </div>
+                      </div>
+                    )}
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>custom caption</label>
+                      <textarea 
+                        value={newPost.gmbCustomCaption || ''}
+                        onChange={(e) => setNewPost({ ...newPost, gmbCustomCaption: e.target.value })}
+                        placeholder="Leave blank to use main content..."
+                        style={{ width: '100%', padding: '12px 16px', minHeight: '80px', borderRadius: '8px', border: 'none', background: '#e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#334155', resize: 'vertical' }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1218,7 +1443,13 @@ export default function Scheduling() {
                           <div style={{ color: plat.color, display: 'flex' }}>{plat.icon}</div>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#334155', lineHeight: '1.2' }}>{plat.label}</span>
-                            {plat.handle && <span style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>{plat.handle.startsWith('@') ? plat.handle : `@${plat.handle.replace(/\s+/g, '').toLowerCase()}`}</span>}
+                            {plat.handle && (
+                              <span style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>
+                                {plat.id === 'google-business' || plat.id === 'facebook' 
+                                  ? plat.handle 
+                                  : (plat.handle.startsWith('@') ? plat.handle : `@${plat.handle.replace(/\s+/g, '').toLowerCase()}`)}
+                              </span>
+                            )}
                           </div>
                           {isSelected && (
                             <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', borderRadius: '50%', border: `4px solid ${plat.color}`, background: 'white' }}></div>
