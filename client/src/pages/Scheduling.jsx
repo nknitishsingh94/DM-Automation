@@ -242,6 +242,7 @@ export default function Scheduling() {
   const [showPlatformDropdown, setShowPlatformDropdown] = useState(false);
   const [dateFilter, setDateFilter] = useState('All dates');
   const [showDateDropdown, setShowDateDropdown] = useState(false);
+  const [scheduleMode, setScheduleMode] = useState('Schedule');
 
 
   // Settings & Timezone
@@ -921,6 +922,217 @@ export default function Scheduling() {
     return true;
   });
 
+  if (showCreate) {
+    return (
+      <div style={{
+        padding: '0', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100vh',
+        display: 'flex', flexDirection: 'column', background: '#f8fafc', overflowY: 'auto'
+      }}>
+        <div style={{
+          background: '#f8fafc', width: '100%', maxWidth: '1000px', margin: '0 auto',
+          display: 'flex', flexDirection: 'column'
+        }}>
+          {/* Header */}
+          <div style={{ padding: '24px', background: 'transparent', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e293b', margin: '0 0 4px 0' }}>Create Post</h3>
+              <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b' }}>create & publish content</p>
+            </div>
+            <button
+              onClick={() => setShowCreate(false)}
+              style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px' }}
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          {/* Body */}
+          <div style={{ padding: '0 24px 24px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+            
+            {/* Left Column - Content & Media */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>content</label>
+                <div style={{ position: 'relative' }}>
+                  <textarea
+                    value={newPost.caption || ''}
+                    onChange={(e) => setNewPost({ ...newPost, caption: e.target.value })}
+                    placeholder="what's on your mind..."
+                    style={{
+                      width: '100%', height: '160px', padding: '16px', borderRadius: '12px',
+                      border: 'none', background: '#e2e8f0', outline: 'none',
+                      fontSize: '0.95rem', resize: 'none', color: '#334155'
+                    }}
+                  />
+                  <div style={{ position: 'absolute', bottom: '8px', right: '12px', fontSize: '0.75rem', color: '#64748b', fontWeight: '600' }}>
+                    {(newPost.caption || '').length} chars
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '8px' }}>
+                <div
+                  onClick={() => fileInputRef.current.click()}
+                  style={{
+                    width: '100%', padding: '24px', border: '1.5px dashed #94a3b8', borderRadius: '12px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                    cursor: 'pointer', background: '#e2e8f0', color: '#475569', fontWeight: '600', fontSize: '0.95rem'
+                  }}
+                >
+                  <input type="file" ref={fileInputRef} style={{ display: 'none' }} multiple accept="image/*,video/*" onChange={handleFileChange} />
+                  <Plus size={18} /> Add media
+                </div>
+                
+                {/* Previews */}
+                {previews.length > 0 && (
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
+                    {previews.map((src, idx) => (
+                      <div key={idx} style={{ width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', position: 'relative', border: '1px solid #e2e8f0' }}>
+                        {selectedFiles[idx]?.type?.startsWith('video') ? (
+                          <video src={src} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <img src={src} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        )}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
+                          style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right Column - Settings */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              
+              {/* Platforms */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>platforms</label>
+                {connectedPlatforms.length === 0 ? (
+                  <div style={{
+                    width: '100%', padding: '32px', border: 'none', borderRadius: '12px',
+                    background: '#e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    gap: '8px'
+                  }}>
+                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '1px solid #64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
+                      <Plus size={14} />
+                    </div>
+                    <div style={{ fontWeight: '700', fontSize: '0.9rem', color: '#334155' }}>no connected accounts</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>select a profile and connect accounts first</div>
+                  </div>
+                ) : (
+                  <div style={{
+                    width: '100%', padding: '16px', border: 'none', borderRadius: '12px',
+                    background: '#e2e8f0', display: 'flex', flexWrap: 'wrap', gap: '12px'
+                  }}>
+                    {connectedPlatforms.map(plat => (
+                      <div 
+                        key={plat.id}
+                        onClick={() => setNewPost(prev => ({ ...prev, platform: plat.id }))}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px',
+                          border: newPost.platform === plat.id ? `2px solid ${plat.color}` : '1px solid transparent',
+                          borderRadius: '8px', background: newPost.platform === plat.id ? 'white' : 'transparent',
+                          cursor: 'pointer', opacity: newPost.platform === plat.id ? 1 : 0.6
+                        }}
+                      >
+                        <span style={{ color: plat.color }}>{plat.icon}</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#334155' }}>{plat.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Publishing Options */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>publishing</label>
+                <div style={{ display: 'flex', background: '#e2e8f0', borderRadius: '12px', padding: '4px', gap: '4px' }}>
+                  {['Schedule', 'Now', 'Queue', 'Draft'].map(mode => (
+                    <button
+                      key={mode}
+                      onClick={() => setScheduleMode(mode)}
+                      style={{
+                        flex: 1, padding: '10px 12px', borderRadius: '8px', border: 'none',
+                        background: scheduleMode === mode ? 'white' : 'transparent',
+                        color: scheduleMode === mode ? '#334155' : '#64748b',
+                        fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer',
+                        boxShadow: scheduleMode === mode ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                      }}
+                    >
+                      {mode}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Date & Timezone */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>date & time</label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type="datetime-local"
+                      value={newPost.scheduledFor || ''}
+                      onChange={e => setNewPost({ ...newPost, scheduledFor: e.target.value })}
+                      style={{
+                        width: '100%', padding: '12px 14px', borderRadius: '8px',
+                        border: 'none', outline: 'none', fontSize: '0.9rem',
+                        color: '#334155', background: 'white'
+                      }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>timezone</label>
+                  <select
+                    value={selectedTimezone}
+                    onChange={e => handleTimezoneChange(e.target.value)}
+                    style={{
+                      width: '100%', padding: '12px 14px', borderRadius: '8px',
+                      border: 'none', outline: 'none', fontSize: '0.9rem',
+                      color: '#334155', background: 'white'
+                    }}
+                  >
+                    {timezoneOptions.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div style={{ padding: '24px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '24px' }}>
+            <button
+              onClick={() => setShowCreate(false)}
+              style={{ background: 'transparent', border: 'none', color: '#64748b', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer' }}
+            >
+              cancel
+            </button>
+            <button
+              onClick={handleAddSubmit}
+              disabled={submitting}
+              style={{
+                background: '#94a3b8', color: 'white', border: 'none', padding: '12px 28px',
+                borderRadius: '8px', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: '8px'
+              }}
+            >
+              {submitting ? 'scheduling...' : 'schedule post'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: '0', maxWidth: 'none', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100vh', display: 'flex', flexDirection: 'column' }} onClick={() => {
       setShowPostStatusDropdown(false);
@@ -1329,649 +1541,7 @@ export default function Scheduling() {
       <div style={{ flex: 1 }}></div>
     </div>
 
-    {/* --- CREATE MODAL --- */}
-      {showCreate && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(10px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, padding: '20px'
-        }}>
-          <div style={{
-            background: '#f8fafc', borderRadius: '32px', width: '100%', maxWidth: '1200px', height: '90vh',
-            overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 50px 100px rgba(0,0,0,0.2)',
-            animation: 'fadeIn 0.3s ease-out'
-          }}>
-            {/* Modal Header */}
-            <div style={{ padding: '24px 32px', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Plus size={20} />
-                </div>
-                <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>New Schedule</h3>
-              </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button
-                  onClick={() => setShowCreate(false)}
-                  style={{ padding: '10px 20px', borderRadius: '12px', background: '#f1f5f9', border: 'none', color: '#64748b', fontWeight: '700', cursor: 'pointer' }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleAddSubmit}
-                  disabled={submitting}
-                  style={{ padding: '10px 32px', borderRadius: '12px', background: '#ea4335', color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(234, 67, 53, 0.2)', display: 'flex', alignItems: 'center', gap: '8px' }}
-                >
-                  {submitting ? (
-                    <>
-                      <Loader2 className="animate-spin" size={18} />
-                      {postType === 'reel' ? 'Uploading Video...' : 'Scheduling...'}
-                    </>
-                  ) : 'Schedule'}
-                </button>
-              </div>
-            </div>
-
-            {/* Modal Body */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '32px' }}>
-                {/* Left Side: Form */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-
-                  {/* Platform Selector */}
-                  <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0', position: 'relative' }}>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '16px' }}>Target Platform</label>
-                    {(() => {
-                      const hasFb = settings?.isFacebookConnected || (!!settings?.facebookAccessToken && !!settings?.facebookPageId);
-                      const hasIg = settings?.isAccountConnected || (!!settings?.instagramAccessToken && !!settings?.businessAccountId);
-                      let hasThreads = false;
-                      if (settings?.connectedPageName) {
-                        try {
-                          const parsed = JSON.parse(settings.connectedPageName);
-                          if (parsed.isThreadsConnected) hasThreads = true;
-                        } catch(e) {}
-                      }
-                      
-                      const allPlatforms = [
-                        { id: 'instagram', label: 'Instagram', icon: <Instagram size={18} />, color: '#e1306c', isConnected: hasIg, supported: true },
-                        { id: 'facebook', label: 'Facebook', icon: <Facebook size={18} />, color: '#1877f2', isConnected: hasFb, supported: true },
-                        { id: 'threads', label: 'Threads', icon: <ThreadsIcon size={18} />, color: '#000000', isConnected: hasThreads, supported: true }
-                      ].filter(p => p.isConnected);
-
-                      const selectedPlat = allPlatforms.find(p => p.id === newPost.platform) || null;
-
-                      if (allPlatforms.length === 0) {
-                        return (
-                          <span style={{ fontSize: '0.88rem', color: '#ef4444', fontWeight: '700', padding: '12px', background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: '12px', width: '100%', display: 'block', textAlign: 'center' }}>
-                            ⚠️ No connected channels. Please link a Facebook page or Instagram account in Settings first.
-                          </span>
-                        );
-                      }
-
-                      return (
-                        <div style={{ position: 'relative' }}>
-                          <button
-                            type="button"
-                            onClick={() => setIsPlatformDropdownOpen(!isPlatformDropdownOpen)}
-                            style={{
-                              width: '100%', padding: '14px 16px', borderRadius: '12px', border: '1px solid #e2e8f0',
-                              background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                              fontSize: '0.95rem', fontWeight: '600', color: '#1e293b', cursor: 'pointer',
-                              boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              {selectedPlat && selectedPlat.supported && selectedPlat.isConnected ? <span style={{color: selectedPlat.color, display: 'flex', alignItems:'center'}}>{selectedPlat.icon}</span> : null}
-                              <span>{selectedPlat && selectedPlat.supported && selectedPlat.isConnected ? selectedPlat.label : "Select Platform"}</span>
-                            </div>
-                            <ChevronRight size={18} style={{ transform: isPlatformDropdownOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: '0.2s', color: '#94a3b8' }} />
-                          </button>
-
-                          {isPlatformDropdownOpen && (
-                            <div style={{
-                              position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '8px',
-                              background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0',
-                              boxShadow: '0 10px 25px rgba(0,0,0,0.1)', zIndex: 50, overflow: 'hidden'
-                            }}>
-                              {allPlatforms.map((plat, idx) => {
-                                const isClickable = plat.supported && plat.isConnected;
-                                return (
-                                  <div
-                                    key={plat.id}
-                                    onClick={() => {
-                                      if (isClickable) {
-                                        setNewPost(prev => ({ ...prev, platform: plat.id }));
-                                        setIsPlatformDropdownOpen(false);
-                                      }
-                                    }}
-                                    style={{
-                                      padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                      background: newPost.platform === plat.id && isClickable ? '#f8fafc' : 'white',
-                                      cursor: isClickable ? 'pointer' : 'not-allowed',
-                                      opacity: isClickable ? 1 : 0.7,
-                                      borderBottom: idx !== allPlatforms.length - 1 ? '1px solid #f1f5f9' : 'none',
-                                      transition: 'background 0.2s'
-                                    }}
-                                    onMouseEnter={(e) => { if(isClickable) e.currentTarget.style.background = '#f1f5f9'; }}
-                                    onMouseLeave={(e) => { if(isClickable) e.currentTarget.style.background = newPost.platform === plat.id ? '#f8fafc' : 'white'; }}
-                                  >
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                      <span style={{ color: plat.color, display: 'flex', alignItems: 'center', width: '20px', justifyContent: 'center' }}>{plat.icon}</span>
-                                      <span style={{ fontWeight: '600', color: '#334155' }}>{plat.label}</span>
-                                    </div>
-                                    {newPost.platform === plat.id && <Check size={16} color="#10b981" />}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })()}
-                  </div>
-
-                  {/* Post Type Selector */}
-                  <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '16px' }}>Post Type</label>
-                    <div style={{ display: 'flex', gap: '12px' }}>
-                      {[
-                        { id: 'image', label: 'Image', icon: <ImageIcon size={18} /> },
-                        { id: 'carousel', label: 'Carousel', icon: <Layers size={18} /> },
-                        { id: 'reel', label: 'Reel', icon: <Film size={18} /> },
-                        { id: 'story', label: 'Story', icon: <Zap size={18} /> }
-                      ].map(type => (
-                        <button
-                          key={type.id}
-                          onClick={() => { setPostType(type.id); setSelectedFiles([]); setPreviews([]); }}
-                          style={{
-                            flex: 1, padding: '12px', borderRadius: '12px', border: postType === type.id ? '2px solid #7c3aed' : '1px solid #e2e8f0',
-                            background: postType === type.id ? '#f5f3ff' : 'white',
-                            color: postType === type.id ? '#7c3aed' : '#64748b',
-                            fontWeight: '700', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer'
-                          }}
-                        >
-                          {type.icon} {type.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Story Info Box */}
-                  {postType === 'story' && (
-                    <div style={{ background: '#ecf9ff', padding: '20px', borderRadius: '20px', border: '1px solid #bae6fd', display: 'flex', gap: '16px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#0ea5e9', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <AlertCircle size={16} />
-                      </div>
-                      <div>
-                        <h4 style={{ margin: '0 0 4px 0', fontSize: '0.9rem', fontWeight: '800', color: '#0369a1' }}>Story Upload</h4>
-                        <p style={{ margin: 0, fontSize: '0.8rem', color: '#0369a1', lineHeight: '1.5' }}>
-                          Upload an image or video for your story. No caption needed. Stickers and links are not supported via scheduling platforms.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #e2e8f0' }}>
-                    {/* Schedule Time */}
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '12px' }}>* Schedule Time</label>
-                      <input
-                        type="datetime-local"
-                        value={newPost.scheduledFor}
-                        onChange={e => setNewPost({ ...newPost, scheduledFor: e.target.value })}
-                        style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', fontWeight: '600' }}
-                        required
-                      />
-                    </div>
-                    {/* Target Timezone */}
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '800', color: '#64748b', marginBottom: '12px' }}>🌍 Target Country / Timezone</label>
-                      <select
-                        value={selectedTimezone}
-                        onChange={e => handleTimezoneChange(e.target.value)}
-                        style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', fontWeight: '600', background: 'white' }}
-                      >
-                        {timezoneOptions.map(opt => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Caption Section */}
-                  {postType !== 'story' && (
-                    <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                        <label style={{ fontSize: '0.85rem', fontWeight: '800', color: '#64748b' }}>Caption</label>
-                        <div style={{ display: 'flex', gap: '16px' }}>
-                          <button onClick={() => setShowCaptionsModal(true)} type="button" style={{ fontSize: '0.8rem', color: '#7c3aed', fontWeight: '700', border: 'none', background: 'none', cursor: 'pointer' }}>
-                            Saved Captions
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Formatting Toolbar */}
-                      <div style={{
-                        display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px',
-                        background: '#f8fafc', borderRadius: '12px 12px 0 0', border: '1.5px solid #e2e8f0',
-                        borderBottom: 'none', flexWrap: 'wrap'
-                      }}>
-                        <button
-                          type="button"
-                          onClick={() => applyFormatting('bold')}
-                          style={{
-                            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            borderRadius: '8px', border: 'none', background: 'white', color: '#0f172a',
-                            fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', fontSize: '0.9rem'
-                          }}
-                          title="Convert selected text to Bold"
-                        >
-                          B
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => applyFormatting('italic')}
-                          style={{
-                            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            borderRadius: '8px', border: 'none', background: 'white', color: '#0f172a',
-                            fontStyle: 'italic', fontWeight: '600', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', fontSize: '0.9rem'
-                          }}
-                          title="Convert selected text to Italic"
-                        >
-                          I
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => applyFormatting('mention')}
-                          style={{
-                            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            borderRadius: '8px', border: 'none', background: 'white', color: '#7c3aed',
-                            fontWeight: '800', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', fontSize: '0.85rem'
-                          }}
-                          title="Add @mention"
-                        >
-                          @
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => applyFormatting('hashtag')}
-                          style={{
-                            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            borderRadius: '8px', border: 'none', background: 'white', color: '#7c3aed',
-                            fontWeight: '800', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', fontSize: '0.85rem'
-                          }}
-                          title="Add #hashtag"
-                        >
-                          #
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                          style={{
-                            width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            borderRadius: '8px', border: 'none', background: 'white', cursor: 'pointer',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.05)', fontSize: '0.95rem'
-                          }}
-                          title="Insert Emoji"
-                        >
-                          😍
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={handleSaveCaption}
-                          style={{
-                            marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px',
-                            background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: '8px',
-                            padding: '6px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer'
-                          }}
-                        >
-                          <Save size={12} /> Save
-                        </button>
-                      </div>
-
-                      {/* Emoji Selector Panel */}
-                      {showEmojiPicker && (
-                        <div style={{
-                          display: 'flex', gap: '6px', flexWrap: 'wrap', padding: '12px',
-                          background: 'white', border: '1.5px solid #e2e8f0', borderTop: 'none',
-                          borderBottom: 'none', animation: 'fadeIn 0.2s ease'
-                        }}>
-                          {popularEmojis.map(emoji => (
-                            <button
-                              key={emoji}
-                              type="button"
-                              onClick={() => insertEmoji(emoji)}
-                              style={{
-                                width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                borderRadius: '6px', border: '1px solid #f1f5f9', background: '#f8fafc',
-                                cursor: 'pointer', fontSize: '1.05rem', transition: '0.15s'
-                              }}
-                            >
-                              {emoji}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-
-                      <textarea
-                        ref={textareaRef}
-                        value={newPost.caption}
-                        onChange={e => setNewPost({ ...newPost, caption: e.target.value })}
-                        placeholder="Write your caption... Tip: Select text to make it Bold or Italic!"
-                        style={{
-                          width: '100%', height: '110px', padding: '16px',
-                          borderRadius: '0 0 14px 14px', border: '1.5px solid #e2e8f0',
-                          outline: 'none', fontSize: '0.95rem', resize: 'none',
-                          boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
-                        }}
-                        required
-                      />
-                    </div>
-                  )}
-
-                  {/* Upload Area */}
-                  <div style={{
-                    background: 'white', padding: previews.length > 0 ? '12px' : '40px', borderRadius: '24px', border: '2px dashed #e2e8f0',
-                    textAlign: 'center', cursor: previews.length > 0 ? 'default' : 'pointer', minHeight: '180px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
-                  }}
-                    onClick={() => previews.length === 0 && fileInputRef.current.click()}>
-                    <input type="file" ref={fileInputRef} style={{ display: 'none' }} multiple={postType === 'carousel'} accept={postType === 'reel' ? 'video/*' : 'image/*,video/*'} onChange={handleFileChange} />
-
-                    {previews.length > 0 ? (
-                      <div style={{ width: '100%' }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px', padding: '8px' }}>
-                          {previews.map((src, idx) => (
-                            <div key={idx} style={{ aspectRatio: '1/1', borderRadius: '12px', overflow: 'hidden', border: '1px solid #f1f5f9', position: 'relative' }}>
-                              {selectedFiles[idx]?.type.startsWith('video') ? (
-                                <video src={src} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                              ) : (
-                                <img src={src} alt="Upload preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                              )}
-                              <button
-                                onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
-                                style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
-                              >
-                                <X size={12} />
-                              </button>
-                            </div>
-                          ))}
-
-                          {postType === 'carousel' && previews.length < 10 && (
-                            <div
-                              onClick={() => fileInputRef.current.click()}
-                              style={{
-                                aspectRatio: '1/1', borderRadius: '12px', border: '2px dashed #7c3aed',
-                                background: '#f5f3ff', display: 'flex', flexDirection: 'column',
-                                alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                                color: '#7c3aed', gap: '4px', transition: 'all 0.2s'
-                              }}
-                              onMouseOver={(e) => e.currentTarget.style.background = '#ede9fe'}
-                              onMouseOut={(e) => e.currentTarget.style.background = '#f5f3ff'}
-                            >
-                              <Plus size={20} strokeWidth={3} />
-                              <span style={{ fontSize: '0.65rem', fontWeight: '800' }}>ADD MORE</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <UploadCloud size={32} color="#7c3aed" style={{ marginBottom: '12px' }} />
-                        <p style={{ fontSize: '0.9rem', fontWeight: '700', marginBottom: '4px' }}>
-                          {postType === 'story' ? 'Click to upload image or video for story' : 'Click to upload media'}
-                        </p>
-                        <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
-                          images/videos up to 5GB each
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Right Side: Live Simulation Preview */}
-                <div style={{ position: 'sticky', top: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <label style={{ fontSize: '0.85rem', fontWeight: '800', color: '#64748b' }}>Live Simulation</label>
-                    <div style={{ display: 'flex', background: '#e2e8f0', padding: '4px', borderRadius: '12px', gap: '4px' }}>
-                      <button 
-                        onClick={() => setPreviewMode('post')}
-                        style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: previewMode === 'post' ? 'white' : 'transparent', color: previewMode === 'post' ? '#7c3aed' : '#64748b', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', boxShadow: previewMode === 'post' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none' }}
-                      >
-                        Post
-                      </button>
-                      <button 
-                        onClick={() => setPreviewMode('dm')}
-                        style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: previewMode === 'dm' ? 'white' : 'transparent', color: previewMode === 'dm' ? '#7c3aed' : '#64748b', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', boxShadow: previewMode === 'dm' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none' }}
-                      >
-                        DM
-                      </button>
-                    </div>
-                  </div>
-                  {(() => {
-                    const previewData = newPost;
-                    return (
-                      <div style={{
-                        width: '320px', height: '640px', background: '#000', borderRadius: '48px', border: '12px solid #1e1b4b',
-                        position: 'relative', overflow: 'hidden', boxShadow: '0 40px 100px -20px rgba(0,0,0,0.3)',
-                        margin: '0 auto', display: 'flex', flexDirection: 'column'
-                      }}>
-                        <style>{`
-                          .custom-ig-scroller::-webkit-scrollbar { width: 4px; }
-                          .custom-ig-scroller::-webkit-scrollbar-track { background: #000; }
-                          .custom-ig-scroller::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-                        `}</style>
-
-                        {/* notch */}
-                        <div style={{ position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)', width: '80px', height: '20px', background: '#000', borderRadius: '20px', zIndex: 100 }}></div>
-
-                        {/* Status Bar */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 24px 8px', fontSize: '0.65rem', fontWeight: '800', color: '#FFF', zIndex: 50 }}>
-                          <span>9:41</span>
-                          <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                            <Zap size={10} fill="white" />
-                            <div style={{ width: '14px', height: '7px', border: '1px solid #FFF', borderRadius: '2px' }}></div>
-                          </div>
-                        </div>
-
-                        {/* Platform Header */}
-                        <div style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '10px', background: '#000', zIndex: 10, borderBottom: '1px solid #1a1a1a' }}>
-                          <ChevronLeft size={20} color="white" />
-                          <div style={{ 
-                            width: '28px', height: '28px', borderRadius: '50%', 
-                            background: user?.profilePhoto ? `url(${user.profilePhoto})` : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-                            backgroundSize: 'cover', backgroundPosition: 'center', flexShrink: 0
-                          }}></div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0 }}>
-                            <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              {newPost.platform === 'facebook' ? <Facebook size={12} fill="#1877f2" color="#1877f2" /> : <Instagram size={12} color="#e1306c" />}
-                              <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                                {newPost.platform === 'facebook' 
-                                  ? (settings?.connectedFacebookName || user?.username || 'facebook_page') 
-                                  : (settings?.connectedInstagramName || user?.username || 'instagram_user')}
-                              </span>
-                            </div>
-                            <span style={{ color: '#64748b', fontSize: '0.6rem', fontWeight: '600' }}>
-                              {newPost.platform === 'facebook' ? 'Facebook Page' : 'Instagram Business'}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div style={{ flex: 1, background: '#000', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                          {previewMode === 'post' ? (
-                            <div ref={chatRef} className="custom-ig-scroller" style={{ flex: 1, overflowY: 'auto' }}>
-                              <div style={{ width: '100%', aspectRatio: '1/1', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                                {previews.length > 0 ? (
-                                    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-                                      {previews[currentPreviewIndex] && (
-                                        (selectedFiles[currentPreviewIndex]?.type?.startsWith('video') || (typeof previews[currentPreviewIndex] === 'string' && (previews[currentPreviewIndex].includes('.mp4') || previews[currentPreviewIndex].includes('.mov')))) ? (
-                                          <video src={previews[currentPreviewIndex]} autoPlay muted loop style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        ) : (
-                                          <img src={previews[currentPreviewIndex]} alt="Post preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        )
-                                      )}
-                                      {previews.length > 1 && (
-                                        <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '4px' }}>
-                                          {previews.map((_, i) => <div key={i} style={{ width: '4px', height: '4px', borderRadius: '50%', background: i === currentPreviewIndex ? '#7c3aed' : 'rgba(255,255,255,0.5)' }} />)}
-                                        </div>
-                                      )}
-                                    </div>
-                                ) : (
-                                  <ImageIcon size={40} color="#333" />
-                                )}
-                              </div>
-                              <div style={{ padding: '12px 16px' }}>
-                                <div style={{ display: 'flex', gap: '14px', marginBottom: '8px' }}>
-                                  <Heart size={20} color="white" />
-                                  <MessageCircle size={20} color="white" />
-                                  <Send size={20} color="white" />
-                                </div>
-                                <div style={{ fontSize: '0.75rem', color: 'white', lineHeight: '1.4' }}>
-                                  <span style={{ fontWeight: '800', marginRight: '6px' }}>{user?.username || 'user'}</span>
-                                  {newPost.caption || '...'}
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            <div 
-                              ref={chatRef} className="custom-ig-scroller"
-                              style={{ 
-                                flex: 1, display: 'flex', flexDirection: 'column', padding: '16px', gap: '16px', 
-                                overflowY: 'auto', background: '#000', minHeight: 0,
-                                scrollBehavior: 'smooth'
-                              }}
-                            >
-                              <div style={{ color: '#8e8e8e', fontSize: '0.72rem', textAlign: 'center', padding: '4px 0' }}>
-                                Automated DM Preview
-                              </div>
-
-                              <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-end', maxWidth: '85%' }}>
-                                <div style={{ background: '#3b82f6', color: '#FFF', padding: '10px 14px', borderRadius: '18px 18px 4px 18px', fontSize: '0.85rem', fontWeight: '500' }}>
-                                  💬 Comment: "{previewData?.triggerKeyword ? `Comment matching "${previewData.triggerKeyword}"` : "Comment matching trigger keyword"}"
-                                </div>
-                              </div>
-
-                              <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-start', maxWidth: '85%' }}>
-                                <div style={{ 
-                                  width: '24px', height: '24px', borderRadius: '50%', 
-                                  background: user?.profilePhoto ? `url(${user.profilePhoto})` : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-                                  backgroundSize: 'cover', backgroundPosition: 'center', flexShrink: 0, fontSize: '0.55rem', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' 
-                                }}>
-                                  {!user?.profilePhoto && "IG"}
-                                </div>
-                                <div style={{ background: '#262626', color: '#a3a3a3', padding: '10px 14px', borderRadius: '18px 18px 18px 4px', fontSize: '0.85rem', border: '1px solid #333' }}>
-                                  💬 Reply: "{previewData?.publicReply || "Check your DMs! 🚀"}"
-                                </div>
-                              </div>
-
-                              <div style={{ color: '#8e8e8e', fontSize: '0.72rem', textAlign: 'center', padding: '8px 12px', background: '#121212', borderRadius: '12px', border: '1px solid #222', lineHeight: '1.4', fontWeight: '500' }}>
-                                🤖 <span style={{ color: '#4f95ff', fontWeight: '700' }}>System Automation</span>: Sent DM because user commented on your post.
-                              </div>
-
-                              <div style={{ alignSelf: 'flex-start', maxWidth: '90%', display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
-                                <div style={{ 
-                                  width: '28px', height: '28px', borderRadius: '50%', 
-                                  background: user?.profilePhoto ? `url(${user.profilePhoto})` : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-                                  backgroundSize: 'cover', backgroundPosition: 'center', flexShrink: 0 
-                                }}></div>
-                                <div style={{ 
-                                  background: '#262626', color: '#FFF', borderRadius: '18px 18px 18px 4px', 
-                                  overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #333', boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
-                                }}>
-                                  <div style={{ padding: '12px 14px', fontSize: '0.85rem', fontWeight: '500', lineHeight: '1.4' }}>
-                                    {previewData?.autoResponse || "Here is your requested link! 👇"}
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div style={{ alignSelf: 'flex-end', maxWidth: '85%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: '#FFF', padding: '12px 16px', borderRadius: '18px 18px 4px 18px', fontSize: '0.85rem', fontWeight: '600', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.2)' }}>
-                                Checking it out! 👍
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Mock bottom navigation bar */}
-                        <div style={{ height: '40px', background: '#000', borderTop: '1px solid #1a1a1a', display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-                          <Home size={18} color="white" />
-                          <ImageIcon size={18} color="white" />
-                          <Plus size={18} color="white" />
-                          <Zap size={18} color="white" />
-                          <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#333' }}></div>
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Saved Captions Modal */}
-      {showCaptionsModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3000, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '24px', width: '100%', maxWidth: '500px', padding: '32px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>Saved Captions</h3>
-              <button onClick={() => setShowCaptionsModal(false)} style={{ border: 'none', background: 'none', cursor: 'pointer' }}><X size={20} /></button>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '400px', overflowY: 'auto' }}>
-              {savedCaptions.length === 0 ? <p style={{ color: '#64748b', textAlign: 'center' }}>No saved captions found.</p> : savedCaptions.map(cap => (
-                <div
-                  key={cap._id || cap.id}
-                  onClick={() => { setNewPost({ ...newPost, caption: cap.content }); setShowCaptionsModal(false); }}
-                  style={{ 
-                    padding: '16px', 
-                    borderRadius: '12px', 
-                    border: '1px solid #f1f5f9', 
-                    cursor: 'pointer',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    gap: '12px',
-                    position: 'relative',
-                    transition: 'all 0.2s',
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.background = '#f8fafc'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#f1f5f9'; e.currentTarget.style.background = 'transparent'; }}
-                >
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: '700', marginBottom: '4px', color: '#1e1b4b', fontSize: '0.95rem' }}>{cap.title}</div>
-                    <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0, whiteSpace: 'pre-wrap' }}>{cap.content}</p>
-                  </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (window.confirm("Are you sure you want to delete this caption?")) {
-                        handleDeleteCaption(cap._id || cap.id);
-                      }
-                    }}
-                    style={{
-                      border: 'none',
-                      background: 'none',
-                      color: '#94a3b8',
-                      cursor: 'pointer',
-                      padding: '4px',
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.2s',
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.background = '#fee2e2'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.background = 'none'; }}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
+        
       {/* --- SUCCESS MODAL --- */}
       {showSuccess && createdPost && (
         <div style={{
