@@ -1003,6 +1003,66 @@ export default function Scheduling() {
                     ))}
                   </div>
                 )}
+
+                {/* YouTube Specific Settings */}
+                {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('youtube') && (
+                  <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', marginBottom: '8px' }}>
+                      <span style={{ color: '#ef4444' }}><Film size={18} /></span>
+                      <span style={{ fontWeight: '600', color: '#334155' }}>YouTube Settings</span>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>title & description (optional)</label>
+                      <input 
+                        value={newPost.youtubeTitle || ''}
+                        onChange={(e) => setNewPost({ ...newPost, youtubeTitle: e.target.value })}
+                        placeholder="Custom title for your video..."
+                        style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: 'none', background: '#e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>tags (optional)</label>
+                      <input 
+                        value={newPost.youtubeTags || ''}
+                        onChange={(e) => setNewPost({ ...newPost, youtubeTags: e.target.value })}
+                        placeholder="Type a tag and press Enter..."
+                        style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: 'none', background: '#e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                      />
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '16px' }}>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>visibility</label>
+                        <select 
+                          value={newPost.youtubeVisibility || 'Public'}
+                          onChange={(e) => setNewPost({ ...newPost, youtubeVisibility: e.target.value })}
+                          style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: 'none', background: '#e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
+                        >
+                          <option value="Public">Public (Anyone)</option>
+                          <option value="Unlisted">Unlisted (Link only)</option>
+                          <option value="Private">Private (Only you)</option>
+                        </select>
+                      </div>
+
+                      <div style={{ flex: 1 }}>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>category</label>
+                        <select 
+                          value={newPost.youtubeCategory || 'People & Blogs'}
+                          onChange={(e) => setNewPost({ ...newPost, youtubeCategory: e.target.value })}
+                          style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: 'none', background: '#e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
+                        >
+                          <option value="People & Blogs">People & Blogs</option>
+                          <option value="Education">Education</option>
+                          <option value="Entertainment">Entertainment</option>
+                          <option value="Gaming">Gaming</option>
+                          <option value="Music">Music</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
