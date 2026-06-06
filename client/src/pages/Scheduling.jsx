@@ -979,7 +979,7 @@ export default function Scheduling() {
                     cursor: 'pointer', background: '#e2e8f0', color: '#475569', fontWeight: '600', fontSize: '0.95rem'
                   }}
                 >
-                  <input type="file" ref={fileInputRef} style={{ display: 'none' }} multiple accept="image/*,video/*" onChange={handleFileChange} />
+                  <input type="file" ref={fileInputRef} style={{ display: 'none' }} multiple accept="video/*,image/*" onChange={handleFileChange} />
                   <Plus size={18} /> Add media
                 </div>
                 
@@ -1029,21 +1029,34 @@ export default function Scheduling() {
                     width: '100%', padding: '16px', border: 'none', borderRadius: '12px',
                     background: '#e2e8f0', display: 'flex', flexWrap: 'wrap', gap: '12px'
                   }}>
-                    {connectedPlatforms.map(plat => (
-                      <div 
-                        key={plat.id}
-                        onClick={() => setNewPost(prev => ({ ...prev, platform: plat.id }))}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px',
-                          border: newPost.platform === plat.id ? `2px solid ${plat.color}` : '1px solid transparent',
-                          borderRadius: '8px', background: newPost.platform === plat.id ? 'white' : 'transparent',
-                          cursor: 'pointer', opacity: newPost.platform === plat.id ? 1 : 0.6
-                        }}
-                      >
-                        <span style={{ color: plat.color }}>{plat.icon}</span>
-                        <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#334155' }}>{plat.label}</span>
+                    {connectedPlatforms.map(plat => {
+                      const isSelected = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes(plat.id);
+                      return (
+                        <div 
+                          key={plat.id}
+                          onClick={() => setNewPost(prev => {
+                            const currentPlatforms = prev.platforms || (prev.platform ? [prev.platform] : []);
+                            let newPlatforms;
+                            if (currentPlatforms.includes(plat.id)) {
+                              newPlatforms = currentPlatforms.filter(p => p !== plat.id);
+                            } else {
+                              newPlatforms = [...currentPlatforms, plat.id];
+                            }
+                            return { ...prev, platforms: newPlatforms, platform: newPlatforms.length > 0 ? newPlatforms[0] : '' };
+                          })}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px',
+                            border: isSelected ? `2px solid ${plat.color}` : '1px solid transparent',
+                            borderRadius: '8px', background: isSelected ? plat.color : 'transparent',
+                            cursor: 'pointer', opacity: isSelected ? 1 : 0.6,
+                            transition: 'all 0.2s ease-in-out'
+                          }}
+                        >
+                        <span style={{ color: isSelected ? '#ffffff' : plat.color, display: 'flex' }}>{plat.icon}</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: '600', color: isSelected ? '#ffffff' : '#334155' }}>{plat.label}</span>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -1120,9 +1133,12 @@ export default function Scheduling() {
               onClick={handleAddSubmit}
               disabled={submitting}
               style={{
-                background: '#94a3b8', color: 'white', border: 'none', padding: '12px 28px',
-                borderRadius: '8px', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: '8px'
+                background: submitting ? '#94a3b8' : 'linear-gradient(135deg, #6366f1, #ec4899)',
+                color: 'white', border: 'none', padding: '8px 24px',
+                borderRadius: '24px', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer',
+                display: 'flex', alignItems: 'center', gap: '8px',
+                boxShadow: submitting ? 'none' : '0 4px 15px rgba(99, 102, 241, 0.3)',
+                transition: 'all 0.2s ease'
               }}
             >
               {submitting ? 'scheduling...' : 'schedule post'}
