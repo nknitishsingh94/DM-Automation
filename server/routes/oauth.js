@@ -78,11 +78,11 @@ router.get('/facebook/callback', async (req, res) => {
 
   if (error) {
     console.error("OAuth Error:", error);
-    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=declined`);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=declined`);
   }
 
   if (!code || !state) {
-    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=missing_parameters`);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=missing_parameters`);
   }
 
   try {
@@ -277,7 +277,7 @@ router.get('/facebook/callback', async (req, res) => {
     delete updateData.connectionError;
 
     /*
-    // Strict Single-Owner Mapping: Clean up other settings rows that might be linked to this page/account
+    // Strict Single-Owner Mapping: Clean up other connections rows that might be linked to this page/account
     if (pageId || businessAccountId) {
       const cleanupQuery = [];
       if (pageId) cleanupQuery.push({ instagramPageId: pageId }, { facebookPageId: pageId });
@@ -334,13 +334,13 @@ router.get('/facebook/callback', async (req, res) => {
     }
     */
 
-    const settingsQuery = { userId: userId };
+    const connectionsQuery = { userId: userId };
     if (workspaceId) {
-      settingsQuery.workspaceId = workspaceId;
+      connectionsQuery.workspaceId = workspaceId;
     }
 
     const updatedSettings = await Settings.findOneAndUpdate(
-      settingsQuery,
+      connectionsQuery,
       updateData,
       { upsert: true, new: true }
     );
@@ -355,7 +355,7 @@ router.get('/facebook/callback', async (req, res) => {
       if (isFromOnboarding) {
         res.redirect(`${frontendUrl}/onboarding?oauth_error=whatsapp_not_configured`);
       } else {
-        res.redirect(`${frontendUrl}/settings?oauth_error=whatsapp_not_configured`);
+        res.redirect(`${frontendUrl}/connections?oauth_error=whatsapp_not_configured`);
       }
       return;
     }
@@ -363,7 +363,7 @@ router.get('/facebook/callback', async (req, res) => {
     if (isFromOnboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=${platformParam}`);
     } else {
-      res.redirect(`${frontendUrl}/settings?oauth_success=true&platform=${platformParam}`);
+      res.redirect(`${frontendUrl}/connections?oauth_success=true&platform=${platformParam}`);
     }
 
   } catch (err) {
@@ -371,7 +371,7 @@ router.get('/facebook/callback', async (req, res) => {
     if (isFromOnboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
     } else {
-      res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
+      res.redirect(`${frontendUrl}/connections?oauth_error=exchange_failed`);
     }
   }
 });
@@ -379,8 +379,8 @@ router.get('/facebook/callback', async (req, res) => {
 // Zorcha Exact Flow: Get available Facebook Pages & their linked Instagram accounts
 router.get('/facebook/pages', verifyToken, async (req, res) => {
   try {
-    const settings = await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
-    const token = settings?.facebookAccessToken || settings?.instagramAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+    const connections = await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
+    const token = connections?.facebookAccessToken || connections?.instagramAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
     if (!token) {
       console.error(`❌ No token found for user ${req.user.userId}`);
@@ -474,7 +474,7 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
     }
 
     /*
-    // Strict Single-Owner Mapping: Clean up other settings rows that might be linked to this page/account
+    // Strict Single-Owner Mapping: Clean up other connections rows that might be linked to this page/account
     if (pageId || businessAccountId) {
       const cleanupQuery = [];
       if (pageId) cleanupQuery.push({ instagramPageId: pageId }, { facebookPageId: pageId });
@@ -531,7 +531,7 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
     }
     */
 
-    const settings = await Settings.findOneAndUpdate(
+    const connections = await Settings.findOneAndUpdate(
       { userId: req.user.userId, workspaceId: req.workspaceId },
       updateData,
       { upsert: true, new: true }
@@ -551,7 +551,7 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
       }
     }
 
-    res.json({ success: true, settings });
+    res.json({ success: true, connections });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -607,11 +607,11 @@ router.get('/youtube/callback', async (req, res) => {
 
   if (error) {
     console.error("YouTube OAuth Error:", error);
-    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=declined`);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=declined`);
   }
 
   if (!code || !state) {
-    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=missing_parameters`);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=missing_parameters`);
   }
 
   try {
@@ -638,15 +638,15 @@ router.get('/youtube/callback', async (req, res) => {
 
     // Save tokens in the database metadata field since strict schema might drop new fields
     // Actually, we can just save it. Supabase schema accepts it if it exists, or we use metadata.
-    const settingsQuery = { userId: userId };
+    const connectionsQuery = { userId: userId };
     if (workspaceId) {
-      settingsQuery.workspaceId = workspaceId;
+      connectionsQuery.workspaceId = workspaceId;
     }
 
-    const settings = await Settings.findOne(settingsQuery);
+    const connections = await Settings.findOne(connectionsQuery);
     let pageData = {};
-    if (settings && settings.connectedPageName) {
-      try { pageData = JSON.parse(settings.connectedPageName); } catch(e){}
+    if (connections && connections.connectedPageName) {
+      try { pageData = JSON.parse(connections.connectedPageName); } catch(e){}
     }
     pageData.isYouTubeConnected = true;
     pageData.connectedYouTubeName = channelName;
@@ -656,7 +656,7 @@ router.get('/youtube/callback', async (req, res) => {
     const updateData = { connectedPageName: JSON.stringify(pageData) };
 
     await Settings.findOneAndUpdate(
-      settingsQuery,
+      connectionsQuery,
       updateData,
       { upsert: true, new: true }
     );
@@ -666,7 +666,7 @@ router.get('/youtube/callback', async (req, res) => {
     if (isFromOnboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=youtube`);
     } else {
-      res.redirect(`${frontendUrl}/settings?oauth_success=true&platform=youtube`);
+      res.redirect(`${frontendUrl}/connections?oauth_success=true&platform=youtube`);
     }
 
   } catch (err) {
@@ -674,7 +674,7 @@ router.get('/youtube/callback', async (req, res) => {
     if (isFromOnboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
     } else {
-      res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
+      res.redirect(`${frontendUrl}/connections?oauth_error=exchange_failed`);
     }
   }
 });
@@ -722,11 +722,11 @@ router.get('/linkedin/callback', async (req, res) => {
 
   if (error) {
     console.error("LinkedIn OAuth Error:", error);
-    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=declined`);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=declined`);
   }
 
   if (!code || !state) {
-    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=missing_parameters`);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=missing_parameters`);
   }
 
   try {
@@ -764,15 +764,15 @@ router.get('/linkedin/callback', async (req, res) => {
     }
 
     // 3. Save to DB
-    const settingsQuery = { userId: userId };
+    const connectionsQuery = { userId: userId };
     if (workspaceId) {
-      settingsQuery.workspaceId = workspaceId;
+      connectionsQuery.workspaceId = workspaceId;
     }
 
-    const settings = await Settings.findOne(settingsQuery);
+    const connections = await Settings.findOne(connectionsQuery);
     let pageData = {};
-    if (settings && settings.connectedPageName) {
-      try { pageData = JSON.parse(settings.connectedPageName); } catch(e){}
+    if (connections && connections.connectedPageName) {
+      try { pageData = JSON.parse(connections.connectedPageName); } catch(e){}
     }
     pageData.isLinkedInConnected = true;
     pageData.connectedLinkedInName = profileName;
@@ -781,7 +781,7 @@ router.get('/linkedin/callback', async (req, res) => {
     const updateData = { connectedPageName: JSON.stringify(pageData) };
 
     await Settings.findOneAndUpdate(
-      settingsQuery,
+      connectionsQuery,
       updateData,
       { upsert: true, new: true }
     );
@@ -791,7 +791,7 @@ router.get('/linkedin/callback', async (req, res) => {
     if (isFromOnboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=linkedin`);
     } else {
-      res.redirect(`${frontendUrl}/settings?oauth_success=true&platform=linkedin`);
+      res.redirect(`${frontendUrl}/connections?oauth_success=true&platform=linkedin`);
     }
 
   } catch (err) {
@@ -799,7 +799,7 @@ router.get('/linkedin/callback', async (req, res) => {
     if (isFromOnboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
     } else {
-      res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
+      res.redirect(`${frontendUrl}/connections?oauth_error=exchange_failed`);
     }
   }
 });
@@ -854,11 +854,11 @@ router.get('/google-business/callback', async (req, res) => {
 
   if (error) {
     console.error("Google Business OAuth Error:", error);
-    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=declined`);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=declined`);
   }
 
   if (!code || !state) {
-    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'settings'}?oauth_error=missing_parameters`);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=missing_parameters`);
   }
 
   try {
@@ -895,15 +895,15 @@ router.get('/google-business/callback', async (req, res) => {
       console.warn("Could not fetch Google Business account name:", gbErr.message);
     }
 
-    const settingsQuery = { userId: userId };
+    const connectionsQuery = { userId: userId };
     if (workspaceId) {
-      settingsQuery.workspaceId = workspaceId;
+      connectionsQuery.workspaceId = workspaceId;
     }
 
-    const settings = await Settings.findOne(settingsQuery);
+    const connections = await Settings.findOne(connectionsQuery);
     let pageData = {};
-    if (settings && settings.connectedPageName) {
-      try { pageData = JSON.parse(settings.connectedPageName); } catch(e){}
+    if (connections && connections.connectedPageName) {
+      try { pageData = JSON.parse(connections.connectedPageName); } catch(e){}
     }
     pageData.isGoogleBusinessConnected = true;
     pageData.connectedGoogleBusinessName = businessName;
@@ -913,7 +913,7 @@ router.get('/google-business/callback', async (req, res) => {
     const updateData = { connectedPageName: JSON.stringify(pageData) };
 
     await Settings.findOneAndUpdate(
-      settingsQuery,
+      connectionsQuery,
       updateData,
       { upsert: true, new: true }
     );
@@ -923,7 +923,7 @@ router.get('/google-business/callback', async (req, res) => {
     if (isFromOnboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=google-business`);
     } else {
-      res.redirect(`${frontendUrl}/settings?oauth_success=true&platform=google-business`);
+      res.redirect(`${frontendUrl}/connections?oauth_success=true&platform=google-business`);
     }
 
   } catch (err) {
@@ -931,7 +931,7 @@ router.get('/google-business/callback', async (req, res) => {
     if (isFromOnboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
     } else {
-      res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
+      res.redirect(`${frontendUrl}/connections?oauth_error=exchange_failed`);
     }
   }
 });
@@ -986,7 +986,7 @@ router.get('/twitter/callback', async (req, res) => {
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
   if (error || !code || !state) {
-    return res.redirect(`${frontendUrl}/settings?oauth_error=declined`);
+    return res.redirect(`${frontendUrl}/connections?oauth_error=declined`);
   }
 
   try {
@@ -1035,15 +1035,15 @@ router.get('/twitter/callback', async (req, res) => {
       console.warn("Could not fetch Twitter profile name:", profileErr.response?.data || profileErr.message);
     }
 
-    const settingsQuery = { userId: userId };
+    const connectionsQuery = { userId: userId };
     if (workspaceId) {
-      settingsQuery.workspaceId = workspaceId;
+      connectionsQuery.workspaceId = workspaceId;
     }
 
-    const settings = await Settings.findOne(settingsQuery);
+    const connections = await Settings.findOne(connectionsQuery);
     let pageData = {};
-      if (settings && settings.connectedPageName) {
-        try { pageData = JSON.parse(settings.connectedPageName); } catch(e){}
+      if (connections && connections.connectedPageName) {
+        try { pageData = JSON.parse(connections.connectedPageName); } catch(e){}
       }
       pageData.isTwitterConnected = true;
       pageData.connectedTwitterName = profileName;
@@ -1054,7 +1054,7 @@ router.get('/twitter/callback', async (req, res) => {
       const updateData = { connectedPageName: JSON.stringify(pageData) };
 
     await Settings.findOneAndUpdate(
-      settingsQuery,
+      connectionsQuery,
       updateData,
       { upsert: true, new: true }
     );
@@ -1064,7 +1064,7 @@ router.get('/twitter/callback', async (req, res) => {
     if (isFromOnboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=twitter`);
     } else {
-      res.redirect(`${frontendUrl}/settings?oauth_success=true&platform=twitter`);
+      res.redirect(`${frontendUrl}/connections?oauth_success=true&platform=twitter`);
     }
 
   } catch (err) {
@@ -1072,7 +1072,7 @@ router.get('/twitter/callback', async (req, res) => {
     if (isFromOnboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
     } else {
-      res.redirect(`${frontendUrl}/settings?oauth_error=exchange_failed`);
+      res.redirect(`${frontendUrl}/connections?oauth_error=exchange_failed`);
     }
   }
 });
