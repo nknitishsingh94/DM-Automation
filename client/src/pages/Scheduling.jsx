@@ -285,6 +285,7 @@ export default function Scheduling() {
 
   const [threadPosts, setThreadPosts] = useState([]);
   const [threadCustomCaption, setThreadCustomCaption] = useState('');
+  const [isThreadMode, setIsThreadMode] = useState(false);
 
   const applyFormatting = (formatType) => {
     const textarea = textareaRef.current;
@@ -1044,10 +1045,11 @@ export default function Scheduling() {
                         onClick={() => setPostType('image')}
                         style={{
                           flex: 1, padding: '10px', borderRadius: '8px',
-                          background: postType === 'image' ? '#4f46e5' : '#f1f5f9',
+                          background: postType === 'image' ? '#7c3aed' : '#f1f5f9',
                           color: postType === 'image' ? 'white' : '#64748b',
                           border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem',
-                          transition: 'all 0.2s'
+                          transition: 'all 0.2s',
+                          boxShadow: postType === 'image' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
                         }}
                       >
                         Single Post
@@ -1056,10 +1058,11 @@ export default function Scheduling() {
                         onClick={() => setPostType('carousel')}
                         style={{
                           flex: 1, padding: '10px', borderRadius: '8px',
-                          background: postType === 'carousel' ? '#4f46e5' : '#f1f5f9',
+                          background: postType === 'carousel' ? '#7c3aed' : '#f1f5f9',
                           color: postType === 'carousel' ? 'white' : '#64748b',
                           border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.85rem',
-                          transition: 'all 0.2s'
+                          transition: 'all 0.2s',
+                          boxShadow: postType === 'carousel' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
                         }}
                       >
                         Carousel
@@ -1199,7 +1202,6 @@ export default function Scheduling() {
                     )}
                   </div>
                 )}
-                )}
 
                 {/* Threads Specific Block */}
                 {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('threads') && (
@@ -1209,10 +1211,23 @@ export default function Scheduling() {
                         <div style={{ background: '#000', color: '#fff', borderRadius: '4px', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>@</div>
                         <span style={{ fontWeight: '700', fontSize: '0.95rem', color: '#334155' }}>Threads</span>
                       </div>
-                      <div style={{ width: '36px', height: '20px', background: '#0f172a', borderRadius: '10px', position: 'relative' }}>
-                        <div style={{ width: '16px', height: '16px', background: '#fff', borderRadius: '50%', position: 'absolute', top: '2px', right: '2px' }} />
+                      <div 
+                        onClick={() => setIsThreadMode(!isThreadMode)}
+                        style={{ 
+                          width: '36px', height: '20px', 
+                          background: isThreadMode ? '#000' : '#cbd5e1', 
+                          borderRadius: '10px', position: 'relative', cursor: 'pointer',
+                          transition: 'background 0.3s ease'
+                        }}
+                      >
+                        <div style={{ 
+                          width: '16px', height: '16px', background: '#fff', borderRadius: '50%', position: 'absolute', top: '2px', 
+                          left: isThreadMode ? '18px' : '2px', transition: 'left 0.3s ease',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                        }} />
                       </div>
                     </div>
+                    {isThreadMode && (
                     <div style={{ padding: '16px' }}>
                       <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '16px', fontWeight: '500' }}>
                         Main content + media become post 1. Add more below.
@@ -1290,6 +1305,7 @@ export default function Scheduling() {
                         />
                       </div>
                     </div>
+                    )}
                   </div>
                 )}
 
