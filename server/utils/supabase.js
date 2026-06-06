@@ -252,7 +252,7 @@ function convertIncoming(doc, tableName) {
       newDoc.isAI = false;
     }
   }
-  if (tableName === 'captions' || tableName === 'scheduled_posts') {
+  /* if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.user_id) {
       newDoc.userId = newDoc.user_id;
       delete newDoc.user_id;
@@ -278,7 +278,7 @@ function convertIncoming(doc, tableName) {
       newDoc.updatedAt = newDoc.updated_at;
       delete newDoc.updated_at;
     }
-  }
+  } */
 
   newDoc.toObject = () => newDoc;
   return newDoc;
@@ -375,7 +375,7 @@ function convertOutgoing(doc, tableName) {
     delete newDoc.name;
     delete newDoc.isAI;
   }
-  if (tableName === 'captions' || tableName === 'scheduled_posts') {
+  /* if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.userId) {
       newDoc.user_id = newDoc.userId;
       delete newDoc.userId;
@@ -401,7 +401,7 @@ function convertOutgoing(doc, tableName) {
       newDoc.updated_at = newDoc.updatedAt;
       delete newDoc.updatedAt;
     }
-  }
+  } */
 
   delete newDoc.toObject;
   delete newDoc.save;

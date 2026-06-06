@@ -3151,9 +3151,6 @@ async function runSchedulingWorker() {
     const _updatePost = async (id, fields) => {
       // Convert camelCase fields to snake_case for direct Supabase query
       const cleanFields = { ...fields };
-      if ('lastError' in cleanFields) { cleanFields.last_error = cleanFields.lastError; delete cleanFields.lastError; }
-      if ('retryCount' in cleanFields) { cleanFields.retry_count = cleanFields.retryCount; delete cleanFields.retryCount; }
-      if ('scheduledFor' in cleanFields) { cleanFields.scheduled_for = cleanFields.scheduledFor; delete cleanFields.scheduledFor; }
       const { data, error } = await _sb.from('scheduled_posts').update({ ...cleanFields, updated_at: new Date().toISOString() }).eq('id', id);
       if (error) throw new Error(error.message);
       return data;
