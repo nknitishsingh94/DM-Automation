@@ -48,7 +48,7 @@ export default function Settings() {
         {/* Tab Navigation */}
         <div style={{ 
           display: 'flex', 
-          gap: '24px', 
+          gap: '48px', 
           borderBottom: '1px solid #e5e7eb',
           paddingBottom: '0px'
         }}>
