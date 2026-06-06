@@ -863,7 +863,7 @@ export default function Scheduling() {
     <div style={{ padding: '0', maxWidth: 'none', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100vh', display: 'flex', flexDirection: 'column' }}>
       
       {/* Filters Row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '16px', padding: '16px 24px 0 24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px', padding: '16px 24px 0 24px' }}>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           {['All posts', 'All platforms', 'All users', 'All dates'].map((filter, idx) => (
             <button key={idx} style={{
@@ -876,6 +876,8 @@ export default function Scheduling() {
               {filter} <ChevronDown size={14} />
             </button>
           ))}
+        </div>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           {/* Scheduled filter button */}
           <button style={{
             display: 'flex', alignItems: 'center', gap: '6px',
@@ -887,59 +889,17 @@ export default function Scheduling() {
             Scheduled (new) <ChevronDown size={14} />
           </button>
         </div>
-        {/* View mode icons */}
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-          <button style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            width: '32px', height: '32px', borderRadius: '6px', background: '#7c3aed', color: 'white',
-            border: 'none', cursor: 'pointer'
-          }} title="Grid view">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
-              <rect x="0" y="0" width="6" height="6" rx="1"/>
-              <rect x="8" y="0" width="6" height="6" rx="1"/>
-              <rect x="0" y="8" width="6" height="6" rx="1"/>
-              <rect x="8" y="8" width="6" height="6" rx="1"/>
-            </svg>
-          </button>
-          <button style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            width: '32px', height: '32px', borderRadius: '6px', background: 'transparent', color: '#64748b',
-            border: '1px solid #cbd5e1', cursor: 'pointer'
-          }} title="List view">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
-              <rect x="0" y="0" width="14" height="3" rx="1"/>
-              <rect x="0" y="5" width="14" height="3" rx="1"/>
-              <rect x="0" y="10" width="14" height="3" rx="1"/>
-            </svg>
-          </button>
-          <button style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            width: '32px', height: '32px', borderRadius: '6px', background: 'transparent', color: '#64748b',
-            border: '1px solid #cbd5e1', cursor: 'pointer'
-          }} title="Calendar view">
-            <Calendar size={14} />
-          </button>
-          {/* Zoom controls */}
-          <button style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            width: '28px', height: '32px', borderRadius: '6px', background: 'transparent', color: '#64748b',
-            border: '1px solid #cbd5e1', borderRight: 'none', cursor: 'pointer', fontSize: '1rem'
-          }} title="Zoom out">−</button>
-          <button style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            width: '28px', height: '32px', borderRadius: '6px', background: 'transparent', color: '#64748b',
-            border: '1px solid #cbd5e1', cursor: 'pointer', fontSize: '1rem'
-          }} title="Zoom in">+</button>
-        </div>
       </div>
 
       {/* Main Content Area: Empty State or Grid */}
+      <div style={{ flex: 1, overflow: 'auto', padding: '0 24px 24px 24px' }}>
       {visiblePosts.length === 0 ? (
         <div style={{ 
           background: 'white', 
           border: '1px solid #e2e8f0', 
           borderRadius: '12px', 
-          height: '500px',
+          height: '100%',
+          minHeight: '400px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -967,7 +927,7 @@ export default function Scheduling() {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px' }}>
           {visiblePosts.map(post => {
             let mediaData = { type: post.type || 'image', mediaUrl: post.mediaUrl };
             try {
@@ -1168,7 +1128,8 @@ export default function Scheduling() {
             );
           })}
         </div>
-      )}
+        <div style={{ flex: 1 }}></div>
+      </div>
 
       {/* --- CREATE MODAL --- */}
       {showCreate && (
