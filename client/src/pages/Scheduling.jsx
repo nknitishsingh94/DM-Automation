@@ -978,14 +978,14 @@ export default function Scheduling() {
     return (
       <div style={{
         padding: '0', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100%',
-        display: 'flex', flexDirection: 'column', background: '#f8fafc', overflowY: 'auto'
+        display: 'flex', flexDirection: 'column', background: '#f8fafc', overflow: 'hidden'
       }}>
         <div style={{
           background: '#f8fafc', width: '100%', maxWidth: 'none', margin: '0',
-          display: 'flex', flexDirection: 'column'
+          display: 'flex', flexDirection: 'column', height: '100%'
         }}>
           {/* Header */}
-          <div style={{ padding: '24px', background: 'transparent', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ padding: '24px', background: 'transparent', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
             <div>
               <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e293b', margin: '0 0 4px 0' }}>Create Post</h3>
               <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b' }}>create & publish content</p>
@@ -999,10 +999,10 @@ export default function Scheduling() {
           </div>
 
           {/* Body */}
-          <div style={{ padding: '0 24px 24px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'start' }}>
+          <div style={{ padding: '0 24px 24px 24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'start', flex: 1, overflow: 'hidden' }}>
             
             {/* Left Column - Content & Media */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', paddingRight: '12px', height: '100%' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>content</label>
                 <div style={{ position: 'relative' }}>
@@ -1174,7 +1174,7 @@ export default function Scheduling() {
             </div>
 
             {/* Right Column - Settings */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', position: 'sticky', top: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', height: '100%', overflowY: 'auto', paddingRight: '12px' }}>
               
               {/* Platforms */}
               <div>
@@ -1311,33 +1311,36 @@ export default function Scheduling() {
                 }
                 return null;
               })()}
-
-
-
             </div>
           </div>
 
           {/* Footer */}
-          <div style={{ padding: '24px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '24px' }}>
+          <div style={{ padding: '24px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '24px', borderTop: '1px solid #e2e8f0' }}>
             <button
               onClick={() => setShowCreate(false)}
-              style={{ background: 'transparent', border: 'none', color: '#64748b', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer' }}
+              style={{ 
+                background: '#f1f5f9', border: '1px solid #e2e8f0', color: '#64748b', 
+                padding: '14px 32px', borderRadius: '12px', fontSize: '1.05rem', 
+                fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#334155'; }}
+              onMouseOut={(e) => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#64748b'; }}
             >
-              cancel
+              Cancel
             </button>
             <button
               onClick={handleAddSubmit}
               disabled={submitting}
               style={{
                 background: submitting ? '#94a3b8' : 'linear-gradient(135deg, #6366f1, #ec4899)',
-                color: 'white', border: 'none', padding: '8px 24px',
-                borderRadius: '24px', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer',
+                color: 'white', border: 'none', padding: '14px 36px',
+                borderRadius: '12px', fontSize: '1.05rem', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer',
                 display: 'flex', alignItems: 'center', gap: '8px',
                 boxShadow: submitting ? 'none' : '0 4px 15px rgba(99, 102, 241, 0.3)',
                 transition: 'all 0.2s ease'
               }}
             >
-              {submitting ? 'scheduling...' : 'schedule post'}
+              {submitting ? 'Scheduling...' : 'Schedule Post'} <Send size={18} />
             </button>
           </div>
         </div>
