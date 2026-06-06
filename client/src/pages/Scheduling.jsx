@@ -1886,10 +1886,11 @@ export default function Scheduling() {
           padding: '40px'
         }}>
           <div style={{ 
-            width: '80px', height: '80px', borderRadius: '50%', background: '#f1f5f9', 
-            display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' 
+            width: '80px', height: '80px', borderRadius: '50%', background: '#f5f3ff', 
+            display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px',
+            boxShadow: '0 8px 16px rgba(124, 58, 237, 0.1)'
           }}>
-            <Pencil size={32} color="#64748b" style={{ transform: 'rotate(-45deg)' }} />
+            <Sparkles size={36} color="#7c3aed" />
           </div>
           
           <h2 style={{ margin: '0 0 12px 0', fontSize: '1.5rem', fontWeight: '800', color: '#1e293b' }}>No posts yet</h2>
