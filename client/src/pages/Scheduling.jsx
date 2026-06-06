@@ -360,7 +360,18 @@ export default function Scheduling() {
   const [postType, setPostType] = useState('image');
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
+  const [youtubeThumbnailPreview, setYoutubeThumbnailPreview] = useState(null);
+  const [youtubeThumbnailFile, setYoutubeThumbnailFile] = useState(null);
   const fileInputRef = useRef(null);
+  const thumbnailInputRef = useRef(null);
+
+  const handleThumbnailChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      setYoutubeThumbnailFile(file);
+      setYoutubeThumbnailPreview(URL.createObjectURL(file));
+    }
+  };
 
   const [newPost, setNewPost] = useState({
     platform: 'instagram',
@@ -645,6 +656,8 @@ export default function Scheduling() {
     setSelectedFiles([]);
     setPreviews([]);
     setPostType('image');
+    setYoutubeThumbnailFile(null);
+    setYoutubeThumbnailPreview(null);
 
     const tempId = 'temp-' + Date.now();
     const tempPost = {
@@ -1063,6 +1076,47 @@ export default function Scheduling() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', marginBottom: '8px' }}>
                       <span style={{ color: '#ef4444' }}><Film size={18} /></span>
                       <span style={{ fontWeight: '600', color: '#334155' }}>YouTube Settings</span>
+                    </div>
+
+                    {/* YouTube Thumbnail Upload */}
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>custom thumbnail (optional)</label>
+                      <div
+                        onClick={() => thumbnailInputRef.current.click()}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const file = e.dataTransfer.files[0];
+                          if (file && file.type.startsWith('image/')) {
+                            setYoutubeThumbnailFile(file);
+                            setYoutubeThumbnailPreview(URL.createObjectURL(file));
+                          }
+                        }}
+                        style={{
+                          width: '100%', padding: '16px', border: '1.5px dashed #94a3b8', borderRadius: '12px',
+                          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                          cursor: 'pointer', background: '#e2e8f0', color: '#475569', fontWeight: '600', fontSize: '0.9rem',
+                          position: 'relative', overflow: 'hidden'
+                        }}
+                      >
+                        <input type="file" ref={thumbnailInputRef} style={{ display: 'none' }} accept="image/*" onChange={handleThumbnailChange} />
+                        {youtubeThumbnailPreview ? (
+                          <>
+                            <img src={youtubeThumbnailPreview} alt="Thumbnail Preview" style={{ width: '100%', maxHeight: '160px', objectFit: 'cover', borderRadius: '8px' }} />
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setYoutubeThumbnailFile(null); setYoutubeThumbnailPreview(null); }}
+                              style={{ position: 'absolute', top: '8px', right: '8px', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
+                            >
+                              <X size={14} />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <UploadCloud size={24} color="#64748b" />
+                            <span>Drag & drop or click to upload thumbnail</span>
+                          </>
+                        )}
+                      </div>
                     </div>
 
                     <div>
