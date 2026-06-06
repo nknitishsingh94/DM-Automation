@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import {
   Plus, Calendar, Clock, Video, Image as ImageIcon, Send, X, Check, ChevronLeft, ChevronRight,
   ChevronDown, Trash2, Globe, AlertCircle, Info, Sparkles, Zap, Heart, MessageCircle, Home,
-  Instagram, Facebook, Film, Save, Layers, UploadCloud, Loader2, Link as LinkIcon, Pencil
+  Instagram, Facebook, Film, Save, Layers, UploadCloud, Loader2, Link as LinkIcon, Pencil, MapPin
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 
 // --- UTILITIES ---
@@ -380,7 +381,11 @@ export default function Scheduling() {
     youtubeFirstComment: '',
     youtubeVisibility: 'Public',
     youtubeTitle: '',
-    youtubeTags: ''
+    youtubeTags: '',
+    gmbCtaEnabled: false,
+    gmbActionType: 'LEARN_MORE',
+    gmbSearchUrl: '',
+    gmbCustomCaption: ''
   });
 
   const chatRef = useRef(null);
@@ -611,6 +616,14 @@ export default function Scheduling() {
       return;
     }
 
+    const platformList = newPost.platforms || (newPost.platform ? [newPost.platform] : []);
+    if (platformList.includes('google-business')) {
+      if (newPost.gmbCtaEnabled && !newPost.gmbSearchUrl) {
+        notify("URL required when CTA is enabled for Google Business!", "error");
+        return;
+      }
+    }
+
     const payloadBase = { ...newPost };
     const currentFiles = [...selectedFiles];
     const currentPreviews = [...previews];
@@ -623,7 +636,11 @@ export default function Scheduling() {
       triggerKeyword: '', autoResponse: '', coverUrl: '',
       requireFollow: true, unfollowedResponse: "Hey! Please follow our account first to get the link! 😍",
       publicReply: "Check your DMs! 🚀",
-      automationStatus: 'Active'
+      automationStatus: 'Active',
+      gmbCtaEnabled: false,
+      gmbActionType: 'LEARN_MORE',
+      gmbSearchUrl: '',
+      gmbCustomCaption: ''
     });
     setSelectedFiles([]);
     setPreviews([]);
@@ -673,7 +690,11 @@ export default function Scheduling() {
           openingMessageText: payloadBase.openingMessageText,
           openingMessageButton: payloadBase.openingMessageButton,
           buttons: JSON.stringify(payloadBase.buttons || []),
-          platform: payloadBase.platform || 'instagram'
+          platform: payloadBase.platform || 'instagram',
+          gmbCtaEnabled: payloadBase.gmbCtaEnabled,
+          gmbActionType: payloadBase.gmbActionType,
+          gmbSearchUrl: payloadBase.gmbSearchUrl,
+          gmbCustomCaption: payloadBase.gmbCustomCaption
         };
 
         const createRes = await fetch(`${API_BASE_URL}/api/scheduling`, {
@@ -887,6 +908,9 @@ export default function Scheduling() {
     if (parsedSettings.isTwitterConnected || settings.isTwitterConnected) {
       platforms.push({ id: 'twitter', label: 'Twitter/X', icon: <X size={14} />, color: '#000000', handle: '' });
     }
+    if (parsedSettings.isGoogleBusinessConnected || settings.isGoogleBusinessConnected) {
+      platforms.push({ id: 'google-business', label: 'Google Business', icon: <MapPin size={14} />, color: '#4285f4', handle: settings.connectedGoogleBusinessName || parsedSettings.connectedGoogleBusinessName || '' });
+    }
     return platforms;
   })();
   
@@ -909,6 +933,7 @@ export default function Scheduling() {
       if (pLabel === 'youtube' && post.platform !== 'youtube') return false;
       if (pLabel === 'linkedin' && post.platform !== 'linkedin') return false;
       if (pLabel === 'twitter/x' && post.platform !== 'twitter') return false;
+      if (pLabel === 'google business' && post.platform !== 'google-business') return false;
     }
 
     // Apply Post Status Filter
@@ -942,7 +967,7 @@ export default function Scheduling() {
         display: 'flex', flexDirection: 'column', background: '#f8fafc', overflowY: 'auto'
       }}>
         <div style={{
-          background: '#f8fafc', width: '100%', maxWidth: '1000px', margin: '0 auto',
+          background: '#f8fafc', width: '100%', maxWidth: 'none', margin: '0',
           display: 'flex', flexDirection: 'column'
         }}>
           {/* Header */}
@@ -998,22 +1023,24 @@ export default function Scheduling() {
                 
                 {/* Previews */}
                 {previews.length > 0 && (
-                  <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
-                    {previews.map((src, idx) => (
-                      <div key={idx} style={{ width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', position: 'relative', border: '1px solid #e2e8f0' }}>
-                        {selectedFiles[idx]?.type?.startsWith('video') ? (
-                          <video src={src} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                          <img src={src} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        )}
-                        <button
-                          onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
-                          style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
-                        >
-                          <X size={12} />
-                        </button>
-                      </div>
-                    ))}
+                  <div style={{ marginTop: '16px', maxHeight: '200px', overflowY: 'auto', borderRadius: '8px' }}>
+                    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                      {previews.map((src, idx) => (
+                        <div key={idx} style={{ width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', position: 'relative', border: '1px solid #e2e8f0' }}>
+                          {selectedFiles[idx]?.type?.startsWith('video') ? (
+                            <video src={src} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ) : (
+                            <img src={src} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          )}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
+                            style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -1146,28 +1173,6 @@ export default function Scheduling() {
                 )}
               </div>
 
-              {/* Publishing Options */}
-              <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>publishing</label>
-                <div style={{ display: 'flex', background: '#e2e8f0', borderRadius: '12px', padding: '4px', gap: '4px' }}>
-                  {['Schedule', 'Now', 'Queue', 'Draft'].map(mode => (
-                    <button
-                      key={mode}
-                      onClick={() => setScheduleMode(mode)}
-                      style={{
-                        flex: 1, padding: '10px 12px', borderRadius: '8px', border: 'none',
-                        background: scheduleMode === mode ? 'white' : 'transparent',
-                        color: scheduleMode === mode ? '#334155' : '#64748b',
-                        fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer',
-                        boxShadow: scheduleMode === mode ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
-                      }}
-                    >
-                      {mode}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Date & Timezone */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
@@ -1201,6 +1206,82 @@ export default function Scheduling() {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              {(() => {
+                const selectedPlatforms = newPost.platforms || (newPost.platform ? [newPost.platform] : []);
+                const hasThreads = selectedPlatforms.includes('threads');
+                const isThreadsConnected = connectedPlatforms.some(p => p.id === 'threads');
+                if (hasThreads && !isThreadsConnected) {
+                  return (
+                    <div style={{
+                      background: '#fef2f2',
+                      border: '1px solid #fee2e2',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      display: 'flex',
+                      gap: '12px',
+                      alignItems: 'flex-start'
+                    }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '2px' }}>
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                      </svg>
+                      <div>
+                        <div style={{ fontWeight: '700', color: '#ef4444', fontSize: '0.85rem', marginBottom: '4px' }}>Threads Not Connected</div>
+                        <div style={{ fontSize: '0.8rem', color: '#64748b', lineHeight: '1.5', marginBottom: '12px' }}>
+                          Please connect your Threads account in settings to create posts for this platform.
+                        </div>
+                        <button
+                          onClick={() => navigate('/settings')}
+                          style={{
+                            padding: '8px 16px',
+                            background: '#ef4444',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '10px',
+                            fontWeight: '700',
+                            cursor: 'pointer',
+                            fontSize: '0.8rem'
+                          }}
+                        >
+                          Connect Threads
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
+              <div style={{ marginTop: 'auto', display: 'flex', gap: '12px', paddingTop: '16px' }}>
+                <button
+                  onClick={handleAddSubmit}
+                  disabled={submitting}
+                  style={{
+                    flex: 1,
+                    background: submitting ? '#94a3b8' : 'linear-gradient(135deg, #6366f1, #ec4899)',
+                    color: 'white', border: 'none', padding: '14px 24px',
+                    borderRadius: '16px', fontWeight: '700', cursor: submitting ? 'not-allowed' : 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                    boxShadow: submitting ? 'none' : '0 4px 15px rgba(99, 102, 241, 0.3)',
+                    transition: 'all 0.2s ease',
+                    fontSize: '0.95rem'
+                  }}
+                >
+                  {submitting ? (
+                    <>
+                      <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                      scheduling...
+                    </>
+                  ) : (
+                    <>
+                      <Calendar size={18} />
+                      schedule post
+                    </>
+                  )}
+                </button>
               </div>
 
             </div>
