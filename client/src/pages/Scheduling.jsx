@@ -887,7 +887,7 @@ export default function Scheduling() {
     if (!settings) return [];
     const platforms = [];
     if (settings.isAccountConnected || (!!settings.instagramAccessToken && !!settings.businessAccountId)) {
-      platforms.push({ id: 'instagram', label: 'Instagram', icon: <Instagram size={14} />, color: '#e1306c', handle: settings.instagramUsername || settings.connectedInstagramId || '' });
+      platforms.push({ id: 'instagram', label: 'Instagram', icon: <Instagram size={14} />, color: '#e1306c', handle: settings.connectedInstagramName || settings.instagramUsername || settings.connectedInstagramId || '' });
     }
     if (settings.isFacebookConnected || (!!settings.facebookAccessToken && !!settings.facebookPageId)) {
       platforms.push({ id: 'facebook', label: 'Facebook', icon: <Facebook size={14} />, color: '#1877f2', handle: settings.connectedPageName || '' });
@@ -1022,25 +1022,37 @@ export default function Scheduling() {
                 </div>
                 
                 {/* Previews */}
-                {previews.length > 0 && (
-                  <div style={{ marginTop: '16px', maxHeight: '200px', overflowY: 'auto', borderRadius: '8px' }}>
-                    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                      {previews.map((src, idx) => (
-                        <div key={idx} style={{ width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', position: 'relative', border: '1px solid #e2e8f0' }}>
-                          {selectedFiles[idx]?.type?.startsWith('video') ? (
-                            <video src={src} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          ) : (
-                            <img src={src} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          )}
-                          <button
-                            onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
-                            style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
-                          >
-                            <X size={12} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                {(previews.length > 0 || (newPost.platforms && newPost.platforms.includes('threads'))) && (
+                  <div style={{ marginTop: '16px', maxHeight: '200px', overflowY: 'auto', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#fafafa' }}>
+                    {previews.length > 0 ? (
+                      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', padding: '8px' }}>
+                        {previews.map((src, idx) => (
+                          <div key={idx} style={{ width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', position: 'relative', border: '1px solid #e2e8f0' }}>
+                            {selectedFiles[idx]?.type?.startsWith('video') ? (
+                              <video src={src} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                              <img src={src} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            )}
+                            <button
+                              onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
+                              style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ textAlign: 'center', padding: '32px 16px', color: '#94a3b8' }}>
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: '0 auto 12px', display: 'block' }}>
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                          <circle cx="8.5" cy="8.5" r="1.5" />
+                          <polyline points="21 15 16 10 5 21" />
+                        </svg>
+                        <div style={{ fontSize: '0.85rem', fontWeight: '500' }}>No media added yet</div>
+                        <div style={{ fontSize: '0.75rem', marginTop: '4px' }}>Click "Add media" to upload photos or videos</div>
+                      </div>
+                    )}
                   </div>
                 )}
 
