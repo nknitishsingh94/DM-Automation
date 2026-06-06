@@ -1120,8 +1120,7 @@ export default function Scheduling() {
                             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
                           }}
                           title="Add Emoji"
-                        >
-                          😀
+                        > icon
                         </button>
                         {showEmojiPicker && (
                           <div style={{
