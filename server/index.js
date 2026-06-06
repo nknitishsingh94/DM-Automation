@@ -1992,7 +1992,9 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
       anyKeyword: req.body.anyKeyword === 'true' || req.body.anyKeyword === true,
       openingMessage: req.body.openingMessage === 'true' || req.body.openingMessage === true,
       openingMessageText: req.body.openingMessageText || '',
-      openingMessageButton: req.body.openingMessageButton || ''
+      openingMessageButton: req.body.openingMessageButton || '',
+      threadCustomCaption: req.body.threadCustomCaption || '',
+      threadPosts: Array.isArray(req.body.threadPosts) ? req.body.threadPosts : []
     };
     
     const finalMediaUrl = JSON.stringify(metadata);
@@ -2200,6 +2202,8 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     if (updateData.openingMessageButton !== undefined) currentMetadata.openingMessageButton = updateData.openingMessageButton;
     if (updateData.triggerKeyword !== undefined) currentMetadata.triggerKeyword = updateData.triggerKeyword;
     if (updateData.autoResponse !== undefined) currentMetadata.autoResponse = updateData.autoResponse;
+    if (updateData.threadCustomCaption !== undefined) currentMetadata.threadCustomCaption = updateData.threadCustomCaption;
+    if (updateData.threadPosts !== undefined) currentMetadata.threadPosts = updateData.threadPosts;
 
     updateData.mediaUrl = JSON.stringify(currentMetadata);
 
@@ -2217,6 +2221,8 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     delete updateData.automationStatus;
     delete updateData.triggerKeyword;
     delete updateData.autoResponse;
+    delete updateData.threadCustomCaption;
+    delete updateData.threadPosts;
 
     const updatedPost = await ScheduledPost.findOneAndUpdate(
       { _id: req.params.id, userId: { $in: sharedUserIds } },
