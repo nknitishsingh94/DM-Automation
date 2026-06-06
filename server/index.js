@@ -1994,7 +1994,8 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
       openingMessageText: req.body.openingMessageText || '',
       openingMessageButton: req.body.openingMessageButton || '',
       threadCustomCaption: req.body.threadCustomCaption || '',
-      threadPosts: Array.isArray(req.body.threadPosts) ? req.body.threadPosts : []
+      threadPosts: Array.isArray(req.body.threadPosts) ? req.body.threadPosts : [],
+      gmbActionType: req.body.gmbActionType || 'LEARN_MORE'
     };
     
     const finalMediaUrl = JSON.stringify(metadata);
@@ -2030,6 +2031,9 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
     delete postData.openingMessage;
     delete postData.openingMessageText;
     delete postData.openingMessageButton;
+    delete postData.threadCustomCaption;
+    delete postData.threadPosts;
+    delete postData.gmbActionType;
 
     const newPost = new ScheduledPost(postData);
     try {
@@ -2204,6 +2208,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     if (updateData.autoResponse !== undefined) currentMetadata.autoResponse = updateData.autoResponse;
     if (updateData.threadCustomCaption !== undefined) currentMetadata.threadCustomCaption = updateData.threadCustomCaption;
     if (updateData.threadPosts !== undefined) currentMetadata.threadPosts = updateData.threadPosts;
+    if (updateData.gmbActionType !== undefined) currentMetadata.gmbActionType = updateData.gmbActionType;
 
     updateData.mediaUrl = JSON.stringify(currentMetadata);
 
@@ -2223,6 +2228,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     delete updateData.autoResponse;
     delete updateData.threadCustomCaption;
     delete updateData.threadPosts;
+    delete updateData.gmbActionType;
 
     const updatedPost = await ScheduledPost.findOneAndUpdate(
       { _id: req.params.id, userId: { $in: sharedUserIds } },
