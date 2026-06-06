@@ -1670,10 +1670,11 @@ export default function Scheduling() {
         </div>
         <button onClick={() => setShowCreate(true)} style={{
           display: 'flex', alignItems: 'center', gap: '8px',
-          background: '#ea4335', color: 'white', border: 'none',
+          background: '#7c3aed', color: 'white', border: 'none',
           padding: '10px 20px', borderRadius: '8px', fontWeight: '600',
-          fontSize: '0.9rem', cursor: 'pointer'
-        }}>
+          fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s',
+          boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)'
+        }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(124, 58, 237, 0.35)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.25)'; }}>
           <Plus size={16} /> Create post
         </button>
       </div>
@@ -1896,11 +1897,12 @@ export default function Scheduling() {
           
           <button onClick={() => setShowCreate(true)} style={{
             display: 'flex', alignItems: 'center', gap: '8px',
-            background: '#ea4335', color: 'white', border: 'none',
+            background: '#7c3aed', color: 'white', border: 'none',
             padding: '14px 48px', borderRadius: '8px', fontWeight: '600',
-            fontSize: '1rem', cursor: 'pointer', transition: 'background 0.2s',
-            width: '300px', justifyContent: 'center'
-          }} onMouseOver={(e) => e.currentTarget.style.background = '#d33828'} onMouseOut={(e) => e.currentTarget.style.background = '#ea4335'}>
+            fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s',
+            width: '300px', justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)'
+          }} onMouseOver={(e) => { e.currentTarget.style.background = '#6d28d9'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(124, 58, 237, 0.35)'; }} onMouseOut={(e) => { e.currentTarget.style.background = '#7c3aed'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.25)'; }}>
             <Plus size={20} /> Create post
           </button>
         </div>
