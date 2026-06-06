@@ -890,7 +890,8 @@ export default function Scheduling() {
       platforms.push({ id: 'instagram', label: 'Instagram', icon: <Instagram size={14} />, color: '#e1306c', handle: settings.connectedInstagramName || settings.instagramUsername || settings.connectedInstagramId || '' });
     }
     if (settings.isFacebookConnected || (!!settings.facebookAccessToken && !!settings.facebookPageId)) {
-      platforms.push({ id: 'facebook', label: 'Facebook', icon: <Facebook size={14} />, color: '#1877f2', handle: settings.connectedPageName || '' });
+      const fbHandle = settings.connectedFacebookName || (settings.connectedPageName && !settings.connectedPageName.startsWith('{') ? settings.connectedPageName : '');
+      platforms.push({ id: 'facebook', label: 'Facebook', icon: <Facebook size={14} />, color: '#1877f2', handle: fbHandle });
     }
     let parsedSettings = {};
     if (settings.connectedPageName && typeof settings.connectedPageName === 'string' && settings.connectedPageName.startsWith('{')) {
