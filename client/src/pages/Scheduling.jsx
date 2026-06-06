@@ -1245,17 +1245,53 @@ export default function Scheduling() {
                       </button>
                     </div>
 
-                    <textarea
-                      value={newPost.caption}
-                      onChange={(e) => setNewPost({ ...newPost, caption: e.target.value })}
-                      placeholder="What do you want to share?"
-                      style={{
-                        width: '100%', minHeight: '120px', padding: '12px',
-                        borderRadius: '10px', border: '1px solid #e2e8f0',
-                        background: 'white', outline: 'none', fontSize: '0.9rem',
-                        resize: 'vertical', color: '#334155', lineHeight: '1.5'
-                      }}
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <textarea
+                        ref={textareaRef}
+                        value={newPost.caption}
+                        onChange={(e) => setNewPost({ ...newPost, caption: e.target.value })}
+                        placeholder="What do you want to share?"
+                        style={{
+                          width: '100%', minHeight: '120px', padding: '12px', paddingBottom: '40px',
+                          borderRadius: '10px', border: '1px solid #e2e8f0',
+                          background: 'white', outline: 'none', fontSize: '0.9rem',
+                          resize: 'vertical', color: '#334155', lineHeight: '1.5'
+                        }}
+                      />
+                      <div style={{ position: 'absolute', bottom: '12px', left: '12px', display: 'flex', alignItems: 'center' }}>
+                        <button
+                          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                          style={{
+                            background: 'transparent', border: 'none', fontSize: '1.2rem',
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                          }}
+                          title="Add Emoji"
+                        >
+                          😀
+                        </button>
+                        {showEmojiPicker && (
+                          <div style={{
+                            position: 'absolute', bottom: '30px', left: '0', background: 'white',
+                            border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px',
+                            display: 'flex', gap: '4px', flexWrap: 'wrap', width: '250px',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 10
+                          }}>
+                            {popularEmojis.map((emoji, i) => (
+                              <span 
+                                key={i} 
+                                onClick={() => {
+                                  insertEmoji(emoji);
+                                  setShowEmojiPicker(false);
+                                }}
+                                style={{ cursor: 'pointer', fontSize: '1.2rem', padding: '4px' }}
+                              >
+                                {emoji}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </>
                 )}
               </div>
