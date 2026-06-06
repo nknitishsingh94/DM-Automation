@@ -606,12 +606,33 @@ export default function Scheduling() {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
-    if (files.length > 1 && postType !== 'carousel') {
-      setPostType('carousel');
-    } else if (files.length === 1 && files[0].type.startsWith('video/') && postType !== 'story') {
-      setPostType('reel');
-    } else if (files.length === 1 && files[0].type.startsWith('image/') && postType === 'reel') {
-      setPostType('image');
+    const isMetaPlatform = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p));
+
+    if (isMetaPlatform) {
+      if (postType === 'video') {
+        if (files.some(f => !f.type.startsWith('video/')) || files.length > 1) {
+          notify("Please select a single video file.", "error");
+          return;
+        }
+      } else if (postType === 'image') {
+        if (files.some(f => !f.type.startsWith('image/')) || files.length > 1) {
+          notify("Please select a single image file.", "error");
+          return;
+        }
+      } else if (postType === 'carousel') {
+        if (files.some(f => !f.type.startsWith('image/'))) {
+          notify("Carousel only supports images.", "error");
+          return;
+        }
+      }
+    } else {
+      if (files.length > 1 && postType !== 'carousel') {
+        setPostType('carousel');
+      } else if (files.length === 1 && files[0].type.startsWith('video/') && postType !== 'story') {
+        setPostType('video');
+      } else if (files.length === 1 && files[0].type.startsWith('image/') && postType === 'reel') {
+        setPostType('image');
+      }
     }
 
     const totalFiles = [...selectedFiles, ...files].slice(0, 10);
@@ -1040,34 +1061,49 @@ export default function Scheduling() {
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>content</label>
                 
-                    <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-                      <button
-                        onClick={() => setPostType('image')}
-                        style={{
-                          flex: 1, padding: '12px', borderRadius: '8px',
-                          background: postType === 'image' ? '#7c3aed' : '#f1f5f9',
-                          color: postType === 'image' ? 'white' : '#64748b',
-                          border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
-                          transition: 'all 0.2s',
-                          boxShadow: postType === 'image' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
-                        }}
-                      >
-                        Single Post
-                      </button>
-                      <button
-                        onClick={() => setPostType('carousel')}
-                        style={{
-                          flex: 1, padding: '12px', borderRadius: '8px',
-                          background: postType === 'carousel' ? '#7c3aed' : '#f1f5f9',
-                          color: postType === 'carousel' ? 'white' : '#64748b',
-                          border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
-                          transition: 'all 0.2s',
-                          boxShadow: postType === 'carousel' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
-                        }}
-                      >
-                        Carousel
-                      </button>
-                    </div>
+                    {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p)) && (
+                      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+                        <button
+                          onClick={() => setPostType('video')}
+                          style={{
+                            flex: 1, padding: '12px', borderRadius: '8px',
+                            background: postType === 'video' ? '#7c3aed' : '#f1f5f9',
+                            color: postType === 'video' ? 'white' : '#64748b',
+                            border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
+                            transition: 'all 0.2s',
+                            boxShadow: postType === 'video' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
+                          }}
+                        >
+                          Video
+                        </button>
+                        <button
+                          onClick={() => setPostType('image')}
+                          style={{
+                            flex: 1, padding: '12px', borderRadius: '8px',
+                            background: postType === 'image' ? '#7c3aed' : '#f1f5f9',
+                            color: postType === 'image' ? 'white' : '#64748b',
+                            border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
+                            transition: 'all 0.2s',
+                            boxShadow: postType === 'image' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
+                          }}
+                        >
+                          Image
+                        </button>
+                        <button
+                          onClick={() => setPostType('carousel')}
+                          style={{
+                            flex: 1, padding: '12px', borderRadius: '8px',
+                            background: postType === 'carousel' ? '#7c3aed' : '#f1f5f9',
+                            color: postType === 'carousel' ? 'white' : '#64748b',
+                            border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
+                            transition: 'all 0.2s',
+                            boxShadow: postType === 'carousel' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
+                          }}
+                        >
+                          Carousel
+                        </button>
+                      </div>
+                    )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                       <select
                         onChange={(e) => {
@@ -1160,8 +1196,19 @@ export default function Scheduling() {
                     type="file" 
                     ref={fileInputRef} 
                     style={{ display: 'none' }} 
-                    multiple={postType === 'carousel' || (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('threads')} 
-                    accept="video/*,image/*" 
+                    multiple={(() => {
+                      const isMeta = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p));
+                      if (isMeta) return postType === 'carousel';
+                      return true;
+                    })()}
+                    accept={(() => {
+                      const isMeta = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p));
+                      if (isMeta) {
+                        if (postType === 'video') return 'video/*';
+                        return 'image/*';
+                      }
+                      return 'video/*,image/*';
+                    })()}
                     onChange={handleFileChange} 
                   />
                   <Plus size={18} /> Add media
