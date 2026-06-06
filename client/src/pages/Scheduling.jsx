@@ -1214,6 +1214,36 @@ export default function Scheduling() {
                         Carousel
                       </button>
                     </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <select
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            const selectedCap = savedCaptions.find(c => c._id === e.target.value);
+                            if (selectedCap) setNewPost({ ...newPost, caption: selectedCap.content });
+                            e.target.value = "";
+                          }
+                        }}
+                        style={{
+                          padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1',
+                          background: 'white', color: '#475569', fontSize: '0.8rem', outline: 'none', cursor: 'pointer', maxWidth: '60%'
+                        }}
+                      >
+                        <option value="">Use saved caption...</option>
+                        {savedCaptions && savedCaptions.map(cap => (
+                          <option key={cap._id} value={cap._id}>{cap.title || cap.content.substring(0, 20)}</option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={handleSaveCaption}
+                        style={{
+                          padding: '6px 12px', borderRadius: '6px', background: '#e0e7ff',
+                          color: '#4338ca', border: 'none', fontWeight: '600', fontSize: '0.8rem',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Save Caption
+                      </button>
+                    </div>
 
                     <textarea
                       value={newPost.caption}
