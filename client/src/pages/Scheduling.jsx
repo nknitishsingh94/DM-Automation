@@ -235,6 +235,15 @@ export default function Scheduling() {
   const [createdPost, setCreatedPost] = useState(null);
   const [isPlatformDropdownOpen, setIsPlatformDropdownOpen] = useState(false);
 
+  // Filters State
+  const [postStatusFilter, setPostStatusFilter] = useState('All posts');
+  const [showPostStatusDropdown, setShowPostStatusDropdown] = useState(false);
+  const [platformFilter, setPlatformFilter] = useState('All platforms');
+  const [showPlatformDropdown, setShowPlatformDropdown] = useState(false);
+  const [dateFilter, setDateFilter] = useState('All dates');
+  const [showDateDropdown, setShowDateDropdown] = useState(false);
+
+
   // Settings & Timezone
   const [selectedTimezone, setSelectedTimezone] = useState('browser');
   const [displayTimezone] = useState('browser');
@@ -850,32 +859,220 @@ export default function Scheduling() {
 
   if (loading) return <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading your schedule...</div>;
 
-  const isFbConnected = settings?.isFacebookConnected || (!!settings?.facebookAccessToken && !!settings?.facebookPageId);
-  const isIgConnected = settings?.isAccountConnected || (!!settings?.instagramAccessToken && !!settings?.businessAccountId);
+  const connectedPlatforms = (() => {
+    if (!settings) return [];
+    const platforms = [];
+    if (settings.isAccountConnected || (!!settings.instagramAccessToken && !!settings.businessAccountId)) {
+      platforms.push({ id: 'instagram', label: 'Instagram', icon: <Instagram size={14} />, color: '#e1306c' });
+    }
+    if (settings.isFacebookConnected || (!!settings.facebookAccessToken && !!settings.facebookPageId)) {
+      platforms.push({ id: 'facebook', label: 'Facebook', icon: <Facebook size={14} />, color: '#1877f2' });
+    }
+    let parsedSettings = {};
+    if (settings.connectedPageName) {
+      try { parsedSettings = JSON.parse(settings.connectedPageName); } catch(e) {}
+    }
+    if (parsedSettings.isThreadsConnected || settings.isThreadsConnected) {
+      platforms.push({ id: 'threads', label: 'Threads', icon: <ThreadsIcon size={14} />, color: '#000000' });
+    }
+    if (parsedSettings.isYouTubeConnected || settings.isYouTubeConnected) {
+      platforms.push({ id: 'youtube', label: 'YouTube', icon: <Film size={14} />, color: '#ff0000' });
+    }
+    if (parsedSettings.isLinkedInConnected || settings.isLinkedInConnected) {
+      platforms.push({ id: 'linkedin', label: 'LinkedIn', icon: <Globe size={14} />, color: '#0a66c2' });
+    }
+    if (parsedSettings.isTwitterConnected || settings.isTwitterConnected) {
+      platforms.push({ id: 'twitter', label: 'Twitter/X', icon: <X size={14} />, color: '#000000' });
+    }
+    return platforms;
+  })();
   
   const visiblePosts = posts.filter(post => {
-    if (post.platform === 'facebook') return isFbConnected;
-    if (post.platform === 'instagram' || !post.platform) return isIgConnected;
+    // Check connected status
+    if (post.platform === 'facebook') {
+      if (!connectedPlatforms.some(p => p.id === 'facebook')) return false;
+    } else if (post.platform === 'instagram' || !post.platform) {
+      if (!connectedPlatforms.some(p => p.id === 'instagram')) return false;
+    } else {
+      if (!connectedPlatforms.some(p => p.id === post.platform)) return false;
+    }
+    
+    // Apply Platform Filter
+    if (platformFilter !== 'All platforms') {
+      const pLabel = platformFilter.toLowerCase();
+      if (pLabel === 'instagram' && post.platform !== 'instagram' && post.platform) return false;
+      if (pLabel === 'facebook' && post.platform !== 'facebook') return false;
+      if (pLabel === 'threads' && post.platform !== 'threads') return false;
+      if (pLabel === 'youtube' && post.platform !== 'youtube') return false;
+      if (pLabel === 'linkedin' && post.platform !== 'linkedin') return false;
+      if (pLabel === 'twitter/x' && post.platform !== 'twitter') return false;
+    }
+
+    // Apply Post Status Filter
+    if (postStatusFilter !== 'All posts') {
+      const statusLower = post.status ? post.status.toLowerCase() : 'scheduled';
+      const filterLower = postStatusFilter.toLowerCase();
+      if (filterLower === 'scheduled' && statusLower !== 'scheduled') return false;
+      if (filterLower === 'published' && statusLower !== 'posted') return false;
+      if (filterLower === 'failed' && statusLower !== 'failed') return false;
+      if (filterLower === 'draft' && statusLower !== 'draft') return false;
+    }
+
     return true;
   });
 
   return (
-    <div style={{ padding: '0', maxWidth: 'none', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ padding: '0', maxWidth: 'none', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100vh', display: 'flex', flexDirection: 'column' }} onClick={() => {
+      setShowPostStatusDropdown(false);
+      setShowPlatformDropdown(false);
+      setShowDateDropdown(false);
+    }}>
       
       {/* Filters Row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px', padding: '16px 24px 0 24px' }}>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          {['All posts', 'All platforms', 'All users', 'All dates'].map((filter, idx) => (
-            <button key={idx} style={{
-              display: 'flex', alignItems: 'center', gap: '6px',
-              background: 'white', color: '#475569', border: '1px solid #cbd5e1',
-              padding: '8px 12px', borderRadius: '6px', fontSize: '0.85rem',
-              fontWeight: '500', cursor: 'pointer'
-            }}>
-              {filter === 'All dates' && <Calendar size={14} style={{ marginRight: '4px' }} />}
-              {filter} <ChevronDown size={14} />
+          
+          {/* All Posts Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <button 
+              onClick={(e) => { e.stopPropagation(); setShowPostStatusDropdown(!showPostStatusDropdown); setShowPlatformDropdown(false); setShowDateDropdown(false); }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                background: postStatusFilter !== 'All posts' ? '#f8fafc' : 'white', color: '#475569', border: '1px solid #cbd5e1',
+                padding: '8px 12px', borderRadius: '6px', fontSize: '0.85rem',
+                fontWeight: '500', cursor: 'pointer'
+              }}
+            >
+              {postStatusFilter} <ChevronDown size={14} />
             </button>
-          ))}
+            {showPostStatusDropdown && (
+              <div style={{
+                position: 'absolute', top: '100%', left: 0, marginTop: '4px',
+                background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 50, minWidth: '160px',
+                padding: '4px 0'
+              }}>
+                {['All posts', 'Draft', 'Scheduled', 'Published', 'Failed'].map(status => (
+                  <div 
+                    key={status}
+                    onClick={() => { setPostStatusFilter(status); setShowPostStatusDropdown(false); }}
+                    style={{
+                      padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      background: postStatusFilter === status ? '#f1f5f9' : 'white',
+                      color: '#334155'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
+                    onMouseOut={(e) => e.currentTarget.style.background = postStatusFilter === status ? '#f1f5f9' : 'white'}
+                  >
+                    {status}
+                    {postStatusFilter === status && <Check size={14} color="#0f172a" />}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* All Platforms Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <button 
+              onClick={(e) => { e.stopPropagation(); setShowPlatformDropdown(!showPlatformDropdown); setShowPostStatusDropdown(false); setShowDateDropdown(false); }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                background: platformFilter !== 'All platforms' ? '#f8fafc' : 'white', color: '#475569', border: '1px solid #cbd5e1',
+                padding: '8px 12px', borderRadius: '6px', fontSize: '0.85rem',
+                fontWeight: '500', cursor: 'pointer'
+              }}
+            >
+              {platformFilter} <ChevronDown size={14} />
+            </button>
+            {showPlatformDropdown && (
+              <div style={{
+                position: 'absolute', top: '100%', left: 0, marginTop: '4px',
+                background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 50, minWidth: '160px',
+                padding: '4px 0', maxHeight: '300px', overflowY: 'auto'
+              }}>
+                <div 
+                  onClick={() => { setPlatformFilter('All platforms'); setShowPlatformDropdown(false); }}
+                  style={{
+                    padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    background: platformFilter === 'All platforms' ? '#f1f5f9' : 'white',
+                    color: '#334155'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
+                  onMouseOut={(e) => e.currentTarget.style.background = platformFilter === 'All platforms' ? '#f1f5f9' : 'white'}
+                >
+                  All platforms
+                  {platformFilter === 'All platforms' && <Check size={14} color="#0f172a" />}
+                </div>
+                {connectedPlatforms.map(plat => (
+                  <div 
+                    key={plat.id}
+                    onClick={() => { setPlatformFilter(plat.label); setShowPlatformDropdown(false); }}
+                    style={{
+                      padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      background: platformFilter === plat.label ? '#f1f5f9' : 'white',
+                      color: '#334155'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
+                    onMouseOut={(e) => e.currentTarget.style.background = platformFilter === plat.label ? '#f1f5f9' : 'white'}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ color: plat.color, display: 'flex', alignItems: 'center' }}>{plat.icon}</span>
+                      {plat.label}
+                    </div>
+                    {platformFilter === plat.label && <Check size={14} color="#0f172a" />}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* All Dates Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <button 
+              onClick={(e) => { e.stopPropagation(); setShowDateDropdown(!showDateDropdown); setShowPostStatusDropdown(false); setShowPlatformDropdown(false); }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                background: dateFilter !== 'All dates' ? '#f8fafc' : 'white', color: '#475569', border: '1px solid #cbd5e1',
+                padding: '8px 12px', borderRadius: '6px', fontSize: '0.85rem',
+                fontWeight: '500', cursor: 'pointer'
+              }}
+            >
+              <Calendar size={14} style={{ marginRight: '2px' }} />
+              {dateFilter} <ChevronDown size={14} />
+            </button>
+            {showDateDropdown && (
+              <div style={{
+                position: 'absolute', top: '100%', left: 0, marginTop: '4px',
+                background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 50, minWidth: '160px',
+                padding: '4px 0'
+              }}>
+                {['All dates', 'Today', 'Tomorrow', 'This week', 'This month'].map(range => (
+                  <div 
+                    key={range}
+                    onClick={() => { setDateFilter(range); setShowDateDropdown(false); notify("Date filtering is simulated", "info"); }}
+                    style={{
+                      padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      background: dateFilter === range ? '#f1f5f9' : 'white',
+                      color: '#334155'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
+                    onMouseOut={(e) => e.currentTarget.style.background = dateFilter === range ? '#f1f5f9' : 'white'}
+                  >
+                    {range}
+                    {dateFilter === range && <Check size={14} color="#0f172a" />}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          
         </div>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           {/* Scheduled filter button */}
@@ -1128,10 +1325,11 @@ export default function Scheduling() {
             );
           })}
         </div>
-        <div style={{ flex: 1 }}></div>
-      </div>
+      )}
+      <div style={{ flex: 1 }}></div>
+    </div>
 
-      {/* --- CREATE MODAL --- */}
+    {/* --- CREATE MODAL --- */}
       {showCreate && (
         <div style={{
           position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(10px)',
