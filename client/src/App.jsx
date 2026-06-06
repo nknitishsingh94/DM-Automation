@@ -648,7 +648,7 @@ function MainLayout() {
   const isPublic = ['/', '/public-home', '/login', '/signup', '/help', '/about', '/resources', '/blog', '/reviews'].includes(location.pathname) || location.pathname.startsWith('/blog/');
   const isEditor = ['/dm-automation-editor', '/automation-editor'].includes(location.pathname);
   const hideSidebar = isPublic || isEditor;
-  const hideTopBar = hideSidebar || isEditor || location.pathname === '/universal-triggers';
+  const hideTopBar = hideSidebar || isEditor || location.pathname === '/universal-triggers' || location.pathname === '/scheduling';
 
   return (
     <div className="app-container" style={{ height: '100%', width: '100%', position: 'fixed', top: 0, left: 0 }}>
@@ -656,8 +656,8 @@ function MainLayout() {
       <main className="main-content">
         {!hideTopBar && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
         <div className="page-container" style={{ 
-          padding: (isPublic || location.pathname === '/inbox' || location.pathname === '/universal-triggers') ? '0' : undefined,
-          overflow: (location.pathname === '/inbox' || location.pathname === '/universal-triggers') ? 'hidden' : 'auto',
+          padding: (isPublic || ['/inbox', '/universal-triggers', '/scheduling'].includes(location.pathname)) ? '0' : undefined,
+          overflow: (['/inbox', '/universal-triggers', '/scheduling'].includes(location.pathname)) ? 'hidden' : 'auto',
           display: 'flex',
           flexDirection: 'column'
         }}>

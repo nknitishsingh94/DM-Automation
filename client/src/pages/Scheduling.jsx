@@ -925,7 +925,7 @@ export default function Scheduling() {
   if (showCreate) {
     return (
       <div style={{
-        padding: '0', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100vh',
+        padding: '0', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100%',
         display: 'flex', flexDirection: 'column', background: '#f8fafc', overflowY: 'auto'
       }}>
         <div style={{
@@ -1134,7 +1134,7 @@ export default function Scheduling() {
   }
 
   return (
-    <div style={{ padding: '0', maxWidth: 'none', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100vh', display: 'flex', flexDirection: 'column' }} onClick={() => {
+    <div style={{ padding: '0', maxWidth: 'none', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100%', display: 'flex', flexDirection: 'column' }} onClick={() => {
       setShowPostStatusDropdown(false);
       setShowPlatformDropdown(false);
       setShowDateDropdown(false);
