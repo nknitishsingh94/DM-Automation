@@ -1153,7 +1153,7 @@ export default function Scheduling() {
                           resize: 'vertical', color: '#334155', lineHeight: '1.5'
                         }}
                       />
-                      <div style={{ position: 'absolute', bottom: '12px', left: '12px', display: 'flex', alignItems: 'center' }}>
+                      <div style={{ position: 'absolute', bottom: '12px', left: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <button
                           onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                           style={{
@@ -1162,6 +1162,34 @@ export default function Scheduling() {
                           }}
                           title="Add Emoji"
                         > 😀
+                        </button>
+                        <button
+                          onClick={() => applyFormatting('mention')}
+                          style={{
+                            background: '#f1f5f9', border: 'none', fontSize: '0.85rem',
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            padding: '4px 10px', borderRadius: '6px', fontWeight: '600', color: '#475569',
+                            transition: 'all 0.2s'
+                          }}
+                          title="Mention (@)"
+                          onMouseOver={(e) => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#1e293b'; }}
+                          onMouseOut={(e) => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#475569'; }}
+                        >
+                          @ Mention
+                        </button>
+                        <button
+                          onClick={() => applyFormatting('hashtag')}
+                          style={{
+                            background: '#f1f5f9', border: 'none', fontSize: '0.85rem',
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            padding: '4px 10px', borderRadius: '6px', fontWeight: '600', color: '#475569',
+                            transition: 'all 0.2s'
+                          }}
+                          title="Hashtag (#)"
+                          onMouseOver={(e) => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#1e293b'; }}
+                          onMouseOut={(e) => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#475569'; }}
+                        >
+                          # Hashtag
                         </button>
                         {showEmojiPicker && (
                           <div style={{
