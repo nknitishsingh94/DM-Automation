@@ -899,8 +899,8 @@ export default function Scheduling() {
     if (parsedSettings.isThreadsConnected || settings.isThreadsConnected) {
       platforms.push({ id: 'threads', label: 'Threads', icon: <ThreadsIcon size={14} />, color: '#000000', handle: parsedSettings.connectedThreadsName || settings.connectedThreadsName || '' });
     }
-    if (parsedSettings.isYouTubeConnected || settings.isYouTubeConnected) {
-      platforms.push({ id: 'youtube', label: 'YouTube', icon: <Film size={14} />, color: '#ff0000', handle: parsedSettings.connectedYouTubeName || settings.connectedYouTubeName || settings.youtubeChannelName || '' });
+    if (parsedSettings.isYouTubeConnected || settings.isYouTubeConnected || parsedSettings.isYoutubeConnected || settings.isYoutubeConnected) {
+      platforms.push({ id: 'youtube', label: 'YouTube', icon: <Film size={14} />, color: '#ff0000', handle: parsedSettings.connectedYouTubeName || settings.connectedYouTubeName || parsedSettings.youtubeChannelName || settings.youtubeChannelName || '' });
     }
     if (parsedSettings.isLinkedInConnected || settings.isLinkedInConnected) {
       platforms.push({ id: 'linkedin', label: 'LinkedIn', icon: <Globe size={14} />, color: '#0a66c2', handle: '' });
