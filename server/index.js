@@ -1995,7 +1995,10 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
       openingMessageButton: req.body.openingMessageButton || '',
       threadCustomCaption: req.body.threadCustomCaption || '',
       threadPosts: Array.isArray(req.body.threadPosts) ? req.body.threadPosts : [],
-      gmbActionType: req.body.gmbActionType || 'LEARN_MORE'
+      gmbActionType: req.body.gmbActionType || 'LEARN_MORE',
+      gmbCtaEnabled: req.body.gmbCtaEnabled,
+      gmbSearchUrl: req.body.gmbSearchUrl || '',
+      gmbCustomCaption: req.body.gmbCustomCaption || ''
     };
     
     const finalMediaUrl = JSON.stringify(metadata);
@@ -2034,6 +2037,9 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
     delete postData.threadCustomCaption;
     delete postData.threadPosts;
     delete postData.gmbActionType;
+    delete postData.gmbCtaEnabled;
+    delete postData.gmbSearchUrl;
+    delete postData.gmbCustomCaption;
 
     const newPost = new ScheduledPost(postData);
     try {
@@ -2209,6 +2215,9 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     if (updateData.threadCustomCaption !== undefined) currentMetadata.threadCustomCaption = updateData.threadCustomCaption;
     if (updateData.threadPosts !== undefined) currentMetadata.threadPosts = updateData.threadPosts;
     if (updateData.gmbActionType !== undefined) currentMetadata.gmbActionType = updateData.gmbActionType;
+    if (updateData.gmbCtaEnabled !== undefined) currentMetadata.gmbCtaEnabled = updateData.gmbCtaEnabled;
+    if (updateData.gmbSearchUrl !== undefined) currentMetadata.gmbSearchUrl = updateData.gmbSearchUrl;
+    if (updateData.gmbCustomCaption !== undefined) currentMetadata.gmbCustomCaption = updateData.gmbCustomCaption;
 
     updateData.mediaUrl = JSON.stringify(currentMetadata);
 
@@ -2229,6 +2238,9 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     delete updateData.threadCustomCaption;
     delete updateData.threadPosts;
     delete updateData.gmbActionType;
+    delete updateData.gmbCtaEnabled;
+    delete updateData.gmbSearchUrl;
+    delete updateData.gmbCustomCaption;
 
     const updatedPost = await ScheduledPost.findOneAndUpdate(
       { _id: req.params.id, userId: { $in: sharedUserIds } },
