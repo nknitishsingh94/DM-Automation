@@ -1140,8 +1140,24 @@ export default function Scheduling() {
       setShowDateDropdown(false);
     }}>
       
+      {/* Top Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px 0 24px' }}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '800', color: '#1e293b' }}>Posts</h2>
+          <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#64748b', fontWeight: '500' }}>Manage and schedule your social media content</p>
+        </div>
+        <button onClick={() => setShowCreate(true)} style={{
+          display: 'flex', alignItems: 'center', gap: '8px',
+          background: '#ea4335', color: 'white', border: 'none',
+          padding: '10px 20px', borderRadius: '8px', fontWeight: '600',
+          fontSize: '0.9rem', cursor: 'pointer'
+        }}>
+          <Plus size={16} /> Create post
+        </button>
+      </div>
+
       {/* Filters Row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px', padding: '16px 24px 0 24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px', padding: '16px 24px 0 24px', marginTop: '16px' }}>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           
           {/* All Posts Dropdown */}
