@@ -243,6 +243,8 @@ export default function Scheduling() {
   const [dateFilter, setDateFilter] = useState('All dates');
   const [showDateDropdown, setShowDateDropdown] = useState(false);
   const [scheduleMode, setScheduleMode] = useState('Schedule');
+  const [sortFilter, setSortFilter] = useState('Scheduled (new)');
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
 
 
   // Settings & Timezone
@@ -864,26 +866,26 @@ export default function Scheduling() {
     if (!settings) return [];
     const platforms = [];
     if (settings.isAccountConnected || (!!settings.instagramAccessToken && !!settings.businessAccountId)) {
-      platforms.push({ id: 'instagram', label: 'Instagram', icon: <Instagram size={14} />, color: '#e1306c' });
+      platforms.push({ id: 'instagram', label: 'Instagram', icon: <Instagram size={14} />, color: '#e1306c', handle: settings.instagramUsername || settings.connectedInstagramId || '' });
     }
     if (settings.isFacebookConnected || (!!settings.facebookAccessToken && !!settings.facebookPageId)) {
-      platforms.push({ id: 'facebook', label: 'Facebook', icon: <Facebook size={14} />, color: '#1877f2' });
+      platforms.push({ id: 'facebook', label: 'Facebook', icon: <Facebook size={14} />, color: '#1877f2', handle: settings.connectedPageName || '' });
     }
     let parsedSettings = {};
-    if (settings.connectedPageName) {
+    if (settings.connectedPageName && typeof settings.connectedPageName === 'string' && settings.connectedPageName.startsWith('{')) {
       try { parsedSettings = JSON.parse(settings.connectedPageName); } catch(e) {}
     }
     if (parsedSettings.isThreadsConnected || settings.isThreadsConnected) {
-      platforms.push({ id: 'threads', label: 'Threads', icon: <ThreadsIcon size={14} />, color: '#000000' });
+      platforms.push({ id: 'threads', label: 'Threads', icon: <ThreadsIcon size={14} />, color: '#000000', handle: parsedSettings.connectedThreadsName || settings.connectedThreadsName || '' });
     }
     if (parsedSettings.isYouTubeConnected || settings.isYouTubeConnected) {
-      platforms.push({ id: 'youtube', label: 'YouTube', icon: <Film size={14} />, color: '#ff0000' });
+      platforms.push({ id: 'youtube', label: 'YouTube', icon: <Film size={14} />, color: '#ff0000', handle: parsedSettings.connectedYouTubeName || settings.connectedYouTubeName || settings.youtubeChannelName || '' });
     }
     if (parsedSettings.isLinkedInConnected || settings.isLinkedInConnected) {
-      platforms.push({ id: 'linkedin', label: 'LinkedIn', icon: <Globe size={14} />, color: '#0a66c2' });
+      platforms.push({ id: 'linkedin', label: 'LinkedIn', icon: <Globe size={14} />, color: '#0a66c2', handle: '' });
     }
     if (parsedSettings.isTwitterConnected || settings.isTwitterConnected) {
-      platforms.push({ id: 'twitter', label: 'Twitter/X', icon: <X size={14} />, color: '#000000' });
+      platforms.push({ id: 'twitter', label: 'Twitter/X', icon: <X size={14} />, color: '#000000', handle: '' });
     }
     return platforms;
   })();
@@ -920,6 +922,17 @@ export default function Scheduling() {
     }
 
     return true;
+  }).sort((a, b) => {
+    const timeA = new Date(a.scheduledFor || a.createdAt || Date.now()).getTime();
+    const timeB = new Date(b.scheduledFor || b.createdAt || Date.now()).getTime();
+    const createA = new Date(a.createdAt || a.scheduledFor || Date.now()).getTime();
+    const createB = new Date(b.createdAt || b.scheduledFor || Date.now()).getTime();
+
+    if (sortFilter === 'Scheduled (new)') return timeB - timeA;
+    if (sortFilter === 'Scheduled (old)') return timeA - timeB;
+    if (sortFilter === 'Recently created') return createB - createA;
+    if (sortFilter === 'Oldest created') return createA - createB;
+    return 0;
   });
 
   if (showCreate) {
@@ -1069,25 +1082,31 @@ export default function Scheduling() {
             {/* Right Column - Settings */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
+              {/* Profiles */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '4px' }}>profiles</label>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '12px' }}>Select one or more profiles to post to their connected accounts</div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#e2e8f0', padding: '6px 12px', borderRadius: '16px', fontSize: '0.8rem', fontWeight: '600', color: '#475569', cursor: 'default' }}>
+                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#cbd5e1' }}></div>
+                  Default
+                </div>
+              </div>
+
               {/* Platforms */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>platforms</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '12px' }}>platforms (from 1 profile)</label>
                 {connectedPlatforms.length === 0 ? (
                   <div style={{
-                    width: '100%', padding: '32px', border: 'none', borderRadius: '12px',
-                    background: '#e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    gap: '8px'
+                    width: '100%', padding: '32px', border: '1px dashed #cbd5e1', borderRadius: '8px',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    gap: '8px', background: 'transparent'
                   }}>
-                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '1px solid #64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
-                      <Plus size={14} />
-                    </div>
-                    <div style={{ fontWeight: '700', fontSize: '0.9rem', color: '#334155' }}>no connected accounts</div>
-                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>select a profile and connect accounts first</div>
+                    <div style={{ fontWeight: '600', fontSize: '0.85rem', color: '#64748b' }}>No accounts connected</div>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Connect accounts in settings first</div>
                   </div>
                 ) : (
                   <div style={{
-                    width: '100%', padding: '16px', border: 'none', borderRadius: '12px',
-                    background: '#e2e8f0', display: 'flex', flexWrap: 'wrap', gap: '12px'
+                    width: '100%', display: 'flex', flexWrap: 'wrap', gap: '12px'
                   }}>
                     {connectedPlatforms.map(plat => {
                       const isSelected = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes(plat.id);
@@ -1105,16 +1124,22 @@ export default function Scheduling() {
                             return { ...prev, platforms: newPlatforms, platform: newPlatforms.length > 0 ? newPlatforms[0] : '' };
                           })}
                           style={{
-                            display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px',
-                            border: isSelected ? `2px solid ${plat.color}` : '1px solid transparent',
-                            borderRadius: '8px', background: isSelected ? plat.color : 'transparent',
-                            cursor: 'pointer', opacity: isSelected ? 1 : 0.6,
+                            display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 14px',
+                            border: isSelected ? `1px solid ${plat.color}` : '1px solid #cbd5e1',
+                            borderRadius: '8px', background: isSelected ? `${plat.color}10` : 'transparent',
+                            cursor: 'pointer', minWidth: '180px', position: 'relative',
                             transition: 'all 0.2s ease-in-out'
                           }}
                         >
-                        <span style={{ color: isSelected ? '#ffffff' : plat.color, display: 'flex' }}>{plat.icon}</span>
-                        <span style={{ fontSize: '0.85rem', fontWeight: '600', color: isSelected ? '#ffffff' : '#334155' }}>{plat.label}</span>
-                      </div>
+                          <div style={{ color: plat.color, display: 'flex' }}>{plat.icon}</div>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#334155', lineHeight: '1.2' }}>{plat.label}</span>
+                            {plat.handle && <span style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>{plat.handle.startsWith('@') ? plat.handle : `@${plat.handle.replace(/\s+/g, '').toLowerCase()}`}</span>}
+                          </div>
+                          {isSelected && (
+                            <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', borderRadius: '50%', border: `4px solid ${plat.color}`, background: 'white' }}></div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
@@ -1214,6 +1239,7 @@ export default function Scheduling() {
       setShowPostStatusDropdown(false);
       setShowPlatformDropdown(false);
       setShowDateDropdown(false);
+      setShowSortDropdown(false);
     }}>
       
       {/* Top Header */}
@@ -1380,15 +1406,46 @@ export default function Scheduling() {
         </div>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           {/* Scheduled filter button */}
-          <button style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            background: 'white', color: '#475569', border: '1px solid #cbd5e1',
-            padding: '8px 12px', borderRadius: '6px', fontSize: '0.85rem',
-            fontWeight: '500', cursor: 'pointer'
-          }}>
-            <Clock size={14} style={{ marginRight: '4px' }} />
-            Scheduled (new) <ChevronDown size={14} />
-          </button>
+          <div style={{ position: 'relative' }}>
+            <button 
+              onClick={(e) => { e.stopPropagation(); setShowSortDropdown(!showSortDropdown); setShowDateDropdown(false); setShowPostStatusDropdown(false); setShowPlatformDropdown(false); }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                background: sortFilter !== 'Scheduled (new)' ? '#f8fafc' : 'white', color: '#475569', border: '1px solid #cbd5e1',
+                padding: '8px 12px', borderRadius: '6px', fontSize: '0.85rem',
+                fontWeight: '500', cursor: 'pointer'
+              }}
+            >
+              {(sortFilter === 'Scheduled (new)' || sortFilter === 'Scheduled (old)') ? <Clock size={14} style={{ marginRight: '4px' }} /> : null}
+              {sortFilter} <ChevronDown size={14} />
+            </button>
+            {showSortDropdown && (
+              <div style={{
+                position: 'absolute', top: '100%', right: 0, marginTop: '4px',
+                background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 50, minWidth: '180px',
+                padding: '4px 0'
+              }}>
+                {['Scheduled (new)', 'Scheduled (old)', 'Recently created', 'Oldest created'].map(opt => (
+                  <div 
+                    key={opt}
+                    onClick={() => { setSortFilter(opt); setShowSortDropdown(false); }}
+                    style={{
+                      padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      background: sortFilter === opt ? '#f1f5f9' : 'white',
+                      color: '#334155'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
+                    onMouseOut={(e) => e.currentTarget.style.background = sortFilter === opt ? '#f1f5f9' : 'white'}
+                  >
+                    {opt}
+                    {sortFilter === opt && <Check size={14} color="#0f172a" />}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
