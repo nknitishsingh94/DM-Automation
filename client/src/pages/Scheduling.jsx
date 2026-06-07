@@ -717,9 +717,9 @@ export default function Scheduling() {
     setThreadPosts([]);
     setThreadCustomCaption('');
 
-    const platformList = newPost.platforms && newPost.platforms.length > 0 ? newPost.platforms : (newPost.platform ? [newPost.platform] : ['instagram']);
+    const activePlatforms = newPost.platforms && newPost.platforms.length > 0 ? newPost.platforms : (newPost.platform ? [newPost.platform] : ['instagram']);
 
-    const tempPosts = platformList.map(plat => ({
+    const tempPosts = activePlatforms.map(plat => ({
       _id: 'temp-' + plat + '-' + Date.now(),
       status: 'Uploading',
       caption: payloadBase.caption,
@@ -771,8 +771,8 @@ export default function Scheduling() {
         };
 
         // Create placeholders for all platforms
-        for (let i = 0; i < platformList.length; i++) {
-          const plat = platformList[i];
+        for (let i = 0; i < activePlatforms.length; i++) {
+          const plat = activePlatforms[i];
           const tempId = tempPosts[i]._id;
           
           const createRes = await fetch(`${API_BASE_URL}/api/scheduling`, {
