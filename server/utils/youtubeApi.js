@@ -8,19 +8,21 @@ export async function publishYouTubeVideo(userId, postData, settings) {
     let videoUrl = '';
     let description = '';
     let thumbnail = '';
+    let youtubeVideoId = '';
 
     // Handle parsed JSON or raw string
     try {
       const parsed = JSON.parse(mediaUrl);
-      videoUrl = parsed.videoUrl || '';
+      videoUrl = parsed.videoUrl || parsed.mediaUrl || '';
       description = parsed.description || '';
       thumbnail = parsed.thumbnail || '';
+      youtubeVideoId = parsed.youtubeVideoId || '';
     } catch (e) {
       videoUrl = mediaUrl;
     }
 
-    if (!videoUrl) {
-      throw new Error('Video URL missing in mediaUrl.');
+    if (!videoUrl && !youtubeVideoId) {
+      throw new Error('Video URL or YouTube Video ID missing.');
     }
 
     const { youtubeAccessToken, youtubeRefreshToken } = settings;
@@ -43,39 +45,54 @@ export async function publishYouTubeVideo(userId, postData, settings) {
       auth: oauth2Client,
     });
 
-    // Ensure video exists locally (if uploaded via /api/upload)
-    const serverRoot = process.cwd();
-    let absoluteVideoPath = videoUrl;
-    if (videoUrl.startsWith('/uploads/')) {
-      absoluteVideoPath = path.join(serverRoot, videoUrl);
+    let videoId = youtubeVideoId;
+
+    if (videoId) {
+      console.log(`✅ [YouTube API] Pre-uploaded video found. Updating privacy to public for ID: ${videoId}`);
+      await youtube.videos.update({
+        part: 'status',
+        requestBody: {
+          id: videoId,
+          status: {
+            privacyStatus: 'public'
+          }
+        }
+      });
     } else {
-      throw new Error(`Video URL must be a local /uploads path, got: ${videoUrl}`);
-    }
+      // Ensure video exists locally (if uploaded via /api/upload)
+      const serverRoot = process.cwd();
+      let absoluteVideoPath = videoUrl;
+      if (videoUrl.startsWith('/uploads/')) {
+        absoluteVideoPath = path.join(serverRoot, videoUrl);
+      } else {
+        throw new Error(`Video URL must be a local /uploads path for synchronous upload, got: ${videoUrl}`);
+      }
 
-    if (!fs.existsSync(absoluteVideoPath)) {
-      throw new Error(`Video file not found at ${absoluteVideoPath}`);
-    }
+      if (!fs.existsSync(absoluteVideoPath)) {
+        throw new Error(`Video file not found at ${absoluteVideoPath}`);
+      }
 
-    // Upload Video
-    const videoRes = await youtube.videos.insert({
-      part: 'id,snippet,status',
-      notifySubscribers: false,
-      requestBody: {
-        snippet: {
-          title: caption.substring(0, 100), // Max 100 chars
-          description: description,
+      // Upload Video
+      const videoRes = await youtube.videos.insert({
+        part: 'id,snippet,status',
+        notifySubscribers: false,
+        requestBody: {
+          snippet: {
+            title: caption.substring(0, 100), // Max 100 chars
+            description: description,
+          },
+          status: {
+            privacyStatus: 'public', // Or private if testing
+          },
         },
-        status: {
-          privacyStatus: 'public', // Or private if testing
+        media: {
+          body: fs.createReadStream(absoluteVideoPath),
         },
-      },
-      media: {
-        body: fs.createReadStream(absoluteVideoPath),
-      },
-    });
+      });
 
-    const videoId = videoRes.data.id;
-    console.log(`✅ [YouTube API] Video uploaded successfully. ID: ${videoId}`);
+      videoId = videoRes.data.id;
+      console.log(`✅ [YouTube API] Video uploaded successfully. ID: ${videoId}`);
+    }
 
     // If thumbnail provided, upload it too
     if (thumbnail && thumbnail.startsWith('/uploads/')) {

@@ -1991,6 +1991,8 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
       gmbCtaEnabled: req.body.gmbCtaEnabled,
       gmbSearchUrl: req.body.gmbSearchUrl || '',
       gmbCustomCaption: req.body.gmbCustomCaption || ''
+      gmbCustomCaption: req.body.gmbCustomCaption || '',
+      youtubeVideoId: req.body.youtubeVideoId || ''
     };
     
     const finalMediaUrl = JSON.stringify(metadata);
@@ -2210,6 +2212,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     if (updateData.gmbCtaEnabled !== undefined) currentMetadata.gmbCtaEnabled = updateData.gmbCtaEnabled;
     if (updateData.gmbSearchUrl !== undefined) currentMetadata.gmbSearchUrl = updateData.gmbSearchUrl;
     if (updateData.gmbCustomCaption !== undefined) currentMetadata.gmbCustomCaption = updateData.gmbCustomCaption;
+    if (updateData.youtubeVideoId !== undefined) currentMetadata.youtubeVideoId = updateData.youtubeVideoId;
 
     updateData.mediaUrl = JSON.stringify(currentMetadata);
 
@@ -2488,6 +2491,49 @@ app.post('/api/ai/generate', verifyToken, async (req, res) => {
   } catch (err) {
     console.error('❌ AI GENERATION ERROR:', err.message);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// YouTube Frontend Resumable Upload URL Generator
+app.post('/api/youtube/get-upload-url', verifyToken, async (req, res) => {
+  try {
+    const { fileSize, contentType, title, description } = req.body;
+    const settings = await Settings.findOne({ userId: req.user.userId });
+    if (!settings || !settings.youtubeAccessToken) {
+      return res.status(400).json({ error: 'YouTube not connected.' });
+    }
+
+    const { default: axios } = await import('axios');
+
+    const response = await axios.post(
+      'https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',
+      {
+        snippet: {
+          title: title ? title.substring(0, 100) : 'Video',
+          description: description || ''
+        },
+        status: {
+          privacyStatus: 'private'
+        }
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${settings.youtubeAccessToken}`,
+          'X-Upload-Content-Length': fileSize,
+          'X-Upload-Content-Type': contentType,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    const uploadUrl = response.headers.location || response.headers['Location'] || response.headers['location'];
+    if (!uploadUrl) throw new Error('No upload URL returned from YouTube');
+
+    res.json({ uploadUrl });
+  } catch (err) {
+    const errorMsg = err.response?.data?.error?.message || err.message;
+    console.error('❌ YouTube Resumable Upload URL Error:', errorMsg);
+    res.status(500).json({ error: errorMsg });
   }
 });
 

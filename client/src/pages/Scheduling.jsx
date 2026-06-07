@@ -820,11 +820,46 @@ export default function Scheduling() {
         
         // Finalize all posts
         let finalPosts = [];
-        for (const { dbId } of createdDbIds) {
+        for (const { dbId, plat } of createdDbIds) {
+          let customMediaUrl = finalMediaUrl;
+          let customVideoId = null;
+
+          // Direct YouTube Upload to bypass backend timeouts
+          if (plat === 'youtube' && (currentType === 'video' || currentType === 'reel') && currentFiles.length > 0) {
+            try {
+               const ytFile = currentFiles[0];
+               const ytUrlRes = await fetch(`${API_BASE_URL}/api/youtube/get-upload-url`, {
+                 method: 'POST',
+                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                 body: JSON.stringify({ 
+                   fileSize: ytFile.size, 
+                   contentType: ytFile.type, 
+                   title: payloadBase.caption,
+                   description: payloadBase.caption
+                 })
+               });
+               if (ytUrlRes.ok) {
+                 const { uploadUrl } = await ytUrlRes.json();
+                 const ytUploadRes = await fetch(uploadUrl, {
+                   method: 'PUT',
+                   headers: { 'Content-Type': ytFile.type },
+                   body: ytFile
+                 });
+                 if (ytUploadRes.ok) {
+                   const ytData = await ytUploadRes.json();
+                   customVideoId = ytData.id;
+                   console.log("Uploaded to YouTube directly! ID:", customVideoId);
+                 }
+               }
+            } catch (ytErr) {
+               console.error("Direct YouTube upload failed:", ytErr);
+            }
+          }
+
           const updateRes = await fetch(`${API_BASE_URL}/api/scheduling/${dbId}`, {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mediaUrl: finalMediaUrl, carouselItems: mediaUrls, status: 'Scheduled' })
+            body: JSON.stringify({ mediaUrl: customMediaUrl, carouselItems: mediaUrls, status: 'Scheduled', youtubeVideoId: customVideoId })
           });
 
           const updatedData = await updateRes.json();
