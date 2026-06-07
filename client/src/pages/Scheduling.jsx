@@ -717,12 +717,13 @@ export default function Scheduling() {
     setThreadPosts([]);
     setThreadCustomCaption('');
 
-    const tempId = 'temp-' + Date.now();
-    const tempPost = {
-      _id: tempId,
+    const platformList = newPost.platforms && newPost.platforms.length > 0 ? newPost.platforms : (newPost.platform ? [newPost.platform] : ['instagram']);
+
+    const tempPosts = platformList.map(plat => ({
+      _id: 'temp-' + plat + '-' + Date.now(),
       status: 'Uploading',
       caption: payloadBase.caption,
-      platform: payloadBase.platform || 'instagram',
+      platform: plat,
       type: currentType,
       scheduledFor: convertLocalToUTC(payloadBase.scheduledFor, selectedTimezone),
       mediaUrl: JSON.stringify({
@@ -730,9 +731,9 @@ export default function Scheduling() {
         mediaUrl: currentPreviews.length > 0 ? currentPreviews[0] : payloadBase.mediaUrl
       }),
       isUploading: true
-    };
+    }));
     
-    setPosts(prev => [tempPost, ...prev]);
+    setPosts(prev => [...tempPosts, ...prev]);
     setSubmitting(true);
     
     if (currentFiles.length > 0 && (currentType === 'reel' || currentType === 'video')) {
@@ -742,13 +743,13 @@ export default function Scheduling() {
     }
 
     (async () => {
-      let dbId = null;
+      let createdDbIds = [];
       try {
-        const initialPayload = {
+        const initialPayloadBase = {
           caption: payloadBase.caption,
           threadCustomCaption: threadCustomCaption,
           threadPosts: currentThreadPosts,
-          scheduledFor: tempPost.scheduledFor,
+          scheduledFor: tempPosts[0].scheduledFor,
           triggerKeyword: payloadBase.triggerKeyword,
           autoResponse: payloadBase.autoResponse,
           type: currentType,
@@ -763,26 +764,33 @@ export default function Scheduling() {
           openingMessageText: payloadBase.openingMessageText,
           openingMessageButton: payloadBase.openingMessageButton,
           buttons: JSON.stringify(payloadBase.buttons || []),
-          platform: payloadBase.platform || 'instagram',
           gmbCtaEnabled: payloadBase.gmbCtaEnabled,
           gmbActionType: payloadBase.gmbActionType,
           gmbSearchUrl: payloadBase.gmbSearchUrl,
           gmbCustomCaption: payloadBase.gmbCustomCaption
         };
 
-        const createRes = await fetch(`${API_BASE_URL}/api/scheduling`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...initialPayload, status: 'Scheduled' })
-        });
-        
-        const dbPost = await createRes.json();
-        if (!createRes.ok) throw new Error(dbPost.error || "Failed to create placeholder");
-        
-        dbId = dbPost._id || dbPost.id;
-        
-        setPosts(prev => prev.map(p => p._id === tempId ? { ...p, _id: dbId, id: dbId, isUploading: true } : p));
+        // Create placeholders for all platforms
+        for (let i = 0; i < platformList.length; i++) {
+          const plat = platformList[i];
+          const tempId = tempPosts[i]._id;
+          
+          const createRes = await fetch(`${API_BASE_URL}/api/scheduling`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...initialPayloadBase, platform: plat, status: 'Scheduled' })
+          });
+          
+          const dbPost = await createRes.json();
+          if (!createRes.ok) throw new Error(dbPost.error || `Failed to create placeholder for ${plat}`);
+          
+          const dbId = dbPost._id || dbPost.id;
+          createdDbIds.push({ dbId, tempId, plat });
+          
+          setPosts(prev => prev.map(p => p._id === tempId ? { ...p, _id: dbId, id: dbId, isUploading: true } : p));
+        }
 
+        // Upload media once
         let mediaUrls = [];
         if (currentFiles.length > 0) {
           const uploadPromises = currentFiles.map(async (originalFile) => {
@@ -809,36 +817,48 @@ export default function Scheduling() {
         }
 
         const finalMediaUrl = mediaUrls.length > 0 ? mediaUrls[0] : payloadBase.mediaUrl;
-        const updateRes = await fetch(`${API_BASE_URL}/api/scheduling/${dbId}`, {
-          method: 'PUT',
-          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ mediaUrl: finalMediaUrl, carouselItems: mediaUrls, status: 'Scheduled' })
-        });
+        
+        // Finalize all posts
+        let finalPosts = [];
+        for (const { dbId } of createdDbIds) {
+          const updateRes = await fetch(`${API_BASE_URL}/api/scheduling/${dbId}`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mediaUrl: finalMediaUrl, carouselItems: mediaUrls, status: 'Scheduled' })
+          });
 
-        const updatedData = await updateRes.json();
-        if (updateRes.ok) {
-          setPosts(prev => prev.map(p => p._id === dbId ? updatedData : p));
-          setCreatedPost(updatedData);
-          setShowSuccess(true);
-          notify("Post scheduled successfully!", "success");
-          
-          // Trigger background worker immediately so it posts without delay
-          fetch(`${API_BASE_URL}/api/cron/publish`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          }).catch(() => {});
-        } else {
-          throw new Error(updatedData.error || "Failed to finalize post");
+          const updatedData = await updateRes.json();
+          if (!updateRes.ok) throw new Error(updatedData.error || "Failed to finalize post");
+          finalPosts.push(updatedData);
         }
+
+        setPosts(prev => prev.map(p => {
+          const finalPost = finalPosts.find(fp => (fp._id || fp.id) === (p._id || p.id));
+          return finalPost ? finalPost : p;
+        }));
+        
+        setCreatedPost(finalPosts[0]);
+        setShowSuccess(true);
+        notify("Posts scheduled successfully!", "success");
+        
+        // Trigger background worker immediately so it posts without delay
+        fetch(`${API_BASE_URL}/api/cron/publish`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }).catch(() => {});
+
       } catch (err) {
         console.error("Background Upload Error:", err);
-        const targetId = dbId || tempId;
-        setPosts(prev => prev.map(p => p._id === targetId ? { ...p, status: 'Failed', lastError: err.message || "Network error during background upload", isUploading: false } : p));
         
-        if (dbId) {
+        // Mark all associated posts as Failed
+        const targetIds = createdDbIds.length > 0 ? createdDbIds.map(c => c.dbId) : tempPosts.map(t => t._id);
+        
+        setPosts(prev => prev.map(p => targetIds.includes(p._id || p.id) ? { ...p, status: 'Failed', lastError: err.message || "Network error during background upload", isUploading: false } : p));
+        
+        for (const { dbId } of createdDbIds) {
            fetch(`${API_BASE_URL}/api/scheduling/${dbId}`, {
              method: 'PUT',
              headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-             body: JSON.stringify({ status: 'Failed' })
+             body: JSON.stringify({ status: 'Failed', lastError: err.message })
            }).catch(() => {});
         }
         
