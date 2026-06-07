@@ -1869,36 +1869,28 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
         if (cachedLiveMediaUrl) {
           p.mediaUrl = cachedLiveMediaUrl;
         } else if (instagramMediaId && accessToken) {
-          try {
-            const isFb = p.platform === 'facebook';
-            const fetchToken = isFb ? (userSettings?.facebookPageAccessToken || userSettings?.facebookAccessToken || accessToken) : accessToken;
-
-            // First priority: Fetch actual live image from Meta Platforms API
-            console.log(`🌐 [Meta API] Fetching live image for post ${p._id} (Media ID: ${instagramMediaId})...`);
-            const metaRes = await axios.get(`https://graph.facebook.com/v19.0/${instagramMediaId}`, {
-              params: {
-                fields: isFb ? 'full_picture,picture,source' : 'media_url,thumbnail_url',
-                access_token: fetchToken
-              },
-              timeout: 4000 // Fast timeout so it doesn't block frontend load
-            });
-
+          p.mediaUrl = localImage; // Fallback to local image immediately to avoid blocking load
+          
+          // Fire-and-forget background check to cache the live URL for future loads
+          const isFb = p.platform === 'facebook';
+          const fetchToken = isFb ? (userSettings?.facebookPageAccessToken || userSettings?.facebookAccessToken || accessToken) : accessToken;
+          
+          axios.get(`https://graph.facebook.com/v19.0/${instagramMediaId}`, {
+            params: {
+              fields: isFb ? 'full_picture,picture,source' : 'media_url,thumbnail_url',
+              access_token: fetchToken
+            },
+            timeout: 5000
+          }).then(metaRes => {
             if (metaRes.data && (metaRes.data.media_url || metaRes.data.thumbnail_url || metaRes.data.full_picture || metaRes.data.source || metaRes.data.picture)) {
               const liveUrl = metaRes.data.thumbnail_url || metaRes.data.media_url || metaRes.data.full_picture || metaRes.data.source || metaRes.data.picture;
-              p.mediaUrl = liveUrl;
-
-              // Cache it back to DB to optimize future API requests
               if (parsedMeta) {
                 parsedMeta.cachedLiveMediaUrl = liveUrl;
-                await ScheduledPost.findByIdAndUpdate(p.id || p._id, { mediaUrl: JSON.stringify(parsedMeta) });
+                ScheduledPost.findByIdAndUpdate(p.id || p._id, { mediaUrl: JSON.stringify(parsedMeta) }).catch(()=>{});
               }
-            } else {
-              p.mediaUrl = localImage; // Fallback
             }
-          } catch (error) {
-            // Silently fallback if Meta API is still propagating the media URL
-            p.mediaUrl = localImage;
-          }
+          }).catch(()=>{});
+
         } else {
           p.mediaUrl = localImage; // Fallback
         }

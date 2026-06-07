@@ -11,19 +11,28 @@ export const publishThreadsContent = async (userId, { type, mediaUrl, caption = 
       settings = await Settings.findOne({ userId });
     }
     
-    if (!settings || !settings.connectedPageName) {
+    if (!settings || (!settings.threadsAccessToken && !settings.connectedPageName)) {
       throw new Error('Threads credentials missing. Please reconnect your account.');
     }
 
-    let threadsData;
-    try {
-      threadsData = JSON.parse(settings.connectedPageName);
-      if (!threadsData.isThreadsConnected) throw new Error();
-    } catch(e) {
-      throw new Error('Threads account not connected properly.');
-    }
+    let threadsPageId = settings.threadsPageId;
+    let threadsAccessToken = settings.threadsAccessToken;
 
-    const { threadsPageId, threadsAccessToken } = threadsData;
+    // Fallback if somehow it was stored as JSON in connectedPageName (legacy)
+    if (!threadsAccessToken && settings.connectedPageName) {
+      try {
+        const threadsData = JSON.parse(settings.connectedPageName);
+        if (!threadsData.isThreadsConnected) throw new Error();
+        threadsPageId = threadsData.threadsPageId;
+        threadsAccessToken = threadsData.threadsAccessToken;
+      } catch(e) {
+        throw new Error('Threads account not connected properly.');
+      }
+    }
+    
+    if (!threadsAccessToken || !threadsPageId) {
+      throw new Error('Threads account missing credentials.');
+    }
 
     let mediaType = 'TEXT';
     if (type === 'image' || type === 'carousel') {
