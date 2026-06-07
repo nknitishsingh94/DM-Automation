@@ -3156,7 +3156,7 @@ async function runSchedulingWorker() {
       try {
         const { data: stuckData, error: stuckErr } = await _sb
           .from('scheduled_posts')
-          .update({ status: 'Retrying', updatedAt: new Date().toISOString() })
+          .update({ status: 'Failed', lastError: 'Worker crash/timeout reset', updatedAt: new Date().toISOString() })
           .eq('status', 'Processing')
           .lt('updatedAt', stuckBoundary)
           .select('id');
@@ -3414,7 +3414,7 @@ async function runSchedulingWorker() {
           console.log(`🚫 [Worker] Fatal Auth Error. Marking Post ${postId} as Failed immediately.`);
           await safeUpdate(postId, { status: 'Failed', lastError: postErr.message });
         } else if (currentRetryCount <= MAX_RETRIES && minutesSinceScheduled < MAX_RETRY_WINDOW) {
-          await safeUpdate(postId, { status: 'Retrying', lastError: postErr.message, retryCount: currentRetryCount });
+          await safeUpdate(postId, { status: 'Failed', lastError: postErr.message, retryCount: currentRetryCount });
         } else {
           await safeUpdate(postId, { status: 'Failed', lastError: postErr.message });
         }
