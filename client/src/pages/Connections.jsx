@@ -9,16 +9,6 @@ import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
 
-function ThreadsIcon({ size = 18, color = 'currentColor' }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
-      <path d="M15.5 10.5C15.5 10.5 14 8 12 8C9.5 8 8.5 10 8.5 12.5C8.5 15 10 16.5 12 16.5C14.5 16.5 15.5 14 15.5 14L15.5 10.5Z" />
-      <path d="M15.5 14C15.5 14 15 16 12 16" />
-    </svg>
-  );
-}
-
 export default function Connections() {
   const { user } = useAuth();
   const navigate = useNavigate();
