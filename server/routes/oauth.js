@@ -583,7 +583,7 @@ router.get('/threads/callback', async (req, res) => {
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
   
   if (error || !code) {
-    return res.redirect(`${frontendUrl}/dashboard/settings/connections?error=threads_oauth_failed`);
+    return res.redirect(`${frontendUrl}/connections?error=threads_oauth_failed`);
   }
 
   let workspaceId = '';
@@ -669,10 +669,10 @@ router.get('/threads/callback', async (req, res) => {
       await Settings.create(payload);
     }
 
-    res.redirect(`${frontendUrl}/dashboard/settings/connections?success=threads_connected`);
+    res.redirect(`${frontendUrl}/connections?success=threads_connected`);
   } catch (err) {
-    console.error("Threads OAuth Error:", err.response?.data || err.message);
-    res.redirect(`${frontendUrl}/dashboard/settings/connections?error=threads_oauth_failed`);
+    console.error("Threads Exchange Failed:", err);
+    res.redirect(`${frontendUrl}/connections?error=threads_oauth_failed`);
   }
 });
 // YOUTUBE OAUTH FLOW
