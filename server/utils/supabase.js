@@ -81,17 +81,12 @@ function parseFilter(q, queryObj, tableName) {
     console.log(`🔍 [Supabase Query] Table: ${tableName}, Filter Keys: ${Object.keys(queryObj).join(', ')}`);
   }
 
-  // Field name mapping: JS camelCase -> Supabase snake_case
   const fieldMap = {
     'triggerKeyword': 'triggerKeyword',
     'autoResponse': 'autoResponse',
     'requireFollow': 'requireFollow',
     'publicReply': 'publicReply',
     // scheduled_posts specific field mappings
-    'scheduledFor': 'scheduled_for',
-    'retryCount': 'retry_count',
-    'lastError': 'last_error',
-    'updatedAt': 'updated_at',
     'createdAt': 'created_at',
   };
 
