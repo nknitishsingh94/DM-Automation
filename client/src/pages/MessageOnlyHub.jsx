@@ -4,7 +4,7 @@ import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, 
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 
-const PlatformHub = () => {
+const MessageOnlyHub = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [settings, setSettings] = useState(null);
@@ -139,8 +139,8 @@ const PlatformHub = () => {
     );
   }
 
-  const automationIds = ['instagram', 'facebook', 'whatsapp', 'telegram'];
-  const connectedPlatforms = platforms.filter(p => p.isConnected && automationIds.includes(p.id));
+  const messageIds = ['youtube', 'linkedin', 'google-business', 'twitter', 'threads'];
+  const connectedPlatforms = platforms.filter(p => p.isConnected && messageIds.includes(p.id));
 
   return (
     <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
@@ -246,5 +246,5 @@ function ThreadsIcon({ size = 18, color = 'currentColor' }) {
   );
 }
 
-export default PlatformHub;
+export default MessageOnlyHub;
 
