@@ -821,6 +821,11 @@ export default function Scheduling() {
           setCreatedPost(updatedData);
           setShowSuccess(true);
           notify("Post scheduled successfully!", "success");
+          
+          // Trigger background worker immediately so it posts without delay
+          fetch(`${API_BASE_URL}/api/cron/publish`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }).catch(() => {});
         } else {
           throw new Error(updatedData.error || "Failed to finalize post");
         }
