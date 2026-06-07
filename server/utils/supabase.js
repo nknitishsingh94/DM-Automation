@@ -279,7 +279,8 @@ function convertIncoming(doc, tableName) {
       newDoc.updatedAt = newDoc.updated_at;
       delete newDoc.updated_at;
     }
-  } */
+    */
+  }
 
   newDoc.toObject = () => newDoc;
   return newDoc;
@@ -403,8 +404,8 @@ function convertOutgoing(doc, tableName) {
       newDoc.updated_at = newDoc.updatedAt;
       delete newDoc.updatedAt;
     }
-  } */
-
+    */
+  }
   delete newDoc.toObject;
   delete newDoc.save;
   delete newDoc.comparePassword;
