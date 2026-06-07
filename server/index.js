@@ -3270,6 +3270,13 @@ async function runSchedulingWorker() {
             mediaUrl: finalMedia,
             caption: post.caption
           }, post.workspaceId);
+        } else if (post.platform === 'youtube') {
+          const { publishYouTubeVideo } = await import('./utils/youtubeApi.js');
+          publishResult = await publishYouTubeVideo(post.userId, {
+            type: finalType,
+            mediaUrl: finalMedia,
+            caption: post.caption
+          }, settings);
         } else {
           // Default to instagram
           const { publishInstagramContent } = await import('./utils/metaApi.js');
