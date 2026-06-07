@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Settings from '../../models/Settings.js';
 
-export const publishThreadsContent = async (userId, { type, mediaUrl, caption = '' }, workspaceId = null) => {
+export const publishThreadsContent = async (userId, { type, mediaUrl, caption = '', containerId = null }, workspaceId = null) => {
   try {
     let settings = null;
     if (workspaceId) {
@@ -53,21 +53,25 @@ export const publishThreadsContent = async (userId, { type, mediaUrl, caption = 
       containerPayload.video_url = mediaUrl;
     }
 
-    console.log(`Starting Threads Container Creation for user ${userId}`);
-    let createContainerUrl = `https://graph.threads.net/v1.0/${threadsPageId}/threads`;
-    const containerRes = await axios.post(createContainerUrl, containerPayload, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    });
-    
-    const containerId = containerRes.data.id;
-    console.log(`Threads Container Created: ${containerId}`);
+    let activeContainerId = containerId;
 
-    // Wait a brief moment before publishing (Threads API can be finicky immediately after container creation)
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    if (!activeContainerId) {
+      console.log(`Starting Threads Container Creation for user ${userId}`);
+      let createContainerUrl = `https://graph.threads.net/v1.0/${threadsPageId}/threads`;
+      const containerRes = await axios.post(createContainerUrl, containerPayload, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+      
+      activeContainerId = containerRes.data.id;
+      console.log(`Threads Container Created: ${activeContainerId}`);
+      
+      // Return early to allow background worker to poll next minute, preventing Vercel timeout
+      return { status: 'IG_PROCESSING', containerId: activeContainerId };
+    }
 
     let publishUrl = `https://graph.threads.net/v1.0/${threadsPageId}/threads_publish`;
     const publishRes = await axios.post(publishUrl, {
-      creation_id: containerId,
+      creation_id: activeContainerId,
       access_token: threadsAccessToken
     }, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
