@@ -3151,7 +3151,8 @@ async function runSchedulingWorker() {
     const _updatePost = async (id, fields) => {
       // Convert camelCase fields to snake_case for direct Supabase query
       const cleanFields = { ...fields };
-      const { data, error } = await _sb.from('scheduled_posts').update({ ...cleanFields, updated_at: new Date().toISOString() }).eq('id', id);
+      delete cleanFields.retryCount;
+      const { data, error } = await _sb.from('scheduled_posts').update({ ...cleanFields, updatedAt: new Date().toISOString() }).eq('id', id);
       if (error) throw new Error(error.message);
       return data;
     };
@@ -3163,9 +3164,9 @@ async function runSchedulingWorker() {
       try {
         const { data: stuckData, error: stuckErr } = await _sb
           .from('scheduled_posts')
-          .update({ status: 'Retrying', updated_at: new Date().toISOString() })
+          .update({ status: 'Retrying', updatedAt: new Date().toISOString() })
           .eq('status', 'Processing')
-          .lt('updated_at', stuckBoundary)
+          .lt('updatedAt', stuckBoundary)
           .select('id');
         if (stuckErr) {
           console.warn('⚠️ [Worker] Safety-net reset failed:', stuckErr.message);
@@ -3239,9 +3240,9 @@ async function runSchedulingWorker() {
 
         const { data: claimData, error: claimErr } = await _sb
           .from('scheduled_posts')
-          .update({ status: 'Processing', updated_at: new Date().toISOString() })
+          .update({ status: 'Processing', updatedAt: new Date().toISOString() })
           .eq('id', postId)
-          .or(`status.in.(Scheduled,Retrying),and(status.eq.Processing,updated_at.lt.${twoMinutesAgo})`)
+          .or(`status.in.(Scheduled,Retrying),and(status.eq.Processing,updatedAt.lt.${twoMinutesAgo})`)
           .select()
           .limit(1);
 

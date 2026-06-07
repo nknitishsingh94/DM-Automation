@@ -252,7 +252,7 @@ function convertIncoming(doc, tableName) {
       newDoc.isAI = false;
     }
   }
-  /* if (tableName === 'captions' || tableName === 'scheduled_posts') {
+  if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.user_id) {
       newDoc.userId = newDoc.user_id;
       delete newDoc.user_id;
@@ -262,6 +262,7 @@ function convertIncoming(doc, tableName) {
       delete newDoc.workspace_id;
     }
     // Map snake_case DB columns to camelCase JS fields
+    /*
     if (newDoc.scheduled_for !== undefined) {
       newDoc.scheduledFor = newDoc.scheduled_for;
       delete newDoc.scheduled_for;
@@ -375,7 +376,7 @@ function convertOutgoing(doc, tableName) {
     delete newDoc.name;
     delete newDoc.isAI;
   }
-  /* if (tableName === 'captions' || tableName === 'scheduled_posts') {
+  if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.userId) {
       newDoc.user_id = newDoc.userId;
       delete newDoc.userId;
@@ -385,6 +386,7 @@ function convertOutgoing(doc, tableName) {
       delete newDoc.workspaceId;
     }
     // Map camelCase JS fields to snake_case DB columns
+    /*
     if (newDoc.scheduledFor !== undefined) {
       newDoc.scheduled_for = newDoc.scheduledFor;
       delete newDoc.scheduledFor;
