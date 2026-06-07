@@ -272,6 +272,10 @@ export default function Connections() {
       window.location.href = `${API_BASE_URL}/api/oauth/google-business?token=${localStorage.getItem('insta_agent_token')}`;
       return;
     }
+    if (platformName.toLowerCase() === 'threads') {
+      window.location.href = `${API_BASE_URL}/api/oauth/threads?token=${localStorage.getItem('insta_agent_token')}`;
+      return;
+    }
     if (platformName.toLowerCase() === 'twitter/x' || platformName.toLowerCase() === 'twitter') {
       window.location.href = `${API_BASE_URL}/api/oauth/twitter?token=${localStorage.getItem('insta_agent_token')}`;
       return;

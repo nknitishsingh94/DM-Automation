@@ -58,8 +58,9 @@ export const publishThreadsContent = async (userId, { type, mediaUrl, caption = 
     if (!activeContainerId) {
       console.log(`Starting Threads Container Creation for user ${userId}`);
       let createContainerUrl = `https://graph.threads.net/v1.0/${threadsPageId}/threads`;
-      const containerRes = await axios.post(createContainerUrl, containerPayload, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      
+      const containerRes = await axios.post(createContainerUrl, null, {
+        params: containerPayload
       });
       
       activeContainerId = containerRes.data.id;
@@ -70,11 +71,11 @@ export const publishThreadsContent = async (userId, { type, mediaUrl, caption = 
     }
 
     let publishUrl = `https://graph.threads.net/v1.0/${threadsPageId}/threads_publish`;
-    const publishRes = await axios.post(publishUrl, {
-      creation_id: activeContainerId,
-      access_token: threadsAccessToken
-    }, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    const publishRes = await axios.post(publishUrl, null, {
+      params: {
+        creation_id: activeContainerId,
+        access_token: threadsAccessToken
+      }
     });
 
     console.log(`Threads Published Successfully! Post ID: ${publishRes.data.id}`);

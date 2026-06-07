@@ -554,6 +554,127 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
 });
 
 // ==========================================
+// THREADS OAUTH FLOW
+// ==========================================
+
+// Step 1: Redirect to Threads OAuth
+router.get('/threads', verifyToken, (req, res) => {
+  const appId = process.env.THREADS_APP_ID || process.env.META_APP_ID;
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+
+  if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+
+  const redirectUri = encodeURIComponent(`${baseUrl}/api/oauth/threads/callback`);
+  const scope = 'threads_basic,threads_content_publish';
+  const state = req.user.userId + 
+                (req.workspaceId ? `_ws_${req.workspaceId}` : '');
+
+  if (!appId) {
+    return res.status(500).json({ error: "Missing META_APP_ID or THREADS_APP_ID in environment variables" });
+  }
+
+  const authUrl = `https://threads.net/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
+  res.redirect(authUrl);
+});
+
+// Step 2: Handle Threads OAuth Callback
+router.get('/threads/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  
+  if (error || !code) {
+    return res.redirect(`${frontendUrl}/dashboard/settings/connections?error=threads_oauth_failed`);
+  }
+
+  let workspaceId = '';
+  const wsMatch = state && state.match(/_ws_([a-f0-9-]{36})/i);
+  if (wsMatch) {
+    workspaceId = wsMatch[1];
+  }
+  let userId = state ? state.replace(/_ws_([a-f0-9-]{36})/i, '') : null;
+
+  try {
+    const appId = process.env.THREADS_APP_ID || process.env.META_APP_ID;
+    const appSecret = process.env.THREADS_APP_SECRET || process.env.META_APP_SECRET;
+    let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/oauth/threads/callback`;
+
+    // 1. Exchange code for short-lived token
+    const tokenRes = await axios.post('https://graph.threads.net/oauth/access_token', new URLSearchParams({
+      client_id: appId,
+      client_secret: appSecret,
+      grant_type: 'authorization_code',
+      redirect_uri: redirectUri,
+      code: code
+    }).toString(), {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+
+    const shortLivedToken = tokenRes.data.access_token;
+
+    // 2. Exchange short-lived token for long-lived token
+    const longTokenRes = await axios.get('https://graph.threads.net/access_token', {
+      params: {
+        grant_type: 'th_exchange_token',
+        client_secret: appSecret,
+        access_token: shortLivedToken
+      }
+    });
+
+    const longLivedToken = longTokenRes.data.access_token;
+    
+    // 3. Get User Profile info to get threadsPageId and Username
+    const profileRes = await axios.get('https://graph.threads.net/v1.0/me', {
+      params: {
+        fields: 'id,username,name',
+        access_token: longLivedToken
+      }
+    });
+    
+    const threadsPageId = profileRes.data.id;
+    const threadsUsername = profileRes.data.username || profileRes.data.name;
+
+    // Save to Database
+    const updateData = {
+      isThreadsConnected: true,
+      threadsAccessToken: longLivedToken,
+      threadsPageId: threadsPageId,
+      connectedThreadsName: threadsUsername || 'Threads Account'
+    };
+
+    let settingsQuery = Settings.findOne({ userId });
+    if (workspaceId) {
+      settingsQuery = Settings.findOne({ userId, workspaceId });
+    }
+    const existingSettings = await settingsQuery;
+
+    if (existingSettings) {
+      let pageData = {};
+      try {
+        if (existingSettings.connectedPageName) {
+          pageData = JSON.parse(existingSettings.connectedPageName);
+        }
+      } catch (e) {}
+      
+      const newPageData = { ...pageData, ...updateData };
+      if (workspaceId) {
+        await Settings.findOneAndUpdate({ userId, workspaceId }, { connectedPageName: JSON.stringify(newPageData) });
+      } else {
+        await Settings.findOneAndUpdate({ userId }, { connectedPageName: JSON.stringify(newPageData) });
+      }
+    } else {
+      const payload = { userId, connectedPageName: JSON.stringify(updateData) };
+      if (workspaceId) payload.workspaceId = workspaceId;
+      await Settings.create(payload);
+    }
+
+    res.redirect(`${frontendUrl}/dashboard/settings/connections?success=threads_connected`);
+  } catch (err) {
+    console.error("Threads OAuth Error:", err.response?.data || err.message);
+    res.redirect(`${frontendUrl}/dashboard/settings/connections?error=threads_oauth_failed`);
+  }
+});
 // YOUTUBE OAUTH FLOW
 // ==========================================
 
