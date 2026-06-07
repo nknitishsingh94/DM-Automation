@@ -805,7 +805,11 @@ export default function Scheduling() {
 
         // Upload media once
         let mediaUrls = [];
-        if (currentFiles.length > 0) {
+        const isMetaPlatform = activePlatforms.some(p => ['instagram', 'facebook', 'threads'].includes(p));
+        const isYoutubeOnly = activePlatforms.includes('youtube') && !isMetaPlatform;
+        const skipStorageForYoutube = isYoutubeOnly && (currentType === 'video' || currentType === 'reel');
+
+        if (currentFiles.length > 0 && !skipStorageForYoutube) {
           const uploadPromises = currentFiles.map(async (originalFile) => {
             const file = await compressImage(originalFile);
             const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
@@ -847,8 +851,8 @@ export default function Scheduling() {
                  body: JSON.stringify({ 
                    fileSize: ytFile.size, 
                    contentType: ytFile.type, 
-                   title: payloadBase.caption,
-                   description: payloadBase.caption
+                   title: newPost.youtubeTitle || payloadBase.caption,
+                   description: newPost.youtubeTags ? `${payloadBase.caption}\n\n${newPost.youtubeTags}` : payloadBase.caption
                  })
                });
                if (ytUrlRes.ok) {
