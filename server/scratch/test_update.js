@@ -1,40 +1,18 @@
-import 'dotenv/config';
-import { createSupabaseModel } from '../utils/supabase.js';
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const ScheduledPost = createSupabaseModel('scheduled_posts');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
-async function test() {
-  try {
-    const post = await ScheduledPost.findOne({});
-    if (!post) {
-      console.log("No posts found to test!");
-      return;
-    }
-    
-    console.log("Found post:", post._id);
-    console.log("Current triggerKeyword:", post.triggerKeyword);
-    console.log("Current autoResponse:", post.autoResponse);
-    
-    console.log("Updating post...");
-    const updated = await ScheduledPost.findOneAndUpdate(
-      { _id: post._id },
-      { triggerKeyword: 'TEST_KEYWORD', autoResponse: 'TEST_RESPONSE' },
-      { new: true }
-    );
-    
-    console.log("Updated result from findOneAndUpdate:");
-    console.log("triggerKeyword:", updated.triggerKeyword);
-    console.log("autoResponse:", updated.autoResponse);
-    
-    console.log("Fetching fresh from DB to verify:");
-    const fresh = await ScheduledPost.findOne({ _id: post._id });
-    console.log("Fresh triggerKeyword:", fresh.triggerKeyword);
-    console.log("Fresh autoResponse:", fresh.autoResponse);
-    
-  } catch (err) {
-    console.error("Error during test:", err);
-  }
-  process.exit(0);
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+async function testUpdate() {
+  const { data, error } = await supabase.from('scheduled_posts').update({ status: 'Failed', lastError: 'Test error message' }).eq('id', 'afe96820-57bd-4f8d-ae4e-5c4e34916be0');
+  console.log("Error:", error);
+  console.log("Data:", data);
 }
-
-test();
+testUpdate();

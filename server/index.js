@@ -2033,6 +2033,7 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
     delete postData.gmbCtaEnabled;
     delete postData.gmbSearchUrl;
     delete postData.gmbCustomCaption;
+    delete postData.youtubeVideoId;
 
     const newPost = new ScheduledPost(postData);
     try {
@@ -2235,6 +2236,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     delete updateData.gmbCtaEnabled;
     delete updateData.gmbSearchUrl;
     delete updateData.gmbCustomCaption;
+    delete updateData.youtubeVideoId;
 
     const updatedPost = await ScheduledPost.findOneAndUpdate(
       { _id: req.params.id, userId: { $in: sharedUserIds } },

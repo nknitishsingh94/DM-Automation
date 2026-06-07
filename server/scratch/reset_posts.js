@@ -10,15 +10,14 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-async function check() {
+async function reset() {
   const { data, error } = await supabase
     .from('scheduled_posts')
-    .select('id, status, platform, lastError, updatedAt, scheduledFor, mediaUrl, caption')
-    .order('createdAt', { ascending: false })
-    .limit(10);
+    .update({ status: 'Failed', lastError: 'Stuck in processing', updatedAt: new Date().toISOString() })
+    .eq('status', 'Processing');
   
   if (error) console.error("Error:", error);
-  else console.log("Recent posts:", JSON.stringify(data, null, 2));
+  else console.log("Reset stuck posts to Failed");
 }
 
-check();
+reset();
