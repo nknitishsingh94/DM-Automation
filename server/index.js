@@ -1990,7 +1990,6 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
       gmbActionType: req.body.gmbActionType || 'LEARN_MORE',
       gmbCtaEnabled: req.body.gmbCtaEnabled,
       gmbSearchUrl: req.body.gmbSearchUrl || '',
-      gmbCustomCaption: req.body.gmbCustomCaption || ''
       gmbCustomCaption: req.body.gmbCustomCaption || '',
       youtubeVideoId: req.body.youtubeVideoId || ''
     };
