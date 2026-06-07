@@ -219,12 +219,10 @@ router.get('/facebook/callback', async (req, res) => {
     }
 
     if (isThreads) {
-      updateData.connectedPageName = JSON.stringify({
-        isThreadsConnected: true,
-        threadsAccessToken: pageAccessToken || longToken,
-        threadsPageId: pageId || '',
-        connectedThreadsName: instagramAccountName || facebookPageName || 'Threads Account'
-      });
+      updateData.isThreadsConnected = true;
+      updateData.threadsAccessToken = pageAccessToken || longToken;
+      updateData.threadsPageId = pageId || '';
+      updateData.connectedThreadsName = instagramAccountName || facebookPageName || 'Threads Account';
       console.log(`✅ Threads: Serialized connection for user ${userId}.`);
     } else if (isWhatsApp) {
       updateData.isWhatsAppConnected = !!whatsappPhoneId;
