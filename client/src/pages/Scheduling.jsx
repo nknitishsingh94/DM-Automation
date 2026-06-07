@@ -2045,15 +2045,20 @@ export default function Scheduling() {
                     <div style={{
                       fontSize: '0.65rem', fontWeight: '800', 
                       color: 'white',
-                      background: (post.platform === 'facebook') ? '#1877f2' : '#e1306c',
+                      background: post.platform === 'facebook' ? '#1877f2' : post.platform === 'threads' ? '#000000' : post.platform === 'youtube' ? '#ff0000' : post.platform === 'google-business' ? '#4285f4' : post.platform === 'linkedin' ? '#0a66c2' : post.platform === 'twitter' ? '#000000' : '#e1306c',
                       padding: '4px 8px', borderRadius: '8px',
                       display: 'flex', alignItems: 'center', gap: '4px',
                       boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                     }}>
-                      {post.platform === 'facebook' ? <Facebook size={10} fill="white" /> : <Instagram size={10} />}
-                      <span>{post.platform === 'facebook' ? 'FACEBOOK' : 'INSTAGRAM'}</span>
+                      {post.platform === 'facebook' ? <Facebook size={10} fill="white" /> : 
+                       post.platform === 'threads' ? <ThreadsIcon size={10} color="white" /> :
+                       post.platform === 'youtube' ? <Film size={10} color="white" /> :
+                       post.platform === 'google-business' ? <MapPin size={10} color="white" /> :
+                       post.platform === 'linkedin' ? <Globe size={10} color="white" /> :
+                       post.platform === 'twitter' ? <X size={10} color="white" /> :
+                       <Instagram size={10} />}
+                      <span>{post.platform ? post.platform.replace('-', ' ').toUpperCase() : 'INSTAGRAM'}</span>
                     </div>
-
                     {/* Post Type Badge */}
                     <div style={{
                       fontSize: '0.65rem', fontWeight: '800', color: '#1e293b', textTransform: 'uppercase',
