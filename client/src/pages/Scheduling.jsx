@@ -607,6 +607,19 @@ export default function Scheduling() {
     if (files.length === 0) return;
 
     const isMetaPlatform = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p));
+    const isYoutubeOnly = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('youtube') && !isMetaPlatform;
+
+    if (isYoutubeOnly) {
+      if (files.some(f => f.size > 5 * 1024 * 1024 * 1024)) {
+        notify("For YouTube, maximum file size is 5GB.", "error");
+        return;
+      }
+    } else {
+      if (files.some(f => f.size > 100 * 1024 * 1024)) {
+        notify("For Instagram/Facebook/Threads, maximum file size is 100MB.", "error");
+        return;
+      }
+    }
 
     if (isMetaPlatform) {
       if (postType === 'video') {
@@ -1074,8 +1087,9 @@ export default function Scheduling() {
     if (postStatusFilter !== 'All posts') {
       const statusLower = post.status ? post.status.toLowerCase() : 'scheduled';
       const filterLower = postStatusFilter.toLowerCase();
+      if (filterLower === 'processing' && statusLower !== 'processing') return false;
       if (filterLower === 'scheduled' && statusLower !== 'scheduled') return false;
-      if (filterLower === 'published' && statusLower !== 'posted') return false;
+      if (filterLower === 'published' && statusLower !== 'posted' && statusLower !== 'published') return false;
       if (filterLower === 'failed' && statusLower !== 'failed') return false;
       if (filterLower === 'draft' && statusLower !== 'draft') return false;
     }
@@ -1843,7 +1857,7 @@ export default function Scheduling() {
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 50, minWidth: '160px',
                 padding: '4px 0'
               }}>
-                {['All posts', 'Draft', 'Scheduled', 'Published', 'Failed'].map(status => (
+                {['All posts', 'Processing', 'Scheduled', 'Published', 'Failed'].map(status => (
                   <div 
                     key={status}
                     onClick={() => { setPostStatusFilter(status); setShowPostStatusDropdown(false); }}
