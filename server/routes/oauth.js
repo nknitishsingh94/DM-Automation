@@ -671,8 +671,9 @@ router.get('/threads/callback', async (req, res) => {
 
     res.redirect(`${frontendUrl}/connections?success=threads_connected`);
   } catch (err) {
-    console.error("Threads Exchange Failed:", err);
-    res.redirect(`${frontendUrl}/connections?error=threads_oauth_failed`);
+    console.error("Threads Exchange Failed:", err.response?.data || err.message);
+    const errorMsg = err.response?.data?.error?.message || err.response?.data?.error_message || err.message || 'unknown';
+    res.redirect(`${frontendUrl}/connections?error=threads_oauth_failed&reason=${encodeURIComponent(errorMsg)}`);
   }
 });
 // YOUTUBE OAUTH FLOW
