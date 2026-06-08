@@ -30,13 +30,14 @@ const lazyRetry = (componentImport) => {
   });
 };
 
+import Dashboard from './pages/Dashboard';
+import Inbox from './pages/Inbox';
+import Connections from './pages/Connections';
+import Campaigns from './pages/Campaigns';
+
 // Lazy load heavy components with retry logic
-const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
-const Inbox = lazyRetry(() => import('./pages/Inbox'));
 const SettingsPage = lazyRetry(() => import('./pages/Settings'));
-const Connections = lazyRetry(() => import('./pages/Connections'));
 const Profile = lazyRetry(() => import('./pages/Profile'));
-const Campaigns = lazyRetry(() => import('./pages/Campaigns'));
 const CampaignBuilder = lazyRetry(() => import('./pages/CampaignBuilder'));
 const Audiences = lazyRetry(() => import('./pages/Audiences'));
 const Subscription = lazyRetry(() => import('./pages/Subscription'));
