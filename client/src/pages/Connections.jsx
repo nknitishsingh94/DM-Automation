@@ -8,6 +8,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Connections() {
   const { user } = useAuth();
@@ -392,11 +393,7 @@ export default function Connections() {
     handleSaveSettings(null, cleared, 'twitter');
   };
 
-  if (loading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', color: '#64748b', fontSize: '1.1rem', fontWeight: '600' }}>
-      <div className="animate-pulse">Loading connections panel...</div>
-    </div>
-  );
+  if (loading) return <LoadingSpinner minHeight="60vh" />;
 
   return (
     <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', padding: '0 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>

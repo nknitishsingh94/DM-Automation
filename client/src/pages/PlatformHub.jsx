@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin, MapPin, Twitter } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const PlatformHub = () => {
   const navigate = useNavigate();
@@ -131,13 +132,7 @@ const PlatformHub = () => {
     }
   ];
 
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '60vh' }}>
-        <div className="animate-spin" style={{ width: '40px', height: '40px', border: '4px solid #f1f5f9', borderTopColor: '#7c3aed', borderRadius: '50%' }}></div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingSpinner minHeight="60vh" />;
 
   const automationIds = ['instagram', 'facebook', 'whatsapp', 'telegram'];
   const connectedPlatforms = platforms.filter(p => p.isConnected && automationIds.includes(p.id));

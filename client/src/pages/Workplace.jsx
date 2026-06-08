@@ -10,6 +10,8 @@ import {
   Shield, HelpCircle
 } from 'lucide-react';
 
+import LoadingSpinner from '../components/LoadingSpinner';
+
 /* ─────────────────────────────────────────────────────────────────────────────
  * WORKPLACE – Main dashboard
  * ───────────────────────────────────────────────────────────────────────────── */
@@ -82,16 +84,7 @@ export default function Workplace() {
     }
   };
 
-  if (loading) {
-    return (
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        height: '60vh', fontSize: '1.1rem', fontWeight: '600', color: '#64748b'
-      }}>
-        Loading workplace …
-      </div>
-    );
-  }
+  if (loading) return <LoadingSpinner minHeight="60vh" />;
 
   return (
     <div style={{

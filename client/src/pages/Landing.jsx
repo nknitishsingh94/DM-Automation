@@ -4,6 +4,7 @@ import { ArrowRight, Bot, Zap, Facebook, Instagram, Youtube, Linkedin, MessageCi
 import toast, { Toaster } from 'react-hot-toast';
 import { API_BASE_URL } from '../config';
 import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Landing() {
   const [featuresOpen, setFeaturesOpen] = useState(false);
@@ -374,10 +375,7 @@ export default function Landing() {
 
           {/* Reviews Grid */}
           {reviewsLoading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '60px 0', gap: '16px' }}>
-              <div style={{ width: '36px', height: '36px', border: '3.5px solid #e2e8f0', borderTopColor: '#7c3aed', borderRadius: '50%' }} className="animate-spin"></div>
-              <span style={{ color: '#64748b', fontWeight: '600' }}>Loading reviews...</span>
-            </div>
+            <LoadingSpinner minHeight="150px" size={36} />
           ) : reviews.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
               <p>No reviews yet. Be the first to share your experience!</p>

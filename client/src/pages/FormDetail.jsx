@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { API_BASE_URL } from '../config';
+import LoadingSpinner from '../components/LoadingSpinner';
 import '../styles/theme.css';
 
 export default function FormDetail() {
@@ -58,7 +59,7 @@ export default function FormDetail() {
     a.click();
   };
 
-  if (loading) return <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center' }}><Loader2 className="animate-spin" /></div>;
+  if (loading) return <LoadingSpinner minHeight="80vh" />;
 
   return (
     <div className="container" style={{ maxWidth: '1200px' }}>

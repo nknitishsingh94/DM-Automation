@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 
+import LoadingSpinner from '../components/LoadingSpinner';
+
 export default function Dashboard() {
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -106,7 +108,7 @@ export default function Dashboard() {
     }
   ];
 
-  if (loading) return <div style={{ padding: '40px', color: 'var(--text-muted)' }}>Loading dashboard...</div>;
+  if (loading) return <LoadingSpinner />;
 
   const displayStats = {
     sentMessages: (stats.sentMessages || 0).toLocaleString(),

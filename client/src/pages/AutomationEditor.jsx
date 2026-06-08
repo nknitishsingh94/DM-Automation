@@ -23,6 +23,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function AutomationEditor() {
   const navigate = useNavigate();
@@ -279,13 +280,7 @@ export default function AutomationEditor() {
     }
   };
 
-  if (loadingEdit) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#f8fafc' }}>
-        <Loader2 className="animate-spin" size={40} color="#7c3aed" />
-      </div>
-    );
-  }
+  if (loadingEdit) return <LoadingSpinner minHeight="100vh" />;
 
   return (
     <div style={{ 

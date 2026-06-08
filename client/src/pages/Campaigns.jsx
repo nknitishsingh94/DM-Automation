@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Campaigns({ platformFilter: propPlatformFilter }) {
   const navigate = useNavigate();
@@ -389,7 +390,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
     }
   };
 
-  if (loading || loadingFlows) return <div style={{ color: 'var(--text-muted)', padding: '40px', textAlign: 'center' }}>Loading automations...</div>;
+  if (loading || loadingFlows) return <LoadingSpinner />;
 
   const filteredCampaigns = campaigns.filter(c => {
     if (c.isUniversal) return false;

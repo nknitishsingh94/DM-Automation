@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
 import FormField from '../components/FormField';
+import LoadingSpinner from '../components/LoadingSpinner';
 import '../styles/theme.css';
 import '../styles/Forms.css';
 
@@ -199,9 +200,7 @@ export default function Forms() {
           
           <div className="forms-list-body" style={{ minHeight: '400px' }}>
             {loading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
-                <Loader2 className="animate-spin" size={40} color="#7c3aed" />
-              </div>
+              <LoadingSpinner minHeight="300px" />
             ) : forms.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '100px 40px', color: '#94a3b8' }}>
                 <FileText size={64} style={{ opacity: 0.1, marginBottom: '16px' }} />

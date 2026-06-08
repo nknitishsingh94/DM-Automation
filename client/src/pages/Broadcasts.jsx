@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Megaphone, Users, Send, CheckCircle2, AlertCircle, Clock, Search, MessageSquare, Zap, Lightbulb } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import '../styles/Broadcasts.css';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Broadcasts() {
   const [contacts, setContacts] = useState([]);
@@ -105,7 +106,7 @@ export default function Broadcasts() {
     }
   };
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading contacts...</div>;
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div className="broadcasts-container">

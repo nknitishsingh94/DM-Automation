@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Instagram, MessageCircle, Phone, ArrowLeft, Bot, Youtube } from 'lucide-react';
+import { Instagram, MessageCircle, Phone, ArrowLeft, Bot, Youtube, ArrowRight } from 'lucide-react';
 import Campaigns from './Campaigns';
 import YoutubeDashboard from './YoutubeDashboard';
 

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Star, Instagram, Facebook, MessageCircle, Check, Sparkles } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import Footer from '../components/Footer';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function AllReviews() {
   const [reviews, setReviews] = useState([]);
@@ -145,10 +146,7 @@ export default function AllReviews() {
       }}>
         
         {loading ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '100px 0', gap: '16px' }}>
-            <div style={{ width: '40px', height: '40px', border: '3.5px solid #e2e8f0', borderTopColor: '#7c3aed', borderRadius: '50%' }} className="animate-spin"></div>
-            <p style={{ color: '#64748b', fontWeight: '600' }}>Loading testimonials...</p>
-          </div>
+          <LoadingSpinner minHeight="200px" size={40} />
         ) : reviews.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '80px 20px', background: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
             <p style={{ color: '#64748b', fontSize: '1.1rem', fontWeight: '500' }}>No reviews submitted yet. Be the first to share your experience!</p>

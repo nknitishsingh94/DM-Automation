@@ -9,6 +9,7 @@ import { useNotification } from '../App';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 // --- UTILITIES ---
 const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
@@ -1031,7 +1032,7 @@ export default function Scheduling() {
     }
   };
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading your schedule...</div>;
+  if (loading) return <LoadingSpinner />;
 
   const connectedPlatforms = (() => {
     if (!settings) return [];

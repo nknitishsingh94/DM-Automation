@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Search, ChevronLeft, MessageCircle, Activity, Instagram, Facebook, Phone, Tag, StickyNote, Plus, X, Filter, Users } from 'lucide-react';
 import { API_BASE_URL } from '../config';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Audiences() {
   const [contacts, setContacts] = useState([]);
@@ -149,7 +150,7 @@ export default function Audiences() {
     }
   };
 
-  if (loading) return <div style={{ color: 'var(--text-muted)', padding: '40px', textAlign: 'center' }}>Loading audience data...</div>;
+  if (loading) return <LoadingSpinner />;
 
   if (selectedContact) {
     const userMessages = allMessages.filter(m => m.chatId === selectedContact.chatId).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 50);
@@ -205,12 +206,7 @@ export default function Audiences() {
               </h3>
               <div className="table-card" style={{ minHeight: '200px', display: 'flex', flexDirection: 'column' }}>
                 {loadingMessages ? (
-                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                      <div className="spinner" style={{ width: '24px', height: '24px', border: '3px solid #f3f3f3', borderTop: '3px solid var(--accent-color)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-                      Loading history...
-                    </div>
-                  </div>
+                  <LoadingSpinner minHeight="200px" size={32} />
                 ) : messages.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '60px 40px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                     No historical messages found for this contact.

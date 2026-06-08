@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { ArrowLeft, CheckCircle, Video, Link as LinkIcon, Zap, ChevronLeft, MoreHorizontal, Info, Globe } from 'lucide-react';
 
 export default function CampaignBuilder() {
@@ -131,13 +132,7 @@ export default function CampaignBuilder() {
     }
   };
 
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 80px)', color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: '600' }}>
-        Loading channel configurations...
-      </div>
-    );
-  }
+  if (loading) return <LoadingSpinner minHeight="calc(100vh - 80px)" />;
 
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 80px)', padding: '20px' }}>

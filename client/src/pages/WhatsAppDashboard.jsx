@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const WA_GREEN = '#25d366';
 const WA_DARK = '#128C7E';
@@ -270,10 +271,7 @@ export default function WhatsAppDashboard() {
             </div>
 
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '60px', color: '#94a3b8' }}>
-                <div style={{ width: '40px', height: '40px', border: '3px solid #e2e8f0', borderTopColor: WA_GREEN, borderRadius: '50%', margin: '0 auto 16px', animation: 'spin 0.8s linear infinite' }} />
-                Loading...
-              </div>
+              <LoadingSpinner minHeight="200px" color={WA_GREEN} />
             ) : filteredCampaigns.length === 0 ? (
               <div style={{ background: 'white', borderRadius: '20px', padding: '60px', textAlign: 'center', border: '2px dashed #e2e8f0' }}>
                 <div style={{ width: '72px', height: '72px', background: WA_BG, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
