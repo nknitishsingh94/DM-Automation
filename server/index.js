@@ -3315,7 +3315,8 @@ async function runSchedulingWorker() {
           publishResult = await publishThreadsContent(post.userId, {
             type: finalType,
             mediaUrl: finalMedia,
-            caption: post.caption
+            caption: post.caption,
+            containerId: existingContainerId
           }, post.workspaceId);
         } else if (post.platform === 'youtube') {
           const { publishYouTubeVideo } = await import('./utils/youtubeApi.js');
