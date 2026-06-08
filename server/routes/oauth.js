@@ -643,31 +643,16 @@ router.get('/threads/callback', async (req, res) => {
       connectedThreadsName: threadsUsername || 'Threads Account'
     };
 
-    let settingsQuery = Settings.findOne({ userId });
+    let settingsQuery = { userId };
     if (workspaceId) {
-      settingsQuery = Settings.findOne({ userId, workspaceId });
+      settingsQuery.workspaceId = workspaceId;
     }
-    const existingSettings = await settingsQuery;
-
-    if (existingSettings) {
-      let pageData = {};
-      try {
-        if (existingSettings.connectedPageName) {
-          pageData = JSON.parse(existingSettings.connectedPageName);
-        }
-      } catch (e) {}
-      
-      const newPageData = { ...pageData, ...updateData };
-      if (workspaceId) {
-        await Settings.findOneAndUpdate({ userId, workspaceId }, { connectedPageName: JSON.stringify(newPageData) });
-      } else {
-        await Settings.findOneAndUpdate({ userId }, { connectedPageName: JSON.stringify(newPageData) });
-      }
-    } else {
-      const payload = { userId, connectedPageName: JSON.stringify(updateData) };
-      if (workspaceId) payload.workspaceId = workspaceId;
-      await Settings.create(payload);
-    }
+    
+    await Settings.findOneAndUpdate(
+      settingsQuery,
+      updateData,
+      { upsert: true, new: true }
+    );
 
     res.redirect(`${frontendUrl}/connections?success=threads_connected`);
   } catch (err) {
