@@ -15,7 +15,6 @@ export const processYouTubeComments = async () => {
     // 1. Get all active YouTube comment campaigns
     const activeCampaigns = await Campaign.find({
       platform: 'youtube',
-      type: 'comment',
       status: 'Active'
     });
 

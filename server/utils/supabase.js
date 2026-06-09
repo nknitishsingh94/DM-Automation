@@ -246,6 +246,15 @@ function convertIncoming(doc, tableName) {
     } else {
       newDoc.isAI = false;
     }
+    // Parse triggerType
+    if (newDoc.response && newDoc.response.includes('__TRIG_TYPE__:')) {
+      const startIdx = newDoc.response.indexOf('__TRIG_TYPE__:');
+      const endIdx = newDoc.response.indexOf('__END_TRIG_TYPE__');
+      if (startIdx !== -1 && endIdx !== -1) {
+        newDoc.triggerType = newDoc.response.slice(startIdx + '__TRIG_TYPE__:'.length, endIdx);
+        newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_TRIG_TYPE__'.length);
+      }
+    }
   }
   if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.user_id) {
@@ -369,8 +378,12 @@ function convertOutgoing(doc, tableName) {
     if (newDoc.name && newDoc.response) {
       newDoc.response = `__CAMP_NAME__:${newDoc.name}__END_CAMP_NAME__${newDoc.response}`;
     }
+    if (newDoc.triggerType && newDoc.response) {
+      newDoc.response = `__TRIG_TYPE__:${newDoc.triggerType}__END_TRIG_TYPE__${newDoc.response}`;
+    }
     delete newDoc.name;
     delete newDoc.isAI;
+    delete newDoc.triggerType;
   }
   if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.userId) {

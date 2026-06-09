@@ -11,12 +11,7 @@ import {
   Position
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { 
-  ArrowLeft, Zap, MessageSquare, Clock, HelpCircle, 
-  UserPlus, Bell, Flag, Check, ChevronDown, TestTube, 
-  Send, Users, Globe, Layout, Search, BrainCircuit, Type, Heart,
-  MousePointer2, Plus, LayoutGrid, Link, Settings
-} from 'lucide-react';
+import { ArrowLeft, TestTube, Send, Plus, MousePointer2, LayoutGrid, Link, Settings, Type, BrainCircuit, MessageSquare, Heart, Check, List, X, Zap, Clock, HelpCircle, UserPlus, Bell, Flag, ChevronDown, Users, Globe, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import { API_BASE_URL } from '../config';
@@ -157,6 +152,8 @@ export default function UniversalTriggers() {
   const [activeTool, setActiveTool] = useState('Pointer');
   const [isTesting, setIsTesting] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [existingTriggers, setExistingTriggers] = useState([]);
+  const [showListModal, setShowListModal] = useState(false);
 
   const handleTest = () => {
     setIsTesting(true);
@@ -249,9 +246,11 @@ export default function UniversalTriggers() {
              width: total > 0 ? `${(count / total) * 100}%` : '0%'
            };
         }));
+        setExistingTriggers(campaigns);
       } else {
         setStats({ totalTriggers: 0, completed: 0, conversions: 0 });
         setTopTriggers([]);
+        setExistingTriggers([]);
       }
       
     } catch (err) {
@@ -320,6 +319,12 @@ export default function UniversalTriggers() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button 
+            onClick={() => setShowListModal(true)}
+            style={{ padding: '8px 16px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#0f172a', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+          >
+            <List size={16} /> My Triggers
+          </button>
           <button 
             onClick={handleTest}
             disabled={isTesting}
@@ -516,6 +521,82 @@ export default function UniversalTriggers() {
         </div>
 
       </div>
+
+      {/* Existing Triggers Modal */}
+      {showListModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: 'white', width: '600px', maxHeight: '80vh', borderRadius: '16px', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', margin: 0 }}>My Universal Triggers</h2>
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0 0' }}>Manage your created cross-platform automation rules.</p>
+              </div>
+              <button onClick={() => setShowListModal(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+              {existingTriggers.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+                  <div style={{ width: '64px', height: '64px', background: '#f1f5f9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#94a3b8' }}>
+                    <List size={32} />
+                  </div>
+                  <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>No Triggers Yet</h3>
+                  <p style={{ fontSize: '13px', color: '#64748b', maxWidth: '300px', margin: '0 auto' }}>You haven't created any Universal Triggers. Build one from the canvas and click "Save Trigger".</p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  {existingTriggers.map((trig, idx) => {
+                    let trigType = "Keyword";
+                    let responsePreview = trig.response;
+                    if (responsePreview && responsePreview.includes('__TRIG_TYPE__:')) {
+                      const startIdx = responsePreview.indexOf('__TRIG_TYPE__:');
+                      const endIdx = responsePreview.indexOf('__END_TRIG_TYPE__');
+                      if (startIdx !== -1 && endIdx !== -1) {
+                        trigType = responsePreview.slice(startIdx + '__TRIG_TYPE__:'.length, endIdx);
+                        responsePreview = responsePreview.slice(0, startIdx) + responsePreview.slice(endIdx + '__END_TRIG_TYPE__'.length);
+                      }
+                    }
+                    if (responsePreview && responsePreview.includes('__CAMP_NAME__:')) {
+                      const endIdx = responsePreview.indexOf('__END_CAMP_NAME__');
+                      if (endIdx !== -1) responsePreview = responsePreview.slice(endIdx + '__END_CAMP_NAME__'.length);
+                    }
+                    
+                    return (
+                      <div key={idx} style={{ padding: '16px', border: '1px solid #e2e8f0', borderRadius: '12px', background: '#f8fafc' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                              <h4 style={{ fontSize: '14px', fontWeight: '800', color: '#0f172a', margin: 0 }}>
+                                {trig.trigger ? `"${trig.trigger}"` : 'Any Trigger'}
+                              </h4>
+                              <span style={{ padding: '2px 8px', background: trig.status === 'Active' ? '#dcfce7' : '#f1f5f9', color: trig.status === 'Active' ? '#166534' : '#475569', borderRadius: '12px', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase' }}>
+                                {trig.status || 'Active'}
+                              </span>
+                            </div>
+                            <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <Type size={12} /> {trigType}
+                            </span>
+                          </div>
+                        </div>
+                        <div style={{ background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '13px', color: '#334155', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <span style={{ fontSize: '10px', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase' }}>Auto-Response Preview</span>
+                          {responsePreview.substring(0, 100)}{responsePreview.length > 100 ? '...' : ''}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            
+            <div style={{ padding: '16px 24px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', background: '#f8fafc', borderBottomLeftRadius: '16px', borderBottomRightRadius: '16px' }}>
+              <button onClick={() => setShowListModal(false)} style={{ padding: '8px 24px', background: '#0f172a', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

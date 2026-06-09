@@ -3322,11 +3322,23 @@ async function runSchedulingWorker() {
           }, post.workspaceId);
         } else if (post.platform === 'youtube') {
           const { publishYouTubeVideo } = await import('./utils/youtubeApi.js');
+          const { data: userSettings, error: setErr } = await _sb.from('settings').select('*').eq('workspaceId', post.workspaceId).limit(1);
+          if (setErr || !userSettings || userSettings.length === 0) {
+            throw new Error('Settings not found for workspace. Please connect YouTube first.');
+          }
+          // Parse connectedPageName to extract tokens if needed
+          let youtubeSettings = userSettings[0];
+          if (youtubeSettings.connectedPageName) {
+            try {
+              const pageData = JSON.parse(youtubeSettings.connectedPageName);
+              youtubeSettings = { ...youtubeSettings, ...pageData };
+            } catch(e){}
+          }
           publishResult = await publishYouTubeVideo(post.userId, {
             type: finalType,
             mediaUrl: finalMedia,
             caption: post.caption
-          }, settings);
+          }, youtubeSettings);
         } else {
           // Default to instagram
           const { publishInstagramContent } = await import('./utils/metaApi.js');
