@@ -444,10 +444,7 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>Post</span>
               <span className="sidebar-badge badge-new">HOT</span>
             </NavLink>
-            <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <LayoutDashboard size={18} />
-              <span>OneView</span>
-            </NavLink>
+
             <div className="nav-group">
               <div 
                 onClick={() => setShowAutoOpsDropdown(!showAutoOpsDropdown)} 
@@ -471,6 +468,10 @@ function Sidebar({ isMobileOpen, onClose }) {
                 </div>
               )}
             </div>
+            <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <LayoutDashboard size={18} />
+              <span>OneView</span>
+            </NavLink>
             <NavLink 
               to="/universal-triggers" 
               className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}
