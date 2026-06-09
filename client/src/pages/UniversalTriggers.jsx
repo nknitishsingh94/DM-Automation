@@ -18,9 +18,8 @@ import { supabase } from '../supabase';
 import { API_BASE_URL } from '../config';
 
 // Custom Nodes Matching the Screenshot
-const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor, data }) => {
+const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor, data, selected }) => {
   const { setNodes, setEdges } = useReactFlow();
-  const [showDelete, setShowDelete] = useState(false);
 
   const onDelete = (e) => {
     e.stopPropagation();
@@ -29,12 +28,8 @@ const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor
   };
 
   return (
-    <div 
-      style={{ position: 'relative' }}
-      onDoubleClick={() => setShowDelete(true)}
-      onMouseLeave={() => setShowDelete(false)}
-    >
-      {showDelete && (
+    <div style={{ position: 'relative' }}>
+      {selected && (
         <div 
           onClick={onDelete}
           style={{
