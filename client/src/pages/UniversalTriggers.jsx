@@ -8,7 +8,8 @@ import {
   useEdgesState, 
   addEdge,
   Handle,
-  Position
+  Position,
+  useReactFlow
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { ArrowLeft, TestTube, Send, Plus, MousePointer2, LayoutGrid, Link, Settings, Type, BrainCircuit, MessageSquare, Heart, Check, List, X, Zap, Clock, HelpCircle, UserPlus, Bell, Flag, ChevronDown, Users, Globe, Search } from 'lucide-react';
@@ -17,64 +18,96 @@ import { supabase } from '../supabase';
 import { API_BASE_URL } from '../config';
 
 // Custom Nodes Matching the Screenshot
-const BaseNode = ({ icon: Icon, title, subtitle, color, bgColor, borderColor, data }) => (
-  <div style={{ position: 'relative' }}>
-    {data?.stepNumber && (
-      <div style={{ 
-        position: 'absolute', 
-        left: '-12px', 
-        top: '50%', 
-        transform: 'translateY(-50%)', 
-        width: '24px', 
-        height: '24px', 
-        borderRadius: '50%', 
-        background: color, 
-        color: 'white', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        fontSize: '11px', 
-        fontWeight: 'bold',
-        zIndex: 10,
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        {data.stepNumber}
-      </div>
-    )}
-    <div style={{ 
-      width: '260px', 
-      background: bgColor || 'white', 
-      border: `1.5px solid ${borderColor || color}`, 
-      borderRadius: '8px',
-      boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
-      display: 'flex',
-      alignItems: 'center',
-      padding: '12px 16px',
-      gap: '12px'
-    }}>
-      <Handle type="target" position={Position.Top} style={{ background: color, border: 'none', width: '8px', height: '8px' }} />
-      <div style={{ 
-        width: '32px', height: '32px', borderRadius: '6px', background: `${color}20`,
-        display: 'flex', alignItems: 'center', justifyContent: 'center', color: color
-      }}>
-        <Icon size={18} strokeWidth={2.5} />
-      </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', marginBottom: '2px' }}>{title}</div>
-        <div style={{ fontSize: '11px', color: '#64748b', lineHeight: '1.4' }}>{subtitle}</div>
-      </div>
-      <Handle type="source" position={Position.Bottom} style={{ background: color, border: 'none', width: '8px', height: '8px' }} />
-    </div>
-  </div>
-);
+const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor, data }) => {
+  const { setNodes, setEdges } = useReactFlow();
 
-const TriggerNode = ({ data }) => <BaseNode icon={Zap} title="Trigger" subtitle="Keyword: price, pricing, cost All Platforms" color="#10b981" bgColor="#f0fdf4" borderColor="#86efac" data={data} />;
-const MessageNode = ({ data }) => <BaseNode icon={MessageSquare} title="Send Message" subtitle={data.subtitle || "Here is our pricing information for you."} color="#3b82f6" bgColor="#eff6ff" borderColor="#bfdbfe" data={data} />;
-const WaitNode = ({ data }) => <BaseNode icon={Clock} title="Wait" subtitle="Wait for 5 Minutes" color="#8b5cf6" bgColor="#f5f3ff" borderColor="#ddd6fe" data={data} />;
-const QuestionNode = ({ data }) => <BaseNode icon={HelpCircle} title="Ask Question" subtitle="Are you interested in our product?" color="#f59e0b" bgColor="#fffbeb" borderColor="#fde68a" data={data} />;
-const SaveNode = ({ data }) => <BaseNode icon={UserPlus} title="Save Lead" subtitle="Save user data in CRM + Add Tag: Pricing Interested" color="#10b981" bgColor="#f0fdf4" borderColor="#86efac" data={data} />;
-const NotifyNode = ({ data }) => <BaseNode icon={Bell} title="Notify Admin" subtitle="Send notification to admin & sales team" color="#f59e0b" bgColor="#fffbeb" borderColor="#fde68a" data={data} />;
-const EndNode = ({ data }) => <BaseNode icon={Flag} title="End" subtitle="Workflow Completed" color="#8b5cf6" bgColor="#f5f3ff" borderColor="#ddd6fe" data={data} />;
+  const onDelete = (e) => {
+    e.stopPropagation();
+    setNodes((nds) => nds.filter((n) => n.id !== id));
+    setEdges((eds) => eds.filter((edge) => edge.source !== id && edge.target !== id));
+  };
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <div 
+        onClick={onDelete}
+        style={{
+          position: 'absolute',
+          top: '-8px',
+          right: '-8px',
+          background: '#ef4444',
+          color: 'white',
+          borderRadius: '50%',
+          width: '20px',
+          height: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          zIndex: 20,
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+        }}
+        title="Remove Step"
+      >
+        <X size={12} strokeWidth={3} />
+      </div>
+      {data?.stepNumber && (
+        <div style={{ 
+          position: 'absolute', 
+          left: '-12px', 
+          top: '50%', 
+          transform: 'translateY(-50%)', 
+          width: '24px', 
+          height: '24px', 
+          borderRadius: '50%', 
+          background: color, 
+          color: 'white', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          fontSize: '11px', 
+          fontWeight: 'bold',
+          zIndex: 10,
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        }}>
+          {data.stepNumber}
+        </div>
+      )}
+      <div style={{ 
+        width: '260px', 
+        background: bgColor || 'white', 
+        border: `1.5px solid ${borderColor || color}`, 
+        borderRadius: '8px',
+        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '12px 16px',
+        gap: '12px'
+      }}>
+        <Handle type="target" position={Position.Top} style={{ background: color, border: 'none', width: '8px', height: '8px' }} />
+        <div style={{ 
+          width: '32px', height: '32px', borderRadius: '6px', background: `${color}20`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', color: color
+        }}>
+          <Icon size={18} strokeWidth={2.5} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', marginBottom: '2px' }}>{title}</div>
+          <div style={{ fontSize: '11px', color: '#64748b', lineHeight: '1.4' }}>{subtitle}</div>
+        </div>
+        <Handle type="source" position={Position.Bottom} style={{ background: color, border: 'none', width: '8px', height: '8px' }} />
+      </div>
+    </div>
+  );
+};
+
+const TriggerNode = (props) => <BaseNode icon={Zap} title="Trigger" subtitle="Keyword: price, pricing, cost All Platforms" color="#10b981" bgColor="#f0fdf4" borderColor="#86efac" {...props} />;
+const MessageNode = (props) => <BaseNode icon={MessageSquare} title="Send Message" subtitle={props.data?.subtitle || "Here is our pricing information for you."} color="#3b82f6" bgColor="#eff6ff" borderColor="#bfdbfe" {...props} />;
+const WaitNode = (props) => <BaseNode icon={Clock} title="Wait" subtitle={props.data?.subtitle || "Wait for 5 Minutes"} color="#8b5cf6" bgColor="#f5f3ff" borderColor="#ddd6fe" {...props} />;
+const QuestionNode = (props) => <BaseNode icon={HelpCircle} title="Ask Question" subtitle="Are you interested in our product?" color="#f59e0b" bgColor="#fffbeb" borderColor="#fde68a" {...props} />;
+const SaveNode = (props) => <BaseNode icon={UserPlus} title="Save Lead" subtitle="Save user data in CRM + Add Tag: Pricing Interested" color="#10b981" bgColor="#f0fdf4" borderColor="#86efac" {...props} />;
+const NotifyNode = (props) => <BaseNode icon={Bell} title="Notify Admin" subtitle="Send notification to admin & sales team" color="#f59e0b" bgColor="#fffbeb" borderColor="#fde68a" {...props} />;
+const EndNode = (props) => <BaseNode icon={Flag} title="End" subtitle="Workflow Completed" color="#8b5cf6" bgColor="#f5f3ff" borderColor="#ddd6fe" {...props} />;
 
 const nodeTypes = {
   triggerNode: TriggerNode,
