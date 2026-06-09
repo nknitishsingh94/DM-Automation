@@ -20,6 +20,7 @@ import { API_BASE_URL } from '../config';
 // Custom Nodes Matching the Screenshot
 const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor, data }) => {
   const { setNodes, setEdges } = useReactFlow();
+  const [showDelete, setShowDelete] = useState(false);
 
   const onDelete = (e) => {
     e.stopPropagation();
@@ -28,29 +29,35 @@ const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor
   };
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div 
-        onClick={onDelete}
-        style={{
-          position: 'absolute',
-          top: '-8px',
-          right: '-8px',
-          background: '#ef4444',
-          color: 'white',
-          borderRadius: '50%',
-          width: '20px',
-          height: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          zIndex: 20,
-          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-        }}
-        title="Remove Step"
-      >
-        <X size={12} strokeWidth={3} />
-      </div>
+    <div 
+      style={{ position: 'relative' }}
+      onDoubleClick={() => setShowDelete(true)}
+      onMouseLeave={() => setShowDelete(false)}
+    >
+      {showDelete && (
+        <div 
+          onClick={onDelete}
+          style={{
+            position: 'absolute',
+            top: '-8px',
+            right: '-8px',
+            background: '#ef4444',
+            color: 'white',
+            borderRadius: '50%',
+            width: '20px',
+            height: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            zIndex: 20,
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+          }}
+          title="Remove Step"
+        >
+          <X size={12} strokeWidth={3} />
+        </div>
+      )}
       {data?.stepNumber && (
         <div style={{ 
           position: 'absolute', 
