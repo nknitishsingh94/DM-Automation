@@ -304,6 +304,7 @@ export default function UniversalTriggers() {
       alert("No authentication token found. Please login again.");
       return;
     }
+    const workspaceId = localStorage.getItem('active_workspace_id');
     
     setIsSaving(true);
     try {
@@ -311,7 +312,8 @@ export default function UniversalTriggers() {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          ...(workspaceId ? { 'x-workspace-id': workspaceId } : {})
         },
         body: JSON.stringify({
           name: 'Universal Trigger - ' + triggerType,
