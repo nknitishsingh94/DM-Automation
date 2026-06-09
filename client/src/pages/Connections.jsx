@@ -307,7 +307,7 @@ export default function Connections() {
       window.location.href = `${API_BASE_URL}/api/oauth/linkedin?token=${localStorage.getItem('insta_agent_token')}`;
       return;
     }
-    if (platformName.toLowerCase() === 'google business') {
+    if (platformName.toLowerCase() === 'google business' || platformName.toLowerCase() === 'google-business') {
       window.location.href = `${API_BASE_URL}/api/oauth/google-business?token=${localStorage.getItem('insta_agent_token')}`;
       return;
     }
