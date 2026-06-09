@@ -962,7 +962,19 @@ router.get('/google-business/callback', async (req, res) => {
     oauth2Client.setCredentials(tokens);
 
     // Fetch Google Business Account Name
+    
     let businessName = 'Google Business Account';
+    try {
+      const userInfoRes = await axios.get('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
+        headers: { Authorization: `Bearer ${tokens.access_token}` }
+      });
+      if (userInfoRes.data && userInfoRes.data.name) {
+        businessName = userInfoRes.data.name;
+      }
+    } catch(err) {
+      console.warn('Could not fetch Google user info:', err.message);
+    }
+
     try {
       const accountsRes = await axios.get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', {
         headers: { Authorization: `Bearer ${tokens.access_token}` }
