@@ -367,7 +367,34 @@ export default function UniversalTriggers() {
               return (
                 <div 
                   key={i} 
-                  onClick={() => setActiveTool(btn.id)}
+                  onClick={() => {
+                    setActiveTool(btn.id);
+                    if (btn.id === 'Plus') {
+                      const newNode = {
+                        id: `msg-${Date.now()}`,
+                        type: 'messageNode',
+                        position: { x: 200 + Math.random() * 100, y: 200 + Math.random() * 100 },
+                        data: { stepNumber: nodes.length + 1, subtitle: "New Message Step" }
+                      };
+                      setNodes((nds) => [...nds, newNode]);
+                      setTimeout(() => setActiveTool('Pointer'), 200);
+                    } else if (btn.id === 'Text') {
+                      const newNode = {
+                        id: `wait-${Date.now()}`,
+                        type: 'waitNode',
+                        position: { x: 200 + Math.random() * 100, y: 200 + Math.random() * 100 },
+                        data: { stepNumber: nodes.length + 1, subtitle: "New Text Note" }
+                      };
+                      setNodes((nds) => [...nds, newNode]);
+                      setTimeout(() => setActiveTool('Pointer'), 200);
+                    } else if (btn.id === 'Settings') {
+                      alert("Canvas Settings opened. Here you can change global workflow settings.");
+                      setTimeout(() => setActiveTool('Pointer'), 200);
+                    } else if (btn.id === 'Grid') {
+                      alert("Integration Apps library opened. Add 3rd party actions!");
+                      setTimeout(() => setActiveTool('Pointer'), 200);
+                    }
+                  }}
                   style={{ padding: '10px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: isActive ? '#f8fafc' : 'transparent', borderRight: isActive ? '3px solid #4f46e5' : '3px solid transparent', color: isActive ? '#4f46e5' : '#64748b' }}
                 >
                   <btn.icon size={18} />
