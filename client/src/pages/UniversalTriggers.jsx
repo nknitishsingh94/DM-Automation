@@ -184,7 +184,7 @@ export default function UniversalTriggers() {
       
       // 1. Fetch connected platforms from settings
       const settingsRes = await fetch(`${API_BASE_URL}/api/settings`, {
-        headers: { 'Authorization': `Bearer ${token}`, 'workspace': workspaceId }
+        headers: { 'Authorization': `Bearer ${token}`, 'x-workspace-id': workspaceId }
       });
       const settingsData = settingsRes.ok ? await settingsRes.json() : null;
         
@@ -214,7 +214,7 @@ export default function UniversalTriggers() {
 
       // 2. Fetch stats from campaigns (Universal Triggers)
       const campRes = await fetch(`${API_BASE_URL}/api/campaigns`, {
-        headers: { 'Authorization': `Bearer ${token}`, 'workspace': workspaceId }
+        headers: { 'Authorization': `Bearer ${token}`, 'x-workspace-id': workspaceId }
       });
       const allCampaigns = campRes.ok ? await campRes.json() : [];
       const campaigns = allCampaigns.filter(c => c.isUniversal === true);
