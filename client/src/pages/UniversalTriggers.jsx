@@ -180,24 +180,25 @@ export default function UniversalTriggers() {
       const workspaceId = localStorage.getItem('active_workspace_id');
       if (!workspaceId) return;
 
+      const token = localStorage.getItem('token');
+      
       // 1. Fetch connected platforms from settings
-      const { data: settingsData } = await supabase
-        .from('settings')
-        .select('*')
-        .eq('workspaceId', workspaceId)
-        .single();
+      const settingsRes = await fetch(`${API_BASE_URL}/api/settings`, {
+        headers: { 'Authorization': `Bearer ${token}`, 'workspace': workspaceId }
+      });
+      const settingsData = settingsRes.ok ? await settingsRes.json() : null;
         
       if (settingsData) {
         const dynamicPlatforms = [
           { id: 'all', label: 'All Connected Platforms', checked: true, color: '#4f46e5' }
         ];
-        if (settingsData.isAccountConnected) {
+        if (settingsData.isAccountConnected || settingsData.instagramAccessToken) {
           dynamicPlatforms.push({ id: 'ig', label: `Instagram (@${settingsData.connectedInstagramName || 'Account'})`, checked: true, color: '#ec4899', icon: true });
         }
-        if (settingsData.isFacebookConnected) {
+        if (settingsData.isFacebookConnected || settingsData.facebookPageId) {
           dynamicPlatforms.push({ id: 'fb', label: `Facebook (${settingsData.connectedFacebookName || 'Page'})`, checked: true, color: '#3b82f6', icon: true });
         }
-        if (settingsData.isWhatsAppConnected) {
+        if (settingsData.isWhatsAppConnected || settingsData.whatsappPhoneNumberId) {
           dynamicPlatforms.push({ id: 'wa', label: 'WhatsApp', checked: true, color: '#10b981', icon: true });
         }
         
@@ -212,11 +213,11 @@ export default function UniversalTriggers() {
       }
 
       // 2. Fetch stats from campaigns (Universal Triggers)
-      const { data: campaigns } = await supabase
-        .from('campaigns')
-        .select('*')
-        .eq('workspaceId', workspaceId)
-        .eq('isUniversal', true);
+      const campRes = await fetch(`${API_BASE_URL}/api/campaigns`, {
+        headers: { 'Authorization': `Bearer ${token}`, 'workspace': workspaceId }
+      });
+      const allCampaigns = campRes.ok ? await campRes.json() : [];
+      const campaigns = allCampaigns.filter(c => c.isUniversal === true);
         
       if (campaigns && campaigns.length > 0) {
         let total = 0;
