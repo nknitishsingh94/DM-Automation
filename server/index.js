@@ -202,7 +202,7 @@ const ALLOWED_ORIGINS = [
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'X-Workspace-ID', 'x-workspace-id', 'Cache-Control']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'X-Workspace-ID', 'x-workspace-id', 'workspace', 'Cache-Control']
 }));
 app.options('*', cors());
 
