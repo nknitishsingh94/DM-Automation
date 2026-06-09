@@ -180,7 +180,7 @@ export default function UniversalTriggers() {
       const workspaceId = localStorage.getItem('active_workspace_id');
       if (!workspaceId) return;
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('insta_agent_token');
       
       // 1. Fetch connected platforms from settings
       const settingsRes = await fetch(`${API_BASE_URL}/api/settings`, {
