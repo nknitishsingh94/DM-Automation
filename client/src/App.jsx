@@ -129,7 +129,7 @@ function Sidebar({ isMobileOpen, onClose }) {
   const [showAutoOpsDropdown, setShowAutoOpsDropdown] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState({
     autoOps: true,
-    message: true,
+    message: false,
     comment: false,
     followUp: false,
     campaigns: false
@@ -450,6 +450,34 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>Dashboard</span>
             </NavLink>
 
+            <div className="nav-section-label" style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '16px', marginBottom: '4px', paddingLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              💬 Communication
+            </div>
+            <NavLink to="/inbox" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>All Chats</span>
+            </NavLink>
+            <NavLink to="/platform/whatsapp" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>WhatsApp</span>
+            </NavLink>
+            <NavLink to="/platform/instagram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Instagram</span>
+            </NavLink>
+            <NavLink to="/platform/facebook" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Facebook</span>
+            </NavLink>
+            <NavLink to="/platform/linkedin" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>LinkedIn</span>
+            </NavLink>
+            <NavLink to="/platform/twitter" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Twitter</span>
+            </NavLink>
+            <NavLink to="/platform/telegram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Telegram</span>
+            </NavLink>
+            <NavLink to="/platform/website-chat" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Website Chat</span>
+            </NavLink>
+
             <div onClick={() => toggleMenu('autoOps')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', cursor: 'pointer', color: '#0f172a', fontSize: '15px', fontWeight: '800', borderRadius: '8px', transition: 'background 0.2s', margin: '16px 0 4px', background: expandedMenus.autoOps ? '#f1f5f9' : 'transparent' }} className="nav-item-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Zap size={18} color="#3b82f6" /> <span>AutoOps</span>
@@ -459,74 +487,74 @@ function Sidebar({ isMobileOpen, onClose }) {
             
             {expandedMenus.autoOps && (
               <div style={{ paddingLeft: '12px', display: 'flex', flexDirection: 'column', borderLeft: '2px solid #e2e8f0', marginLeft: '16px' }}>
-            
-            <div onClick={() => toggleMenu('message')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', cursor: 'pointer', color: '#64748b', fontSize: '14px', fontWeight: '600', borderRadius: '8px', transition: 'background 0.2s', margin: '4px 0' }} className="nav-item-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '16px' }}>📩</span> <span>Message Automation</span>
-              </div>
-              <ChevronDown size={16} style={{ transform: expandedMenus.message ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
-            </div>
-            {expandedMenus.message && (
-              <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '8px' }}>
-                <NavLink to="/platform/whatsapp" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>WhatsApp</span></NavLink>
-                <NavLink to="/platform/instagram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Instagram</span></NavLink>
-                <NavLink to="/platform/facebook" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Facebook</span></NavLink>
-                <NavLink to="/platform/telegram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Telegram</span></NavLink>
-                <NavLink to="/platform/linkedin" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>LinkedIn</span></NavLink>
-                <NavLink to="/platform/twitter" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>X</span></NavLink>
-                <NavLink to="/platform/website-chat" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Website Chat</span></NavLink>
-              </div>
-            )}
+                
+                <div onClick={() => toggleMenu('message')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', cursor: 'pointer', color: '#64748b', fontSize: '14px', fontWeight: '600', borderRadius: '8px', transition: 'background 0.2s', margin: '4px 0' }} className="nav-item-header">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '16px' }}>📩</span> <span>Message Automation</span>
+                  </div>
+                  <ChevronDown size={16} style={{ transform: expandedMenus.message ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+                </div>
+                {expandedMenus.message && (
+                  <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '8px' }}>
+                    <NavLink to="/platform/whatsapp" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>WhatsApp</span></NavLink>
+                    <NavLink to="/platform/instagram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Instagram</span></NavLink>
+                    <NavLink to="/platform/facebook" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Facebook</span></NavLink>
+                    <NavLink to="/platform/telegram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Telegram</span></NavLink>
+                    <NavLink to="/platform/linkedin" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>LinkedIn</span></NavLink>
+                    <NavLink to="/platform/twitter" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>X</span></NavLink>
+                    <NavLink to="/platform/website-chat" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Website Chat</span></NavLink>
+                  </div>
+                )}
 
-            <div onClick={() => toggleMenu('comment')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', cursor: 'pointer', color: '#64748b', fontSize: '14px', fontWeight: '600', borderRadius: '8px', transition: 'background 0.2s', margin: '4px 0' }} className="nav-item-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '16px' }}>💬</span> <span>Comment Automation</span>
-              </div>
-              <ChevronDown size={16} style={{ transform: expandedMenus.comment ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
-            </div>
-            {expandedMenus.comment && (
-              <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '8px' }}>
-                <NavLink to="/automation/comment/instagram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Instagram</span></NavLink>
-                <NavLink to="/automation/comment/facebook" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Facebook</span></NavLink>
-                <NavLink to="/automation/comment/youtube" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>YouTube</span></NavLink>
-                <NavLink to="/automation/comment/threads" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Threads</span></NavLink>
-              </div>
-            )}
+                <div onClick={() => toggleMenu('comment')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', cursor: 'pointer', color: '#64748b', fontSize: '14px', fontWeight: '600', borderRadius: '8px', transition: 'background 0.2s', margin: '4px 0' }} className="nav-item-header">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '16px' }}>💬</span> <span>Comment Automation</span>
+                  </div>
+                  <ChevronDown size={16} style={{ transform: expandedMenus.comment ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+                </div>
+                {expandedMenus.comment && (
+                  <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '8px' }}>
+                    <NavLink to="/automation/comment/instagram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Instagram</span></NavLink>
+                    <NavLink to="/automation/comment/facebook" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Facebook</span></NavLink>
+                    <NavLink to="/automation/comment/youtube" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>YouTube</span></NavLink>
+                    <NavLink to="/automation/comment/threads" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Threads</span></NavLink>
+                  </div>
+                )}
 
-            <NavLink to="/ai-studio" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '12px', margin: '4px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '16px' }}>🤖</span> <span>AI Workflows (All Platforms)</span>
-            </NavLink>
+                <NavLink to="/ai-studio" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '12px', margin: '4px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '16px' }}>🤖</span> <span>AI Workflows</span>
+                </NavLink>
 
-            <div onClick={() => toggleMenu('followUp')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', cursor: 'pointer', color: '#64748b', fontSize: '14px', fontWeight: '600', borderRadius: '8px', transition: 'background 0.2s', margin: '4px 0' }} className="nav-item-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '16px' }}>🔄</span> <span>Follow-up Automation</span>
-              </div>
-              <ChevronDown size={16} style={{ transform: expandedMenus.followUp ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
-            </div>
-            {expandedMenus.followUp && (
-              <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '8px' }}>
-                <NavLink to="/automation/follow-up/whatsapp" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>WhatsApp</span></NavLink>
-                <NavLink to="/automation/follow-up/instagram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Instagram</span></NavLink>
-                <NavLink to="/automation/follow-up/facebook" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Facebook</span></NavLink>
-                <NavLink to="/automation/follow-up/telegram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Telegram</span></NavLink>
-                <NavLink to="/automation/follow-up/website-chat" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Website Chat</span></NavLink>
-              </div>
-            )}
+                <div onClick={() => toggleMenu('followUp')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', cursor: 'pointer', color: '#64748b', fontSize: '14px', fontWeight: '600', borderRadius: '8px', transition: 'background 0.2s', margin: '4px 0' }} className="nav-item-header">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '16px' }}>🔄</span> <span>Follow-up Automation</span>
+                  </div>
+                  <ChevronDown size={16} style={{ transform: expandedMenus.followUp ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+                </div>
+                {expandedMenus.followUp && (
+                  <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '8px' }}>
+                    <NavLink to="/automation/follow-up/whatsapp" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>WhatsApp</span></NavLink>
+                    <NavLink to="/automation/follow-up/instagram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Instagram</span></NavLink>
+                    <NavLink to="/automation/follow-up/facebook" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Facebook</span></NavLink>
+                    <NavLink to="/automation/follow-up/telegram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Telegram</span></NavLink>
+                    <NavLink to="/automation/follow-up/website-chat" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Website Chat</span></NavLink>
+                  </div>
+                )}
 
-            <div onClick={() => toggleMenu('campaigns')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', cursor: 'pointer', color: '#64748b', fontSize: '14px', fontWeight: '600', borderRadius: '8px', transition: 'background 0.2s', margin: '4px 0' }} className="nav-item-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '16px' }}>📢</span> <span>Campaigns</span>
-              </div>
-              <ChevronDown size={16} style={{ transform: expandedMenus.campaigns ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
-            </div>
-            {expandedMenus.campaigns && (
-              <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '8px' }}>
-                <NavLink to="/broadcasts" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>WhatsApp Broadcast</span></NavLink>
-                <NavLink to="/campaigns/telegram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Telegram Broadcast</span></NavLink>
-                <NavLink to="/campaigns/email" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Email Campaigns</span></NavLink>
-                <NavLink to="/campaigns/marketing" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Marketing Campaigns</span></NavLink>
-              </div>
-            )}
+                <div onClick={() => toggleMenu('campaigns')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', cursor: 'pointer', color: '#64748b', fontSize: '14px', fontWeight: '600', borderRadius: '8px', transition: 'background 0.2s', margin: '4px 0' }} className="nav-item-header">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '16px' }}>📢</span> <span>Campaigns</span>
+                  </div>
+                  <ChevronDown size={16} style={{ transform: expandedMenus.campaigns ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+                </div>
+                {expandedMenus.campaigns && (
+                  <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '8px' }}>
+                    <NavLink to="/broadcasts" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>WhatsApp Broadcast</span></NavLink>
+                    <NavLink to="/campaigns/telegram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Telegram Broadcast</span></NavLink>
+                    <NavLink to="/campaigns/email" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Email Campaigns</span></NavLink>
+                    <NavLink to="/campaigns/marketing" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Marketing Campaigns</span></NavLink>
+                  </div>
+                )}
               </div>
             )}
 
