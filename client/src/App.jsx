@@ -527,7 +527,8 @@ function Sidebar({ isMobileOpen, onClose }) {
                 <NavLink to="/campaigns/marketing" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}><span>Marketing Campaigns</span></NavLink>
               </div>
             )}
-            </div>
+              </div>
+            )}
 
             <div className="nav-section-label" style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '16px', marginBottom: '4px', paddingLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               👥 CRM
