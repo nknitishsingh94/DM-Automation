@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate } from 'react-router-dom';
-import { Bot, Home, LayoutDashboard, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2 } from 'lucide-react';
+import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2 } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config';
@@ -30,14 +30,13 @@ const lazyRetry = (componentImport) => {
   });
 };
 
-import Dashboard from './pages/Dashboard';
-import Inbox from './pages/Inbox';
-import Connections from './pages/Connections';
-import Campaigns from './pages/Campaigns';
-
 // Lazy load heavy components with retry logic
+const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
+const Inbox = lazyRetry(() => import('./pages/Inbox'));
 const SettingsPage = lazyRetry(() => import('./pages/Settings'));
+const Connections = lazyRetry(() => import('./pages/Connections'));
 const Profile = lazyRetry(() => import('./pages/Profile'));
+const Campaigns = lazyRetry(() => import('./pages/Campaigns'));
 const CampaignBuilder = lazyRetry(() => import('./pages/CampaignBuilder'));
 const Audiences = lazyRetry(() => import('./pages/Audiences'));
 const Subscription = lazyRetry(() => import('./pages/Subscription'));
@@ -53,8 +52,7 @@ const Resources = lazyRetry(() => import('./pages/Resources'));
 const Blog = lazyRetry(() => import('./pages/Blog'));
 const BlogPost = lazyRetry(() => import('./pages/BlogPost'));
 const Workplace = lazyRetry(() => import('./pages/Workplace'));
-const InstagramWorkbench = lazyRetry(() => import('./pages/Workplace').then(module => ({ default: module.InstagramWorkbench })));
-const FacebookWorkbench = lazyRetry(() => import('./pages/Workplace').then(module => ({ default: module.FacebookWorkbench })));
+import { InstagramWorkbench, FacebookWorkbench } from './pages/Workplace';
 const Privacy = lazyRetry(() => import('./pages/Privacy'));
 const Terms = lazyRetry(() => import('./pages/Terms'));
 const Cookies = lazyRetry(() => import('./pages/Cookies'));
@@ -63,7 +61,7 @@ const TemplateSelector = lazyRetry(() => import('./pages/TemplateSelector'));
 const AutomationEditor = lazyRetry(() => import('./pages/AutomationEditor'));
 const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'));
 const WriteReview = lazyRetry(() => import('./pages/WriteReview'));
-const MessageOnlyHub = lazyRetry(() => import('./pages/MessageOnlyHub'));
+const PlatformHub = lazyRetry(() => import('./pages/PlatformHub'));
 const PlatformDashboard = lazyRetry(() => import('./pages/PlatformDashboard'));
 const WhatsAppDashboard = lazyRetry(() => import('./pages/WhatsAppDashboard'));
 
@@ -127,13 +125,6 @@ function Sidebar({ isMobileOpen, onClose }) {
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
   const [showAutoOpsDropdown, setShowAutoOpsDropdown] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState({
-    autoOps: true
-  });
-
-  const toggleMenu = (menu) => {
-    setExpandedMenus(prev => ({ ...prev, [menu]: !prev[menu] }));
-  };
 
   // Fetch workspaces
   const fetchWorkspaces = async () => {
@@ -441,79 +432,67 @@ function Sidebar({ isMobileOpen, onClose }) {
 
         <div className="sidebar-middle-scroll">
           <nav className="nav-links">
+            <NavLink to="/connections" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Link2 size={18} />
+              <span>Connections</span>
+            </NavLink>
+            <NavLink to="/scheduling" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Calendar size={18} />
+              <span>Post</span>
+              <span className="sidebar-badge badge-new">HOT</span>
+            </NavLink>
             <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
               <Home size={18} />
-              <span>Dashboard</span>
+              <span>Home</span>
             </NavLink>
-
-            <div className="nav-section-label" style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '16px', marginBottom: '4px', paddingLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              💬 Communication
-            </div>
-            <NavLink to="/inbox" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
-              <span>All Chats</span>
-            </NavLink>
-            <NavLink to="/platform/whatsapp" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
-              <span>WhatsApp</span>
-            </NavLink>
-            <NavLink to="/platform/instagram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
-              <span>Instagram</span>
-            </NavLink>
-            <NavLink to="/platform/facebook" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
-              <span>Facebook</span>
-            </NavLink>
-            <NavLink to="/platform/linkedin" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
-              <span>LinkedIn</span>
-            </NavLink>
-            <NavLink to="/platform/twitter" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
-              <span>Twitter</span>
-            </NavLink>
-            <NavLink to="/platform/telegram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
-              <span>Telegram</span>
-            </NavLink>
-            <NavLink to="/platform/website-chat" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
-              <span>Website Chat</span>
-            </NavLink>
-
-            <div onClick={() => toggleMenu('autoOps')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', cursor: 'pointer', color: '#0f172a', fontSize: '15px', fontWeight: '800', borderRadius: '8px', transition: 'background 0.2s', margin: '16px 0 4px', background: expandedMenus.autoOps ? '#f1f5f9' : 'transparent' }} className="nav-item-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Zap size={18} color="#3b82f6" /> <span>AutoOps</span>
+            <div className="nav-group">
+              <div 
+                onClick={() => setShowAutoOpsDropdown(!showAutoOpsDropdown)} 
+                className={`nav-item ${location.pathname.startsWith('/hub') ? 'active' : ''}`} 
+                style={{ cursor: 'pointer', justifyContent: 'space-between' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Zap size={18} />
+                  <span>AutoOps</span>
+                </div>
+                <ChevronDown size={14} style={{ transform: showAutoOpsDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
               </div>
-              <ChevronDown size={16} style={{ transform: expandedMenus.autoOps ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+              {showAutoOpsDropdown && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', paddingLeft: '32px', marginTop: '4px' }}>
+                  <NavLink to="/hub" end className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                    Automation
+                  </NavLink>
+                  <NavLink to="/hub/message-only" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                    Message only
+                  </NavLink>
+                </div>
+              )}
             </div>
-            {expandedMenus.autoOps && (
-              <div style={{ paddingLeft: '12px', display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '8px', borderLeft: '2px solid #e2e8f0', marginLeft: '16px' }}>
-                <NavLink to="/campaigns" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}>
-                  <span>Automation</span>
-                </NavLink>
-                <NavLink to="/hub/message-only" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`}>
-                  <span>Message Only</span>
-                </NavLink>
-              </div>
-            )}
+            <NavLink 
+              to="/universal-triggers" 
+              className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <Globe size={18} />
+              <span>Universal Triggers</span>
+            </NavLink>
+            <NavLink to="/ai-studio" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Sparkles size={18} />
+              <span>AI Studio</span>
+              <span className="sidebar-badge badge-new">NEW</span>
+            </NavLink>
 
-            <div className="nav-section-label" style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '16px', marginBottom: '4px', paddingLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              👥 CRM
-            </div>
-            <NavLink to="/audiences" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+            <NavLink to="/audiences" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Users size={18} />
               <span>Contacts</span>
             </NavLink>
 
-            <div className="nav-section-label" style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '16px', marginBottom: '4px', paddingLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              📊 Analytics
-            </div>
-            <NavLink to="/analytics" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
-              <span>Overview</span>
-            </NavLink>
-
-            <div className="nav-section-label" style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '16px', marginBottom: '4px', paddingLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              ⚙ Settings
-            </div>
-            <NavLink to="/settings" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
-              <span>General Settings</span>
+            <NavLink to="/settings" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Settings size={18} />
+              <span>Settings</span>
             </NavLink>
             
             {localStorage.getItem('smart10x_reviewed') !== 'true' && (
-              <NavLink to="/write-review" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`} style={{ marginTop: '16px' }}>
+              <NavLink to="/write-review" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
                 <MessageSquare size={18} />
                 <span>Write a Review</span>
               </NavLink>
@@ -643,7 +622,7 @@ function TopBar({ onMenuClick }) {
   
   const getTitle = () => {
     switch(location.pathname) {
-      case '/dashboard': return 'OneView';
+      case '/dashboard': return 'Home';
       case '/campaigns': return 'Automations';
       case '/campaign-builder/new': return 'Campaign Builder';
       case '/audiences': return 'Contacts';
@@ -658,7 +637,7 @@ function TopBar({ onMenuClick }) {
       default: 
         if (location.pathname.startsWith('/flow-builder/')) return 'Editing Flow';
         if (location.pathname.startsWith('/platform/')) return 'Hub';
-        return 'OneView';
+        return 'Home';
     }
   };
 
@@ -705,9 +684,9 @@ function MainLayout() {
             </div>
           }>
             <Routes>
-              <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
+              <Route path="/" element={user ? <Navigate to="/connections" /> : <Landing />} />
               <Route path="/public-home" element={<Landing />} />
-              <Route path="/hub/message-only" element={<ProtectedRoute><MessageOnlyHub /></ProtectedRoute>} />
+              <Route path="/hub" element={<ProtectedRoute><PlatformHub /></ProtectedRoute>} />
               <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
               <Route path="/platform/whatsapp" element={<ProtectedRoute><WhatsAppDashboard /></ProtectedRoute>} />
               <Route path="/platform/:platformId" element={<ProtectedRoute><PlatformDashboard /></ProtectedRoute>} />
