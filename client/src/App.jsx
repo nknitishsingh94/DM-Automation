@@ -73,6 +73,7 @@ const ScheduleFeature = lazyRetry(() => import('./pages/ScheduleFeature'));
 const AllReviews = lazyRetry(() => import('./pages/AllReviews'));
 const Scheduling = lazyRetry(() => import('./pages/Scheduling'));
 const Contact = lazyRetry(() => import('./pages/Contact'));
+import TemplatesModal from './components/TemplatesModal';
 
 const NotificationContext = createContext();
 export const useNotification = () => useContext(NotificationContext);
@@ -128,6 +129,7 @@ function Sidebar({ isMobileOpen, onClose }) {
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
   const [showAutoOpsDropdown, setShowAutoOpsDropdown] = useState(false);
+  const [showTemplatesModal, setShowTemplatesModal] = useState(false);
 
   // Fetch workspaces
   const fetchWorkspaces = async () => {
@@ -465,9 +467,9 @@ function Sidebar({ isMobileOpen, onClose }) {
                   <NavLink to="/hub/message-only" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
                     Message only
                   </NavLink>
-                  <NavLink to="/templates" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                  <div onClick={() => setShowTemplatesModal(true)} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px' }} onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                     All Template
-                  </NavLink>
+                  </div>
                 </div>
               )}
             </div>
@@ -618,6 +620,7 @@ function Sidebar({ isMobileOpen, onClose }) {
             </div>
           </div>
         )}
+        <TemplatesModal isOpen={showTemplatesModal} onClose={() => setShowTemplatesModal(false)} />
       </aside>
     </>
   );

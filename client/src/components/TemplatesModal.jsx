@@ -1,0 +1,131 @@
+import React from 'react';
+import { X, Crown, Sparkles, Zap, Waypoints } from 'lucide-react';
+
+const templatesData = [
+  { title: "Auto-DM links from comments", desc: "Send a link when people comment on a post or reel", type: "Quick Automation", recommended: true },
+  { title: "Generate leads with stories", desc: "Use limited-time offers in your Stories to convert leads", type: "Quick Automation" },
+  { title: "Respond to all your DMs", desc: "Auto-send customized replies when people DM you", type: "Quick Automation" },
+  { title: "Grow followers from comments", desc: "Incentivize a follow to grow your account", type: "Quick Automation", upgrade: true },
+  { title: "Send affiliate product links", desc: "Include product card with photos and links of your affiliate collabs", type: "Quick Automation" },
+  { title: "Automate conversations with AI", desc: "Let AI collect info, pitch your offer, and even recommend what to buy — without breaking a sweat", type: "Flow Builder" },
+  { title: "Auto-reply to comment in DM", desc: "Send a product lineup in Instagram DMs", type: "Flow Builder" },
+  { title: "Auto-send links in DM", desc: "Automate DMs to send followers to your website. Sick of saying “link in bio” like a broken record? Just slide your website link right into their DMs", type: "Flow Builder" },
+  { title: "Follow first, then freebie", desc: "Wanna freebie? Gotta follow first. Reward the fans, not the lurkers.", type: "Flow Builder", upgrade: true },
+  { title: "Grow your email list", desc: "Collect emails on Instagram with a freebie offer", type: "Flow Builder", upgrade: true },
+  { title: "Run a giveaway", desc: "Run a giveaway to grow Instagram followers. Want your IG comment section to look like a Black Friday line? Run a giveaway. People love free stuff, and they’ll happily engage with your content to get it", type: "Flow Builder", upgrade: true },
+  { title: "Grow followers from comments", desc: "Incentivize a follow to grow your account", type: "Flow Builder" },
+  { title: "Grow your YouTube", desc: "Get YouTube subscribers via IG DMs. Turn your IG audience into YouTube subscribers without begging. Just sneak that subscribe CTA into your DMs like a smooth operator", type: "Flow Builder" },
+  { title: "Recognize questions in DM with AI", desc: "Identify and respond to common user inquiries", type: "Flow Builder", ai: true, upgrade: true },
+  { title: "Gamify Instagram live", desc: "Want more comments and sales during Lives? Turn your audience into contestants with DM-triggered giveaways", type: "Flow Builder" },
+  { title: "Get more collabs from Story replies", desc: "When your Story sparks collab requests, your automation’s got answers — so you don’t have to copy-paste all day", type: "Flow Builder" },
+  { title: "Give coupons in stories", desc: "Someone watched your story? Treat ‘em like a VIP with a secret DM coupon", type: "Flow Builder" },
+  { title: "Go from Instagram to WhatsApp", desc: "Get Instagram followers to move to WhatsApp", type: "Flow Builder" },
+  { title: "Send offers in DMs during Live", desc: "Every “WHERE IS THIS FROM?” moment is a missed sale — unless your automation’s on it. Catch ‘em while the vibes are hot", type: "Flow Builder" },
+  { title: "Sell from Reel comments", desc: "A reel got people talking? Slide into their DMs with something worth buying", type: "Flow Builder" },
+  { title: "Turn comments into RSVPs", desc: "“Comment to join” becomes “You're registered.” No forms, no fuss", type: "Flow Builder" },
+  { title: "Qualify with a quiz", desc: "People love to talk about themselves. So, let ‘em. Quiz ‘em, tag ‘em, and send the right offer at the right time.", type: "Flow Builder" },
+  { title: "DM your course like a closer", desc: "Give followers early access to a new launch. Instagram launch day chaos? Not anymore. Let followers DM you for a sneak peek and serve up your new product instantly", type: "Flow Builder" },
+  { title: "Grow an SMS list", desc: "Did we just become text friends? Get Instagram followers on your SMS list", type: "Flow Builder" },
+  { title: "Trigger DMs during IG Live", desc: "Use Lives to spark DMs, drop links, and collect leads while eyeballs are actually on you", type: "Flow Builder" },
+  { title: "Answer FAQs from story replies", desc: "Reply to your followers’ questions ASAP", type: "Flow Builder" },
+];
+
+export default function TemplatesModal({ isOpen, onClose }) {
+  if (!isOpen) return null;
+
+  return (
+    <div style={{
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 99999,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '20px'
+    }} onClick={onClose}>
+      <div style={{
+        backgroundColor: '#fff', borderRadius: '16px', width: '100%', maxWidth: '1000px',
+        maxHeight: '90vh', display: 'flex', flexDirection: 'column',
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        overflow: 'hidden'
+      }} onClick={e => e.stopPropagation()}>
+        
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid #e2e8f0' }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#0f172a' }}>Templates Gallery</h2>
+            <p style={{ margin: 0, fontSize: '13px', color: '#64748b', marginTop: '4px' }}>Discover ready-to-use automations for your business</p>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: '4px', borderRadius: '8px', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'} onMouseOut={e => e.currentTarget.style.background = 'none'}>
+            <X size={24} />
+          </button>
+        </div>
+
+        <div style={{ padding: '24px', overflowY: 'auto', flex: 1, backgroundColor: '#f8fafc' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+            {templatesData.map((template, idx) => (
+              <div key={idx} style={{
+                border: '1px solid #e2e8f0', borderRadius: '14px', padding: '20px',
+                display: 'flex', flexDirection: 'column', backgroundColor: '#fff',
+                transition: 'all 0.2s ease', cursor: 'pointer',
+                boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+              }} className="template-card-hover">
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {template.recommended && (
+                      <span style={{ fontSize: '10px', fontWeight: '800', backgroundColor: '#fef3c7', color: '#d97706', padding: '4px 8px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '4px', letterSpacing: '0.05em' }}>
+                        ★ RECOMMENDED
+                      </span>
+                    )}
+                    {template.upgrade && (
+                      <span style={{ fontSize: '10px', fontWeight: '800', backgroundColor: '#fce7f3', color: '#db2777', padding: '4px 8px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '4px', letterSpacing: '0.05em' }}>
+                        <Crown size={10} /> UPGRADE
+                      </span>
+                    )}
+                    {template.ai && (
+                      <span style={{ fontSize: '10px', fontWeight: '800', backgroundColor: '#ede9fe', color: '#7c3aed', padding: '4px 8px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '4px', letterSpacing: '0.05em' }}>
+                        <Sparkles size={10} /> AI
+                      </span>
+                    )}
+                  </div>
+                  
+                  {template.type === 'Quick Automation' ? (
+                    <div style={{ color: '#3b82f6', background: '#eff6ff', padding: '6px', borderRadius: '8px' }} title="Quick Automation"><Zap size={16} /></div>
+                  ) : (
+                    <div style={{ color: '#10b981', background: '#ecfdf5', padding: '6px', borderRadius: '8px' }} title="Flow Builder"><Waypoints size={16} /></div>
+                  )}
+                </div>
+
+                <h3 style={{ margin: '0 0 10px 0', fontSize: '15px', fontWeight: '800', color: '#1e293b', lineHeight: '1.4' }}>
+                  {template.title}
+                </h3>
+                
+                <p style={{ margin: 0, fontSize: '13px', color: '#64748b', lineHeight: '1.5', flex: 1 }}>
+                  {template.desc}
+                </p>
+
+                <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {template.type}
+                  </span>
+                  <button style={{
+                    backgroundColor: '#0f172a', color: '#fff', border: 'none', borderRadius: '8px',
+                    padding: '8px 16px', fontSize: '12px', fontWeight: '700', cursor: 'pointer',
+                    transition: 'background 0.2s'
+                  }} onMouseOver={e => e.currentTarget.style.backgroundColor = '#1e293b'} onMouseOut={e => e.currentTarget.style.backgroundColor = '#0f172a'}>
+                    Use
+                  </button>
+                </div>
+
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <style>{`
+        .template-card-hover:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+          border-color: #cbd5e1 !important;
+        }
+      `}</style>
+    </div>
+  );
+}
