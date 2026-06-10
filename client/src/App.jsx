@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate } from 'react-router-dom';
-import { Bot, Home, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2 } from 'lucide-react';
+import { Bot, Home, LayoutDashboard, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2 } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config';
@@ -30,13 +30,14 @@ const lazyRetry = (componentImport) => {
   });
 };
 
+import Dashboard from './pages/Dashboard';
+import Inbox from './pages/Inbox';
+import Connections from './pages/Connections';
+import Campaigns from './pages/Campaigns';
+
 // Lazy load heavy components with retry logic
-const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
-const Inbox = lazyRetry(() => import('./pages/Inbox'));
 const SettingsPage = lazyRetry(() => import('./pages/Settings'));
-const Connections = lazyRetry(() => import('./pages/Connections'));
 const Profile = lazyRetry(() => import('./pages/Profile'));
-const Campaigns = lazyRetry(() => import('./pages/Campaigns'));
 const CampaignBuilder = lazyRetry(() => import('./pages/CampaignBuilder'));
 const Audiences = lazyRetry(() => import('./pages/Audiences'));
 const Subscription = lazyRetry(() => import('./pages/Subscription'));
@@ -52,7 +53,8 @@ const Resources = lazyRetry(() => import('./pages/Resources'));
 const Blog = lazyRetry(() => import('./pages/Blog'));
 const BlogPost = lazyRetry(() => import('./pages/BlogPost'));
 const Workplace = lazyRetry(() => import('./pages/Workplace'));
-import { InstagramWorkbench, FacebookWorkbench } from './pages/Workplace';
+const InstagramWorkbench = lazyRetry(() => import('./pages/Workplace').then(module => ({ default: module.InstagramWorkbench })));
+const FacebookWorkbench = lazyRetry(() => import('./pages/Workplace').then(module => ({ default: module.FacebookWorkbench })));
 const Privacy = lazyRetry(() => import('./pages/Privacy'));
 const Terms = lazyRetry(() => import('./pages/Terms'));
 const Cookies = lazyRetry(() => import('./pages/Cookies'));
@@ -61,6 +63,7 @@ const TemplateSelector = lazyRetry(() => import('./pages/TemplateSelector'));
 const AutomationEditor = lazyRetry(() => import('./pages/AutomationEditor'));
 const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'));
 const WriteReview = lazyRetry(() => import('./pages/WriteReview'));
+// Removed PlatformHub as it was deleted
 const MessageOnlyHub = lazyRetry(() => import('./pages/MessageOnlyHub'));
 const PlatformDashboard = lazyRetry(() => import('./pages/PlatformDashboard'));
 const WhatsAppDashboard = lazyRetry(() => import('./pages/WhatsAppDashboard'));
@@ -441,10 +444,7 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>Post</span>
               <span className="sidebar-badge badge-new">HOT</span>
             </NavLink>
-            <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Home size={18} />
-              <span>Home</span>
-            </NavLink>
+
             <div className="nav-group">
               <div 
                 onClick={() => setShowAutoOpsDropdown(!showAutoOpsDropdown)} 
@@ -459,7 +459,7 @@ function Sidebar({ isMobileOpen, onClose }) {
               </div>
               {showAutoOpsDropdown && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', paddingLeft: '32px', marginTop: '4px' }}>
-                  <NavLink to="/hub" end className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                  <NavLink to="/campaigns" end className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
                     Automation
                   </NavLink>
                   <NavLink to="/hub/message-only" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
@@ -468,6 +468,10 @@ function Sidebar({ isMobileOpen, onClose }) {
                 </div>
               )}
             </div>
+            <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <LayoutDashboard size={18} />
+              <span>OneView</span>
+            </NavLink>
             <NavLink 
               to="/universal-triggers" 
               className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}
@@ -622,7 +626,7 @@ function TopBar({ onMenuClick }) {
   
   const getTitle = () => {
     switch(location.pathname) {
-      case '/dashboard': return 'Home';
+      case '/dashboard': return 'OneView';
       case '/campaigns': return 'Automations';
       case '/campaign-builder/new': return 'Campaign Builder';
       case '/audiences': return 'Contacts';
@@ -637,7 +641,7 @@ function TopBar({ onMenuClick }) {
       default: 
         if (location.pathname.startsWith('/flow-builder/')) return 'Editing Flow';
         if (location.pathname.startsWith('/platform/')) return 'Hub';
-        return 'Home';
+        return 'OneView';
     }
   };
 
@@ -686,6 +690,7 @@ function MainLayout() {
             <Routes>
               <Route path="/" element={user ? <Navigate to="/connections" /> : <Landing />} />
               <Route path="/public-home" element={<Landing />} />
+              {/* PlatformHub route removed */}
               <Route path="/hub/message-only" element={<ProtectedRoute><MessageOnlyHub /></ProtectedRoute>} />
               <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
               <Route path="/platform/whatsapp" element={<ProtectedRoute><WhatsAppDashboard /></ProtectedRoute>} />
