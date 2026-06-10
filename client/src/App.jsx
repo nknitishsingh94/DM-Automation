@@ -61,7 +61,7 @@ const TemplateSelector = lazyRetry(() => import('./pages/TemplateSelector'));
 const AutomationEditor = lazyRetry(() => import('./pages/AutomationEditor'));
 const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'));
 const WriteReview = lazyRetry(() => import('./pages/WriteReview'));
-const PlatformHub = lazyRetry(() => import('./pages/PlatformHub'));
+const MessageOnlyHub = lazyRetry(() => import('./pages/MessageOnlyHub'));
 const PlatformDashboard = lazyRetry(() => import('./pages/PlatformDashboard'));
 const WhatsAppDashboard = lazyRetry(() => import('./pages/WhatsAppDashboard'));
 
@@ -686,7 +686,7 @@ function MainLayout() {
             <Routes>
               <Route path="/" element={user ? <Navigate to="/connections" /> : <Landing />} />
               <Route path="/public-home" element={<Landing />} />
-              <Route path="/hub" element={<ProtectedRoute><PlatformHub /></ProtectedRoute>} />
+              <Route path="/hub/message-only" element={<ProtectedRoute><MessageOnlyHub /></ProtectedRoute>} />
               <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
               <Route path="/platform/whatsapp" element={<ProtectedRoute><WhatsAppDashboard /></ProtectedRoute>} />
               <Route path="/platform/:platformId" element={<ProtectedRoute><PlatformDashboard /></ProtectedRoute>} />
