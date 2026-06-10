@@ -134,7 +134,7 @@ const MessageOnlyHub = () => {
 
   if (loading) return <LoadingSpinner minHeight="60vh" />;
 
-  const messageIds = ['youtube', 'linkedin', 'google-business', 'twitter', 'threads'];
+  const messageIds = ['instagram', 'facebook', 'whatsapp', 'telegram'];
   const connectedPlatforms = platforms.filter(p => p.isConnected && messageIds.includes(p.id));
 
   return (
