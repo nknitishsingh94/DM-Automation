@@ -79,13 +79,6 @@ export default function Dashboard() {
 
   const exploreItems = [
     {
-      title: 'Create Platform Automation',
-      desc: 'Set up auto-replies for comments, DMs, and story mentions instantly',
-      cta: 'Build Automation',
-      link: '/hub',
-      icon: <Zap size={18} color="#7c3aed" fill="#7c3aed" />
-    },
-    {
       title: 'Answer all your FAQs',
       desc: 'Set up AI-powered responses to handle common questions automatically',
       cta: 'Create FAQ Bot',
@@ -98,13 +91,6 @@ export default function Dashboard() {
       cta: 'Create Form',
       link: '/forms',
       icon: <BookOpen size={18} color="#0ea5e9" />
-    },
-    {
-      title: 'Refer & Earn',
-      desc: 'Invite friends to smart10X and earn rewards for every referral',
-      cta: 'Refer Now',
-      link: '/refer',
-      icon: <Users size={18} color="#f59e0b" />
     }
   ];
 
