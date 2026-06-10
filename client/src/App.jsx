@@ -465,6 +465,9 @@ function Sidebar({ isMobileOpen, onClose }) {
                   <NavLink to="/hub/message-only" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
                     Message only
                   </NavLink>
+                  <NavLink to="/templates" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                    All Template
+                  </NavLink>
                 </div>
               )}
             </div>
