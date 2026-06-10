@@ -63,7 +63,6 @@ const TemplateSelector = lazyRetry(() => import('./pages/TemplateSelector'));
 const AutomationEditor = lazyRetry(() => import('./pages/AutomationEditor'));
 const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'));
 const WriteReview = lazyRetry(() => import('./pages/WriteReview'));
-const PlatformHub = lazyRetry(() => import('./pages/PlatformHub'));
 const MessageOnlyHub = lazyRetry(() => import('./pages/MessageOnlyHub'));
 const PlatformDashboard = lazyRetry(() => import('./pages/PlatformDashboard'));
 const WhatsAppDashboard = lazyRetry(() => import('./pages/WhatsAppDashboard'));
@@ -435,68 +434,81 @@ function Sidebar({ isMobileOpen, onClose }) {
 
         <div className="sidebar-middle-scroll">
           <nav className="nav-links">
-            <NavLink to="/connections" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Link2 size={18} />
-              <span>Connections</span>
-            </NavLink>
-            <NavLink to="/scheduling" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Calendar size={18} />
-              <span>Post</span>
-              <span className="sidebar-badge badge-new">HOT</span>
-            </NavLink>
-
-            <div className="nav-group">
-              <div 
-                onClick={() => setShowAutoOpsDropdown(!showAutoOpsDropdown)} 
-                className={`nav-item ${location.pathname.startsWith('/hub') ? 'active' : ''}`} 
-                style={{ cursor: 'pointer', justifyContent: 'space-between' }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Zap size={18} />
-                  <span>AutoOps</span>
-                </div>
-                <ChevronDown size={14} style={{ transform: showAutoOpsDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-              </div>
-              {showAutoOpsDropdown && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', paddingLeft: '32px', marginTop: '4px' }}>
-                  <NavLink to="/hub" end className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
-                    Automation
-                  </NavLink>
-                  <NavLink to="/hub/message-only" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
-                    Message only
-                  </NavLink>
-                </div>
-              )}
-            </div>
             <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <LayoutDashboard size={18} />
-              <span>OneView</span>
-            </NavLink>
-            <NavLink 
-              to="/universal-triggers" 
-              className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}
-            >
-              <Globe size={18} />
-              <span>Universal Triggers</span>
-            </NavLink>
-            <NavLink to="/ai-studio" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Sparkles size={18} />
-              <span>AI Studio</span>
-              <span className="sidebar-badge badge-new">NEW</span>
+              <Home size={18} />
+              <span>Dashboard</span>
             </NavLink>
 
-            <NavLink to="/audiences" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Users size={18} />
+            <div className="nav-section-label" style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '16px', marginBottom: '4px', paddingLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              💬 Communication
+            </div>
+            <NavLink to="/inbox" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>All Chats</span>
+            </NavLink>
+            <NavLink to="/platform/whatsapp" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>WhatsApp</span>
+            </NavLink>
+            <NavLink to="/platform/instagram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Instagram</span>
+            </NavLink>
+            <NavLink to="/platform/facebook" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Facebook</span>
+            </NavLink>
+            <NavLink to="/platform/linkedin" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>LinkedIn</span>
+            </NavLink>
+            <NavLink to="/platform/twitter" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Twitter</span>
+            </NavLink>
+            <NavLink to="/platform/telegram" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Telegram</span>
+            </NavLink>
+            <NavLink to="/platform/website-chat" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Website Chat</span>
+            </NavLink>
+
+            <div className="nav-section-label" style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '16px', marginBottom: '4px', paddingLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              ⚡ Automation
+            </div>
+            <NavLink to="/automation/message" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Message Automation</span>
+            </NavLink>
+            <NavLink to="/automation/comment" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Comment Automation</span>
+            </NavLink>
+            <NavLink to="/ai-studio" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>AI Workflows</span>
+            </NavLink>
+            <NavLink to="/automation/follow-up" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Follow-up</span>
+            </NavLink>
+            <NavLink to="/campaigns" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Campaigns</span>
+            </NavLink>
+
+            <div className="nav-section-label" style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '16px', marginBottom: '4px', paddingLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              👥 CRM
+            </div>
+            <NavLink to="/audiences" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
               <span>Contacts</span>
             </NavLink>
 
-            <NavLink to="/settings" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Settings size={18} />
-              <span>Settings</span>
+            <div className="nav-section-label" style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '16px', marginBottom: '4px', paddingLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              📊 Analytics
+            </div>
+            <NavLink to="/analytics" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>Overview</span>
+            </NavLink>
+
+            <div className="nav-section-label" style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '16px', marginBottom: '4px', paddingLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              ⚙ Settings
+            </div>
+            <NavLink to="/settings" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ paddingLeft: '36px' }}>
+              <span>General Settings</span>
             </NavLink>
             
             {localStorage.getItem('smart10x_reviewed') !== 'true' && (
-              <NavLink to="/write-review" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <NavLink to="/write-review" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`} style={{ marginTop: '16px' }}>
                 <MessageSquare size={18} />
                 <span>Write a Review</span>
               </NavLink>
@@ -688,9 +700,8 @@ function MainLayout() {
             </div>
           }>
             <Routes>
-              <Route path="/" element={user ? <Navigate to="/connections" /> : <Landing />} />
+              <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
               <Route path="/public-home" element={<Landing />} />
-              <Route path="/hub" element={<ProtectedRoute><PlatformHub /></ProtectedRoute>} />
               <Route path="/hub/message-only" element={<ProtectedRoute><MessageOnlyHub /></ProtectedRoute>} />
               <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
               <Route path="/platform/whatsapp" element={<ProtectedRoute><WhatsAppDashboard /></ProtectedRoute>} />
