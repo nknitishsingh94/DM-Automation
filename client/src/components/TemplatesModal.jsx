@@ -1,37 +1,46 @@
 import React from 'react';
 import { X, Crown, Sparkles, Zap, Waypoints } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const templatesData = [
-  { title: "Auto-DM links from comments", desc: "Send a link when people comment on a post or reel", type: "Quick Automation", recommended: true },
-  { title: "Generate leads with stories", desc: "Use limited-time offers in your Stories to convert leads", type: "Quick Automation" },
-  { title: "Respond to all your DMs", desc: "Auto-send customized replies when people DM you", type: "Quick Automation" },
-  { title: "Grow followers from comments", desc: "Incentivize a follow to grow your account", type: "Quick Automation", upgrade: true },
-  { title: "Send affiliate product links", desc: "Include product card with photos and links of your affiliate collabs", type: "Quick Automation" },
-  { title: "Automate conversations with AI", desc: "Let AI collect info, pitch your offer, and even recommend what to buy — without breaking a sweat", type: "Flow Builder" },
-  { title: "Auto-reply to comment in DM", desc: "Send a product lineup in Instagram DMs", type: "Flow Builder" },
-  { title: "Auto-send links in DM", desc: "Automate DMs to send followers to your website. Sick of saying “link in bio” like a broken record? Just slide your website link right into their DMs", type: "Flow Builder" },
-  { title: "Follow first, then freebie", desc: "Wanna freebie? Gotta follow first. Reward the fans, not the lurkers.", type: "Flow Builder", upgrade: true },
-  { title: "Grow your email list", desc: "Collect emails on Instagram with a freebie offer", type: "Flow Builder", upgrade: true },
-  { title: "Run a giveaway", desc: "Run a giveaway to grow Instagram followers. Want your IG comment section to look like a Black Friday line? Run a giveaway. People love free stuff, and they’ll happily engage with your content to get it", type: "Flow Builder", upgrade: true },
-  { title: "Grow followers from comments", desc: "Incentivize a follow to grow your account", type: "Flow Builder" },
-  { title: "Grow your YouTube", desc: "Get YouTube subscribers via IG DMs. Turn your IG audience into YouTube subscribers without begging. Just sneak that subscribe CTA into your DMs like a smooth operator", type: "Flow Builder" },
-  { title: "Recognize questions in DM with AI", desc: "Identify and respond to common user inquiries", type: "Flow Builder", ai: true, upgrade: true },
-  { title: "Gamify Instagram live", desc: "Want more comments and sales during Lives? Turn your audience into contestants with DM-triggered giveaways", type: "Flow Builder" },
-  { title: "Get more collabs from Story replies", desc: "When your Story sparks collab requests, your automation’s got answers — so you don’t have to copy-paste all day", type: "Flow Builder" },
-  { title: "Give coupons in stories", desc: "Someone watched your story? Treat ‘em like a VIP with a secret DM coupon", type: "Flow Builder" },
-  { title: "Go from Instagram to WhatsApp", desc: "Get Instagram followers to move to WhatsApp", type: "Flow Builder" },
-  { title: "Send offers in DMs during Live", desc: "Every “WHERE IS THIS FROM?” moment is a missed sale — unless your automation’s on it. Catch ‘em while the vibes are hot", type: "Flow Builder" },
-  { title: "Sell from Reel comments", desc: "A reel got people talking? Slide into their DMs with something worth buying", type: "Flow Builder" },
-  { title: "Turn comments into RSVPs", desc: "“Comment to join” becomes “You're registered.” No forms, no fuss", type: "Flow Builder" },
-  { title: "Qualify with a quiz", desc: "People love to talk about themselves. So, let ‘em. Quiz ‘em, tag ‘em, and send the right offer at the right time.", type: "Flow Builder" },
-  { title: "DM your course like a closer", desc: "Give followers early access to a new launch. Instagram launch day chaos? Not anymore. Let followers DM you for a sneak peek and serve up your new product instantly", type: "Flow Builder" },
-  { title: "Grow an SMS list", desc: "Did we just become text friends? Get Instagram followers on your SMS list", type: "Flow Builder" },
-  { title: "Trigger DMs during IG Live", desc: "Use Lives to spark DMs, drop links, and collect leads while eyeballs are actually on you", type: "Flow Builder" },
-  { title: "Answer FAQs from story replies", desc: "Reply to your followers’ questions ASAP", type: "Flow Builder" },
+  { id: "auto_dm_links", title: "Auto-DM links from comments", desc: "Send a link when people comment on a post or reel", type: "Quick Automation", recommended: true },
+  { id: "gen_leads_stories", title: "Generate leads with stories", desc: "Use limited-time offers in your Stories to convert leads", type: "Quick Automation" },
+  { id: "respond_all_dms", title: "Respond to all your DMs", desc: "Auto-send customized replies when people DM you", type: "Quick Automation" },
+  { id: "grow_followers_comments_quick", title: "Grow followers from comments", desc: "Incentivize a follow to grow your account", type: "Quick Automation", upgrade: true },
+  { id: "send_affiliate_links", title: "Send affiliate product links", desc: "Include product card with photos and links of your affiliate collabs", type: "Quick Automation" },
+  { id: "automate_conv_ai", title: "Automate conversations with AI", desc: "Let AI collect info, pitch your offer, and even recommend what to buy — without breaking a sweat", type: "Flow Builder" },
+  { id: "auto_reply_dm", title: "Auto-reply to comment in DM", desc: "Send a product lineup in Instagram DMs", type: "Flow Builder" },
+  { id: "auto_send_links_dm", title: "Auto-send links in DM", desc: "Automate DMs to send followers to your website. Sick of saying “link in bio” like a broken record? Just slide your website link right into their DMs", type: "Flow Builder" },
+  { id: "follow_first_freebie", title: "Follow first, then freebie", desc: "Wanna freebie? Gotta follow first. Reward the fans, not the lurkers.", type: "Flow Builder", upgrade: true },
+  { id: "grow_email_list", title: "Grow your email list", desc: "Collect emails on Instagram with a freebie offer", type: "Flow Builder", upgrade: true },
+  { id: "run_giveaway", title: "Run a giveaway", desc: "Run a giveaway to grow Instagram followers. Want your IG comment section to look like a Black Friday line? Run a giveaway. People love free stuff, and they’ll happily engage with your content to get it", type: "Flow Builder", upgrade: true },
+  { id: "grow_followers_comments_flow", title: "Grow followers from comments", desc: "Incentivize a follow to grow your account", type: "Flow Builder" },
+  { id: "grow_youtube", title: "Grow your YouTube", desc: "Get YouTube subscribers via IG DMs. Turn your IG audience into YouTube subscribers without begging. Just sneak that subscribe CTA into your DMs like a smooth operator", type: "Flow Builder" },
+  { id: "recognize_questions_ai", title: "Recognize questions in DM with AI", desc: "Identify and respond to common user inquiries", type: "Flow Builder", ai: true, upgrade: true },
+  { id: "get_collabs_stories", title: "Get more collabs from Story replies", desc: "When your Story sparks collab requests, your automation’s got answers — so you don’t have to copy-paste all day", type: "Flow Builder" },
+  { id: "give_coupons_stories", title: "Give coupons in stories", desc: "Someone watched your story? Treat ‘em like a VIP with a secret DM coupon", type: "Flow Builder" },
+  { id: "go_to_whatsapp", title: "Go from Instagram to WhatsApp", desc: "Get Instagram followers to move to WhatsApp", type: "Flow Builder" },
+  { id: "send_offers_live", title: "Send offers in DMs during Live", desc: "Every “WHERE IS THIS FROM?” moment is a missed sale — unless your automation’s on it. Catch ‘em while the vibes are hot", type: "Flow Builder" },
+  { id: "sell_reel_comments", title: "Sell from Reel comments", desc: "A reel got people talking? Slide into their DMs with something worth buying", type: "Flow Builder" },
+  { id: "dm_course", title: "DM your course like a closer", desc: "Give followers early access to a new launch. Instagram launch day chaos? Not anymore. Let followers DM you for a sneak peek and serve up your new product instantly", type: "Flow Builder" },
+  { id: "grow_sms_list", title: "Grow an SMS list", desc: "Did we just become text friends? Get Instagram followers on your SMS list", type: "Flow Builder" },
+  { id: "trigger_dms_live", title: "Trigger DMs during IG Live", desc: "Use Lives to spark DMs, drop links, and collect leads while eyeballs are actually on you", type: "Flow Builder" },
+  { id: "answer_faqs_stories", title: "Answer FAQs from story replies", desc: "Reply to your followers’ questions ASAP", type: "Flow Builder" },
 ];
 
 export default function TemplatesModal({ isOpen, onClose }) {
+  const navigate = useNavigate();
+
   if (!isOpen) return null;
+
+  const handleUseTemplate = (template) => {
+    onClose();
+    if (template.type === 'Quick Automation') {
+      navigate(`/automation-editor/new?template=${template.id}`);
+    } else {
+      navigate(`/flow-builder/new?template=${template.id}`);
+    }
+  };
 
   return (
     <div style={{
@@ -105,7 +114,9 @@ export default function TemplatesModal({ isOpen, onClose }) {
                   <span style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     {template.type}
                   </span>
-                  <button style={{
+                  <button 
+                    onClick={() => handleUseTemplate(template)}
+                    style={{
                     backgroundColor: '#0f172a', color: '#fff', border: 'none', borderRadius: '8px',
                     padding: '8px 16px', fontSize: '12px', fontWeight: '700', cursor: 'pointer',
                     transition: 'background 0.2s'
