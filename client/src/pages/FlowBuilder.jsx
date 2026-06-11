@@ -307,21 +307,46 @@ export default function FlowBuilder() {
   };
 
   return (
-    <div style={{ height: 'calc(100vh - 80px)', width: '100%', position: 'fixed', top: '80px', left: '260px', right: 0, bottom: 0, display: 'flex', background: '#f8fafc' }}>
-      {/* Sidebar / Properties Panel */}
-      <div style={{ width: '320px', background: 'white', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', zIndex: 10 }}>
-        <div style={{ padding: '24px', borderBottom: '1px solid #f1f5f9' }}>
-          <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '13px', border: 'none', background: 'none', cursor: 'pointer', marginBottom: '16px' }}>
-            <ArrowLeft size={16} /> Back to List
+    <div style={{ height: 'calc(100vh - 80px)', width: '100%', position: 'fixed', top: '80px', left: '260px', right: 0, bottom: 0, display: 'flex', flexDirection: 'column', background: '#f8fafc' }}>
+      
+      {/* ManyChat Style Top Header */}
+      <div style={{ height: '60px', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', zIndex: 20, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#64748b' }}>
+            <ArrowLeft size={20} />
           </button>
           <input 
             value={flowName}
             onChange={(e) => setFlowName(e.target.value)}
-            style={{ fontSize: '1.2rem', fontWeight: '800', border: 'none', outline: 'none', width: '100%', color: '#1e293b' }}
+            style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', border: 'none', outline: 'none', background: 'transparent', width: '250px' }}
+            placeholder="Name your flow..."
           />
+          <div style={{ background: '#ecfdf5', color: '#059669', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: '700', border: '1px solid #a7f3d0' }}>
+            Published
+          </div>
         </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '600', color: '#64748b', marginRight: '8px' }}>
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
+            Live Support
+          </div>
+          <button style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>
+            Preview
+          </button>
+          <button 
+            onClick={saveFlow} 
+            disabled={isSaving} 
+            style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '8px 24px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+          >
+             {isSaving ? 'Updating...' : 'Update'}
+          </button>
+        </div>
+      </div>
 
-        <div style={{ flex: 1, padding: '24px', overflowY: 'auto' }}>
+      <div style={{ flex: 1, display: 'flex', position: 'relative' }}>
+        {/* Sidebar / Properties Panel */}
+        <div style={{ width: '320px', background: 'white', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', zIndex: 10 }}>
+          <div style={{ flex: 1, padding: '24px', overflowY: 'auto' }}>
           {!selectedNode ? (
             <div>
               <h4 style={{ fontSize: '0.85rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Add Nodes</h4>
@@ -412,39 +437,12 @@ export default function FlowBuilder() {
             </div>
           )}
         </div>
-
-      <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
-        {/* ManyChat Style Top Header */}
-        <div style={{ height: '60px', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', zIndex: 10, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#64748b' }}>
-              <ArrowLeft size={20} />
-            </button>
-            <h1 style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', margin: 0 }}>{flowName}</h1>
-            <div style={{ background: '#ecfdf5', color: '#059669', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: '700', border: '1px solid #a7f3d0' }}>
-              Published
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '600', color: '#64748b', marginRight: '8px' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
-              Live Support
-            </div>
-            <button style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>
-              Preview
-            </button>
-            <button 
-              onClick={saveFlow} 
-              disabled={isSaving} 
-              style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '8px 24px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-            >
-               {isSaving ? 'Updating...' : 'Update'}
-            </button>
-          </div>
         </div>
 
-        <div style={{ flex: 1, position: 'relative' }}>
-          <ReactFlow
+        {/* React Flow Canvas Area */}
+        <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1, position: 'relative' }}>
+            <ReactFlow
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
@@ -459,8 +457,8 @@ export default function FlowBuilder() {
             <MiniMap style={{ borderRadius: '12px', border: '1px solid #f1f5f9' }} />
           </ReactFlow>
         </div>
-        </div>
       </div>
+    </div>
     </div>
   );
 }
