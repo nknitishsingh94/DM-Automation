@@ -12,11 +12,12 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Save, Play, ArrowLeft, MessageSquare, Zap, Activity, Trash2, Plus, Info, Sparkles } from 'lucide-react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
 import { useAuth } from '../context/AuthContext';
 import { Crown } from 'lucide-react';
+import { getTemplateData } from '../utils/flowTemplates';
 
 // --- Custom Node Components ---
 
@@ -67,7 +68,11 @@ const ConditionNode = ({ data }) => (
       <Activity size={14} color="#ec4899" />
       <span style={{ fontSize: '12px', fontWeight: '800' }}>Wait / Condition</span>
     </div>
-    <Handle type="source" position={Position.Bottom} style={{ background: '#ec4899' }} />
+    <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+      <span style={{ color: '#ec4899', fontWeight: 'bold' }}>{data.condition || 'Condition Check'}</span>
+    </div>
+    <Handle type="source" position={Position.Bottom} id="true" style={{ background: '#10b981', left: '30%' }} />
+    <Handle type="source" position={Position.Bottom} id="false" style={{ background: '#ef4444', left: '70%' }} />
   </div>
 );
 
@@ -156,6 +161,7 @@ const StableInput = ({ value, onChange, placeholder, isTextArea = false }) => {
 export default function FlowBuilder() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { notify } = useNotification();
   const { user } = useAuth();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -170,14 +176,15 @@ export default function FlowBuilder() {
     if (id !== 'new') {
       fetchFlow();
     } else {
-      // Default Initial Nodes
-      setNodes([
-        { id: '1', type: 'trigger', position: { x: 250, y: 50 }, data: { keyword: 'START' } },
-        { id: '2', type: 'message', position: { x: 250, y: 200 }, data: { text: 'Welcome to our automation!' } },
-      ]);
-      setEdges([{ id: 'e1-2', source: '1', target: '2' }]);
+      const params = new URLSearchParams(location.search);
+      const templateId = params.get('template');
+      
+      const tplData = getTemplateData(templateId);
+      setFlowName(tplData.name);
+      setNodes(tplData.nodes);
+      setEdges(tplData.edges);
     }
-  }, [id]);
+  }, [id, location]);
 
   const fetchFlow = async () => {
     const token = localStorage.getItem('insta_agent_token');

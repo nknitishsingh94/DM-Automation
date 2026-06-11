@@ -69,6 +69,56 @@ export default function AutomationEditor() {
   const [isEditMode, setIsEditMode] = useState(!!id);
 
   React.useEffect(() => {
+    if (!id && template) {
+      if (template === 'auto_dm_links') {
+        setName('Auto-DM Links');
+        setTriggerOnComments(true);
+        setTriggerOnDms(false);
+        setTriggerOnStories(false);
+        setPreviewMode('comment');
+        setKeywords(['LINK', 'INFO', 'YES']);
+        setPublicReply('Just sent you a DM with the link! 🚀');
+        setMessage("Hey there! Here is the link you requested 👇");
+        setButtons([{ text: 'View Product', url: 'https://' }]);
+      } else if (template === 'gen_leads_stories') {
+        setName('Story Lead Gen');
+        setTriggerOnStories(true);
+        setTriggerOnDms(false);
+        setTriggerOnComments(false);
+        setPreviewMode('dm');
+        setKeywords(['OFFER', 'LEAD']);
+        setMessage("Thanks for replying to my story! Here is your exclusive offer:");
+        setButtons([{ text: 'Claim Offer', url: 'https://' }]);
+      } else if (template === 'respond_all_dms') {
+        setName('Auto Reply to DMs');
+        setTriggerOnDms(true);
+        setTriggerOnComments(false);
+        setTriggerOnStories(false);
+        setAnyKeyword(true);
+        setPreviewMode('dm');
+        setMessage("Hey! I got your message. I'll get back to you as soon as I can! In the meantime, check out my recent links.");
+        setButtons([{ text: 'My Website', url: 'https://' }]);
+      } else if (template === 'grow_followers_comments_quick') {
+        setName('Grow Followers via Comments');
+        setTriggerOnComments(true);
+        setPreviewMode('comment');
+        setRequireFollow(true);
+        setKeywords(['FOLLOW', 'GIFT']);
+        setPublicReply('Check your DMs for the gift! 🎁');
+        setMessage("Here is your gift for following us! Enjoy.");
+      } else if (template === 'send_affiliate_links') {
+        setName('Affiliate Link Bot');
+        setTriggerOnComments(true);
+        setTriggerOnDms(true);
+        setPreviewMode('comment');
+        setKeywords(['SHOP', 'OUTFIT', 'BUY']);
+        setMessage("Hey! Here are the links to the items you asked about 🛍️");
+        setButtons([{ text: 'Shop Here', url: 'https://' }]);
+      }
+    }
+  }, [id, template]);
+
+  React.useEffect(() => {
     if (id) {
       const fetchCampaign = async () => {
         try {
