@@ -650,6 +650,7 @@ function TopBar({ onMenuClick }) {
       case '/hub': return 'Hub';
       default: 
         if (location.pathname.startsWith('/flow-builder/')) return 'Editing Flow';
+        if (location.pathname.startsWith('/automation-editor/')) return 'Automation';
         if (location.pathname.startsWith('/platform/')) return 'Hub';
         return 'OneView';
     }
