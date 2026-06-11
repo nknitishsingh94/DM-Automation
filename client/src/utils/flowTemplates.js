@@ -186,6 +186,86 @@ export const getTemplateData = (templateId) => {
         ],
         edges: [{ id: 'e1-2', source: '1', target: '2' }]
       };
+    case 'sell_from_ads':
+      return {
+        name: 'Sell from Ads Flow',
+        nodes: [
+          { id: '1', type: 'trigger', position: { x: 250, y: 50 }, data: { keyword: 'AD' } },
+          { id: '2', type: 'message', position: { x: 250, y: 200 }, data: { text: "Thanks for checking out our ad! Here's the link to buy with your exclusive discount: [LINK]" } }
+        ],
+        edges: [{ id: 'e1-2', source: '1', target: '2' }]
+      };
+    case 'get_event_signups':
+      return {
+        name: 'Event Signups',
+        nodes: [
+          { id: '1', type: 'trigger', position: { x: 250, y: 50 }, data: { keyword: 'EVENT' } },
+          { id: '2', type: 'message', position: { x: 250, y: 200 }, data: { text: "We're excited to see you! RSVP for the event here: [LINK]" } }
+        ],
+        edges: [{ id: 'e1-2', source: '1', target: '2' }]
+      };
+    case 'hide_negative_comments':
+      return {
+        name: 'Hide Negative Comments',
+        nodes: [
+          { id: '1', type: 'trigger', position: { x: 250, y: 50 }, data: { keyword: '*' } },
+          { id: '2', type: 'ai', position: { x: 250, y: 200 }, data: { } }
+        ],
+        edges: [{ id: 'e1-2', source: '1', target: '2' }]
+      };
+    case 'grow_ig_from_website':
+      return {
+        name: 'Grow Instagram from Website',
+        nodes: [
+          { id: '1', type: 'trigger', position: { x: 250, y: 50 }, data: { keyword: 'WEB' } },
+          { id: '2', type: 'message', position: { x: 250, y: 200 }, data: { text: "Welcome from our website! Follow us here for daily updates." } }
+        ],
+        edges: [{ id: 'e1-2', source: '1', target: '2' }]
+      };
+    case 'grow_podcast':
+      return {
+        name: 'Grow Podcast Audience',
+        nodes: [
+          { id: '1', type: 'trigger', position: { x: 250, y: 50 }, data: { keyword: 'PODCAST' } },
+          { id: '2', type: 'message', position: { x: 250, y: 200 }, data: { text: "Listen to our latest episode here on Spotify or Apple Podcasts: [LINK]" } }
+        ],
+        edges: [{ id: 'e1-2', source: '1', target: '2' }]
+      };
+    case 'grow_tiktok':
+      return {
+        name: 'Grow TikTok',
+        nodes: [
+          { id: '1', type: 'trigger', position: { x: 250, y: 50 }, data: { keyword: 'TIKTOK' } },
+          { id: '2', type: 'message', position: { x: 250, y: 200 }, data: { text: "Catch behind the scenes on our TikTok! Follow us here: [LINK]" } }
+        ],
+        edges: [{ id: 'e1-2', source: '1', target: '2' }]
+      };
+    case 'dm_new_follower':
+      return {
+        name: 'Welcome New Follower',
+        nodes: [
+          { id: '1', type: 'trigger', position: { x: 250, y: 50 }, data: { keyword: 'START' } },
+          { id: '2', type: 'message', position: { x: 250, y: 200 }, data: { text: "Welcome to our page! Thanks for the follow. If you have any questions, feel free to ask." } }
+        ],
+        edges: [{ id: 'e1-2', source: '1', target: '2' }]
+      };
+    case 'launch_new_product':
+      return {
+        name: 'New Product Launch',
+        nodes: [
+          { id: '1', type: 'trigger', position: { x: 250, y: 50 }, data: { keyword: 'LAUNCH' } },
+          { id: '2', type: 'message', position: { x: 250, y: 200 }, data: { text: "It's finally here! Check out our new product and get 10% off with this link: [LINK]" } }
+        ],
+        edges: [{ id: 'e1-2', source: '1', target: '2' }]
+      };
+    case 'custom_flow':
+      return {
+        name: 'Custom Automation Flow',
+        nodes: [
+          { id: '1', type: 'trigger', position: { x: 250, y: 50 }, data: { keyword: 'START' } }
+        ],
+        edges: []
+      };
     default:
       return {
         name: 'New Automation Flow',

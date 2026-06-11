@@ -114,6 +114,25 @@ export default function AutomationEditor() {
         setKeywords(['SHOP', 'OUTFIT', 'BUY']);
         setMessage("Hey! Here are the links to the items you asked about 🛍️");
         setButtons([{ text: 'Shop Here', url: 'https://' }]);
+      } else if (template === 'auto_thank_positive_comments') {
+        setName('Auto Thank Positive Comments');
+        setTriggerOnComments(true);
+        setPreviewMode('comment');
+        setKeywords(['LOVE', 'AMAZING', 'GREAT', 'BEAUTIFUL']);
+        setPublicReply('Thank you so much! ❤️');
+        setMessage("Hey! I just saw your comment and wanted to say thank you for the support. It means a lot!");
+      } else if (template === 'auto_like_positive_messages') {
+        setName('Auto Like Positive Messages');
+        setTriggerOnDms(true);
+        setPreviewMode('dm');
+        setAnyKeyword(true);
+        setMessage("Thanks for reaching out! ❤️");
+      } else if (template === 'reply_story_mentions') {
+        setName('Reply to Story Mentions');
+        setTriggerOnStories(true);
+        setPreviewMode('dm');
+        setAnyKeyword(true);
+        setMessage("Thanks for mentioning me in your story! You're awesome. 🔥");
       }
     }
   }, [id, template]);

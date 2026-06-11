@@ -26,6 +26,19 @@ const templatesData = [
   { id: "grow_sms_list", title: "Grow an SMS list", desc: "Did we just become text friends? Get Instagram followers on your SMS list", type: "Flow Builder" },
   { id: "trigger_dms_live", title: "Trigger DMs during IG Live", desc: "Use Lives to spark DMs, drop links, and collect leads while eyeballs are actually on you", type: "Flow Builder" },
   { id: "answer_faqs_stories", title: "Answer FAQs from story replies", desc: "Reply to your followers’ questions ASAP", type: "Flow Builder" },
+  // Newly added from screenshots
+  { id: "auto_thank_positive_comments", title: "Auto Thank Positive Comments", desc: "Show appreciation by automatically thanking users who leave positive comments.", type: "Quick Automation" },
+  { id: "auto_like_positive_messages", title: "Auto Like Positive Messages", desc: "Automatically like every positive message to show appreciation and boost engagement.", type: "Quick Automation" },
+  { id: "reply_story_mentions", title: "Reply to Story Mentions", desc: "Automatically respond when someone mentions you in their story.", type: "Quick Automation" },
+  { id: "sell_from_ads", title: "Sell from Ads", desc: "Convert ad viewers into customers by automatically sending DMs with offers and links.", type: "Flow Builder" },
+  { id: "get_event_signups", title: "Get Event Signups", desc: "Automatically send event details and registration links to interested users via DMs.", type: "Flow Builder" },
+  { id: "hide_negative_comments", title: "Hide Negative Comments", desc: "Automatically hide or filter out negative comments to maintain a positive community.", type: "Flow Builder", ai: true, upgrade: true },
+  { id: "grow_ig_from_website", title: "Grow Instagram from Website", desc: "Convert website visitors into Instagram followers by sending follow links via DMs.", type: "Flow Builder" },
+  { id: "grow_podcast", title: "Grow Your Podcast", desc: "Expand your podcast audience by automatically sharing episodes and subscription links.", type: "Flow Builder" },
+  { id: "grow_tiktok", title: "Grow Your TikTok", desc: "Drive Instagram followers to your TikTok account with automated DM campaigns.", type: "Flow Builder" },
+  { id: "dm_new_follower", title: "DM to New Follower", desc: "Automatically send a welcome message to new followers to build engagement and connection.", type: "Flow Builder" },
+  { id: "launch_new_product", title: "Launch a New Product", desc: "Announce and promote new product launches by sending exclusive offers and links to your audience.", type: "Flow Builder" },
+  { id: "custom_flow", title: "Create a Custom Flow", desc: "Create a completely custom automations flow from the ground up.", type: "Flow Builder" },
 ];
 
 export default function TemplatesModal({ isOpen, onClose }) {
