@@ -384,14 +384,80 @@ export default function FlowBuilder() {
               )}
 
               {selectedNode.type === 'message' && (
-                <div className="input-group">
-                  <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Message Text</label>
-                  <StableInput 
-                    value={selectedNode.data.text || ''}
-                    onChange={(val) => updateNodeData('text', val)}
-                    isTextArea={true}
-                  />
-                </div>
+                <>
+                  <div className="input-group" style={{ marginBottom: '16px' }}>
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Message Text</label>
+                    <StableInput 
+                      value={selectedNode.data.text || ''}
+                      onChange={(val) => updateNodeData('text', val)}
+                      isTextArea={true}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Buttons</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px' }}>
+                      {(selectedNode.data.buttons || []).map((btn, idx) => (
+                        <div key={btn.id || idx} style={{ border: '1px solid #e2e8f0', padding: '12px', borderRadius: '8px', background: '#f8fafc' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                            <input
+                              type="text"
+                              value={btn.text}
+                              onChange={(e) => {
+                                const newButtons = [...(selectedNode.data.buttons || [])];
+                                newButtons[idx] = { ...newButtons[idx], text: e.target.value };
+                                updateNodeData('buttons', newButtons);
+                              }}
+                              placeholder="Button Text"
+                              style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '12px' }}
+                            />
+                            <select
+                              value={btn.type || 'reply'}
+                              onChange={(e) => {
+                                const newButtons = [...(selectedNode.data.buttons || [])];
+                                newButtons[idx] = { ...newButtons[idx], type: e.target.value };
+                                updateNodeData('buttons', newButtons);
+                              }}
+                              style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '12px', background: 'white' }}
+                            >
+                              <option value="reply">Quick Reply</option>
+                              <option value="url">Link (URL)</option>
+                            </select>
+                            <button onClick={() => {
+                              const newButtons = (selectedNode.data.buttons || []).filter((_, i) => i !== idx);
+                              updateNodeData('buttons', newButtons);
+                            }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px' }}>
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                          {btn.type === 'url' && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <LinkIcon size={12} color="#94a3b8" />
+                              <input
+                                type="url"
+                                value={btn.url || ''}
+                                onChange={(e) => {
+                                  const newButtons = [...(selectedNode.data.buttons || [])];
+                                  newButtons[idx] = { ...newButtons[idx], url: e.target.value };
+                                  updateNodeData('buttons', newButtons);
+                                }}
+                                placeholder="https://..."
+                                style={{ flex: 1, padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '11px', background: 'white' }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    {(selectedNode.data.buttons || []).length < 3 && (
+                      <button onClick={() => {
+                        const newButtons = [...(selectedNode.data.buttons || []), { id: `b${Date.now()}`, text: 'New Button', type: 'reply' }];
+                        updateNodeData('buttons', newButtons);
+                      }} style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px dashed #cbd5e1', background: '#f8fafc', color: '#64748b', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                        <Plus size={14} /> Add Button
+                      </button>
+                    )}
+                  </div>
+                </>
               )}
 
               {selectedNode.type === 'ai' && (
