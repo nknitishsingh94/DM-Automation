@@ -1,5 +1,5 @@
 import express from 'express';
-import { OpenAI } from 'openai';
+import OpenAI from 'openai';
 import { verifyToken } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -8,7 +8,7 @@ const router = express.Router();
 const getOpenAIClient = () => {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-        throw new Error("OpenAI API key not configured");
+        throw new Error("OpenAI API key not configured in .env file. Please add OPENAI_API_KEY.");
     }
     return new OpenAI({ apiKey });
 };
@@ -49,7 +49,7 @@ router.post('/generate', verifyToken, async (req, res) => {
         res.json({ success: true, generatedText });
     } catch (error) {
         console.error("AI Generation Error:", error.message);
-        res.status(500).json({ error: "Failed to generate AI content", details: error.message });
+        res.status(500).json({ error: error.message || "Failed to generate AI content" });
     }
 });
 
