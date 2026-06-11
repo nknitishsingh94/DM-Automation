@@ -776,7 +776,7 @@ export default function AutomationEditor() {
                         cursor: 'pointer'
                       }}
                    >
-                      {template === 'dms' && <option value="all">🌐 All Connected Platforms</option>}
+                      {(!triggerOnComments && !triggerOnStories) && <option value="all">🌐 All Connected Platforms</option>}
                       {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
                         <option value="instagram">📸 Instagram</option>
                       )}
@@ -841,7 +841,7 @@ export default function AutomationEditor() {
               </div>
             </div>
                {/* Step 2: Select a Post (Restored) */}
-            {template !== 'dms' && !isUniversal && (
+            {(triggerOnComments || triggerOnStories) && !isUniversal && (
               <div style={{ marginBottom: '18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                   <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>2</div>
