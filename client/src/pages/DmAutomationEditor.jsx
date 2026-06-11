@@ -57,6 +57,32 @@ export default function DmAutomationEditor() {
   const [loadingEdit, setLoadingEdit] = useState(!!id && id !== 'new');
   const [isEditMode, setIsEditMode] = useState(!!id && id !== 'new');
 
+  const handleGenerateAI = async (type) => {
+    const promptText = window.prompt(`What should the AI write for ${type}? (e.g. "Selling fitness coaching", "Welcome message")`);
+    if (!promptText) return;
+    
+    notify("Generating with AI...", "info");
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/ai/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ prompt: promptText, type })
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.generatedText) {
+        if (type === 'message') setMessage(data.generatedText);
+        if (type === 'keywords') setKeywords([...keywords, ...data.generatedText.split(',').map(k=>k.trim())]);
+        notify("AI generation successful!", "success");
+      } else {
+        notify(data.error || "AI generation failed.", "error");
+      }
+    } catch(e) {
+      notify("AI generation error.", "error");
+    }
+  };
+
   useEffect(() => {
     if (id && id !== 'new') {
       const fetchCampaign = async () => {
@@ -568,7 +594,14 @@ export default function DmAutomationEditor() {
               </div>
               <div style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', border: '1.5px solid #e2e8f0', borderRadius: '20px', padding: '18px 22px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.04)' }}>
                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: !anyKeyword ? '14px' : '0' }}>
-                    <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem', fontWeight: '500' }}>{template === 'stories' ? 'Trigger on Story Replies' : 'Trigger on specific keywords'}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem', fontWeight: '500' }}>{template === 'stories' ? 'Trigger on Story Replies' : 'Trigger on specific keywords'}</p>
+                      {!anyKeyword && (
+                         <button onClick={() => handleGenerateAI('keywords')} style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #e9d5ff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                           <Sparkles size={12} /> Auto-Gen Keywords
+                         </button>
+                      )}
+                    </div>
                     <div onClick={() => setAnyKeyword(!anyKeyword)} style={{ width: '50px', height: '24px', borderRadius: '12px', background: anyKeyword ? '#7c3aed' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)' }}>
                        <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: anyKeyword ? '29px' : '3px', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}></div>
                     </div>
@@ -700,12 +733,19 @@ export default function DmAutomationEditor() {
                  </div>
 
                  {!isAI ? (
-                    <textarea 
-                      placeholder="Type your final message here..." 
-                      value={message} 
-                      onChange={(e) => setMessage(e.target.value)} 
-                      style={{ width: '100%', height: '80px', padding: '14px 18px', borderRadius: '14px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '0.95rem', resize: 'none', marginBottom: '16px', fontWeight: '500', color: '#1e1b4b', lineHeight: '1.5' }}
-                    />
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+                        <button onClick={() => handleGenerateAI('message')} style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #e9d5ff', padding: '4px 10px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Sparkles size={14} /> Write Message with AI
+                        </button>
+                      </div>
+                      <textarea 
+                        placeholder="Type your final message here..." 
+                        value={message} 
+                        onChange={(e) => setMessage(e.target.value)} 
+                        style={{ width: '100%', height: '80px', padding: '14px 18px', borderRadius: '14px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '0.95rem', resize: 'none', marginBottom: '16px', fontWeight: '500', color: '#1e1b4b', lineHeight: '1.5' }}
+                      />
+                    </div>
                  ) : (
                     <div style={{ 
                       padding: '14px', 

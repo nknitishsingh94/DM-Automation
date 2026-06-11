@@ -53,6 +53,7 @@ import formRoutes from './routes/forms.js';
 import oauthRoutes from './routes/oauth.js';
 import supportRoutes from './routes/support.js';
 import threadsRoutes from './routes/threads.js';
+import aiRoutes from './routes/ai.js';
 import { generateAIResponse } from './utils/aiHandler.js';
 import { supabase, convertObjectIDToUUID } from './utils/supabase.js';
 import Workspace from './models/Workspace.js';
@@ -283,6 +284,7 @@ app.use((req, res, next) => {
 app.use(hpp());
 
 app.use('/api/youtube', youtubeRoutes);
+app.use('/api/ai', aiRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', domain: req.hostname, timestamp: new Date() }));
 app.get('/api/ping', (req, res) => res.send('pong'));

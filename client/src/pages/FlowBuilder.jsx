@@ -203,6 +203,32 @@ export default function FlowBuilder() {
   const [selectedNode, setSelectedNode] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  const handleGenerateAI = async (type) => {
+    const promptText = window.prompt(`What should the AI write for ${type}?`);
+    if (!promptText) return;
+    
+    notify("Generating with AI...", "info");
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/ai/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ prompt: promptText, type })
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.generatedText) {
+        if (type === 'message') updateNodeData('text', data.generatedText);
+        if (type === 'keywords') updateNodeData('keyword', (selectedNode.data.keyword ? selectedNode.data.keyword + ', ' : '') + data.generatedText);
+        notify("AI generation successful!", "success");
+      } else {
+        notify(data.error || "AI generation failed.", "error");
+      }
+    } catch(e) {
+      notify("AI generation error.", "error");
+    }
+  };
+
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
   useEffect(() => {
@@ -365,7 +391,12 @@ export default function FlowBuilder() {
               {selectedNode.type === 'trigger' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div className="input-group">
-                    <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Keyword Trigger</label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', margin: 0 }}>Keyword Trigger</label>
+                      <button onClick={() => handleGenerateAI('keywords')} style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #e9d5ff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                         <Sparkles size={12} /> Auto-Gen
+                      </button>
+                    </div>
                     <StableInput 
                       value={selectedNode.data.keyword || ''}
                       onChange={(val) => updateNodeData('keyword', val)}
@@ -386,7 +417,12 @@ export default function FlowBuilder() {
               {selectedNode.type === 'message' && (
                 <>
                   <div className="input-group" style={{ marginBottom: '16px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Message Text</label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', margin: 0 }}>Message Text</label>
+                      <button onClick={() => handleGenerateAI('message')} style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #e9d5ff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                         <Sparkles size={12} /> Auto-Gen
+                      </button>
+                    </div>
                     <StableInput 
                       value={selectedNode.data.text || ''}
                       onChange={(val) => updateNodeData('text', val)}
