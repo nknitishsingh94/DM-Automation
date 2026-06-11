@@ -122,6 +122,7 @@ function ProtectedRoute({ children }) {
 function Sidebar({ isMobileOpen, onClose }) {
   const { logout, user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [workspaces, setWorkspaces] = useState([]);
   const [activeWorkspace, setActiveWorkspace] = useState(null);
