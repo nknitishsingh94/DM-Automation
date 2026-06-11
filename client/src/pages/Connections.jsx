@@ -122,9 +122,10 @@ export default function Connections() {
           whatsappDisplayName: mergedData.connectedInstagramId || mergedData.whatsappPhoneNumberId || 'WhatsApp Business'
         };
         setSettings(s => ({ ...s, ...derivedData }));
-        setLoading(false);
       } catch (err) {
         console.error("Error loading settings:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
