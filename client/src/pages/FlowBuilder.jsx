@@ -11,7 +11,7 @@ import {
   Position
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { Save, Play, ArrowLeft, MessageSquare, Zap, Activity, Trash2, Plus, Info, Sparkles } from 'lucide-react';
+import { Save, Play, ArrowLeft, MessageSquare, Zap, Activity, Trash2, Plus, Info, Sparkles, Instagram, Link as LinkIcon, HelpCircle } from 'lucide-react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
@@ -22,40 +22,73 @@ import { getTemplateData } from '../utils/flowTemplates';
 // --- Custom Node Components ---
 
 const MessageNode = ({ data }) => (
-  <div style={{ 
-    padding: '12px', background: 'white', borderRadius: '12px', border: '1px solid #4f46e5', minWidth: '180px',
-    boxShadow: '0 4px 12px rgba(79, 70, 229, 0.1)'
-  }}>
-    <Handle type="target" position={Position.Top} style={{ background: '#4f46e5' }} />
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', borderBottom: '1px solid #f1f5f9', paddingBottom: '6px' }}>
-      <MessageSquare size={14} color="#4f46e5" />
-      <span style={{ fontSize: '12px', fontWeight: '800', color: '#1e293b' }}>Send Message</span>
+  <div style={{ position: 'relative' }}>
+    {data.noteTop && (
+      <div style={{ position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: '12px', background: '#ffedd5', padding: '8px 12px', borderRadius: '8px', fontSize: '10px', color: '#9a3412', width: '220px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', whiteSpace: 'pre-wrap' }}>
+        {data.noteTop}
+      </div>
+    )}
+    <div style={{ 
+      padding: '0', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', width: '240px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflow: 'hidden', position: 'relative'
+    }}>
+      <Handle type="target" position={Position.Left} style={{ background: '#94a3b8', width: '8px', height: '8px' }} />
+      <div style={{ background: '#f8fafc', padding: '12px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ background: '#ef4444', borderRadius: '50%', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Instagram size={14} color="white" />
+        </div>
+        <span style={{ fontSize: '12px', fontWeight: '700', color: '#1e293b', whiteSpace: 'pre-wrap' }}>{data.title || 'Instagram\nSend Message'}</span>
+      </div>
+      <div style={{ padding: '12px', fontSize: '12px', color: '#334155', minHeight: '40px', whiteSpace: 'pre-wrap', lineHeight: '1.4' }}>
+        {data.text || <span style={{ opacity: 0.5, fontStyle: 'italic' }}>Click to edit text...</span>}
+      </div>
+      {data.buttons && data.buttons.length > 0 && (
+        <div style={{ padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {data.buttons.map(btn => (
+            <div key={btn.id} style={{ position: 'relative', border: '1px solid #e2e8f0', padding: '8px', borderRadius: '6px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#3b82f6', background: 'white' }}>
+              {btn.text}
+              <Handle type="source" position={Position.Right} id={btn.id} style={{ background: '#94a3b8', width: '8px', height: '8px', right: '-12px' }} />
+            </div>
+          ))}
+        </div>
+      )}
+      {(!data.buttons || data.buttons.length === 0) && (
+        <Handle type="source" position={Position.Right} style={{ background: '#94a3b8', width: '8px', height: '8px' }} />
+      )}
     </div>
-    <div style={{ fontSize: '13px', color: '#475569', minHeight: '20px' }}>
-      {data.text || <span style={{ opacity: 0.5, fontStyle: 'italic' }}>Click to edit text...</span>}
-    </div>
-    <Handle type="source" position={Position.Bottom} style={{ background: '#4f46e5' }} />
+    {data.noteBottom && (
+      <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: '12px', background: '#f1f5f9', padding: '8px 12px', borderRadius: '8px', fontSize: '10px', color: '#475569', width: '220px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', whiteSpace: 'pre-wrap' }}>
+        {data.noteBottom}
+      </div>
+    )}
   </div>
 );
 
 const TriggerNode = ({ data }) => (
-  <div style={{ 
-    padding: '12px', background: '#0f172a', borderRadius: '12px', color: 'white', minWidth: '180px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
-  }}>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-      <Zap size={14} color="#fbbf24" />
-      <span style={{ fontSize: '12px', fontWeight: '800', color: '#f8fafc' }}>Flow Start</span>
+  <div style={{ position: 'relative' }}>
+    <div style={{ 
+      padding: '0', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', width: '240px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflow: 'hidden'
+    }}>
+      <div style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <Zap size={14} color="#64748b" />
+        <span style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b' }}>{data.title || 'When...'}</span>
+      </div>
+      <div style={{ padding: '12px', borderTop: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ background: '#ef4444', borderRadius: '50%', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Instagram size={12} color="white" />
+        </div>
+        <span style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '600', whiteSpace: 'pre-wrap' }}>
+          {data.text || `User comments on your Post or Reel`}
+        </span>
+      </div>
+      <Handle type="source" position={Position.Right} style={{ background: '#94a3b8', width: '8px', height: '8px' }} />
     </div>
-    <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-      Keyword: <span style={{ color: '#fbbf24', fontWeight: 'bold' }}>{data.keyword || '*Any Message*'}</span>
-    </div>
-    {data.publicReplyText && (
-      <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px', borderTop: '1px solid #334155', paddingTop: '4px' }}>
-        Reply: <span style={{ color: '#a7f3d0' }}>{data.publicReplyText}</span>
+    {data.noteBottom && (
+      <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: '12px', background: '#f1f5f9', padding: '8px 12px', borderRadius: '8px', fontSize: '10px', color: '#475569', width: '220px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', whiteSpace: 'pre-wrap' }}>
+        {data.noteBottom}
       </div>
     )}
-    <Handle type="source" position={Position.Bottom} style={{ background: '#fbbf24' }} />
   </div>
 );
 

@@ -85,10 +85,46 @@ export const getTemplateData = (templateId) => {
       return {
         name: 'YouTube Subscriber Growth',
         nodes: [
-          { id: '1', type: 'trigger', position: { x: 250, y: 50 }, data: { keyword: 'YOUTUBE' } },
-          { id: '2', type: 'message', position: { x: 250, y: 200 }, data: { text: "Thanks for the support! Subscribe to my YouTube channel here: [LINK]" } }
+          { 
+            id: '1', 
+            type: 'trigger', 
+            position: { x: 50, y: 150 }, 
+            data: { 
+              title: "When...",
+              text: "User comments on your Post or Reel",
+              noteBottom: "Your trigger here will be 'User comments on post or Reel'"
+            } 
+          },
+          { 
+            id: '2', 
+            type: 'message', 
+            position: { x: 450, y: 100 }, 
+            data: { 
+              title: "Instagram\nSend Message",
+              text: "Hey! The full video is on my YouTube channel right now!\n\nTo watch it (and so you don't miss a new video drop), subscribe to my channel 👇",
+              noteTop: "This is the first message a follower sees in their DMs. Personalize this message so your follower is excited to click to the next step.\nWe use a button here to open to your YouTube channel.",
+              noteBottom: "Make sure you update this\n'Subscribe' button URL so it opens\nto your YouTube channel",
+              buttons: [
+                { id: 'b1', text: 'Subscribe 🔗', type: 'url' },
+                { id: 'b2', text: 'Help! 🆘', type: 'reply' }
+              ]
+            } 
+          },
+          { 
+            id: '3', 
+            type: 'message', 
+            position: { x: 800, y: 120 }, 
+            data: { 
+              title: "Instagram\nSend Message #1",
+              text: "Did you have any trouble subscribing?\nLooking for another video? Let me know!",
+              noteTop: "If they tap 'Help!', this is the\nmessage they'll receive. They can\ntype their message to you, and you\ncan reply when you're online."
+            } 
+          }
         ],
-        edges: [{ id: 'e1-2', source: '1', target: '2' }]
+        edges: [
+          { id: 'e1-2', source: '1', target: '2' },
+          { id: 'e2-3', source: '2', sourceHandle: 'b2', target: '3' }
+        ]
       };
     case 'recognize_questions_ai':
       return {
