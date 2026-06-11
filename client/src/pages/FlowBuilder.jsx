@@ -306,38 +306,6 @@ export default function FlowBuilder() {
     }));
   };
 
-  if (user?.plan !== 'pro') {
-    return (
-      <div style={{ height: 'calc(100vh - 80px)', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: '20px' }}>
-        <div style={{ maxWidth: '500px', width: '100%', background: 'white', borderRadius: '24px', padding: '40px', textAlign: 'center', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', border: '1px solid #fce7f3' }}>
-          <div style={{ width: '80px', height: '80px', borderRadius: '24px', background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', boxShadow: '0 10px 15px -3px rgba(217, 70, 239, 0.4)' }}>
-            <Zap size={40} color="white" />
-          </div>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '12px' }}>Visual Flows is a Premium Feature</h2>
-          <p style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '32px', lineHeight: '1.6' }}>
-            Build complex, multi-step AI agents with our drag-and-drop Visual Flow Builder. Upgrade to PRO to unlock this powerful automation tool.
-          </p>
-          <button 
-            onClick={() => navigate('/upgrade')}
-            style={{ width: '100%', padding: '16px', borderRadius: '14px', background: '#1e1b4b', color: 'white', fontWeight: '800', fontSize: '1.1rem', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.3s' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(30,27,75,0.4)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
-          >
-            <Crown size={20} color="#fbbf24" /> Upgrade to PRO Now
-          </button>
-          <button 
-            onClick={() => navigate(-1)}
-            style={{ width: '100%', padding: '16px', marginTop: '12px', borderRadius: '14px', background: 'transparent', color: '#64748b', fontWeight: '700', fontSize: '1rem', border: '1px solid #e2e8f0', cursor: 'pointer', transition: 'all 0.3s' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#1e1b4b'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748b'; }}
-          >
-            Back to Automations
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div style={{ height: 'calc(100vh - 80px)', width: '100%', position: 'fixed', top: '80px', left: '260px', right: 0, bottom: 0, display: 'flex', background: '#f8fafc' }}>
       {/* Sidebar / Properties Panel */}
