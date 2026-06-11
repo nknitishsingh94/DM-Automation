@@ -413,40 +413,52 @@ export default function FlowBuilder() {
           )}
         </div>
 
-        <div style={{ padding: '24px', borderTop: '1px solid #f1f5f9' }}>
-          <button 
-            onClick={saveFlow}
-            disabled={isSaving}
-            style={{ width: '100%', padding: '14px', borderRadius: '12px', background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', color: 'white', fontWeight: '700', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-          >
-            <Save size={18} /> {isSaving ? 'Saving...' : 'Save & Publish'}
-          </button>
-        </div>
-      </div>
-
-      {/* React Flow Canvas */}
-      <div style={{ flex: 1, position: 'relative' }}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          onSelectionChange={onSelectionChange}
-          fitView
-        >
-          <Background color="#cbd5e1" variant="dots" />
-          <Controls />
-          <MiniMap style={{ borderRadius: '12px', border: '1px solid #f1f5f9' }} />
-        </ReactFlow>
-
-        {/* Floating Toolbar */}
-        <div style={{ position: 'absolute', top: '24px', right: '24px', display: 'flex', gap: '12px' }}>
-          <div style={{ background: 'white', padding: '8px 16px', borderRadius: '30px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '700' }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
-            Live Support Enabled
+      <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+        {/* ManyChat Style Top Header */}
+        <div style={{ height: '60px', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', zIndex: 10, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#64748b' }}>
+              <ArrowLeft size={20} />
+            </button>
+            <h1 style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', margin: 0 }}>{flowName}</h1>
+            <div style={{ background: '#ecfdf5', color: '#059669', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: '700', border: '1px solid #a7f3d0' }}>
+              Published
+            </div>
           </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '600', color: '#64748b', marginRight: '8px' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
+              Live Support
+            </div>
+            <button style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>
+              Preview
+            </button>
+            <button 
+              onClick={saveFlow} 
+              disabled={isSaving} 
+              style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '8px 24px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+               {isSaving ? 'Updating...' : 'Update'}
+            </button>
+          </div>
+        </div>
+
+        <div style={{ flex: 1, position: 'relative' }}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            onSelectionChange={onSelectionChange}
+            fitView
+          >
+            <Background color="#cbd5e1" variant="dots" />
+            <Controls />
+            <MiniMap style={{ borderRadius: '12px', border: '1px solid #f1f5f9' }} />
+          </ReactFlow>
+        </div>
         </div>
       </div>
     </div>
