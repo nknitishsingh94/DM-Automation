@@ -54,11 +54,11 @@ export default function DmAutomationEditor() {
   const [tempLinkUrl, setTempLinkUrl] = useState('https://');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [isAI, setIsAI] = useState(false);
-  const [loadingEdit, setLoadingEdit] = useState(!!id);
-  const [isEditMode, setIsEditMode] = useState(!!id);
+  const [loadingEdit, setLoadingEdit] = useState(!!id && id !== 'new');
+  const [isEditMode, setIsEditMode] = useState(!!id && id !== 'new');
 
   useEffect(() => {
-    if (id) {
+    if (id && id !== 'new') {
       const fetchCampaign = async () => {
         try {
           const token = localStorage.getItem('insta_agent_token');

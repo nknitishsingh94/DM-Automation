@@ -65,8 +65,8 @@ export default function AutomationEditor() {
   const [triggerOnStories, setTriggerOnStories] = useState(template === 'stories');
   const [previewMode, setPreviewMode] = useState(template === 'comments' ? 'comment' : 'dm');
   const [isAI, setIsAI] = useState(false);
-  const [loadingEdit, setLoadingEdit] = useState(!!id);
-  const [isEditMode, setIsEditMode] = useState(!!id);
+  const [loadingEdit, setLoadingEdit] = useState(!!id && id !== 'new');
+  const [isEditMode, setIsEditMode] = useState(!!id && id !== 'new');
 
   React.useEffect(() => {
     if (!id && template) {
@@ -138,7 +138,7 @@ export default function AutomationEditor() {
   }, [id, template]);
 
   React.useEffect(() => {
-    if (id) {
+    if (id && id !== 'new') {
       const fetchCampaign = async () => {
         try {
           const token = localStorage.getItem('insta_agent_token');
