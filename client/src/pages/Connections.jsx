@@ -73,7 +73,7 @@ export default function Connections() {
     { name: 'YouTube', icon: Youtube, color: '#ff0000', enabled: true },
     { name: 'LinkedIn', icon: Linkedin, color: '#0077b5', enabled: true },
     { name: 'Twitter/X', icon: Twitter, color: '#0f1419', enabled: true },
-    { name: 'Threads', icon: ThreadsIcon, color: '#000000', enabled: true },
+    { name: 'Threads', icon: Activity, color: '#000000', enabled: true },
     { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: true },
     { name: 'Telegram', icon: Send, color: '#0088cc', enabled: true },
     { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: true }
