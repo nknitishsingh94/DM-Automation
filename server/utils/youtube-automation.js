@@ -4,9 +4,13 @@ import Campaign from '../models/Campaign.js';
 import Settings from '../models/Settings.js';
 import Message from '../models/Message.js';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+const getOpenAIClient = () => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("OpenAI API key not configured. Please add OPENAI_API_KEY.");
+  }
+  return new OpenAI({ apiKey });
+};
 
 export const processYouTubeComments = async () => {
   try {
@@ -125,7 +129,7 @@ export const processYouTubeComments = async () => {
                 Generate a friendly, helpful, and short reply. Do not include hashtags.
               `;
               try {
-                const aiRes = await openai.chat.completions.create({
+                const aiRes = await getOpenAIClient().chat.completions.create({
                   model: "gpt-4o-mini",
                   messages: [
                     { role: "system", content: "You are a helpful YouTube assistant." },

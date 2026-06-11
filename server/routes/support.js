@@ -4,10 +4,6 @@ import FormSubmission from '../models/FormSubmission.js';
 
 const router = express.Router();
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-});
-
 router.post('/chat', async (req, res) => {
     try {
         const { message, history = [] } = req.body;

@@ -5,9 +5,14 @@ import verifyToken from '../middleware/auth.js';
 import ScheduledPost from '../models/ScheduledPost.js';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize OpenAI client lazily to prevent crash on boot if API key is missing
+const getOpenAIClient = () => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("OpenAI API key not configured. Please add OPENAI_API_KEY.");
+  }
+  return new OpenAI({ apiKey });
+};
 
 const router = express.Router();
 
@@ -164,7 +169,7 @@ router.post('/generate-thumbnail', verifyToken, async (req, res) => {
     const { prompt } = req.body;
     if (!prompt) return res.status(400).json({ error: 'Prompt is required' });
 
-    const aiResponse = await openai.images.generate({
+    const aiResponse = await getOpenAIClient().images.generate({
       model: "dall-e-3",
       prompt: `A high-quality, eye-catching YouTube thumbnail for a video titled: "${prompt}". No text, just vibrant visual elements.`,
       n: 1,
@@ -205,7 +210,7 @@ router.post('/generate-metadata', verifyToken, async (req, res) => {
 
     userPrompt += "\nReturn EXACTLY in this JSON format:\n{\n  \"titles\": [\"Title 1\", \"Title 2\", \"Title 3\"],\n  \"description\": \"Your generated description...\",\n  \"tags\": \"tag1, tag2, tag3\"\n}";
 
-    const aiResponse = await openai.chat.completions.create({
+    const aiResponse = await getOpenAIClient().chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         { role: "system", content: systemPrompt },
