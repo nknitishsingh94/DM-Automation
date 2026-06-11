@@ -344,47 +344,25 @@ export default function FlowBuilder() {
       </div>
 
       <div style={{ flex: 1, display: 'flex', position: 'relative' }}>
-        {/* Sidebar / Properties Panel */}
-        <div style={{ width: '320px', background: 'white', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', zIndex: 10 }}>
-          <div style={{ flex: 1, padding: '24px', overflowY: 'auto' }}>
-          {!selectedNode ? (
-            <div>
-              <h4 style={{ fontSize: '0.85rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Add Nodes</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <button onClick={() => addNode('message')} style={{ padding: '16px', borderRadius: '12px', border: '1px solid #f1f5f9', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <MessageSquare size={20} color="#4f46e5" />
-                  <span style={{ fontSize: '12px', fontWeight: '700' }}>Message</span>
-                </button>
-                <button onClick={() => addNode('condition')} style={{ padding: '16px', borderRadius: '12px', border: '1px solid #f1f5f9', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <Activity size={20} color="#ec4899" />
-                  <span style={{ fontSize: '12px', fontWeight: '700' }}>Condition</span>
-                </button>
-                <button onClick={() => addNode('ai')} style={{ padding: '16px', borderRadius: '12px', border: '1px solid #f3e8ff', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer', gridColumn: 'span 2' }}>
-                  <Sparkles size={20} color="#a855f7" />
-                  <span style={{ fontSize: '12px', fontWeight: '800', color: '#6b21a8' }}>AI Agent (Smart Reply)</span>
-                </button>
-              </div>
-              <div style={{ marginTop: '40px', padding: '20px', borderRadius: '16px', background: '#eff6ff', border: '1px solid #dbeafe' }}>
-                <div style={{ display: 'flex', gap: '8px', color: '#1e40af', marginBottom: '8px' }}>
-                   <Info size={16} /> <span style={{ fontWeight: '700', fontSize: '12px' }}>How to use</span>
+        {/* Sidebar / Properties Panel - ONLY VISIBLE WHEN A NODE IS SELECTED */}
+        {selectedNode && (
+          <div style={{ width: '320px', background: 'white', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', zIndex: 10, boxShadow: '2px 0 8px rgba(0,0,0,0.05)' }}>
+            <div style={{ flex: 1, padding: '24px', overflowY: 'auto' }}>
+              <div style={{ padding: '0 0 20px', marginBottom: '20px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <h4 style={{ fontSize: '0.85rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>
+                    Node Properties
+                  </h4>
+                  <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
+                    Editing {selectedNode.type === 'trigger' ? 'Flow Trigger' : 'Message Action'}
+                  </div>
                 </div>
-                <p style={{ fontSize: '11px', color: '#1e40af', lineHeight: '1.5', margin: 0 }}>
-                  Drag nodes to move them. Connect dots to create paths. The "Flow Start" node is where the magic begins.
-                </p>
+                <button onClick={() => setSelectedNode(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
+                  ✕
+                </button>
               </div>
-            </div>
-          ) : (
-            <div>
-               <div style={{ padding: '0 0 20px', marginBottom: '20px', borderBottom: '1px solid #f1f5f9' }}>
-                 <h4 style={{ fontSize: '0.85rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>
-                   Node Properties
-                 </h4>
-                 <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
-                   Editing {selectedNode.type === 'trigger' ? 'Flow Trigger' : 'Message Action'}
-                 </div>
-               </div>
-               
-               {selectedNode.type === 'trigger' && (
+              
+              {selectedNode.type === 'trigger' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div className="input-group">
                     <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Keyword Trigger</label>
@@ -429,15 +407,17 @@ export default function FlowBuilder() {
               )}
 
               <button 
-                onClick={() => setNodes(nds => nds.filter(n => n.id !== selectedNode.id))}
+                onClick={() => {
+                  setNodes(nds => nds.filter(n => n.id !== selectedNode.id));
+                  setSelectedNode(null);
+                }}
                 style={{ marginTop: '24px', width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #fee2e2', color: '#ef4444', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
               >
                 <Trash2 size={16} /> Delete Node
               </button>
             </div>
-          )}
-        </div>
-        </div>
+          </div>
+        )}
 
         {/* React Flow Canvas Area */}
         <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
@@ -456,6 +436,22 @@ export default function FlowBuilder() {
             <Controls />
             <MiniMap style={{ borderRadius: '12px', border: '1px solid #f1f5f9' }} />
           </ReactFlow>
+
+          {/* Floating Add Node Toolbar */}
+          {!selectedNode && (
+            <div style={{ position: 'absolute', bottom: '32px', left: '50%', transform: 'translateX(-50%)', background: 'white', padding: '12px 24px', borderRadius: '100px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', display: 'flex', gap: '16px', zIndex: 10, alignItems: 'center', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '13px', fontWeight: '700', color: '#64748b' }}>Add Node:</span>
+              <button onClick={() => addNode('message')} style={{ border: 'none', background: '#e0e7ff', color: '#4f46e5', padding: '8px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <MessageSquare size={14} /> Message
+              </button>
+              <button onClick={() => addNode('condition')} style={{ border: 'none', background: '#fce7f3', color: '#ec4899', padding: '8px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Activity size={14} /> Condition
+              </button>
+              <button onClick={() => addNode('ai')} style={{ border: 'none', background: '#f3e8ff', color: '#a855f7', padding: '8px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Sparkles size={14} /> Smart Reply
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
