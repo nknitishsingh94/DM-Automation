@@ -296,7 +296,7 @@ export default function AutomationEditor() {
     }
 
     if (!anyStory && !selectedContentId) {
-      notify(`Please select a specific ${template === 'stories' ? 'story' : 'post'} to continue`, 'error');
+      notify(`Please select a specific ${triggerOnStories ? 'story' : 'post'} to continue`, 'error');
       return;
     }
 
@@ -449,7 +449,7 @@ export default function AutomationEditor() {
                   {/* Post Header */}
                   <div style={{ padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1a1a1a' }}>
                     <ChevronLeft size={18} color="white" />
-                    <span style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>{template === 'stories' ? 'Story' : 'Posts'}</span>
+                    <span style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>{triggerOnStories ? 'Story' : 'Posts'}</span>
                     <div style={{ width: '18px' }}></div>
                   </div>
 
@@ -458,14 +458,14 @@ export default function AutomationEditor() {
                   <div style={{ flex: 1, position: 'relative', background: '#1a1a1a', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflow: 'hidden', paddingTop: '40px' }}>
                     <div style={{ 
                       width: '100%', 
-                      aspectRatio: template === 'stories' ? '9/16' : '1/1', 
+                      aspectRatio: triggerOnStories ? '9/16' : '1/1', 
                       background: '#262626', 
                       display: 'flex', 
                       alignItems: 'center', 
                       justifyContent: 'center',
                       position: 'relative'
                     }}>
-                      {template === 'stories' ? (
+                      {triggerOnStories ? (
                         <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '800', fontSize: '1.5rem' }}>
                           Story
                         </div>
@@ -506,7 +506,7 @@ export default function AutomationEditor() {
                             <span style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>2m</span>
                           </div>
                           <p style={{ margin: '8px 0 0 0', fontSize: '0.7rem', color: '#94a3b8', fontWeight: '500' }}>
-                            {template === 'stories' ? 'When someone replies to this story...' : (template === 'comments' ? 'When someone comments on this post...' : 'When someone comments this...')}
+                            {triggerOnStories ? 'When someone replies to this story...' : (triggerOnComments ? 'When someone comments on this post...' : 'When someone comments this...')}
                           </p>
                           <div style={{ color: 'white', fontSize: '0.75rem', marginTop: '3px', fontWeight: '500' }}>
                             {keywords.length > 0 ? keywords[0] : "Keyword"}
@@ -552,7 +552,7 @@ export default function AutomationEditor() {
                       fontSize: '0.85rem', 
                       lineHeight: '1.4' 
                     }}>
-                      {template === 'stories' 
+                      {triggerOnStories 
                         ? (anyKeyword ? 'Replied to your story' : `Replied to your story: ${keywords[0]}`) 
                         : (anyKeyword ? "Hey, I saw your post!" : keywords[0])}
                     </div>
@@ -845,10 +845,10 @@ export default function AutomationEditor() {
               <div style={{ marginBottom: '18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                   <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>2</div>
-                  <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>{template === 'stories' ? 'Select a Story' : 'Select a Post'}</h3>
+                  <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>{triggerOnStories ? 'Select a Story' : 'Select a Post'}</h3>
                 </div>
               <div style={{ padding: '14px 18px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
-                {template === 'stories' ? (
+                {triggerOnStories ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', background: '#e2e8f0', borderRadius: '10px', fontWeight: '800', color: '#475569', fontSize: '1rem', border: '2px dashed #cbd5e1' }}>
                         Story Mode Active
@@ -951,7 +951,7 @@ export default function AutomationEditor() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                 <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>3</div>
                 <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>
-                  {template === 'stories' ? 'Reply Trigger' : (template === 'comments' ? 'Comment Trigger' : 'Keyword Trigger')}
+                  {triggerOnStories ? 'Reply Trigger' : (triggerOnComments ? 'Comment Trigger' : 'Keyword Trigger')}
                 </h3>
               </div>
               
@@ -1239,7 +1239,7 @@ export default function AutomationEditor() {
                     <span style={{ background: '#f5f3ff', color: '#7c3aed', padding: '2px 6px', borderRadius: '4px', fontSize: '0.6rem', fontWeight: '800' }}>RECOMMENDED</span>
                   </div>
                   <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                    Trigger on ANY {template === 'stories' ? 'Story interaction' : (template === 'comments' ? 'Comment' : 'DM message')}
+                    Trigger on ANY {triggerOnStories ? 'Story interaction' : (triggerOnComments ? 'Comment' : 'DM message')}
                   </span>
                   
                   <div style={{ 

@@ -293,7 +293,7 @@ export default function FlowBuilder() {
             <Crown size={20} color="#fbbf24" /> Upgrade to PRO Now
           </button>
           <button 
-            onClick={() => navigate('/campaigns')}
+            onClick={() => navigate(-1)}
             style={{ width: '100%', padding: '16px', marginTop: '12px', borderRadius: '14px', background: 'transparent', color: '#64748b', fontWeight: '700', fontSize: '1rem', border: '1px solid #e2e8f0', cursor: 'pointer', transition: 'all 0.3s' }}
             onMouseEnter={(e) => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#1e1b4b'; }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748b'; }}
@@ -310,7 +310,7 @@ export default function FlowBuilder() {
       {/* Sidebar / Properties Panel */}
       <div style={{ width: '320px', background: 'white', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', zIndex: 10 }}>
         <div style={{ padding: '24px', borderBottom: '1px solid #f1f5f9' }}>
-          <button onClick={() => navigate('/campaigns')} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '13px', border: 'none', background: 'none', cursor: 'pointer', marginBottom: '16px' }}>
+          <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '13px', border: 'none', background: 'none', cursor: 'pointer', marginBottom: '16px' }}>
             <ArrowLeft size={16} /> Back to List
           </button>
           <input 

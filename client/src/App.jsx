@@ -163,7 +163,13 @@ function Sidebar({ isMobileOpen, onClose }) {
 
   useEffect(() => {
     if (isMobileOpen) onClose();
-  }, [location.pathname]);
+    const params = new URLSearchParams(location.search);
+    if (params.get('openTemplates') === 'true') {
+      setShowTemplatesModal(true);
+      // Optional: Clean up URL after opening
+      window.history.replaceState({}, document.title, location.pathname);
+    }
+  }, [location.pathname, location.search]);
 
   const handleSwitchWorkspace = (workspaceId) => {
     localStorage.setItem('active_workspace_id', workspaceId);
@@ -461,7 +467,7 @@ function Sidebar({ isMobileOpen, onClose }) {
               </div>
               {showAutoOpsDropdown && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', paddingLeft: '32px', marginTop: '4px' }}>
-                  <div onClick={() => setShowTemplatesModal(true)} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px' }} onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                  <div onClick={() => { navigate(location.pathname + '?openTemplates=true'); setShowTemplatesModal(true); }} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px' }} onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                     All Template
                   </div>
                   <NavLink to="/hub/message-only" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
