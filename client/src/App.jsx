@@ -680,8 +680,8 @@ function MainLayout() {
   const isPublic = ['/', '/public-home', '/login', '/signup', '/help', '/about', '/resources', '/blog', '/reviews'].includes(location.pathname) || location.pathname.startsWith('/blog/');
   const isEditor = ['/dm-automation-editor', '/automation-editor'].includes(location.pathname);
   const isMessageOnlyHub = location.pathname === '/hub/message-only';
-  const hideSidebar = isPublic || isEditor || isMessageOnlyHub;
-  const hideTopBar = hideSidebar || isEditor || location.pathname === '/universal-triggers' || location.pathname === '/scheduling';
+  const hideSidebar = isPublic || isEditor;
+  const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub || location.pathname === '/universal-triggers' || location.pathname === '/scheduling';
 
   return (
     <div className="app-container" style={{ height: '100%', width: '100%', position: 'fixed', top: 0, left: 0 }}>
