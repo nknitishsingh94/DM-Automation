@@ -38,7 +38,7 @@ export default function AutomationEditor() {
 
   // State
   const [selectedPlatform, setSelectedPlatform] = useState(isUniversal ? 'all' : (channel || 'instagram'));
-  const [anyStory, setAnyStory] = useState(isUniversal ? true : true);
+  const [anyStory, setAnyStory] = useState(isUniversal ? true : false);
   const [anyKeyword, setAnyKeyword] = useState(false);
   const [keywords, setKeywords] = useState([]);
   const [keywordInput, setKeywordInput] = useState('');
