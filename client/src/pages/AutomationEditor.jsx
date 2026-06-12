@@ -516,6 +516,27 @@ export default function AutomationEditor() {
                           </div>
                         </div>
                       </div>
+
+                      {/* Bot's Public Reply */}
+                      {triggerOnComments && publicReply && (
+                        <div style={{ display: 'flex', gap: '12px', marginTop: '16px', marginLeft: '30px' }}>
+                          <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Zap size={14} color="white" />
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span style={{ color: 'white', fontSize: '0.75rem', fontWeight: '800' }}>Your Page</span>
+                              <span style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>Just now</span>
+                            </div>
+                            <div style={{ color: 'white', fontSize: '0.75rem', marginTop: '4px', fontWeight: '500' }}>
+                              {publicReply}
+                            </div>
+                            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                              <span style={{ color: '#a8a8a8', fontSize: '0.65rem', fontWeight: '700' }}>Reply</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
