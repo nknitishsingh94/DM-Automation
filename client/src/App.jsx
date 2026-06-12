@@ -38,7 +38,7 @@ import Campaigns from './pages/Campaigns';
 // Lazy load heavy components with retry logic
 const SettingsPage = lazyRetry(() => import('./pages/Settings'));
 const Profile = lazyRetry(() => import('./pages/Profile'));
-const CampaignBuilder = lazyRetry(() => import('./pages/CampaignBuilder'));
+
 const Audiences = lazyRetry(() => import('./pages/Audiences'));
 const Subscription = lazyRetry(() => import('./pages/Subscription'));
 const HelpCenter = lazyRetry(() => import('./pages/HelpCenter'));
@@ -711,7 +711,7 @@ function MainLayout() {
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
               <Route path="/universal-triggers" element={<ProtectedRoute><UniversalTriggers /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
-              <Route path="/campaign-builder/new" element={<ProtectedRoute><CampaignBuilder /></ProtectedRoute>} />
+
               <Route path="/automation-editor/:id?" element={<ProtectedRoute><AutomationEditor /></ProtectedRoute>} />
               <Route path="/dm-automation-editor/:id?" element={<ProtectedRoute><DmAutomationEditor /></ProtectedRoute>} />
               <Route path="/write-review" element={<ProtectedRoute><WriteReview /></ProtectedRoute>} />

@@ -230,7 +230,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
   };
 
   const handleBuildClick = () => {
-    navigate(`/campaign-builder/new${platformFilter !== 'all' ? '?channel=' + platformFilter : ''}`);
+    navigate(`/automation-editor/new${platformFilter !== 'all' ? '?channel=' + platformFilter : ''}`);
   };
 
   const handleAddSubmit = async (e) => {
