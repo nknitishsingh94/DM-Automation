@@ -70,7 +70,7 @@ export default function AutomationEditor() {
 
   React.useEffect(() => {
     if (!id && template) {
-      if (template === 'auto_dm_links') {
+      if (template === 'auto_dm_links' || template === 'comments') {
         setName('Auto-DM Links');
         setTriggerOnComments(true);
         setTriggerOnDms(false);
@@ -164,8 +164,11 @@ export default function AutomationEditor() {
             if (data.triggerOnComments !== undefined) setTriggerOnComments(data.triggerOnComments);
             if (data.triggerOnStories !== undefined) setTriggerOnStories(data.triggerOnStories);
 
-            // Backwards compatibility for older campaigns without trigger flags
-            if (data.triggerOnDms === undefined && data.triggerOnComments === undefined && data.triggerOnStories === undefined) {
+            // Backwards compatibility for older campaigns without trigger flags, or campaigns corrupted with all false
+            if (
+              (data.triggerOnDms === undefined && data.triggerOnComments === undefined && data.triggerOnStories === undefined) ||
+              (data.triggerOnDms === false && data.triggerOnComments === false && data.triggerOnStories === false)
+            ) {
               setTriggerOnComments(true);
             }
             if (data.isAI !== undefined) setIsAI(data.isAI);
