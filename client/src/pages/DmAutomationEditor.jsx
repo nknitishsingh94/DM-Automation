@@ -15,7 +15,15 @@ import {
   Sparkles,
   MessageCircle,
   Crown,
-  Brain
+  Brain,
+  Smile,
+  Paperclip,
+  MoreVertical,
+  Phone,
+  Video,
+  Check,
+  Camera,
+  Mic
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
@@ -284,7 +292,7 @@ export default function DmAutomationEditor() {
           <div style={{ 
             width: '340px', 
             height: '680px', 
-            background: '#000', 
+            background: selectedPlatform === 'whatsapp' ? '#efeae2' : '#000', 
             borderRadius: '40px', 
             border: '8px solid #1e1b4b',
             position: 'relative',
@@ -296,6 +304,134 @@ export default function DmAutomationEditor() {
           }}>
              <div style={{ position: 'absolute', top: '8px', left: '50%', transform: 'translateX(-50%)', width: '80px', height: '18px', background: '#000', borderRadius: '20px', zIndex: 10 }}></div>
              
+             {selectedPlatform === 'whatsapp' ? (
+                <div style={{ height: '100%', background: '#efeae2', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                  {/* WhatsApp Header */}
+                  <div style={{ padding: '30px 16px 12px', background: '#008069', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <ArrowLeft size={20} color="white" />
+                    <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#ccc', overflow: 'hidden' }}>
+                      <div style={{ width: '100%', height: '100%', background: '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ color: 'white', fontWeight: '800', fontSize: '1rem' }}>B</span>
+                      </div>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ color: 'white', fontWeight: 'bold', fontSize: '0.9rem' }}>WhatsApp Business</div>
+                      <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.7rem' }}>online</div>
+                    </div>
+                    <Video size={20} color="white" />
+                    <Phone size={18} color="white" style={{ margin: '0 10px' }} />
+                    <MoreVertical size={20} color="white" />
+                  </div>
+
+                  {/* Chat Messages */}
+                  <div style={{ 
+                    flex: 1, 
+                    padding: '20px', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '16px', 
+                    overflowY: 'auto',
+                    backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")',
+                    backgroundSize: 'cover',
+                    backgroundBlendMode: 'multiply',
+                    backgroundColor: 'rgba(239, 234, 226, 0.95)'
+                  }}>
+                    {/* Date Badge */}
+                    <div style={{ alignSelf: 'center', background: '#fff', padding: '4px 10px', borderRadius: '8px', fontSize: '0.7rem', color: '#555', boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
+                      TODAY
+                    </div>
+
+                    {(!anyKeyword && keywords.length === 0 && !message && !openingMessage) ? (
+                      <div style={{ alignSelf: 'center', background: '#dcf8c6', padding: '8px 16px', borderRadius: '8px', fontSize: '0.8rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
+                        Previewing...
+                      </div>
+                    ) : (
+                      <>
+                        {/* User Message */}
+                        <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#dcf8c6', padding: '6px 8px 6px 12px', borderRadius: '8px 0 8px 8px', fontSize: '0.85rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', position: 'relative' }}>
+                          <span style={{ paddingRight: '45px', display: 'inline-block' }}>{anyKeyword ? "Hello!" : keywords[0] || 'hi'}</span>
+                          <span style={{ fontSize: '0.65rem', color: '#667781', position: 'absolute', bottom: '4px', right: '8px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                            9:41 am <Check size={14} color="#53bdeb" style={{ marginLeft: '2px' }} />
+                          </span>
+                        </div>
+
+                        {/* Opening Message Flow */}
+                        {openingMessage && (
+                          <div style={{ alignSelf: 'flex-start', maxWidth: '80%', background: '#ffffff', padding: '6px 8px 6px 12px', borderRadius: '0 8px 8px 8px', fontSize: '0.85rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', position: 'relative' }}>
+                            <span style={{ paddingRight: '45px', display: 'inline-block', whiteSpace: 'pre-line' }}>{openingMessageText}</span>
+                            <span style={{ fontSize: '0.65rem', color: '#667781', position: 'absolute', bottom: '4px', right: '8px' }}>9:41 am</span>
+                            <div style={{ marginTop: '8px', borderTop: '1px solid #f0f2f5', paddingTop: '8px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                              <div style={{ color: '#00a884', fontWeight: 'bold', textAlign: 'center', padding: '4px 0', background: '#f0f2f5', borderRadius: '8px', fontSize: '0.8rem' }}>
+                                {openingMessageButton}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* User Clicks Button */}
+                        {openingMessage && (
+                          <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#dcf8c6', padding: '6px 8px 6px 12px', borderRadius: '8px 0 8px 8px', fontSize: '0.85rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', position: 'relative' }}>
+                            <span style={{ paddingRight: '45px', display: 'inline-block' }}>{openingMessageButton}</span>
+                            <span style={{ fontSize: '0.65rem', color: '#667781', position: 'absolute', bottom: '4px', right: '8px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                              9:42 am <Check size={14} color="#53bdeb" style={{ marginLeft: '2px' }} />
+                            </span>
+                          </div>
+                        )}
+
+                        {/* AI Response Card */}
+                        {isAI ? (
+                          <div style={{ alignSelf: 'flex-start', maxWidth: '80%', background: '#ffffff', padding: '6px 8px 6px 12px', borderRadius: '0 8px 8px 8px', fontSize: '0.85rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', position: 'relative' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                              <Sparkles size={12} color="#c084fc" />
+                              <span style={{ color: '#c084fc', fontSize: '0.7rem', fontWeight: '800' }}>AI Reply</span>
+                            </div>
+                            <span style={{ paddingRight: '45px', display: 'inline-block', whiteSpace: 'pre-line' }}>{message && message !== "[AI Agent will generate a custom neural reply here]" ? message : "Generates neural reply..."}</span>
+                            <span style={{ fontSize: '0.65rem', color: '#667781', position: 'absolute', bottom: '4px', right: '8px' }}>9:42 am</span>
+                            
+                            {buttons.length > 0 && (
+                              <div style={{ marginTop: '8px', borderTop: '1px solid #f0f2f5', paddingTop: '8px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                {buttons.map((btn, idx) => (
+                                  <div key={idx} style={{ color: '#00a884', fontWeight: 'bold', textAlign: 'center', padding: '4px 0', background: '#f0f2f5', borderRadius: '8px', fontSize: '0.8rem' }}>
+                                    {btn.text || "Visit Link"}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ) : message && (
+                          <div style={{ alignSelf: 'flex-start', maxWidth: '80%', background: '#ffffff', padding: '6px 8px 6px 12px', borderRadius: '0 8px 8px 8px', fontSize: '0.85rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', position: 'relative' }}>
+                            <span style={{ paddingRight: '45px', display: 'inline-block', whiteSpace: 'pre-line' }}>{message}</span>
+                            <span style={{ fontSize: '0.65rem', color: '#667781', position: 'absolute', bottom: '4px', right: '8px' }}>9:42 am</span>
+                            
+                            {buttons.length > 0 && (
+                              <div style={{ marginTop: '8px', borderTop: '1px solid #f0f2f5', paddingTop: '8px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                {buttons.map((btn, idx) => (
+                                  <div key={idx} style={{ color: '#00a884', fontWeight: 'bold', textAlign: 'center', padding: '4px 0', background: '#f0f2f5', borderRadius: '8px', fontSize: '0.8rem' }}>
+                                    {btn.text || "Visit Link"}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+
+                  {/* Bottom Input Area */}
+                  <div style={{ padding: '8px', display: 'flex', alignItems: 'center', gap: '8px', background: '#f0f2f5' }}>
+                    <div style={{ flex: 1, background: 'white', borderRadius: '24px', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
+                      <Smile size={24} color="#858e93" />
+                      <span style={{ flex: 1, color: '#858e93', fontSize: '0.9rem' }}>Message</span>
+                      <Paperclip size={20} color="#858e93" style={{ transform: 'rotate(-45deg)' }} />
+                      <Camera size={20} color="#858e93" />
+                    </div>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#00a884', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', flexShrink: 0 }}>
+                      <Mic size={24} color="white" />
+                    </div>
+                  </div>
+                </div>
+             ) : (
              <div style={{ height: '100%', background: '#000', display: 'flex', flexDirection: 'column', position: 'relative' }}>
                 <div style={{ padding: '30px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <ChevronLeft size={20} color="white" />
@@ -443,6 +579,7 @@ export default function DmAutomationEditor() {
                    <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#1a1a1a', border: '1px solid #333' }}></div>
                 </div>
              </div>
+             )}
           </div>
         </div>
 

@@ -100,26 +100,8 @@ const MessageOnlyHub = () => {
       isConnected: settings && settings.isTwitterConnected,
       accountName: settings?.connectedTwitterName || 'Twitter User'
     },
-    {
-      id: 'threads',
-      name: 'Threads',
-      description: 'Automate replies and track mentions on your Threads profile.',
-      icon: <ThreadsIcon size={40} />,
-      color: '#000000',
-      gradient: 'linear-gradient(135deg, #111111, #444444)',
-      isConnected: settings && settings.isThreadsConnected,
-      accountName: settings?.connectedThreadsName || 'Threads Profile'
-    },
-    {
-      id: 'whatsapp',
-      name: 'WhatsApp Business',
-      description: 'Automate WhatsApp conversations and build marketing flows.',
-      icon: <MessageSquare size={40} />,
-      color: '#25d366',
-      gradient: 'linear-gradient(135deg, #25d366, #128c7e)',
-      isConnected: settings && (settings.whatsappToken && settings.whatsappPhoneNumberId),
-      accountName: settings?.whatsappDisplayName || 'WhatsApp Business'
-    },
+
+
     {
       id: 'telegram',
       name: 'Telegram',
@@ -134,7 +116,7 @@ const MessageOnlyHub = () => {
 
   if (loading) return <LoadingSpinner minHeight="60vh" />;
 
-  const messageIds = ['youtube', 'linkedin', 'google-business', 'twitter', 'threads'];
+  const messageIds = ['whatsapp', 'youtube', 'linkedin', 'google-business', 'twitter'];
   const connectedPlatforms = platforms.filter(p => p.isConnected && messageIds.includes(p.id));
 
   return (
