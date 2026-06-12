@@ -849,25 +849,74 @@ export default function AutomationEditor() {
                 </div>
               <div style={{ padding: '14px 18px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
                 {triggerOnStories ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', background: '#e2e8f0', borderRadius: '10px', fontWeight: '800', color: '#475569', fontSize: '1rem', border: '2px dashed #cbd5e1' }}>
-                        Story Mode Active
-                      </div>
-                      <a 
-                        href="https://www.canva.com/templates/?query=instagram%20story" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: !anyStory ? '10px' : '0' }}>
+                      <span style={{ fontWeight: '700', color: '#475569', fontSize: '0.85rem' }}>Any story</span>
+                      <div 
+                        onClick={() => setAnyStory(!anyStory)}
                         style={{ 
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', 
-                          padding: '8px 12px', borderRadius: '10px', background: '#00c4cc', color: 'white', 
-                          fontWeight: '800', textDecoration: 'none', transition: 'all 0.3s', boxShadow: '0 2px 6px rgba(0, 196, 204, 0.15)', fontSize: '0.85rem'
+                          width: '40px', height: '22px', borderRadius: '11px', background: anyStory ? '#7c3aed' : '#cbd5e1', 
+                          position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
                         }}
-                        onMouseOver={e => e.currentTarget.style.transform = 'translateY(-1px)'}
-                        onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
                       >
-                        🎨 Open Canva Story Templates
-                      </a>
+                        <div style={{ 
+                          width: '16px', height: '16px', borderRadius: '50%', background: 'white', 
+                          position: 'absolute', top: '3px', left: anyStory ? '21px' : '3px', transition: 'all 0.3s' 
+                        }}></div>
+                      </div>
                     </div>
+                    {!anyStory && (
+                      <div style={{ marginTop: '12px' }}>
+                        {loadingMedia ? (
+                          <div style={{ textAlign: 'center', padding: '10px', color: '#94a3b8', fontSize: '0.8rem' }}>
+                            <Loader2 className="animate-spin" style={{ margin: '0 auto 4px' }} />
+                            Fetching your stories...
+                          </div>
+                        ) : realMedia.length === 0 ? (
+                          <div style={{ textAlign: 'center', padding: '10px', color: '#94a3b8', fontSize: '0.8rem' }}>
+                            No stories found.
+                          </div>
+                        ) : (
+                          <div style={{ 
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(70px, 1fr))',
+                            gap: '8px'
+                          }}>
+                            {realMedia.map((item) => (
+                              <div 
+                                key={item.id} 
+                                onClick={() => setSelectedContentId(item.id)}
+                                style={{ 
+                                  aspectRatio: '1/1',
+                                  background: '#e2e8f0',
+                                  borderRadius: '8px',
+                                  border: selectedContentId === item.id ? '2px solid #7c3aed' : '2px solid transparent',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s',
+                                  overflow: 'hidden',
+                                  position: 'relative'
+                                }}
+                              >
+                                <img 
+                                  src={item.thumbnail_url || item.media_url} 
+                                  alt="IG Media" 
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                                />
+                                {selectedContentId === item.id && (
+                                  <div style={{ 
+                                    position: 'absolute', top: '2px', right: '2px', 
+                                    background: '#7c3aed', borderRadius: '50%', padding: '1px' 
+                                  }}>
+                                    <CheckCircle2 size={10} color="white" />
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: !anyStory ? '10px' : '0' }}>
