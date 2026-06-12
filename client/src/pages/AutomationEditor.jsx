@@ -811,29 +811,7 @@ export default function AutomationEditor() {
            </div>
            )}
 
-            {/* Step 1.5: Trigger Types */}
-            {!isUniversal && (
-              <div style={{ marginBottom: '18px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>⚡</div>
-                  <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Where should this bot reply?</h3>
-                </div>
-                <div style={{ padding: '14px 18px', borderRadius: '12px', background: '#eff6ff', border: '1px solid #bfdbfe', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: '700', color: '#1e3a8a', fontSize: '0.9rem' }}>
-                    <input type="checkbox" checked={triggerOnComments} onChange={(e) => setTriggerOnComments(e.target.checked)} style={{ width: '18px', height: '18px', accentColor: '#3b82f6' }} />
-                    Replies to Comments (Posts & Reels)
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: '700', color: '#1e3a8a', fontSize: '0.9rem' }}>
-                    <input type="checkbox" checked={triggerOnDms} onChange={(e) => setTriggerOnDms(e.target.checked)} style={{ width: '18px', height: '18px', accentColor: '#3b82f6' }} />
-                    Replies to Direct Messages (DMs)
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: '700', color: '#1e3a8a', fontSize: '0.9rem' }}>
-                    <input type="checkbox" checked={triggerOnStories} onChange={(e) => setTriggerOnStories(e.target.checked)} style={{ width: '18px', height: '18px', accentColor: '#3b82f6' }} />
-                    Replies to Stories
-                  </label>
-                </div>
-              </div>
-            )}
+
 
             {/* Step 1: Follower Growth Gating (NEW PRIORITY) */}
             <div style={{ marginBottom: '18px' }}>
@@ -886,7 +864,7 @@ export default function AutomationEditor() {
               </div>
             </div>
                {/* Step 2: Select a Post (Restored) */}
-            {(triggerOnComments || triggerOnStories) && !isUniversal && (
+            {!isUniversal && (
               <div style={{ marginBottom: '18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                   <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>2</div>
