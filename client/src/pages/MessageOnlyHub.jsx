@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin, MapPin, Twitter, Search, MoreVertical, Plus, User, CircleDashed, Users, Lock } from 'lucide-react';
+import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin, MapPin, Twitter, Search, MoreVertical, Plus, User, CircleDashed, Users, Lock, Send, Paperclip, Smile } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -115,6 +115,7 @@ const MessageOnlyHub = () => {
   ];
 
   const [selectedPlatform, setSelectedPlatform] = useState('all');
+  const [activeChat, setActiveChat] = useState(null);
 
   const mockChats = [
     { id: 1, platformId: 'instagram', userName: 'Alex Johnson', lastMessage: 'Is this product still available?', time: '10:30 AM', unread: 2, avatar: 'https://i.pravatar.cc/150?img=11' },
@@ -220,7 +221,7 @@ const MessageOnlyHub = () => {
                 return (
                   <div 
                     key={chat.id}
-                    onClick={() => navigate(`/platform/${chat.platformId}`)}
+                    onClick={() => setActiveChat(chat)}
                     style={{ 
                       display: 'flex', 
                       padding: '12px 16px', 
@@ -272,50 +273,111 @@ const MessageOnlyHub = () => {
           </div>
         </div>
 
-        {/* Right Pane (WhatsApp Web Welcome) */}
-        <div style={{ 
-          flex: 1, 
-          background: '#f0f2f5', 
-          display: 'flex', 
-          flexDirection: 'column',
-          alignItems: 'center', 
-          justifyContent: 'center',
-          position: 'relative',
-          borderBottom: '6px solid #7c3aed'
-        }}>
-          {/* Subtle Background */}
-          <div style={{
-            position: 'absolute',
-            top: 0, left: 0, right: 0, bottom: 0,
-            backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")',
-            backgroundSize: 'cover',
-            opacity: 0.06,
-            pointerEvents: 'none'
-          }}></div>
-
-          <div style={{ textAlign: 'center', zIndex: 1, maxWidth: '460px', padding: '0 20px' }}>
-            <div style={{ marginBottom: '32px' }}>
-              <svg width="320" height="188" viewBox="0 0 320 188" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="20" y="20" width="280" height="148" rx="8" fill="#E9EDEF" />
-                <rect x="40" y="40" width="80" height="10" rx="5" fill="#D1D7DB" />
-                <rect x="40" y="60" width="240" height="8" rx="4" fill="#D1D7DB" />
-                <rect x="40" y="80" width="200" height="8" rx="4" fill="#D1D7DB" />
-                <circle cx="160" cy="120" r="20" fill="#7c3aed" opacity="0.8" />
-                <path d="M152 120L158 126L168 114" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+        {/* Right Pane */}
+        {activeChat ? (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#efeae2', position: 'relative' }}>
+            {/* Chat Header */}
+            <div style={{ padding: '10px 16px', background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #d1d7db', height: '60px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                <img src={activeChat.avatar} alt="Avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1rem', color: '#111b21', fontWeight: '500' }}>{activeChat.userName}</h3>
+                  <span style={{ fontSize: '0.8rem', color: '#667781' }}>click here for contact info</span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '20px', color: '#54656f' }}>
+                <Search size={24} style={{ cursor: 'pointer' }} />
+                <MoreVertical size={24} style={{ cursor: 'pointer' }} />
+              </div>
             </div>
-            <h1 style={{ fontSize: '2rem', color: '#41525d', fontWeight: '300', marginBottom: '18px' }}>Message Only Web</h1>
-            <p style={{ color: '#667781', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '32px' }}>
-              Send and receive automated messages without keeping your phone online.<br/>
-              Click on a platform from the left sidebar to start automating.
-            </p>
+
+            {/* Chat Messages */}
+            <div style={{ flex: 1, padding: '20px', overflowY: 'auto', backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")', backgroundSize: 'cover' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {/* Received Message */}
+                <div style={{ alignSelf: 'flex-start', maxWidth: '65%', background: '#ffffff', padding: '8px 12px', borderRadius: '8px 8px 8px 0', boxShadow: '0 1px 0.5px rgba(11,20,26,.13)', position: 'relative' }}>
+                  <div style={{ fontSize: '0.9rem', color: '#111b21', lineHeight: '19px' }}>{activeChat.lastMessage}</div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '4px', gap: '4px' }}>
+                    <span style={{ fontSize: '0.65rem', color: '#667781' }}>{activeChat.time}</span>
+                  </div>
+                </div>
+                
+                {/* Send a mock reply to show UI */}
+                {activeChat.unread === 0 && (
+                  <div style={{ alignSelf: 'flex-end', maxWidth: '65%', background: '#d9fdd3', padding: '8px 12px', borderRadius: '8px 8px 0 8px', boxShadow: '0 1px 0.5px rgba(11,20,26,.13)', position: 'relative' }}>
+                    <div style={{ fontSize: '0.9rem', color: '#111b21', lineHeight: '19px' }}>We have received your message. A representative will be with you shortly.</div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '4px', gap: '4px' }}>
+                      <span style={{ fontSize: '0.65rem', color: '#667781' }}>{activeChat.time}</span>
+                      <svg viewBox="0 0 16 16" width="16" height="16"><path fill="#53bdeb" d="M11.804 3.006l1.52-.468a.5.5 0 01.625.626l-.468 1.52a.5.5 0 01-.223.223l-3.323 1.88a10.957 10.957 0 01-2.905-2.904l1.88-3.324a.5.5 0 01.223-.223zM5.385 10.375l-1.88 3.323a.5.5 0 01-.625-.626l.468-1.52a.5.5 0 01.223-.223l3.323-1.88a10.957 10.957 0 012.905 2.904z"></path></svg>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Chat Input */}
+            <div style={{ padding: '10px 16px', background: '#f0f2f5', display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ display: 'flex', gap: '16px', color: '#54656f' }}>
+                <Smile size={26} style={{ cursor: 'pointer' }} />
+                <Paperclip size={24} style={{ cursor: 'pointer' }} />
+              </div>
+              <div style={{ flex: 1, background: '#ffffff', borderRadius: '8px', padding: '9px 12px' }}>
+                <input 
+                  type="text" 
+                  placeholder="Type a message" 
+                  style={{ width: '100%', border: 'none', outline: 'none', fontSize: '0.95rem', color: '#111b21' }} 
+                />
+              </div>
+              <div style={{ color: '#54656f', cursor: 'pointer' }}>
+                <Send size={24} />
+              </div>
+            </div>
           </div>
-          
-          <div style={{ position: 'absolute', bottom: '40px', display: 'flex', alignItems: 'center', gap: '6px', color: '#8696a0', fontSize: '0.8rem' }}>
-            <Lock size={12} />
-            <span>End-to-end encrypted</span>
+        ) : (
+          <div style={{ 
+            flex: 1, 
+            background: '#f0f2f5', 
+            display: 'flex', 
+            flexDirection: 'column',
+            alignItems: 'center', 
+            justifyContent: 'center',
+            position: 'relative',
+            borderBottom: '6px solid #7c3aed'
+          }}>
+            {/* Subtle Background */}
+            <div style={{
+              position: 'absolute',
+              top: 0, left: 0, right: 0, bottom: 0,
+              backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")',
+              backgroundSize: 'cover',
+              opacity: 0.06,
+              pointerEvents: 'none'
+            }}></div>
+
+            <div style={{ textAlign: 'center', zIndex: 1, maxWidth: '460px', padding: '0 20px' }}>
+              <div style={{ marginBottom: '32px' }}>
+                <svg width="320" height="188" viewBox="0 0 320 188" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="20" y="20" width="280" height="148" rx="8" fill="#E9EDEF" />
+                  <rect x="40" y="40" width="80" height="10" rx="5" fill="#D1D7DB" />
+                  <rect x="40" y="60" width="240" height="8" rx="4" fill="#D1D7DB" />
+                  <rect x="40" y="80" width="200" height="8" rx="4" fill="#D1D7DB" />
+                  <circle cx="160" cy="120" r="20" fill="#7c3aed" opacity="0.8" />
+                  <path d="M152 120L158 126L168 114" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <h1 style={{ fontSize: '2rem', color: '#41525d', fontWeight: '300', marginBottom: '18px' }}>Message Only Web</h1>
+              <p style={{ color: '#667781', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '32px' }}>
+                Send and receive automated messages without keeping your phone online.<br/>
+                Click on a chat to start responding.
+              </p>
+            </div>
+            
+            <div style={{ position: 'absolute', bottom: '40px', display: 'flex', alignItems: 'center', gap: '6px', color: '#8696a0', fontSize: '0.8rem' }}>
+              <Lock size={12} />
+              <span>End-to-end encrypted</span>
+            </div>
           </div>
-        </div>
+        )}
 
       </div>
     </div>
