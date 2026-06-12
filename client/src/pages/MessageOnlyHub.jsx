@@ -1,32 +1,92 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin, MapPin, Twitter, Search, MoreVertical, Plus, User, CircleDashed, Users, Lock, Send, Paperclip, Smile, Wand2, Bot, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { supabase } from '../supabase';
 
 const MessageOnlyHub = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [contacts, setContacts] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
-    const fetchSettings = async () => {
+    scrollToBottom();
+  }, [messages, activeChat]);
+
+  useEffect(() => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem('insta_agent_token');
-        const res = await fetch(`${API_BASE_URL}/api/settings`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await res.json();
-        setSettings(data);
+        const headers = { 'Authorization': `Bearer ${token}` };
+        const [settingsRes, contactsRes, messagesRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/settings`, { headers }),
+          fetch(`${API_BASE_URL}/api/contacts`, { headers }),
+          fetch(`${API_BASE_URL}/api/messages`, { headers })
+        ]);
+
+        if (settingsRes.ok) setSettings(await settingsRes.json());
+        if (contactsRes.ok) setContacts(await contactsRes.json());
+        if (messagesRes.ok) setMessages(await messagesRes.json());
       } catch (err) {
-        console.error("Failed to fetch settings:", err);
+        console.error("Failed to fetch data:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchSettings();
+    fetchData();
+
+    // SUPABASE REALTIME MESSAGE SUBSCRIPTION
+    let supabaseChannel = null;
+    try {
+      supabaseChannel = supabase
+        .channel('public:messages_hub')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'messages' },
+          (payload) => {
+            const rawMessage = payload.new;
+            const formattedMessage = {
+              ...rawMessage,
+              _id: rawMessage.id,
+              userId: rawMessage.userId || rawMessage.user_id,
+              timestamp: rawMessage.timestamp || rawMessage.created_at || new Date().toISOString(),
+              createdAt: rawMessage.created_at,
+              sender: rawMessage.sender,
+              text: rawMessage.text,
+              type: rawMessage.type,
+              chatId: rawMessage.chatId,
+              platform: rawMessage.platform
+            };
+
+            setMessages((prev) => {
+              const isDuplicate = prev.some(m => 
+                String(m._id) === String(formattedMessage._id) || 
+                (formattedMessage.tempId && String(m._id) === String(formattedMessage.tempId)) ||
+                (formattedMessage.tempId && String(m.tempId) === String(formattedMessage.tempId))
+              );
+              if (isDuplicate) return prev;
+              return [...prev, formattedMessage];
+            });
+          }
+        )
+        .subscribe();
+    } catch (e) {
+      console.error("Failed to initialize Supabase Realtime:", e);
+    }
+
+    return () => {
+      if (supabaseChannel) supabase.removeChannel(supabaseChannel);
+    };
   }, []);
 
   const platforms = [
@@ -144,23 +204,79 @@ const MessageOnlyHub = () => {
     }, 1200);
   };
 
-  const mockChats = [
-    { id: 1, platformId: 'instagram', userName: 'Alex Johnson', lastMessage: 'Is this product still available?', time: '10:30 AM', unread: 2, avatar: 'https://i.pravatar.cc/150?img=11' },
-    { id: 2, platformId: 'whatsapp', userName: 'Maria Garcia', lastMessage: 'Thanks for the info!', time: 'Yesterday', unread: 0, avatar: 'https://i.pravatar.cc/150?img=5' },
-    { id: 3, platformId: 'facebook', userName: 'David Smith', lastMessage: 'Can you help me with my order?', time: 'Tuesday', unread: 1, avatar: 'https://i.pravatar.cc/150?img=14' },
-    { id: 4, platformId: 'youtube', userName: 'Tech Enthusiast', lastMessage: 'Great video! Loved the review.', time: 'Monday', unread: 0, avatar: 'https://i.pravatar.cc/150?img=33' },
-    { id: 5, platformId: 'instagram', userName: 'Sarah Lee', lastMessage: 'Do you ship internationally?', time: '12:15 PM', unread: 3, avatar: 'https://i.pravatar.cc/150?img=9' },
-    { id: 6, platformId: 'twitter', userName: 'Crypto Fan', lastMessage: 'DM me the link please.', time: 'Sunday', unread: 0, avatar: 'https://i.pravatar.cc/150?img=12' },
-  ];
+  const handleSendMessage = async () => {
+    if (!draftMessage.trim() || !activeChat) return;
+
+    const tempId = Date.now().toString();
+    const msgData = {
+      sender: 'admin',
+      text: draftMessage,
+      type: 'sent',
+      chatId: activeChat.id,
+      platform: activeChat.platformId || 'instagram'
+    };
+
+    const tempMessage = { ...msgData, _id: tempId, tempId, timestamp: new Date().toISOString() };
+
+    setDraftMessage('');
+    setMessages(prev => [...prev, tempMessage]);
+
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ ...msgData, tempId })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setMessages(prev => prev.map(m => m._id === tempId ? data : m));
+      } else {
+        setMessages(prev => prev.filter(m => m._id !== tempId));
+      }
+    } catch (err) {
+      console.error("Failed to send message:", err);
+      setMessages(prev => prev.filter(m => m._id !== tempId));
+    }
+  };
+
+  // Derive real chats from messages and contacts
+  const realChatsObj = messages.reduce((acc, m) => {
+    if (!m.chatId) return acc;
+    if (!acc[m.chatId]) {
+      const contact = contacts.find(c => c.chatId === m.chatId) || {};
+      let name = contact.name || contact.username;
+      if (!name) {
+        if (m.chatId === 'ai_bot_support') name = 'Support Chat';
+        else name = `User ${m.chatId.substring(0, 6)}`;
+      }
+      
+      acc[m.chatId] = {
+        id: m.chatId,
+        platformId: m.platform || contact.platform || 'instagram',
+        userName: name,
+        lastMessage: m.text,
+        time: new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        unread: contact.unreadCount || 0,
+        avatar: contact.profilePicUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
+      };
+    } else {
+      acc[m.chatId].lastMessage = m.text;
+      acc[m.chatId].time = new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }
+    return acc;
+  }, {});
+
+  const allRealChats = Object.values(realChatsObj).reverse(); // newest first if messages was asc
 
   if (loading) return <LoadingSpinner minHeight="60vh" />;
 
   const connectedPlatforms = platforms.filter(p => p.isConnected);
 
   // Filter chats by both connected platforms and the selected dropdown option
-  const visibleChats = mockChats.filter(chat => {
+  const visibleChats = allRealChats.filter(chat => {
     const isPlatformConnected = connectedPlatforms.some(p => p.id === chat.platformId);
-    if (!isPlatformConnected) return false;
+    if (!isPlatformConnected && chat.id !== 'ai_bot_support') return false;
     if (selectedPlatform === 'all') return true;
     return chat.platformId === selectedPlatform;
   });
@@ -333,24 +449,38 @@ const MessageOnlyHub = () => {
             {/* Chat Messages */}
             <div style={{ flex: 1, padding: '20px', overflowY: 'auto', backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")', backgroundSize: 'cover' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {/* Received Message */}
-                <div style={{ alignSelf: 'flex-start', maxWidth: '65%', background: '#ffffff', padding: '8px 12px', borderRadius: '8px 8px 8px 0', boxShadow: '0 1px 0.5px rgba(11,20,26,.13)', position: 'relative' }}>
-                  <div style={{ fontSize: '0.9rem', color: '#111b21', lineHeight: '19px' }}>{activeChat.lastMessage}</div>
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '4px', gap: '4px' }}>
-                    <span style={{ fontSize: '0.65rem', color: '#667781' }}>{activeChat.time}</span>
-                  </div>
-                </div>
-                
-                {/* Send a mock reply to show UI */}
-                {activeChat.unread === 0 && (
-                  <div style={{ alignSelf: 'flex-end', maxWidth: '65%', background: '#d9fdd3', padding: '8px 12px', borderRadius: '8px 8px 0 8px', boxShadow: '0 1px 0.5px rgba(11,20,26,.13)', position: 'relative' }}>
-                    <div style={{ fontSize: '0.9rem', color: '#111b21', lineHeight: '19px' }}>We have received your message. A representative will be with you shortly.</div>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '4px', gap: '4px' }}>
-                      <span style={{ fontSize: '0.65rem', color: '#667781' }}>{activeChat.time}</span>
-                      <svg viewBox="0 0 16 16" width="16" height="16"><path fill="#53bdeb" d="M11.804 3.006l1.52-.468a.5.5 0 01.625.626l-.468 1.52a.5.5 0 01-.223.223l-3.323 1.88a10.957 10.957 0 01-2.905-2.904l1.88-3.324a.5.5 0 01.223-.223zM5.385 10.375l-1.88 3.323a.5.5 0 01-.625-.626l.468-1.52a.5.5 0 01.223-.223l3.323-1.88a10.957 10.957 0 012.905 2.904z"></path></svg>
+                {messages.filter(m => m.chatId === activeChat.id).map((msg, index) => {
+                  const isSentByMe = msg.sender === 'admin' || msg.sender === 'AI Agent';
+                  return (
+                    <div 
+                      key={msg._id || index} 
+                      style={{ 
+                        alignSelf: isSentByMe ? 'flex-end' : 'flex-start', 
+                        maxWidth: '65%', 
+                        background: isSentByMe ? '#d9fdd3' : '#ffffff', 
+                        padding: '8px 12px', 
+                        borderRadius: isSentByMe ? '8px 8px 0 8px' : '8px 8px 8px 0', 
+                        boxShadow: '0 1px 0.5px rgba(11,20,26,.13)', 
+                        position: 'relative',
+                        borderTop: msg.sender === 'AI Agent' ? '2px solid #7c3aed' : 'none'
+                      }}
+                    >
+                      {msg.sender === 'AI Agent' && (
+                        <div style={{ fontSize: '0.65rem', color: '#7c3aed', fontWeight: 'bold', marginBottom: '2px' }}>🤖 AI Agent</div>
+                      )}
+                      <div style={{ fontSize: '0.9rem', color: '#111b21', lineHeight: '19px', wordBreak: 'break-word' }}>{msg.text}</div>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '4px', gap: '4px' }}>
+                        <span style={{ fontSize: '0.65rem', color: '#667781' }}>
+                          {new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        </span>
+                        {isSentByMe && (
+                          <svg viewBox="0 0 16 16" width="16" height="16"><path fill="#53bdeb" d="M11.804 3.006l1.52-.468a.5.5 0 01.625.626l-.468 1.52a.5.5 0 01-.223.223l-3.323 1.88a10.957 10.957 0 01-2.905-2.904l1.88-3.324a.5.5 0 01.223-.223zM5.385 10.375l-1.88 3.323a.5.5 0 01-.625-.626l.468-1.52a.5.5 0 01.223-.223l3.323-1.88a10.957 10.957 0 012.905 2.904z"></path></svg>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })}
+                <div ref={messagesEndRef} />
               </div>
             </div>
 
@@ -366,6 +496,7 @@ const MessageOnlyHub = () => {
                   placeholder="Type a message" 
                   value={draftMessage}
                   onChange={(e) => setDraftMessage(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                   style={{ flex: 1, border: 'none', outline: 'none', fontSize: '0.95rem', color: '#111b21', width: '100%' }} 
                 />
                 {isAiEnabled && (
@@ -383,7 +514,10 @@ const MessageOnlyHub = () => {
                   </div>
                 )}
               </div>
-              <div style={{ color: draftMessage ? '#7c3aed' : '#54656f', cursor: 'pointer' }}>
+              <div 
+                style={{ color: draftMessage.trim() ? '#7c3aed' : '#54656f', cursor: draftMessage.trim() ? 'pointer' : 'default' }}
+                onClick={() => draftMessage.trim() && handleSendMessage()}
+              >
                 <Send size={24} />
               </div>
             </div>
