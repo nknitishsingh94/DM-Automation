@@ -3,7 +3,7 @@ import { X, Crown, Sparkles, Zap, Waypoints } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const templatesData = [
-  { id: "auto_dm_links", title: "Auto-DM links from comments", desc: "Send a link when people comment on a post or reel", type: "Quick Automation", recommended: true },
+  { id: "comments", title: "Auto-DM links from comments", desc: "Send a link when people comment on a post or reel", type: "Flow Builder", recommended: true },
   { id: "gen_leads_stories", title: "Generate leads with stories", desc: "Use limited-time offers in your Stories to convert leads", type: "Quick Automation" },
   { id: "respond_all_dms", title: "Respond to all your DMs", desc: "Auto-send customized replies when people DM you", type: "Quick Automation" },
   { id: "grow_followers_comments_quick", title: "Grow followers from comments", desc: "Incentivize a follow to grow your account", type: "Quick Automation", upgrade: true },
