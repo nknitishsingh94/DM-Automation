@@ -116,9 +116,26 @@ const MessageOnlyHub = () => {
 
   const [selectedPlatform, setSelectedPlatform] = useState('all');
 
+  const mockChats = [
+    { id: 1, platformId: 'instagram', userName: 'Alex Johnson', lastMessage: 'Is this product still available?', time: '10:30 AM', unread: 2, avatar: 'https://i.pravatar.cc/150?img=11' },
+    { id: 2, platformId: 'whatsapp', userName: 'Maria Garcia', lastMessage: 'Thanks for the info!', time: 'Yesterday', unread: 0, avatar: 'https://i.pravatar.cc/150?img=5' },
+    { id: 3, platformId: 'facebook', userName: 'David Smith', lastMessage: 'Can you help me with my order?', time: 'Tuesday', unread: 1, avatar: 'https://i.pravatar.cc/150?img=14' },
+    { id: 4, platformId: 'youtube', userName: 'Tech Enthusiast', lastMessage: 'Great video! Loved the review.', time: 'Monday', unread: 0, avatar: 'https://i.pravatar.cc/150?img=33' },
+    { id: 5, platformId: 'instagram', userName: 'Sarah Lee', lastMessage: 'Do you ship internationally?', time: '12:15 PM', unread: 3, avatar: 'https://i.pravatar.cc/150?img=9' },
+    { id: 6, platformId: 'twitter', userName: 'Crypto Fan', lastMessage: 'DM me the link please.', time: 'Sunday', unread: 0, avatar: 'https://i.pravatar.cc/150?img=12' },
+  ];
+
   if (loading) return <LoadingSpinner minHeight="60vh" />;
 
   const connectedPlatforms = platforms.filter(p => p.isConnected);
+
+  // Filter chats by both connected platforms and the selected dropdown option
+  const visibleChats = mockChats.filter(chat => {
+    const isPlatformConnected = connectedPlatforms.some(p => p.id === chat.platformId);
+    if (!isPlatformConnected) return false;
+    if (selectedPlatform === 'all') return true;
+    return chat.platformId === selectedPlatform;
+  });
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: '#e0e0de', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
@@ -180,7 +197,7 @@ const MessageOnlyHub = () => {
             </div>
           </div>
 
-          {/* Platforms List */}
+          {/* Chats / Users List */}
           <div style={{ flex: 1, overflowY: 'auto', background: '#ffffff' }}>
             {connectedPlatforms.length === 0 ? (
               <div style={{ padding: '40px 20px', textAlign: 'center', color: '#667781' }}>
@@ -193,46 +210,64 @@ const MessageOnlyHub = () => {
                   Connect in Settings
                 </button>
               </div>
+            ) : visibleChats.length === 0 ? (
+              <div style={{ padding: '40px 20px', textAlign: 'center', color: '#667781' }}>
+                <p>No recent messages found.</p>
+              </div>
             ) : (
-              connectedPlatforms.filter(p => selectedPlatform === 'all' || p.id === selectedPlatform).map((platform) => (
-                <div 
-                  key={platform.id}
-                  onClick={() => navigate(`/platform/${platform.id}`)}
-                  style={{ 
-                    display: 'flex', 
-                    padding: '12px 16px', 
-                    cursor: 'pointer', 
-                    transition: 'background 0.2s',
-                    alignItems: 'center',
-                    gap: '16px'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = '#f5f6f6'}
-                  onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
-                >
-                  {/* Icon */}
-                  <div style={{ 
-                    width: '50px', height: '50px', borderRadius: '50%', 
-                    background: platform.gradient, 
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'white', flexShrink: 0
-                  }}>
-                    {platform.icon}
-                  </div>
-                  
-                  {/* Text Content */}
-                  <div style={{ flex: 1, borderBottom: '1px solid #f2f2f2', paddingBottom: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '1.05rem', color: '#111b21', fontWeight: '400' }}>{platform.name}</span>
-                      <span style={{ fontSize: '0.75rem', color: '#667781' }}>Yesterday</span>
+              visibleChats.map((chat) => {
+                const plat = platforms.find(p => p.id === chat.platformId);
+                return (
+                  <div 
+                    key={chat.id}
+                    onClick={() => navigate(`/platform/${chat.platformId}`)}
+                    style={{ 
+                      display: 'flex', 
+                      padding: '12px 16px', 
+                      cursor: 'pointer', 
+                      transition: 'background 0.2s',
+                      alignItems: 'center',
+                      gap: '16px'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = '#f5f6f6'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    {/* User Avatar with Platform Badge */}
+                    <div style={{ position: 'relative', flexShrink: 0 }}>
+                      <img src={chat.avatar} alt={chat.userName} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} />
+                      <div style={{ 
+                        position: 'absolute', bottom: -2, right: -2, 
+                        width: '20px', height: '20px', borderRadius: '50%', 
+                        background: plat?.gradient || '#ccc', 
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: 'white', border: '2px solid white'
+                      }}>
+                        <div style={{ transform: 'scale(0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {plat?.icon}
+                        </div>
+                      </div>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.85rem', color: '#667781', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
-                        {platform.accountName}
-                      </span>
+                    
+                    {/* Chat Content */}
+                    <div style={{ flex: 1, borderBottom: '1px solid #f2f2f2', paddingBottom: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2px' }}>
+                        <span style={{ fontSize: '1.05rem', color: '#111b21', fontWeight: chat.unread > 0 ? '600' : '400' }}>{chat.userName}</span>
+                        <span style={{ fontSize: '0.75rem', color: chat.unread > 0 ? '#00a884' : '#667781', fontWeight: chat.unread > 0 ? '600' : '400' }}>{chat.time}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.85rem', color: '#667781', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
+                          {chat.lastMessage}
+                        </span>
+                        {chat.unread > 0 && (
+                          <div style={{ background: '#00a884', color: 'white', fontSize: '0.7rem', fontWeight: 'bold', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {chat.unread}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
