@@ -11,6 +11,17 @@ import Settings from '../models/Settings.js';
  */
 export const sendMessageToInstagram = async (platform, recipientId, text, mediaUrl = '', userId = null, buttonText = '', manualToken = null, buttons = [], buttonPayload = '', commentId = null) => {
   try {
+    if (platform === 'whatsapp') {
+      let waText = text || '';
+      if (buttonText) waText += `\n\n👉 Options:\n- ${buttonText}`;
+      if (buttons && buttons.length > 0) {
+        buttons.forEach(b => {
+          waText += `\n- ${b.text}`;
+        });
+      }
+      return await sendWhatsAppMessage(recipientId, waText, userId);
+    }
+
     let accessToken = manualToken;
     if (!accessToken && userId) {
       const userSettings = await Settings.findOne({ userId });
@@ -175,6 +186,27 @@ export const sendPublicComment = async (platform, commentId, text, userId = null
     await axios.post(url, { message: text, access_token: accessToken });
     return true;
   } catch (err) {
+    return false;
+  }
+};
+
+export const checkFollowerStatus = async (platform, chatId, userId, preloadedSettings = null) => {
+  if (platform !== 'instagram') return false;
+
+  try {
+    const userSettings = preloadedSettings || await Settings.findOne({ userId });
+    if (!userSettings || !userSettings.instagramAccessToken) {
+      console.log("⚠️ Missing credentials for follow check. Defaulting to false.");
+      return false;
+    }
+
+    const res = await axios.get(`https://graph.facebook.com/v19.0/${chatId}?fields=is_user_follow_business&access_token=${userSettings.instagramAccessToken}`, {
+      timeout: 5000 
+    });
+
+    return !!(res.data && res.data.is_user_follow_business === true);
+  } catch (err) {
+    console.warn("⚠️ Follow check API failed:", err.response?.data || err.message);
     return false;
   }
 };
