@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin, MapPin, Twitter, Search, MoreVertical, Plus, User, CircleDashed, Users, Lock, Send, Paperclip, Smile } from 'lucide-react';
+import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin, MapPin, Twitter, Search, MoreVertical, Plus, User, CircleDashed, Users, Lock, Send, Paperclip, Smile, Wand2, Bot, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -116,6 +116,33 @@ const MessageOnlyHub = () => {
 
   const [selectedPlatform, setSelectedPlatform] = useState('all');
   const [activeChat, setActiveChat] = useState(null);
+  
+  // AI States
+  const [isAiEnabled, setIsAiEnabled] = useState(false);
+  const [showAiSettings, setShowAiSettings] = useState(false);
+  const [draftMessage, setDraftMessage] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiContext, setAiContext] = useState({
+    businessName: 'Insta AI',
+    businessDescription: 'We provide AI automation services and software for businesses.',
+    tone: 'Professional and helpful'
+  });
+
+  const handleGenerateAiResponse = () => {
+    if (!activeChat || !isAiEnabled) return;
+    setIsGenerating(true);
+    // Simulate AI generation delay
+    setTimeout(() => {
+      const responses = [
+        `Hi ${activeChat.userName.split(' ')[0]}! Thanks for reaching out to ${aiContext.businessName}. Based on what you said: "${activeChat.lastMessage}", we can definitely help with that. ${aiContext.businessDescription} Let me know if you need more details!`,
+        `Hello! I'd be happy to assist you with "${activeChat.lastMessage}". At ${aiContext.businessName}, we specialize in this. How else can I help?`,
+        `Hi there! Thanks for your message. I can confirm we can help you with that. Feel free to ask any other questions.`
+      ];
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      setDraftMessage(randomResponse);
+      setIsGenerating(false);
+    }, 1200);
+  };
 
   const mockChats = [
     { id: 1, platformId: 'instagram', userName: 'Alex Johnson', lastMessage: 'Is this product still available?', time: '10:30 AM', unread: 2, avatar: 'https://i.pravatar.cc/150?img=11' },
@@ -181,8 +208,22 @@ const MessageOnlyHub = () => {
                 ))}
               </select>
             </div>
-            <div style={{ display: 'flex', gap: '20px', color: '#54656f' }}>
-              <MoreVertical size={24} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#54656f' }}>
+              {/* AI Toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', background: isAiEnabled ? '#f3e8ff' : '#f0f2f5', padding: '4px 10px', borderRadius: '20px', border: `1px solid ${isAiEnabled ? '#d8b4fe' : '#d1d7db'}` }}>
+                <Bot size={16} color={isAiEnabled ? '#7c3aed' : '#54656f'} style={{ marginRight: '6px' }} />
+                <span style={{ fontSize: '0.8rem', fontWeight: 'bold', color: isAiEnabled ? '#7c3aed' : '#54656f', marginRight: '8px' }}>AI Reply</span>
+                <div 
+                  onClick={() => setIsAiEnabled(!isAiEnabled)}
+                  style={{ width: '32px', height: '18px', background: isAiEnabled ? '#7c3aed' : '#d1d7db', borderRadius: '10px', position: 'relative', cursor: 'pointer', transition: '0.3s' }}
+                >
+                  <div style={{ width: '14px', height: '14px', background: 'white', borderRadius: '50%', position: 'absolute', top: '2px', left: isAiEnabled ? '16px' : '2px', transition: '0.3s' }}></div>
+                </div>
+                {isAiEnabled && (
+                  <SettingsIcon size={14} color="#7c3aed" style={{ marginLeft: '8px', cursor: 'pointer' }} onClick={() => setShowAiSettings(true)} />
+                )}
+              </div>
+              <MoreVertical size={24} style={{ cursor: 'pointer' }} />
             </div>
           </div>
 
@@ -321,14 +362,30 @@ const MessageOnlyHub = () => {
                 <Smile size={26} style={{ cursor: 'pointer' }} />
                 <Paperclip size={24} style={{ cursor: 'pointer' }} />
               </div>
-              <div style={{ flex: 1, background: '#ffffff', borderRadius: '8px', padding: '9px 12px' }}>
+              <div style={{ flex: 1, background: '#ffffff', borderRadius: '8px', padding: '9px 12px', display: 'flex', alignItems: 'center' }}>
                 <input 
                   type="text" 
                   placeholder="Type a message" 
-                  style={{ width: '100%', border: 'none', outline: 'none', fontSize: '0.95rem', color: '#111b21' }} 
+                  value={draftMessage}
+                  onChange={(e) => setDraftMessage(e.target.value)}
+                  style={{ flex: 1, border: 'none', outline: 'none', fontSize: '0.95rem', color: '#111b21', width: '100%' }} 
                 />
+                {isAiEnabled && (
+                  <div 
+                    onClick={handleGenerateAiResponse}
+                    style={{ 
+                      display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', 
+                      background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', 
+                      padding: '4px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold',
+                      opacity: isGenerating ? 0.7 : 1, pointerEvents: isGenerating ? 'none' : 'auto'
+                    }}
+                  >
+                    <Wand2 size={14} className={isGenerating ? "animate-pulse" : ""} />
+                    {isGenerating ? "Thinking..." : "AI Reply"}
+                  </div>
+                )}
               </div>
-              <div style={{ color: '#54656f', cursor: 'pointer' }}>
+              <div style={{ color: draftMessage ? '#7c3aed' : '#54656f', cursor: 'pointer' }}>
                 <Send size={24} />
               </div>
             </div>
@@ -380,6 +437,72 @@ const MessageOnlyHub = () => {
         )}
 
       </div>
+
+      {/* AI Settings Modal */}
+      {showAiSettings && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: 'white', padding: '32px', borderRadius: '16px', width: '500px', maxWidth: '90%', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#111b21', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Bot size={24} color="#7c3aed" />
+                AI Auto-Reply Settings
+              </h2>
+              <X size={24} color="#667781" style={{ cursor: 'pointer' }} onClick={() => setShowAiSettings(false)} />
+            </div>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: '#41525d', fontWeight: 'bold' }}>Business Name</label>
+              <input 
+                type="text" 
+                value={aiContext.businessName}
+                onChange={(e) => setAiContext({...aiContext, businessName: e.target.value})}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d7db', fontSize: '0.95rem', outline: 'none' }}
+              />
+            </div>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: '#41525d', fontWeight: 'bold' }}>Business Description & Knowledge</label>
+              <textarea 
+                value={aiContext.businessDescription}
+                onChange={(e) => setAiContext({...aiContext, businessDescription: e.target.value})}
+                rows={4}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d7db', fontSize: '0.95rem', outline: 'none', resize: 'none' }}
+                placeholder="Enter what your business does, products, prices, etc."
+              />
+            </div>
+            
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: '#41525d', fontWeight: 'bold' }}>AI Tone</label>
+              <select 
+                value={aiContext.tone}
+                onChange={(e) => setAiContext({...aiContext, tone: e.target.value})}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d7db', fontSize: '0.95rem', outline: 'none', background: 'white' }}
+              >
+                <option value="Professional and helpful">Professional & Helpful</option>
+                <option value="Friendly and casual">Friendly & Casual</option>
+                <option value="Persuasive and sales-oriented">Persuasive & Sales-oriented</option>
+                <option value="Short and direct">Short & Direct</option>
+              </select>
+            </div>
+            
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+              <button 
+                onClick={() => setShowAiSettings(false)}
+                style={{ padding: '10px 20px', background: '#f0f2f5', color: '#54656f', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => setShowAiSettings(false)}
+                style={{ padding: '10px 20px', background: '#7c3aed', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                Save AI Context
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
