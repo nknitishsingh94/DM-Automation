@@ -608,7 +608,13 @@ export default function DmAutomationEditor() {
            {/* Section -1: Navigation & Name */}
            <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '10px', position: 'relative', zIndex: 1 }}>
               <button 
-                onClick={() => navigate(-1)} 
+                onClick={() => {
+                  if (!isEditMode && template) {
+                    navigate(`/template-selector?channel=${selectedPlatform}`);
+                  } else {
+                    navigate(`/campaigns?platform=${selectedPlatform}`);
+                  }
+                }} 
                 onMouseEnter={(e) => { e.target.style.background = '#f1f5f9'; e.target.style.transform = 'translateX(-4px)'; }}
                 onMouseLeave={(e) => { e.target.style.background = 'white'; e.target.style.transform = 'translateX(0)'; }}
                 style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: '16px', padding: '12px', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}
