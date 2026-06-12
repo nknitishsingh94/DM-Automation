@@ -15,6 +15,20 @@ const MessageOnlyHub = () => {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
 
+  const [selectedPlatform, setSelectedPlatform] = useState('all');
+  const [activeChat, setActiveChat] = useState(null);
+  
+  // AI States
+  const [isAiEnabled, setIsAiEnabled] = useState(false);
+  const [showAiSettings, setShowAiSettings] = useState(false);
+  const [draftMessage, setDraftMessage] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiContext, setAiContext] = useState({
+    businessName: 'Insta AI',
+    businessDescription: 'We provide AI automation services and software for businesses.',
+    tone: 'Professional and helpful'
+  });
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -174,20 +188,7 @@ const MessageOnlyHub = () => {
     }
   ];
 
-  const [selectedPlatform, setSelectedPlatform] = useState('all');
-  const [activeChat, setActiveChat] = useState(null);
-  
-  // AI States
-  const [isAiEnabled, setIsAiEnabled] = useState(false);
-  const [showAiSettings, setShowAiSettings] = useState(false);
-  const [draftMessage, setDraftMessage] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [aiContext, setAiContext] = useState({
-    businessName: 'Insta AI',
-    businessDescription: 'We provide AI automation services and software for businesses.',
-    tone: 'Professional and helpful'
-  });
-
+  // End of platforms array
   const handleGenerateAiResponse = () => {
     if (!activeChat || !isAiEnabled) return;
     setIsGenerating(true);
