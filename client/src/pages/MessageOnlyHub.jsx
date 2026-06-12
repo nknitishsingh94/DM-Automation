@@ -118,8 +118,7 @@ const MessageOnlyHub = () => {
 
   if (loading) return <LoadingSpinner minHeight="60vh" />;
 
-  const messageIds = ['whatsapp', 'youtube', 'linkedin', 'google-business', 'twitter'];
-  const connectedPlatforms = platforms.filter(p => p.isConnected && messageIds.includes(p.id));
+  const connectedPlatforms = platforms.filter(p => p.isConnected);
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: '#e0e0de', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
@@ -159,7 +158,7 @@ const MessageOnlyHub = () => {
                 }}
               >
                 <option value="all">All Platforms</option>
-                {platforms.filter(p => p.isConnected && messageIds.includes(p.id)).map(p => (
+                {platforms.filter(p => p.isConnected).map(p => (
                   <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
               </select>
