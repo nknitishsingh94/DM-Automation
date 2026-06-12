@@ -128,18 +128,17 @@ const MessageOnlyHub = () => {
           
           {/* Header */}
           <div style={{ background: '#f0f2f5', padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#dfe5e7', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-              {user?.profilePicture ? (
-                <img src={user.profilePicture} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <User size={24} color="#aebac1" />
-              )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#dfe5e7', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                {user?.profilePhoto ? (
+                  <img src={user.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <User size={24} color="#aebac1" />
+                )}
+              </div>
+              <h2 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#111b21', margin: 0 }}>All Platforms</h2>
             </div>
             <div style={{ display: 'flex', gap: '20px', color: '#54656f' }}>
-              <Users size={24} />
-              <CircleDashed size={24} />
-              <MessageSquare size={24} />
-              <Plus size={24} />
               <MoreVertical size={24} />
             </div>
           </div>
