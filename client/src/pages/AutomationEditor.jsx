@@ -69,7 +69,7 @@ export default function AutomationEditor() {
   const [isEditMode, setIsEditMode] = useState(!!id && id !== 'new');
 
   React.useEffect(() => {
-    if (!id && template) {
+    if ((!id || id === 'new') && template) {
       if (template === 'auto_dm_links' || template === 'comments') {
         setName('Auto-DM Links');
         setTriggerOnComments(true);
