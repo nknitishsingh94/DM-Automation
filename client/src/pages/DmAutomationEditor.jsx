@@ -610,7 +610,7 @@ export default function DmAutomationEditor() {
               <button 
                 onClick={() => {
                   if (!isEditMode && template) {
-                    navigate(`/template-selector?channel=${selectedPlatform}`);
+                    navigate(`/campaigns?openTemplates=true`);
                   } else {
                     navigate(`/campaigns?platform=${selectedPlatform}`);
                   }

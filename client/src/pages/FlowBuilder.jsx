@@ -338,7 +338,17 @@ export default function FlowBuilder() {
       {/* ManyChat Style Top Header */}
       <div style={{ height: '60px', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', zIndex: 20, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#64748b' }}>
+          <button 
+            onClick={() => {
+              const params = new URLSearchParams(location.search);
+              if (id === 'new' && params.get('template')) {
+                navigate('/campaigns?openTemplates=true');
+              } else {
+                navigate('/campaigns');
+              }
+            }} 
+            style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#64748b' }}
+          >
             <ArrowLeft size={20} />
           </button>
           <input 
