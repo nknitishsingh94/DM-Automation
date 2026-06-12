@@ -164,7 +164,7 @@ const MessageOnlyHub = () => {
                 <p>No platforms connected yet.</p>
                 <button 
                   onClick={() => navigate('/settings')}
-                  style={{ marginTop: '16px', padding: '8px 24px', background: '#00a884', color: 'white', border: 'none', borderRadius: '24px', cursor: 'pointer', fontWeight: 'bold' }}
+                  style={{ marginTop: '16px', padding: '8px 24px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', borderRadius: '24px', cursor: 'pointer', fontWeight: 'bold' }}
                 >
                   Connect in Settings
                 </button>
@@ -222,7 +222,7 @@ const MessageOnlyHub = () => {
           alignItems: 'center', 
           justifyContent: 'center',
           position: 'relative',
-          borderBottom: '6px solid #43c960'
+          borderBottom: '6px solid #7c3aed'
         }}>
           {/* Subtle Background */}
           <div style={{
@@ -241,7 +241,7 @@ const MessageOnlyHub = () => {
                 <rect x="40" y="40" width="80" height="10" rx="5" fill="#D1D7DB" />
                 <rect x="40" y="60" width="240" height="8" rx="4" fill="#D1D7DB" />
                 <rect x="40" y="80" width="200" height="8" rx="4" fill="#D1D7DB" />
-                <circle cx="160" cy="120" r="20" fill="#00A884" opacity="0.8" />
+                <circle cx="160" cy="120" r="20" fill="#7c3aed" opacity="0.8" />
                 <path d="M152 120L158 126L168 114" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
