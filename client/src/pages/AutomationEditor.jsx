@@ -163,6 +163,11 @@ export default function AutomationEditor() {
             if (data.triggerOnDms !== undefined) setTriggerOnDms(data.triggerOnDms);
             if (data.triggerOnComments !== undefined) setTriggerOnComments(data.triggerOnComments);
             if (data.triggerOnStories !== undefined) setTriggerOnStories(data.triggerOnStories);
+
+            // Backwards compatibility for older campaigns without trigger flags
+            if (data.triggerOnDms === undefined && data.triggerOnComments === undefined && data.triggerOnStories === undefined) {
+              setTriggerOnComments(true);
+            }
             if (data.isAI !== undefined) setIsAI(data.isAI);
             if (data.isAnyPost !== undefined) setAnyStory(data.isAnyPost);
             if (data.postId) setSelectedContentId(data.postId);
@@ -192,7 +197,7 @@ export default function AutomationEditor() {
     try {
       const token = localStorage.getItem('insta_agent_token');
       const apiPath = selectedPlatform === 'facebook' ? '/api/facebook/media' : '/api/instagram/media';
-      const res = await fetch(`${API_BASE_URL}${apiPath}?type=${template === 'stories' ? 'stories' : 'media'}`, {
+      const res = await fetch(`${API_BASE_URL}${apiPath}?type=${triggerOnStories ? 'stories' : 'media'}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -212,7 +217,7 @@ export default function AutomationEditor() {
     if (!anyStory && (selectedPlatform === 'instagram' || selectedPlatform === 'facebook')) {
       fetchRealMedia();
     }
-  }, [anyStory, template, selectedPlatform]);
+  }, [anyStory, template, selectedPlatform, triggerOnStories]);
 
   React.useEffect(() => {
     const fetchSettings = async () => {
@@ -864,7 +869,7 @@ export default function AutomationEditor() {
               </div>
             </div>
                {/* Step 2: Select a Post (Restored) */}
-            {!isUniversal && (
+            {(triggerOnComments || triggerOnStories) && !isUniversal && (
               <div style={{ marginBottom: '18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                   <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>2</div>
