@@ -223,7 +223,6 @@ const MessageOnlyHub = () => {
                   <SettingsIcon size={14} color="#7c3aed" style={{ marginLeft: '8px', cursor: 'pointer' }} onClick={() => setShowAiSettings(true)} />
                 )}
               </div>
-              <MoreVertical size={24} style={{ cursor: 'pointer' }} />
             </div>
           </div>
 
@@ -328,7 +327,6 @@ const MessageOnlyHub = () => {
               </div>
               <div style={{ display: 'flex', gap: '20px', color: '#54656f' }}>
                 <Search size={24} style={{ cursor: 'pointer' }} />
-                <MoreVertical size={24} style={{ cursor: 'pointer' }} />
               </div>
             </div>
 
