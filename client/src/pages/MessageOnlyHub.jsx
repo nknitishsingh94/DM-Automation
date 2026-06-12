@@ -120,7 +120,7 @@ const MessageOnlyHub = () => {
   const connectedPlatforms = platforms.filter(p => p.isConnected && messageIds.includes(p.id));
 
   return (
-    <div style={{ display: 'flex', height: 'calc(100vh - 64px)', background: '#e0e0de', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div style={{ display: 'flex', height: '100vh', background: '#e0e0de', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <div style={{ display: 'flex', width: '100%', maxWidth: '1600px', margin: '0 auto', background: '#ffffff', boxShadow: '0 6px 18px rgba(0,0,0,0.05)' }}>
         
         {/* Left Sidebar (Chats List) */}

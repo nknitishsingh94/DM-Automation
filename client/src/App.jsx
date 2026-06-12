@@ -679,7 +679,8 @@ function MainLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isPublic = ['/', '/public-home', '/login', '/signup', '/help', '/about', '/resources', '/blog', '/reviews'].includes(location.pathname) || location.pathname.startsWith('/blog/');
   const isEditor = ['/dm-automation-editor', '/automation-editor'].includes(location.pathname);
-  const hideSidebar = isPublic || isEditor;
+  const isMessageOnlyHub = location.pathname === '/hub/message-only';
+  const hideSidebar = isPublic || isEditor || isMessageOnlyHub;
   const hideTopBar = hideSidebar || isEditor || location.pathname === '/universal-triggers' || location.pathname === '/scheduling';
 
   return (
@@ -688,8 +689,8 @@ function MainLayout() {
       <main className="main-content">
         {!hideTopBar && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
         <div className="page-container" style={{ 
-          padding: (isPublic || ['/inbox', '/universal-triggers', '/scheduling'].includes(location.pathname)) ? '0' : undefined,
-          overflow: (['/inbox', '/universal-triggers', '/scheduling'].includes(location.pathname)) ? 'hidden' : 'auto',
+          padding: (isPublic || ['/inbox', '/universal-triggers', '/scheduling', '/hub/message-only'].includes(location.pathname)) ? '0' : undefined,
+          overflow: (['/inbox', '/universal-triggers', '/scheduling', '/hub/message-only'].includes(location.pathname)) ? 'hidden' : 'auto',
           display: 'flex',
           flexDirection: 'column'
         }}>
