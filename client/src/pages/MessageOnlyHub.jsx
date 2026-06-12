@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin, MapPin, Twitter } from 'lucide-react';
+import { Instagram, MessageCircle, Phone, ArrowRight, Settings as SettingsIcon, Zap, MessageSquare, Youtube, Linkedin, MapPin, Twitter, Search, MoreVertical, Plus, User, CircleDashed, Users, Lock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -120,96 +120,145 @@ const MessageOnlyHub = () => {
   const connectedPlatforms = platforms.filter(p => p.isConnected && messageIds.includes(p.id));
 
   return (
-    <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
-      <div style={{ marginBottom: '20px' }}>
-      </div>
-
-      {connectedPlatforms.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '60px 20px', background: 'white', borderRadius: '24px', border: '1px dashed #cbd5e1' }}>
-          <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#f1f5f9', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-            <SettingsIcon size={28} />
-          </div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>No Platforms Connected</h2>
-          <p style={{ color: '#64748b', marginBottom: '24px', maxWidth: '400px', margin: '0 auto 24px' }}>
-            You haven't connected any social media accounts yet. Head over to settings to connect Instagram or Facebook to get started.
-          </p>
-          <button 
-            onClick={() => navigate('/settings')}
-            style={{ padding: '12px 24px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)' }}
-          >
-            Connect Account Now
-          </button>
-        </div>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
-          {connectedPlatforms.map((platform) => (
-            <div 
-              key={platform.id}
-              onClick={() => navigate(`/platform/${platform.id}`)}
-              style={{ 
-                background: '#ffffff',
-                borderRadius: '24px',
-                border: `1px solid ${platform.color}40`,
-                padding: '24px',
-                cursor: 'pointer',
-                position: 'relative',
-                overflow: 'hidden',
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: `0 10px 40px -10px ${platform.color}30`,
-                transform: 'translateY(0)'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)';
-                e.currentTarget.style.boxShadow = `0 20px 40px -10px ${platform.color}40`;
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = `0 10px 40px -10px ${platform.color}30`;
-              }}
-            >
-              {/* Background Glow */}
-              <div style={{ 
-                position: 'absolute', top: '-50px', right: '-50px', width: '150px', height: '150px', 
-                background: platform.gradient, opacity: 0.1, borderRadius: '50%', filter: 'blur(30px)' 
-              }}></div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', position: 'relative', zIndex: 2 }}>
-                <div style={{ 
-                  width: '64px', height: '64px', borderRadius: '20px', 
-                  background: platform.gradient, 
-                  color: 'white',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: `0 10px 20px -5px ${platform.color}50`
-                }}>
-                  {platform.icon}
-                </div>
-                
-                <div style={{ padding: '6px 12px', background: `${platform.color}15`, color: platform.color, borderRadius: '50px', fontSize: '0.75rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: platform.color }}></div>
-                  Connected
-                </div>
-              </div>
-
-              <div style={{ position: 'relative', zIndex: 2 }}>
-                <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>
-                  {platform.name}
-                </h2>
-                <p style={{ fontSize: '0.95rem', color: '#64748b', lineHeight: '1.5', marginBottom: '24px' }}>
-                  {platform.description}
-                </p>
-
-                <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase' }}>Active Account</span>
-                    <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#0f172a' }}>{platform.accountName}</span>
-                  </div>
-                  <ArrowRight size={20} color={platform.color} />
-                </div>
-              </div>
+    <div style={{ display: 'flex', height: 'calc(100vh - 64px)', background: '#e0e0de', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      <div style={{ display: 'flex', width: '100%', maxWidth: '1600px', margin: '0 auto', background: '#ffffff', boxShadow: '0 6px 18px rgba(0,0,0,0.05)' }}>
+        
+        {/* Left Sidebar (Chats List) */}
+        <div style={{ width: '35%', minWidth: '320px', maxWidth: '420px', background: '#ffffff', borderRight: '1px solid #d1d7db', display: 'flex', flexDirection: 'column' }}>
+          
+          {/* Header */}
+          <div style={{ background: '#f0f2f5', padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#dfe5e7', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              {user?.profilePicture ? (
+                <img src={user.profilePicture} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <User size={24} color="#aebac1" />
+              )}
             </div>
-          ))}
+            <div style={{ display: 'flex', gap: '20px', color: '#54656f' }}>
+              <Users size={24} />
+              <CircleDashed size={24} />
+              <MessageSquare size={24} />
+              <Plus size={24} />
+              <MoreVertical size={24} />
+            </div>
+          </div>
+
+          {/* Search Bar */}
+          <div style={{ padding: '8px 12px', background: '#ffffff', borderBottom: '1px solid #f2f2f2' }}>
+            <div style={{ background: '#f0f2f5', borderRadius: '8px', display: 'flex', alignItems: 'center', padding: '6px 12px', gap: '12px' }}>
+              <Search size={18} color="#54656f" />
+              <input 
+                type="text" 
+                placeholder="Search or start new chat" 
+                style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', fontSize: '0.9rem', color: '#111b21' }} 
+              />
+            </div>
+          </div>
+
+          {/* Platforms List */}
+          <div style={{ flex: 1, overflowY: 'auto', background: '#ffffff' }}>
+            {connectedPlatforms.length === 0 ? (
+              <div style={{ padding: '40px 20px', textAlign: 'center', color: '#667781' }}>
+                <SettingsIcon size={40} style={{ marginBottom: '16px', opacity: 0.5 }} />
+                <p>No platforms connected yet.</p>
+                <button 
+                  onClick={() => navigate('/settings')}
+                  style={{ marginTop: '16px', padding: '8px 24px', background: '#00a884', color: 'white', border: 'none', borderRadius: '24px', cursor: 'pointer', fontWeight: 'bold' }}
+                >
+                  Connect in Settings
+                </button>
+              </div>
+            ) : (
+              connectedPlatforms.map((platform) => (
+                <div 
+                  key={platform.id}
+                  onClick={() => navigate(`/platform/${platform.id}`)}
+                  style={{ 
+                    display: 'flex', 
+                    padding: '12px 16px', 
+                    cursor: 'pointer', 
+                    transition: 'background 0.2s',
+                    alignItems: 'center',
+                    gap: '16px'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.background = '#f5f6f6'}
+                  onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                >
+                  {/* Icon */}
+                  <div style={{ 
+                    width: '50px', height: '50px', borderRadius: '50%', 
+                    background: platform.gradient, 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: 'white', flexShrink: 0
+                  }}>
+                    {platform.icon}
+                  </div>
+                  
+                  {/* Text Content */}
+                  <div style={{ flex: 1, borderBottom: '1px solid #f2f2f2', paddingBottom: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2px' }}>
+                      <span style={{ fontSize: '1.05rem', color: '#111b21', fontWeight: '400' }}>{platform.name}</span>
+                      <span style={{ fontSize: '0.75rem', color: '#667781' }}>Yesterday</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.85rem', color: '#667781', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
+                        {platform.accountName}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
-      )}
+
+        {/* Right Pane (WhatsApp Web Welcome) */}
+        <div style={{ 
+          flex: 1, 
+          background: '#f0f2f5', 
+          display: 'flex', 
+          flexDirection: 'column',
+          alignItems: 'center', 
+          justifyContent: 'center',
+          position: 'relative',
+          borderBottom: '6px solid #43c960'
+        }}>
+          {/* Subtle Background */}
+          <div style={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0, bottom: 0,
+            backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")',
+            backgroundSize: 'cover',
+            opacity: 0.06,
+            pointerEvents: 'none'
+          }}></div>
+
+          <div style={{ textAlign: 'center', zIndex: 1, maxWidth: '460px', padding: '0 20px' }}>
+            <div style={{ marginBottom: '32px' }}>
+              <svg width="320" height="188" viewBox="0 0 320 188" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="20" width="280" height="148" rx="8" fill="#E9EDEF" />
+                <rect x="40" y="40" width="80" height="10" rx="5" fill="#D1D7DB" />
+                <rect x="40" y="60" width="240" height="8" rx="4" fill="#D1D7DB" />
+                <rect x="40" y="80" width="200" height="8" rx="4" fill="#D1D7DB" />
+                <circle cx="160" cy="120" r="20" fill="#00A884" opacity="0.8" />
+                <path d="M152 120L158 126L168 114" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h1 style={{ fontSize: '2rem', color: '#41525d', fontWeight: '300', marginBottom: '18px' }}>Message Only Web</h1>
+            <p style={{ color: '#667781', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '32px' }}>
+              Send and receive automated messages without keeping your phone online.<br/>
+              Click on a platform from the left sidebar to start automating.
+            </p>
+          </div>
+          
+          <div style={{ position: 'absolute', bottom: '40px', display: 'flex', alignItems: 'center', gap: '6px', color: '#8696a0', fontSize: '0.8rem' }}>
+            <Lock size={12} />
+            <span>End-to-end encrypted</span>
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 };
