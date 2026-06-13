@@ -125,6 +125,16 @@ const MessageOnlyHub = () => {
       accountName: settings?.connectedFacebookName || 'Facebook Page'
     },
     {
+      id: 'threads',
+      name: 'Threads',
+      description: 'Automate posts, messages, and replies on your Threads account.',
+      icon: <ThreadsIcon size={40} />,
+      color: '#000000',
+      gradient: 'linear-gradient(135deg, #000000, #333333)',
+      isConnected: settings && settings.isThreadsConnected,
+      accountName: settings?.connectedThreadsName || 'Threads User'
+    },
+    {
       id: 'whatsapp',
       name: 'WhatsApp',
       description: 'Automate WhatsApp Business messages, auto-replies, and customer flows.',
