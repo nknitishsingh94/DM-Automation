@@ -657,7 +657,7 @@ function TopBar({ onMenuClick }) {
       case '/broadcasts': return 'Broadcasts';
       case '/scheduling': return '';
       case '/hub': return 'Hub';
-      case '/developer': return 'Developer Settings';
+      case '/developer': return 'API Keys';
       default: 
         if (location.pathname.startsWith('/flow-builder/')) return 'Editing Flow';
         if (location.pathname.startsWith('/automation-editor/')) return 'Automation';
@@ -676,7 +676,7 @@ function TopBar({ onMenuClick }) {
         </button>
         <h1 className="page-title" style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b' }}>{getTitle()}</h1>
       </div>
-      <div className="topbar-actions">
+      <div className="topbar-actions" id="topbar-actions-portal">
         {/* Support button removed */}
       </div>
     </header>
