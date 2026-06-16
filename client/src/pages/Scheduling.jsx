@@ -1043,6 +1043,8 @@ export default function Scheduling() {
       { id: 'google-business', label: 'Google Business', icon: <MapPin size={14} />, color: '#4285f4', handle: '', connected: false }
     ];
 
+    if (!settings) return platforms;
+
     let parsedSettings = {};
     if (typeof settings.parsedSettings === 'string') {
       try { parsedSettings = JSON.parse(settings.parsedSettings); } catch(e) {}
