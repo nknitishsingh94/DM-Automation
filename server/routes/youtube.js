@@ -96,7 +96,7 @@ router.get('/callback', async (req, res) => {
 // 3. Get Channel Stats
 router.get('/stats', verifyToken, async (req, res) => {
   try {
-    const settings = await Settings.findOne({ userId: req.user.id });
+    const settings = await Settings.findOne({ userId: req.user.userId });
     if (!settings || !settings.isYoutubeConnected || !settings.youtubeAccessToken) {
       return res.json({ error: 'YouTube not connected', notConnected: true });
     }
@@ -129,7 +129,7 @@ router.get('/stats', verifyToken, async (req, res) => {
 // 4. Get Latest Videos
 router.get('/videos', verifyToken, async (req, res) => {
   try {
-    const settings = await Settings.findOne({ userId: req.user.id });
+    const settings = await Settings.findOne({ userId: req.user.userId });
     if (!settings || !settings.isYoutubeConnected || !settings.youtubeAccessToken) {
       return res.json({ error: 'YouTube not connected', notConnected: true });
     }
@@ -230,7 +230,7 @@ router.post('/generate-metadata', verifyToken, async (req, res) => {
 // 7. Get Access Token for Direct Uploads
 router.get('/access-token', verifyToken, async (req, res) => {
   try {
-    const settings = await Settings.findOne({ userId: req.user.id });
+    const settings = await Settings.findOne({ userId: req.user.userId });
     if (!settings || !settings.isYoutubeConnected || !settings.youtubeAccessToken) {
       return res.status(400).json({ error: 'YouTube not connected' });
     }
@@ -247,7 +247,7 @@ router.get('/access-token', verifyToken, async (req, res) => {
 // 8. Get Resumable Upload URL for Frontend Direct Upload
 router.post('/get-upload-url', verifyToken, async (req, res) => {
   try {
-    const settings = await Settings.findOne({ userId: req.user.id });
+    const settings = await Settings.findOne({ userId: req.user.userId });
     if (!settings || (!settings.isYoutubeConnected && !settings.isYouTubeConnected) || !settings.youtubeAccessToken) {
       return res.status(400).json({ error: 'YouTube not connected' });
     }

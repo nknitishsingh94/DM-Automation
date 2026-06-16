@@ -25,7 +25,7 @@ router.post('/create-order', verifyToken, async (req, res) => {
     const options = {
       amount: 1599 * 100, // Amount in paise (₹1599)
       currency: "INR",
-      receipt: `receipt_pro_${req.user.id}_${Date.now()}`,
+      receipt: `receipt_pro_${req.user.userId}_${Date.now()}`,
     };
 
     const order = await razorpay.orders.create(options);
@@ -52,7 +52,7 @@ router.post('/verify-payment', verifyToken, async (req, res) => {
 
     if (razorpay_signature === expectedSign) {
       // Payment Successful - Update User Plan
-      await User.findByIdAndUpdate(req.user.id, { plan: 'pro' });
+      await User.findByIdAndUpdate(req.user.userId, { plan: 'pro' });
       
       return res.json({ 
         success: true, 
