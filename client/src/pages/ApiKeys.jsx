@@ -99,7 +99,7 @@ export default function ApiKeys() {
 
 
   return (
-    <div style={{ width: '100%', padding: '0 24px 100px 24px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ width: '100%', padding: '24px 24px 100px 24px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
       {/* Header & Create Button */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
         <div>
