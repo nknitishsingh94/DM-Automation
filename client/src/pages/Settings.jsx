@@ -15,13 +15,14 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState('billing'); // 'billing', 'profile', 'danger'
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [deleteConfirmationText, setDeleteConfirmationText] = useState('');
 
   const handleDeleteAccount = async () => {
     if (!user) return;
     try {
       setDeleting(true);
-      const res = await fetch(`${API_BASE_URL}/api/users/delete`, {
-        method: 'POST',
+      const res = await fetch(`${API_BASE_URL}/api/auth/delete`, {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${user.token}`
@@ -118,16 +119,34 @@ export default function Settings() {
                   <p style={{ margin: '0 0 16px 0', fontSize: '0.85rem', fontWeight: '700', color: '#1e293b' }}>
                     Are you absolutely sure? Type 'DELETE' to confirm.
                   </p>
+                  <input
+                    type="text"
+                    placeholder="DELETE"
+                    value={deleteConfirmationText}
+                    onChange={(e) => setDeleteConfirmationText(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      marginBottom: '16px',
+                      border: '1px solid #fecdd3',
+                      borderRadius: '8px',
+                      outline: 'none',
+                      fontSize: '0.9rem'
+                    }}
+                  />
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button 
                       onClick={handleDeleteAccount} 
-                      disabled={deleting}
-                      style={{ flex: 1, background: '#e11d48', color: 'white', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: deleting ? 'not-allowed' : 'pointer', fontSize: '0.82rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+                      disabled={deleting || deleteConfirmationText !== 'DELETE'}
+                      style={{ flex: 1, background: '#e11d48', color: 'white', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: (deleting || deleteConfirmationText !== 'DELETE') ? 'not-allowed' : 'pointer', fontSize: '0.82rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', opacity: (deleting || deleteConfirmationText !== 'DELETE') ? 0.5 : 1 }}
                     >
                       {deleting ? 'Deleting...' : 'Yes, Delete Everything'}
                     </button>
                     <button 
-                      onClick={() => setShowDeleteConfirm(false)} 
+                      onClick={() => {
+                        setShowDeleteConfirm(false);
+                        setDeleteConfirmationText('');
+                      }} 
                       style={{ flex: 1, background: '#f1f5f9', color: '#475569', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontSize: '0.82rem' }}
                     >
                       Cancel

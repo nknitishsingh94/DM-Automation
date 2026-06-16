@@ -400,4 +400,34 @@ router.delete('/account', verifyToken, async (req, res) => {
   }
 });
 
+// ─── Account Deletion ────────────────────────────────────────────────────────
+router.delete('/delete', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    
+    // Delete user from Database
+    await User.findByIdAndDelete(userId);
+
+    // Delete associated data
+    await Promise.all([
+      Settings.deleteMany({ userId }),
+      Message.deleteMany({ userId }),
+      Campaign.deleteMany({ userId }),
+      Contact.deleteMany({ userId }),
+      Flow.deleteMany({ userId }),
+      Form.deleteMany({ userId }),
+      FormSubmission.deleteMany({ userId }),
+      ChatMessage.deleteMany({ userId }),
+      Caption.deleteMany({ userId }),
+      ScheduledPost.deleteMany({ user_id: userId }), // some models use user_id
+      ApiKey.deleteMany({ user_id: convertObjectIDToUUID(userId) })
+    ]);
+
+    res.json({ message: 'Account and all associated data permanently deleted.' });
+  } catch (err) {
+    console.error('Account deletion error:', err.message);
+    res.status(500).json({ message: 'Failed to delete account.' });
+  }
+});
+
 export default router;
