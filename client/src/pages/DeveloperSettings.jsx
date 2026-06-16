@@ -98,8 +98,19 @@ export default function DeveloperSettings() {
 
   return (
     <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '28px', padding: '24px 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
-      
-
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '700px' }}>
+        <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
+          API Keys
+        </h2>
+        {!showGenerateForm && (
+          <button
+            onClick={() => { setShowGenerateForm(true); setNewlyCreatedKey(null); }}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.9rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(139, 92, 246, 0.25)' }}
+          >
+            <Plus size={16} /> Create
+          </button>
+        )}
+      </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', maxWidth: '700px', alignItems: 'start' }}>
         
@@ -108,19 +119,6 @@ export default function DeveloperSettings() {
           
           {/* Key List Card */}
           <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', boxShadow: '0 4px 10px rgba(0,0,0,0.02)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Key size={18} color="#64748b" /> Active API Keys
-              </h3>
-              {!showGenerateForm && (
-                <button
-                  onClick={() => { setShowGenerateForm(true); setNewlyCreatedKey(null); }}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(139, 92, 246, 0.25)' }}
-                >
-                  <Plus size={14} /> Create Key
-                </button>
-              )}
-            </div>
 
             {showGenerateForm && (
               <form onSubmit={handleGenerateKey} style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
