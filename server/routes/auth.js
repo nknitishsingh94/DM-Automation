@@ -42,8 +42,10 @@ const autoGenerateApiKey = async (userId) => {
     });
     await newKeyRecord.save();
     console.log(`🔑 Auto-generated API Key for new user ${userId}`);
+    return newKeyString;
   } catch (err) {
     console.error('⚠️ Auto API Key generation failed:', err.message);
+    return null;
   }
 };
 
@@ -80,7 +82,7 @@ router.post('/signup', async (req, res) => {
     await newUser.save();
     
     // Auto-generate API Key for new user
-    await autoGenerateApiKey(newUser._id || newUser.id);
+    const newApiKey = await autoGenerateApiKey(newUser._id || newUser.id);
 
     const welcomeMessage = new Message({
       userId: newUser.id || newUser._id, sender: 'AI Agent',
@@ -90,7 +92,7 @@ router.post('/signup', async (req, res) => {
     await welcomeMessage.save();
 
     const token = signToken(newUser._id);
-    res.status(201).json({ token, user: { id: newUser._id, username: newUser.username, email: newUser.email, profilePhoto: newUser.profilePhoto } });
+    res.status(201).json({ token, user: { id: newUser._id, username: newUser.username, email: newUser.email, profilePhoto: newUser.profilePhoto }, apiKey: newApiKey });
   } catch (err) {
     // SECURITY: Never expose internal error messages in production
     console.error('Signup error:', err.message);
@@ -152,7 +154,7 @@ router.post('/google', async (req, res) => {
       if (mode === 'signup') {
         user = new User({ username: (name || '').slice(0, 50), email, googleId: sub, profilePhoto: picture });
         await user.save();
-        await autoGenerateApiKey(user._id || user.id);
+        user._newApiKey = await autoGenerateApiKey(user._id || user.id);
       } else {
         return res.status(404).json({ message: 'Account not found. Please sign up first.' });
       }
@@ -173,7 +175,7 @@ router.post('/google', async (req, res) => {
 
     const userId = user._id || user.id;
     const jwtToken = signToken(userId);
-    res.json({ token: jwtToken, user: { id: userId, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
+    res.json({ token: jwtToken, user: { id: userId, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan }, apiKey: user._newApiKey });
   } catch (err) {
     console.error('Google Auth Error:', err.message);
     res.status(500).json({ 
@@ -198,7 +200,7 @@ router.post('/google_custom', async (req, res) => {
       try {
         user = new User({ username: (name || '').slice(0, 50), email, googleId: sub, profilePhoto: picture });
         await user.save();
-        await autoGenerateApiKey(user._id || user.id);
+        user._newApiKey = await autoGenerateApiKey(user._id || user.id);
       } catch (saveErr) {
         if (saveErr.message?.includes('unique constraint') || saveErr.code === '23505') {
           user = await User.findOne({ email });
@@ -229,7 +231,7 @@ router.post('/google_custom', async (req, res) => {
 
     const userId = user._id || user.id;
     const jwtToken = signToken(userId);
-    res.json({ token: jwtToken, user: { id: userId, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
+    res.json({ token: jwtToken, user: { id: userId, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan }, apiKey: user._newApiKey });
   } catch (err) {
     console.error('Custom Google Auth Error:', err.message);
     res.status(500).json({ 
@@ -270,7 +272,7 @@ router.post('/facebook', async (req, res) => {
           facebookId: fbData.id, profilePhoto: fbData.picture?.data?.url
         });
         await user.save();
-        await autoGenerateApiKey(user._id || user.id);
+        user._newApiKey = await autoGenerateApiKey(user._id || user.id);
       } catch (saveErr) {
         // Handle race condition for duplicate email
         if (saveErr.message?.includes('unique constraint') || saveErr.code === '23505') {
@@ -297,7 +299,7 @@ router.post('/facebook', async (req, res) => {
     }
 
     const jwtToken = signToken(user._id);
-    res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan } });
+    res.json({ token: jwtToken, user: { id: user._id, username: user.username, email: user.email, profilePhoto: user.profilePhoto, plan: user.plan }, apiKey: user._newApiKey });
   } catch (err) {
     console.error('Facebook Auth Error:', err.message);
     res.status(500).json({ message: 'Facebook authentication failed.' });

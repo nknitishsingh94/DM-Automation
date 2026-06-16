@@ -62,6 +62,7 @@ const ChannelSelector = lazyRetry(() => import('./pages/ChannelSelector'));
 const TemplateSelector = lazyRetry(() => import('./pages/TemplateSelector'));
 const AutomationEditor = lazyRetry(() => import('./pages/AutomationEditor'));
 const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'));
+const Setup = lazyRetry(() => import('./pages/Setup'));
 const WriteReview = lazyRetry(() => import('./pages/WriteReview'));
 // Removed PlatformHub as it was deleted
 const MessageOnlyHub = lazyRetry(() => import('./pages/MessageOnlyHub'));
@@ -685,7 +686,7 @@ function MainLayout() {
   const { user } = useAuth();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const isPublic = ['/', '/public-home', '/login', '/signup', '/help', '/about', '/resources', '/blog', '/reviews'].includes(location.pathname) || location.pathname.startsWith('/blog/');
+  const isPublic = ['/', '/public-home', '/login', '/signup', '/help', '/about', '/resources', '/blog', '/reviews', '/setup'].includes(location.pathname) || location.pathname.startsWith('/blog/');
   const isEditor = ['/dm-automation-editor', '/automation-editor'].includes(location.pathname);
   const isMessageOnlyHub = location.pathname === '/hub/message-only';
   const hideSidebar = isPublic || isEditor;
@@ -737,6 +738,7 @@ function MainLayout() {
               <Route path="/broadcasts" element={<ProtectedRoute><Broadcasts /></ProtectedRoute>} />
               <Route path="/flow-builder/:id" element={<ProtectedRoute><FlowBuilder /></ProtectedRoute>} />
               <Route path="/refer" element={<ProtectedRoute><Referral /></ProtectedRoute>} />
+              <Route path="/setup" element={<ProtectedRoute><Setup /></ProtectedRoute>} />
               <Route path="/login" element={user ? <Navigate to="/connections" /> : <Login />} />
               <Route path="/signup" element={user ? <Navigate to="/connections" /> : <Signup />} />
               <Route path="/help" element={<HelpCenter />} />
