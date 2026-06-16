@@ -3254,12 +3254,14 @@ async function runSchedulingWorker() {
         let finalType = post.type || 'image';
         let finalCarousel = [];
 
+        let hasYouTubeVideoId = false;
         if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
           try {
             const meta = JSON.parse(post.mediaUrl);
             finalType = meta.type || finalType;
             finalCarousel = meta.carouselItems || [];
             finalMedia = meta.mediaUrl || (finalCarousel.length > 0 ? finalCarousel[0] : '');
+            hasYouTubeVideoId = !!meta.youtubeVideoId;
           } catch (e) {
             console.warn("⚠️ Metadata parse failed, using raw mediaUrl");
           }
@@ -3274,7 +3276,7 @@ async function runSchedulingWorker() {
           finalCarousel = finalCarousel.map(item => (item && item.startsWith('/uploads/')) ? `${SERVER_PUBLIC_URL}${item}` : item);
         }
 
-        const requiresMedia = !post.platform || post.platform === 'instagram' || post.platform === 'youtube';
+        const requiresMedia = !post.platform || post.platform === 'instagram' || (post.platform === 'youtube' && !hasYouTubeVideoId);
         if (requiresMedia && !finalMedia) {
            console.log(`⏭️ Post ${postId} has no media URL yet (likely still uploading). Skipping.`);
            return;
@@ -3347,7 +3349,7 @@ async function runSchedulingWorker() {
           }
           publishResult = await publishYouTubeVideo(post.userId, {
             type: finalType,
-            mediaUrl: finalMedia,
+            mediaUrl: post.mediaUrl,
             caption: post.caption
           }, youtubeSettings);
         } else {

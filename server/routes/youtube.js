@@ -244,4 +244,44 @@ router.get('/access-token', verifyToken, async (req, res) => {
   }
 });
 
+// 8. Get Resumable Upload URL for Frontend Direct Upload
+router.post('/get-upload-url', verifyToken, async (req, res) => {
+  try {
+    const settings = await Settings.findOne({ userId: req.user.id });
+    if (!settings || (!settings.isYoutubeConnected && !settings.isYouTubeConnected) || !settings.youtubeAccessToken) {
+      return res.status(400).json({ error: 'YouTube not connected' });
+    }
+
+    const { fileSize, contentType, title, description } = req.body;
+
+    const response = await axios.post(
+      'https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',
+      {
+        snippet: {
+          title: title || 'YouTube Video',
+          description: description || ''
+        },
+        status: {
+          privacyStatus: 'public'
+        }
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${settings.youtubeAccessToken}`,
+          'X-Upload-Content-Length': fileSize,
+          'X-Upload-Content-Type': contentType,
+          'Content-Type': 'application/json',
+          'Origin': req.headers.origin || 'http://localhost:5173'
+        }
+      }
+    );
+
+    const uploadUrl = response.headers.location;
+    res.json({ uploadUrl });
+  } catch (err) {
+    console.error('YouTube get-upload-url Error:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Failed to generate YouTube upload URL' });
+  }
+});
+
 export default router;

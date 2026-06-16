@@ -808,9 +808,9 @@ export default function Scheduling() {
         let mediaUrls = [];
         const isMetaPlatform = activePlatforms.some(p => ['instagram', 'facebook', 'threads'].includes(p));
         const isYoutubeOnly = activePlatforms.includes('youtube') && !isMetaPlatform;
-        const skipStorageForYoutube = isYoutubeOnly && (currentType === 'video' || currentType === 'reel');
 
-        if (currentFiles.length > 0 && !skipStorageForYoutube) {
+
+        if (currentFiles.length > 0) {
           const uploadPromises = currentFiles.map(async (originalFile) => {
             const file = await compressImage(originalFile);
             const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
@@ -1032,50 +1032,54 @@ export default function Scheduling() {
     }
   };
 
-  if (loading) return <LoadingSpinner />;
+  const allPlatforms = (() => {
+    const platforms = [
+      { id: 'instagram', label: 'Instagram', icon: <Instagram size={14} />, color: '#e1306c', handle: '', connected: false },
+      { id: 'facebook', label: 'Facebook', icon: <Facebook size={14} />, color: '#1877f2', handle: '', connected: false },
+      { id: 'threads', label: 'Threads', icon: <ThreadsIcon size={14} />, color: '#000000', handle: '', connected: false },
+      { id: 'youtube', label: 'YouTube', icon: <Film size={14} />, color: '#ff0000', handle: '', connected: false },
+      { id: 'linkedin', label: 'LinkedIn', icon: <Globe size={14} />, color: '#0a66c2', handle: '', connected: false },
+      { id: 'twitter', label: 'Twitter/X', icon: <X size={14} />, color: '#000000', handle: '', connected: false },
+      { id: 'google-business', label: 'Google Business', icon: <MapPin size={14} />, color: '#4285f4', handle: '', connected: false }
+    ];
 
-  const connectedPlatforms = (() => {
-    if (!settings) return [];
-    const platforms = [];
-    if (settings.isAccountConnected || (!!settings.instagramAccessToken && !!settings.businessAccountId)) {
-      platforms.push({ id: 'instagram', label: 'Instagram', icon: <Instagram size={14} />, color: '#e1306c', handle: settings.connectedInstagramName || settings.instagramUsername || settings.connectedInstagramId || '' });
-    }
-    if (settings.isFacebookConnected || (!!settings.facebookAccessToken && !!settings.facebookPageId)) {
-      const fbHandle = settings.connectedFacebookName || (settings.connectedPageName && !settings.connectedPageName.startsWith('{') ? settings.connectedPageName : '');
-      platforms.push({ id: 'facebook', label: 'Facebook', icon: <Facebook size={14} />, color: '#1877f2', handle: fbHandle });
-    }
     let parsedSettings = {};
-    if (settings.connectedPageName && typeof settings.connectedPageName === 'string' && settings.connectedPageName.startsWith('{')) {
-      try { parsedSettings = JSON.parse(settings.connectedPageName); } catch(e) {}
+    if (typeof settings.parsedSettings === 'string') {
+      try { parsedSettings = JSON.parse(settings.parsedSettings); } catch(e) {}
+    } else if (settings.parsedSettings) {
+      parsedSettings = settings.parsedSettings;
     }
-    if (parsedSettings.isThreadsConnected || settings.isThreadsConnected) {
-      platforms.push({ id: 'threads', label: 'Threads', icon: <ThreadsIcon size={14} />, color: '#000000', handle: parsedSettings.connectedThreadsName || settings.connectedThreadsName || '' });
-    }
-    if (parsedSettings.isYouTubeConnected || settings.isYouTubeConnected || parsedSettings.isYoutubeConnected || settings.isYoutubeConnected) {
-      platforms.push({ id: 'youtube', label: 'YouTube', icon: <Film size={14} />, color: '#ff0000', handle: parsedSettings.connectedYouTubeName || settings.connectedYouTubeName || parsedSettings.youtubeChannelName || settings.youtubeChannelName || '' });
-    }
-    if (parsedSettings.isLinkedInConnected || settings.isLinkedInConnected) {
-      platforms.push({ id: 'linkedin', label: 'LinkedIn', icon: <Globe size={14} />, color: '#0a66c2', handle: '' });
-    }
-    if (parsedSettings.isTwitterConnected || settings.isTwitterConnected) {
-      platforms.push({ id: 'twitter', label: 'Twitter/X', icon: <X size={14} />, color: '#000000', handle: '' });
-    }
-    if (parsedSettings.isGoogleBusinessConnected || settings.isGoogleBusinessConnected) {
-      platforms.push({ id: 'google-business', label: 'Google Business', icon: <MapPin size={14} />, color: '#4285f4', handle: settings.connectedGoogleBusinessName || parsedSettings.connectedGoogleBusinessName || '' });
-    }
+
+    platforms.forEach(p => {
+      if (p.id === 'instagram' && (settings.isAccountConnected || (!!settings.instagramAccessToken && !!settings.businessAccountId))) {
+        p.connected = true; p.handle = settings.connectedInstagramName || settings.instagramUsername || settings.connectedInstagramId || '';
+      }
+      if (p.id === 'facebook' && (settings.isFacebookConnected || (!!settings.facebookAccessToken && !!settings.facebookPageId))) {
+        p.connected = true; p.handle = settings.connectedFacebookName || (settings.connectedPageName && !settings.connectedPageName.startsWith('{') ? settings.connectedPageName : '');
+      }
+      if (p.id === 'threads' && (parsedSettings.isThreadsConnected || settings.isThreadsConnected)) {
+        p.connected = true; p.handle = parsedSettings.connectedThreadsName || settings.connectedThreadsName || '';
+      }
+      if (p.id === 'youtube' && (parsedSettings.isYouTubeConnected || settings.isYouTubeConnected || parsedSettings.isYoutubeConnected || settings.isYoutubeConnected)) {
+        p.connected = true; p.handle = parsedSettings.connectedYouTubeName || settings.connectedYouTubeName || parsedSettings.youtubeChannelName || settings.youtubeChannelName || '';
+      }
+      if (p.id === 'linkedin' && (parsedSettings.isLinkedInConnected || settings.isLinkedInConnected)) {
+        p.connected = true;
+      }
+      if (p.id === 'twitter' && (parsedSettings.isTwitterConnected || settings.isTwitterConnected)) {
+        p.connected = true;
+      }
+      if (p.id === 'google-business' && (parsedSettings.isGoogleBusinessConnected || settings.isGoogleBusinessConnected)) {
+        p.connected = true; p.handle = settings.connectedGoogleBusinessName || parsedSettings.connectedGoogleBusinessName || '';
+      }
+    });
+
     return platforms;
   })();
-  
+
+  if (loading) return <LoadingSpinner />;
+
   const visiblePosts = posts.filter(post => {
-    // Check connected status
-    if (post.platform === 'facebook') {
-      if (!connectedPlatforms.some(p => p.id === 'facebook')) return false;
-    } else if (post.platform === 'instagram' || !post.platform) {
-      if (!connectedPlatforms.some(p => p.id === 'instagram')) return false;
-    } else {
-      if (!connectedPlatforms.some(p => p.id === post.platform)) return false;
-    }
-    
     // Apply Platform Filter
     if (platformFilter !== 'All platforms') {
       const pLabel = platformFilter.toLowerCase();
@@ -1116,7 +1120,7 @@ export default function Scheduling() {
   if (showCreate) {
     return (
       <div style={{
-        padding: '0', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100%',
+        padding: '16px 0 0 0', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100%',
         display: 'flex', flexDirection: 'column', background: '#f8fafc', overflow: 'hidden'
       }}>
         <div style={{
@@ -1151,7 +1155,7 @@ export default function Scheduling() {
                           onClick={() => setPostType('video')}
                           style={{
                             flex: 1, padding: '12px', borderRadius: '8px',
-                            background: postType === 'video' ? '#7c3aed' : '#f1f5f9',
+                            background: postType === 'video' ? '#3b82f6' : '#f1f5f9',
                             color: postType === 'video' ? 'white' : '#64748b',
                             border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
                             transition: 'all 0.2s',
@@ -1164,7 +1168,7 @@ export default function Scheduling() {
                           onClick={() => setPostType('image')}
                           style={{
                             flex: 1, padding: '12px', borderRadius: '8px',
-                            background: postType === 'image' ? '#7c3aed' : '#f1f5f9',
+                            background: postType === 'image' ? '#3b82f6' : '#f1f5f9',
                             color: postType === 'image' ? 'white' : '#64748b',
                             border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
                             transition: 'all 0.2s',
@@ -1177,7 +1181,7 @@ export default function Scheduling() {
                           onClick={() => setPostType('carousel')}
                           style={{
                             flex: 1, padding: '12px', borderRadius: '8px',
-                            background: postType === 'carousel' ? '#7c3aed' : '#f1f5f9',
+                            background: postType === 'carousel' ? '#3b82f6' : '#f1f5f9',
                             color: postType === 'carousel' ? 'white' : '#64748b',
                             border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
                             transition: 'all 0.2s',
@@ -1582,7 +1586,7 @@ export default function Scheduling() {
                         id="gmb-cta-enable"
                         checked={newPost.gmbCtaEnabled || false}
                         onChange={(e) => setNewPost({ ...newPost, gmbCtaEnabled: e.target.checked })}
-                        style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: '#4f46e5' }}
+                        style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: '#2563eb' }}
                       />
                       <label htmlFor="gmb-cta-enable" style={{ fontSize: '0.9rem', fontWeight: '500', color: '#334155', cursor: 'pointer' }}>
                         Add call-to-action button (optional)
@@ -1637,53 +1641,48 @@ export default function Scheduling() {
               
               {/* Platforms */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '12px' }}>platforms (from 1 profile)</label>
-                {connectedPlatforms.length === 0 ? (
-                  <div style={{
-                    width: '100%', padding: '32px', border: '1px dashed #cbd5e1', borderRadius: '8px',
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    gap: '8px', background: 'transparent'
-                  }}>
-                    <div style={{ fontWeight: '600', fontSize: '0.85rem', color: '#64748b' }}>No accounts connected</div>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Connect accounts in settings first</div>
-                  </div>
-                ) : (
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '12px' }}>platforms</label>
                   <div style={{
                     width: '100%', display: 'flex', flexWrap: 'wrap', gap: '12px'
                   }}>
-                    {connectedPlatforms.map(plat => {
+                    {allPlatforms.map(plat => {
                       const isSelected = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes(plat.id);
                       return (
                         <div 
                           key={plat.id}
-                          onClick={() => setNewPost(prev => {
-                            const currentPlatforms = prev.platforms || (prev.platform ? [prev.platform] : []);
-                            let newPlatforms;
-                            if (currentPlatforms.includes(plat.id)) {
-                              newPlatforms = currentPlatforms.filter(p => p !== plat.id);
-                            } else {
-                              newPlatforms = [...currentPlatforms, plat.id];
+                          onClick={() => {
+                            if (!plat.connected) {
+                              notify(`Please connect your ${plat.label} account first.`, "info");
+                              return;
                             }
-                            return { ...prev, platforms: newPlatforms, platform: newPlatforms.length > 0 ? newPlatforms[0] : '' };
-                          })}
+                            setNewPost(prev => {
+                              const current = prev.platforms || (prev.platform ? [prev.platform] : []);
+                              if (current.includes(plat.id)) {
+                                return { ...prev, platforms: current.filter(p => p !== plat.id) };
+                              } else {
+                                return { ...prev, platforms: [...current, plat.id] };
+                              }
+                            });
+                          }}
                           style={{
-                            display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 14px',
-                            border: isSelected ? `1px solid ${plat.color}` : '1px solid #cbd5e1',
-                            borderRadius: '8px', background: isSelected ? `${plat.color}10` : 'transparent',
-                            cursor: 'pointer', minWidth: '180px', position: 'relative',
-                            transition: 'all 0.2s ease-in-out'
+                            display: 'flex', alignItems: 'center', gap: '8px',
+                            background: isSelected ? `${plat.color}15` : 'white',
+                            border: `2px solid ${isSelected ? plat.color : '#e2e8f0'}`,
+                            padding: '10px 16px', borderRadius: '12px',
+                            cursor: 'pointer', transition: 'all 0.2s ease',
+                            opacity: plat.connected ? 1 : 0.5,
+                            minWidth: '140px', flex: '1 1 calc(50% - 6px)'
                           }}
                         >
-                          <div style={{ color: plat.color, display: 'flex' }}>{plat.icon}</div>
+                          <div style={{ 
+                            width: '28px', height: '28px', borderRadius: '8px', 
+                            background: isSelected ? plat.color : '#f1f5f9',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: isSelected ? 'white' : plat.color
+                          }}>
+                            {plat.icon}
+                          </div>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#334155', lineHeight: '1.2' }}>{plat.label}</span>
-                            {plat.handle && (
-                              <span style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>
-                                {plat.id === 'google-business' || plat.id === 'facebook' 
-                                  ? plat.handle 
-                                  : (plat.handle.startsWith('@') ? plat.handle : `@${plat.handle.replace(/\s+/g, '').toLowerCase()}`)}
-                              </span>
-                            )}
                           </div>
                           {isSelected && (
                             <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', borderRadius: '50%', border: `4px solid ${plat.color}`, background: 'white' }}></div>
@@ -1814,7 +1813,7 @@ export default function Scheduling() {
   }
 
   return (
-    <div style={{ padding: '0', maxWidth: 'none', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100%', display: 'flex', flexDirection: 'column' }} onClick={() => {
+    <div style={{ padding: '16px 0 0 0', maxWidth: 'none', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100%', display: 'flex', flexDirection: 'column' }} onClick={() => {
       setShowPostStatusDropdown(false);
       setShowPlatformDropdown(false);
       setShowDateDropdown(false);
@@ -1829,7 +1828,7 @@ export default function Scheduling() {
         </div>
         <button onClick={() => setShowCreate(true)} style={{
           display: 'flex', alignItems: 'center', gap: '8px',
-          background: '#7c3aed', color: 'white', border: 'none',
+          background: '#3b82f6', color: 'white', border: 'none',
           padding: '10px 20px', borderRadius: '8px', fontWeight: '600',
           fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s',
           boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)'
@@ -2045,11 +2044,11 @@ export default function Scheduling() {
           padding: '40px'
         }}>
           <div style={{ 
-            width: '80px', height: '80px', borderRadius: '50%', background: '#f5f3ff', 
+            width: '80px', height: '80px', borderRadius: '50%', background: '#eff6ff', 
             display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px',
             boxShadow: '0 8px 16px rgba(124, 58, 237, 0.1)'
           }}>
-            <Sparkles size={36} color="#7c3aed" />
+            <Sparkles size={36} color="#3b82f6" />
           </div>
           
           <h2 style={{ margin: '0 0 12px 0', fontSize: '1.5rem', fontWeight: '800', color: '#1e293b' }}>No posts yet</h2>
@@ -2057,17 +2056,17 @@ export default function Scheduling() {
           
           <button onClick={() => setShowCreate(true)} style={{
             display: 'flex', alignItems: 'center', gap: '8px',
-            background: '#7c3aed', color: 'white', border: 'none',
+            background: '#3b82f6', color: 'white', border: 'none',
             padding: '14px 48px', borderRadius: '8px', fontWeight: '600',
             fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s',
             width: '300px', justifyContent: 'center',
             boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)'
-          }} onMouseOver={(e) => { e.currentTarget.style.background = '#6d28d9'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(124, 58, 237, 0.35)'; }} onMouseOut={(e) => { e.currentTarget.style.background = '#7c3aed'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.25)'; }}>
+          }} onMouseOver={(e) => { e.currentTarget.style.background = '#6d28d9'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(124, 58, 237, 0.35)'; }} onMouseOut={(e) => { e.currentTarget.style.background = '#3b82f6'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.25)'; }}>
             <Plus size={20} /> Create post
           </button>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
           {visiblePosts.map(post => {
             let mediaData = { type: post.type || 'image', mediaUrl: post.mediaUrl };
             try {
@@ -2108,7 +2107,7 @@ export default function Scheduling() {
                   <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                     {/* Status Badge */}
                     <div style={{
-                      background: post.status === 'Posted' ? '#10b981' : (post.status === 'Failed' ? '#ef4444' : ((post.status === 'Processing' || (post.status === 'Scheduled' && mediaData.igContainerId)) ? '#3b82f6' : '#7c3aed')),
+                      background: post.status === 'Posted' ? '#10b981' : (post.status === 'Failed' ? '#ef4444' : ((post.status === 'Processing' || (post.status === 'Scheduled' && mediaData.igContainerId)) ? '#3b82f6' : '#3b82f6')),
                       color: 'white', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px',
                       fontSize: '0.65rem', fontWeight: '800', boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                     }}>
@@ -2199,7 +2198,7 @@ export default function Scheduling() {
                         {tzData.abbr && (
                           <>
                             <span>•</span>
-                            <span style={{ color: '#7c3aed', background: '#f5f3ff', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '800' }}>
+                            <span style={{ color: '#3b82f6', background: '#eff6ff', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: '800' }}>
                               {tzData.abbr}
                             </span>
                           </>
@@ -2241,8 +2240,8 @@ export default function Scheduling() {
                     }}
                     style={{
                       flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                      padding: '10px 14px', borderRadius: '12px', border: '1px solid #f5f3ff',
-                      background: '#f5f3ff', color: '#7c3aed', fontWeight: '800', cursor: 'pointer',
+                      padding: '10px 14px', borderRadius: '12px', border: '1px solid #eff6ff',
+                      background: '#eff6ff', color: '#3b82f6', fontWeight: '800', cursor: 'pointer',
                       transition: 'all 0.2s', fontSize: '0.8rem'
                     }}
                   >
@@ -2290,7 +2289,7 @@ export default function Scheduling() {
             padding: '32px 24px', textAlign: 'center', boxShadow: '0 40px 80px rgba(0,0,0,0.2)',
             animation: 'scaleIn 0.3s ease-out'
           }}>
-            <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#eff6ff', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
               <Check size={32} />
             </div>
             <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '8px' }}>Post Scheduled!</h2>
@@ -2309,8 +2308,8 @@ export default function Scheduling() {
               <button
                 onClick={() => { setShowSuccess(false); setShowAdvanced(true); }}
                 style={{
-                  width: '100%', padding: '14px', borderRadius: '14px', background: '#f5f3ff',
-                  color: '#7c3aed', border: 'none', fontWeight: '800', cursor: 'pointer',
+                  width: '100%', padding: '14px', borderRadius: '14px', background: '#eff6ff',
+                  color: '#3b82f6', border: 'none', fontWeight: '800', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
                 }}
               >
@@ -2343,7 +2342,7 @@ export default function Scheduling() {
             <div style={{ padding: '40px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '32px', flex: 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <h3 style={{ fontSize: '1.6rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Advanced <span style={{ color: '#7c3aed' }}>Automation</span></h3>
+                  <h3 style={{ fontSize: '1.6rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Advanced <span style={{ color: '#3b82f6' }}>Automation</span></h3>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
                     <div
                       onClick={() => setCreatedPost({ ...createdPost, automationStatus: createdPost.automationStatus === 'Active' ? 'Paused' : 'Active' })}
@@ -2378,8 +2377,8 @@ export default function Scheduling() {
                 boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                  <Layers size={16} color="#7c3aed" />
-                  <span style={{ fontSize: '0.8rem', fontWeight: '900', color: '#7c3aed', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Live Automation Blueprint</span>
+                  <Layers size={16} color="#3b82f6" />
+                  <span style={{ fontSize: '0.8rem', fontWeight: '900', color: '#3b82f6', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Live Automation Blueprint</span>
                 </div>
                 
                 <div style={{ 
@@ -2403,7 +2402,7 @@ export default function Scheduling() {
                   }}>
                     <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>Trigger Post</div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                      <ImageIcon size={12} color="#7c3aed" />
+                      <ImageIcon size={12} color="#3b82f6" />
                       <span style={{ fontSize: '0.75rem', fontWeight: '900', color: '#1e1b4b' }}>This Post</span>
                     </div>
                   </div>
@@ -2451,7 +2450,7 @@ export default function Scheduling() {
                   <div style={{ 
                     flex: 2, 
                     minWidth: '120px',
-                    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', 
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)', 
                     color: 'white',
                     borderRadius: '12px', 
                     padding: '10px 6px', 
@@ -2699,12 +2698,12 @@ export default function Scheduling() {
                 </div>
                 <p style={{ color: '#64748b', fontSize: '0.8rem', marginBottom: '24px' }}>Grow your audience faster — with smart, hands-free engagement.</p>
 
-                <div style={{ background: '#f5f3ff', border: '1.5px solid #ddd6fe', borderRadius: '20px', padding: '24px', marginTop: '20px' }}>
+                <div style={{ background: '#eff6ff', border: '1.5px solid #ddd6fe', borderRadius: '20px', padding: '24px', marginTop: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: '900', color: '#7c3aed', textTransform: 'uppercase' }}>PUBLIC COMMENT REPLY (RECOMMENDED)</label>
+                    <label style={{ fontSize: '0.8rem', fontWeight: '900', color: '#3b82f6', textTransform: 'uppercase' }}>PUBLIC COMMENT REPLY (RECOMMENDED)</label>
                     <button
                       onClick={() => handleAIGenerate('publicReply', `Write a short, friendly Instagram comment reply to someone who commented on my post. Mention that I've sent them a DM with the details. Use emojis.`)}
-                      style={{ background: 'none', border: 'none', color: '#7c3aed', fontWeight: '800', fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                      style={{ background: 'none', border: 'none', color: '#3b82f6', fontWeight: '800', fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                     >
                       <Sparkles size={14} /> AI Write
                     </button>
@@ -2760,7 +2759,7 @@ export default function Scheduling() {
                         }
                       } catch (err) { notify("Network error while saving", "error"); }
                     }}
-                    style={{ width: '100%', padding: '18px', borderRadius: '20px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', fontWeight: '900', fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 25px rgba(124, 58, 237, 0.3)' }}
+                    style={{ width: '100%', padding: '18px', borderRadius: '20px', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', border: 'none', fontWeight: '900', fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 25px rgba(124, 58, 237, 0.3)' }}
                   >
                     <Zap size={24} fill="white" /> Create Automation
                   </button>
@@ -2804,14 +2803,14 @@ export default function Scheduling() {
                 value={tempLinkUrl}
                 onChange={(e) => setTempLinkUrl(e.target.value)}
                 placeholder="https://..."
-                style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem', fontWeight: '600', color: '#7c3aed' }}
+                style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '1rem', fontWeight: '600', color: '#3b82f6' }}
               />
             </div>
 
             <div style={{ display: 'flex', gap: '12px' }}>
               <button
                 onClick={handleSaveLink}
-                style={{ flex: 1.5, padding: '16px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', boxShadow: '0 8px 20px rgba(124, 58, 237, 0.2)' }}
+                style={{ flex: 1.5, padding: '16px', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', boxShadow: '0 8px 20px rgba(124, 58, 237, 0.2)' }}
               >
                 Save Button
               </button>

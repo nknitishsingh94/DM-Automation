@@ -53,13 +53,17 @@ export default function Dashboard() {
         
         const isInstagramConnected = !!(settingsData?.isAccountConnected || settingsData?.instagramAccessToken);
         const isFacebookConnected = !!(settingsData?.isFacebookConnected || (settingsData?.facebookAccessToken && settingsData?.facebookPageId));
+        const isYoutubeConnected = !!(settingsData?.isYoutubeConnected || settingsData?.isYouTubeConnected || settingsData?.youtubeAccessToken);
+        const isWhatsappConnected = !!(settingsData?.isWhatsAppConnected || settingsData?.whatsappToken);
         
         setSetupStatus({
           profileDone: true, 
-          metaDone: isInstagramConnected || isFacebookConnected, // Launch readiness setup complete if at least one is connected
+          metaDone: isInstagramConnected || isFacebookConnected || isYoutubeConnected || isWhatsappConnected, // Launch readiness setup complete if at least one is connected
           flowDone: Array.isArray(flowsData) && flowsData.length > 0,
           instagramConnected: isInstagramConnected,
-          facebookConnected: isFacebookConnected
+          facebookConnected: isFacebookConnected,
+          youtubeConnected: isYoutubeConnected,
+          whatsappConnected: isWhatsappConnected
         });
 
       } catch (err) {
@@ -278,6 +282,24 @@ export default function Dashboard() {
                     <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
                       💬 Facebook Messenger
+                    </span>
+                    <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
+                  </div>
+                )}
+                {setupStatus.youtubeConnected && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                    <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
+                      ▶️ YouTube Channel
+                    </span>
+                    <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
+                  </div>
+                )}
+                {setupStatus.whatsappConnected && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                    <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
+                      🟩 WhatsApp Business
                     </span>
                     <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
                   </div>
