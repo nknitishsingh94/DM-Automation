@@ -11,8 +11,11 @@ import FormSubmission from '../models/FormSubmission.js';
 import ChatMessage from '../models/ChatMessage.js';
 import Caption from '../models/Caption.js';
 import ScheduledPost from '../models/ScheduledPost.js';
+import ApiKey from '../models/ApiKey.js';
 import verifyToken from '../middleware/auth.js';
 import { OAuth2Client } from 'google-auth-library';
+import crypto from 'crypto';
+import { convertObjectIDToUUID } from '../utils/supabase.js';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -24,6 +27,25 @@ const signToken = (userId) =>
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const isStrongPassword = (pw) => pw && pw.length >= 8;
+
+const autoGenerateApiKey = async (userId) => {
+  try {
+    const uuidUserId = convertObjectIDToUUID(userId);
+    const randomHex = crypto.randomBytes(24).toString('hex');
+    const newKeyString = `sk_live_${randomHex}`;
+    const newKeyRecord = new ApiKey({
+      user_id: uuidUserId,
+      key: newKeyString,
+      name: 'Default Key',
+      active: true,
+      createdAt: new Date().toISOString()
+    });
+    await newKeyRecord.save();
+    console.log(`🔑 Auto-generated API Key for new user ${userId}`);
+  } catch (err) {
+    console.error('⚠️ Auto API Key generation failed:', err.message);
+  }
+};
 
 // ─── Signup ──────────────────────────────────────────────────────────────────
 router.post('/signup', async (req, res) => {
@@ -56,6 +78,9 @@ router.post('/signup', async (req, res) => {
 
     const newUser = new User({ username: username.slice(0, 50), email, password });
     await newUser.save();
+    
+    // Auto-generate API Key for new user
+    await autoGenerateApiKey(newUser._id || newUser.id);
 
     const welcomeMessage = new Message({
       userId: newUser.id || newUser._id, sender: 'AI Agent',
@@ -127,6 +152,7 @@ router.post('/google', async (req, res) => {
       if (mode === 'signup') {
         user = new User({ username: (name || '').slice(0, 50), email, googleId: sub, profilePhoto: picture });
         await user.save();
+        await autoGenerateApiKey(user._id || user.id);
       } else {
         return res.status(404).json({ message: 'Account not found. Please sign up first.' });
       }
@@ -172,6 +198,7 @@ router.post('/google_custom', async (req, res) => {
       try {
         user = new User({ username: (name || '').slice(0, 50), email, googleId: sub, profilePhoto: picture });
         await user.save();
+        await autoGenerateApiKey(user._id || user.id);
       } catch (saveErr) {
         if (saveErr.message?.includes('unique constraint') || saveErr.code === '23505') {
           user = await User.findOne({ email });
@@ -243,6 +270,7 @@ router.post('/facebook', async (req, res) => {
           facebookId: fbData.id, profilePhoto: fbData.picture?.data?.url
         });
         await user.save();
+        await autoGenerateApiKey(user._id || user.id);
       } catch (saveErr) {
         // Handle race condition for duplicate email
         if (saveErr.message?.includes('unique constraint') || saveErr.code === '23505') {
