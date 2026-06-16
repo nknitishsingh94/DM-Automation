@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
-import { Bot, Home, LayoutDashboard, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2, LayoutTemplate, Terminal } from 'lucide-react';
+import { Bot, Home, LayoutDashboard, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2, LayoutTemplate, Terminal, Lock } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config';
@@ -485,6 +485,10 @@ function Sidebar({ isMobileOpen, onClose }) {
               <LayoutDashboard size={18} />
               <span>OneView</span>
             </NavLink>
+            <NavLink to="/developer" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Lock size={18} />
+              <span>API keys</span>
+            </NavLink>
             <NavLink 
               to="/universal-triggers" 
               className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}
@@ -507,10 +511,7 @@ function Sidebar({ isMobileOpen, onClose }) {
               <Settings size={18} />
               <span>Settings</span>
             </NavLink>
-            <NavLink to="/developer" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Terminal size={18} />
-              <span>Developer API</span>
-            </NavLink>
+
             
             {localStorage.getItem('smart10x_reviewed') !== 'true' && (
               <NavLink to="/write-review" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
