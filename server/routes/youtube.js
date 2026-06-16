@@ -41,7 +41,7 @@ router.get('/callback', async (req, res) => {
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
   if (error) {
-    return res.redirect(`${frontendUrl}/settings?error=youtube_auth_failed`);
+    return res.redirect(`${frontendUrl}/connections?error=youtube_auth_failed`);
   }
 
   try {
@@ -66,7 +66,7 @@ router.get('/callback', async (req, res) => {
     });
 
     if (!channelRes.data.items || channelRes.data.items.length === 0) {
-      return res.redirect(`${frontendUrl}/settings?error=no_youtube_channel_found`);
+      return res.redirect(`${frontendUrl}/connections?error=no_youtube_channel_found`);
     }
 
     const channel = channelRes.data.items[0];
@@ -86,10 +86,10 @@ router.get('/callback', async (req, res) => {
       { upsert: true }
     );
 
-    res.redirect(`${frontendUrl}/settings?success=youtube_connected`);
+    res.redirect(`${frontendUrl}/connections?success=youtube_connected`);
   } catch (err) {
     console.error('YouTube OAuth Error:', err.response?.data || err.message);
-    res.redirect(`${frontendUrl}/settings?error=youtube_auth_failed`);
+    res.redirect(`${frontendUrl}/connections?error=youtube_auth_failed`);
   }
 });
 
