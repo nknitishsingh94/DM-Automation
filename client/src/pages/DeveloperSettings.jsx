@@ -12,9 +12,13 @@ export default function DeveloperSettings() {
   const [showGenerateForm, setShowGenerateForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   
-  // State to hold the newly generated raw key (shown only once)
   const [newlyCreatedKey, setNewlyCreatedKey] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [portalTarget, setPortalTarget] = useState(null);
+
+  useEffect(() => {
+    setPortalTarget(document.getElementById('topbar-actions-portal'));
+  }, []);
 
   const fetchKeys = async () => {
     try {
@@ -100,7 +104,7 @@ export default function DeveloperSettings() {
   return (
     <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '28px', padding: '24px 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
       {/* Render Create button into Topbar */}
-      {document.getElementById('topbar-actions-portal') && createPortal(
+      {portalTarget && createPortal(
         !showGenerateForm && (
           <button
             onClick={() => { setShowGenerateForm(true); setNewlyCreatedKey(null); }}
@@ -109,7 +113,7 @@ export default function DeveloperSettings() {
             <Plus size={16} /> Create
           </button>
         ),
-        document.getElementById('topbar-actions-portal')
+        portalTarget
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', maxWidth: '700px', alignItems: 'start' }}>
