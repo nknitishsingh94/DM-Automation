@@ -109,7 +109,7 @@ export default function ApiKeys() {
         {!showGenerateForm && (
           <button
             onClick={() => { setShowGenerateForm(true); setNewlyCreatedKey(null); }}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px', background: '#e04f32', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(224, 79, 50, 0.25)' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(59, 130, 246, 0.25)' }}
           >
             <Plus size={18} /> Create key
           </button>
@@ -295,7 +295,7 @@ export default function ApiKeys() {
                 type="submit"
                 form="create-api-key-form"
                 disabled={submitting}
-                style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: '#e04f32', color: 'white', fontSize: '0.95rem', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer', boxShadow: '0 4px 6px rgba(224, 79, 50, 0.25)' }}
+                style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: '#3b82f6', color: 'white', fontSize: '0.95rem', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer', boxShadow: '0 4px 6px rgba(59, 130, 246, 0.25)' }}
               >
                 {submitting ? 'Generating...' : 'Create key'}
               </button>
