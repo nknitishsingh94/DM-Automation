@@ -1649,7 +1649,7 @@ export default function Scheduling() {
                   <div style={{
                     width: '100%', display: 'flex', flexWrap: 'wrap', gap: '12px'
                   }}>
-                    {allPlatforms.map(plat => {
+                    {connectedPlatforms.map(plat => {
                       const isSelected = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes(plat.id);
                       return (
                         <div 
@@ -1662,9 +1662,9 @@ export default function Scheduling() {
                             setNewPost(prev => {
                               const current = prev.platforms || (prev.platform ? [prev.platform] : []);
                               if (current.includes(plat.id)) {
-                                return { ...prev, platforms: current.filter(p => p !== plat.id) };
+                                  return { ...prev, platforms: current.filter(p => p !== plat.id) };
                               } else {
-                                return { ...prev, platforms: [...current, plat.id] };
+                                  return { ...prev, platforms: [...current, plat.id] };
                               }
                             });
                           }}
@@ -1687,6 +1687,10 @@ export default function Scheduling() {
                             {plat.icon}
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#334155' }}>{plat.label}</span>
+                            {plat.handle && (
+                              <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{plat.handle}</span>
+                            )}
                           </div>
                           {isSelected && (
                             <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', borderRadius: '50%', border: `4px solid ${plat.color}`, background: 'white' }}></div>
