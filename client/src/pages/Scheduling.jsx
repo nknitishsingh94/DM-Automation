@@ -1675,7 +1675,8 @@ export default function Scheduling() {
                             padding: '10px 16px', borderRadius: '12px',
                             cursor: 'pointer', transition: 'all 0.2s ease',
                             opacity: plat.connected ? 1 : 0.5,
-                            minWidth: '140px', flex: '1 1 calc(50% - 6px)'
+                            minWidth: '140px', flex: '1 1 calc(50% - 6px)',
+                            position: 'relative'
                           }}
                         >
                           <div style={{ 
