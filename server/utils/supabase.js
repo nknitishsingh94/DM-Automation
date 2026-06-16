@@ -62,7 +62,7 @@ export const convertObjectIDToUUID = (id) => {
   return id;
 };
 
-const convertUUIDToObjectID = (uuid) => {
+export const convertUUIDToObjectID = (uuid) => {
   if (typeof uuid !== 'string') return uuid;
   if (uuid.endsWith('00000000')) {
     const clean = uuid.replace(/-/g, '');

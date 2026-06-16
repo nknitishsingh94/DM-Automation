@@ -41,6 +41,7 @@ import User from './models/User.js';
 import Contact from './models/Contact.js';
 import Flow from './models/Flow.js';
 import ScheduledPost from './models/ScheduledPost.js';
+import PostLog from './models/PostLog.js';
 import { runFlow } from './utils/FlowRunner.js';
 import { sendMessageToInstagram, sendWhatsAppMessage, sendPrivateReply, sendPublicComment } from './utils/metaApi.js';
 import authRoutes from './routes/auth.js';
@@ -56,6 +57,8 @@ import threadsRoutes from './routes/threads.js';
 import aiRoutes from './routes/ai.js';
 import apiKeyRoutes from './routes/apiKeys.js';
 import postsRoutes from './routes/posts.js';
+import analyticsRoutes from './routes/analytics.js';
+import { setupSwagger } from './swagger.js';
 import { generateAIResponse } from './utils/aiHandler.js';
 import { supabase, convertObjectIDToUUID } from './utils/supabase.js';
 import Workspace from './models/Workspace.js';
@@ -162,6 +165,7 @@ const upload = multer({
 import verifyToken from './middleware/auth.js';
 
 const app = express();
+setupSwagger(app); // Initialize Swagger Docs
 app.set('trust proxy', 1); // Trust Render/Vercel proxies for rate limiting
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -287,6 +291,7 @@ app.use(hpp());
 
 app.use('/api/youtube', youtubeRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', domain: req.hostname, timestamp: new Date() }));
 app.get('/api/ping', (req, res) => res.send('pong'));
@@ -3475,6 +3480,22 @@ async function runSchedulingWorker() {
         const updatedMediaUrl = JSON.stringify(updatedMetaObj);
 
         await safeUpdate(postId, { status: 'Posted', mediaUrl: updatedMediaUrl });
+        
+        // Log success for Analytics
+        try {
+          const log = new PostLog({
+            post_id: postId,
+            status: 'success',
+            platform: post.platform || 'instagram',
+            response: publishResult,
+            user_id: post.userId,
+            workspace_id: post.workspaceId
+          });
+          await log.save();
+        } catch (logErr) {
+          console.error(`⚠️ Failed to save success log for Post ${postId}:`, logErr.message);
+        }
+
         console.log(`✅ SUCCESS: Post ${postId} is now LIVE on ${post.platform === 'facebook' ? 'Facebook' : 'Instagram'}.`);
 
       } catch (postErr) {
@@ -3488,10 +3509,18 @@ async function runSchedulingWorker() {
         if (postErr.message && (postErr.message.includes('Authorization Error') || postErr.message.toLowerCase().includes('credential'))) {
           console.log(`🚫 [Worker] Fatal Auth Error. Marking Post ${postId} as Failed immediately.`);
           await safeUpdate(postId, { status: 'Failed', lastError: postErr.message });
+          
+          try {
+            await new PostLog({ post_id: postId, status: 'failed', platform: post.platform || 'instagram', response: { error: postErr.message }, user_id: post.userId, workspace_id: post.workspaceId }).save();
+          } catch(e) {}
         } else if (currentRetryCount <= MAX_RETRIES && minutesSinceScheduled < MAX_RETRY_WINDOW) {
           await safeUpdate(postId, { status: 'Failed', lastError: postErr.message, retryCount: currentRetryCount });
         } else {
           await safeUpdate(postId, { status: 'Failed', lastError: postErr.message });
+          
+          try {
+            await new PostLog({ post_id: postId, status: 'failed', platform: post.platform || 'instagram', response: { error: postErr.message }, user_id: post.userId, workspace_id: post.workspaceId }).save();
+          } catch(e) {}
         }
       }
     });
