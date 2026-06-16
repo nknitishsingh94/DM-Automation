@@ -12,15 +12,16 @@ router.get('/', verifyToken, async (req, res) => {
     const uuidUserId = convertObjectIDToUUID(req.user.userId);
     const keys = await ApiKey.find({ user_id: uuidUserId, active: true });
     
-    // Mask keys for security before returning
-    const maskedKeys = keys.map(k => ({
+    // Send full key for copying, but also provide maskedKey for UI
+    const mappedKeys = keys.map(k => ({
       id: k.id || k._id,
       name: k.name,
-      key: k.key.substring(0, 12) + '...' + k.key.substring(k.key.length - 4),
+      key: k.key, // Send full key so user can copy it later
+      maskedKey: k.key.substring(0, 12) + '...' + k.key.substring(k.key.length - 4),
       createdAt: k.createdAt || k.created_at
     }));
 
-    res.json(maskedKeys);
+    res.json(mappedKeys);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

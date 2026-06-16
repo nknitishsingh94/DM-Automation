@@ -191,7 +191,7 @@ export default function ApiKeys() {
                   </td>
                   <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <code style={{ fontSize: '0.85rem', color: '#475569', fontFamily: 'monospace' }}>{k.key}</code>
+                      <code style={{ fontSize: '0.85rem', color: '#475569', fontFamily: 'monospace' }}>{k.maskedKey || k.key}</code>
                       <button
                         onClick={() => handleCopy(k.key, k.id)}
                         style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px', color: '#94a3b8', transition: 'color 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
