@@ -74,7 +74,7 @@ const ScheduleFeature = lazyRetry(() => import('./pages/ScheduleFeature'));
 const AllReviews = lazyRetry(() => import('./pages/AllReviews'));
 const Scheduling = lazyRetry(() => import('./pages/Scheduling'));
 const Contact = lazyRetry(() => import('./pages/Contact'));
-const DeveloperSettings = lazyRetry(() => import('./pages/DeveloperSettings'));
+const ApiKeys = lazyRetry(() => import('./pages/ApiKeys'));
 import TemplatesModal from './components/TemplatesModal';
 
 const NotificationContext = createContext();
@@ -754,7 +754,7 @@ function MainLayout() {
               <Route path="/features/universal-triggers" element={<UniversalTriggersFeature />} />
               <Route path="/features/scheduling" element={<ScheduleFeature />} />
               <Route path="/scheduling" element={<ProtectedRoute><Scheduling /></ProtectedRoute>} />
-              <Route path="/developer" element={<ProtectedRoute><DeveloperSettings /></ProtectedRoute>} />
+              <Route path="/developer" element={<ProtectedRoute><ApiKeys /></ProtectedRoute>} />
               <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<div style={{textAlign:'center', marginTop:'50px', color:'var(--text-muted)'}}>Page Under Construction</div>} />
             </Routes>

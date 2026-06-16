@@ -4,7 +4,7 @@ import { Key, Copy, Trash2, Plus, Terminal, Check, HelpCircle, Eye, EyeOff, X } 
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
 
-export default function DeveloperSettings() {
+export default function ApiKeys() {
   const { notify } = useNotification();
   const [keys, setKeys] = useState([]);
   const [loading, setLoading] = useState(true);
