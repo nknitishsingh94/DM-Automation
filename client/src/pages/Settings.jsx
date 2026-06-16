@@ -21,11 +21,12 @@ export default function Settings() {
     if (!user) return;
     try {
       setDeleting(true);
+      const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/auth/delete`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`
+          'Authorization': `Bearer ${token}`
         },
       });
       if (!res.ok) throw new Error('Failed to delete account');
