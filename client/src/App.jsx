@@ -696,10 +696,10 @@ function MainLayout() {
   return (
     <div className="app-container" style={{ height: '100%', width: '100%', position: 'fixed', top: 0, left: 0 }}>
       {user && !hideSidebar && <Sidebar isMobileOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />}
-      <main className="main-content">
+      <main className="main-content" style={{ paddingTop: location.pathname === '/developer' ? '0' : undefined }}>
         {!hideTopBar && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
         <div className="page-container" style={{ 
-          padding: (isPublic || ['/inbox', '/universal-triggers', '/scheduling', '/hub/message-only'].includes(location.pathname)) ? '0' : undefined,
+          padding: (isPublic || ['/inbox', '/universal-triggers', '/scheduling', '/hub/message-only', '/developer'].includes(location.pathname)) ? '0' : undefined,
           overflow: (['/inbox', '/universal-triggers', '/scheduling', '/hub/message-only'].includes(location.pathname)) ? 'hidden' : 'auto',
           display: 'flex',
           flexDirection: 'column'
