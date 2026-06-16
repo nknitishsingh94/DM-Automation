@@ -1691,7 +1691,6 @@ export default function Scheduling() {
                       );
                     })}
                   </div>
-                )}
               </div>
 
               {/* Date & Timezone */}
