@@ -102,11 +102,8 @@ export default function DeveloperSettings() {
       {/* Title Header */}
       <div>
         <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#0f172a', margin: '0 0 4px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Terminal size={28} color="#7c3aed" /> Developer API Settings
+          <Key size={28} color="#7c3aed" /> API Keys
         </h2>
-        <p style={{ margin: 0, fontSize: '0.95rem', color: '#64748b' }}>
-          Generate API keys to programmatically schedule and automate posts across multiple platforms.
-        </p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', maxWidth: '700px', alignItems: 'start' }}>
