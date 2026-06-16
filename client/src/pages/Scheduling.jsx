@@ -1079,6 +1079,8 @@ export default function Scheduling() {
     return platforms;
   })();
 
+  const connectedPlatforms = allPlatforms.filter(p => p.connected);
+
   if (loading) return <LoadingSpinner />;
 
   const visiblePosts = posts.filter(post => {
