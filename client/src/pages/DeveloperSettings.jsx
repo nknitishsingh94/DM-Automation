@@ -94,31 +94,7 @@ export default function DeveloperSettings() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const curlExample = `curl -X POST "${API_BASE_URL}/api/posts" \\
-  -H "Authorization: Bearer sk_live_YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "caption": "Programmatic post from Developer API!",
-    "mediaUrl": "https://example.com/video.mp4",
-    "platforms": ["instagram", "youtube"],
-    "type": "video"
-  }'`;
 
-  const nodeExample = `fetch("${API_BASE_URL}/api/posts", {
-  method: "POST",
-  headers: {
-    "Authorization": "Bearer sk_live_YOUR_API_KEY",
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    caption: "Programmatic post from Developer API!",
-    mediaUrl: "https://example.com/video.mp4",
-    platforms: ["instagram", "youtube"],
-    type: "video"
-  })
-})
-.then(res => res.json())
-.then(data => console.log(data));`;
 
   return (
     <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '28px', padding: '24px 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
@@ -133,7 +109,7 @@ export default function DeveloperSettings() {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', maxWidth: '700px', alignItems: 'start' }}>
         
         {/* Left Side: Keys Management */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -239,119 +215,7 @@ export default function DeveloperSettings() {
           </div>
         </div>
 
-        {/* Right Side: Documentation & Examples */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          
-          {/* Endpoint Documentation Card */}
-          <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', boxShadow: '0 4px 10px rgba(0,0,0,0.02)' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <HelpCircle size={18} color="#7c3aed" /> Developer API Reference
-            </h3>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <span style={{ background: '#22c55e', color: 'white', fontSize: '0.75rem', fontWeight: '800', padding: '2px 8px', borderRadius: '4px', textTransform: 'uppercase', marginRight: '8px' }}>POST</span>
-                <code style={{ fontSize: '0.88rem', fontWeight: '700', color: '#0f172a', fontFamily: 'monospace' }}>/api/posts</code>
-                <p style={{ margin: '6px 0 0 0', fontSize: '0.85rem', color: '#64748b', lineHeight: '1.4' }}>
-                  Create and schedule a post for one or more platforms. The scheduling worker runs in the background to publish your posts.
-                </p>
-              </div>
 
-              <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '12px' }}>
-                <h4 style={{ margin: '0 0 8px 0', fontSize: '0.85rem', fontWeight: '700', color: '#334155' }}>Headers</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <div style={{ display: 'flex', fontSize: '0.8rem' }}><span style={{ fontWeight: '700', width: '120px', color: '#475569' }}>Authorization</span><span style={{ color: '#64748b' }}>Bearer sk_live_YOUR_API_KEY</span></div>
-                  <div style={{ display: 'flex', fontSize: '0.8rem' }}><span style={{ fontWeight: '700', width: '120px', color: '#475569' }}>Content-Type</span><span style={{ color: '#64748b' }}>application/json</span></div>
-                </div>
-              </div>
-
-              <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '12px' }}>
-                <h4 style={{ margin: '0 0 8px 0', fontSize: '0.85rem', fontWeight: '700', color: '#334155' }}>Request Body (JSON)</h4>
-                <table style={{ width: '100%', fontSize: '0.8rem', borderCollapse: 'collapse', textAlign: 'left' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid #e2e8f0', color: '#475569' }}>
-                      <th style={{ padding: '6px 0', fontWeight: '700' }}>Parameter</th>
-                      <th style={{ padding: '6px 0', fontWeight: '700' }}>Type</th>
-                      <th style={{ padding: '6px 0', fontWeight: '700' }}>Req?</th>
-                      <th style={{ padding: '6px 0', fontWeight: '700' }}>Description</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '6px 0', fontFamily: 'monospace', fontWeight: '600' }}>caption</td>
-                      <td style={{ padding: '6px 0', color: '#64748b' }}>string</td>
-                      <td style={{ padding: '6px 0', color: '#475569' }}>Yes</td>
-                      <td style={{ padding: '6px 0', color: '#64748b' }}>Post text content.</td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '6px 0', fontFamily: 'monospace', fontWeight: '600' }}>mediaUrl</td>
-                      <td style={{ padding: '6px 0', color: '#64748b' }}>string</td>
-                      <td style={{ padding: '6px 0', color: '#475569' }}>No</td>
-                      <td style={{ padding: '6px 0', color: '#64748b' }}>Public HTTP link to your image/video.</td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '6px 0', fontFamily: 'monospace', fontWeight: '600' }}>platforms</td>
-                      <td style={{ padding: '6px 0', color: '#64748b' }}>array</td>
-                      <td style={{ padding: '6px 0', color: '#475569' }}>Yes</td>
-                      <td style={{ padding: '6px 0', color: '#64748b' }}>e.g. <code>["instagram", "youtube"]</code>.</td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '6px 0', fontFamily: 'monospace', fontWeight: '600' }}>scheduledFor</td>
-                      <td style={{ padding: '6px 0', color: '#64748b' }}>string</td>
-                      <td style={{ padding: '6px 0', color: '#475569' }}>No</td>
-                      <td style={{ padding: '6px 0', color: '#64748b' }}>ISO 8601 date. Defaults to now.</td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '6px 0', fontFamily: 'monospace', fontWeight: '600' }}>type</td>
-                      <td style={{ padding: '6px 0', color: '#64748b' }}>string</td>
-                      <td style={{ padding: '6px 0', color: '#475569' }}>No</td>
-                      <td style={{ padding: '6px 0', color: '#64748b' }}><code>"image"</code> or <code>"video"</code>.</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          {/* Code Sandbox Card */}
-          <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', boxShadow: '0 4px 10px rgba(0,0,0,0.02)' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Terminal size={18} color="#7c3aed" /> Integration Examples
-            </h3>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <h4 style={{ margin: '0 0 6px 0', fontSize: '0.85rem', fontWeight: '700', color: '#334155' }}>cURL (Command Line)</h4>
-                <div style={{ position: 'relative' }}>
-                  <pre style={{ margin: 0, padding: '12px', background: '#0f172a', color: '#f8fafc', borderRadius: '8px', fontSize: '0.76rem', overflowX: 'auto', fontFamily: 'monospace', whiteSpace: 'pre' }}>
-                    {curlExample}
-                  </pre>
-                  <button
-                    onClick={() => handleCopy(curlExample, 'curl')}
-                    style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  >
-                    {copiedId === 'curl' ? <Check size={12} color="#10b981" /> : <Copy size={12} color="#f8fafc" />}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <h4 style={{ margin: '0 0 6px 0', fontSize: '0.85rem', fontWeight: '700', color: '#334155' }}>JavaScript (Fetch API)</h4>
-                <div style={{ position: 'relative' }}>
-                  <pre style={{ margin: 0, padding: '12px', background: '#0f172a', color: '#f8fafc', borderRadius: '8px', fontSize: '0.76rem', overflowX: 'auto', fontFamily: 'monospace', whiteSpace: 'pre' }}>
-                    {nodeExample}
-                  </pre>
-                  <button
-                    onClick={() => handleCopy(nodeExample, 'node')}
-                    style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  >
-                    {copiedId === 'node' ? <Check size={12} color="#10b981" /> : <Copy size={12} color="#f8fafc" />}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
       </div>
 
