@@ -16,11 +16,6 @@ export default function ApiKeys() {
   
   const [newlyCreatedKey, setNewlyCreatedKey] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
-  const [portalTarget, setPortalTarget] = useState(null);
-
-  useEffect(() => {
-    setPortalTarget(document.getElementById('topbar-actions-portal'));
-  }, []);
 
   const fetchKeys = async () => {
     try {
@@ -104,27 +99,26 @@ export default function ApiKeys() {
 
 
   return (
-    <div style={{ width: '100%', padding: '0 40px 100px 40px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
-      
-      {/* Subtitle */}
-      <p style={{ margin: '-10px 0 24px 0', color: '#64748b', fontSize: '0.95rem' }}>Authentication tokens for the programmatic API</p>
-
-      {/* Render Create button into Topbar */}
-      {portalTarget && createPortal(
-        !showGenerateForm && (
+    <div style={{ width: '100%', padding: '40px 40px 100px 40px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
+      {/* Header & Create Button */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+        <div>
+          <h1 style={{ margin: '0 0 8px 0', fontSize: '24px', fontWeight: '800', color: '#1e293b' }}>API Keys</h1>
+          <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>Authentication tokens for the programmatic API</p>
+        </div>
+        {!showGenerateForm && (
           <button
             onClick={() => { setShowGenerateForm(true); setNewlyCreatedKey(null); }}
             style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px', background: '#e04f32', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(224, 79, 50, 0.25)' }}
           >
             <Plus size={18} /> Create key
           </button>
-        ),
-        portalTarget
-      )}
+        )}
+      </div>
 
       {/* Display newly created key ONCE */}
       {newlyCreatedKey && (
-        <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
+        <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '12px', padding: '16px', marginBottom: '32px' }}>
           <h4 style={{ margin: '0 0 6px 0', fontSize: '0.88rem', fontWeight: '700', color: '#065f46' }}>Copy your API Key now!</h4>
           <p style={{ margin: '0 0 12px 0', fontSize: '0.8rem', color: '#047857', lineHeight: '1.4' }}>
             For security reasons, this key will only be shown to you this one time. If you leave this page, you won't be able to recover it.
@@ -141,20 +135,6 @@ export default function ApiKeys() {
           </div>
         </div>
       )}
-
-      {/* Search & Filters */}
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', background: 'transparent', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '6px 12px', width: '220px' }}>
-          <span style={{ color: '#94a3b8', marginRight: '8px', fontSize: '0.9rem' }}>🔍</span>
-          <input type="text" placeholder="Search keys..." style={{ border: 'none', outline: 'none', fontSize: '0.85rem', width: '100%', background: 'transparent', color: '#334155' }} />
-        </div>
-        <select style={{ padding: '6px 28px 6px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', background: 'transparent', fontSize: '0.85rem', color: '#475569', outline: 'none', appearance: 'none', cursor: 'pointer', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23475569%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center', backgroundSize: '8px' }}>
-          <option>All</option>
-        </select>
-        <select style={{ padding: '6px 28px 6px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', background: 'transparent', fontSize: '0.85rem', color: '#475569', outline: 'none', appearance: 'none', cursor: 'pointer', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23475569%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center', backgroundSize: '8px' }}>
-          <option>All perms</option>
-        </select>
-      </div>
 
       {/* Table UI */}
       <div style={{ width: '100%', overflowX: 'auto', borderTop: '1px solid #cbd5e1' }}>
