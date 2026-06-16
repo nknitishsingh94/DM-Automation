@@ -190,7 +190,18 @@ export default function DeveloperSettings() {
                     <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>{new Date(k.createdAt).toLocaleDateString()}</div>
                   </td>
                   <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
-                    <code style={{ fontSize: '0.85rem', color: '#475569', fontFamily: 'monospace' }}>{k.key}</code>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <code style={{ fontSize: '0.85rem', color: '#475569', fontFamily: 'monospace' }}>{k.key}</code>
+                      <button
+                        onClick={() => handleCopy(k.key, k.id)}
+                        style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px', color: '#94a3b8', transition: 'color 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        title="Copy API Key"
+                        onMouseOver={(e) => e.currentTarget.style.color = '#3b82f6'}
+                        onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}
+                      >
+                        {copiedId === k.id ? <Check size={14} color="#059669" /> : <Copy size={14} />}
+                      </button>
+                    </div>
                   </td>
                   <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
                     <span style={{ fontSize: '0.85rem', color: '#64748b' }}>All profiles</span>
