@@ -104,85 +104,123 @@ export default function DeveloperSettings() {
 
 
   return (
-    <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '28px', padding: '24px 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ width: '100%', padding: '0 40px 100px 40px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
+      
+      {/* Subtitle */}
+      <p style={{ margin: '-10px 0 24px 0', color: '#64748b', fontSize: '0.95rem' }}>Authentication tokens for the programmatic API</p>
+
       {/* Render Create button into Topbar */}
       {portalTarget && createPortal(
         !showGenerateForm && (
           <button
             onClick={() => { setShowGenerateForm(true); setNewlyCreatedKey(null); }}
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.9rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(139, 92, 246, 0.25)' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px', background: '#e04f32', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(224, 79, 50, 0.25)' }}
           >
-            <Plus size={16} /> Create
+            <Plus size={18} /> Create key
           </button>
         ),
         portalTarget
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', maxWidth: '700px', alignItems: 'start' }}>
-        
-        {/* Left Side: Keys Management */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          
-          {/* Key List Card */}
-          <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', boxShadow: '0 4px 10px rgba(0,0,0,0.02)' }}>
+      {/* Display newly created key ONCE */}
+      {newlyCreatedKey && (
+        <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
+          <h4 style={{ margin: '0 0 6px 0', fontSize: '0.88rem', fontWeight: '700', color: '#065f46' }}>Copy your API Key now!</h4>
+          <p style={{ margin: '0 0 12px 0', fontSize: '0.8rem', color: '#047857', lineHeight: '1.4' }}>
+            For security reasons, this key will only be shown to you this one time. If you leave this page, you won't be able to recover it.
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', background: 'white', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 12px', gap: '8px' }}>
+            <code style={{ fontSize: '0.82rem', color: '#0f172a', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace' }}>{newlyCreatedKey}</code>
+            <button
+              onClick={() => handleCopy(newlyCreatedKey, 'new')}
+              style={{ background: '#f1f5f9', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              title="Copy API Key"
+            >
+              {copiedId === 'new' ? <Check size={14} color="#059669" /> : <Copy size={14} color="#64748b" />}
+            </button>
+          </div>
+        </div>
+      )}
 
+      {/* Search & Filters */}
+      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', background: 'transparent', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '6px 12px', width: '220px' }}>
+          <span style={{ color: '#94a3b8', marginRight: '8px', fontSize: '0.9rem' }}>🔍</span>
+          <input type="text" placeholder="Search keys..." style={{ border: 'none', outline: 'none', fontSize: '0.85rem', width: '100%', background: 'transparent', color: '#334155' }} />
+        </div>
+        <select style={{ padding: '6px 28px 6px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', background: 'transparent', fontSize: '0.85rem', color: '#475569', outline: 'none', appearance: 'none', cursor: 'pointer', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23475569%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center', backgroundSize: '8px' }}>
+          <option>All</option>
+        </select>
+        <select style={{ padding: '6px 28px 6px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', background: 'transparent', fontSize: '0.85rem', color: '#475569', outline: 'none', appearance: 'none', cursor: 'pointer', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23475569%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center', backgroundSize: '8px' }}>
+          <option>All perms</option>
+        </select>
+      </div>
 
-
-            {/* Display newly created key ONCE */}
-            {newlyCreatedKey && (
-              <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
-                <h4 style={{ margin: '0 0 6px 0', fontSize: '0.88rem', fontWeight: '700', color: '#065f46' }}>Copy your API Key now!</h4>
-                <p style={{ margin: '0 0 12px 0', fontSize: '0.8rem', color: '#047857', lineHeight: '1.4' }}>
-                  For security reasons, this key will only be shown to you this one time. If you leave this page, you won't be able to recover it.
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', background: 'white', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 12px', gap: '8px' }}>
-                  <code style={{ fontSize: '0.82rem', color: '#0f172a', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace' }}>{newlyCreatedKey}</code>
-                  <button
-                    onClick={() => handleCopy(newlyCreatedKey, 'new')}
-                    style={{ background: '#f1f5f9', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    title="Copy API Key"
-                  >
-                    {copiedId === 'new' ? <Check size={14} color="#059669" /> : <Copy size={14} color="#64748b" />}
-                  </button>
-                </div>
-              </div>
-            )}
-
+      {/* Table UI */}
+      <div style={{ width: '100%', overflowX: 'auto', borderTop: '1px solid #cbd5e1' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <thead>
+            <tr>
+              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', borderBottom: '1px solid #cbd5e1', width: '20%' }}>Name</th>
+              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', borderBottom: '1px solid #cbd5e1', width: '25%' }}>Key</th>
+              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Scope</th>
+              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Status</th>
+              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', borderBottom: '1px solid #cbd5e1', width: '20%' }}>Permission</th>
+              <th style={{ padding: '16px 8px', borderBottom: '1px solid #cbd5e1', width: '5%' }}></th>
+            </tr>
+          </thead>
+          <tbody>
             {loading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '24px' }}>
-                <div style={{ width: '24px', height: '24px', border: '2px solid #e2e8f0', borderTopColor: '#7c3aed', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-              </div>
+              <tr>
+                <td colSpan="6" style={{ padding: '32px', textAlign: 'center' }}>
+                  <div style={{ display: 'inline-block', width: '24px', height: '24px', border: '2px solid #e2e8f0', borderTopColor: '#7c3aed', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                </td>
+              </tr>
             ) : keys.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '32px 16px', color: '#94a3b8' }}>
-                <Key size={36} style={{ marginBottom: '8px', opacity: 0.5 }} />
-                <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '500' }}>No active API keys found.</p>
-                <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem' }}>Generate one above to start automating programmatically.</p>
-              </div>
+              <tr>
+                <td colSpan="6" style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>
+                  <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '500' }}>No active API keys found.</p>
+                </td>
+              </tr>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {keys.map(k => (
-                  <div key={k.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0 }}>
-                      <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{k.name}</span>
-                      <code style={{ fontSize: '0.78rem', color: '#64748b', fontFamily: 'monospace' }}>{k.key}</code>
-                      <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Created: {new Date(k.createdAt).toLocaleDateString()}</span>
-                    </div>
+              keys.map(k => (
+                <tr key={k.id} style={{ borderBottom: '1px solid #cbd5e1' }}>
+                  <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
+                    <div style={{ fontSize: '0.9rem', fontWeight: '600', color: '#1e293b' }}>{k.name}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>{new Date(k.createdAt).toLocaleDateString()}</div>
+                  </td>
+                  <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
+                    <code style={{ fontSize: '0.85rem', color: '#475569', fontFamily: 'monospace' }}>{k.key}</code>
+                  </td>
+                  <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
+                    <span style={{ fontSize: '0.85rem', color: '#64748b' }}>All profiles</span>
+                  </td>
+                  <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
+                    <span style={{ display: 'inline-flex', padding: '2px 8px', background: '#dcfce7', color: '#059669', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}>
+                      active
+                    </span>
+                  </td>
+                  <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
+                    <span style={{ display: 'inline-flex', padding: '4px 10px', background: '#f8fafc', border: '1px solid #cbd5e1', color: '#059669', borderRadius: '12px', fontSize: '0.8rem', fontWeight: '600' }}>
+                      Read & Write
+                    </span>
+                  </td>
+                  <td style={{ padding: '16px 8px', verticalAlign: 'top', textAlign: 'right' }}>
                     <button
                       onClick={() => handleRevokeKey(k.id)}
-                      style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '6px', color: '#ef4444', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8', transition: 'color 0.2s' }}
                       title="Revoke Key"
+                      onMouseOver={(e) => e.currentTarget.style.color = '#ef4444'}
+                      onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}
                     >
                       <Trash2 size={16} />
                     </button>
-                  </div>
-                ))}
-              </div>
+                  </td>
+                </tr>
+              ))
             )}
-          </div>
-        </div>
-
-
-
+          </tbody>
+        </table>
       </div>
 
       {showGenerateForm && createPortal(
@@ -266,7 +304,7 @@ export default function DeveloperSettings() {
                 type="submit"
                 form="create-api-key-form"
                 disabled={submitting}
-                style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: '#3b82f6', color: 'white', fontSize: '0.95rem', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer', boxShadow: '0 4px 6px rgba(59, 130, 246, 0.25)' }}
+                style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: '#e04f32', color: 'white', fontSize: '0.95rem', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer', boxShadow: '0 4px 6px rgba(224, 79, 50, 0.25)' }}
               >
                 {submitting ? 'Generating...' : 'Create key'}
               </button>
