@@ -54,6 +54,8 @@ import oauthRoutes from './routes/oauth.js';
 import supportRoutes from './routes/support.js';
 import threadsRoutes from './routes/threads.js';
 import aiRoutes from './routes/ai.js';
+import apiKeyRoutes from './routes/apiKeys.js';
+import postsRoutes from './routes/posts.js';
 import { generateAIResponse } from './utils/aiHandler.js';
 import { supabase, convertObjectIDToUUID } from './utils/supabase.js';
 import Workspace from './models/Workspace.js';
@@ -1457,6 +1459,8 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/oauth', oauthRoutes);
 app.use('/api/forms', formRoutes);
 app.use('/api/threads', threadsRoutes);
+app.use('/api/api-keys', apiKeyRoutes);
+app.use('/api/posts', postsRoutes);
 
 // --- AVATAR UPLOAD ROUTE ---
 app.post('/api/upload/avatar', upload.single('file'), async (req, res) => {
