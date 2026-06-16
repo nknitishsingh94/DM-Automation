@@ -11,6 +11,8 @@ export default function DeveloperSettings() {
   const [newKeyName, setNewKeyName] = useState('');
   const [showGenerateForm, setShowGenerateForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [permission, setPermission] = useState('Read & Write');
+  const [fullAccess, setFullAccess] = useState(true);
   
   const [newlyCreatedKey, setNewlyCreatedKey] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
@@ -225,10 +227,18 @@ export default function DeveloperSettings() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <label style={{ fontSize: '0.9rem', fontWeight: '600', color: '#334155' }}>Permission</label>
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <button type="button" style={{ flex: 1, padding: '10px', background: '#dcfce7', color: '#166534', border: '1px solid #bbf7d0', borderRadius: '8px', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer' }}>
+                  <button 
+                    type="button" 
+                    onClick={() => setPermission('Read & Write')}
+                    style={{ flex: 1, padding: '10px', background: permission === 'Read & Write' ? '#dcfce7' : 'white', color: permission === 'Read & Write' ? '#166534' : '#64748b', border: `1px solid ${permission === 'Read & Write' ? '#bbf7d0' : '#e2e8f0'}`, borderRadius: '8px', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s' }}
+                  >
                     Read & Write
                   </button>
-                  <button type="button" style={{ flex: 1, padding: '10px', background: 'white', color: '#64748b', border: '1px solid #e2e8f0', borderRadius: '8px', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer' }}>
+                  <button 
+                    type="button" 
+                    onClick={() => setPermission('Read Only')}
+                    style={{ flex: 1, padding: '10px', background: permission === 'Read Only' ? '#dcfce7' : 'white', color: permission === 'Read Only' ? '#166534' : '#64748b', border: `1px solid ${permission === 'Read Only' ? '#bbf7d0' : '#e2e8f0'}`, borderRadius: '8px', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s' }}
+                  >
                     Read Only
                   </button>
                 </div>
@@ -238,8 +248,11 @@ export default function DeveloperSettings() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <label style={{ fontSize: '0.9rem', fontWeight: '600', color: '#334155' }}>Profile Access</label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '44px', height: '24px', background: '#334155', borderRadius: '12px', position: 'relative', cursor: 'pointer' }}>
-                    <div style={{ position: 'absolute', top: '2px', right: '2px', width: '20px', height: '20px', background: 'white', borderRadius: '50%' }}></div>
+                  <div 
+                    onClick={() => setFullAccess(!fullAccess)}
+                    style={{ width: '44px', height: '24px', background: fullAccess ? '#3b82f6' : '#cbd5e1', borderRadius: '12px', position: 'relative', cursor: 'pointer', transition: 'background 0.3s' }}
+                  >
+                    <div style={{ position: 'absolute', top: '2px', left: fullAccess ? '22px' : '2px', width: '20px', height: '20px', background: 'white', borderRadius: '50%', transition: 'left 0.3s' }}></div>
                   </div>
                   <span style={{ fontSize: '0.95rem', color: '#475569' }}>Full access (all profiles)</span>
                 </div>
@@ -253,7 +266,7 @@ export default function DeveloperSettings() {
                 type="submit"
                 form="create-api-key-form"
                 disabled={submitting}
-                style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: '#f97316', color: 'white', fontSize: '0.95rem', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer' }}
+                style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: '#3b82f6', color: 'white', fontSize: '0.95rem', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer', boxShadow: '0 4px 6px rgba(59, 130, 246, 0.25)' }}
               >
                 {submitting ? 'Generating...' : 'Create key'}
               </button>
