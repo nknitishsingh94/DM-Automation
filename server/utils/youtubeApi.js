@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import fs from 'fs';
 import path from 'path';
+import axios from 'axios';
 
 export async function publishYouTubeVideo(userId, postData, settings) {
   try {
@@ -59,17 +60,27 @@ export async function publishYouTubeVideo(userId, postData, settings) {
         }
       });
     } else {
-      // Ensure video exists locally (if uploaded via /api/upload)
       const serverRoot = process.cwd();
-      let absoluteVideoPath = videoUrl;
-      if (videoUrl.startsWith('/uploads/')) {
-        absoluteVideoPath = path.join(serverRoot, videoUrl);
-      } else {
-        throw new Error(`Video URL must be a local /uploads path for synchronous upload, got: ${videoUrl}`);
-      }
+      let mediaStream;
 
-      if (!fs.existsSync(absoluteVideoPath)) {
-        throw new Error(`Video file not found at ${absoluteVideoPath}`);
+      if (videoUrl.startsWith('http://') || videoUrl.startsWith('https://')) {
+        // Handle remote URL by streaming directly to YouTube
+        console.log(`[YouTube API] Fetching remote video stream from: ${videoUrl}`);
+        const response = await axios({
+          method: 'get',
+          url: videoUrl,
+          responseType: 'stream'
+        });
+        mediaStream = response.data;
+      } else if (videoUrl.startsWith('/uploads/')) {
+        // Handle local file
+        const absoluteVideoPath = path.join(serverRoot, videoUrl);
+        if (!fs.existsSync(absoluteVideoPath)) {
+          throw new Error(`Video file not found at ${absoluteVideoPath}`);
+        }
+        mediaStream = fs.createReadStream(absoluteVideoPath);
+      } else {
+        throw new Error(`Video URL must be an http(s) URL or a local /uploads path, got: ${videoUrl}`);
       }
 
       // Upload Video
@@ -86,7 +97,7 @@ export async function publishYouTubeVideo(userId, postData, settings) {
           },
         },
         media: {
-          body: fs.createReadStream(absoluteVideoPath),
+          body: mediaStream,
         },
       });
 
@@ -95,14 +106,26 @@ export async function publishYouTubeVideo(userId, postData, settings) {
     }
 
     // If thumbnail provided, upload it too
-    if (thumbnail && thumbnail.startsWith('/uploads/')) {
+    if (thumbnail) {
       try {
-        const absoluteThumbPath = path.join(serverRoot, thumbnail);
-        if (fs.existsSync(absoluteThumbPath)) {
+        const serverRoot = process.cwd();
+        let thumbStream;
+
+        if (thumbnail.startsWith('http://') || thumbnail.startsWith('https://')) {
+          const response = await axios({ method: 'get', url: thumbnail, responseType: 'stream' });
+          thumbStream = response.data;
+        } else if (thumbnail.startsWith('/uploads/')) {
+          const absoluteThumbPath = path.join(serverRoot, thumbnail);
+          if (fs.existsSync(absoluteThumbPath)) {
+            thumbStream = fs.createReadStream(absoluteThumbPath);
+          }
+        }
+
+        if (thumbStream) {
           await youtube.thumbnails.set({
             videoId: videoId,
             media: {
-              body: fs.createReadStream(absoluteThumbPath),
+              body: thumbStream,
             },
           });
           console.log(`✅ [YouTube API] Thumbnail uploaded successfully for video ID: ${videoId}`);
