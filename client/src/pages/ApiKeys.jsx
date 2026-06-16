@@ -99,12 +99,12 @@ export default function ApiKeys() {
 
 
   return (
-    <div style={{ width: '100%', padding: '40px 40px 100px 40px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ width: '100%', padding: '40px 24px 100px 24px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
       {/* Header & Create Button */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
         <div>
-          <h1 style={{ margin: '0 0 8px 0', fontSize: '24px', fontWeight: '800', color: '#1e293b' }}>API Keys</h1>
-          <p style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>Authentication tokens for the programmatic API</p>
+          <h1 style={{ margin: '0 0 8px 0', fontSize: '28px', fontWeight: '800', color: '#1e293b' }}>API Keys</h1>
+          <p style={{ margin: 0, color: '#64748b', fontSize: '1.05rem' }}>Authentication tokens for the programmatic API</p>
         </div>
         {!showGenerateForm && (
           <button
@@ -141,12 +141,12 @@ export default function ApiKeys() {
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ background: '#f1f5f9' }}>
-              <th style={{ padding: '16px 16px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '20%', borderTopLeftRadius: '8px' }}>Name</th>
-              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '25%' }}>Key</th>
-              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Scope</th>
-              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Status</th>
-              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '20%' }}>Permission</th>
-              <th style={{ padding: '16px 16px', borderBottom: '1px solid #cbd5e1', width: '5%', borderTopRightRadius: '8px' }}></th>
+              <th style={{ padding: '18px 20px', fontSize: '0.95rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '20%', borderTopLeftRadius: '8px' }}>Name</th>
+              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '25%' }}>Key</th>
+              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Scope</th>
+              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Status</th>
+              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '20%' }}>Permission</th>
+              <th style={{ padding: '18px 20px', borderBottom: '1px solid #cbd5e1', width: '5%', borderTopRightRadius: '8px' }}></th>
             </tr>
           </thead>
           <tbody>
@@ -165,13 +165,13 @@ export default function ApiKeys() {
             ) : (
               keys.map(k => (
                 <tr key={k.id} style={{ borderBottom: '1px solid #cbd5e1' }}>
-                  <td style={{ padding: '16px 16px', verticalAlign: 'top' }}>
-                    <div style={{ fontSize: '0.9rem', fontWeight: '600', color: '#1e293b' }}>{k.name}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>{new Date(k.createdAt).toLocaleDateString()}</div>
+                  <td style={{ padding: '20px 20px', verticalAlign: 'top' }}>
+                    <div style={{ fontSize: '1rem', fontWeight: '600', color: '#1e293b' }}>{k.name}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '6px' }}>{new Date(k.createdAt).toLocaleDateString()}</div>
                   </td>
-                  <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
+                  <td style={{ padding: '20px 12px', verticalAlign: 'top' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <code style={{ fontSize: '0.85rem', color: '#475569', fontFamily: 'monospace' }}>{k.maskedKey || k.key}</code>
+                      <code style={{ fontSize: '0.95rem', color: '#475569', fontFamily: 'monospace' }}>{k.maskedKey || k.key}</code>
                       <button
                         onClick={() => handleCopy(k.key, k.id)}
                         style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px', color: '#94a3b8', transition: 'color 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -179,24 +179,24 @@ export default function ApiKeys() {
                         onMouseOver={(e) => e.currentTarget.style.color = '#3b82f6'}
                         onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}
                       >
-                        {copiedId === k.id ? <Check size={14} color="#059669" /> : <Copy size={14} />}
+                        {copiedId === k.id ? <Check size={16} color="#059669" /> : <Copy size={16} />}
                       </button>
                     </div>
                   </td>
-                  <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
-                    <span style={{ fontSize: '0.85rem', color: '#64748b' }}>All profiles</span>
+                  <td style={{ padding: '20px 12px', verticalAlign: 'top' }}>
+                    <span style={{ fontSize: '0.95rem', color: '#64748b' }}>All profiles</span>
                   </td>
-                  <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
-                    <span style={{ display: 'inline-flex', padding: '2px 8px', background: '#dcfce7', color: '#059669', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}>
+                  <td style={{ padding: '20px 12px', verticalAlign: 'top' }}>
+                    <span style={{ display: 'inline-flex', padding: '4px 10px', background: '#dcfce7', color: '#059669', borderRadius: '4px', fontSize: '0.85rem', fontWeight: '600' }}>
                       active
                     </span>
                   </td>
-                  <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
-                    <span style={{ display: 'inline-flex', padding: '4px 10px', background: '#f8fafc', border: '1px solid #cbd5e1', color: '#059669', borderRadius: '12px', fontSize: '0.8rem', fontWeight: '600' }}>
+                  <td style={{ padding: '20px 12px', verticalAlign: 'top' }}>
+                    <span style={{ display: 'inline-flex', padding: '6px 12px', background: '#f8fafc', border: '1px solid #cbd5e1', color: '#059669', borderRadius: '12px', fontSize: '0.85rem', fontWeight: '600' }}>
                       Read & Write
                     </span>
                   </td>
-                  <td style={{ padding: '16px 16px', verticalAlign: 'top', textAlign: 'right' }}>
+                  <td style={{ padding: '20px 20px', verticalAlign: 'top', textAlign: 'right' }}>
                     <button
                       onClick={() => handleRevokeKey(k.id)}
                       style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8', transition: 'color 0.2s' }}
@@ -204,7 +204,7 @@ export default function ApiKeys() {
                       onMouseOver={(e) => e.currentTarget.style.color = '#ef4444'}
                       onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={18} />
                     </button>
                   </td>
                 </tr>
