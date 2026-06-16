@@ -160,13 +160,13 @@ export default function ApiKeys() {
       <div style={{ width: '100%', overflowX: 'auto', borderTop: '1px solid #cbd5e1' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
-            <tr>
-              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', borderBottom: '1px solid #cbd5e1', width: '20%' }}>Name</th>
-              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', borderBottom: '1px solid #cbd5e1', width: '25%' }}>Key</th>
-              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Scope</th>
-              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Status</th>
-              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', borderBottom: '1px solid #cbd5e1', width: '20%' }}>Permission</th>
-              <th style={{ padding: '16px 8px', borderBottom: '1px solid #cbd5e1', width: '5%' }}></th>
+            <tr style={{ background: '#f1f5f9' }}>
+              <th style={{ padding: '16px 16px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '20%', borderTopLeftRadius: '8px' }}>Name</th>
+              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '25%' }}>Key</th>
+              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Scope</th>
+              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Status</th>
+              <th style={{ padding: '16px 8px', fontSize: '0.85rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '20%' }}>Permission</th>
+              <th style={{ padding: '16px 16px', borderBottom: '1px solid #cbd5e1', width: '5%', borderTopRightRadius: '8px' }}></th>
             </tr>
           </thead>
           <tbody>
@@ -185,7 +185,7 @@ export default function ApiKeys() {
             ) : (
               keys.map(k => (
                 <tr key={k.id} style={{ borderBottom: '1px solid #cbd5e1' }}>
-                  <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
+                  <td style={{ padding: '16px 16px', verticalAlign: 'top' }}>
                     <div style={{ fontSize: '0.9rem', fontWeight: '600', color: '#1e293b' }}>{k.name}</div>
                     <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>{new Date(k.createdAt).toLocaleDateString()}</div>
                   </td>
@@ -216,7 +216,7 @@ export default function ApiKeys() {
                       Read & Write
                     </span>
                   </td>
-                  <td style={{ padding: '16px 8px', verticalAlign: 'top', textAlign: 'right' }}>
+                  <td style={{ padding: '16px 16px', verticalAlign: 'top', textAlign: 'right' }}>
                     <button
                       onClick={() => handleRevokeKey(k.id)}
                       style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8', transition: 'color 0.2s' }}
