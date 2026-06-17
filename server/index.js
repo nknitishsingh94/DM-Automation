@@ -3213,8 +3213,85 @@ app.get('/api/debug/settings', verifyToken, async (req, res) => {
   }
 });
 
+// --- ONE-TIME FIX: Fetch and cache GMB Account/Location IDs for current user ---
+app.post('/api/fix-gmb-cache', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id || req.user._id || req.user.userId;
+    const workspaceId = req.headers['x-workspace-id'] || req.body.workspaceId;
+
+    const { supabase: _sb } = await import('./utils/supabase.js');
+    const Settings = (await import('./models/Settings.js')).default;
+
+    const query = { userId };
+    if (workspaceId) query.workspaceId = workspaceId;
+    const settings = await Settings.findOne(query);
+
+    if (!settings || !settings.googleBusinessAccessToken) {
+      return res.status(400).json({ error: 'Google Business not connected.' });
+    }
+
+    // Refresh token
+    let accessToken = settings.googleBusinessAccessToken;
+    if (settings.googleBusinessRefreshToken) {
+      const axios = (await import('axios')).default;
+      try {
+        const refreshRes = await axios.post('https://oauth2.googleapis.com/token', {
+          client_id: process.env.GOOGLE_CLIENT_ID,
+          client_secret: process.env.GOOGLE_CLIENT_SECRET,
+          refresh_token: settings.googleBusinessRefreshToken,
+          grant_type: 'refresh_token'
+        });
+        if (refreshRes.data?.access_token) accessToken = refreshRes.data.access_token;
+      } catch(e) {}
+    }
+
+    const axios = (await import('axios')).default;
+    const accountsRes = await axios.get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+
+    const accounts = accountsRes.data?.accounts || [];
+    if (accounts.length === 0) return res.status(400).json({ error: 'No GMB accounts found.' });
+
+    const account = accounts[0];
+    const accountId = account.name;
+
+    const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${accountId}/locations?readMask=name,title`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+
+    const locations = locationsRes.data?.locations || [];
+    if (locations.length === 0) return res.status(400).json({ error: 'No GMB locations found.' });
+
+    const location = locations[0];
+    const locationId = location.name;
+    const locationTitle = location.title;
+
+    // Save to connectedPageName JSON
+    let pageData = {};
+    try { pageData = JSON.parse(settings.connectedPageName || '{}'); } catch(e) {}
+    pageData.googleBusinessAccountId = accountId;
+    pageData.googleBusinessLocationId = locationId;
+    pageData.connectedGoogleBusinessName = locationTitle;
+
+    const updateQ = _sb.from('settings').update({ connectedPageName: JSON.stringify(pageData) });
+    if (workspaceId) {
+      await updateQ.eq('workspaceId', workspaceId);
+    } else {
+      await updateQ.eq('userId', userId);
+    }
+
+    console.log(`✅ [GMB FIX] Saved Account: ${accountId}, Location: ${locationId} for user ${userId}`);
+    res.json({ success: true, accountId, locationId, locationTitle });
+  } catch (err) {
+    console.error('❌ [GMB FIX] Error:', err.response?.data || err.message);
+    res.status(500).json({ error: err.response?.data?.error?.message || err.message });
+  }
+});
+
 
 // Start the server
+
 
 // --- REINFORCED BACKGROUND WORKER (Scheduling) ---
 async function runSchedulingWorker() {
