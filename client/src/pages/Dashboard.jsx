@@ -28,6 +28,9 @@ export default function Dashboard() {
     instagramConnected: false,
     facebookConnected: false
   });
+  const [hasReviewed, setHasReviewed] = useState(
+    localStorage.getItem('smart10x_reviewed') === 'true'
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,10 +38,11 @@ export default function Dashboard() {
       const headers = { 'Authorization': `Bearer ${token}` };
 
       try {
-        const [statsRes, settingsRes, flowsRes] = await Promise.all([
+        const [statsRes, settingsRes, flowsRes, feedbackRes] = await Promise.all([
           fetch(`${API_BASE_URL}/api/stats?filter=${timeFilter}`, { headers }),
           fetch(`${API_BASE_URL}/api/settings`, { headers }),
-          fetch(`${API_BASE_URL}/api/flows`, { headers })
+          fetch(`${API_BASE_URL}/api/flows`, { headers }),
+          fetch(`${API_BASE_URL}/api/user-feedback/check`, { headers }).catch(() => null)
         ]);
         
         if (statsRes.status === 401) {
@@ -50,6 +54,17 @@ export default function Dashboard() {
         const flowsData = await flowsRes.json().catch(() => ([]));
 
         if (statsData) setStats(statsData);
+        
+        if (feedbackRes && feedbackRes.ok) {
+          const feedbackData = await feedbackRes.json().catch(() => ({}));
+          if (feedbackData.exists) {
+            setHasReviewed(true);
+            localStorage.setItem('smart10x_reviewed', 'true');
+          } else {
+            setHasReviewed(false);
+            localStorage.removeItem('smart10x_reviewed');
+          }
+        }
         
         const isInstagramConnected = !!(settingsData?.isAccountConnected || settingsData?.instagramAccessToken);
         const isFacebookConnected = !!(settingsData?.isFacebookConnected || (settingsData?.facebookAccessToken && settingsData?.facebookPageId));
@@ -198,6 +213,52 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
+
+        {/* Write a Review Card */}
+        {!hasReviewed && (
+          <div className="stat-card" style={{ 
+            padding: '24px', 
+            background: 'linear-gradient(135deg, #ffffff 0%, #fcf9ff 100%)', 
+            border: '1px solid #e2e8f0', 
+            borderRadius: '24px', 
+            boxShadow: '0 4px 6px rgba(0,0,0,0.02)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <div style={{ width: '36px', height: '36px', background: 'linear-gradient(135deg, #fce7f3 0%, #fae8ff 100%)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Star size={18} color="#db2777" fill="#db2777" />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#1e293b', margin: 0 }}>Write a Review</h3>
+                <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Share your feedback with us</p>
+              </div>
+            </div>
+            <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '20px', lineHeight: '1.6' }}>
+              Enjoying our automation tools? We'd love to hear your thoughts! Help other creators and brands discover us by leaving a review.
+            </p>
+            <Link 
+              to="/write-review" 
+              className="landing-cta" 
+              style={{ 
+                background: 'linear-gradient(135deg, #7c3aed, #db2777)', 
+                padding: '10px 24px', 
+                fontSize: '13px', 
+                borderRadius: '12px', 
+                display: 'inline-flex',
+                fontWeight: '700',
+                color: 'white',
+                textDecoration: 'none',
+                boxShadow: '0 4px 12px rgba(124,58,237,0.25)',
+                transition: 'transform 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              Write Review
+            </Link>
+          </div>
+        )}
 
         {/* NAYA SETUP PART (MOVED BELOW) */}
         <div className="stat-card" style={{ padding: '24px', background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', border: 'none', color: 'white', borderRadius: '24px' }}>

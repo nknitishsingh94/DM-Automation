@@ -513,12 +513,6 @@ function Sidebar({ isMobileOpen, onClose }) {
             </NavLink>
 
             
-            {localStorage.getItem('smart10x_reviewed') !== 'true' && (
-              <NavLink to="/write-review" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-                <MessageSquare size={18} />
-                <span>Write a Review</span>
-              </NavLink>
-            )}
           </nav>
         </div>
 
