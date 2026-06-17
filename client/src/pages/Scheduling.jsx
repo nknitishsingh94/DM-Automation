@@ -1640,7 +1640,7 @@ export default function Scheduling() {
                       <select 
                         value={newPost.gmbTopicType || 'STANDARD'}
                         onChange={(e) => setNewPost({ ...newPost, gmbTopicType: e.target.value })}
-                        style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
+                        style={{ width: '100%', maxWidth: '280px', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
                       >
                         <option value="STANDARD">Update (Standard)</option>
                         <option value="EVENT">Event</option>
@@ -1762,7 +1762,7 @@ export default function Scheduling() {
                           <select 
                             value={newPost.gmbActionType || 'LEARN_MORE'}
                             onChange={(e) => setNewPost({ ...newPost, gmbActionType: e.target.value })}
-                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
+                            style={{ width: '100%', maxWidth: '280px', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
                           >
                             <option value="LEARN_MORE">Learn More</option>
                             <option value="BOOK">Book</option>
