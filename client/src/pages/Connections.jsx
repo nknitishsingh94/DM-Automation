@@ -1106,9 +1106,47 @@ onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                     </div>
                     <div>
                       <div style={{ fontSize: '0.9rem', fontWeight: '600', color: '#0f172a' }}>Connected account</div>
-                      <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#334155', marginTop: '2px' }}>
-                        {selectedSettingsPlatform.username && !selectedSettingsPlatform.username.startsWith('@') ? '@' : ''}{selectedSettingsPlatform.username || 'unknown'}
-                      </div>
+                      {selectedSettingsPlatform.id === 'google-business' ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                          <input 
+                            type="text" 
+                            value={selectedSettingsPlatform.username || ''}
+                            onChange={(e) => setSelectedSettingsPlatform({ ...selectedSettingsPlatform, username: e.target.value })}
+                            placeholder="e.g. smart10X"
+                            style={{ 
+                              padding: '6px 10px', 
+                              borderRadius: '6px', 
+                              border: '1px solid #cbd5e1',
+                              fontSize: '0.9rem',
+                              outline: 'none',
+                              width: '160px'
+                            }}
+                          />
+                          <button 
+                            onClick={async () => {
+                              const updated = { ...settings, connectedGoogleBusinessName: selectedSettingsPlatform.username };
+                              setSettings(updated);
+                              await handleSaveSettings(null, updated, 'google-business');
+                            }}
+                            style={{ 
+                              padding: '6px 12px', 
+                              background: '#3b82f6', 
+                              color: 'white', 
+                              border: 'none', 
+                              borderRadius: '6px',
+                              fontSize: '0.85rem',
+                              fontWeight: '600',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Save
+                          </button>
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#334155', marginTop: '2px' }}>
+                          {selectedSettingsPlatform.username && !selectedSettingsPlatform.username.startsWith('@') ? '@' : ''}{selectedSettingsPlatform.username || 'unknown'}
+                        </div>
+                      )}
                     </div>
                   </div>
                   

@@ -963,18 +963,21 @@ router.get('/google-business/callback', async (req, res) => {
 
     // Fetch Google Business Account Name
     
+    let googleUserName = '';
     let businessName = 'Google Business Account';
     try {
       const userInfoRes = await axios.get('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
         headers: { Authorization: `Bearer ${tokens.access_token}` }
       });
       if (userInfoRes.data && userInfoRes.data.name) {
-        businessName = userInfoRes.data.name;
+        googleUserName = userInfoRes.data.name;
+        businessName = googleUserName;
       }
     } catch(err) {
       console.warn('Could not fetch Google user info:', err.message);
     }
 
+    let gmbFetched = false;
     try {
       const accountsRes = await axios.get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', {
         headers: { Authorization: `Bearer ${tokens.access_token}` }
@@ -982,6 +985,7 @@ router.get('/google-business/callback', async (req, res) => {
       if (accountsRes.data && accountsRes.data.accounts && accountsRes.data.accounts.length > 0) {
         const account = accountsRes.data.accounts[0];
         businessName = account.accountName || account.name;
+        gmbFetched = true;
         
         try {
           const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations?readMask=title`, {
@@ -1001,6 +1005,18 @@ router.get('/google-business/callback', async (req, res) => {
     const connectionsQuery = { userId: userId };
     if (workspaceId) {
       connectionsQuery.workspaceId = workspaceId;
+    }
+
+    // Preserve existing custom business name if GMB API failed
+    if (!gmbFetched) {
+      try {
+        const existingSettings = await Settings.findOne(connectionsQuery);
+        if (existingSettings && existingSettings.connectedGoogleBusinessName) {
+          businessName = existingSettings.connectedGoogleBusinessName;
+        }
+      } catch (dbErr) {
+        console.warn("Could not fetch existing settings to preserve GMB name:", dbErr.message);
+      }
     }
 
     const updateData = {};
