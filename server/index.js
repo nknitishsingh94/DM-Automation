@@ -3391,6 +3391,9 @@ async function runSchedulingWorker() {
         } else if (post.platform === 'google-business') {
           const { publishGoogleBusinessContent } = await import('./utils/googleBusinessApi.js');
           publishResult = await publishGoogleBusinessContent(post.userId, post, post.workspaceId);
+        } else if (post.platform === 'linkedin') {
+          const { publishLinkedInContent } = await import('./utils/linkedinApi.js');
+          publishResult = await publishLinkedInContent(post.userId, post, post.workspaceId);
         } else {
           // Default to instagram
           const { publishInstagramContent } = await import('./utils/metaApi.js');
@@ -3516,6 +3519,8 @@ async function runSchedulingWorker() {
           updatedMetaObj.threadsPostId = publishedId;
         } else if (post.platform === 'google-business') {
           updatedMetaObj.gmbPostId = publishedId;
+        } else if (post.platform === 'linkedin') {
+          updatedMetaObj.linkedinPostId = publishedId;
         } else {
           updatedMetaObj.instagramMediaId = publishedId;
         }
