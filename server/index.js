@@ -3273,10 +3273,10 @@ async function runSchedulingWorker() {
     // If the media URL is a local path, convert it to a public URL
     const SERVER_PUBLIC_URL = process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
 
-    // Limit to 3 posts per run to prevent Vercel 10-second timeout
-    const postsToProcess = duePosts.slice(0, 3);
-    if (duePosts.length > 3) {
-      console.log(`⚠️ Limit hit: Processing 3 out of ${duePosts.length} due posts to prevent timeout. The rest will be processed on the next ping.`);
+    // Process up to 20 posts per run to handle many users scheduling at the same time
+    const postsToProcess = duePosts.slice(0, 20);
+    if (duePosts.length > 20) {
+      console.log(`⚠️ Limit hit: Processing 20 out of ${duePosts.length} due posts to prevent timeout. The rest will be processed on the next ping.`);
     }
 
     // Process due posts in parallel
