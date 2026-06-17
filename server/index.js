@@ -2002,6 +2002,15 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
       gmbCtaEnabled: req.body.gmbCtaEnabled,
       gmbSearchUrl: req.body.gmbSearchUrl || '',
       gmbCustomCaption: req.body.gmbCustomCaption || '',
+      gmbTopicType: req.body.gmbTopicType || 'STANDARD',
+      gmbEventTitle: req.body.gmbEventTitle || '',
+      gmbEventStartDate: req.body.gmbEventStartDate || '',
+      gmbEventEndDate: req.body.gmbEventEndDate || '',
+      gmbOfferCouponCode: req.body.gmbOfferCouponCode || '',
+      gmbOfferRedeemUrl: req.body.gmbOfferRedeemUrl || '',
+      gmbOfferTerms: req.body.gmbOfferTerms || '',
+      gmbProductName: req.body.gmbProductName || '',
+      gmbProductPrice: req.body.gmbProductPrice || '',
       youtubeVideoId: req.body.youtubeVideoId || ''
     };
     
@@ -2044,6 +2053,15 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
     delete postData.gmbCtaEnabled;
     delete postData.gmbSearchUrl;
     delete postData.gmbCustomCaption;
+    delete postData.gmbTopicType;
+    delete postData.gmbEventTitle;
+    delete postData.gmbEventStartDate;
+    delete postData.gmbEventEndDate;
+    delete postData.gmbOfferCouponCode;
+    delete postData.gmbOfferRedeemUrl;
+    delete postData.gmbOfferTerms;
+    delete postData.gmbProductName;
+    delete postData.gmbProductPrice;
     delete postData.youtubeVideoId;
 
     const newPost = new ScheduledPost(postData);
@@ -2223,6 +2241,15 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     if (updateData.gmbCtaEnabled !== undefined) currentMetadata.gmbCtaEnabled = updateData.gmbCtaEnabled;
     if (updateData.gmbSearchUrl !== undefined) currentMetadata.gmbSearchUrl = updateData.gmbSearchUrl;
     if (updateData.gmbCustomCaption !== undefined) currentMetadata.gmbCustomCaption = updateData.gmbCustomCaption;
+    if (updateData.gmbTopicType !== undefined) currentMetadata.gmbTopicType = updateData.gmbTopicType;
+    if (updateData.gmbEventTitle !== undefined) currentMetadata.gmbEventTitle = updateData.gmbEventTitle;
+    if (updateData.gmbEventStartDate !== undefined) currentMetadata.gmbEventStartDate = updateData.gmbEventStartDate;
+    if (updateData.gmbEventEndDate !== undefined) currentMetadata.gmbEventEndDate = updateData.gmbEventEndDate;
+    if (updateData.gmbOfferCouponCode !== undefined) currentMetadata.gmbOfferCouponCode = updateData.gmbOfferCouponCode;
+    if (updateData.gmbOfferRedeemUrl !== undefined) currentMetadata.gmbOfferRedeemUrl = updateData.gmbOfferRedeemUrl;
+    if (updateData.gmbOfferTerms !== undefined) currentMetadata.gmbOfferTerms = updateData.gmbOfferTerms;
+    if (updateData.gmbProductName !== undefined) currentMetadata.gmbProductName = updateData.gmbProductName;
+    if (updateData.gmbProductPrice !== undefined) currentMetadata.gmbProductPrice = updateData.gmbProductPrice;
     if (updateData.youtubeVideoId !== undefined) currentMetadata.youtubeVideoId = updateData.youtubeVideoId;
 
     updateData.mediaUrl = JSON.stringify(currentMetadata);
@@ -2247,6 +2274,15 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     delete updateData.gmbCtaEnabled;
     delete updateData.gmbSearchUrl;
     delete updateData.gmbCustomCaption;
+    delete updateData.gmbTopicType;
+    delete updateData.gmbEventTitle;
+    delete updateData.gmbEventStartDate;
+    delete updateData.gmbEventEndDate;
+    delete updateData.gmbOfferCouponCode;
+    delete updateData.gmbOfferRedeemUrl;
+    delete updateData.gmbOfferTerms;
+    delete updateData.gmbProductName;
+    delete updateData.gmbProductPrice;
     delete updateData.youtubeVideoId;
 
     const updatedPost = await ScheduledPost.findOneAndUpdate(

@@ -1,6 +1,25 @@
 import axios from 'axios';
 import Settings from '../models/Settings.js';
 
+function parseGmbDateTime(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return null;
+  return {
+    date: {
+      year: d.getUTCFullYear(),
+      month: d.getUTCMonth() + 1,
+      day: d.getUTCDate()
+    },
+    time: {
+      hours: d.getUTCHours(),
+      minutes: d.getUTCMinutes(),
+      seconds: d.getUTCSeconds(),
+      nanos: 0
+    }
+  };
+}
+
 export async function publishGoogleBusinessContent(userId, post, workspaceId) {
   console.log(`📡 [GMB] Starting publishing sequence for user: ${userId}, post: ${post.id || post._id}`);
 
@@ -89,6 +108,15 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
   let actionType = 'LEARN_MORE';
   let searchUrl = '';
   let cleanMediaUrl = post.mediaUrl || '';
+  let topicType = 'STANDARD';
+  let gmbEventTitle = '';
+  let gmbEventStartDate = '';
+  let gmbEventEndDate = '';
+  let gmbOfferCouponCode = '';
+  let gmbOfferRedeemUrl = '';
+  let gmbOfferTerms = '';
+  let gmbProductName = '';
+  let gmbProductPrice = '';
 
   if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
     try {
@@ -100,8 +128,27 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
       if (meta.gmbCustomCaption) {
         summary = meta.gmbCustomCaption;
       }
+      topicType = meta.gmbTopicType || 'STANDARD';
+      gmbEventTitle = meta.gmbEventTitle || '';
+      gmbEventStartDate = meta.gmbEventStartDate || '';
+      gmbEventEndDate = meta.gmbEventEndDate || '';
+      gmbOfferCouponCode = meta.gmbOfferCouponCode || '';
+      gmbOfferRedeemUrl = meta.gmbOfferRedeemUrl || '';
+      gmbOfferTerms = meta.gmbOfferTerms || '';
+      gmbProductName = meta.gmbProductName || '';
+      gmbProductPrice = meta.gmbProductPrice || '';
     } catch (e) {
       console.warn('⚠️ GMB Metadata parse failed:', e.message);
+    }
+  }
+
+  // Prepend product details if topicType is PRODUCT (since GMB localPosts API doesn't support PRODUCT post type natively)
+  if (topicType === 'PRODUCT') {
+    let productDetails = '';
+    if (gmbProductName) productDetails += `📦 Product: ${gmbProductName}\n`;
+    if (gmbProductPrice) productDetails += `💰 Price: ${gmbProductPrice}\n`;
+    if (productDetails) {
+      summary = `${productDetails}\n${summary}`;
     }
   }
 
@@ -116,18 +163,60 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
   const postBody = {
     languageCode: 'en-US',
     summary: summary,
-    topicType: 'STANDARD'
+    topicType: topicType === 'PRODUCT' ? 'STANDARD' : topicType
   };
 
   if (mediaList.length > 0) {
     postBody.media = mediaList;
   }
 
-  if (ctaEnabled && searchUrl) {
-    postBody.callToAction = {
-      actionType: actionType,
-      url: searchUrl
-    };
+  // EVENT or OFFER require event details
+  if (topicType === 'EVENT' || topicType === 'OFFER') {
+    const startParsed = parseGmbDateTime(gmbEventStartDate);
+    const endParsed = parseGmbDateTime(gmbEventEndDate);
+    if (startParsed && endParsed) {
+      postBody.event = {
+        title: gmbEventTitle || (topicType === 'OFFER' ? 'Special Offer' : 'Special Event'),
+        schedule: {
+          startDate: startParsed.date,
+          startTime: startParsed.time,
+          endDate: endParsed.date,
+          endTime: endParsed.time
+        }
+      };
+    }
+  }
+
+  // OFFER requires offer details
+  if (topicType === 'OFFER') {
+    postBody.offer = {};
+    if (gmbOfferCouponCode) {
+      postBody.offer.couponCode = gmbOfferCouponCode;
+    }
+    if (gmbOfferRedeemUrl) {
+      postBody.offer.redeemOnlineUrl = gmbOfferRedeemUrl;
+    }
+    if (gmbOfferTerms) {
+      postBody.offer.termsAndConditions = gmbOfferTerms;
+    }
+    // If offer is empty object, clean it up
+    if (Object.keys(postBody.offer).length === 0) {
+      delete postBody.offer;
+    }
+  }
+
+  if (ctaEnabled) {
+    // If actionType is CALL, url is not sent
+    if (actionType === 'CALL') {
+      postBody.callToAction = {
+        actionType: 'CALL'
+      };
+    } else if (searchUrl) {
+      postBody.callToAction = {
+        actionType: actionType,
+        url: searchUrl
+      };
+    }
   }
 
   try {

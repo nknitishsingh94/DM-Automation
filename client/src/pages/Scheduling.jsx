@@ -423,6 +423,15 @@ export default function Scheduling() {
     gmbActionType: 'LEARN_MORE',
     gmbSearchUrl: '',
     gmbCustomCaption: '',
+    gmbTopicType: 'STANDARD',
+    gmbEventTitle: '',
+    gmbEventStartDate: '',
+    gmbEventEndDate: '',
+    gmbOfferCouponCode: '',
+    gmbOfferRedeemUrl: '',
+    gmbOfferTerms: '',
+    gmbProductName: '',
+    gmbProductPrice: '',
     threadPosts: []
   });
 
@@ -695,9 +704,33 @@ export default function Scheduling() {
 
     const platformList = newPost.platforms || (newPost.platform ? [newPost.platform] : []);
     if (platformList.includes('google-business')) {
-      if (newPost.gmbCtaEnabled && !newPost.gmbSearchUrl) {
+      if (newPost.gmbCtaEnabled && newPost.gmbActionType !== 'CALL' && !newPost.gmbSearchUrl) {
         notify("URL required when CTA is enabled for Google Business!", "error");
         return;
+      }
+      if (newPost.gmbTopicType === 'EVENT' || newPost.gmbTopicType === 'OFFER') {
+        if (!newPost.gmbEventTitle) {
+          notify("Event/Offer Title is required for Google Business!", "error");
+          return;
+        }
+        if (!newPost.gmbEventStartDate) {
+          notify("Start Date is required for Google Business Event/Offer!", "error");
+          return;
+        }
+        if (!newPost.gmbEventEndDate) {
+          notify("End Date is required for Google Business Event/Offer!", "error");
+          return;
+        }
+      }
+      if (newPost.gmbTopicType === 'PRODUCT') {
+        if (!newPost.gmbProductName) {
+          notify("Product Name is required for Google Business Product!", "error");
+          return;
+        }
+        if (!newPost.gmbProductPrice) {
+          notify("Product Price is required for Google Business Product!", "error");
+          return;
+        }
       }
     }
 
@@ -721,7 +754,16 @@ export default function Scheduling() {
       gmbCtaEnabled: false,
       gmbActionType: 'LEARN_MORE',
       gmbSearchUrl: '',
-      gmbCustomCaption: ''
+      gmbCustomCaption: '',
+      gmbTopicType: 'STANDARD',
+      gmbEventTitle: '',
+      gmbEventStartDate: '',
+      gmbEventEndDate: '',
+      gmbOfferCouponCode: '',
+      gmbOfferRedeemUrl: '',
+      gmbOfferTerms: '',
+      gmbProductName: '',
+      gmbProductPrice: ''
     });
     setSelectedFiles([]);
     setPreviews([]);
@@ -781,7 +823,16 @@ export default function Scheduling() {
           gmbCtaEnabled: payloadBase.gmbCtaEnabled,
           gmbActionType: payloadBase.gmbActionType,
           gmbSearchUrl: payloadBase.gmbSearchUrl,
-          gmbCustomCaption: payloadBase.gmbCustomCaption
+          gmbCustomCaption: payloadBase.gmbCustomCaption,
+          gmbTopicType: payloadBase.gmbTopicType || 'STANDARD',
+          gmbEventTitle: payloadBase.gmbEventTitle || '',
+          gmbEventStartDate: payloadBase.gmbEventStartDate || '',
+          gmbEventEndDate: payloadBase.gmbEventEndDate || '',
+          gmbOfferCouponCode: payloadBase.gmbOfferCouponCode || '',
+          gmbOfferRedeemUrl: payloadBase.gmbOfferRedeemUrl || '',
+          gmbOfferTerms: payloadBase.gmbOfferTerms || '',
+          gmbProductName: payloadBase.gmbProductName || '',
+          gmbProductPrice: payloadBase.gmbProductPrice || ''
         };
 
         // Create placeholders for all platforms
@@ -1584,6 +1635,113 @@ export default function Scheduling() {
                       <span style={{ fontWeight: '600', color: '#334155' }}>Google Business</span>
                     </div>
 
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>post type</label>
+                      <select 
+                        value={newPost.gmbTopicType || 'STANDARD'}
+                        onChange={(e) => setNewPost({ ...newPost, gmbTopicType: e.target.value })}
+                        style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
+                      >
+                        <option value="STANDARD">Update (Standard)</option>
+                        <option value="EVENT">Event</option>
+                        <option value="OFFER">Offer</option>
+                        <option value="PRODUCT">Product</option>
+                      </select>
+                    </div>
+
+                    {(newPost.gmbTopicType === 'EVENT' || newPost.gmbTopicType === 'OFFER') && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                        <div style={{ fontWeight: '600', fontSize: '0.9rem', color: '#475569' }}>
+                          {newPost.gmbTopicType === 'EVENT' ? 'Event Details' : 'Offer Details'}
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>event/offer title</label>
+                          <input 
+                            value={newPost.gmbEventTitle || ''}
+                            onChange={(e) => setNewPost({ ...newPost, gmbEventTitle: e.target.value })}
+                            placeholder={newPost.gmbTopicType === 'EVENT' ? "e.g., Summer Special Gathering" : "e.g., 20% Off All Items"}
+                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                          <div style={{ flex: 1 }}>
+                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>start date & time</label>
+                            <input 
+                              type="datetime-local"
+                              value={newPost.gmbEventStartDate || ''}
+                              onChange={(e) => setNewPost({ ...newPost, gmbEventStartDate: e.target.value })}
+                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                            />
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>end date & time</label>
+                            <input 
+                              type="datetime-local"
+                              value={newPost.gmbEventEndDate || ''}
+                              onChange={(e) => setNewPost({ ...newPost, gmbEventEndDate: e.target.value })}
+                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                            />
+                          </div>
+                        </div>
+                        
+                        {newPost.gmbTopicType === 'OFFER' && (
+                          <>
+                            <div>
+                              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>coupon code (optional)</label>
+                              <input 
+                                value={newPost.gmbOfferCouponCode || ''}
+                                onChange={(e) => setNewPost({ ...newPost, gmbOfferCouponCode: e.target.value })}
+                                placeholder="e.g., SUMMER20"
+                                style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                              />
+                            </div>
+                            <div>
+                              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>redemption link (optional)</label>
+                              <input 
+                                value={newPost.gmbOfferRedeemUrl || ''}
+                                onChange={(e) => setNewPost({ ...newPost, gmbOfferRedeemUrl: e.target.value })}
+                                placeholder="https://example.com/redeem"
+                                style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                              />
+                            </div>
+                            <div>
+                              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>terms & conditions (optional)</label>
+                              <textarea 
+                                value={newPost.gmbOfferTerms || ''}
+                                onChange={(e) => setNewPost({ ...newPost, gmbOfferTerms: e.target.value })}
+                                placeholder="One coupon per customer. Cannot be combined with other offers."
+                                style={{ width: '100%', padding: '12px 16px', minHeight: '60px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155', resize: 'vertical' }}
+                              />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    )}
+
+                    {newPost.gmbTopicType === 'PRODUCT' && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                        <div style={{ fontWeight: '600', fontSize: '0.9rem', color: '#475569' }}>Product Details</div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>product name</label>
+                          <input 
+                            value={newPost.gmbProductName || ''}
+                            onChange={(e) => setNewPost({ ...newPost, gmbProductName: e.target.value })}
+                            placeholder="e.g., Deluxe Leather Wallet"
+                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>product price</label>
+                          <input 
+                            value={newPost.gmbProductPrice || ''}
+                            onChange={(e) => setNewPost({ ...newPost, gmbProductPrice: e.target.value })}
+                            placeholder="e.g., $49.99"
+                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <input 
                         type="checkbox" 
@@ -1611,18 +1769,21 @@ export default function Scheduling() {
                             <option value="ORDER">Order Online</option>
                             <option value="SHOP">Buy</option>
                             <option value="SIGN_UP">Sign Up</option>
+                            <option value="CALL">Call</option>
                           </select>
                         </div>
-                        <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>destination url</label>
-                          <input 
-                            value={newPost.gmbSearchUrl || ''}
-                            onChange={(e) => setNewPost({ ...newPost, gmbSearchUrl: e.target.value })}
-                            placeholder="https://example.com/book"
-                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
-                          />
-                          {!newPost.gmbSearchUrl && <div style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '6px' }}>URL required when CTA is enabled</div>}
-                        </div>
+                        {newPost.gmbActionType !== 'CALL' && (
+                          <div>
+                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>destination url</label>
+                            <input 
+                              value={newPost.gmbSearchUrl || ''}
+                              onChange={(e) => setNewPost({ ...newPost, gmbSearchUrl: e.target.value })}
+                              placeholder="https://example.com/book"
+                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                            />
+                            {!newPost.gmbSearchUrl && <div style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '6px' }}>URL required when CTA is enabled</div>}
+                          </div>
+                        )}
                       </div>
                     )}
 
