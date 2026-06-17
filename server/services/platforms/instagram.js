@@ -325,7 +325,7 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
       } else {
         let containerUrl = `https://graph.facebook.com/v19.0/${igId}/media?access_token=${accessToken}`;
         const params = { caption };
-        if (type === 'reel') { params.media_type = 'REELS'; params.video_url = mediaUrl; params.share_to_feed = true; }
+        if (type === 'reel' || type === 'video') { params.media_type = 'REELS'; params.video_url = mediaUrl; params.share_to_feed = true; }
         else if (type === 'story') { 
           params.media_type = 'STORIES'; 
           if (mediaUrl.match(/\.(mp4|mov|webm)/i)) params.video_url = mediaUrl; 
