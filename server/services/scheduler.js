@@ -2,6 +2,7 @@ import ScheduledPost from '../models/ScheduledPost.js';
 import Settings from '../models/Settings.js';
 import { publishInstagramContent, publishFacebookContent } from '../utils/metaApi.js';
 import { publishYouTubeVideo } from '../utils/youtubeApi.js';
+import { publishGoogleBusinessContent } from '../utils/googleBusinessApi.js';
 import { supabase } from '../utils/supabase.js';
 
 export async function runSchedulingWorker() {
@@ -58,9 +59,9 @@ export async function runSchedulingWorker() {
       console.log(`⚙️ [Worker] Processing Post ID: ${post._id}`);
       
       try {
-        if (!post.platform || (post.platform !== 'instagram' && post.platform !== 'facebook' && post.platform !== 'youtube')) {
+        if (!post.platform || (post.platform !== 'instagram' && post.platform !== 'facebook' && post.platform !== 'youtube' && post.platform !== 'google-business')) {
           console.log(`⏭️ [Worker] Skipping post ${post._id} - Platform is not supported (${post.platform})`);
-          await safeUpdate(post.id, { status: 'Failed', errorLog: 'Only Instagram, Facebook, and YouTube are supported via this worker.' });
+          await safeUpdate(post.id, { status: 'Failed', errorLog: 'Only Instagram, Facebook, YouTube, and Google Business are supported via this worker.' });
           await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', errorLog: 'Unsupported platform.' });
           continue;
         }
@@ -79,6 +80,13 @@ export async function runSchedulingWorker() {
         if (post.platform === 'youtube' && !settings.youtubeAccessToken) {
           console.log(`❌ [Worker] Failed post ${post._id} - Missing YouTube Token`);
           await safeUpdate(post.id, { status: 'Failed', errorLog: 'YouTube API tokens missing. Please reconnect.' });
+          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', errorLog: 'Tokens missing' });
+          continue;
+        }
+
+        if (post.platform === 'google-business' && !settings.googleBusinessAccessToken) {
+          console.log(`❌ [Worker] Failed post ${post._id} - Missing Google Business Token`);
+          await safeUpdate(post.id, { status: 'Failed', errorLog: 'Google Business API tokens missing. Please reconnect.' });
           await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', errorLog: 'Tokens missing' });
           continue;
         }
@@ -174,6 +182,8 @@ export async function runSchedulingWorker() {
             mediaUrl: post.mediaUrl,
             caption: post.caption,
           }, settings);
+        } else if (post.platform === 'google-business') {
+          result = await publishGoogleBusinessContent(post.userId, post, post.workspaceId);
         } else {
           result = await publishInstagramContent(post.userId, {
             type: post.type,
