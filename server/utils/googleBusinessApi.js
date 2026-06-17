@@ -55,49 +55,71 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
     }
   }
 
-  // 1. Get Accounts
-  console.log('📡 [GMB] Fetching Google Business Accounts...');
-  let accountsRes;
-  try {
-    accountsRes = await axios.get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
-  } catch (err) {
-    console.error('❌ [GMB] Fetch accounts failed:', err.response?.data || err.message);
-    throw new Error(`Google Business API failed to fetch accounts: ${err.message}`);
+  let accountName = settings.googleBusinessAccountId;
+  let locationName = settings.googleBusinessLocationId;
+  let locationTitle = settings.connectedGoogleBusinessName;
+
+  if (!accountName || !locationName) {
+    // 1. Get Accounts
+    console.log('📡 [GMB] Fetching Google Business Accounts (Cache miss)...');
+    let accountsRes;
+    try {
+      accountsRes = await axios.get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+    } catch (err) {
+      console.error('❌ [GMB] Fetch accounts failed:', err.response?.data || err.message);
+      throw new Error(`Google Business API failed to fetch accounts: ${err.message}`);
+    }
+
+    const accounts = accountsRes.data?.accounts || [];
+    if (accounts.length === 0) {
+      throw new Error('No Google Business Accounts found.');
+    }
+
+    const account = accounts[0];
+    accountName = account.name;
+    console.log(`✅ [GMB] Using Account: ${account.accountName || account.name}`);
+
+    // 2. Get Locations
+    console.log(`📡 [GMB] Fetching locations for account: ${accountName}...`);
+    let locationsRes;
+    try {
+      locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${accountName}/locations?readMask=name,title`, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+    } catch (err) {
+      console.error('❌ [GMB] Fetch locations failed:', err.response?.data || err.message);
+      throw new Error(`Google Business API failed to fetch locations: ${err.message}`);
+    }
+
+    const locations = locationsRes.data?.locations || [];
+    if (locations.length === 0) {
+      throw new Error('No locations found under this Google Business Account.');
+    }
+
+    const location = locations[0];
+    locationName = location.name;
+    locationTitle = location.title;
+    console.log(`✅ [GMB] Using Location: ${location.title} (${location.name})`);
+
+    // Save back to settings cache
+    try {
+      settings.googleBusinessAccountId = accountName;
+      settings.googleBusinessLocationId = locationName;
+      settings.connectedGoogleBusinessName = locationTitle;
+      await settings.save();
+      console.log('✅ [GMB] Saved Account & Location URNs to Settings cache.');
+    } catch (saveErr) {
+      console.warn('⚠️ [GMB] Failed to save GMB details to Settings cache:', saveErr.message);
+    }
+  } else {
+    console.log(`✅ [GMB] Using cached details - Account: ${accountName}, Location: ${locationName}`);
   }
-
-  const accounts = accountsRes.data?.accounts || [];
-  if (accounts.length === 0) {
-    throw new Error('No Google Business Accounts found.');
-  }
-
-  const account = accounts[0];
-  console.log(`✅ [GMB] Using Account: ${account.accountName || account.name}`);
-
-  // 2. Get Locations
-  console.log(`📡 [GMB] Fetching locations for account: ${account.name}...`);
-  let locationsRes;
-  try {
-    locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations?readMask=name,title`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
-  } catch (err) {
-    console.error('❌ [GMB] Fetch locations failed:', err.response?.data || err.message);
-    throw new Error(`Google Business API failed to fetch locations: ${err.message}`);
-  }
-
-  const locations = locationsRes.data?.locations || [];
-  if (locations.length === 0) {
-    throw new Error('No locations found under this Google Business Account.');
-  }
-
-  const location = locations[0];
-  console.log(`✅ [GMB] Using Location: ${location.title} (${location.name})`);
 
   // 3. Create Local Post
-  const accountId = account.name.split('/')[1];
-  const locationId = location.name.split('/')[1];
+  const accountId = accountName.split('/')[1];
+  const locationId = locationName.split('/')[1];
   const publishUrl = `https://mybusiness.googleapis.com/v4/accounts/${accountId}/locations/${locationId}/localPosts`;
 
   console.log(`📡 [GMB] Creating Local Post on URL: ${publishUrl}...`);

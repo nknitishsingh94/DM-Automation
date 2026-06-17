@@ -3558,7 +3558,7 @@ async function runSchedulingWorker() {
         const lowerError = errorMsg.toLowerCase();
         
         const isFatalError = 
-          lowerError.includes('authorization error') || 
+          (lowerError.includes('authorization error') || 
           lowerError.includes('credential') || 
           lowerError.includes('token') || 
           lowerError.includes('auth') || 
@@ -3566,12 +3566,14 @@ async function runSchedulingWorker() {
           lowerError.includes('permission') || 
           lowerError.includes('insufficient') ||
           lowerError.includes('403') ||
-          lowerError.includes('429') ||
-          lowerError.includes('quota') ||
-          lowerError.includes('resource_exhausted') ||
-          lowerError.includes('limit') ||
           lowerError.includes('400') ||
-          lowerError.includes('bad request');
+          lowerError.includes('bad request')) &&
+          !(
+            lowerError.includes('429') ||
+            lowerError.includes('quota') ||
+            lowerError.includes('limit') ||
+            lowerError.includes('resource_exhausted')
+          );
 
         if (isFatalError) {
           console.log(`🚫 [Worker] Fatal/Client Error for Post ${postId}. Marking as Failed immediately.`);
