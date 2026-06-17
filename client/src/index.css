@@ -3052,6 +3052,171 @@ tr:hover {
   }
 }
 
+/* ============================================================
+   COMPREHENSIVE MOBILE RESPONSIVENESS FIX
+   Covers: Scheduling, Connections, Dashboard, Inbox, Campaigns,
+   ApiKeys, Audiences, AutomationEditor, Broadcasts, and more.
+   ============================================================ */
+
+/* --- Topbar mobile fix --- */
+@media (max-width: 768px) {
+  .topbar {
+    padding: 0 12px;
+    height: 60px;
+  }
+  .page-title {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+  }
+}
+
+/* --- Dashboard Mobile --- */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .stat-card {
+    padding: 20px;
+    border-radius: 16px;
+  }
+  .upgrade-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+}
+
+/* --- General text/font adjustments for mobile --- */
+@media (max-width: 480px) {
+  h1 { font-size: 1.5rem !important; }
+  h2 { font-size: 1.25rem !important; }
+  h3 { font-size: 1.1rem !important; }
+  input, select, textarea {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+  }
+  .dashboard-grid,
+  .pricing-grid,
+  .resources-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .pro-card {
+    grid-column: span 1 !important;
+    transform: scale(1) !important;
+  }
+}
+
+/* --- Tables on mobile: horizontal scroll --- */
+@media (max-width: 768px) {
+  .table-card {
+    overflow-x: auto !important;
+  }
+  table {
+    min-width: 500px;
+  }
+  th, td {
+    padding: 12px 16px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+/* --- Modal / popup mobile --- */
+@media (max-width: 768px) {
+  .write-review-modal {
+    width: 95vw !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    border-radius: 20px !important;
+  }
+  .modal-form-content {
+    padding: 20px !important;
+  }
+  .modal-header {
+    padding: 20px 20px 12px !important;
+  }
+}
+
+/* --- Pricing mobile --- */
+@media (max-width: 640px) {
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+  .pro-card {
+    grid-column: span 1 !important;
+    transform: scale(1) !important;
+    order: -1;
+  }
+  .pricing-card {
+    padding: 24px !important;
+  }
+}
+
+/* --- Resources grid mobile --- */
+@media (max-width: 768px) {
+  .resources-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  .resource-card {
+    flex-direction: column !important;
+    padding: 24px !important;
+  }
+}
+
+/* --- Inbox mobile full height --- */
+@media (max-width: 768px) {
+  .inbox-container {
+    flex-direction: column !important;
+    height: 100% !important;
+  }
+  .inbox-sidebar {
+    width: 100% !important;
+    height: 220px !important;
+    min-height: 180px !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    overflow-y: auto;
+  }
+  .inbox-main {
+    flex: 1 !important;
+    width: 100% !important;
+    overflow: hidden;
+  }
+  .chat-messages {
+    padding: 12px !important;
+  }
+}
+
+/* --- Bottom padding for page on mobile (for bottom nav bars etc.) --- */
+@media (max-width: 768px) {
+  .page-container {
+    padding-bottom: 100px !important;
+  }
+}
+
+/* --- Prevent horizontal overflow globally --- */
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* --- Forms on mobile --- */
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .platform-selector {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+
 
 
 
