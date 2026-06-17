@@ -65,21 +65,47 @@ export const publishThreadsContent = async (userId, { type, mediaUrl, caption = 
       
       activeContainerId = containerRes.data.id;
       console.log(`Threads Container Created: ${activeContainerId}`);
-      
-      // Return early to allow background worker to poll next minute, preventing Vercel timeout
-      return { status: 'IG_PROCESSING', containerId: activeContainerId };
+    }
+
+    // Check status before publishing if it's not a direct text post
+    if (mediaType !== 'TEXT') {
+      try {
+        const statusRes = await axios.get(`https://graph.threads.net/v1.0/${activeContainerId}`, {
+          params: { fields: 'status,error_message', access_token: threadsAccessToken }
+        });
+        const status = statusRes.data.status;
+        if (status === 'IN_PROGRESS') {
+           console.log(`⏳ Threads Container ${activeContainerId} is IN_PROGRESS. Deferring...`);
+           return { status: 'IG_PROCESSING', containerId: activeContainerId };
+        } else if (status === 'ERROR') {
+           throw new Error(statusRes.data.error_message || 'Threads container processing failed');
+        }
+      } catch (e) {
+        if (e.response && e.response.data && e.response.data.error && e.response.data.error.code === 100) {
+           console.log(`⏳ Threads Container ${activeContainerId} not found yet (consistency delay). Deferring...`);
+           return { status: 'IG_PROCESSING', containerId: activeContainerId };
+        }
+      }
     }
 
     let publishUrl = `https://graph.threads.net/v1.0/${threadsPageId}/threads_publish`;
-    const publishRes = await axios.post(publishUrl, null, {
-      params: {
-        creation_id: activeContainerId,
-        access_token: threadsAccessToken
+    try {
+      const publishRes = await axios.post(publishUrl, null, {
+        params: {
+          creation_id: activeContainerId,
+          access_token: threadsAccessToken
+        }
+      });
+      console.log(`Threads Published Successfully! Post ID: ${publishRes.data.id}`);
+      return publishRes.data;
+    } catch (err) {
+      const errorMsg = err.response?.data?.error?.message || err.message;
+      if (errorMsg.includes('does not exist') || errorMsg.includes('not ready')) {
+        console.log(`⏳ Threads container ${activeContainerId} threw '${errorMsg}'. Deferring to worker...`);
+        return { status: 'IG_PROCESSING', containerId: activeContainerId };
       }
-    });
-
-    console.log(`Threads Published Successfully! Post ID: ${publishRes.data.id}`);
-    return publishRes.data;
+      throw err;
+    }
   } catch (err) {
     const errorMsg = err.response?.data?.error?.message || err.message;
     console.error(`Threads Publish Error: ${errorMsg}`);
