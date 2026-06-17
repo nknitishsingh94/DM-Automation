@@ -50,15 +50,19 @@ export async function publishYouTubeVideo(userId, postData, settings) {
 
     if (videoId) {
       console.log(`✅ [YouTube API] Pre-uploaded video found. Updating privacy to public for ID: ${videoId}`);
-      await youtube.videos.update({
-        part: 'status',
-        requestBody: {
-          id: videoId,
-          status: {
-            privacyStatus: 'public'
+      try {
+        await youtube.videos.update({
+          part: 'status',
+          requestBody: {
+            id: videoId,
+            status: {
+              privacyStatus: 'public'
+            }
           }
-        }
-      });
+        });
+      } catch (updateErr) {
+        console.warn(`⚠️ [YouTube API] Failed to update privacy status for video ${videoId} (likely due to scope permissions), proceeding since video is pre-uploaded:`, updateErr.message);
+      }
     } else {
       const serverRoot = process.cwd();
       let mediaStream;
