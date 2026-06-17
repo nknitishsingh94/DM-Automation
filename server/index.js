@@ -3549,23 +3549,42 @@ async function runSchedulingWorker() {
         const scheduledAt = new Date(post.scheduledFor);
         const minutesSinceScheduled = (Date.now() - scheduledAt.getTime()) / 60000;
 
-        if (postErr.message && (postErr.message.includes('Authorization Error') || postErr.message.toLowerCase().includes('credential'))) {
-          console.log(`🚫 [Worker] Fatal Auth Error. Marking Post ${postId} as Failed immediately.`);
-          await safeUpdate(postId, { status: 'Failed', lastError: postErr.message });
+        const errorMsg = postErr.message || '';
+        const lowerError = errorMsg.toLowerCase();
+        
+        const isFatalError = 
+          lowerError.includes('authorization error') || 
+          lowerError.includes('credential') || 
+          lowerError.includes('token') || 
+          lowerError.includes('auth') || 
+          lowerError.includes('scope') || 
+          lowerError.includes('permission') || 
+          lowerError.includes('insufficient') ||
+          lowerError.includes('403') ||
+          lowerError.includes('429') ||
+          lowerError.includes('quota') ||
+          lowerError.includes('resource_exhausted') ||
+          lowerError.includes('limit') ||
+          lowerError.includes('400') ||
+          lowerError.includes('bad request');
+
+        if (isFatalError) {
+          console.log(`🚫 [Worker] Fatal/Client Error for Post ${postId}. Marking as Failed immediately.`);
+          await safeUpdate(postId, { status: 'Failed', lastError: errorMsg });
           
           try {
-            await new PostLog({ post_id: postId, status: 'failed', platform: post.platform || 'instagram', response: { error: postErr.message }, user_id: post.userId, workspace_id: post.workspaceId }).save();
+            await new PostLog({ post_id: postId, status: 'failed', platform: post.platform || 'instagram', response: { error: errorMsg }, user_id: post.userId, workspace_id: post.workspaceId }).save();
           } catch(e) {}
         } else if (currentRetryCount <= MAX_RETRIES && minutesSinceScheduled < MAX_RETRY_WINDOW) {
           const delayMinutes = 5 * currentRetryCount;
           const nextRunTime = new Date(Date.now() + delayMinutes * 60 * 1000).toISOString();
           console.log(`⚠️ Post ${postId} failed. Rescheduling for retry in ${delayMinutes} mins at ${nextRunTime}.`);
-          await safeUpdate(postId, { status: 'Scheduled', scheduledFor: nextRunTime, lastError: postErr.message, retryCount: currentRetryCount });
+          await safeUpdate(postId, { status: 'Scheduled', scheduledFor: nextRunTime, lastError: errorMsg, retryCount: currentRetryCount });
         } else {
-          await safeUpdate(postId, { status: 'Failed', lastError: postErr.message });
+          await safeUpdate(postId, { status: 'Failed', lastError: errorMsg });
           
           try {
-            await new PostLog({ post_id: postId, status: 'failed', platform: post.platform || 'instagram', response: { error: postErr.message }, user_id: post.userId, workspace_id: post.workspaceId }).save();
+            await new PostLog({ post_id: postId, status: 'failed', platform: post.platform || 'instagram', response: { error: errorMsg }, user_id: post.userId, workspace_id: post.workspaceId }).save();
           } catch(e) {}
         }
       }
