@@ -230,6 +230,7 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
     console.log('✅ [GMB] Local Post created successfully:', postRes.data.name);
     return {
       status: 'PUBLISHED',
+      id: postRes.data.name,
       url: postRes.data.searchUrl || cleanMediaUrl || ''
     };
   } catch (err) {

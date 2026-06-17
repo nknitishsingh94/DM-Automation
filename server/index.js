@@ -3281,8 +3281,8 @@ async function runSchedulingWorker() {
 
     // Process due posts in parallel
     const processPromises = postsToProcess.map(async (post) => {
+      const postId = post.id || post._id;
       try {
-        const postId = post.id || post._id;
         console.log(`🔄 EXECUTION: Processing Post ${postId} for User ${post.userId}`);
 
         // Deserialize metadata
@@ -3388,6 +3388,9 @@ async function runSchedulingWorker() {
             mediaUrl: post.mediaUrl,
             caption: post.caption
           }, youtubeSettings);
+        } else if (post.platform === 'google-business') {
+          const { publishGoogleBusinessContent } = await import('./utils/googleBusinessApi.js');
+          publishResult = await publishGoogleBusinessContent(post.userId, post, post.workspaceId);
         } else {
           // Default to instagram
           const { publishInstagramContent } = await import('./utils/metaApi.js');
@@ -3511,6 +3514,8 @@ async function runSchedulingWorker() {
           updatedMetaObj.facebookPostId = publishedId;
         } else if (post.platform === 'threads') {
           updatedMetaObj.threadsPostId = publishedId;
+        } else if (post.platform === 'google-business') {
+          updatedMetaObj.gmbPostId = publishedId;
         } else {
           updatedMetaObj.instagramMediaId = publishedId;
         }
@@ -3552,7 +3557,10 @@ async function runSchedulingWorker() {
             await new PostLog({ post_id: postId, status: 'failed', platform: post.platform || 'instagram', response: { error: postErr.message }, user_id: post.userId, workspace_id: post.workspaceId }).save();
           } catch(e) {}
         } else if (currentRetryCount <= MAX_RETRIES && minutesSinceScheduled < MAX_RETRY_WINDOW) {
-          await safeUpdate(postId, { status: 'Failed', lastError: postErr.message, retryCount: currentRetryCount });
+          const delayMinutes = 5 * currentRetryCount;
+          const nextRunTime = new Date(Date.now() + delayMinutes * 60 * 1000).toISOString();
+          console.log(`⚠️ Post ${postId} failed. Rescheduling for retry in ${delayMinutes} mins at ${nextRunTime}.`);
+          await safeUpdate(postId, { status: 'Scheduled', scheduledFor: nextRunTime, lastError: postErr.message, retryCount: currentRetryCount });
         } else {
           await safeUpdate(postId, { status: 'Failed', lastError: postErr.message });
           
@@ -3564,6 +3572,11 @@ async function runSchedulingWorker() {
     });
 
     const results = await Promise.allSettled(processPromises);
+    results.forEach((res, idx) => {
+      if (res.status === 'rejected') {
+        console.error(`❌ [Worker] Promise ${idx} rejected:`, res.reason);
+      }
+    });
     return { message: 'Processed due posts', count: duePosts.length, results };
   } catch (err) {
     console.error("🔥 CRITICAL WORKER ERROR:", err.message);
