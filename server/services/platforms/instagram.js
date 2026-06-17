@@ -352,9 +352,13 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
     
     while (retryCount < MAX_RETRIES) {
       try {
-        publishRes = await axios.post(publishUrl, null, { timeout: 6000 });
+        publishRes = await axios.post(publishUrl, null, { timeout: 15000 });
         break; // Success! Break out of the loop
       } catch (pubErr) {
+        if (pubErr.code === 'ECONNABORTED' || pubErr.message.includes('timeout')) {
+          console.warn(`⏳ Network timeout while publishing container ${finalCreationId}. Deferring to background worker.`);
+          return { status: 'IG_PROCESSING', containerId: finalCreationId };
+        }
         if (pubErr.response && pubErr.response.data && pubErr.response.data.error) {
           const errorMsg = pubErr.response.data.error.message?.toLowerCase() || '';
           // 9007 = media not ready
