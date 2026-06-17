@@ -1019,6 +1019,11 @@ router.get('/google-business/callback', async (req, res) => {
       }
     }
 
+    // Default 'Nitish Singh' to 'smart10X' for the user's connection
+    if (businessName === 'Nitish Singh') {
+      businessName = 'smart10X';
+    }
+
     const updateData = {};
     updateData.isGoogleBusinessConnected = true;
     updateData.connectedGoogleBusinessName = businessName;

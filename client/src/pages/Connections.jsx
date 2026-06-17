@@ -1127,6 +1127,7 @@ onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                               const updated = { ...settings, connectedGoogleBusinessName: selectedSettingsPlatform.username };
                               setSettings(updated);
                               await handleSaveSettings(null, updated, 'google-business');
+                              setSelectedSettingsPlatform(null);
                             }}
                             style={{ 
                               padding: '6px 12px', 
