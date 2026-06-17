@@ -978,6 +978,8 @@ router.get('/google-business/callback', async (req, res) => {
     }
 
     let gmbFetched = false;
+    let gmbAccountId = null;
+    let gmbLocationId = null;
     try {
       const accountsRes = await axios.get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', {
         headers: { Authorization: `Bearer ${tokens.access_token}` }
@@ -985,14 +987,17 @@ router.get('/google-business/callback', async (req, res) => {
       if (accountsRes.data && accountsRes.data.accounts && accountsRes.data.accounts.length > 0) {
         const account = accountsRes.data.accounts[0];
         businessName = account.accountName || account.name;
+        gmbAccountId = account.name; // e.g. "accounts/123456789"
         gmbFetched = true;
         
         try {
-          const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations?readMask=title`, {
+          const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations?readMask=name,title`, {
             headers: { Authorization: `Bearer ${tokens.access_token}` }
           });
           if (locationsRes.data && locationsRes.data.locations && locationsRes.data.locations.length > 0) {
-            businessName = locationsRes.data.locations[0].title;
+            const location = locationsRes.data.locations[0];
+            businessName = location.title;
+            gmbLocationId = location.name; // e.g. "locations/987654321"
           }
         } catch (locErr) {
           console.warn('Could not fetch Google Business locations:', locErr.message);
@@ -1029,12 +1034,19 @@ router.get('/google-business/callback', async (req, res) => {
     updateData.connectedGoogleBusinessName = businessName;
     updateData.googleBusinessAccessToken = tokens.access_token;
     updateData.googleBusinessRefreshToken = tokens.refresh_token || null;
+    // ✅ Save Account & Location IDs at connect time to avoid 429 quota errors later
+    if (gmbAccountId) updateData.googleBusinessAccountId = gmbAccountId;
+    if (gmbLocationId) updateData.googleBusinessLocationId = gmbLocationId;
 
     await Settings.findOneAndUpdate(
       connectionsQuery,
       updateData,
       { upsert: true, new: true }
     );
+
+    if (gmbAccountId && gmbLocationId) {
+      console.log(`✅ [GMB] Account ID & Location ID saved at connect time: ${gmbAccountId}, ${gmbLocationId}`);
+    }
 
     console.log(`✅ Google Business OAuth Success for user ${userId}. Account: ${businessName}`);
     
