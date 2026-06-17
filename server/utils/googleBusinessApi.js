@@ -103,13 +103,31 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
     locationTitle = location.title;
     console.log(`✅ [GMB] Using Location: ${location.title} (${location.name})`);
 
-    // Save back to settings cache
+    // Save back to settings cache via direct Supabase update
     try {
-      settings.googleBusinessAccountId = accountName;
-      settings.googleBusinessLocationId = locationName;
-      settings.connectedGoogleBusinessName = locationTitle;
-      await settings.save();
-      console.log('✅ [GMB] Saved Account & Location URNs to Settings cache.');
+      const { supabase: _sb } = await import('./supabase.js');
+      
+      // Read current connectedPageName and merge GMB IDs into it
+      const currentConnectedPageName = settings.connectedPageName || '{}';
+      let pageData = {};
+      try { pageData = JSON.parse(currentConnectedPageName); } catch(e) {}
+      
+      pageData.googleBusinessAccountId = accountName;
+      pageData.googleBusinessLocationId = locationName;
+      pageData.connectedGoogleBusinessName = locationTitle;
+
+      const updateQuery = _sb.from('settings').update({
+        connectedPageName: JSON.stringify(pageData)
+      });
+
+      // Match by workspaceId if available, otherwise by userId
+      if (workspaceId) {
+        await updateQuery.eq('workspaceId', workspaceId);
+      } else {
+        await updateQuery.eq('userId', userId);
+      }
+      
+      console.log('✅ [GMB] Saved Account & Location URNs to Settings cache via direct Supabase update.');
     } catch (saveErr) {
       console.warn('⚠️ [GMB] Failed to save GMB details to Settings cache:', saveErr.message);
     }
