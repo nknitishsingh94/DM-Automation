@@ -3214,9 +3214,20 @@ app.get('/api/debug/settings', verifyToken, async (req, res) => {
 });
 
 // --- ONE-TIME FIX: Fetch and cache GMB Account/Location IDs for current user ---
-app.post('/api/fix-gmb-cache', authenticateToken, async (req, res) => {
+app.post('/api/fix-gmb-cache', async (req, res) => {
   try {
-    const userId = req.user.id || req.user._id || req.user.userId;
+    // Inline auth check
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'No token provided.' });
+    
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch(e) {
+      return res.status(401).json({ error: 'Invalid token.' });
+    }
+    const userId = decoded.id || decoded._id || decoded.userId;
     const workspaceId = req.headers['x-workspace-id'] || req.body.workspaceId;
 
     const { supabase: _sb } = await import('./utils/supabase.js');
