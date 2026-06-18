@@ -333,7 +333,7 @@ export default function FlowBuilder() {
   };
 
   return (
-    <div style={{ height: 'calc(100vh - 80px)', position: 'fixed', top: '80px', left: '260px', right: 0, bottom: 0, display: 'flex', flexDirection: 'column', background: '#f8fafc' }}>
+    <div style={{ height: '100vh', position: 'fixed', top: 0, left: window.innerWidth > 1000 ? '260px' : 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', background: '#f8fafc', zIndex: 10 }}>
       
       {/* ManyChat Style Top Header */}
       <div style={{ height: '60px', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', zIndex: 20, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
