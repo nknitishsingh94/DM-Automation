@@ -3957,6 +3957,58 @@ app.get('/api/diag-storage', async (req, res) => {
 });
 
 // ── SECURITY: Global Error Handler ────────────────────────────────────────────
+// --- TWITTER TESTING ENDPOINT ---
+app.post('/api/test/twitter/post', verifyToken, async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ error: "Missing 'text' in request body" });
+    }
+
+    const { supabase: _sb } = await import('./utils/supabase.js');
+    const { data: userSettings, error: setErr } = await _sb.from('settings').select('*').eq('userId', req.user.userId).limit(1);
+
+    if (setErr || !userSettings || userSettings.length === 0) {
+      return res.status(404).json({ error: 'Settings not found' });
+    }
+
+    const settings = userSettings[0];
+    if (!settings.twitterAccessToken || !settings.twitterRefreshToken) {
+      return res.status(401).json({ error: 'Twitter is not connected. Please connect Twitter first.' });
+    }
+
+    const { TwitterApi } = await import('twitter-api-v2');
+    const clientId = process.env.TWITTER_CLIENT_ID;
+    const clientSecret = process.env.TWITTER_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+      return res.status(500).json({ error: 'Twitter OAuth credentials missing on server' });
+    }
+
+    // Refresh token if needed
+    const client = new TwitterApi({
+      clientId: clientId,
+      clientSecret: clientSecret
+    });
+
+    const { client: refreshedClient, accessToken, refreshToken: newRefreshToken } = await client.refreshOAuth2Token(settings.twitterRefreshToken);
+
+    // Save new tokens
+    await _sb.from('settings').update({
+      twitterAccessToken: accessToken,
+      twitterRefreshToken: newRefreshToken || settings.twitterRefreshToken
+    }).eq('userId', req.user.userId);
+
+    // Post tweet
+    const tweetRes = await refreshedClient.v2.tweet(text);
+
+    res.json({ success: true, tweet: tweetRes.data });
+  } catch (err) {
+    console.error("❌ Twitter Test Posting Error:", err);
+    res.status(500).json({ error: err.message, raw: err });
+  }
+});
+
 // Must be LAST middleware. Prevents stack trace leakage in production.
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {

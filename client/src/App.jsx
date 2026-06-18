@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import CookieBanner from './components/CookieBanner';
 import UniversalTriggers from './pages/UniversalTriggers';
+import TwitterTest from './pages/TwitterTest';
 
 // Helper to handle lazy loading retries (Fixes 'Failed to fetch dynamically imported module')
 const lazyRetry = (componentImport) => {
@@ -752,6 +753,7 @@ function MainLayout() {
               <Route path="/scheduling" element={<ProtectedRoute><Scheduling /></ProtectedRoute>} />
               <Route path="/developer" element={<ProtectedRoute><ApiKeys /></ProtectedRoute>} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/twitter-test" element={<TwitterTest />} />
               <Route path="*" element={<div style={{textAlign:'center', marginTop:'50px', color:'var(--text-muted)'}}>Page Under Construction</div>} />
             </Routes>
           </Suspense>
