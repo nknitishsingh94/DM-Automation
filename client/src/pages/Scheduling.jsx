@@ -340,20 +340,7 @@ export default function Scheduling() {
   };
 
   const insertEmoji = (emoji) => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
-
-    const newCaption = text.substring(0, start) + emoji + text.substring(end);
-    setNewPost(prev => ({ ...prev, caption: newCaption }));
-
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + emoji.length, start + emoji.length);
-    }, 0);
+    setNewPost(prev => ({ ...prev, caption: (prev.caption || '') + emoji }));
   };
 
   const addThreadPost = () => {
