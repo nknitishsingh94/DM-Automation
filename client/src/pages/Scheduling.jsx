@@ -1355,27 +1355,27 @@ export default function Scheduling() {
                         >
                           # Hashtag
                         </button>
-                        {showEmojiPicker && (
-                          <div style={{
-                            position: 'absolute', bottom: '40px', left: '0', 
-                            zIndex: 50, boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
-                            borderRadius: '8px', overflow: 'hidden'
-                          }}>
-                            <EmojiPicker 
-                               onEmojiClick={(emojiObj) => {
-                                 insertEmoji(emojiObj.emoji);
-                                 setShowEmojiPicker(false);
-                               }} 
-                               width={320}
-                               height={400}
-                               previewConfig={{ showPreview: false }}
-                               searchDisabled={false}
-                               skinTonesDisabled={true}
-                            />
-                          </div>
-                        )}
                       </div>
                     </div>
+                    {showEmojiPicker && (
+                      <div style={{
+                        marginTop: '12px',
+                        borderRadius: '8px', overflow: 'hidden',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      }}>
+                        <EmojiPicker 
+                           onEmojiClick={(emojiObj) => {
+                             insertEmoji(emojiObj.emoji);
+                             setShowEmojiPicker(false);
+                           }} 
+                           width={'100%'}
+                           height={350}
+                           previewConfig={{ showPreview: false }}
+                           searchDisabled={false}
+                           skinTonesDisabled={true}
+                        />
+                      </div>
+                    )}
               </div>
 
               <div style={{ marginTop: '24px' }}>
