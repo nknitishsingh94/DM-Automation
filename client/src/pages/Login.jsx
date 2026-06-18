@@ -640,7 +640,7 @@ export default function Login() {
           <div className="login-right">
             <div style={{ textAlign: 'center', marginBottom: '8px' }}>
               <p className="login-right-title">Quick Sign In</p>
-              <p className="login-right-subtitle">Use your Google or Facebook account to sign in instantly</p>
+              <p className="login-right-subtitle">Use your Google account to sign in instantly</p>
             </div>
 
             <div className="login-social-wrap">
@@ -650,17 +650,7 @@ export default function Login() {
                 style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
               />
 
-              {/* Facebook */}
-              <button
-                type="button"
-                className="login-fb-btn"
-                onClick={handleFacebookLogin}
-              >
-                <div className="login-fb-icon-wrap">
-                  <Facebook size={16} color="#fff" fill="#fff" />
-                </div>
-                Continue with Facebook
-              </button>
+
             </div>
 
             <p className="login-social-note">

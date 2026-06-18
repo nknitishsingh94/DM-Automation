@@ -397,30 +397,7 @@ export default function Signup() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', width: '100%' }}>
           <div id="googleBtn" style={{ width: '100%' }}></div>
 
-          <button 
-            type="button"
-            onClick={handleFacebookLogin}
-            style={{
-              width: '100%',
-              maxWidth: '320px',
-              height: '40px',
-              borderRadius: '10px',
-              border: 'none',
-              background: '#1877f2',
-              color: 'white',
-              fontWeight: '700',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '12px',
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(24, 119, 242, 0.12)',
-              transition: 'all 0.2s',
-              margin: '0 auto'
-            }}
-          >
-            <Facebook size={18} fill="white" color="white" /> Continue with Facebook
-          </button>
+
         </div>
 
 
