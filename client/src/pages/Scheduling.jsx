@@ -1205,46 +1205,57 @@ export default function Scheduling() {
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>content</label>
                 
                     {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p)) && (
-                      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-                        <button
-                          onClick={() => setPostType('video')}
-                          style={{
-                            flex: 1, padding: '12px', borderRadius: '8px',
-                            background: postType === 'video' ? '#3b82f6' : '#f1f5f9',
-                            color: postType === 'video' ? 'white' : '#64748b',
-                            border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
-                            transition: 'all 0.2s',
-                            boxShadow: postType === 'video' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
-                          }}
-                        >
-                          Video
-                        </button>
-                        <button
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
+                        <div
                           onClick={() => setPostType('image')}
                           style={{
-                            flex: 1, padding: '12px', borderRadius: '8px',
-                            background: postType === 'image' ? '#3b82f6' : '#f1f5f9',
-                            color: postType === 'image' ? 'white' : '#64748b',
-                            border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
-                            transition: 'all 0.2s',
-                            boxShadow: postType === 'image' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
+                            padding: '16px 12px', borderRadius: '12px',
+                            background: postType === 'image' ? '#eef2ff' : '#f8fafc',
+                            border: postType === 'image' ? '2px solid #6366f1' : '2px solid transparent',
+                            color: postType === 'image' ? '#4f46e5' : '#64748b',
+                            cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                            transition: 'all 0.2s', textAlign: 'center',
+                            boxShadow: postType === 'image' ? '0 4px 12px rgba(99, 102, 241, 0.15)' : 'none'
                           }}
                         >
-                          Image
-                        </button>
-                        <button
+                          <ImageIcon size={24} />
+                          <div style={{ fontSize: '0.9rem', fontWeight: '700', color: postType === 'image' ? '#312e81' : '#334155' }}>Image</div>
+                          <div style={{ fontSize: '0.7rem', color: postType === 'image' ? '#4f46e5' : '#94a3b8' }}>Single photo</div>
+                        </div>
+
+                        <div
+                          onClick={() => setPostType('video')}
+                          style={{
+                            padding: '16px 12px', borderRadius: '12px',
+                            background: postType === 'video' ? '#eef2ff' : '#f8fafc',
+                            border: postType === 'video' ? '2px solid #6366f1' : '2px solid transparent',
+                            color: postType === 'video' ? '#4f46e5' : '#64748b',
+                            cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                            transition: 'all 0.2s', textAlign: 'center',
+                            boxShadow: postType === 'video' ? '0 4px 12px rgba(99, 102, 241, 0.15)' : 'none'
+                          }}
+                        >
+                          <Film size={24} />
+                          <div style={{ fontSize: '0.9rem', fontWeight: '700', color: postType === 'video' ? '#312e81' : '#334155' }}>Video</div>
+                          <div style={{ fontSize: '0.7rem', color: postType === 'video' ? '#4f46e5' : '#94a3b8' }}>Reel or Video</div>
+                        </div>
+
+                        <div
                           onClick={() => setPostType('carousel')}
                           style={{
-                            flex: 1, padding: '12px', borderRadius: '8px',
-                            background: postType === 'carousel' ? '#3b82f6' : '#f1f5f9',
-                            color: postType === 'carousel' ? 'white' : '#64748b',
-                            border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem',
-                            transition: 'all 0.2s',
-                            boxShadow: postType === 'carousel' ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none'
+                            padding: '16px 12px', borderRadius: '12px',
+                            background: postType === 'carousel' ? '#eef2ff' : '#f8fafc',
+                            border: postType === 'carousel' ? '2px solid #6366f1' : '2px solid transparent',
+                            color: postType === 'carousel' ? '#4f46e5' : '#64748b',
+                            cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                            transition: 'all 0.2s', textAlign: 'center',
+                            boxShadow: postType === 'carousel' ? '0 4px 12px rgba(99, 102, 241, 0.15)' : 'none'
                           }}
                         >
-                          Carousel
-                        </button>
+                          <Layers size={24} />
+                          <div style={{ fontSize: '0.9rem', fontWeight: '700', color: postType === 'carousel' ? '#312e81' : '#334155' }}>Carousel</div>
+                          <div style={{ fontSize: '0.7rem', color: postType === 'carousel' ? '#4f46e5' : '#94a3b8' }}>Multiple photos</div>
+                        </div>
                       </div>
                     )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
