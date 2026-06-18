@@ -54,9 +54,21 @@ export async function runSchedulingWorker() {
 
     if (duePosts.length === 0) return { skipped: true, reason: 'No posts due' };
 
-    for (const post of duePosts) {
+    for (let post of duePosts) {
       console.log(`\n===========================================`);
       console.log(`⚙️ [Worker] Processing Post ID: ${post._id}`);
+      
+      // Parse JSON mediaUrl if it exists
+      if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
+        try {
+          const parsedMeta = JSON.parse(post.mediaUrl);
+          post.type = parsedMeta.type || 'image';
+          post.carouselItems = parsedMeta.carouselItems || [];
+          post.mediaUrl = parsedMeta.mediaUrl || '';
+        } catch (e) {
+          console.warn(`⚠️ [Worker] Failed to parse mediaUrl JSON for post ${post._id}`);
+        }
+      }
       
       try {
         if (!post.platform || (post.platform !== 'instagram' && post.platform !== 'facebook' && post.platform !== 'youtube' && post.platform !== 'google-business')) {
