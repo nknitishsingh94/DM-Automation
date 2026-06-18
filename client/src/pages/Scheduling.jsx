@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import LoadingSpinner from '../components/LoadingSpinner';
+import EmojiPicker from 'emoji-picker-react';
 
 // --- UTILITIES ---
 const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
@@ -1356,23 +1357,21 @@ export default function Scheduling() {
                         </button>
                         {showEmojiPicker && (
                           <div style={{
-                            position: 'absolute', bottom: '30px', left: '0', background: 'white',
-                            border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px',
-                            display: 'flex', gap: '4px', flexWrap: 'wrap', width: '250px',
-                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 10
+                            position: 'absolute', bottom: '40px', left: '0', 
+                            zIndex: 50, boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+                            borderRadius: '8px', overflow: 'hidden'
                           }}>
-                            {popularEmojis.map((emoji, i) => (
-                              <span 
-                                key={i} 
-                                onClick={() => {
-                                  insertEmoji(emoji);
-                                  setShowEmojiPicker(false);
-                                }}
-                                style={{ cursor: 'pointer', fontSize: '1.2rem', padding: '4px' }}
-                              >
-                                {emoji}
-                              </span>
-                            ))}
+                            <EmojiPicker 
+                               onEmojiClick={(emojiObj) => {
+                                 insertEmoji(emojiObj.emoji);
+                                 setShowEmojiPicker(false);
+                               }} 
+                               width={320}
+                               height={400}
+                               previewConfig={{ showPreview: false }}
+                               searchDisabled={false}
+                               skinTonesDisabled={true}
+                            />
                           </div>
                         )}
                       </div>
