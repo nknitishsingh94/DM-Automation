@@ -633,12 +633,12 @@ export default function Scheduling() {
 
     if (isMetaPlatform) {
       if (postType === 'video') {
-        if (files.some(f => !f.type.startsWith('video/')) || files.length > 1) {
+        if (files.some(f => !f.type.startsWith('video/')) || (selectedFiles.length + files.length > 1)) {
           notify("Please select a single video file.", "error");
           return;
         }
       } else if (postType === 'image') {
-        if (files.some(f => !f.type.startsWith('image/')) || files.length > 1) {
+        if (files.some(f => !f.type.startsWith('image/')) || (selectedFiles.length + files.length > 1)) {
           notify("Please select a single image file.", "error");
           return;
         }
@@ -1207,7 +1207,14 @@ export default function Scheduling() {
                     {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p)) && (
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
                         <div
-                          onClick={() => setPostType('image')}
+                          onClick={() => {
+                            setPostType('image');
+                            if (selectedFiles.length > 1) {
+                              setSelectedFiles([selectedFiles[0]]);
+                              setPreviews([previews[0]]);
+                              notify("Trimmed to a single image for Image post type.", "info");
+                            }
+                          }}
                           style={{
                             padding: '16px 12px', borderRadius: '12px',
                             background: postType === 'image' ? '#eef2ff' : '#f8fafc',
@@ -1224,7 +1231,14 @@ export default function Scheduling() {
                         </div>
 
                         <div
-                          onClick={() => setPostType('video')}
+                          onClick={() => {
+                            setPostType('video');
+                            if (selectedFiles.length > 1) {
+                              setSelectedFiles([selectedFiles[0]]);
+                              setPreviews([previews[0]]);
+                              notify("Trimmed to a single video for Video post type.", "info");
+                            }
+                          }}
                           style={{
                             padding: '16px 12px', borderRadius: '12px',
                             background: postType === 'video' ? '#eef2ff' : '#f8fafc',
