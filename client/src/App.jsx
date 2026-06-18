@@ -686,7 +686,7 @@ function MainLayout() {
                    location.pathname.startsWith('/automation-editor') || 
                    location.pathname.startsWith('/flow-builder');
   const isMessageOnlyHub = location.pathname === '/hub/message-only';
-  const hideSidebar = isPublic || isEditor;
+  const hideSidebar = isPublic; // Sidebar should remain visible on editor pages
   const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub || location.pathname === '/universal-triggers' || location.pathname === '/scheduling' || location.pathname === '/developer';
 
   return (
