@@ -490,6 +490,10 @@ function Sidebar({ isMobileOpen, onClose }) {
               <Lock size={18} />
               <span>API keys</span>
             </NavLink>
+            <NavLink to="/twitter-test" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Terminal size={18} />
+              <span>Twitter Test</span>
+            </NavLink>
             <NavLink 
               to="/universal-triggers" 
               className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}
