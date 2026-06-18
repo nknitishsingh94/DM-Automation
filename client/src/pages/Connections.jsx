@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { 
   ShieldCheck, Instagram, Facebook, MessageSquare, Key, MapPin, Save, Info, 
@@ -441,32 +442,34 @@ export default function Connections() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         
-        {/* Top-right button for Connections tab */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', alignItems: 'center' }}>
+        {/* Top-right button portal */}
+        {document.getElementById('topbar-actions-portal') && createPortal(
           <button 
             className="settings-header-btn"
             onClick={() => setShowConnectModal(true)}
             style={{ 
               background: '#7c3aed', 
               color: 'white', 
-              padding: '12px 24px', 
-              borderRadius: '10px', 
-              fontWeight: '700', 
-              fontSize: '1.05rem',
+              padding: '10px 20px', 
+              borderRadius: '8px', 
+              fontWeight: '600', 
+              fontSize: '0.95rem',
               border: 'none', 
               cursor: 'pointer', 
               display: 'flex', 
               alignItems: 'center', 
-              gap: '8px',
+              gap: '6px',
               boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)',
-              transition: 'background 0.2s, transform 0.2s'
+              transition: 'background 0.2s, transform 0.2s',
+              whiteSpace: 'nowrap'
             }}
             onMouseOver={(e) => { e.currentTarget.style.background = '#6d28d9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
             onMouseOut={(e) => { e.currentTarget.style.background = '#7c3aed'; e.currentTarget.style.transform = 'translateY(0)'; }}
           >
             <Plus size={18} /> New Connection
-          </button>
-        </div>
+          </button>,
+          document.getElementById('topbar-actions-portal')
+        )}
 
       {/* Filters Row */}
       <div className="settings-filters" style={{ 
