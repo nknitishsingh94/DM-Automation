@@ -682,7 +682,9 @@ function MainLayout() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isPublic = ['/', '/public-home', '/login', '/signup', '/help', '/about', '/resources', '/blog', '/reviews', '/setup'].includes(location.pathname) || location.pathname.startsWith('/blog/');
-  const isEditor = ['/dm-automation-editor', '/automation-editor'].includes(location.pathname);
+  const isEditor = location.pathname.startsWith('/dm-automation-editor') || 
+                   location.pathname.startsWith('/automation-editor') || 
+                   location.pathname.startsWith('/flow-builder');
   const isMessageOnlyHub = location.pathname === '/hub/message-only';
   const hideSidebar = isPublic || isEditor;
   const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub || location.pathname === '/universal-triggers' || location.pathname === '/scheduling' || location.pathname === '/developer';

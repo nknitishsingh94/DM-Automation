@@ -60,16 +60,29 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
   let locationTitle = settings.connectedGoogleBusinessName;
 
   if (!accountName || !locationName) {
-    // 1. Get Accounts
+    // 1. Get Accounts - try v4 first (different quota), then v1
     console.log('📡 [GMB] Fetching Google Business Accounts (Cache miss)...');
     let accountsRes;
     try {
-      accountsRes = await axios.get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', {
+      // Try old v4 API first - different quota bucket, more lenient
+      accountsRes = await axios.get('https://mybusiness.googleapis.com/v4/accounts', {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
-    } catch (err) {
-      console.error('❌ [GMB] Fetch accounts failed:', err.response?.data || err.message);
-      throw new Error(`Google Business API failed to fetch accounts: ${err.message}`);
+    } catch (v4Err) {
+      console.warn('⚠️ [GMB] v4 accounts failed, trying v1:', v4Err.response?.data?.error?.code || v4Err.message);
+      try {
+        accountsRes = await axios.get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+      } catch (err) {
+        if (err.response?.data?.error?.code === 429) {
+          console.error('❌ [GMB] Rate limit hit. Post will retry later.');
+          // Return a special status to defer without marking as failed
+          throw new Error('RATE_LIMITED: Google Business API quota exceeded. Will retry automatically.');
+        }
+        console.error('❌ [GMB] Fetch accounts failed:', err.response?.data || err.message);
+        throw new Error(`Google Business API failed to fetch accounts: ${err.message}`);
+      }
     }
 
     const accounts = accountsRes.data?.accounts || [];
