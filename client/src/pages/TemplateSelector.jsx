@@ -41,7 +41,6 @@ export default function TemplateSelector() {
     { id: 'follow_first_freebie', category: 'Audience Growth', title: 'Follow First Then Freebie', desc: 'Require a follow before sending a free resource', icon: 'Gift' },
     { id: 'run_giveaway', category: 'Audience Growth', title: 'Run a Giveaway', desc: 'Verify follows and comments for giveaway entries', icon: 'Trophy' },
     { id: 'grow_youtube', category: 'Audience Growth', title: 'Grow Your YouTube', desc: 'Send YouTube links and track subscriptions', icon: 'Youtube' },
-    { id: 'grow_tiktok', category: 'Audience Growth', title: 'Grow Your TikTok', desc: 'Send TikTok profile link when users comment TIKTOK', icon: 'Smartphone' },
     { id: 'grow_podcast', category: 'Audience Growth', title: 'Grow Your Podcast', desc: 'Send podcast links and track listeners', icon: 'Headphones' },
     { id: 'grow_ig_from_website', category: 'Audience Growth', title: 'Grow Instagram from Website', desc: 'Show CTA on website to track Instagram follows', icon: 'Globe' },
     { id: 'dm_new_follower', category: 'Audience Growth', title: 'DM to New Follower', desc: 'Welcome new followers with a brand intro and resource', icon: 'UserPlus' },

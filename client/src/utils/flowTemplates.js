@@ -243,17 +243,7 @@ export const getTemplateData = (templateId) => {
           { id: 'e1-2', source: '1', target: '2' }
         ]
       };
-    case 'grow_tiktok':
-      return {
-        name: 'Grow Your TikTok',
-        nodes: [
-          { id: '1', type: 'trigger', position: { x: 50, y: 150 }, data: { title: "When...", text: "User comments TIKTOK" } },
-          { id: '2', type: 'message', position: { x: 350, y: 150 }, data: { title: "Send Link", text: "Catch behind the scenes on our TikTok! Follow us here:", buttons: [{id: 'b1', text: 'TikTok Profile', type: 'url'}] } }
-        ],
-        edges: [
-          { id: 'e1-2', source: '1', target: '2' }
-        ]
-      };
+
     case 'grow_podcast':
       return {
         name: 'Grow Your Podcast',

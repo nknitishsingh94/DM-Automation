@@ -35,7 +35,6 @@ const templatesData = [
   { id: "hide_negative_comments", title: "Hide Negative Comments", desc: "Automatically hide or filter out negative comments to maintain a positive community.", type: "Flow Builder", ai: true, upgrade: true },
   { id: "grow_ig_from_website", title: "Grow Instagram from Website", desc: "Convert website visitors into Instagram followers by sending follow links via DMs.", type: "Flow Builder" },
   { id: "grow_podcast", title: "Grow Your Podcast", desc: "Expand your podcast audience by automatically sharing episodes and subscription links.", type: "Flow Builder" },
-  { id: "grow_tiktok", title: "Grow Your TikTok", desc: "Drive Instagram followers to your TikTok account with automated DM campaigns.", type: "Flow Builder" },
   { id: "dm_new_follower", title: "DM to New Follower", desc: "Automatically send a welcome message to new followers to build engagement and connection.", type: "Flow Builder" },
   { id: "launch_new_product", title: "Launch a New Product", desc: "Announce and promote new product launches by sending exclusive offers and links to your audience.", type: "Flow Builder" },
   { id: "custom_flow", title: "Create a Custom Flow", desc: "Create a completely custom automations flow from the ground up.", type: "Flow Builder" },
