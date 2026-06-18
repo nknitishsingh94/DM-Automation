@@ -1109,7 +1109,7 @@ onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                     </div>
                     <div>
                       <div style={{ fontSize: '0.9rem', fontWeight: '600', color: '#0f172a' }}>Connected account</div>
-                      {selectedSettingsPlatform.id === 'google-business' ? (
+                      {['google-business', 'linkedin'].includes(selectedSettingsPlatform.id) ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
                           <input 
                             type="text" 
@@ -1127,9 +1127,14 @@ onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                           />
                           <button 
                             onClick={async () => {
-                              const updated = { ...settings, connectedGoogleBusinessName: selectedSettingsPlatform.username };
+                              let updated = { ...settings };
+                              if (selectedSettingsPlatform.id === 'google-business') {
+                                updated.connectedGoogleBusinessName = selectedSettingsPlatform.username;
+                              } else if (selectedSettingsPlatform.id === 'linkedin') {
+                                updated.connectedLinkedInName = selectedSettingsPlatform.username;
+                              }
                               setSettings(updated);
-                              await handleSaveSettings(null, updated, 'google-business');
+                              await handleSaveSettings(null, updated, selectedSettingsPlatform.id);
                               setSelectedSettingsPlatform(null);
                             }}
                             style={{ 

@@ -853,8 +853,12 @@ router.get('/linkedin/callback', async (req, res) => {
       const profileRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
-      if (profileRes.data && profileRes.data.name) {
-        profileName = profileRes.data.name;
+      if (profileRes.data) {
+        if (profileRes.data.name) {
+          profileName = profileRes.data.name;
+        } else if (profileRes.data.given_name) {
+          profileName = `${profileRes.data.given_name} ${profileRes.data.family_name || ''}`.trim();
+        }
       }
     } catch (profileErr) {
       console.warn("Could not fetch LinkedIn profile name:", profileErr.response?.data || profileErr.message);
