@@ -1380,35 +1380,37 @@ export default function Scheduling() {
               </div>
 
               <div style={{ marginTop: '24px' }}>
-                <div
-                  onClick={() => fileInputRef.current.click()}
-                  style={{
-                    width: '100%', padding: '24px', border: '1.5px dashed #94a3b8', borderRadius: '12px',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                    cursor: 'pointer', background: '#e2e8f0', color: '#475569', fontWeight: '600', fontSize: '0.95rem'
-                  }}
-                >
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    style={{ display: 'none' }} 
-                    multiple={(() => {
-                      const isMeta = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p));
-                      if (isMeta) return postType === 'carousel';
-                      return true;
-                    })()}
-                    accept={(() => {
-                      const isMeta = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p));
-                      if (isMeta) {
-                        if (postType === 'video') return 'video/*';
-                        return 'image/*';
-                      }
-                      return 'video/*,image/*';
-                    })()}
-                    onChange={handleFileChange} 
-                  />
-                  <Plus size={18} /> Add media
-                </div>
+                {!(selectedFiles.length >= 1 && postType !== 'carousel') && (
+                  <div
+                    onClick={() => fileInputRef.current.click()}
+                    style={{
+                      width: '100%', padding: '24px', border: '1.5px dashed #94a3b8', borderRadius: '12px',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                      cursor: 'pointer', background: '#e2e8f0', color: '#475569', fontWeight: '600', fontSize: '0.95rem'
+                    }}
+                  >
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      style={{ display: 'none' }} 
+                      multiple={(() => {
+                        const isMeta = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p));
+                        if (isMeta) return postType === 'carousel';
+                        return true;
+                      })()}
+                      accept={(() => {
+                        const isMeta = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p));
+                        if (isMeta) {
+                          if (postType === 'video') return 'video/*';
+                          return 'image/*';
+                        }
+                        return 'video/*,image/*';
+                      })()}
+                      onChange={handleFileChange} 
+                    />
+                    <Plus size={18} /> Add media
+                  </div>
+                )}
                 
                 {/* Previews */}
                 {(previews.length > 0 || (newPost.platforms && newPost.platforms.includes('threads'))) && (
