@@ -13,13 +13,15 @@ const TwitterTest = () => {
 
   const handleConnect = () => {
     addLog('Initiating Twitter OAuth...');
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('insta_agent_token');
     if (!token) {
       addLog('Error: No authentication token found.');
       return;
     }
     // Redirect to backend OAuth route
-    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/oauth/twitter?token=${token}`;
+    const redirectUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/oauth/twitter?token=${token}`;
+    addLog(`Redirecting to: ${redirectUrl}`);
+    window.location.assign(redirectUrl);
   };
 
   const handlePostTweet = async () => {
@@ -27,7 +29,7 @@ const TwitterTest = () => {
     addLog('Attempting to post tweet...', { text: tweetText });
     
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/test/twitter/post`, {
         method: 'POST',
         headers: {

@@ -3973,7 +3973,19 @@ app.post('/api/test/twitter/post', verifyToken, async (req, res) => {
     }
 
     const settings = userSettings[0];
-    if (!settings.twitterAccessToken || !settings.twitterRefreshToken) {
+    
+    // Extract virtual fields from connectedPageName
+    let virtualFields = {};
+    if (settings.connectedPageName) {
+      try {
+        virtualFields = JSON.parse(settings.connectedPageName);
+      } catch(e) {}
+    }
+
+    const twitterAccessToken = settings.twitterAccessToken || virtualFields.twitterAccessToken;
+    const twitterRefreshToken = settings.twitterRefreshToken || virtualFields.twitterRefreshToken;
+
+    if (!twitterAccessToken || !twitterRefreshToken) {
       return res.status(401).json({ error: 'Twitter is not connected. Please connect Twitter first.' });
     }
 
@@ -3991,12 +4003,14 @@ app.post('/api/test/twitter/post', verifyToken, async (req, res) => {
       clientSecret: clientSecret
     });
 
-    const { client: refreshedClient, accessToken, refreshToken: newRefreshToken } = await client.refreshOAuth2Token(settings.twitterRefreshToken);
+    const { client: refreshedClient, accessToken, refreshToken: newRefreshToken } = await client.refreshOAuth2Token(twitterRefreshToken);
 
-    // Save new tokens
+    // Save new tokens back to virtual fields
+    virtualFields.twitterAccessToken = accessToken;
+    virtualFields.twitterRefreshToken = newRefreshToken || twitterRefreshToken;
+    
     await _sb.from('settings').update({
-      twitterAccessToken: accessToken,
-      twitterRefreshToken: newRefreshToken || settings.twitterRefreshToken
+      connectedPageName: JSON.stringify(virtualFields)
     }).eq('userId', req.user.userId);
 
     // Post tweet

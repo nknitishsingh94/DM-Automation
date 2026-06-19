@@ -743,7 +743,7 @@ export default function Connections() {
               
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
-                  onClick={(e) => { e.stopPropagation(); window.open(`https://linkedin.com/in/${settings.connectedLinkedInName || ''}`, '_blank'); }}
+                  onClick={(e) => { e.stopPropagation(); window.open(`https://linkedin.com/search/results/all/?keywords=${encodeURIComponent(settings.connectedLinkedInName || '')}`, '_blank'); }}
                   style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
                   onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}

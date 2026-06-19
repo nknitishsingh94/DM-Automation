@@ -107,13 +107,13 @@ function ProtectedRoute({ children }) {
   const { user } = useAuth();
   const location = useLocation();
   const token = localStorage.getItem('insta_agent_token');
-  
+
   if (!user && !token) return <Navigate to="/login" />;
 
   // More robust connection check
   const isConnected = localStorage.getItem('insta_agent_connected') === 'true';
   const isBypassPage = ['/upgrade', '/settings', '/campaigns', '/dashboard'].includes(location.pathname);
-  
+
   if (!isConnected && !isBypassPage) {
     // We'll allow them to see the dashboard for now to help debug
     // return <Navigate to="/onboarding" />;
@@ -230,7 +230,7 @@ function Sidebar({ isMobileOpen, onClose }) {
   };
 
   const handleToggleSelectWorkspace = (id) => {
-    setSelectedWorkspaces(prev => 
+    setSelectedWorkspaces(prev =>
       prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
     );
   };
@@ -242,7 +242,7 @@ function Sidebar({ isMobileOpen, onClose }) {
     }
     try {
       const token = localStorage.getItem('insta_agent_token');
-      const deletePromises = selectedWorkspaces.map(id => 
+      const deletePromises = selectedWorkspaces.map(id =>
         fetch(`${API_BASE_URL}/api/workspaces/${id}`, {
           method: 'DELETE',
           headers: {
@@ -261,28 +261,28 @@ function Sidebar({ isMobileOpen, onClose }) {
 
   return (
     <>
-      <div 
-        className={`sidebar-overlay ${isMobileOpen ? 'visible' : ''}`} 
+      <div
+        className={`sidebar-overlay ${isMobileOpen ? 'visible' : ''}`}
         onClick={onClose}
       />
-      
+
       <aside className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
         <div className="sidebar-header" style={{ padding: '20px 24px', borderBottom: 'none', position: 'relative' }}>
           {user && (
             <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-               <div 
-                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                 className="profile-hover"
-                 style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '6px 8px', margin: '-6px -8px', borderRadius: '8px', transition: 'background 0.2s', width: '100%', maxWidth: 'calc(100% - 30px)' }}
-               >
-                <div style={{ 
-                  width: '32px', 
-                  height: '32px', 
-                  borderRadius: '6px', 
-                  background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
+              <div
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="profile-hover"
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '6px 8px', margin: '-6px -8px', borderRadius: '8px', transition: 'background 0.2s', width: '100%', maxWidth: 'calc(100% - 30px)' }}
+              >
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '6px',
+                  background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   fontSize: '14px',
                   fontWeight: '700',
                   color: 'white',
@@ -342,7 +342,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                       </button>
                     )}
                   </div>
-                  
+
                   <div style={{ maxHeight: '200px', overflowY: 'auto', marginBottom: '8px' }}>
                     {workspaces.map(w => {
                       const parts = [];
@@ -351,10 +351,10 @@ function Sidebar({ isMobileOpen, onClose }) {
                       const connectionLabel = parts.join(', ');
 
                       return (
-                        <div 
-                          key={w.id} 
-                          className="dropdown-item" 
-                          style={{ 
+                        <div
+                          key={w.id}
+                          className="dropdown-item"
+                          style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
@@ -386,9 +386,9 @@ function Sidebar({ isMobileOpen, onClose }) {
                               />
                             )}
                             <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                              <span style={{ 
-                                overflow: 'hidden', 
-                                textOverflow: 'ellipsis', 
+                              <span style={{
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
                                 fontWeight: w.id === activeWorkspace?.id ? '700' : '500',
                                 color: '#1e293b',
@@ -397,9 +397,9 @@ function Sidebar({ isMobileOpen, onClose }) {
                                 {w.name}
                               </span>
                               {connectionLabel && (
-                                <span style={{ 
-                                  fontSize: '10px', 
-                                  color: '#64748b', 
+                                <span style={{
+                                  fontSize: '10px',
+                                  color: '#64748b',
                                   fontWeight: 'normal',
                                   whiteSpace: 'nowrap',
                                   overflow: 'hidden',
@@ -422,17 +422,17 @@ function Sidebar({ isMobileOpen, onClose }) {
                       );
                     })}
                   </div>
-                  
+
                   <button onClick={() => { setShowWorkspaceModal(true); setShowProfileMenu(false); }} className="dropdown-item">
                     <PlusSquare size={16} color="#64748b" /> Add New Workspace
                   </button>
-                  
+
                   <div style={{ height: '1px', background: '#f1f5f9', margin: '4px 0' }}></div>
-                  
+
                   <Link to="/help" onClick={() => setShowProfileMenu(false)} className="dropdown-item">
                     <FileText size={16} color="#64748b" /> Help Center
                   </Link>
-                  
+
                   <button onClick={() => { logout(); setShowProfileMenu(false); }} className="dropdown-item">
                     <LogOut size={16} color="#64748b" /> Sign out
                   </button>
@@ -447,20 +447,20 @@ function Sidebar({ isMobileOpen, onClose }) {
 
         <div className="sidebar-middle-scroll">
           <nav className="nav-links">
-            <NavLink to="/connections" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/connections" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Link2 size={18} />
               <span>Connections</span>
             </NavLink>
-            <NavLink to="/scheduling" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/scheduling" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Calendar size={18} />
               <span>Post</span>
               <span className="sidebar-badge badge-new">HOT</span>
             </NavLink>
 
             <div className="nav-group">
-              <div 
-                onClick={() => setShowAutoOpsDropdown(!showAutoOpsDropdown)} 
-                className={`nav-item ${location.pathname.startsWith('/hub') ? 'active' : ''}`} 
+              <div
+                onClick={() => setShowAutoOpsDropdown(!showAutoOpsDropdown)}
+                className={`nav-item ${location.pathname.startsWith('/hub') ? 'active' : ''}`}
                 style={{ cursor: 'pointer', justifyContent: 'space-between' }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -475,57 +475,53 @@ function Sidebar({ isMobileOpen, onClose }) {
                     <LayoutTemplate size={16} />
                     <span>All Template</span>
                   </div>
-                  <NavLink to="/hub/message-only" className={({isActive}) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <NavLink to="/hub/message-only" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <MessageSquare size={16} />
                     <span>Message only</span>
                   </NavLink>
                 </div>
               )}
             </div>
-            <NavLink to="/dashboard" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <LayoutDashboard size={18} />
               <span>OneView</span>
             </NavLink>
-            <NavLink to="/developer" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/developer" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Lock size={18} />
               <span>API keys</span>
             </NavLink>
-            <NavLink to="/twitter-test" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Terminal size={18} />
-              <span>Twitter Test</span>
-            </NavLink>
-            <NavLink 
-              to="/universal-triggers" 
-              className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}
+            <NavLink
+              to="/universal-triggers"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
             >
               <Globe size={18} />
               <span>Universal Triggers</span>
             </NavLink>
-            <NavLink to="/ai-studio" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/ai-studio" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Sparkles size={18} />
               <span>AI Studio</span>
               <span className="sidebar-badge badge-new">NEW</span>
             </NavLink>
 
-            <NavLink to="/audiences" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/audiences" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Users size={18} />
               <span>Contacts</span>
             </NavLink>
 
-            <NavLink to="/settings" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Settings size={18} />
               <span>Settings</span>
             </NavLink>
 
-            
+
           </nav>
         </div>
 
         {/* Fixed Upgrade Card at the bottom */}
         <div style={{ padding: '16px', borderTop: '1px solid #f1f5f9', flexShrink: 0 }}>
-          <div style={{ 
-            padding: '18px', 
-            borderRadius: '16px', 
+          <div style={{
+            padding: '18px',
+            borderRadius: '16px',
             background: '#0f172a',
             border: '1px solid #1e293b',
             display: 'flex',
@@ -541,35 +537,35 @@ function Sidebar({ isMobileOpen, onClose }) {
                 Unlock all advanced features
               </p>
             </div>
-            
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '14px 0', borderTop: '1px solid rgba(255, 255, 255, 0.08)', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontWeight: '600' }}>
-                 <span style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                   <div style={{ padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                     <Sparkles size={12} color="#3b82f6" />
-                   </div>
-                   AI Credits
-                 </span>
-                 <span style={{ color: '#f8fafc', fontWeight: '800' }}>1X</span>
+                <span style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                    <Sparkles size={12} color="#3b82f6" />
+                  </div>
+                  AI Credits
+                </span>
+                <span style={{ color: '#f8fafc', fontWeight: '800' }}>1X</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontWeight: '600' }}>
-                 <span style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                   <div style={{ padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                     <Zap size={12} color="#3b82f6" />
-                   </div>
-                   Automations
-                 </span>
-                 <span style={{ color: '#f8fafc', fontWeight: '800' }}>Infinite</span>
+                <span style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                    <Zap size={12} color="#3b82f6" />
+                  </div>
+                  Automations
+                </span>
+                <span style={{ color: '#f8fafc', fontWeight: '800' }}>Infinite</span>
               </div>
 
             </div>
 
-            <NavLink to="/upgrade" className="upgrade-btn-zoom" style={{ 
-              width: '100%', 
-              padding: '12px', 
-              fontSize: '13px', 
-              borderRadius: '10px', 
-              justifyContent: 'center', 
+            <NavLink to="/upgrade" className="upgrade-btn-zoom" style={{
+              width: '100%',
+              padding: '12px',
+              fontSize: '13px',
+              borderRadius: '10px',
+              justifyContent: 'center',
               background: '#ffffff',
               color: '#0f172a',
               fontWeight: '800',
@@ -596,12 +592,12 @@ function Sidebar({ isMobileOpen, onClose }) {
             }}>
               <h3 style={{ fontSize: '20px', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>Create Workspace</h3>
               <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '20px' }}>Organize your settings, campaigns, messages, and contacts under a new workspace.</p>
-              
+
               <form onSubmit={handleCreateWorkspace}>
                 <div style={{ marginBottom: '20px' }}>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '8px', textTransform: 'uppercase' }}>Workspace Name</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={newWorkspaceName}
                     onChange={(e) => setNewWorkspaceName(e.target.value)}
                     placeholder="e.g. Acme Marketing"
@@ -612,17 +608,17 @@ function Sidebar({ isMobileOpen, onClose }) {
                     }}
                   />
                 </div>
-                
+
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => { setShowWorkspaceModal(false); setNewWorkspaceName(''); }}
                     style={{ padding: '10px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', background: 'transparent', fontSize: '14px', fontWeight: '600', color: '#475569', cursor: 'pointer' }}
                   >
                     Cancel
                   </button>
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     style={{ padding: '10px 20px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', fontSize: '14px', fontWeight: '600', color: 'white', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(139, 92, 246, 0.3)' }}
                   >
                     Create
@@ -641,9 +637,9 @@ function Sidebar({ isMobileOpen, onClose }) {
 function TopBar({ onMenuClick }) {
   const location = useLocation();
   const { user } = useAuth();
-  
+
   const getTitle = () => {
-    switch(location.pathname) {
+    switch (location.pathname) {
       case '/dashboard': return 'OneView';
       case '/campaigns': return 'Automations';
       case '/campaign-builder/new': return 'Campaign Builder';
@@ -657,7 +653,7 @@ function TopBar({ onMenuClick }) {
       case '/scheduling': return '';
       case '/hub': return 'Hub';
       case '/developer': return 'API Keys';
-      default: 
+      default:
         if (location.pathname.startsWith('/flow-builder/')) return 'Editing Flow';
         if (location.pathname.startsWith('/automation-editor/')) return 'Automation';
         if (location.pathname.startsWith('/platform/')) return 'Hub';
@@ -687,9 +683,9 @@ function MainLayout() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isPublic = ['/', '/public-home', '/login', '/signup', '/help', '/about', '/resources', '/blog', '/reviews', '/setup'].includes(location.pathname) || location.pathname.startsWith('/blog/');
-  const isEditor = location.pathname.startsWith('/dm-automation-editor') || 
-                   location.pathname.startsWith('/automation-editor') || 
-                   location.pathname.startsWith('/flow-builder');
+  const isEditor = location.pathname.startsWith('/dm-automation-editor') ||
+    location.pathname.startsWith('/automation-editor') ||
+    location.pathname.startsWith('/flow-builder');
   const isMessageOnlyHub = location.pathname === '/hub/message-only';
   const hideSidebar = isPublic; // Sidebar should remain visible on editor pages
   const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub || location.pathname === '/universal-triggers' || location.pathname === '/scheduling' || location.pathname === '/developer';
@@ -699,7 +695,7 @@ function MainLayout() {
       {user && !hideSidebar && <Sidebar isMobileOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />}
       <main className="main-content" style={{ paddingTop: (isEditor || location.pathname === '/developer') ? '0' : undefined }}>
         {!hideTopBar && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
-        <div className="page-container" style={{ 
+        <div className="page-container" style={{
           padding: (isPublic || isEditor || ['/inbox', '/universal-triggers', '/scheduling', '/hub/message-only', '/developer'].includes(location.pathname)) ? '0' : undefined,
           overflow: (isEditor || ['/inbox', '/universal-triggers', '/scheduling', '/hub/message-only'].includes(location.pathname)) ? 'hidden' : 'auto',
           display: 'flex',
@@ -747,7 +743,7 @@ function MainLayout() {
               <Route path="/about" element={<About />} />
               <Route path="/resources" element={<Resources />} />
               <Route path="/blog" element={<Blog />} />
-               <Route path="/blog/:id" element={<BlogPost />} />
+              <Route path="/blog/:id" element={<BlogPost />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/cookies" element={<Cookies />} />
@@ -758,7 +754,7 @@ function MainLayout() {
               <Route path="/developer" element={<ProtectedRoute><ApiKeys /></ProtectedRoute>} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/twitter-test" element={<TwitterTest />} />
-              <Route path="*" element={<div style={{textAlign:'center', marginTop:'50px', color:'var(--text-muted)'}}>Page Under Construction</div>} />
+              <Route path="*" element={<div style={{ textAlign: 'center', marginTop: '50px', color: 'var(--text-muted)' }}>Page Under Construction</div>} />
             </Routes>
           </Suspense>
         </div>
