@@ -2978,6 +2978,53 @@ app.post('/api/settings', verifyToken, async (req, res) => {
   }
 });
 
+
+// WhatsApp Manual API Connection (BYOC)
+app.post('/api/settings/whatsapp/connect-manual', verifyToken, async (req, res) => {
+  try {
+    const { whatsappPhoneNumberId, whatsappBusinessAccountId, whatsappToken } = req.body;
+    
+    if (!whatsappPhoneNumberId || !whatsappBusinessAccountId || !whatsappToken) {
+      return res.status(400).json({ error: 'Missing required credentials' });
+    }
+
+    // Verify token with Meta Graph API
+    let connectedName = 'WhatsApp Business';
+    try {
+      const testRes = await axios.get(`https://graph.facebook.com/v19.0/${whatsappPhoneNumberId}?access_token=${whatsappToken}`);
+      connectedName = testRes.data.verified_name || testRes.data.display_phone_number || testRes.data.id || 'WhatsApp Business';
+    } catch (metaErr) {
+      const errMsg = metaErr.response?.data?.error?.message || metaErr.message;
+      return res.status(400).json({ error: `Invalid credentials: ${errMsg}` });
+    }
+
+    // Update settings in database
+    const updateData = {
+      isWhatsAppConnected: true,
+      whatsappPhoneNumberId,
+      whatsappBusinessAccountId,
+      whatsappToken,
+      connectedWhatsAppName: connectedName
+    };
+
+    let settingsQuery = { userId: req.user.userId };
+    if (req.user.workspaceId) {
+      settingsQuery.workspaceId = req.user.workspaceId;
+    }
+
+    await Settings.findOneAndUpdate(settingsQuery, updateData, { upsert: true, new: true });
+
+    res.json({
+      success: true,
+      whatsappPhoneNumberId,
+      whatsappBusinessAccountId,
+      connectedWhatsAppName: connectedName
+    });
+  } catch (error) {
+    console.error('Error connecting WhatsApp:', error);
+    res.status(500).json({ error: 'Failed to connect WhatsApp account' });
+  }
+});
 app.post('/api/settings/whatsapp/connect-qr', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOneAndUpdate(

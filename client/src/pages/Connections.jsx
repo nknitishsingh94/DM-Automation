@@ -6,6 +6,7 @@ import {
   CheckCircle, XCircle, Rocket, Trash2, AlertTriangle, Send, Twitter, 
   Youtube, Linkedin, ChevronDown, ChevronRight, Plus, X, Globe, Sliders, Activity, Sparkles
 } from 'lucide-react';
+import WhatsAppConnectModal from '../components/WhatsAppConnectModal';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
@@ -14,6 +15,8 @@ import LoadingSpinner from '../components/LoadingSpinner';
 export default function Connections() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [saveStatus, setSaveStatus] = useState('');
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   const [settings, setSettings] = useState({
     instagramAccessToken: '',
     instagramPageId: '',
@@ -311,6 +314,10 @@ export default function Connections() {
     }
     if (platformName.toLowerCase() === 'google business' || platformName.toLowerCase() === 'google-business') {
       window.location.href = `${API_BASE_URL}/api/oauth/google-business?token=${localStorage.getItem('insta_agent_token')}`;
+      return;
+    }
+    if (platformName.toLowerCase() === 'whatsapp') {
+      setShowWhatsAppModal(true);
       return;
     }
     if (platformName.toLowerCase() === 'threads') {
@@ -1360,6 +1367,26 @@ onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
           }
         }
       `}</style>
+
+      {/* ---- WhatsApp Modal ---- */}
+      {showWhatsAppModal && (
+        <WhatsAppConnectModal 
+          onClose={() => setShowWhatsAppModal(false)}
+          onSuccess={(data) => {
+            setShowWhatsAppModal(false);
+            notify('WhatsApp connected successfully!', 'success');
+            // Optimistically update settings
+            setSettings(prev => ({
+              ...prev,
+              isWhatsAppConnected: true,
+              whatsappPhoneNumberId: data.whatsappPhoneNumberId,
+              whatsappDisplayName: data.connectedWhatsAppName || 'WhatsApp Business'
+            }));
+          }}
+          API_BASE_URL={API_BASE_URL}
+          token={localStorage.getItem('insta_agent_token')}
+        />
+      )}
     </div>
   );
 }

@@ -319,7 +319,7 @@ function convertOutgoing(doc, tableName) {
     const VIRTUAL_SETTINGS_FIELDS = [
       'instagramAutomationEnabled',
       'facebookAutomationEnabled',
-      'whatsappAutomationEnabled',
+      'whatsappAutomationEnabled', 'connectedWhatsAppName',
       'telegramToken', 'isTelegramConnected', 'telegramAutomationEnabled',
       'twitterApiKey', 'isTwitterConnected', 'twitterAutomationEnabled', 'twitterAccessToken', 'twitterRefreshToken', 'connectedTwitterName', 'connectedTwitterId',
       'youtubeApiKey', 'isYouTubeConnected', 'isYoutubeConnected', 'youtubeAutomationEnabled', 'youtubeAccessToken', 'youtubeRefreshToken', 'youtubeChannelId', 'youtubeChannelName', 'lastYouTubeCommentCheck',
