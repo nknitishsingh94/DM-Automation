@@ -2627,6 +2627,9 @@ app.get('/api/workspaces', verifyToken, async (req, res) => {
             wsJson.connectedFacebookName = settings.connectedFacebookName || null;
             wsJson.isInstagramConnected = settings.isAccountConnected || (!!settings.instagramAccessToken && !!settings.businessAccountId);
             wsJson.isFacebookConnected = settings.isFacebookConnected || (!!settings.facebookAccessToken && !!settings.facebookPageId);
+            wsJson.isWhatsAppConnected = settings.isWhatsAppConnected || !!settings.whatsappToken;
+            wsJson.isTelegramConnected = settings.isTelegramConnected || !!settings.telegramToken;
+            wsJson.isDiscordConnected = settings.isDiscordConnected || !!settings.discordToken;
           }
         } catch (settingsErr) {
           // If query fails (e.g. column doesn't exist), just log and proceed without settings details

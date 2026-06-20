@@ -476,18 +476,24 @@ function Sidebar({ isMobileOpen, onClose }) {
                     <LayoutTemplate size={16} />
                     <span>All Template</span>
                   </div>
-                  <NavLink to="/autoops/whatsapp" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <MessageCircle size={16} color="#10b981" />
-                    <span style={{ fontWeight: '600' }}>WhatsApp</span>
-                  </NavLink>
-                  <NavLink to="/autoops/telegram" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <MessageSquare size={16} color="#3b82f6" />
-                    <span style={{ fontWeight: '600' }}>Telegram</span>
-                  </NavLink>
-                  <NavLink to="/autoops/discord" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <MessageSquare size={16} color="#8b5cf6" />
-                    <span style={{ fontWeight: '600' }}>Discord</span>
-                  </NavLink>
+                  {activeWorkspace?.isWhatsAppConnected && (
+                    <NavLink to="/autoops/whatsapp" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <MessageCircle size={16} color="#10b981" />
+                      <span style={{ fontWeight: '600' }}>WhatsApp</span>
+                    </NavLink>
+                  )}
+                  {activeWorkspace?.isTelegramConnected && (
+                    <NavLink to="/autoops/telegram" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <MessageSquare size={16} color="#3b82f6" />
+                      <span style={{ fontWeight: '600' }}>Telegram</span>
+                    </NavLink>
+                  )}
+                  {activeWorkspace?.isDiscordConnected && (
+                    <NavLink to="/autoops/discord" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <MessageSquare size={16} color="#8b5cf6" />
+                      <span style={{ fontWeight: '600' }}>Discord</span>
+                    </NavLink>
+                  )}
                 </div>
               )}
             </div>
