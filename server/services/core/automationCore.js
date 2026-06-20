@@ -319,7 +319,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     // GATING: Follower Check (Now universal for ALL sources)
     if (match.requireFollow) {
       console.log(`🛡️ UNIVERSAL GATING: Checking follower status for ${chatId}...`);
-      const isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
+      const isFollowing = platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings);
 
       if (!isFollowing) {
         console.log(`🚫 GATED: User ${chatId} is not following. Sending follow-request DM.`);

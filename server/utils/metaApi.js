@@ -170,14 +170,17 @@ export const sendPrivateReply = async (platform, commentId, text, userId = null)
   }
 };
 
-export const sendPublicComment = async (platform, commentId, text, userId = null) => {
+export const sendPublicComment = async (platform, commentId, text, userId = null, passedToken = null) => {
   try {
-    let accessToken = process.env.META_PAGE_ACCESS_TOKEN;
-    if (userId) {
+    let accessToken = passedToken;
+    if (!accessToken && userId) {
       const userSettings = await Settings.findOne({ userId });
       if (userSettings) {
         accessToken = platform === 'facebook' ? userSettings.facebookAccessToken : userSettings.instagramAccessToken;
       }
+    }
+    if (!accessToken) {
+      accessToken = process.env.META_PAGE_ACCESS_TOKEN;
     }
 
     if (!accessToken) return false;
