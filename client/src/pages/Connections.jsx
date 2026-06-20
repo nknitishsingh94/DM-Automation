@@ -57,6 +57,8 @@ export default function Connections() {
 
   // Interactive UI Dropdowns & Modals
   const [showConnectModal, setShowConnectModal] = useState(false);
+  const [showTelegramModal, setShowTelegramModal] = useState(false);
+  const [telegramTokenInput, setTelegramTokenInput] = useState('');
   const [showPlatformDropdown, setShowPlatformDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
@@ -402,11 +404,8 @@ export default function Connections() {
       return;
     }
     if (platformName.toLowerCase() === 'telegram') {
-      const token = prompt('Enter your Telegram Bot Token:');
-      if (token) {
-        handleSaveSettings(null, { ...settings, telegramToken: token, isTelegramConnected: true }, 'telegram');
-        notify('Telegram Connected successfully!', 'success');
-      }
+      setTelegramTokenInput('');
+      setShowTelegramModal(true);
       return;
     }
     const connectType = platformName.toLowerCase() === 'facebook' ? 'facebook'
@@ -1137,6 +1136,129 @@ onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                   )}
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TELEGRAM CONNECT MODAL */}
+      {showTelegramModal && (
+        <div style={{ 
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+          background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1001,
+          animation: 'fadeIn 0.2s ease-out'
+        }}>
+          <div style={{ 
+            background: 'white', borderRadius: '24px', width: '100%', maxWidth: '500px', 
+            padding: '36px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            border: '1px solid #e2e8f0', position: 'relative', margin: '20px',
+            animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+          }}>
+            {/* Close Button */}
+            <button 
+              onClick={() => setShowTelegramModal(false)}
+              style={{ position: 'absolute', top: '24px', right: '24px', background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '6px', borderRadius: '50%' }}
+              onMouseOver={(e) => e.currentTarget.style.color = '#1e293b'}
+              onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}
+            >
+              <X size={20} />
+            </button>
+
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+                <Send size={24} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>Connect Telegram Bot</h3>
+                <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '500' }}>Community & Bot Engagement</span>
+              </div>
+            </div>
+
+            {/* Instructions */}
+            <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '16px', border: '1px solid #e2e8f0', marginBottom: '24px' }}>
+              <h4 style={{ margin: '0 0 8px 0', fontSize: '0.85rem', fontWeight: '700', color: '#334155' }}>How to get a Bot Token:</h4>
+              <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.82rem', color: '#475569', lineHeight: '1.6' }}>
+                <li>Open Telegram and start a chat with <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6', fontWeight: '700', textDecoration: 'underline' }}>@BotFather</a></li>
+                <li>Send the command <strong>/newbot</strong> to create your bot</li>
+                <li>Choose a display name and a unique username</li>
+                <li>Copy the generated HTTP API Token</li>
+              </ol>
+            </div>
+
+            {/* Token Input */}
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: '800', color: '#475569', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                Telegram Bot Token
+              </label>
+              <input
+                type="text"
+                value={telegramTokenInput}
+                onChange={(e) => setTelegramTokenInput(e.target.value)}
+                placeholder="e.g. 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ"
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  borderRadius: '12px',
+                  border: '1.5px solid #e2e8f0',
+                  outline: 'none',
+                  fontSize: '0.9rem',
+                  color: '#0f172a',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowTelegramModal(false)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '12px',
+                  border: '1.5px solid #cbd5e1',
+                  background: 'transparent',
+                  color: '#475569',
+                  fontWeight: '700',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (!telegramTokenInput.trim()) {
+                    notify('Please enter a valid token', 'error');
+                    return;
+                  }
+                  handleSaveSettings(null, { ...settings, telegramToken: telegramTokenInput.trim(), isTelegramConnected: true }, 'telegram');
+                  notify('Telegram Connected successfully!', 'success');
+                  setShowTelegramModal(false);
+                }}
+                style={{
+                  padding: '10px 24px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                  color: 'white',
+                  fontWeight: '700',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.3)',
+                  transition: 'filter 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.filter = 'brightness(1.1)'}
+                onMouseOut={(e) => e.currentTarget.style.filter = 'brightness(1)'}
+              >
+                Connect Bot
+              </button>
             </div>
           </div>
         </div>
