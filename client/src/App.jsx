@@ -477,10 +477,10 @@ function Sidebar({ isMobileOpen, onClose }) {
                     <span>All Template</span>
                   </div>
                   <div style={{ height: '1px', background: '#e2e8f0', margin: '4px 12px' }}></div>
-                  <NavLink to="/connections" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'default', opacity: 0.8 }}>
                     <Link2 size={16} color="#475569" />
                     <span style={{ fontWeight: '600', color: '#475569' }}>Communication</span>
-                  </NavLink>
+                  </div>
                   {activeWorkspace?.isWhatsAppConnected && (
                     <NavLink to="/autoops/whatsapp" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <MessageCircle size={16} color="#10b981" />
