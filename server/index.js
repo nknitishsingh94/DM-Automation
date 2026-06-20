@@ -2987,26 +2987,41 @@ app.post('/api/settings/whatsapp/connect-embedded', verifyToken, async (req, res
       return res.status(400).json({ error: 'Missing access token' });
     }
 
-    // 1. Use token to fetch WABAs
-    let testRes;
+    // 1. Fetch User's Business Accounts first
+    let businessRes;
     try {
-      testRes = await axios.get(`https://graph.facebook.com/v19.0/me/client_wa_accounts?access_token=${accessToken}`);
+      businessRes = await axios.get(`https://graph.facebook.com/v20.0/me/businesses?access_token=${accessToken}`);
     } catch (metaErr) {
       const errMsg = metaErr.response?.data?.error?.message || metaErr.message;
-      return res.status(400).json({ error: `Invalid Facebook token: ${errMsg}` });
+      return res.status(400).json({ error: `Failed to fetch businesses: ${errMsg}` });
     }
 
-    if (!testRes.data.data || testRes.data.data.length === 0) {
-      return res.status(400).json({ error: 'No WhatsApp Business Accounts found for this Facebook account' });
+    if (!businessRes.data.data || businessRes.data.data.length === 0) {
+      return res.status(400).json({ error: 'No Meta Business Accounts found. Please create one during the login popup.' });
     }
 
-    const wabaId = testRes.data.data[0].id;
-    let connectedName = testRes.data.data[0].name || 'WhatsApp Business';
+    const businessId = businessRes.data.data[0].id;
 
-    // 2. Fetch the Phone Numbers for this WABA
+    // 2. Fetch WABAs owned by this business
+    let wabaRes;
+    try {
+      wabaRes = await axios.get(`https://graph.facebook.com/v20.0/${businessId}/owned_whatsapp_business_accounts?access_token=${accessToken}`);
+    } catch (metaErr) {
+      const errMsg = metaErr.response?.data?.error?.message || metaErr.message;
+      return res.status(400).json({ error: `Failed to fetch WABA: ${errMsg}` });
+    }
+
+    if (!wabaRes.data.data || wabaRes.data.data.length === 0) {
+      return res.status(400).json({ error: 'No WhatsApp Business Accounts found for this Business' });
+    }
+
+    const wabaId = wabaRes.data.data[0].id;
+    let connectedName = wabaRes.data.data[0].name || 'WhatsApp Business';
+
+    // 3. Fetch the Phone Numbers for this WABA
     let phoneRes;
     try {
-      phoneRes = await axios.get(`https://graph.facebook.com/v19.0/${wabaId}/phone_numbers?access_token=${accessToken}`);
+      phoneRes = await axios.get(`https://graph.facebook.com/v20.0/${wabaId}/phone_numbers?access_token=${accessToken}`);
     } catch (metaErr) {
       const errMsg = metaErr.response?.data?.error?.message || metaErr.message;
       return res.status(400).json({ error: `Failed to fetch phone numbers: ${errMsg}` });
