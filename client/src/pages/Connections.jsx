@@ -956,12 +956,19 @@ export default function Connections() {
               
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
-                  onClick={(e) => { e.stopPropagation(); window.open(`https://wa.me/${settings.whatsappPhoneNumberId || ''}`, '_blank'); }}
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    if (settings.whatsappBusinessAccountId) {
+                      window.open(`https://business.facebook.com/wa/manage/phone-numbers/?business_id=${settings.whatsappBusinessAccountId}`, '_blank'); 
+                    } else {
+                      window.open('https://business.facebook.com/', '_blank');
+                    }
+                  }}
                   style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
                   onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
                 >
-                  Profile
+                  Manage Account
                 </button>
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'whatsapp', name: 'WhatsApp', username: settings.whatsappDisplayName, isAutomationEnabled: true, color: '#22c55e' })}
