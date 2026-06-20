@@ -6,7 +6,6 @@ import {
   CheckCircle, XCircle, Rocket, Trash2, AlertTriangle, Send, Twitter, 
   Youtube, Linkedin, ChevronDown, ChevronRight, Plus, X, Globe, Sliders, Activity, Sparkles
 } from 'lucide-react';
-import WhatsAppConnectModal from '../components/WhatsAppConnectModal';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
 import { API_BASE_URL } from '../config';
@@ -16,7 +15,6 @@ export default function Connections() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [saveStatus, setSaveStatus] = useState('');
-  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   const [settings, setSettings] = useState({
     instagramAccessToken: '',
     instagramPageId: '',
@@ -164,6 +162,52 @@ export default function Connections() {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
+
+  const handleWhatsAppEmbeddedSignup = () => {
+    if (!window.FB) {
+      notify('Facebook SDK not loaded yet', 'error');
+      return;
+    }
+    setLoading(true);
+    window.FB.login((response) => {
+      if (response.authResponse) {
+        const accessToken = response.authResponse.accessToken;
+        fetch(`${API_BASE_URL}/api/settings/whatsapp/connect-embedded`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}`
+          },
+          body: JSON.stringify({ accessToken })
+        })
+        .then(res => res.json())
+        .then(data => {
+          setLoading(false);
+          if (data.success) {
+            notify('WhatsApp connected successfully!', 'success');
+            setSettings(prev => ({
+              ...prev,
+              isWhatsAppConnected: true,
+              whatsappPhoneNumberId: data.whatsappPhoneNumberId,
+              whatsappDisplayName: data.connectedWhatsAppName || 'WhatsApp Business'
+            }));
+          } else {
+            notify(data.error || 'Failed to connect WhatsApp', 'error');
+          }
+        })
+        .catch(err => {
+          setLoading(false);
+          console.error(err);
+          notify('Network error during WhatsApp connection', 'error');
+        });
+      } else {
+        setLoading(false);
+        console.log('User cancelled login or did not fully authorize.');
+      }
+    }, { 
+      scope: 'whatsapp_business_management,whatsapp_business_messaging,business_management' 
+    });
+  };
 
   const handleSaveSettings = async (e, overrideSettings = null, platform = 'instagram') => {
     if (e) e.preventDefault();
@@ -317,7 +361,7 @@ export default function Connections() {
       return;
     }
     if (platformName.toLowerCase() === 'whatsapp') {
-      setShowWhatsAppModal(true);
+      handleWhatsAppEmbeddedSignup();
       return;
     }
     if (platformName.toLowerCase() === 'threads') {
@@ -1368,25 +1412,6 @@ onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
         }
       `}</style>
 
-      {/* ---- WhatsApp Modal ---- */}
-      {showWhatsAppModal && (
-        <WhatsAppConnectModal 
-          onClose={() => setShowWhatsAppModal(false)}
-          onSuccess={(data) => {
-            setShowWhatsAppModal(false);
-            notify('WhatsApp connected successfully!', 'success');
-            // Optimistically update settings
-            setSettings(prev => ({
-              ...prev,
-              isWhatsAppConnected: true,
-              whatsappPhoneNumberId: data.whatsappPhoneNumberId,
-              whatsappDisplayName: data.connectedWhatsAppName || 'WhatsApp Business'
-            }));
-          }}
-          API_BASE_URL={API_BASE_URL}
-          token={localStorage.getItem('insta_agent_token')}
-        />
-      )}
     </div>
   );
 }

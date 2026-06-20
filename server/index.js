@@ -2979,31 +2979,56 @@ app.post('/api/settings', verifyToken, async (req, res) => {
 });
 
 
-// WhatsApp Manual API Connection (BYOC)
-app.post('/api/settings/whatsapp/connect-manual', verifyToken, async (req, res) => {
+// WhatsApp Meta Embedded Signup API Connection
+app.post('/api/settings/whatsapp/connect-embedded', verifyToken, async (req, res) => {
   try {
-    const { whatsappPhoneNumberId, whatsappBusinessAccountId, whatsappToken } = req.body;
-    
-    if (!whatsappPhoneNumberId || !whatsappBusinessAccountId || !whatsappToken) {
-      return res.status(400).json({ error: 'Missing required credentials' });
+    const { accessToken } = req.body;
+    if (!accessToken) {
+      return res.status(400).json({ error: 'Missing access token' });
     }
 
-    // Verify token with Meta Graph API
-    let connectedName = 'WhatsApp Business';
+    // 1. Use token to fetch WABAs
+    let testRes;
     try {
-      const testRes = await axios.get(`https://graph.facebook.com/v19.0/${whatsappPhoneNumberId}?access_token=${whatsappToken}`);
-      connectedName = testRes.data.verified_name || testRes.data.display_phone_number || testRes.data.id || 'WhatsApp Business';
+      testRes = await axios.get(`https://graph.facebook.com/v19.0/me/client_wa_accounts?access_token=${accessToken}`);
     } catch (metaErr) {
       const errMsg = metaErr.response?.data?.error?.message || metaErr.message;
-      return res.status(400).json({ error: `Invalid credentials: ${errMsg}` });
+      return res.status(400).json({ error: `Invalid Facebook token: ${errMsg}` });
     }
 
-    // Update settings in database
+    if (!testRes.data.data || testRes.data.data.length === 0) {
+      return res.status(400).json({ error: 'No WhatsApp Business Accounts found for this Facebook account' });
+    }
+
+    const wabaId = testRes.data.data[0].id;
+    let connectedName = testRes.data.data[0].name || 'WhatsApp Business';
+
+    // 2. Fetch the Phone Numbers for this WABA
+    let phoneRes;
+    try {
+      phoneRes = await axios.get(`https://graph.facebook.com/v19.0/${wabaId}/phone_numbers?access_token=${accessToken}`);
+    } catch (metaErr) {
+      const errMsg = metaErr.response?.data?.error?.message || metaErr.message;
+      return res.status(400).json({ error: `Failed to fetch phone numbers: ${errMsg}` });
+    }
+
+    if (!phoneRes.data.data || phoneRes.data.data.length === 0) {
+      return res.status(400).json({ error: 'No phone numbers registered in this WhatsApp Business Account' });
+    }
+
+    const phoneNumberId = phoneRes.data.data[0].id;
+    if (phoneRes.data.data[0].verified_name) {
+      connectedName = phoneRes.data.data[0].verified_name;
+    } else if (phoneRes.data.data[0].display_phone_number) {
+      connectedName = phoneRes.data.data[0].display_phone_number;
+    }
+
+    // 3. Save to database
     const updateData = {
       isWhatsAppConnected: true,
-      whatsappPhoneNumberId,
-      whatsappBusinessAccountId,
-      whatsappToken,
+      whatsappPhoneNumberId: phoneNumberId,
+      whatsappBusinessAccountId: wabaId,
+      whatsappToken: accessToken,
       connectedWhatsAppName: connectedName
     };
 
@@ -3016,13 +3041,13 @@ app.post('/api/settings/whatsapp/connect-manual', verifyToken, async (req, res) 
 
     res.json({
       success: true,
-      whatsappPhoneNumberId,
-      whatsappBusinessAccountId,
+      whatsappPhoneNumberId: phoneNumberId,
+      whatsappBusinessAccountId: wabaId,
       connectedWhatsAppName: connectedName
     });
   } catch (error) {
-    console.error('Error connecting WhatsApp:', error);
-    res.status(500).json({ error: 'Failed to connect WhatsApp account' });
+    console.error('Error connecting WhatsApp embedded:', error);
+    res.status(500).json({ error: 'Failed to complete WhatsApp Embedded Signup' });
   }
 });
 app.post('/api/settings/whatsapp/connect-qr', verifyToken, async (req, res) => {
