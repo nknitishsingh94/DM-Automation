@@ -958,11 +958,7 @@ export default function Connections() {
                 <button 
                   onClick={(e) => { 
                     e.stopPropagation(); 
-                    if (settings.whatsappBusinessAccountId) {
-                      window.open(`https://business.facebook.com/wa/manage/phone-numbers/?business_id=${settings.whatsappBusinessAccountId}`, '_blank'); 
-                    } else {
-                      window.open('https://business.facebook.com/', '_blank');
-                    }
+                    window.open('https://business.facebook.com/', '_blank');
                   }}
                   style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
