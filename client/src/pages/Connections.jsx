@@ -1003,7 +1003,6 @@ export default function Connections() {
             </div>
             )}
 
-          </div>
           </>
         ) : (
           /* Empty Connections slot matching screenshot exactly */
