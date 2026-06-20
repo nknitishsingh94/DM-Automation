@@ -12,14 +12,14 @@ export default function CommunicationHub() {
   useEffect(() => {
     const fetchWorkspaces = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('insta_agent_token');
         const res = await fetch(`${API_BASE_URL}/api/workspaces`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
           const data = await res.json();
           setWorkspaces(data);
-          const activeId = localStorage.getItem('activeWorkspaceId');
+          const activeId = localStorage.getItem('active_workspace_id');
           const active = data.find(w => w._id === activeId || w.id === activeId) || data[0];
           setActiveWorkspace(active);
         }
@@ -123,95 +123,153 @@ export default function CommunicationHub() {
         </div>
       </div>
 
-      <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', marginBottom: '24px' }}>Available Channels</h2>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', marginBottom: '24px' }}>
+        {platforms.filter(p => p.isConnected).length > 0 ? 'Active Channels' : 'Get Started'}
+      </h2>
       
       {/* Platform Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
-        {platforms.map(platform => (
-          <div key={platform.id} style={{
-            background: 'white',
-            borderRadius: '24px',
-            border: '1px solid #e2e8f0',
-            padding: '32px',
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            position: 'relative',
-            overflow: 'hidden',
-            cursor: 'pointer',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'
-          }}
-          onMouseOver={e => {
-            e.currentTarget.style.transform = 'translateY(-5px)';
-            e.currentTarget.style.boxShadow = `0 20px 25px -5px ${platform.color}22, 0 10px 10px -5px ${platform.color}11`;
-            e.currentTarget.style.borderColor = platform.color;
-          }}
-          onMouseOut={e => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)';
-            e.currentTarget.style.borderColor = '#e2e8f0';
-          }}>
-            
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-              <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: platform.bgGradient, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}>
-                <platform.icon size={32} color="white" />
-              </div>
+      {platforms.filter(p => p.isConnected).length > 0 ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+          {platforms.filter(p => p.isConnected).map(platform => (
+            <div key={platform.id} style={{
+              background: 'white',
+              borderRadius: '24px',
+              border: '1px solid #e2e8f0',
+              padding: '32px',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              position: 'relative',
+              overflow: 'hidden',
+              cursor: 'pointer',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.transform = 'translateY(-5px)';
+              e.currentTarget.style.boxShadow = `0 20px 25px -5px ${platform.color}22, 0 10px 10px -5px ${platform.color}11`;
+              e.currentTarget.style.borderColor = platform.color;
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)';
+              e.currentTarget.style.borderColor = '#e2e8f0';
+            }}>
               
-              {platform.isConnected ? (
-                <div style={{ background: '#dcfce7', color: '#166534', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <ShieldCheck size={14} /> CONNECTED
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: platform.bgGradient, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}>
+                  <platform.icon size={32} color="white" />
                 </div>
-              ) : (
-                <div style={{ background: '#f1f5f9', color: '#64748b', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '700' }}>
-                  NOT CONNECTED
-                </div>
-              )}
+                
+                {platform.isConnected && (
+                  <div style={{ background: '#dcfce7', color: '#166534', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <ShieldCheck size={14} /> CONNECTED
+                  </div>
+                )}
+              </div>
+
+              <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem', fontWeight: '800', color: '#0f172a' }}>{platform.name}</h3>
+              <p style={{ margin: '0 0 24px 0', fontSize: '0.95rem', color: '#64748b', lineHeight: '1.5', minHeight: '44px' }}>
+                {platform.desc}
+              </p>
+
+              <button 
+                onClick={() => {
+                  if (platform.isConnected) {
+                    navigate(`/autoops/${platform.id}`);
+                  }
+                }}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  background: '#f8fafc',
+                  color: platform.color,
+                  fontWeight: '700',
+                  fontSize: '0.95rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={e => {
+                  e.currentTarget.style.background = `${platform.color}11`;
+                }}
+                onMouseOut={e => {
+                  e.currentTarget.style.background = '#f8fafc';
+                }}>
+                Configure AutoOps <ArrowRight size={16} />
+              </button>
             </div>
-
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem', fontWeight: '800', color: '#0f172a' }}>{platform.name}</h3>
-            <p style={{ margin: '0 0 24px 0', fontSize: '0.95rem', color: '#64748b', lineHeight: '1.5', minHeight: '44px' }}>
-              {platform.desc}
-            </p>
-
-            <button 
-              onClick={() => {
-                if (platform.isConnected) {
-                  navigate(`/autoops/${platform.id}`);
-                } else {
-                  navigate('/connections');
-                }
-              }}
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '12px',
-                border: 'none',
-                background: platform.isConnected ? '#f8fafc' : platform.color,
-                color: platform.isConnected ? platform.color : 'white',
-                fontWeight: '700',
-                fontSize: '0.95rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={e => {
-                if (platform.isConnected) e.currentTarget.style.background = `${platform.color}11`;
-                else e.currentTarget.style.filter = 'brightness(1.1)';
-              }}
-              onMouseOut={e => {
-                if (platform.isConnected) e.currentTarget.style.background = '#f8fafc';
-                else e.currentTarget.style.filter = 'brightness(1)';
-              }}>
-              {platform.isConnected ? (
-                <>Configure AutoOps <ArrowRight size={16} /></>
-              ) : (
-                <>Connect Account <Link2 size={16} /></>
-              )}
-            </button>
+          ))}
+        </div>
+      ) : (
+        <div style={{
+          background: 'white',
+          borderRadius: '24px',
+          border: '1px solid #e2e8f0',
+          padding: '48px 32px',
+          textAlign: 'center',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+          maxWidth: '600px',
+          margin: '40px auto',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '24px',
+          animation: 'fadeIn 0.5s ease-out'
+        }}>
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginBottom: '8px' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 10px 15px -3px rgba(16, 185, 129, 0.2)' }}>
+              <MessageCircle size={28} />
+            </div>
+            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.2)' }}>
+              <Send size={28} />
+            </div>
+            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 10px 15px -3px rgba(139, 92, 246, 0.2)' }}>
+              <MessageSquare size={28} />
+            </div>
           </div>
-        ))}
-      </div>
+          
+          <div>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '1.4rem', fontWeight: '800', color: '#0f172a' }}>
+              Connect Your Channels
+            </h3>
+            <p style={{ margin: 0, fontSize: '1rem', color: '#64748b', lineHeight: '1.6', maxWidth: '460px' }}>
+              You don't have any channels connected to this workspace yet. Link your WhatsApp Business, Telegram Bot, or Discord Bot to start automating.
+            </p>
+          </div>
+          
+          <button
+            onClick={() => navigate('/connections')}
+            style={{
+              padding: '14px 28px',
+              borderRadius: '12px',
+              border: 'none',
+              background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+              color: 'white',
+              fontWeight: '700',
+              fontSize: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              cursor: 'pointer',
+              boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.3)',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 15px 20px -3px rgba(59, 130, 246, 0.4)';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(59, 130, 246, 0.3)';
+            }}
+          >
+            Go to Connections <Link2 size={18} />
+          </button>
+        </div>
+      )}
 
       <style>{`
         @keyframes fadeIn {
