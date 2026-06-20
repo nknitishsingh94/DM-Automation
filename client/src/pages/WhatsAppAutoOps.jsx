@@ -62,6 +62,7 @@ export default function WhatsAppAutoOps() {
             display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s',
             boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
           }}
+          onClick={() => navigate('/automation-editor')}
           onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
           onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
             <Plus size={20} /> Create New Flow
@@ -155,7 +156,9 @@ export default function WhatsAppAutoOps() {
                 <p style={{ color: '#64748b', fontSize: '0.95rem', maxWidth: '400px', margin: '0 auto 24px auto', lineHeight: '1.5' }}>
                   Set up your first automation rule. For example, when someone says "Pricing", send them your rate card.
                 </p>
-                <button style={{ background: '#10b981', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <button 
+                  onClick={() => navigate('/automation-editor')}
+                  style={{ background: '#10b981', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                   <Plus size={18} /> Create Workflow
                 </button>
               </div>
@@ -190,7 +193,9 @@ export default function WhatsAppAutoOps() {
                   </div>
                 </div>
                 
-                <div style={{ padding: '24px', border: '2px dashed #cbd5e1', borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', background: '#f8fafc', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.borderColor = '#10b981'} onMouseOut={e => e.currentTarget.style.borderColor = '#cbd5e1'}>
+                <div 
+                  onClick={() => alert('WhatsApp Template Editor coming soon. For now, please create templates directly in Meta Business Manager.')}
+                  style={{ padding: '24px', border: '2px dashed #cbd5e1', borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', background: '#f8fafc', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.borderColor = '#10b981'} onMouseOut={e => e.currentTarget.style.borderColor = '#cbd5e1'}>
                   <div style={{ width: '48px', height: '48px', background: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
                     <Plus size={24} color="#10b981" />
                   </div>
@@ -207,7 +212,9 @@ export default function WhatsAppAutoOps() {
                   <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0' }}>Bulk Broadcasts</h2>
                   <p style={{ color: '#64748b', margin: 0, fontSize: '0.95rem' }}>Send mass campaigns to your uploaded audience lists.</p>
                 </div>
-                <button style={{ background: '#10b981', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button 
+                  onClick={() => navigate('/broadcasts')}
+                  style={{ background: '#10b981', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Megaphone size={16} /> New Broadcast
                 </button>
               </div>
