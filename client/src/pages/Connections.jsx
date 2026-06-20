@@ -1305,6 +1305,49 @@ onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                 </button>
               </div>
 
+              {/* Threads Capabilities Section */}
+              {selectedSettingsPlatform.id === 'threads' && (
+                <div style={{ background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)', borderRadius: '12px', padding: '24px', border: '1px solid #e2e8f0', marginTop: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Sparkles size={16} color="white" />
+                    </div>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>Threads Capabilities</h3>
+                  </div>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                    <div style={{ background: 'white', padding: '16px', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#6366f1', textTransform: 'uppercase', marginBottom: '6px' }}>Content</div>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>Text (up to 500 chars), photos, videos, links, and polls can be posted.</p>
+                    </div>
+                    <div style={{ background: 'white', padding: '16px', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#ec4899', textTransform: 'uppercase', marginBottom: '6px' }}>Engagement</div>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>Like, reply, repost, and quote thread actions are all natively supported.</p>
+                    </div>
+                    <div style={{ background: 'white', padding: '16px', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#10b981', textTransform: 'uppercase', marginBottom: '6px' }}>Growth</div>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>Follow/following tracking, hashtags, mentions, and discover feed optimization.</p>
+                    </div>
+                    <div style={{ background: 'white', padding: '16px', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#f59e0b', textTransform: 'uppercase', marginBottom: '6px' }}>Automation</div>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>Schedule posts natively (Meta Business Suite) or via Threads API and Webhooks.</p>
+                    </div>
+                    <div style={{ background: 'white', padding: '16px', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#8b5cf6', textTransform: 'uppercase', marginBottom: '6px' }}>Profile Sync</div>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>Bio, website link, Instagram automatic sync, and profile highlights.</p>
+                    </div>
+                    <div style={{ background: 'white', padding: '16px', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#14b8a6', textTransform: 'uppercase', marginBottom: '6px' }}>Analytics & Privacy</div>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>Views, reach, block, mute, restrict, hidden words filter, and private accounts.</p>
+                    </div>
+                    <div style={{ background: 'white', padding: '16px', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#ef4444', textTransform: 'uppercase', marginBottom: '6px' }}>Cross-platform</div>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>Seamlessly share to Instagram stories and import followers from Instagram.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
             </div>
           </div>
         </div>

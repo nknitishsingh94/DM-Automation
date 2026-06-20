@@ -398,9 +398,10 @@ export default function Scheduling() {
     requireFollow: true,
     unfollowedResponse: "Hey! Please follow our account first to get the link! 😍",
     openingMessage: false,
-    openingMessageText: "Hey there! I'm so happy you're here, thanks so much for your interest 😍\n\nClick below and I'll send you the link in just a sec 🚀",
-    openingMessageButton: "click the button",
+    openingMessageText: "",
+    openingMessageButton: "",
     buttons: [],
+    automationStatus: 'Active',
     anyKeyword: false,
     publicReply: "Check your DMs! 🚀 I've sent you the info.",
     youtubeFirstComment: '',
@@ -420,6 +421,7 @@ export default function Scheduling() {
     gmbOfferTerms: '',
     gmbProductName: '',
     gmbProductPrice: '',
+    whatsappNumbers: '',
     threadPosts: []
   });
 
@@ -751,7 +753,8 @@ export default function Scheduling() {
       gmbOfferRedeemUrl: '',
       gmbOfferTerms: '',
       gmbProductName: '',
-      gmbProductPrice: ''
+      gmbProductPrice: '',
+      whatsappNumbers: ''
     });
     setSelectedFiles([]);
     setPreviews([]);
@@ -820,7 +823,8 @@ export default function Scheduling() {
           gmbOfferRedeemUrl: payloadBase.gmbOfferRedeemUrl || '',
           gmbOfferTerms: payloadBase.gmbOfferTerms || '',
           gmbProductName: payloadBase.gmbProductName || '',
-          gmbProductPrice: payloadBase.gmbProductPrice || ''
+          gmbProductPrice: payloadBase.gmbProductPrice || '',
+          whatsappNumbers: payloadBase.whatsappNumbers || ''
         };
 
         // Create placeholders for all platforms
@@ -1079,7 +1083,8 @@ export default function Scheduling() {
       { id: 'youtube', label: 'YouTube', icon: <Film size={14} />, color: '#ff0000', handle: '', connected: false },
       { id: 'linkedin', label: 'LinkedIn', icon: <Globe size={14} />, color: '#0a66c2', handle: '', connected: false },
       { id: 'twitter', label: 'Twitter/X', icon: <X size={14} />, color: '#000000', handle: '', connected: false },
-      { id: 'google-business', label: 'Google Business', icon: <MapPin size={14} />, color: '#4285f4', handle: '', connected: false }
+      { id: 'google-business', label: 'Google Business', icon: <MapPin size={14} />, color: '#4285f4', handle: '', connected: false },
+      { id: 'whatsapp', label: 'WhatsApp', icon: <MessageCircle size={14} />, color: '#25d366', handle: '', connected: false }
     ];
 
     if (!settings) return platforms;
@@ -1112,6 +1117,9 @@ export default function Scheduling() {
       }
       if (p.id === 'google-business' && (parsedSettings.isGoogleBusinessConnected || settings.isGoogleBusinessConnected)) {
         p.connected = true; p.handle = settings.connectedGoogleBusinessName || parsedSettings.connectedGoogleBusinessName || '';
+      }
+      if (p.id === 'whatsapp' && (parsedSettings.isWhatsAppConnected || settings.isWhatsAppConnected)) {
+        p.connected = true; p.handle = settings.whatsappDisplayName || parsedSettings.whatsappDisplayName || '';
       }
     });
 
@@ -1811,6 +1819,33 @@ export default function Scheduling() {
                     </div>
                   </div>
                 )}
+                
+                {/* WHATSAPP SPECIFIC FIELDS */}
+                {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('whatsapp') && (
+                  <div style={{ marginTop: '24px', background: '#f0fdf4', borderRadius: '12px', border: '1px solid #bbf7d0', overflow: 'hidden' }}>
+                    <div style={{ padding: '16px', borderBottom: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                       <MessageCircle size={18} color="#16a34a" />
+                       <span style={{ fontWeight: '700', fontSize: '0.95rem', color: '#166534' }}>WhatsApp Recipients</span>
+                    </div>
+                    <div style={{ padding: '16px' }}>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#166534', marginBottom: '8px' }}>
+                        Target Phone Numbers
+                      </label>
+                      <div style={{ fontSize: '0.75rem', color: '#15803d', marginBottom: '8px' }}>
+                        Enter comma-separated numbers with country code (e.g. 919876543210, 1234567890).
+                      </div>
+                      <textarea
+                        value={newPost.whatsappNumbers || ''}
+                        onChange={(e) => setNewPost({...newPost, whatsappNumbers: e.target.value})}
+                        placeholder="919876543210, 919876543211..."
+                        style={{
+                          width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #bbf7d0',
+                          outline: 'none', fontSize: '0.85rem', minHeight: '80px', resize: 'vertical', background: 'white', color: '#334155'
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -2305,7 +2340,7 @@ export default function Scheduling() {
                     <div style={{
                       fontSize: '0.65rem', fontWeight: '800', 
                       color: 'white',
-                      background: post.platform === 'facebook' ? '#1877f2' : post.platform === 'threads' ? '#000000' : post.platform === 'youtube' ? '#ff0000' : post.platform === 'google-business' ? '#4285f4' : post.platform === 'linkedin' ? '#0a66c2' : post.platform === 'twitter' ? '#000000' : '#e1306c',
+                      background: post.platform === 'facebook' ? '#1877f2' : post.platform === 'threads' ? '#000000' : post.platform === 'youtube' ? '#ff0000' : post.platform === 'google-business' ? '#4285f4' : post.platform === 'linkedin' ? '#0a66c2' : post.platform === 'twitter' ? '#000000' : post.platform === 'whatsapp' ? '#25d366' : '#e1306c',
                       padding: '4px 8px', borderRadius: '8px',
                       display: 'flex', alignItems: 'center', gap: '4px',
                       boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
@@ -2316,7 +2351,8 @@ export default function Scheduling() {
                        post.platform === 'google-business' ? <MapPin size={10} color="white" /> :
                        post.platform === 'linkedin' ? <Globe size={10} color="white" /> :
                        post.platform === 'twitter' ? <X size={10} color="white" /> :
-                       <Instagram size={10} />}
+                       post.platform === 'whatsapp' ? <MessageCircle size={10} color="white" /> :
+                       <Instagram size={10} color="white" />}
                       <span>{post.platform ? post.platform.replace('-', ' ').toUpperCase() : 'INSTAGRAM'}</span>
                     </div>
                     {/* Post Type Badge */}

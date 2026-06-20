@@ -2011,7 +2011,8 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
       gmbOfferTerms: req.body.gmbOfferTerms || '',
       gmbProductName: req.body.gmbProductName || '',
       gmbProductPrice: req.body.gmbProductPrice || '',
-      youtubeVideoId: req.body.youtubeVideoId || ''
+      youtubeVideoId: req.body.youtubeVideoId || '',
+      whatsappNumbers: req.body.whatsappNumbers || ''
     };
     
     const finalMediaUrl = JSON.stringify(metadata);
@@ -2063,6 +2064,7 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
     delete postData.gmbProductName;
     delete postData.gmbProductPrice;
     delete postData.youtubeVideoId;
+    delete postData.whatsappNumbers;
 
     const newPost = new ScheduledPost(postData);
     try {
@@ -3617,6 +3619,9 @@ async function runSchedulingWorker() {
         } else if (post.platform === 'linkedin') {
           const { publishLinkedInContent } = await import('./utils/linkedinApi.js');
           publishResult = await publishLinkedInContent(post.userId, post, post.workspaceId);
+        } else if (post.platform === 'whatsapp') {
+          const { publishWhatsAppContent } = await import('./services/platforms/whatsapp.js');
+          publishResult = await publishWhatsAppContent(post.userId, post, post.workspaceId);
         } else {
           // Default to instagram
           const { publishInstagramContent } = await import('./utils/metaApi.js');
