@@ -1,17 +1,61 @@
-import React, { useState } from 'react';
-import { MessageCircle, Settings, Layers, Megaphone, Plus, ArrowRight, LayoutTemplate, MessageSquare, List, Phone, ExternalLink } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { MessageCircle, Settings, Layers, Megaphone, Plus, LayoutTemplate, List, Phone, ExternalLink, Send, MessageSquare } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-export default function WhatsAppAutoOps() {
+export default function PlatformAutoOps() {
   const navigate = useNavigate();
+  const { platform } = useParams();
   const [activeTab, setActiveTab] = useState('flows');
 
-  const tabs = [
+  // Platform configs
+  const platformConfig = {
+    whatsapp: {
+      name: 'WhatsApp',
+      icon: MessageCircle,
+      primaryColor: '#10b981',
+      darkColor: '#059669',
+      bgGradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+      lightBg: '#ecfdf5',
+      features: ['flows', 'templates', 'broadcasts', 'interactive']
+    },
+    telegram: {
+      name: 'Telegram',
+      icon: Send,
+      primaryColor: '#3b82f6',
+      darkColor: '#2563eb',
+      bgGradient: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)',
+      lightBg: '#eff6ff',
+      features: ['flows', 'broadcasts']
+    },
+    discord: {
+      name: 'Discord',
+      icon: MessageSquare,
+      primaryColor: '#8b5cf6',
+      darkColor: '#6d28d9',
+      bgGradient: 'linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%)',
+      lightBg: '#f5f3ff',
+      features: ['flows', 'broadcasts']
+    }
+  };
+
+  const currentPlatform = platformConfig[platform] || platformConfig['whatsapp'];
+  const PlatformIcon = currentPlatform.icon;
+
+  useEffect(() => {
+    // Reset to flows tab if current tab is not supported by new platform
+    if (!currentPlatform.features.includes(activeTab)) {
+      setActiveTab('flows');
+    }
+  }, [platform, activeTab, currentPlatform.features]);
+
+  const allTabs = [
     { id: 'flows', label: 'Keyword Flows', icon: Layers, desc: 'Auto-reply to specific keywords' },
     { id: 'templates', label: 'Message Templates', icon: LayoutTemplate, desc: 'Pre-approved 24h messages' },
     { id: 'broadcasts', label: 'Broadcasts', icon: Megaphone, desc: 'Bulk messaging campaigns' },
     { id: 'interactive', label: 'Interactive Builder', icon: List, desc: 'Buttons & List messages' }
   ];
+
+  const visibleTabs = allTabs.filter(tab => currentPlatform.features.includes(tab.id));
 
   return (
     <div style={{
@@ -24,17 +68,18 @@ export default function WhatsAppAutoOps() {
     }}>
       {/* Header Section */}
       <div style={{
-        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        background: currentPlatform.bgGradient,
         borderRadius: '24px',
         padding: '40px',
         color: 'white',
         marginBottom: '32px',
-        boxShadow: '0 20px 25px -5px rgba(16, 185, 129, 0.2), 0 10px 10px -5px rgba(16, 185, 129, 0.1)',
+        boxShadow: `0 20px 25px -5px ${currentPlatform.primaryColor}33, 0 10px 10px -5px ${currentPlatform.primaryColor}1a`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        transition: 'all 0.4s ease'
       }}>
         {/* Background decorative circles */}
         <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '200px', height: '200px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
@@ -43,21 +88,21 @@ export default function WhatsAppAutoOps() {
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
             <div style={{ background: 'white', padding: '12px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <MessageCircle size={32} color="#059669" />
+              <PlatformIcon size={32} color={currentPlatform.darkColor} />
             </div>
             <div>
-              <h1 style={{ margin: 0, fontSize: '2.2rem', fontWeight: '800', letterSpacing: '-0.5px' }}>WhatsApp AutoOps</h1>
-              <span style={{ fontSize: '1rem', opacity: 0.9, fontWeight: '500' }}>Dedicated automation suite for WhatsApp Business</span>
+              <h1 style={{ margin: 0, fontSize: '2.2rem', fontWeight: '800', letterSpacing: '-0.5px' }}>{currentPlatform.name} AutoOps</h1>
+              <span style={{ fontSize: '1rem', opacity: 0.9, fontWeight: '500' }}>Dedicated automation suite for {currentPlatform.name}</span>
             </div>
           </div>
           <p style={{ margin: '16px 0 0 0', maxWidth: '600px', fontSize: '1.05rem', lineHeight: '1.6', opacity: 0.85 }}>
-            Build powerful conversation flows, manage pre-approved templates, and send bulk broadcasts directly to your customers' WhatsApp.
+            Build powerful conversation flows and send bulk broadcasts directly to your {currentPlatform.name} audience.
           </p>
         </div>
 
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <button style={{
-            background: 'white', color: '#059669', border: 'none', padding: '14px 24px',
+            background: 'white', color: currentPlatform.darkColor, border: 'none', padding: '14px 24px',
             borderRadius: '12px', fontWeight: '700', fontSize: '1rem', cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s',
             boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
@@ -83,12 +128,12 @@ export default function WhatsAppAutoOps() {
       {/* Tabs Layout */}
       <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '32px' }}>
         
-        {/* Sidebar Navigation for WhatsApp AutoOps */}
+        {/* Sidebar Navigation for Platform AutoOps */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <h3 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', paddingLeft: '12px' }}>
             Modules
           </h3>
-          {tabs.map(tab => (
+          {visibleTabs.map(tab => (
             <div 
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -113,9 +158,10 @@ export default function WhatsAppAutoOps() {
               }}
             >
               <div style={{ 
-                background: activeTab === tab.id ? '#ecfdf5' : '#f8fafc', 
-                color: activeTab === tab.id ? '#10b981' : '#64748b',
-                padding: '10px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                background: activeTab === tab.id ? currentPlatform.lightBg : '#f8fafc', 
+                color: activeTab === tab.id ? currentPlatform.primaryColor : '#64748b',
+                padding: '10px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'all 0.3s'
               }}>
                 <tab.icon size={20} />
               </div>
@@ -146,19 +192,19 @@ export default function WhatsAppAutoOps() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
                 <div>
                   <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0' }}>Keyword Flows</h2>
-                  <p style={{ color: '#64748b', margin: 0, fontSize: '0.95rem' }}>Create automated responses triggered by specific keywords sent by users on WhatsApp.</p>
+                  <p style={{ color: '#64748b', margin: 0, fontSize: '0.95rem' }}>Create automated responses triggered by specific keywords sent by users on {currentPlatform.name}.</p>
                 </div>
               </div>
               
               <div style={{ textAlign: 'center', padding: '60px 20px', background: '#f8fafc', borderRadius: '16px', border: '2px dashed #e2e8f0' }}>
                 <Layers size={48} color="#cbd5e1" style={{ marginBottom: '16px' }} />
-                <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#334155', marginBottom: '8px' }}>No WhatsApp Flows Yet</h3>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#334155', marginBottom: '8px' }}>No {currentPlatform.name} Flows Yet</h3>
                 <p style={{ color: '#64748b', fontSize: '0.95rem', maxWidth: '400px', margin: '0 auto 24px auto', lineHeight: '1.5' }}>
                   Set up your first automation rule. For example, when someone says "Pricing", send them your rate card.
                 </p>
                 <button 
                   onClick={() => navigate('/automation-editor')}
-                  style={{ background: '#10b981', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  style={{ background: currentPlatform.primaryColor, color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                   <Plus size={18} /> Create Workflow
                 </button>
               </div>
@@ -195,9 +241,11 @@ export default function WhatsAppAutoOps() {
                 
                 <div 
                   onClick={() => alert('WhatsApp Template Editor coming soon. For now, please create templates directly in Meta Business Manager.')}
-                  style={{ padding: '24px', border: '2px dashed #cbd5e1', borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', background: '#f8fafc', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.borderColor = '#10b981'} onMouseOut={e => e.currentTarget.style.borderColor = '#cbd5e1'}>
+                  style={{ padding: '24px', border: '2px dashed #cbd5e1', borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', background: '#f8fafc', cursor: 'pointer', transition: 'border-color 0.2s' }} 
+                  onMouseOver={e => e.currentTarget.style.borderColor = currentPlatform.primaryColor} 
+                  onMouseOut={e => e.currentTarget.style.borderColor = '#cbd5e1'}>
                   <div style={{ width: '48px', height: '48px', background: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-                    <Plus size={24} color="#10b981" />
+                    <Plus size={24} color={currentPlatform.primaryColor} />
                   </div>
                   <span style={{ fontWeight: '600', color: '#334155' }}>Create New Template</span>
                 </div>
@@ -214,7 +262,7 @@ export default function WhatsAppAutoOps() {
                 </div>
                 <button 
                   onClick={() => navigate('/broadcasts')}
-                  style={{ background: '#10b981', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  style={{ background: currentPlatform.primaryColor, color: 'white', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Megaphone size={16} /> New Broadcast
                 </button>
               </div>
@@ -244,7 +292,7 @@ export default function WhatsAppAutoOps() {
 
               <div style={{ display: 'flex', gap: '32px' }}>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = '#10b981'} onMouseOut={e => e.currentTarget.style.borderColor = '#e2e8f0'}>
+                  <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = currentPlatform.primaryColor} onMouseOut={e => e.currentTarget.style.borderColor = '#e2e8f0'}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
                       <div style={{ background: '#f1f5f9', padding: '12px', borderRadius: '12px' }}>
                         <Phone size={24} color="#3b82f6" />
@@ -256,7 +304,7 @@ export default function WhatsAppAutoOps() {
                     </div>
                   </div>
 
-                  <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = '#10b981'} onMouseOut={e => e.currentTarget.style.borderColor = '#e2e8f0'}>
+                  <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = currentPlatform.primaryColor} onMouseOut={e => e.currentTarget.style.borderColor = '#e2e8f0'}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
                       <div style={{ background: '#f1f5f9', padding: '12px', borderRadius: '12px' }}>
                         <List size={24} color="#8b5cf6" />
