@@ -3065,6 +3065,54 @@ app.post('/api/settings/whatsapp/connect-embedded', verifyToken, async (req, res
     res.status(500).json({ error: 'Failed to complete WhatsApp Embedded Signup' });
   }
 });
+
+// WhatsApp Send Test Message API
+app.post('/api/settings/whatsapp/send-test', verifyToken, async (req, res) => {
+  try {
+    const { targetPhoneNumber } = req.body;
+    if (!targetPhoneNumber) {
+      return res.status(400).json({ error: 'Missing target phone number' });
+    }
+
+    let settingsQuery = { userId: req.user.userId };
+    if (req.user.workspaceId) settingsQuery.workspaceId = req.user.workspaceId;
+
+    const settings = await Settings.findOne(settingsQuery);
+    if (!settings || !settings.whatsappToken || !settings.whatsappPhoneNumberId) {
+      return res.status(400).json({ error: 'WhatsApp is not connected' });
+    }
+
+    // Send the hello_world template
+    const payload = {
+      messaging_product: "whatsapp",
+      to: targetPhoneNumber,
+      type: "template",
+      template: {
+        name: "hello_world",
+        language: { code: "en_US" }
+      }
+    };
+
+    const response = await axios.post(
+      `https://graph.facebook.com/v20.0/${settings.whatsappPhoneNumberId}/messages`,
+      payload,
+      {
+        headers: {
+          'Authorization': `Bearer ${settings.whatsappToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    res.json({ success: true, data: response.data });
+  } catch (error) {
+    console.error('Error sending WhatsApp test message:', error.response?.data || error.message);
+    res.status(500).json({ 
+      error: 'Failed to send WhatsApp message', 
+      details: error.response?.data?.error?.message || error.message 
+    });
+  }
+});
 app.post('/api/settings/whatsapp/connect-qr', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOneAndUpdate(

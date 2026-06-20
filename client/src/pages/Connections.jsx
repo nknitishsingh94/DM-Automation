@@ -209,6 +209,35 @@ export default function Connections() {
     });
   };
 
+  const handleSendWhatsAppTest = async () => {
+    const phoneNumber = window.prompt("Enter your WhatsApp number with country code (e.g. 919876543210):");
+    if (!phoneNumber) return;
+    
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/settings/whatsapp/send-test`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}`
+        },
+        body: JSON.stringify({ targetPhoneNumber: phoneNumber })
+      });
+      const data = await res.json();
+      setLoading(false);
+      
+      if (data.success) {
+        notify('Test message sent successfully!', 'success');
+      } else {
+        notify(data.error || 'Failed to send test message', 'error');
+      }
+    } catch (err) {
+      setLoading(false);
+      console.error(err);
+      notify('Network error sending test message', 'error');
+    }
+  };
+
   const handleSaveSettings = async (e, overrideSettings = null, platform = 'instagram') => {
     if (e) e.preventDefault();
     setSavingSettings(true);
@@ -954,24 +983,38 @@ export default function Connections() {
                 <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
               </div>
               
-              <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
+              <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%', flexWrap: 'wrap' }}>
                 <button 
                   onClick={(e) => { 
                     e.stopPropagation(); 
                     window.open('https://business.facebook.com/', '_blank');
                   }}
-                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  style={{ flex: 1, minWidth: '45%', padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
                   onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
                 >
                   Manage Account
                 </button>
+                
+                <button 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    handleSendWhatsAppTest();
+                  }}
+                  style={{ flex: 1, minWidth: '45%', padding: '10px', background: '#ecfdf5', border: '1px solid #10b981', borderRadius: '8px', fontSize: '0.85rem', color: '#047857', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='#d1fae5'}
+                  onMouseOut={(e) => e.currentTarget.style.background='#ecfdf5'}
+                >
+                  <Send size={14} /> Send Test
+                </button>
               
-                            <button onClick={() => setSelectedSettingsPlatform({ id: 'whatsapp', name: 'WhatsApp', username: settings.whatsappDisplayName, isAutomationEnabled: true, color: '#22c55e' })}
-                style={{ flex: 1, padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
-              ><Sliders size={14} /> Settings</button>
+                <button onClick={() => setSelectedSettingsPlatform({ id: 'whatsapp', name: 'WhatsApp', username: settings.whatsappDisplayName, isAutomationEnabled: true, color: '#22c55e' })}
+                  style={{ flex: '1 1 100%', padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                  onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
+                >
+                  <Sliders size={14} /> Settings
+                </button>
               </div>
             </div>
             )}
