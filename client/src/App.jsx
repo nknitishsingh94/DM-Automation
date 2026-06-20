@@ -476,12 +476,6 @@ function Sidebar({ isMobileOpen, onClose }) {
                     <LayoutTemplate size={16} />
                     <span>All Template</span>
                   </div>
-                  <NavLink to="/hub/message-only" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <MessageSquare size={16} />
-                    <span>Message only</span>
-                  </NavLink>
-                  <div style={{ height: '1px', background: '#e2e8f0', margin: '4px 12px' }}></div>
-                  <div style={{ padding: '4px 12px', fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Communication AutoOps</div>
                   <NavLink to="/whatsapp-autoops" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <MessageCircle size={16} color="#10b981" />
                     <span style={{ fontWeight: '600' }}>WhatsApp</span>
