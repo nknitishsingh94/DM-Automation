@@ -70,6 +70,7 @@ const MessageOnlyHub = lazyRetry(() => import('./pages/MessageOnlyHub'));
 const PlatformDashboard = lazyRetry(() => import('./pages/PlatformDashboard'));
 const WhatsAppDashboard = lazyRetry(() => import('./pages/WhatsAppDashboard'));
 const PlatformAutoOps = lazyRetry(() => import('./pages/PlatformAutoOps'));
+const CommunicationHub = lazyRetry(() => import('./pages/CommunicationHub'));
 
 const UniversalTriggersFeature = lazyRetry(() => import('./pages/UniversalTriggersFeature'));
 const ScheduleFeature = lazyRetry(() => import('./pages/ScheduleFeature'));
@@ -477,10 +478,10 @@ function Sidebar({ isMobileOpen, onClose }) {
                     <span>All Template</span>
                   </div>
                   <div style={{ height: '1px', background: '#e2e8f0', margin: '4px 12px' }}></div>
-                  <div className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'default', opacity: 0.8 }}>
+                  <NavLink to="/communication" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Link2 size={16} color="#475569" />
                     <span style={{ fontWeight: '600', color: '#475569' }}>Communication</span>
-                  </div>
+                  </NavLink>
                   {activeWorkspace?.isWhatsAppConnected && (
                     <NavLink to="/autoops/whatsapp" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <MessageCircle size={16} color="#10b981" />
@@ -732,6 +733,7 @@ function MainLayout() {
               {/* PlatformHub route removed */}
               <Route path="/hub/message-only" element={<ProtectedRoute><MessageOnlyHub /></ProtectedRoute>} />
               <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
+              <Route path="/communication" element={<ProtectedRoute><CommunicationHub /></ProtectedRoute>} />
               <Route path="/platform/whatsapp" element={<ProtectedRoute><WhatsAppDashboard /></ProtectedRoute>} />
               <Route path="/autoops/:platform" element={<ProtectedRoute><PlatformAutoOps /></ProtectedRoute>} />
               <Route path="/platform/:platformId" element={<ProtectedRoute><PlatformDashboard /></ProtectedRoute>} />
