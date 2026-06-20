@@ -864,7 +864,7 @@ export default function AutomationEditor() {
               <button 
                 onClick={() => {
                   if (!isEditMode && template) {
-                    navigate(`/campaigns?openTemplates=true`);
+                    navigate(-1);
                   } else {
                     navigate(`/campaigns?platform=${selectedPlatform}`);
                   }

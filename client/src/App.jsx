@@ -69,6 +69,7 @@ const WriteReview = lazyRetry(() => import('./pages/WriteReview'));
 const MessageOnlyHub = lazyRetry(() => import('./pages/MessageOnlyHub'));
 const PlatformDashboard = lazyRetry(() => import('./pages/PlatformDashboard'));
 const WhatsAppDashboard = lazyRetry(() => import('./pages/WhatsAppDashboard'));
+const WhatsAppAutoOps = lazyRetry(() => import('./pages/WhatsAppAutoOps'));
 
 const UniversalTriggersFeature = lazyRetry(() => import('./pages/UniversalTriggersFeature'));
 const ScheduleFeature = lazyRetry(() => import('./pages/ScheduleFeature'));
@@ -479,6 +480,12 @@ function Sidebar({ isMobileOpen, onClose }) {
                     <MessageSquare size={16} />
                     <span>Message only</span>
                   </NavLink>
+                  <div style={{ height: '1px', background: '#e2e8f0', margin: '4px 12px' }}></div>
+                  <div style={{ padding: '4px 12px', fontSize: '0.7rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Communication AutoOps</div>
+                  <NavLink to="/whatsapp-autoops" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <MessageCircle size={16} color="#10b981" />
+                    <span style={{ fontWeight: '600' }}>WhatsApp</span>
+                  </NavLink>
                 </div>
               )}
             </div>
@@ -713,6 +720,7 @@ function MainLayout() {
               <Route path="/hub/message-only" element={<ProtectedRoute><MessageOnlyHub /></ProtectedRoute>} />
               <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
               <Route path="/platform/whatsapp" element={<ProtectedRoute><WhatsAppDashboard /></ProtectedRoute>} />
+              <Route path="/whatsapp-autoops" element={<ProtectedRoute><WhatsAppAutoOps /></ProtectedRoute>} />
               <Route path="/platform/:platformId" element={<ProtectedRoute><PlatformDashboard /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/onboarding" element={<Navigate to="/connections" replace />} />

@@ -1,0 +1,302 @@
+import React, { useState } from 'react';
+import { MessageCircle, Settings, Layers, Megaphone, Plus, ArrowRight, LayoutTemplate, MessageSquare, List, Phone, ExternalLink } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+export default function WhatsAppAutoOps() {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('flows');
+
+  const tabs = [
+    { id: 'flows', label: 'Keyword Flows', icon: Layers, desc: 'Auto-reply to specific keywords' },
+    { id: 'templates', label: 'Message Templates', icon: LayoutTemplate, desc: 'Pre-approved 24h messages' },
+    { id: 'broadcasts', label: 'Broadcasts', icon: Megaphone, desc: 'Bulk messaging campaigns' },
+    { id: 'interactive', label: 'Interactive Builder', icon: List, desc: 'Buttons & List messages' }
+  ];
+
+  return (
+    <div style={{
+      padding: '32px',
+      maxWidth: '1200px',
+      margin: '0 auto',
+      minHeight: '100vh',
+      background: '#fafafa',
+      animation: 'fadeIn 0.4s ease-out'
+    }}>
+      {/* Header Section */}
+      <div style={{
+        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        borderRadius: '24px',
+        padding: '40px',
+        color: 'white',
+        marginBottom: '32px',
+        boxShadow: '0 20px 25px -5px rgba(16, 185, 129, 0.2), 0 10px 10px -5px rgba(16, 185, 129, 0.1)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Background decorative circles */}
+        <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '200px', height: '200px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
+        <div style={{ position: 'absolute', bottom: '-80px', right: '100px', width: '150px', height: '150px', background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }}></div>
+
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
+            <div style={{ background: 'white', padding: '12px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <MessageCircle size={32} color="#059669" />
+            </div>
+            <div>
+              <h1 style={{ margin: 0, fontSize: '2.2rem', fontWeight: '800', letterSpacing: '-0.5px' }}>WhatsApp AutoOps</h1>
+              <span style={{ fontSize: '1rem', opacity: 0.9, fontWeight: '500' }}>Dedicated automation suite for WhatsApp Business</span>
+            </div>
+          </div>
+          <p style={{ margin: '16px 0 0 0', maxWidth: '600px', fontSize: '1.05rem', lineHeight: '1.6', opacity: 0.85 }}>
+            Build powerful conversation flows, manage pre-approved templates, and send bulk broadcasts directly to your customers' WhatsApp.
+          </p>
+        </div>
+
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <button style={{
+            background: 'white', color: '#059669', border: 'none', padding: '14px 24px',
+            borderRadius: '12px', fontWeight: '700', fontSize: '1rem', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+          }}
+          onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+          onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
+            <Plus size={20} /> Create New Flow
+          </button>
+          <button style={{
+            background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.4)',
+            padding: '12px 24px', borderRadius: '12px', fontWeight: '600', fontSize: '0.95rem', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s', backdropFilter: 'blur(10px)'
+          }}
+          onClick={() => navigate('/connections')}
+          onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+          onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}>
+            <Settings size={18} /> API Settings
+          </button>
+        </div>
+      </div>
+
+      {/* Tabs Layout */}
+      <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '32px' }}>
+        
+        {/* Sidebar Navigation for WhatsApp AutoOps */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <h3 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', paddingLeft: '12px' }}>
+            Modules
+          </h3>
+          {tabs.map(tab => (
+            <div 
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                padding: '16px',
+                borderRadius: '16px',
+                background: activeTab === tab.id ? 'white' : 'transparent',
+                border: `1px solid ${activeTab === tab.id ? '#e2e8f0' : 'transparent'}`,
+                boxShadow: activeTab === tab.id ? '0 4px 6px -1px rgba(0,0,0,0.05)' : 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '16px',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                transform: activeTab === tab.id ? 'scale(1.02)' : 'scale(1)'
+              }}
+              onMouseOver={e => {
+                if (activeTab !== tab.id) e.currentTarget.style.background = '#f1f5f9';
+              }}
+              onMouseOut={e => {
+                if (activeTab !== tab.id) e.currentTarget.style.background = 'transparent';
+              }}
+            >
+              <div style={{ 
+                background: activeTab === tab.id ? '#ecfdf5' : '#f8fafc', 
+                color: activeTab === tab.id ? '#10b981' : '#64748b',
+                padding: '10px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <tab.icon size={20} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '1rem', fontWeight: '700', color: activeTab === tab.id ? '#0f172a' : '#475569' }}>
+                  {tab.label}
+                </span>
+                <span style={{ fontSize: '0.8rem', color: '#94a3b8', lineHeight: '1.4' }}>
+                  {tab.desc}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Content Area */}
+        <div style={{ 
+          background: 'white', 
+          borderRadius: '24px', 
+          border: '1px solid #e2e8f0', 
+          padding: '40px',
+          minHeight: '500px',
+          boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)'
+        }}>
+          
+          {activeTab === 'flows' && (
+            <div className="tab-pane animate-fade-in">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+                <div>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0' }}>Keyword Flows</h2>
+                  <p style={{ color: '#64748b', margin: 0, fontSize: '0.95rem' }}>Create automated responses triggered by specific keywords sent by users on WhatsApp.</p>
+                </div>
+              </div>
+              
+              <div style={{ textAlign: 'center', padding: '60px 20px', background: '#f8fafc', borderRadius: '16px', border: '2px dashed #e2e8f0' }}>
+                <Layers size={48} color="#cbd5e1" style={{ marginBottom: '16px' }} />
+                <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#334155', marginBottom: '8px' }}>No WhatsApp Flows Yet</h3>
+                <p style={{ color: '#64748b', fontSize: '0.95rem', maxWidth: '400px', margin: '0 auto 24px auto', lineHeight: '1.5' }}>
+                  Set up your first automation rule. For example, when someone says "Pricing", send them your rate card.
+                </p>
+                <button style={{ background: '#10b981', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  <Plus size={18} /> Create Workflow
+                </button>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'templates' && (
+            <div className="tab-pane animate-fade-in">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+                <div>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0' }}>Message Templates</h2>
+                  <p style={{ color: '#64748b', margin: 0, fontSize: '0.95rem' }}>Draft and submit templates to Meta for approval. Required to message users after 24 hours.</p>
+                </div>
+                <button style={{ background: '#f1f5f9', color: '#0f172a', border: '1px solid #e2e8f0', padding: '10px 16px', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <ExternalLink size={16} /> Sync from Meta
+                </button>
+              </div>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+                <div style={{ padding: '24px', border: '1px solid #e2e8f0', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: '700', background: '#dcfce7', color: '#166534', padding: '4px 10px', borderRadius: '20px' }}>APPROVED</span>
+                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Marketing</span>
+                  </div>
+                  <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: '#0f172a' }}>welcome_offer_01</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b', background: '#f8fafc', padding: '12px', borderRadius: '8px', lineHeight: '1.5' }}>
+                    Hi {'{{1}}'}! 👋 Welcome to Smart10X. Use code {'{{2}}'} to get 20% off your first purchase!
+                  </p>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
+                    <button style={{ flex: 1, padding: '8px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#3b82f6', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer' }}>Use in Flow</button>
+                    <button style={{ flex: 1, padding: '8px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#64748b', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer' }}>Edit</button>
+                  </div>
+                </div>
+                
+                <div style={{ padding: '24px', border: '2px dashed #cbd5e1', borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', background: '#f8fafc', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.borderColor = '#10b981'} onMouseOut={e => e.currentTarget.style.borderColor = '#cbd5e1'}>
+                  <div style={{ width: '48px', height: '48px', background: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    <Plus size={24} color="#10b981" />
+                  </div>
+                  <span style={{ fontWeight: '600', color: '#334155' }}>Create New Template</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'broadcasts' && (
+            <div className="tab-pane animate-fade-in">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+                <div>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0' }}>Bulk Broadcasts</h2>
+                  <p style={{ color: '#64748b', margin: 0, fontSize: '0.95rem' }}>Send mass campaigns to your uploaded audience lists.</p>
+                </div>
+                <button style={{ background: '#10b981', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Megaphone size={16} /> New Broadcast
+                </button>
+              </div>
+
+              <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px', padding: '16px 24px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', fontWeight: '700', fontSize: '0.85rem', color: '#64748b', textTransform: 'uppercase' }}>
+                  <div>Campaign Name</div>
+                  <div>Audience</div>
+                  <div>Status</div>
+                  <div>Sent Date</div>
+                </div>
+                <div style={{ padding: '32px', textAlign: 'center', color: '#94a3b8', fontSize: '0.95rem' }}>
+                  No previous broadcast history found. Start your first campaign!
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'interactive' && (
+            <div className="tab-pane animate-fade-in">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+                <div>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0' }}>Interactive Builder</h2>
+                  <p style={{ color: '#64748b', margin: 0, fontSize: '0.95rem' }}>Design rich interactive messages with reply buttons and selection lists.</p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '32px' }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = '#10b981'} onMouseOut={e => e.currentTarget.style.borderColor = '#e2e8f0'}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
+                      <div style={{ background: '#f1f5f9', padding: '12px', borderRadius: '12px' }}>
+                        <Phone size={24} color="#3b82f6" />
+                      </div>
+                      <div>
+                        <h3 style={{ margin: '0 0 4px 0', fontSize: '1.1rem', color: '#0f172a' }}>Quick Reply Buttons</h3>
+                        <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>Send up to 3 buttons for users to click.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = '#10b981'} onMouseOut={e => e.currentTarget.style.borderColor = '#e2e8f0'}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
+                      <div style={{ background: '#f1f5f9', padding: '12px', borderRadius: '12px' }}>
+                        <List size={24} color="#8b5cf6" />
+                      </div>
+                      <div>
+                        <h3 style={{ margin: '0 0 4px 0', fontSize: '1.1rem', color: '#0f172a' }}>List Messages</h3>
+                        <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>Send a menu with up to 10 options.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preview Phone Frame */}
+                <div style={{ width: '300px', flexShrink: 0, background: '#e2e8f0', padding: '12px', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+                  <div style={{ background: '#ece5dd', height: '500px', borderRadius: '20px', overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                    <div style={{ background: '#075e54', color: 'white', padding: '16px 12px 12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '32px', height: '32px', background: '#fff', borderRadius: '50%' }}></div>
+                      <div style={{ fontWeight: '600', fontSize: '0.95rem' }}>Your Business</div>
+                    </div>
+                    
+                    <div style={{ flex: 1, padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ background: 'white', padding: '12px', borderRadius: '0 12px 12px 12px', fontSize: '0.9rem', color: '#111', boxShadow: '0 1px 2px rgba(0,0,0,0.1)', maxWidth: '85%' }}>
+                        Please choose an option below:
+                        <div style={{ height: '1px', background: '#eee', margin: '8px 0' }}></div>
+                        <div style={{ color: '#0ea5e9', fontWeight: '600', textAlign: 'center', padding: '4px 0' }}>View Products</div>
+                        <div style={{ height: '1px', background: '#eee', margin: '8px 0' }}></div>
+                        <div style={{ color: '#0ea5e9', fontWeight: '600', textAlign: 'center', padding: '4px 0' }}>Contact Support</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+
+      <style>{`
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+    </div>
+  );
+}
