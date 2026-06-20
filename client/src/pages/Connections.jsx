@@ -667,6 +667,7 @@ export default function Connections() {
           (settings.isTwitterConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X')) ||
           (settings.isThreadsConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Threads'))
         ) ? (
+          <>
           /* Active Integration Card Grid View */
           <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'stretch' }}>
 
@@ -1003,6 +1004,7 @@ export default function Connections() {
             )}
 
           </div>
+          </>
         ) : (
           /* Empty Connections slot matching screenshot exactly */
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 24px', textAlign: 'center' }}>
