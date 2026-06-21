@@ -356,6 +356,33 @@ router.get('/facebook/callback', async (req, res) => {
       return;
     }
 
+    if (isInstagram && !businessAccountId) {
+      if (isFromOnboarding) {
+        res.redirect(`${frontendUrl}/onboarding?oauth_error=no_instagram_account`);
+      } else {
+        res.redirect(`${frontendUrl}/connections?oauth_error=no_instagram_account`);
+      }
+      return;
+    }
+
+    if (isFacebook && !pageId) {
+      if (isFromOnboarding) {
+        res.redirect(`${frontendUrl}/onboarding?oauth_error=no_pages_found`);
+      } else {
+        res.redirect(`${frontendUrl}/connections?oauth_error=no_pages_found`);
+      }
+      return;
+    }
+
+    if (!isWhatsApp && !isThreads && !pageId && !businessAccountId) {
+      if (isFromOnboarding) {
+        res.redirect(`${frontendUrl}/onboarding?oauth_error=no_pages_found`);
+      } else {
+        res.redirect(`${frontendUrl}/connections?oauth_error=no_pages_found`);
+      }
+      return;
+    }
+
     if (isFromOnboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=${platformParam}`);
     } else {

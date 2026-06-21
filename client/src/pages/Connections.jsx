@@ -159,6 +159,8 @@ export default function Connections() {
       else if (errorType === 'whatsapp_not_configured') msg = "No WhatsApp Business number found. You must configure a WhatsApp Business Account in Meta Business Manager first.";
       else if (errorType === 'youtube_auth_failed') msg = "YouTube authorization failed. Please try again.";
       else if (errorType === 'linkedin_auth_failed') msg = "LinkedIn authorization failed. Please try again.";
+      else if (errorType === 'no_pages_found') msg = "No Facebook Pages found. Make sure you own a Facebook Page and that you checked it in the Meta permission popup (click 'Edit Settings' in the popup to verify).";
+      else if (errorType === 'no_instagram_account') msg = "No Instagram Business account linked to your Facebook Page found. Make sure you link your Instagram account to your Facebook Page, and select both in the Meta permission popup (click 'Edit Settings' in the popup to verify).";
       
       notify(msg, "error");
       window.history.replaceState({}, document.title, window.location.pathname);
