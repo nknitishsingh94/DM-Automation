@@ -1420,6 +1420,30 @@ onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
                     <Activity size={16} /> Refresh permissions
                   </button>
                 </div>
+
+                {selectedSettingsPlatform.id === 'linkedin' && settings.linkedinPages && Array.isArray(settings.linkedinPages) && (
+                  <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #f1f5f9' }}>
+                    <div style={{ fontSize: '0.9rem', fontWeight: '700', color: '#0f172a', marginBottom: '12px' }}>
+                      Discovered targets (Profiles & Pages):
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '10px', maxHeight: '200px', overflowY: 'auto', paddingRight: '4px' }}>
+                      {settings.linkedinPages.map(page => (
+                        <div key={page.urn} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ fontSize: '1.2rem' }}>{page.type === 'profile' ? '👤' : '🏢'}</div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#1e293b' }}>{page.name}</span>
+                              <span style={{ fontSize: '0.65rem', color: '#64748b', wordBreak: 'break-all' }}>{page.urn}</span>
+                            </div>
+                          </div>
+                          <span style={{ fontSize: '0.65rem', padding: '2px 8px', borderRadius: '6px', background: page.type === 'profile' ? '#eff6ff' : '#f0fdf4', color: page.type === 'profile' ? '#1d4ed8' : '#15803d', fontWeight: '700' }}>
+                            {page.type === 'profile' ? 'Profile' : 'Page'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Automation Channel Section */}

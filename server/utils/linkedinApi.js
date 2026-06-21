@@ -14,35 +14,41 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
 
   const accessToken = settings.linkedinAccessToken;
 
-  // 1. Fetch User URN (sub)
-  console.log('📡 [LinkedIn] Fetching profile info...');
-  let profileRes;
-  try {
-    profileRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
-  } catch (err) {
-    console.error('❌ [LinkedIn] Fetch profile failed:', err.response?.data || err.message);
-    const apiError = err.response?.data?.message || err.message;
-    throw new Error(`LinkedIn API failed to fetch profile: ${apiError}`);
-  }
-
-  const sub = profileRes.data.sub;
-  if (!sub) {
-    throw new Error('Could not retrieve URN (sub) from LinkedIn profile.');
-  }
-
-  const personUrn = `urn:li:person:${sub}`;
-  console.log(`✅ [LinkedIn] Author URN: ${personUrn}`);
-
-  // 2. Parse media
+  // 1. Determine Target URN
   let cleanMediaUrl = post.mediaUrl || '';
+  let selectedTargetUrn = null;
   if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
     try {
       const meta = JSON.parse(post.mediaUrl);
       cleanMediaUrl = meta.mediaUrl || '';
-    } catch(e){}
+      if (meta.linkedinTarget) {
+        selectedTargetUrn = meta.linkedinTarget;
+      }
+    } catch (e) {}
   }
+
+  let targetUrn = selectedTargetUrn;
+  if (!targetUrn) {
+    console.log('📡 [LinkedIn] No explicit target URN provided, fetching profile info as fallback...');
+    let profileRes;
+    try {
+      profileRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+    } catch (err) {
+      console.error('❌ [LinkedIn] Fetch profile failed:', err.response?.data || err.message);
+      const apiError = err.response?.data?.message || err.message;
+      throw new Error(`LinkedIn API failed to fetch profile: ${apiError}`);
+    }
+
+    const sub = profileRes.data.sub;
+    if (!sub) {
+      throw new Error('Could not retrieve URN (sub) from LinkedIn profile.');
+    }
+    targetUrn = `urn:li:person:${sub}`;
+  }
+
+  console.log(`✅ [LinkedIn] Target URN to publish: ${targetUrn}`);
 
   const hasMedia = !!cleanMediaUrl;
 
@@ -72,7 +78,7 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
             recipes: [
               isVideo ? 'urn:li:digitalmediaRecipe:feedshare-video' : 'urn:li:digitalmediaRecipe:feedshare-image'
             ],
-            owner: personUrn,
+            owner: targetUrn,
             supportedUploadMechanism: ['SYNCHRONOUS_UPLOAD'],
             serviceRelationships: [
               {
@@ -111,7 +117,7 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
 
   // 3. Build Post Body
   const postBody = {
-    author: personUrn,
+    author: targetUrn,
     lifecycleState: 'PUBLISHED',
     specificContent: {
       'com.linkedin.ugc.ShareContent': {

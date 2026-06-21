@@ -422,7 +422,8 @@ export default function Scheduling() {
     gmbProductName: '',
     gmbProductPrice: '',
     whatsappNumbers: '',
-    threadPosts: []
+    threadPosts: [],
+    linkedinTargets: []
   });
 
   const chatRef = useRef(null);
@@ -496,12 +497,18 @@ export default function Scheduling() {
         setSettings(data);
         const isIgConnected = data.isAccountConnected || (!!data.instagramAccessToken && !!data.businessAccountId);
         const isFbConnected = data.isFacebookConnected || (!!data.facebookAccessToken && !!data.facebookPageId);
+        
+        let defaultTargets = [];
+        if (data.linkedinPages && Array.isArray(data.linkedinPages) && data.linkedinPages.length > 0) {
+          defaultTargets = [data.linkedinPages[0].urn];
+        }
+
         if (isIgConnected) {
-          setNewPost(prev => ({ ...prev, platform: 'instagram' }));
+          setNewPost(prev => ({ ...prev, platform: 'instagram', linkedinTargets: defaultTargets }));
         } else if (isFbConnected) {
-          setNewPost(prev => ({ ...prev, platform: 'facebook' }));
+          setNewPost(prev => ({ ...prev, platform: 'facebook', linkedinTargets: defaultTargets }));
         } else {
-          setNewPost(prev => ({ ...prev, platform: '' }));
+          setNewPost(prev => ({ ...prev, platform: '', linkedinTargets: defaultTargets }));
         }
       }
     } catch (err) {
@@ -754,7 +761,8 @@ export default function Scheduling() {
       gmbOfferTerms: '',
       gmbProductName: '',
       gmbProductPrice: '',
-      whatsappNumbers: ''
+      whatsappNumbers: '',
+      linkedinTargets: []
     });
     setSelectedFiles([]);
     setPreviews([]);
@@ -764,21 +772,44 @@ export default function Scheduling() {
     setThreadPosts([]);
     setThreadCustomCaption('');
 
-    const activePlatforms = newPost.platforms && newPost.platforms.length > 0 ? newPost.platforms : (newPost.platform ? [newPost.platform] : ['instagram']);
+    const selectedPlatformsList = newPost.platforms && newPost.platforms.length > 0 ? newPost.platforms : (newPost.platform ? [newPost.platform] : ['instagram']);
+    const activePlatforms = [];
+    selectedPlatformsList.forEach(plat => {
+      if (plat === 'linkedin') {
+        const selectedTargets = newPost.linkedinTargets || [];
+        if (selectedTargets.length > 0) {
+          selectedTargets.forEach(targetUrn => {
+            activePlatforms.push({
+              id: 'linkedin',
+              targetUrn: targetUrn
+            });
+          });
+        } else {
+          activePlatforms.push({ id: 'linkedin', targetUrn: null });
+        }
+      } else {
+        activePlatforms.push({ id: plat, targetUrn: null });
+      }
+    });
 
-    const tempPosts = activePlatforms.map(plat => ({
-      _id: 'temp-' + plat + '-' + Date.now(),
-      status: 'Uploading',
-      caption: payloadBase.caption,
-      platform: plat,
-      type: currentType,
-      scheduledFor: convertLocalToUTC(payloadBase.scheduledFor, selectedTimezone),
-      mediaUrl: JSON.stringify({
+    const tempPosts = activePlatforms.map((platObj, index) => {
+      const targetName = platObj.targetUrn ? (settings.linkedinPages?.find(p => p.urn === platObj.targetUrn)?.name || '') : '';
+      return {
+        _id: 'temp-' + platObj.id + '-' + (platObj.targetUrn ? platObj.targetUrn.replace(/:/g, '_') : index) + '-' + Date.now(),
+        status: 'Uploading',
+        caption: payloadBase.caption,
+        platform: platObj.id,
         type: currentType,
-        mediaUrl: currentPreviews.length > 0 ? currentPreviews[0] : payloadBase.mediaUrl
-      }),
-      isUploading: true
-    }));
+        scheduledFor: convertLocalToUTC(payloadBase.scheduledFor, selectedTimezone),
+        mediaUrl: JSON.stringify({
+          type: currentType,
+          mediaUrl: currentPreviews.length > 0 ? currentPreviews[0] : payloadBase.mediaUrl,
+          linkedinTarget: platObj.targetUrn,
+          linkedinTargetName: targetName
+        }),
+        isUploading: true
+      };
+    });
     
     setPosts(prev => [...tempPosts, ...prev]);
     setSubmitting(true);
@@ -829,28 +860,33 @@ export default function Scheduling() {
 
         // Create placeholders for all platforms
         for (let i = 0; i < activePlatforms.length; i++) {
-          const plat = activePlatforms[i];
+          const platObj = activePlatforms[i];
           const tempId = tempPosts[i]._id;
           
           const createRes = await fetch(`${API_BASE_URL}/api/scheduling`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...initialPayloadBase, platform: plat, status: 'Scheduled' })
+            body: JSON.stringify({
+              ...initialPayloadBase,
+              platform: platObj.id,
+              mediaUrl: tempPosts[i].mediaUrl,
+              status: 'Scheduled'
+            })
           });
           
           const dbPost = await createRes.json();
-          if (!createRes.ok) throw new Error(dbPost.error || `Failed to create placeholder for ${plat}`);
+          if (!createRes.ok) throw new Error(dbPost.error || `Failed to create placeholder for ${platObj.id}`);
           
           const dbId = dbPost._id || dbPost.id;
-          createdDbIds.push({ dbId, tempId, plat });
+          createdDbIds.push({ dbId, tempId, plat: platObj.id });
           
           setPosts(prev => prev.map(p => p._id === tempId ? { ...p, _id: dbId, id: dbId, isUploading: true } : p));
         }
 
         // Upload media once
         let mediaUrls = [];
-        const isMetaPlatform = activePlatforms.some(p => ['instagram', 'facebook', 'threads'].includes(p));
-        const isYoutubeOnly = activePlatforms.includes('youtube') && !isMetaPlatform;
+        const isMetaPlatform = activePlatforms.some(p => ['instagram', 'facebook', 'threads'].includes(p.id));
+        const isYoutubeOnly = activePlatforms.some(p => p.id === 'youtube') && !isMetaPlatform;
 
 
         if (currentFiles.length > 0) {
@@ -1843,6 +1879,77 @@ export default function Scheduling() {
                           outline: 'none', fontSize: '0.85rem', minHeight: '80px', resize: 'vertical', background: 'white', color: '#334155'
                         }}
                       />
+                    </div>
+                  </div>
+                )}
+                
+                {/* LINKEDIN SPECIFIC TARGETS SELECTOR */}
+                {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('linkedin') && (
+                  <div style={{ marginTop: '24px', background: '#eff6ff', borderRadius: '12px', border: '1px solid #bfdbfe', overflow: 'hidden' }}>
+                    <div style={{ padding: '16px', borderBottom: '1px solid #bfdbfe', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Globe size={18} color="#1d4ed8" />
+                      <span style={{ fontWeight: '700', fontSize: '0.95rem', color: '#1e40af' }}>LinkedIn Targets</span>
+                    </div>
+                    <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#1e40af' }}>
+                        Select publishing destinations:
+                      </label>
+                      {settings && settings.linkedinPages && Array.isArray(settings.linkedinPages) && settings.linkedinPages.length > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          {settings.linkedinPages.map(target => {
+                            const isChecked = (newPost.linkedinTargets || []).includes(target.urn);
+                            return (
+                              <label 
+                                key={target.urn} 
+                                style={{ 
+                                  display: 'flex', 
+                                  alignItems: 'center', 
+                                  gap: '10px', 
+                                  padding: '10px 12px', 
+                                  background: 'white', 
+                                  border: `1.5px solid ${isChecked ? '#3b82f6' : '#e2e8f0'}`, 
+                                  borderRadius: '8px', 
+                                  cursor: 'pointer',
+                                  transition: 'all 0.15s ease'
+                                }}
+                              >
+                                <input 
+                                  type="checkbox" 
+                                  checked={isChecked}
+                                  onChange={() => {
+                                    setNewPost(prev => {
+                                      const current = prev.linkedinTargets || [];
+                                      if (current.includes(target.urn)) {
+                                        return { ...prev, linkedinTargets: current.filter(u => u !== target.urn) };
+                                      } else {
+                                        return { ...prev, linkedinTargets: [...current, target.urn] };
+                                      }
+                                    });
+                                  }}
+                                  style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                                />
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                  <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#334155' }}>
+                                    {target.name}
+                                  </span>
+                                  <span style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                                    {target.type === 'profile' ? '👤 Personal Profile' : '🏢 Business Page'}
+                                  </span>
+                                </div>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: '0.85rem', color: '#64748b', fontStyle: 'italic' }}>
+                          No targets found. Please reconnect your LinkedIn account on the Connections page.
+                        </div>
+                      )}
+                      {(!newPost.linkedinTargets || newPost.linkedinTargets.length === 0) && (
+                        <div style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '4px' }}>
+                          ⚠️ Please select at least one publishing target
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

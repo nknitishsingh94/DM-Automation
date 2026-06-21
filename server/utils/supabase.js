@@ -323,7 +323,7 @@ function convertOutgoing(doc, tableName) {
       'telegramToken', 'isTelegramConnected', 'telegramAutomationEnabled',
       'twitterApiKey', 'isTwitterConnected', 'twitterAutomationEnabled', 'twitterAccessToken', 'twitterRefreshToken', 'connectedTwitterName', 'connectedTwitterId',
       'youtubeApiKey', 'isYouTubeConnected', 'isYoutubeConnected', 'youtubeAutomationEnabled', 'youtubeAccessToken', 'youtubeRefreshToken', 'youtubeChannelId', 'youtubeChannelName', 'lastYouTubeCommentCheck',
-      'linkedinAccessToken', 'isLinkedInConnected', 'linkedinAutomationEnabled', 'connectedLinkedInName',
+      'linkedinAccessToken', 'isLinkedInConnected', 'linkedinAutomationEnabled', 'connectedLinkedInName', 'linkedinPages',
       'isGoogleBusinessConnected', 'connectedGoogleBusinessName', 'googleBusinessAccessToken', 'googleBusinessRefreshToken', 'googleBusinessAccountId', 'googleBusinessLocationId',
       'isThreadsConnected', 'threadsAccessToken', 'threadsPageId', 'connectedThreadsName',
       'aiFallbackMessage', 'aiName', 'aiTone', 'aiKnowledgeBase', 'aiTemperature'

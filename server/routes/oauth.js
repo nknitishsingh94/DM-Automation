@@ -821,7 +821,7 @@ router.get('/linkedin', verifyToken, (req, res) => {
     return res.status(500).json({ error: "Missing LINKEDIN_CLIENT_ID in environment variables" });
   }
 
-  const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=openid%20profile%20w_member_social%20email`;
+  const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=openid%20profile%20w_member_social%20w_organization_social%20r_organization_admin%20email`;
   res.redirect(authUrl);
 });
 
@@ -876,11 +876,15 @@ router.get('/linkedin/callback', async (req, res) => {
     
     // 2. Fetch User Profile
     let profileName = 'LinkedIn Member';
+    let personUrn = '';
     try {
       const profileRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       if (profileRes.data) {
+        if (profileRes.data.sub) {
+          personUrn = `urn:li:person:${profileRes.data.sub}`;
+        }
         if (profileRes.data.name) {
           profileName = profileRes.data.name;
         } else if (profileRes.data.given_name) {
@@ -889,6 +893,74 @@ router.get('/linkedin/callback', async (req, res) => {
       }
     } catch (profileErr) {
       console.warn("Could not fetch LinkedIn profile name:", profileErr.response?.data || profileErr.message);
+    }
+
+    // Fetch Organization Pages (targets) user administers
+    let pages = [];
+    if (personUrn) {
+      pages.push({
+        urn: personUrn,
+        name: `${profileName} (Personal)`,
+        type: 'profile'
+      });
+    }
+
+    try {
+      console.log("📡 [LinkedIn] Fetching organization access list using /organizationAcls...");
+      const aclRes = await axios.get('https://api.linkedin.com/v2/organizationAcls', {
+        params: {
+          q: 'roleAssignee',
+          role: 'ADMINISTRATOR',
+          projection: '(elements*(organization~(localizedName)))'
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-Restli-Protocol-Version': '2.0.0'
+        }
+      });
+      if (aclRes.data && aclRes.data.elements) {
+        for (const elem of aclRes.data.elements) {
+          const targetUrn = elem.organization;
+          const targetDetails = elem['organization~'];
+          if (targetUrn && targetDetails) {
+            pages.push({
+              urn: targetUrn,
+              name: targetDetails.localizedName || targetUrn,
+              type: 'page'
+            });
+          }
+        }
+      }
+    } catch (aclErr) {
+      console.warn("⚠️ LinkedIn /organizationAcls failed, trying legacy /organizationalEntityAcls...", aclErr.response?.data || aclErr.message);
+      try {
+        const legacyAclRes = await axios.get('https://api.linkedin.com/v2/organizationalEntityAcls', {
+          params: {
+            q: 'roleAssignee',
+            role: 'ADMINISTRATOR',
+            projection: '(elements*(organizationalTarget~(localizedName)))'
+          },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'X-Restli-Protocol-Version': '2.0.0'
+          }
+        });
+        if (legacyAclRes.data && legacyAclRes.data.elements) {
+          for (const elem of legacyAclRes.data.elements) {
+            const targetUrn = elem.organizationalTarget;
+            const targetDetails = elem['organizationalTarget~'];
+            if (targetUrn && targetDetails) {
+              pages.push({
+                urn: targetUrn,
+                name: targetDetails.localizedName || targetUrn,
+                type: 'page'
+              });
+            }
+          }
+        }
+      } catch (legacyAclErr) {
+        console.error("❌ Both LinkedIn organization endpoints failed:", legacyAclErr.response?.data || legacyAclErr.message);
+      }
     }
 
     // 3. Save to DB
@@ -901,6 +973,7 @@ router.get('/linkedin/callback', async (req, res) => {
     updateData.isLinkedInConnected = true;
     updateData.connectedLinkedInName = profileName;
     updateData.linkedinAccessToken = accessToken;
+    updateData.linkedinPages = pages;
 
     await Settings.findOneAndUpdate(
       connectionsQuery,
