@@ -112,12 +112,41 @@ export default function TemplateSelector() {
           <h1 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>Template Library</h1>
           <p style={{ color: '#64748b', margin: '4px 0 0 0', fontSize: '0.9rem' }}>Choose a pre-built automation to get started quickly.</p>
         </div>
-        <button 
-          onClick={() => navigate('/select-channel')}
-          style={{ background: 'white', border: '1px solid #e2e8f0', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}
-        >
-          <X size={20} color="#64748b" />
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            onClick={() => navigate('/campaigns')}
+            style={{
+              background: 'white',
+              border: '1px solid #7c3aed',
+              color: '#7c3aed',
+              padding: '10px 20px',
+              borderRadius: '10px',
+              fontWeight: '700',
+              fontSize: '0.9rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.backgroundColor = '#7c3aed';
+              e.currentTarget.style.color = 'white';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.backgroundColor = 'white';
+              e.currentTarget.style.color = '#7c3aed';
+            }}
+          >
+            <Zap size={16} /> Active Automations
+          </button>
+          <button 
+            onClick={() => navigate('/select-channel')}
+            style={{ background: 'white', border: '1px solid #e2e8f0', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}
+          >
+            <X size={20} color="#64748b" />
+          </button>
+        </div>
       </div>
 
       <div style={{ display: 'flex', maxWidth: '1400px', margin: '0 auto' }}>

@@ -73,9 +73,41 @@ export default function TemplatesModal({ isOpen, onClose }) {
             <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#0f172a' }}>Templates Gallery</h2>
             <p style={{ margin: 0, fontSize: '13px', color: '#64748b', marginTop: '4px' }}>Discover ready-to-use automations for your business</p>
           </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            onClick={() => {
+              onClose();
+              navigate('/campaigns');
+            }}
+            style={{
+              background: 'white',
+              border: '1px solid #7c3aed',
+              color: '#7c3aed',
+              padding: '8px 16px',
+              borderRadius: '10px',
+              fontWeight: '700',
+              fontSize: '0.85rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.backgroundColor = '#7c3aed';
+              e.currentTarget.style.color = 'white';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.backgroundColor = 'white';
+              e.currentTarget.style.color = '#7c3aed';
+            }}
+          >
+            <Zap size={14} /> Active Automations
+          </button>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: '4px', borderRadius: '8px', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'} onMouseOut={e => e.currentTarget.style.background = 'none'}>
             <X size={24} />
           </button>
+        </div>
         </div>
 
         <div style={{ padding: '24px', overflowY: 'auto', flex: 1, backgroundColor: '#f8fafc' }}>

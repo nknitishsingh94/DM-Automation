@@ -431,105 +431,195 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                 <div key={campaign._id} style={{ 
                   background: 'white', 
                   borderRadius: '24px', 
-                  padding: '24px', 
-                  border: '1px solid #f1f5f9',
-                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)',
-                  transition: 'all 0.3s',
+                  padding: '28px 24px 24px', 
+                  border: '1px solid rgba(226, 232, 240, 0.8)',
+                  boxShadow: '0 10px 30px -10px rgba(30, 41, 59, 0.04), 0 1px 3px rgba(30, 41, 59, 0.02)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   position: 'relative',
                   overflow: 'hidden'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0,0,0,0.05)';
+                  e.currentTarget.style.transform = 'translateY(-6px)';
+                  e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(124, 58, 237, 0.05), 0 0 0 1px rgba(124, 58, 237, 0.1)';
+                  e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.3)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)';
+                  e.currentTarget.style.boxShadow = '0 10px 30px -10px rgba(30, 41, 59, 0.04), 0 1px 3px rgba(30, 41, 59, 0.02)';
+                  e.currentTarget.style.borderColor = 'rgba(226, 232, 240, 0.8)';
                 }}
                 >
+                  {/* Category Badge */}
                   <div style={{ 
                     position: 'absolute', top: '24px', right: '24px',
-                    padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800',
-                    background: isStory ? '#fdf2f8' : (isComment ? '#f0fdf4' : '#f0f9ff'),
-                    color: isStory ? '#db2777' : (isComment ? '#16a34a' : '#0369a1'),
-                    textTransform: 'uppercase'
+                    padding: '5px 12px', borderRadius: '30px', fontSize: '0.65rem', fontWeight: '800',
+                    background: isStory ? '#fdf2f8' : (isComment ? '#ecfdf5' : '#eef2ff'),
+                    color: isStory ? '#db2777' : (isComment ? '#059669' : '#4f46e5'),
+                    border: `1px solid ${isStory ? '#fbcfe8' : (isComment ? '#a7f3d0' : '#c7d2fe')}`,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
                   }}>
                     {isStory ? 'Story' : (isComment ? 'Comment' : 'DM')}
                   </div>
 
-                {campaign.isUniversal && (
-                  <div style={{ 
-                    position: 'absolute', top: '24px', right: '110px',
-                    padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800',
-                    background: 'rgba(14, 165, 233, 0.1)',
-                    color: '#0ea5e9',
-                    textTransform: 'uppercase',
-                    display: 'flex', alignItems: 'center', gap: '4px'
-                  }}>
-                    <Globe size={12} /> Universal
-                  </div>
-                )}
-
-                <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px', paddingRight: '60px' }}>
-                  {campaign.name}
-                </h4>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', marginBottom: '12px' }}>
-                  <MessageCircle size={16} />
-                  <span>Trigger: <strong style={{ color: '#1e1b4b' }}>{campaign.trigger === '*' ? 'Any' : campaign.trigger}</strong></span>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
-                  {((campaign.platform || 'all') === 'instagram' || ((campaign.platform || 'all') === 'all' && connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)))) && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: '#fdf2f8', color: '#e1306c', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '800' }}>
-                      <Instagram size={14} /> Instagram
+                  {campaign.isUniversal && (
+                    <div style={{ 
+                      position: 'absolute', top: '24px', right: '110px',
+                      padding: '5px 12px', borderRadius: '30px', fontSize: '0.65rem', fontWeight: '800',
+                      background: '#f0f9ff',
+                      color: '#0284c7',
+                      border: '1px solid #bae6fd',
+                      textTransform: 'uppercase',
+                      display: 'flex', alignItems: 'center', gap: '4px',
+                      letterSpacing: '0.05em'
+                    }}>
+                      <Globe size={11} /> Universal
                     </div>
                   )}
-                  {((campaign.platform || 'all') === 'facebook' || ((campaign.platform || 'all') === 'all' && connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)))) && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: '#eff6ff', color: '#1877f2', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '800' }}>
-                      <Facebook size={14} fill="currentColor" /> Facebook
-                    </div>
-                  )}
-                  {((campaign.platform || 'all') === 'whatsapp' || ((campaign.platform || 'all') === 'all' && connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)))) && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', background: '#f0fdf4', color: '#25d366', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '800' }}>
-                      <MessageSquare size={14} fill="currentColor" /> WhatsApp
-                    </div>
-                  )}
-                </div>
 
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', padding: '16px', background: '#f8fafc', borderRadius: '16px' }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '4px' }}>DMs Sent</div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b' }}>{campaign.dmsSent || 0}</div>
+                  <h4 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a', marginBottom: '10px', paddingRight: '80px', letterSpacing: '-0.02em', lineHeight: '1.3' }}>
+                    {campaign.name}
+                  </h4>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', marginBottom: '16px' }}>
+                    <MessageCircle size={16} color="#94a3b8" />
+                    <span style={{ fontWeight: '500' }}>Trigger: <strong style={{ color: '#0f172a', background: '#f1f5f9', padding: '3px 8px', borderRadius: '6px', fontFamily: 'monospace', fontSize: '0.85rem', border: '1px solid #e2e8f0' }}>{campaign.trigger === '*' ? 'Any' : campaign.trigger}</strong></span>
                   </div>
-                  <div style={{ width: '1px', background: '#e2e8f0' }}></div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '4px' }}>Status</div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: '800', color: campaign.status === 'Active' ? '#10b981' : '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: campaign.status === 'Active' ? '#10b981' : '#94a3b8' }}></div>
-                      {campaign.status}
+
+                  {/* Platforms Row */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
+                    {((campaign.platform || 'all') === 'instagram' || ((campaign.platform || 'all') === 'all' && connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)))) && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '5px 10px', background: '#fff1f2', color: '#e11d48', borderRadius: '10px', fontSize: '0.75rem', fontWeight: '700', border: '1px solid #ffe4e6' }}>
+                        <Instagram size={13} /> Instagram
+                      </div>
+                    )}
+                    {((campaign.platform || 'all') === 'facebook' || ((campaign.platform || 'all') === 'all' && connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)))) && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '5px 10px', background: '#eff6ff', color: '#1d4ed8', borderRadius: '10px', fontSize: '0.75rem', fontWeight: '700', border: '1px solid #dbeafe' }}>
+                        <Facebook size={13} fill="currentColor" /> Facebook
+                      </div>
+                    )}
+                    {((campaign.platform || 'all') === 'whatsapp' || ((campaign.platform || 'all') === 'all' && connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)))) && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '5px 10px', background: '#f0fdf4', color: '#166534', borderRadius: '10px', fontSize: '0.75rem', fontWeight: '700', border: '1px solid #dcfce7' }}>
+                        <MessageSquare size={13} fill="currentColor" /> WhatsApp
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Stats Board */}
+                  <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', padding: '16px', background: 'rgba(248, 250, 252, 0.7)', borderRadius: '18px', border: '1px solid #f1f5f9' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <div style={{ fontSize: '0.72rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>DMs Sent</div>
+                      <div style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0f172a' }}>{campaign.dmsSent || 0}</div>
+                    </div>
+                    <div style={{ width: '1px', background: '#e2e8f0' }}></div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <div style={{ fontSize: '0.72rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: '800', color: campaign.status === 'Active' ? '#10b981' : '#64748b', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                        <div style={{ 
+                          width: '8px', height: '8px', borderRadius: '50%', 
+                          background: campaign.status === 'Active' ? '#10b981' : '#94a3b8',
+                          boxShadow: campaign.status === 'Active' ? '0 0 10px #10b981' : 'none'
+                        }}></div>
+                        {campaign.status}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <button onClick={() => toggleStatus(campaign._id, campaign.status)} style={{ flex: 1, padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#1e1b4b', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                    <Power size={14} color={campaign.status === 'Active' ? '#10b981' : '#94a3b8'} />
-                    {campaign.status === 'Active' ? 'Pause' : 'Activate'}
-                  </button>
-                  <button onClick={() => { setEditingCampaign(campaign); setEditForm({ name: campaign.name || '', trigger: campaign.trigger || '', response: campaign.response || '', linkUrl: campaign.linkUrl || (campaign.buttons && campaign.buttons.length > 0 ? campaign.buttons[0].url : ''), buttonText: campaign.buttonText || (campaign.buttons && campaign.buttons.length > 0 ? campaign.buttons[0].text : ''), isUniversal: campaign.isUniversal || false, triggerSource: campaign.triggerSource || 'dm' }); }} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6', cursor: 'pointer' }}>
-                    <Edit2 size={18} />
-                  </button>
-                  <button onClick={() => viewLogs(campaign)} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#64748b', cursor: 'pointer' }}>
-                    <History size={18} />
-                  </button>
-                  <button onClick={() => deleteCampaign(campaign._id)} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', background: 'white', color: '#ef4444', cursor: 'pointer' }}>
-                    <Trash2 size={18} />
-                  </button>
+                  {/* Action Buttons Row */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <button 
+                      onClick={() => toggleStatus(campaign._id, campaign.status)} 
+                      style={{ 
+                        flex: 1, padding: '10px 16px', borderRadius: '12px', 
+                        border: '1px solid #e2e8f0', background: 'white', 
+                        color: '#0f172a', fontWeight: '700', fontSize: '0.85rem', 
+                        cursor: 'pointer', display: 'flex', alignItems: 'center', 
+                        justifyContent: 'center', gap: '8px', transition: 'all 0.2s'
+                      }}
+                      onMouseOver={(e) => {
+                        if (campaign.status === 'Active') {
+                          e.currentTarget.style.background = '#fef2f2';
+                          e.currentTarget.style.borderColor = '#fca5a5';
+                          e.currentTarget.style.color = '#ef4444';
+                        } else {
+                          e.currentTarget.style.background = '#ecfdf5';
+                          e.currentTarget.style.borderColor = '#86efac';
+                          e.currentTarget.style.color = '#059669';
+                        }
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'white';
+                        e.currentTarget.style.borderColor = '#e2e8f0';
+                        e.currentTarget.style.color = '#0f172a';
+                      }}
+                    >
+                      <Power size={14} color={campaign.status === 'Active' ? '#10b981' : '#94a3b8'} />
+                      {campaign.status === 'Active' ? 'Pause' : 'Activate'}
+                    </button>
+                    <button 
+                      onClick={() => { setEditingCampaign(campaign); setEditForm({ name: campaign.name || '', trigger: campaign.trigger || '', response: campaign.response || '', linkUrl: campaign.linkUrl || (campaign.buttons && campaign.buttons.length > 0 ? campaign.buttons[0].url : ''), buttonText: campaign.buttonText || (campaign.buttons && campaign.buttons.length > 0 ? campaign.buttons[0].text : ''), isUniversal: campaign.isUniversal || false, triggerSource: campaign.triggerSource || 'dm' }); }} 
+                      style={{ 
+                        padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', 
+                        background: 'white', color: '#3b82f6', cursor: 'pointer', transition: 'all 0.2s',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = '#eff6ff';
+                        e.currentTarget.style.borderColor = '#93c5fd';
+                        e.currentTarget.style.color = '#2563eb';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'white';
+                        e.currentTarget.style.borderColor = '#e2e8f0';
+                        e.currentTarget.style.color = '#3b82f6';
+                      }}
+                    >
+                      <Edit2 size={18} />
+                    </button>
+                    <button 
+                      onClick={() => viewLogs(campaign)} 
+                      style={{ 
+                        padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', 
+                        background: 'white', color: '#64748b', cursor: 'pointer', transition: 'all 0.2s',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = '#f8fafc';
+                        e.currentTarget.style.borderColor = '#cbd5e1';
+                        e.currentTarget.style.color = '#1e293b';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'white';
+                        e.currentTarget.style.borderColor = '#e2e8f0';
+                        e.currentTarget.style.color = '#64748b';
+                      }}
+                    >
+                      <History size={18} />
+                    </button>
+                    <button 
+                      onClick={() => deleteCampaign(campaign._id)} 
+                      style={{ 
+                        padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', 
+                        background: 'white', color: '#ef4444', cursor: 'pointer', transition: 'all 0.2s',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = '#fee2e2';
+                        e.currentTarget.style.borderColor = '#fca5a5';
+                        e.currentTarget.style.color = '#dc2626';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'white';
+                        e.currentTarget.style.borderColor = '#fee2e2';
+                        e.currentTarget.style.color = '#ef4444';
+                      }}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
           </div>
         </div>
       ) : null}
