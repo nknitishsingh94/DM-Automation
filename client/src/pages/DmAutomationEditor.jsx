@@ -154,12 +154,25 @@ export default function DmAutomationEditor() {
         });
         const data = await res.json();
         setConnectedSettings(data);
+
+        // Adjust selected platform based on actual connection status if creating a new campaign
+        if (!id || id === 'new') {
+          const isInstagramConnected = data.isAccountConnected || (data.instagramAccessToken && data.businessAccountId);
+          const isFacebookConnected = data.isFacebookConnected || (data.facebookAccessToken && data.facebookPageId);
+          const currentPlatform = channel || 'instagram';
+
+          if (currentPlatform === 'instagram' && !isInstagramConnected && isFacebookConnected) {
+            setSelectedPlatform('facebook');
+          } else if (currentPlatform === 'facebook' && !isFacebookConnected && isInstagramConnected) {
+            setSelectedPlatform('instagram');
+          }
+        }
       } catch (err) {
         console.error("Failed to fetch settings:", err);
       }
     };
     fetchSettings();
-  }, []);
+  }, [id, channel]);
 
   const handleAddKeyword = (e) => {
     if (e.key === 'Enter' && keywordInput.trim()) {
