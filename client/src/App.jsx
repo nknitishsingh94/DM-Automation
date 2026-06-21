@@ -477,7 +477,6 @@ function Sidebar({ isMobileOpen, onClose }) {
                     <LayoutTemplate size={16} />
                     <span>All Template</span>
                   </div>
-                  <div style={{ height: '1px', background: 'var(--border-subtle)', margin: '6px 8px' }}></div>
                   <NavLink to="/communication" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <MessageSquare size={16} />
                     <span style={{ fontWeight: '600' }}>Communication</span>
