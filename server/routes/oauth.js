@@ -813,15 +813,21 @@ router.get('/linkedin', verifyToken, (req, res) => {
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
   const redirectUri = `${baseUrl}/api/oauth/linkedin/callback`;
   
+  const isBusiness = req.query.type === 'business';
   const state = req.user.userId + 
                 (req.query.onboarding === 'true' ? '_onboarding' : '') + 
-                (req.workspaceId ? `_ws_${req.workspaceId}` : '');
+                (req.workspaceId ? `_ws_${req.workspaceId}` : '') +
+                (isBusiness ? '_type_business' : '_type_personal');
 
   if (!clientId) {
     return res.status(500).json({ error: "Missing LINKEDIN_CLIENT_ID in environment variables" });
   }
 
-  const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=openid%20profile%20w_member_social%20w_organization_social%20r_organization_admin%20email`;
+  const scope = isBusiness 
+    ? 'openid%20profile%20w_member_social%20w_organization_social%20r_organization_admin%20email' 
+    : 'openid%20profile%20w_member_social%20email';
+
+  const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
   res.redirect(authUrl);
 });
 
@@ -841,6 +847,8 @@ router.get('/linkedin/callback', async (req, res) => {
   let userId = state
     ? state
         .replace('_onboarding', '')
+        .replace('_type_business', '')
+        .replace('_type_personal', '')
         .replace(new RegExp(`_ws_${workspaceId}`, 'i'), '')
     : '';
 
@@ -895,7 +903,7 @@ router.get('/linkedin/callback', async (req, res) => {
       console.warn("Could not fetch LinkedIn profile name:", profileErr.response?.data || profileErr.message);
     }
 
-    // Fetch Organization Pages (targets) user administers
+    // Fetch Organization Pages (targets) user administers (only if it is a Business connection)
     let pages = [];
     if (personUrn) {
       pages.push({
@@ -905,50 +913,25 @@ router.get('/linkedin/callback', async (req, res) => {
       });
     }
 
-    try {
-      console.log("📡 [LinkedIn] Fetching organization access list using /organizationAcls...");
-      const aclRes = await axios.get('https://api.linkedin.com/v2/organizationAcls', {
-        params: {
-          q: 'roleAssignee',
-          role: 'ADMINISTRATOR',
-          projection: '(elements*(organization~(localizedName)))'
-        },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'X-Restli-Protocol-Version': '2.0.0'
-        }
-      });
-      if (aclRes.data && aclRes.data.elements) {
-        for (const elem of aclRes.data.elements) {
-          const targetUrn = elem.organization;
-          const targetDetails = elem['organization~'];
-          if (targetUrn && targetDetails) {
-            pages.push({
-              urn: targetUrn,
-              name: targetDetails.localizedName || targetUrn,
-              type: 'page'
-            });
-          }
-        }
-      }
-    } catch (aclErr) {
-      console.warn("⚠️ LinkedIn /organizationAcls failed, trying legacy /organizationalEntityAcls...", aclErr.response?.data || aclErr.message);
+    const isBusiness = state && state.includes('_type_business');
+    if (isBusiness) {
       try {
-        const legacyAclRes = await axios.get('https://api.linkedin.com/v2/organizationalEntityAcls', {
+        console.log("📡 [LinkedIn] Fetching organization access list using /organizationAcls...");
+        const aclRes = await axios.get('https://api.linkedin.com/v2/organizationAcls', {
           params: {
             q: 'roleAssignee',
             role: 'ADMINISTRATOR',
-            projection: '(elements*(organizationalTarget~(localizedName)))'
+            projection: '(elements*(organization~(localizedName)))'
           },
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'X-Restli-Protocol-Version': '2.0.0'
           }
         });
-        if (legacyAclRes.data && legacyAclRes.data.elements) {
-          for (const elem of legacyAclRes.data.elements) {
-            const targetUrn = elem.organizationalTarget;
-            const targetDetails = elem['organizationalTarget~'];
+        if (aclRes.data && aclRes.data.elements) {
+          for (const elem of aclRes.data.elements) {
+            const targetUrn = elem.organization;
+            const targetDetails = elem['organization~'];
             if (targetUrn && targetDetails) {
               pages.push({
                 urn: targetUrn,
@@ -958,8 +941,36 @@ router.get('/linkedin/callback', async (req, res) => {
             }
           }
         }
-      } catch (legacyAclErr) {
-        console.error("❌ Both LinkedIn organization endpoints failed:", legacyAclErr.response?.data || legacyAclErr.message);
+      } catch (aclErr) {
+        console.warn("⚠️ LinkedIn /organizationAcls failed, trying legacy /organizationalEntityAcls...", aclErr.response?.data || aclErr.message);
+        try {
+          const legacyAclRes = await axios.get('https://api.linkedin.com/v2/organizationalEntityAcls', {
+            params: {
+              q: 'roleAssignee',
+              role: 'ADMINISTRATOR',
+              projection: '(elements*(organizationalTarget~(localizedName)))'
+            },
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'X-Restli-Protocol-Version': '2.0.0'
+            }
+          });
+          if (legacyAclRes.data && legacyAclRes.data.elements) {
+            for (const elem of legacyAclRes.data.elements) {
+              const targetUrn = elem.organizationalTarget;
+              const targetDetails = elem['organizationalTarget~'];
+              if (targetUrn && targetDetails) {
+                pages.push({
+                  urn: targetUrn,
+                  name: targetDetails.localizedName || targetUrn,
+                  type: 'page'
+                });
+              }
+            }
+          }
+        } catch (legacyAclErr) {
+          console.error("❌ Both LinkedIn organization endpoints failed:", legacyAclErr.response?.data || legacyAclErr.message);
+        }
       }
     }
 
