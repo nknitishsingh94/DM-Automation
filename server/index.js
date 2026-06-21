@@ -2751,13 +2751,21 @@ app.get('/api/settings', verifyToken, async (req, res) => {
 
 app.get('/api/instagram/media', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    const settings = await Settings.findOne({ 
-      userId: { $in: sharedUserIds }, 
+    let settings = await Settings.findOne({ 
+      userId: req.user.userId, 
       workspaceId: req.workspaceId,
       instagramAccessToken: { $ne: null }, 
       businessAccountId: { $ne: null } 
     });
+    if (!settings) {
+      const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+      settings = await Settings.findOne({ 
+        userId: { $in: sharedUserIds }, 
+        workspaceId: req.workspaceId,
+        instagramAccessToken: { $ne: null }, 
+        businessAccountId: { $ne: null } 
+      });
+    }
     const activeSettings = settings || await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
 
     if (!activeSettings || !activeSettings.instagramAccessToken || !activeSettings.businessAccountId) {
@@ -2784,13 +2792,21 @@ app.get('/api/instagram/media', verifyToken, async (req, res) => {
 
 app.get('/api/facebook/media', verifyToken, async (req, res) => {
   try {
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    const settings = await Settings.findOne({ 
-      userId: { $in: sharedUserIds }, 
+    let settings = await Settings.findOne({ 
+      userId: req.user.userId, 
       workspaceId: req.workspaceId,
       facebookAccessToken: { $ne: null }, 
       facebookPageId: { $ne: null } 
     });
+    if (!settings) {
+      const sharedUserIds = getSharedUserIdsSync(req.user.userId);
+      settings = await Settings.findOne({ 
+        userId: { $in: sharedUserIds }, 
+        workspaceId: req.workspaceId,
+        facebookAccessToken: { $ne: null }, 
+        facebookPageId: { $ne: null } 
+      });
+    }
     const activeSettings = settings || await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
 
     if (!activeSettings || !activeSettings.facebookAccessToken || !activeSettings.facebookPageId) {
