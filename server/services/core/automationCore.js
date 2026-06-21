@@ -111,25 +111,19 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
   }
 
   // --- DESKTOP FALLBACK: Opening Message Re-check ---
-  // Only process pending opening messages from DM source.
-  // Comments (source='comment') should NOT cancel or trigger pending campaigns,
-  // because a user's new comment on another post should not interfere.
-  if (contact && contact.pendingCampaignId && contact.pendingCampaignId.startsWith('OPENING:') && source === 'dm') {
+  // If the user was sent an "Opening Message" (Double opt-in), and they reply with text,
+  // we treat it as if they clicked the button.
+  if (contact && contact.pendingCampaignId && contact.pendingCampaignId.startsWith('OPENING:')) {
     const pendingId = contact.pendingCampaignId.replace('OPENING:', '');
     const match = await Campaign.findById(pendingId);
 
     if (match && match.status === 'Active') {
-      const btnText = (match.openingMessageButton || 'Send me the link!').toLowerCase().trim();
+      const btnText = (match.openingMessageButton || "Send me the link!").toLowerCase().trim();
       const incomingText = (text || '').toLowerCase().trim();
-      // Strip common emoji ranges for a cleaner comparison
-      const cleanBtnText = btnText.replace(/[\u{1F300}-\u{1FFFF}\u{2700}-\u{27BF}]/gu, '').trim();
+      const cleanBtnText = btnText.replace(/[\u1F600-\u1F64F\u2702-\u27B0]/g, '').trim();
 
-      // Match: exact button text, cleaned button text, "yes", "link", or any positive reply
-      const positiveReplies = ['yes', 'yep', 'ya', 'yeah', 'yup', 'ok', 'okay', 'sure', 'send', 'link', 'give', 'go'];
-      const isPositiveReply = positiveReplies.some(p => incomingText.includes(p));
-
-      if (incomingText === btnText || (cleanBtnText && incomingText === cleanBtnText) || isPositiveReply) {
-        console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied "${text}" to Opening Message. Triggering final response.`);
+      if (incomingText === btnText || (cleanBtnText && incomingText === cleanBtnText) || incomingText === 'yes') {
+        console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied correctly to Opening Message. Triggering final response.`);
         await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
 
         const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
@@ -137,38 +131,35 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
         let finalResponse = match.response;
         if (match.isAI) {
            try {
+             const { generateAIResponse } = await import('./utils/aiHandler.js');
              const generated = await generateAIResponse(match.userId, `User just confirmed they want the link. Warmly deliver the content for "${match.triggerKeyword || match.trigger}".`, workspaceId);
              if (generated) {
                if (finalResponse === "[AI Agent will generate a custom neural reply here]" || !finalResponse.trim()) {
                  finalResponse = generated;
                } else {
-                 finalResponse = generated + '\n\n' + finalResponse;
+                 finalResponse = generated + "\n\n" + finalResponse;
                }
              }
            } catch (e) {
-             finalResponse = 'Here it is! Click the button below! 👇';
+             finalResponse = "Here it is! Click the button below! 👇";
            }
         } else if (finalResponse === "[AI Agent will generate a custom neural reply here]") {
-           finalResponse = 'Here is your link! 👇';
+           finalResponse = "Here is your link! 👇";
         }
 
         await sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
         await Campaign.findByIdAndUpdate(pendingId, { $inc: { dmsSent: 1 } });
         return { opening_triggered: true };
       } else {
-        // IMPORTANT: Do NOT clear pendingCampaignId on unrecognized text.
-        // User might be confused — just resend the prompt.
-        console.log(`⚠️ [DESKTOP PENDING] User ${chatId} replied "${text}" (unrecognized). Re-prompting...`);
-        const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
-        await sendMessageToInstagram(platform, chatId, `Hey! 👋 Just reply "Yes" and I'll send you the link right away! 😊`, '', userId, '', activeToken, []);
-        return { reprompted: true };
+        console.log(`🚫 [DESKTOP FAIL] User ${chatId} replied with "${text}" instead of button click. Cancelling pending opening trigger.`);
+        await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
+        // Let it fall through to normal keyword processing
       }
     }
-  } else if (contact && contact.pendingCampaignId && !contact.pendingCampaignId.includes(':') && source === 'dm') {
+  } else if (contact && contact.pendingCampaignId && !contact.pendingCampaignId.includes(':')) {
     // --- DESKTOP FALLBACK: Follow Gate Re-check ---
     const incomingText = (text || '').toLowerCase().trim();
-    const positiveReplies = ['yes', 'yep', 'ya', 'yeah', 'yup', 'ok', 'okay', 'sure', "i've followed", 'ive followed', 'followed'];
-    if (positiveReplies.some(p => incomingText.includes(p))) {
+    if (incomingText === 'yes' || incomingText === "i've followed" || incomingText === "ive followed") {
       const match = await Campaign.findById(contact.pendingCampaignId);
       if (match && match.status === 'Active') {
         console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied correctly to Follow Gate. Triggering final response directly.`);
@@ -177,7 +168,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
         
         let finalResponse = match.response;
         if (match.isAI) {
-           finalResponse = 'Here is your link! 👇'; // Simplified fallback for AI here
+           finalResponse = "Here is your link! 👇"; // Simplified fallback for AI here
         }
         await sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
         await Campaign.findByIdAndUpdate(match._id, { $inc: { dmsSent: 1 } });
