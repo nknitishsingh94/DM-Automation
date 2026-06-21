@@ -2987,7 +2987,7 @@ app.post('/api/settings', verifyToken, async (req, res) => {
 // WhatsApp Meta Embedded Signup API Connection
 app.post('/api/settings/whatsapp/connect-embedded', verifyToken, async (req, res) => {
   try {
-    const { accessToken } = req.body;
+    const { accessToken, wabaId: inputWabaId, phoneNumberId: inputPhoneNumberId } = req.body;
     if (!accessToken) {
       return res.status(400).json({ error: 'Missing access token' });
     }
@@ -3016,12 +3016,23 @@ app.post('/api/settings/whatsapp/connect-embedded', verifyToken, async (req, res
       return res.status(400).json({ error: `Failed to fetch WABA: ${errMsg}` });
     }
 
-    if (!wabaRes.data.data || wabaRes.data.data.length === 0) {
-      return res.status(400).json({ error: 'No WhatsApp Business Accounts found for this Business' });
-    }
+    let wabaId = inputWabaId;
+    let connectedName = 'WhatsApp Business';
 
-    const wabaId = wabaRes.data.data[0].id;
-    let connectedName = wabaRes.data.data[0].name || 'WhatsApp Business';
+    if (wabaId) {
+      if (wabaRes.data.data && wabaRes.data.data.length > 0) {
+        const matchedWaba = wabaRes.data.data.find(w => w.id === wabaId);
+        if (matchedWaba && matchedWaba.name) {
+          connectedName = matchedWaba.name;
+        }
+      }
+    } else {
+      if (!wabaRes.data.data || wabaRes.data.data.length === 0) {
+        return res.status(400).json({ error: 'No WhatsApp Business Accounts found for this Business' });
+      }
+      wabaId = wabaRes.data.data[0].id;
+      connectedName = wabaRes.data.data[0].name || 'WhatsApp Business';
+    }
 
     // 3. Fetch the Phone Numbers for this WABA
     let phoneRes;
@@ -3032,15 +3043,25 @@ app.post('/api/settings/whatsapp/connect-embedded', verifyToken, async (req, res
       return res.status(400).json({ error: `Failed to fetch phone numbers: ${errMsg}` });
     }
 
-    if (!phoneRes.data.data || phoneRes.data.data.length === 0) {
-      return res.status(400).json({ error: 'No phone numbers registered in this WhatsApp Business Account' });
+    let phoneNumberId = inputPhoneNumberId;
+    let selectedPhone;
+
+    if (phoneNumberId && phoneRes.data.data) {
+      selectedPhone = phoneRes.data.data.find(p => p.id === phoneNumberId);
     }
 
-    const phoneNumberId = phoneRes.data.data[0].id;
-    if (phoneRes.data.data[0].verified_name) {
-      connectedName = phoneRes.data.data[0].verified_name;
-    } else if (phoneRes.data.data[0].display_phone_number) {
-      connectedName = phoneRes.data.data[0].display_phone_number;
+    if (!selectedPhone) {
+      if (!phoneRes.data.data || phoneRes.data.data.length === 0) {
+        return res.status(400).json({ error: 'No phone numbers registered in this WhatsApp Business Account' });
+      }
+      selectedPhone = phoneRes.data.data[0];
+      phoneNumberId = selectedPhone.id;
+    }
+
+    if (selectedPhone.verified_name) {
+      connectedName = selectedPhone.verified_name;
+    } else if (selectedPhone.display_phone_number) {
+      connectedName = selectedPhone.display_phone_number;
     }
 
     // 3. Save to database

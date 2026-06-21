@@ -171,39 +171,75 @@ export default function Connections() {
       return;
     }
     setLoading(true);
+
+    // Setup message listener to capture exact WABA and phone number IDs
+    const handleSignupMessage = (event) => {
+      if (event.origin !== "https://www.facebook.com" && event.origin !== "https://web.facebook.com") return;
+      try {
+        const parsed = JSON.parse(event.data);
+        if (parsed.type === 'WA_EMBEDDED_SIGNUP') {
+          if (parsed.event === 'FINISH' || parsed.event === 'FINISH_ONLY_WABA') {
+            const { waba_id, phone_number_id } = parsed.data;
+            window.lastWhatsAppSignupData = { waba_id, phone_number_id };
+          }
+        }
+      } catch (err) {
+        // Ignore non-JSON postMessages
+      }
+    };
+    window.addEventListener('message', handleSignupMessage);
+
     window.FB.login((response) => {
+      // Remove event listener after FB.login finishes
+      setTimeout(() => {
+        window.removeEventListener('message', handleSignupMessage);
+      }, 5000);
+
       if (response.authResponse) {
         const accessToken = response.authResponse.accessToken;
-        fetch(`${API_BASE_URL}/api/settings/whatsapp/connect-embedded`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}`
-          },
-          body: JSON.stringify({ accessToken })
-        })
-        .then(res => res.json())
-        .then(data => {
-          setLoading(false);
-          if (data.success) {
-            notify('WhatsApp connected successfully!', 'success');
-            setSettings(prev => ({
-              ...prev,
-              isWhatsAppConnected: true,
-              whatsappPhoneNumberId: data.whatsappPhoneNumberId,
-              whatsappDisplayName: data.connectedWhatsAppName || 'WhatsApp Business'
-            }));
-          } else {
-            notify(data.error || 'Failed to connect WhatsApp', 'error');
-          }
-        })
-        .catch(err => {
-          setLoading(false);
-          console.error(err);
-          notify('Network error during WhatsApp connection', 'error');
-        });
+        
+        // Wait briefly to allow the message handler to capture the event
+        setTimeout(() => {
+          const signupData = window.lastWhatsAppSignupData || {};
+          window.lastWhatsAppSignupData = null; // Clean up
+
+          fetch(`${API_BASE_URL}/api/settings/whatsapp/connect-embedded`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('insta_agent_token')}`
+            },
+            body: JSON.stringify({ 
+              accessToken,
+              wabaId: signupData.waba_id,
+              phoneNumberId: signupData.phone_number_id
+            })
+          })
+          .then(res => res.json())
+          .then(data => {
+            setLoading(false);
+            if (data.success) {
+              notify('WhatsApp connected successfully!', 'success');
+              setSettings(prev => ({
+                ...prev,
+                isWhatsAppConnected: true,
+                whatsappPhoneNumberId: data.whatsappPhoneNumberId,
+                whatsappBusinessAccountId: data.whatsappBusinessAccountId || signupData.waba_id,
+                whatsappDisplayName: data.connectedWhatsAppName || 'WhatsApp Business'
+              }));
+            } else {
+              notify(data.error || 'Failed to connect WhatsApp', 'error');
+            }
+          })
+          .catch(err => {
+            setLoading(false);
+            console.error(err);
+            notify('Network error during WhatsApp connection', 'error');
+          });
+        }, 1000);
       } else {
         setLoading(false);
+        window.removeEventListener('message', handleSignupMessage);
         console.log('User cancelled login or did not fully authorize.');
       }
     }, { 
