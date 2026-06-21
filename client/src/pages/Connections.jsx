@@ -207,7 +207,10 @@ export default function Connections() {
         console.log('User cancelled login or did not fully authorize.');
       }
     }, { 
-      scope: 'whatsapp_business_management,whatsapp_business_messaging,business_management' 
+      scope: 'whatsapp_business_management,whatsapp_business_messaging,business_management',
+      extras: {
+        feature: 'whatsapp_embedded_signup'
+      }
     });
   };
 
