@@ -426,7 +426,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
           </p>
         </div>
         <button
-          onClick={() => navigate('/select-channel')}
+          onClick={() => navigate('/campaigns?openTemplates=true')}
           style={{
             background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
             color: 'white',
@@ -684,7 +684,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
             You haven't set up any automation rules yet. Start converting comments and DMs into leads with our pre-built templates.
           </p>
           <button
-            onClick={() => navigate('/select-channel')}
+            onClick={() => navigate('/campaigns?openTemplates=true')}
             style={{
               background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
               color: 'white',
