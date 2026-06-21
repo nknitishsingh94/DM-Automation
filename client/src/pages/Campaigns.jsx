@@ -402,8 +402,9 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
 
   return (
     <div style={{ 
-      maxWidth: '1200px', 
-      margin: '0 auto',
+      width: '100%',
+      maxWidth: '100%', 
+      margin: '0',
       padding: '40px 40px 60px 40px',
       boxSizing: 'border-box'
     }}>
@@ -457,7 +458,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
 
       {filteredCampaigns.length > 0 ? (
         <div style={{ marginTop: '16px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
             {filteredCampaigns.map((campaign) => {
               const isAllThree = campaign.triggerOnDms && campaign.triggerOnComments && campaign.triggerOnStories;
               const isStory = (campaign.triggerOnStories || campaign.triggerSource === 'story_mention') && !isAllThree;
@@ -467,7 +468,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                 <div key={campaign._id} style={{ 
                   background: 'white', 
                   borderRadius: '24px', 
-                  padding: '28px 24px 24px', 
+                  padding: '24px 20px 20px', 
                   border: '1px solid rgba(226, 232, 240, 0.8)',
                   boxShadow: '0 10px 30px -10px rgba(30, 41, 59, 0.04), 0 1px 3px rgba(30, 41, 59, 0.02)',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -513,7 +514,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                     </div>
                   )}
 
-                  <h4 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a', marginBottom: '10px', paddingRight: '80px', letterSpacing: '-0.02em', lineHeight: '1.3' }}>
+                  <h4 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#0f172a', marginBottom: '10px', paddingRight: '80px', letterSpacing: '-0.02em', lineHeight: '1.3' }}>
                     {campaign.name}
                   </h4>
                   
@@ -542,17 +543,17 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                   </div>
 
                   {/* Stats Board */}
-                  <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', padding: '16px', background: 'rgba(248, 250, 252, 0.7)', borderRadius: '18px', border: '1px solid #f1f5f9' }}>
+                  <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', padding: '12px 16px', background: 'rgba(248, 250, 252, 0.7)', borderRadius: '18px', border: '1px solid #f1f5f9' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                      <div style={{ fontSize: '0.72rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>DMs Sent</div>
-                      <div style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0f172a' }}>{campaign.dmsSent || 0}</div>
+                      <div style={{ fontSize: '0.68rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>DMs Sent</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a' }}>{campaign.dmsSent || 0}</div>
                     </div>
                     <div style={{ width: '1px', background: '#e2e8f0' }}></div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                      <div style={{ fontSize: '0.72rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</div>
-                      <div style={{ fontSize: '0.9rem', fontWeight: '800', color: campaign.status === 'Active' ? '#10b981' : '#64748b', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                      <div style={{ fontSize: '0.68rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: '800', color: campaign.status === 'Active' ? '#10b981' : '#64748b', display: 'flex', alignItems: 'center', gap: '5px', marginTop: '2px' }}>
                         <div style={{ 
-                          width: '8px', height: '8px', borderRadius: '50%', 
+                          width: '6px', height: '6px', borderRadius: '50%', 
                           background: campaign.status === 'Active' ? '#10b981' : '#94a3b8',
                           boxShadow: campaign.status === 'Active' ? '0 0 10px #10b981' : 'none'
                         }}></div>
@@ -562,15 +563,16 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                   </div>
 
                   {/* Action Buttons Row */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <button 
                       onClick={() => toggleStatus(campaign._id, campaign.status)} 
                       style={{ 
-                        flex: 1, padding: '10px 16px', borderRadius: '12px', 
+                        flex: 1, padding: '10px 12px', borderRadius: '12px', 
                         border: '1px solid #e2e8f0', background: 'white', 
-                        color: '#0f172a', fontWeight: '700', fontSize: '0.85rem', 
+                        color: '#0f172a', fontWeight: '700', fontSize: '0.8rem', 
                         cursor: 'pointer', display: 'flex', alignItems: 'center', 
-                        justifyContent: 'center', gap: '8px', transition: 'all 0.2s'
+                        justifyContent: 'center', gap: '6px', transition: 'all 0.2s',
+                        whiteSpace: 'nowrap', minWidth: '0', overflow: 'hidden'
                       }}
                       onMouseOver={(e) => {
                         if (campaign.status === 'Active') {
@@ -589,15 +591,17 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                         e.currentTarget.style.color = '#0f172a';
                       }}
                     >
-                      <Power size={14} color={campaign.status === 'Active' ? '#10b981' : '#94a3b8'} />
-                      {campaign.status === 'Active' ? 'Pause' : 'Activate'}
+                      <Power size={13} color={campaign.status === 'Active' ? '#10b981' : '#94a3b8'} />
+                      <span style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                        {campaign.status === 'Active' ? 'Pause' : 'Activate'}
+                      </span>
                     </button>
                     <button 
                       onClick={() => { setEditingCampaign(campaign); setEditForm({ name: campaign.name || '', trigger: campaign.trigger || '', response: campaign.response || '', linkUrl: campaign.linkUrl || (campaign.buttons && campaign.buttons.length > 0 ? campaign.buttons[0].url : ''), buttonText: campaign.buttonText || (campaign.buttons && campaign.buttons.length > 0 ? campaign.buttons[0].text : ''), isUniversal: campaign.isUniversal || false, triggerSource: campaign.triggerSource || 'dm' }); }} 
                       style={{ 
-                        padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', 
+                        padding: '10px', width: '38px', height: '38px', borderRadius: '12px', border: '1px solid #e2e8f0', 
                         background: 'white', color: '#3b82f6', cursor: 'pointer', transition: 'all 0.2s',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                       }}
                       onMouseOver={(e) => {
                         e.currentTarget.style.background = '#eff6ff';
@@ -610,14 +614,14 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                         e.currentTarget.style.color = '#3b82f6';
                       }}
                     >
-                      <Edit2 size={18} />
+                      <Edit2 size={16} />
                     </button>
                     <button 
                       onClick={() => viewLogs(campaign)} 
                       style={{ 
-                        padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', 
+                        padding: '10px', width: '38px', height: '38px', borderRadius: '12px', border: '1px solid #e2e8f0', 
                         background: 'white', color: '#64748b', cursor: 'pointer', transition: 'all 0.2s',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                       }}
                       onMouseOver={(e) => {
                         e.currentTarget.style.background = '#f8fafc';
@@ -630,14 +634,14 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                         e.currentTarget.style.color = '#64748b';
                       }}
                     >
-                      <History size={18} />
+                      <History size={16} />
                     </button>
                     <button 
                       onClick={() => deleteCampaign(campaign._id)} 
                       style={{ 
-                        padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', 
+                        padding: '10px', width: '38px', height: '38px', borderRadius: '12px', border: '1px solid #fee2e2', 
                         background: 'white', color: '#ef4444', cursor: 'pointer', transition: 'all 0.2s',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                       }}
                       onMouseOver={(e) => {
                         e.currentTarget.style.background = '#fee2e2';
@@ -709,10 +713,10 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
             </span>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
             {flows.map((flow) => (
-              <div key={flow._id} style={{ background: 'white', borderRadius: '24px', padding: '24px', border: '1px solid #fce7f3', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', transition: 'all 0.3s', position: 'relative', overflow: 'hidden' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(217,70,239,0.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)'; }}>
-                <div style={{ position: 'absolute', top: '24px', right: '24px', padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800', background: '#fdf4ff', color: '#d946ef', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}><Crown size={12} /> Advanced</div>
+              <div key={flow._id} style={{ background: 'white', borderRadius: '24px', padding: '24px 20px 20px', border: '1px solid #fce7f3', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', transition: 'all 0.3s', position: 'relative', overflow: 'hidden' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(217,70,239,0.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)'; }}>
+                <div style={{ position: 'absolute', top: '24px', right: '20px', padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800', background: '#fdf4ff', color: '#d946ef', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}><Crown size={12} /> Advanced</div>
                 <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px', paddingRight: '100px' }}>{flow.name || 'Untitled Flow'}</h4>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', marginBottom: '24px' }}><MessageCircle size={16} /><span>Keyword: <strong style={{ color: '#1e1b4b' }}>{flow.triggerKeyword || 'None'}</strong></span></div>
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', padding: '16px', background: '#faf5ff', borderRadius: '16px' }}><div style={{ flex: 1 }}><div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#a855f7', textTransform: 'uppercase', marginBottom: '4px' }}>Nodes</div><div style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b' }}>{flow.nodes ? flow.nodes.length : 0}</div></div><div style={{ width: '1px', background: '#e9d5ff' }}></div><div style={{ flex: 1 }}><div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#a855f7', textTransform: 'uppercase', marginBottom: '4px' }}>Status</div><div style={{ fontSize: '0.9rem', fontWeight: '800', color: flow.status === 'Active' ? '#10b981' : '#a855f7', display: 'flex', alignItems: 'center', gap: '4px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: flow.status === 'Active' ? '#10b981' : '#a855f7' }}></div>{flow.status || 'Active'}</div></div></div>
