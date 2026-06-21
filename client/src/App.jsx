@@ -702,7 +702,7 @@ function MainLayout() {
     location.pathname.startsWith('/flow-builder');
   const isMessageOnlyHub = location.pathname === '/hub/message-only';
   const hideSidebar = isPublic; // Sidebar should remain visible on editor pages
-  const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub || location.pathname !== '/dashboard';
+  const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub || !['/dashboard', '/connections'].includes(location.pathname);
 
   return (
     <div className="app-container" style={{ height: '100%', width: '100%', position: 'fixed', top: 0, left: 0 }}>
