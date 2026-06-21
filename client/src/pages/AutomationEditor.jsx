@@ -24,7 +24,8 @@ import {
   MoreVertical,
   Phone,
   Video,
-  Check
+  Check,
+  AlertTriangle
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
@@ -59,6 +60,7 @@ export default function AutomationEditor() {
   const [connectedSettings, setConnectedSettings] = useState(null);
   const [realMedia, setRealMedia] = useState([]);
   const [loadingMedia, setLoadingMedia] = useState(false);
+  const [mediaError, setMediaError] = useState(null);
   const [selectedContentId, setSelectedContentId] = useState(null);
   const [buttons, setButtons] = useState([]);
   const [showLinkModal, setShowLinkModal] = useState(false);
@@ -203,6 +205,7 @@ export default function AutomationEditor() {
 
   const fetchRealMedia = async () => {
     setLoadingMedia(true);
+    setMediaError(null);
     try {
       const token = localStorage.getItem('insta_agent_token');
       const apiPath = selectedPlatform === 'facebook' ? '/api/facebook/media' : '/api/instagram/media';
@@ -210,11 +213,14 @@ export default function AutomationEditor() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
-      if (Array.isArray(data)) {
+      if (res.ok && Array.isArray(data)) {
         setRealMedia(data);
+      } else {
+        setMediaError(data.details || data.error || 'Failed to fetch media');
       }
     } catch (err) {
       console.error(`Failed to fetch ${selectedPlatform} media:`, err);
+      setMediaError('Failed to fetch media');
     } finally {
       setLoadingMedia(false);
     }
@@ -1125,6 +1131,43 @@ export default function AutomationEditor() {
                           <div style={{ textAlign: 'center', padding: '10px', color: '#94a3b8', fontSize: '0.8rem' }}>
                             <Loader2 className="animate-spin" style={{ margin: '0 auto 4px' }} />
                             Fetching your posts...
+                          </div>
+                        ) : mediaError ? (
+                          <div style={{ 
+                            textAlign: 'center', 
+                            padding: '16px', 
+                            color: '#e11d48', 
+                            fontSize: '0.8rem',
+                            background: '#fff1f2',
+                            border: '1px solid #ffe4e6',
+                            borderRadius: '12px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}>
+                            <AlertTriangle size={20} color="#e11d48" />
+                            <div style={{ fontWeight: '600' }}>Meta Connection Error</div>
+                            <div style={{ color: '#f43f5e', lineHeight: '1.4' }}>{mediaError}</div>
+                            <button
+                              onClick={() => navigate('/connections')}
+                              style={{
+                                marginTop: '4px',
+                                background: '#e11d48',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                padding: '6px 12px',
+                                fontSize: '0.75rem',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'background 0.2s'
+                              }}
+                              onMouseOver={e => e.currentTarget.style.background = '#be123c'}
+                              onMouseOut={e => e.currentTarget.style.background = '#e11d48'}
+                            >
+                              Reconnect Account
+                            </button>
                           </div>
                         ) : realMedia.length === 0 ? (
                           <div style={{ textAlign: 'center', padding: '10px', color: '#94a3b8', fontSize: '0.8rem' }}>

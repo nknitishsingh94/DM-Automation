@@ -2777,7 +2777,8 @@ app.get('/api/instagram/media', verifyToken, async (req, res) => {
     res.json(response.data.data || []);
   } catch (err) {
     console.error("❌ Error fetching IG media:", err.response?.data || err.message);
-    res.status(500).json({ error: 'Failed to fetch Instagram media' });
+    const errorDetails = err.response?.data?.error?.message || err.message;
+    res.status(400).json({ error: 'Failed to fetch Instagram media', details: errorDetails });
   }
 });
 
@@ -2854,7 +2855,8 @@ app.get('/api/facebook/media', verifyToken, async (req, res) => {
     res.json(mappedData);
   } catch (err) {
     console.error("❌ Error fetching FB media:", err.response?.data || err.message);
-    res.status(500).json({ error: 'Failed to fetch Facebook posts' });
+    const errorDetails = err.response?.data?.error?.message || err.message;
+    res.status(400).json({ error: 'Failed to fetch Facebook posts', details: errorDetails });
   }
 });
 
