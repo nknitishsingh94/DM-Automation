@@ -702,15 +702,15 @@ function MainLayout() {
     location.pathname.startsWith('/flow-builder');
   const isMessageOnlyHub = location.pathname === '/hub/message-only';
   const hideSidebar = isPublic; // Sidebar should remain visible on editor pages
-  const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub || location.pathname === '/universal-triggers' || location.pathname === '/scheduling' || location.pathname === '/developer' || location.pathname === '/communication';
+  const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub || location.pathname !== '/dashboard';
 
   return (
     <div className="app-container" style={{ height: '100%', width: '100%', position: 'fixed', top: 0, left: 0 }}>
       {user && !hideSidebar && <Sidebar isMobileOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />}
-      <main className="main-content" style={{ paddingTop: (isEditor || location.pathname === '/developer' || location.pathname === '/communication') ? '0' : undefined }}>
+      <main className="main-content" style={{ paddingTop: hideTopBar ? '0' : undefined }}>
         {!hideTopBar && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
         <div className="page-container" style={{
-          padding: (isPublic || isEditor || ['/inbox', '/universal-triggers', '/scheduling', '/hub/message-only', '/developer', '/communication'].includes(location.pathname)) ? '0' : undefined,
+          padding: hideTopBar ? '0' : undefined,
           overflow: (isEditor || ['/inbox', '/universal-triggers', '/scheduling', '/hub/message-only'].includes(location.pathname)) ? 'hidden' : 'auto',
           display: 'flex',
           flexDirection: 'column'
