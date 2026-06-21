@@ -35,7 +35,7 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
   const personUrn = `urn:li:person:${sub}`;
   console.log(`✅ [LinkedIn] Author URN: ${personUrn}`);
 
-  // 2. Build Post Body
+  // 2. Parse media
   let cleanMediaUrl = post.mediaUrl || '';
   if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
     try {
@@ -46,6 +46,70 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
 
   const hasMedia = !!cleanMediaUrl;
 
+  // Detect if the media is a video or image
+  let isVideo = false;
+  if (hasMedia) {
+    const lowercaseUrl = cleanMediaUrl.toLowerCase();
+    if (lowercaseUrl.includes('.mp4') || lowercaseUrl.includes('.mov') || lowercaseUrl.includes('.avi') || lowercaseUrl.includes('.webm') || post.type === 'video') {
+      isVideo = true;
+    }
+  }
+
+  let assetUrn = null;
+
+  if (hasMedia) {
+    try {
+      console.log(`📡 [LinkedIn] Downloading media from URL: ${cleanMediaUrl}`);
+      const mediaResponse = await axios.get(cleanMediaUrl, { responseType: 'arraybuffer' });
+      const mediaBuffer = Buffer.from(mediaResponse.data, 'binary');
+      const contentType = mediaResponse.headers['content-type'] || (isVideo ? 'video/mp4' : 'image/jpeg');
+
+      console.log(`📡 [LinkedIn] Registering upload for ${isVideo ? 'video' : 'image'}...`);
+      const registerRes = await axios.post(
+        'https://api.linkedin.com/v2/assets?action=registerUpload',
+        {
+          registerUploadRequest: {
+            recipes: [
+              isVideo ? 'urn:li:digitalmediaRecipe:feedshare-video' : 'urn:li:digitalmediaRecipe:feedshare-image'
+            ],
+            owner: personUrn,
+            supportedUploadMechanism: ['SYNCHRONOUS_UPLOAD'],
+            serviceRelationships: [
+              {
+                relationshipType: 'OWNER',
+                identifier: 'urn:li:userGeneratedContent'
+              }
+            ]
+          }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'X-Restli-Protocol-Version': '2.0.0'
+          }
+        }
+      );
+
+      const uploadUrl = registerRes.data.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest'].uploadUrl;
+      assetUrn = registerRes.data.value.asset;
+
+      console.log(`📡 [LinkedIn] Uploading media binary to LinkedIn... URN: ${assetUrn}`);
+      await axios.put(uploadUrl, mediaBuffer, {
+        headers: {
+          'Content-Type': contentType,
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+      console.log('✅ [LinkedIn] Media uploaded successfully!');
+
+    } catch (mediaErr) {
+      console.warn('⚠️ [LinkedIn] Native media upload failed, falling back to link sharing (ARTICLE):', mediaErr.response?.data || mediaErr.message);
+      assetUrn = null; // fallback
+    }
+  }
+
+  // 3. Build Post Body
   const postBody = {
     author: personUrn,
     lifecycleState: 'PUBLISHED',
@@ -53,8 +117,7 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
       'com.linkedin.ugc.ShareContent': {
         shareCommentary: {
           text: post.caption || ''
-        },
-        shareMediaCategory: hasMedia ? 'ARTICLE' : 'NONE'
+        }
       }
     },
     visibility: {
@@ -62,8 +125,20 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
     }
   };
 
-  if (hasMedia) {
-    postBody.specificContent['com.linkedin.ugc.ShareContent'].media = [
+  const shareContent = postBody.specificContent['com.linkedin.ugc.ShareContent'];
+
+  if (hasMedia && assetUrn) {
+    shareContent.shareMediaCategory = isVideo ? 'VIDEO' : 'IMAGE';
+    shareContent.media = [
+      {
+        status: 'READY',
+        media: assetUrn
+      }
+    ];
+  } else if (hasMedia) {
+    // Fallback to link/article sharing
+    shareContent.shareMediaCategory = 'ARTICLE';
+    shareContent.media = [
       {
         status: 'READY',
         originalUrl: cleanMediaUrl,
@@ -72,9 +147,11 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
         }
       }
     ];
+  } else {
+    shareContent.shareMediaCategory = 'NONE';
   }
 
-  // 3. Post to ugcPosts
+  // 4. Post to ugcPosts
   console.log('📡 [LinkedIn] Posting UGC Share to LinkedIn...');
   try {
     const postRes = await axios.post('https://api.linkedin.com/v2/ugcPosts', postBody, {
