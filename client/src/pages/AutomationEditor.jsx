@@ -45,7 +45,9 @@ export default function AutomationEditor() {
 
   // State
   const [selectedPlatform, setSelectedPlatform] = useState(isUniversal ? 'all' : (channel || 'instagram'));
-  const [anyStory, setAnyStory] = useState(isUniversal ? true : false);
+  // For DM-only templates, no post selection needed (anyStory=true means skip post pick)
+  const isDmOnlyTemplate = template && !['comments', 'auto_dm_links', 'gen_leads_stories', 'sell_reel_comments', 'grow_followers_comments_flow', 'grow_followers_comments_quick', 'reply_story_mentions', 'send_offers_live', 'give_coupons_stories', 'auto_thank_positive', 'auto_thank_positive_comments', 'trigger_dms_live', 'auto_reply_comment_dm'].includes(template);
+  const [anyStory, setAnyStory] = useState(isUniversal ? true : isDmOnlyTemplate ? true : false);
   const [anyKeyword, setAnyKeyword] = useState(false);
   const [keywords, setKeywords] = useState([]);
   const [keywordInput, setKeywordInput] = useState('');
@@ -141,6 +143,100 @@ export default function AutomationEditor() {
         setPreviewMode('dm');
         setAnyKeyword(true);
         setMessage("Thanks for mentioning me in your story! You're awesome. 🔥");
+      } else if (template === 'auto_send_links_dm') {
+        setName('Auto-Send Links in DM');
+        setTriggerOnDms(true);
+        setTriggerOnComments(false);
+        setTriggerOnStories(false);
+        setAnyStory(true);
+        setPreviewMode('dm');
+        setKeywords(['LINK', 'INFO']);
+        setMessage("Hey! Here is the link you asked for 👇");
+        setButtons([{ text: 'Click Here', url: 'https://' }]);
+      } else if (template === 'dm_new_follower') {
+        setName('Welcome New Followers');
+        setTriggerOnDms(true);
+        setTriggerOnComments(false);
+        setTriggerOnStories(false);
+        setAnyStory(true);
+        setPreviewMode('dm');
+        setAnyKeyword(true);
+        setMessage("Hey! Welcome to our community 🎉 Here's what we're about:");
+        setButtons([{ text: 'Learn More', url: 'https://' }]);
+      } else if (template === 'dm_course') {
+        setName('DM Course Info');
+        setTriggerOnDms(true);
+        setTriggerOnComments(false);
+        setTriggerOnStories(false);
+        setAnyStory(true);
+        setPreviewMode('dm');
+        setKeywords(['COURSE', 'ENROLL', 'LEARN']);
+        setMessage("Hey! Here are all the details about our course 📚");
+        setButtons([{ text: 'Enroll Now', url: 'https://' }]);
+      } else if (template === 'grow_email_list') {
+        setName('Grow Email List');
+        setTriggerOnDms(true);
+        setTriggerOnComments(false);
+        setTriggerOnStories(false);
+        setAnyStory(true);
+        setPreviewMode('dm');
+        setKeywords(['SUBSCRIBE', 'EMAIL', 'JOIN']);
+        setMessage("Thanks for your interest! Drop your email below and we'll send you exclusive updates 📧");
+      } else if (template === 'go_to_whatsapp') {
+        setName('Move to WhatsApp');
+        setTriggerOnDms(true);
+        setTriggerOnComments(false);
+        setTriggerOnStories(false);
+        setAnyStory(true);
+        setPreviewMode('dm');
+        setKeywords(['WHATSAPP', 'WA', 'CHAT']);
+        setMessage("Hey! Let's continue our conversation on WhatsApp 💬");
+        setButtons([{ text: 'Open WhatsApp', url: 'https://wa.me/' }]);
+      } else if (template === 'grow_sms_list') {
+        setName('Grow SMS List');
+        setTriggerOnDms(true);
+        setTriggerOnComments(false);
+        setTriggerOnStories(false);
+        setAnyStory(true);
+        setPreviewMode('dm');
+        setKeywords(['SMS', 'TEXT', 'SUBSCRIBE']);
+        setMessage("Hey! Share your number and we'll keep you updated via text 📱");
+      } else if (template === 'get_event_signups') {
+        setName('Event Signups');
+        setTriggerOnDms(true);
+        setTriggerOnComments(false);
+        setTriggerOnStories(false);
+        setAnyStory(true);
+        setPreviewMode('dm');
+        setKeywords(['EVENT', 'SIGNUP', 'REGISTER']);
+        setMessage("Thanks for your interest in our event! Here's the registration link 🎫");
+        setButtons([{ text: 'Register Now', url: 'https://' }]);
+      } else if (template === 'launch_new_product') {
+        setName('Product Launch');
+        setTriggerOnDms(true);
+        setTriggerOnComments(false);
+        setTriggerOnStories(false);
+        setAnyStory(true);
+        setPreviewMode('dm');
+        setKeywords(['LAUNCH', 'NEW', 'BUY', 'PRODUCT']);
+        setMessage("🚀 Our new product is here! Check it out:");
+        setButtons([{ text: 'Shop Now', url: 'https://' }]);
+      } else if (template === 'get_collabs_stories') {
+        setName('Story Collaborations');
+        setTriggerOnStories(true);
+        setTriggerOnDms(false);
+        setTriggerOnComments(false);
+        setAnyStory(true);
+        setPreviewMode('dm');
+        setKeywords(['COLLAB', 'PARTNER']);
+        setMessage("Hi! Thanks for reaching out about a collaboration. Please share your brand details and budget 🤝");
+      } else {
+        // For any other unrecognized template, default to DM trigger with any post
+        setTriggerOnDms(true);
+        setTriggerOnComments(false);
+        setTriggerOnStories(false);
+        setAnyStory(true);
+        setPreviewMode('dm');
       }
     }
   }, [id, template]);
@@ -328,7 +424,8 @@ export default function AutomationEditor() {
       return;
     }
 
-    if (!anyStory && !selectedContentId) {
+    // Post/story selection is only required for comment or story-triggered automations
+    if ((triggerOnComments || triggerOnStories) && !anyStory && !selectedContentId) {
       notify(`Please select a specific ${triggerOnStories ? 'story' : 'post'} to continue`, 'error');
       return;
     }
