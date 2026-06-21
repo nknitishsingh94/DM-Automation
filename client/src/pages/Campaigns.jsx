@@ -401,9 +401,52 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
   });
 
   return (
-    <div style={{ maxWidth: '1200px' }}>
-      
-
+    <div style={{ 
+      maxWidth: '1200px', 
+      margin: '0 auto',
+      padding: '40px 40px 60px 40px',
+      boxSizing: 'border-box'
+    }}>
+      {/* Page Header */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: '32px',
+        paddingBottom: '20px',
+        borderBottom: '1px solid #e2e8f0',
+        flexWrap: 'wrap',
+        gap: '16px'
+      }}>
+        <div>
+          <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', margin: 0, letterSpacing: '-0.02em' }}>Active Automations</h2>
+          <p style={{ color: '#64748b', margin: '4px 0 0 0', fontSize: '0.9rem', fontWeight: '500' }}>
+            Manage and monitor your live reply automation campaigns.
+          </p>
+        </div>
+        <button
+          onClick={() => navigate('/select-channel')}
+          style={{
+            background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+            color: 'white',
+            border: 'none',
+            padding: '12px 24px',
+            borderRadius: '12px',
+            fontWeight: '700',
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)',
+            transition: 'all 0.2s'
+          }}
+          onMouseOver={e => e.currentTarget.style.opacity = '0.9'}
+          onMouseOut={e => e.currentTarget.style.opacity = '1'}
+        >
+          <Plus size={16} /> Create Automation
+        </button>
+      </div>
 
       {message.text && (
         <div style={{ padding: '12px', background: message.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: message.type === 'success' ? '#34d399' : '#f87171', borderRadius: '8px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -413,14 +456,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
       )}
 
       {filteredCampaigns.length > 0 ? (
-        <div style={{ marginTop: '32px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e1b4b' }}>Active Automations</h3>
-            <span style={{ padding: '6px 16px', background: '#f5f3ff', color: '#7c3aed', borderRadius: '50px', fontSize: '0.85rem', fontWeight: '700' }}>
-              {filteredCampaigns.length} Total
-            </span>
-          </div>
-
+        <div style={{ marginTop: '16px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
             {filteredCampaigns.map((campaign) => {
               const isAllThree = campaign.triggerOnDms && campaign.triggerOnComments && campaign.triggerOnStories;
@@ -622,7 +658,44 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
             })}
           </div>
         </div>
-      ) : null}
+      ) : (
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '80px 20px', 
+          background: 'white', 
+          borderRadius: '24px', 
+          border: '1.5px dashed #e2e8f0',
+          boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)',
+          marginTop: '20px',
+          marginBottom: '40px'
+        }}>
+          <div style={{ 
+            width: '64px', height: '64px', borderRadius: '50%', background: '#f5f3ff', 
+            display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px'
+          }}>
+            <Zap size={28} color="#7c3aed" />
+          </div>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>No Automations Found</h3>
+          <p style={{ color: '#64748b', fontSize: '0.9rem', maxWidth: '400px', margin: '0 auto 20px', lineHeight: '1.5' }}>
+            You haven't set up any automation rules yet. Start converting comments and DMs into leads with our pre-built templates.
+          </p>
+          <button
+            onClick={() => navigate('/select-channel')}
+            style={{
+              background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '10px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
+            }}
+          >
+            Create Your First Automation
+          </button>
+        </div>
+      )}
 
       {flows.length > 0 && (
         <div style={{ marginTop: '64px' }}>
