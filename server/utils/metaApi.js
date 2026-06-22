@@ -108,6 +108,27 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
             }
           }
         };
+      } else if (mediaUrl && (mediaUrl.startsWith('http') || mediaUrl.includes('.'))) {
+        let safeUrl = mediaUrl;
+        if (!safeUrl.startsWith('http')) safeUrl = 'https://' + safeUrl;
+        payload = {
+          recipient,
+          messaging_type: "RESPONSE",
+          message: {
+            attachment: {
+              type: "template",
+              payload: {
+                template_type: "button",
+                text: safeText || "Click the link below:",
+                buttons: [{
+                  type: "web_url",
+                  url: safeUrl,
+                  title: effectiveButtonText
+                }]
+              }
+            }
+          }
+        };
       } else {
         payload = {
           recipient,
