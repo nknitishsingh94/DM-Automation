@@ -197,8 +197,11 @@ function convertIncoming(doc, tableName) {
   if (doc.automation_status) newDoc.automationStatus = doc.automation_status;
 
   ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost', 'isUniversal'].forEach(field => {
-    if (newDoc[field] !== undefined && newDoc[field] !== null) {
-      if (typeof newDoc[field] === 'string') {
+    if (newDoc[field] !== undefined) {
+      // Also convert null to false (null means "not set" = false for boolean flags)
+      if (newDoc[field] === null) {
+        newDoc[field] = false;
+      } else if (typeof newDoc[field] === 'string') {
         newDoc[field] = newDoc[field] === 'true' || newDoc[field] === 't';
       } else {
         newDoc[field] = Boolean(newDoc[field]);

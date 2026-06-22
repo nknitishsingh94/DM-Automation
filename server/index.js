@@ -575,9 +575,15 @@ const processAutoReply = async (userId, platform, chatId, text, source = 'dm', c
 
   const match = activeCampaigns.find(c => {
     const platformMatch = !c.platform || c.platform === 'all' || c.platform === (platform || 'instagram');
-    const triggerDms = c.triggerOnDms === true || c.triggerSource === 'dm' || !c.triggerSource;
-    const triggerComments = c.triggerOnComments === true || c.triggerSource === 'comment';
-    const triggerStories = c.triggerOnStories === true || c.triggerSource === 'story_mention';
+    // Null-safe boolean checks — treat null/undefined as false
+    const hasTriggerDms = c.triggerOnDms === true;
+    const hasTriggerComments = c.triggerOnComments === true;
+    const hasTriggerStories = c.triggerOnStories === true;
+    const hasNoTriggerFlags = !hasTriggerDms && !hasTriggerComments && !hasTriggerStories;
+    // Legacy fallback: if no trigger flags set, check triggerSource; if nothing, default to DM
+    const triggerDms = hasTriggerDms || c.triggerSource === 'dm' || (hasNoTriggerFlags && !c.triggerSource);
+    const triggerComments = hasTriggerComments || c.triggerSource === 'comment';
+    const triggerStories = hasTriggerStories || c.triggerSource === 'story_mention';
 
     const sourceMatch = (source === 'dm' && triggerDms) ||
       (source === 'comment' && triggerComments) ||
