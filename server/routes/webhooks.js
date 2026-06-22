@@ -83,6 +83,16 @@ router.post('/api/webhook', async (req, res) => {
 
         console.log(`📩 Messaging detected from ${senderId}`);
 
+        // 1.0 Intercept Quick Replies (Some Instagram regions/apps convert buttons to quick_replies)
+        if (messaging.message?.quick_reply?.payload) {
+          console.log(`⚡ QUICK REPLY INTERCEPTED: Converting to postback -> ${messaging.message.quick_reply.payload}`);
+          messaging.postback = {
+            payload: messaging.message.quick_reply.payload,
+            title: messaging.message.text
+          };
+          delete messaging.message; // prevent text handler from double processing it
+        }
+
         // 1.1 Handle Messages (Text/Story)
         if (messaging.message?.text || messaging.message?.story || messaging.message?.reply_to?.story) {
           const isStoryMention = !!(messaging.message?.story || messaging.message?.reply_to?.story);
