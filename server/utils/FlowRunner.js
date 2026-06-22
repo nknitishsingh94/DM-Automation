@@ -28,6 +28,17 @@ export const runFlow = async (userId, flowId, contactId, platform, initialText =
     const contact = await Contact.findOne(contactQuery);
     if (contact && contact.isBotMuted) return;
 
+    // Ensure nodes and edges are arrays (they might be stored as strings in DB)
+    if (typeof flow.nodes === 'string') {
+      try { flow.nodes = JSON.parse(flow.nodes); } catch (e) { flow.nodes = []; }
+    }
+    if (typeof flow.edges === 'string') {
+      try { flow.edges = JSON.parse(flow.edges); } catch (e) { flow.edges = []; }
+    }
+
+    if (!Array.isArray(flow.nodes)) flow.nodes = [];
+    if (!Array.isArray(flow.edges)) flow.edges = [];
+
     // 1. Identify starting point
     let currentNode = flow.nodes.find(n => n.type === 'trigger');
     if (!currentNode && flow.nodes.length > 0) {
