@@ -32,6 +32,7 @@ export default function Connections() {
     isTwitterConnected: false,
     isWhatsAppConnected: false,
     isThreadsConnected: false,
+    isPinterestConnected: false,
     instagramAutomationEnabled: true,
     facebookAutomationEnabled: true,
     connectedInstagramName: '',
@@ -79,6 +80,7 @@ export default function Connections() {
     { name: 'LinkedIn Business', icon: Linkedin, color: '#0077b5', enabled: true },
     { name: 'Twitter/X', icon: Twitter, color: '#0f1419', enabled: true },
     { name: 'Threads', icon: Activity, color: '#000000', enabled: true },
+    { name: 'Pinterest', icon: PinterestIcon, color: '#E60023', enabled: true },
     { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: true },
     { name: 'Telegram', icon: Send, color: '#0088cc', enabled: true },
     { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: true }
@@ -121,6 +123,7 @@ export default function Connections() {
           isTwitterConnected: !!mergedData.isTwitterConnected,
           isWhatsAppConnected: !!mergedData.whatsappToken && !!mergedData.whatsappPhoneNumberId,
           isThreadsConnected: !!mergedData.isThreadsConnected,
+          isPinterestConnected: !!mergedData.isPinterestConnected,
           threadsAccessToken: mergedData.threadsAccessToken || null,
           threadsPageId: mergedData.threadsPageId || null,
           connectedThreadsName: mergedData.connectedThreadsName || null,
@@ -149,6 +152,7 @@ export default function Connections() {
       else if (platform === 'linkedin') platformLabel = 'LinkedIn profile';
       else if (platform === 'google-business') platformLabel = 'Google Business Profile';
       else if (platform === 'twitter' || platform === 'twitter/x') platformLabel = 'Twitter profile';
+      else if (platform === 'pinterest') platformLabel = 'Pinterest profile';
 
       notify(`🚀 ${platformLabel} linked successfully!`, "success");
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -319,6 +323,7 @@ export default function Connections() {
           isTwitterConnected: !!data.isTwitterConnected,
           isWhatsAppConnected: !!data.whatsappToken && !!data.whatsappPhoneNumberId,
           isThreadsConnected: !!threadsInfo.isThreadsConnected,
+          isPinterestConnected: !!data.isPinterestConnected,
           threadsAccessToken: threadsInfo.threadsAccessToken || null,
           threadsPageId: threadsInfo.threadsPageId || null,
           connectedThreadsName: threadsInfo.connectedThreadsName || null,
@@ -406,6 +411,9 @@ export default function Connections() {
     } else if (platformId === 'threads') {
       delete pageData.isThreadsConnected; delete pageData.connectedThreadsName; delete pageData.threadsAccessToken; delete pageData.threadsPageId;
       cleared = { ...cleared, isThreadsConnected: false, threadsAccessToken: null, threadsPageId: null, connectedThreadsName: null };
+    } else if (platformId === 'pinterest') {
+      delete pageData.isPinterestConnected; delete pageData.connectedPinterestName; delete pageData.pinterestAccessToken; delete pageData.pinterestRefreshToken; delete pageData.connectedPinterestId;
+      cleared = { ...cleared, isPinterestConnected: false, pinterestAccessToken: null, pinterestRefreshToken: null, connectedPinterestName: null, connectedPinterestId: null };
     } else if (platformId === 'whatsapp') {
       cleared = { ...cleared, whatsappToken: null, whatsappPhoneNumberId: null, whatsappBusinessAccountId: null, isWhatsAppConnected: false };
     }
@@ -432,6 +440,10 @@ export default function Connections() {
     }
     if (platformName.toLowerCase() === 'google business' || platformName.toLowerCase() === 'google-business') {
       window.location.href = `${API_BASE_URL}/api/oauth/google-business?token=${localStorage.getItem('insta_agent_token')}`;
+      return;
+    }
+    if (platformName.toLowerCase() === 'pinterest') {
+      window.location.href = `${API_BASE_URL}/api/oauth/pinterest?token=${localStorage.getItem('insta_agent_token')}`;
       return;
     }
     if (platformName.toLowerCase() === 'whatsapp') {
@@ -562,7 +574,8 @@ export default function Connections() {
     (settings.isLinkedInConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'LinkedIn')) ||
     (settings.isGoogleBusinessConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Google Business')) ||
     (settings.isTwitterConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X')) ||
-    (settings.isThreadsConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Threads'));
+    (settings.isThreadsConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Threads')) ||
+    (settings.isPinterestConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Pinterest'));
 
   const hasWhatsAppConnected = 
     settings.isWhatsAppConnected && (platformFilter === 'All platforms' || platformFilter === 'WhatsApp') && (statusFilter === 'All statuses' || statusFilter === 'Connected');
@@ -711,13 +724,11 @@ export default function Connections() {
         padding: '24px'
       }}>
         
-        {/* Check if ANY channel is connected based on active filters */}
-        {(hasSocialConnected || hasWhatsAppConnected) ? (
+        {/* ALWAYS SHOW THE GRID OF ACCOUNTS */}
+        <>
           <>
-          {hasSocialConnected && (
-            <>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#111827', marginBottom: '16px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>Social Account connection</h3>
-              <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'stretch' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#111827', marginBottom: '16px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>Channels & Platforms</h3>
+            <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'stretch' }}>
 
             {/* ---- INSTAGRAM CARD ---- */}
             {settings.isAccountConnected && (platformFilter === 'All platforms' || platformFilter === 'Instagram') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
@@ -971,6 +982,46 @@ export default function Connections() {
 
 
 
+            {/* ---- PINTEREST CARD ---- */}
+            {settings.isPinterestConnected && (platformFilter === 'All platforms' || platformFilter === 'Pinterest') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#fef2f2', border: '1px solid #fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <PinterestIcon size={22} color="#E60023" />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Pinterest</h4>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                  </div>
+                </div>
+                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Pinterest connected`, 'info')} />
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>@{settings.connectedPinterestName || 'pinterest_user'}</span>
+                <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
+              </div>
+              
+              <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); window.open(`https://pinterest.com/${settings.connectedPinterestName || ''}`, '_blank'); }}
+                  style={{ flex: 1, padding: '10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
+                  onMouseOut={(e) => e.currentTarget.style.background='#f8fafc'}
+                >
+                  Profile
+                </button>
+              
+                          <button onClick={() => setSelectedSettingsPlatform({ id: 'pinterest', name: 'Pinterest', username: settings.connectedPinterestName, isAutomationEnabled: true, color: '#E60023' })}
+                style={{ flex: 1, padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
+              ><Sliders size={14} /> Settings</button>
+              </div>
+            </div>
+            )}
+
             {/* ---- THREADS CARD ---- */}
             {settings.isThreadsConnected && (platformFilter === 'All platforms' || platformFilter === 'Threads') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
             <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
@@ -1011,80 +1062,58 @@ export default function Connections() {
             </div>
             )}
 
-            </div>
-            </>
-          )}
+            {/* ---- DISCONNECTED PLATFORMS ---- */}
+            {platformsList.map(plat => {
+               let isConnected = false;
+               if (plat.name === 'Instagram') isConnected = settings.isAccountConnected;
+               else if (plat.name === 'Facebook') isConnected = settings.isFacebookConnected;
+               else if (plat.name === 'YouTube') isConnected = settings.isYouTubeConnected;
+               else if (plat.name === 'LinkedIn Profile') return null; // skip
+               else if (plat.name === 'LinkedIn Business') isConnected = settings.isLinkedInConnected;
+               else if (plat.name === 'Twitter/X') isConnected = settings.isTwitterConnected;
+               else if (plat.name === 'Threads') isConnected = settings.isThreadsConnected;
+               else if (plat.name === 'Pinterest') isConnected = settings.isPinterestConnected;
+               else if (plat.name === 'Google Business') isConnected = settings.isGoogleBusinessConnected;
+               else if (plat.name === 'Telegram') isConnected = settings.isTelegramConnected;
+               else if (plat.name === 'WhatsApp') isConnected = settings.isWhatsAppConnected;
 
-            {/* ---- WHATSAPP CARD (Communication Channel) ---- */}
-            {hasWhatsAppConnected && (
-            <div style={{ marginTop: hasSocialConnected ? '32px' : '0px' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#111827', marginBottom: '16px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>Communication Channels</h3>
-              <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'stretch' }}>
-                <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#f0fdf4', border: '1px solid #dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <MessageSquare size={22} color="#22c55e" />
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>WhatsApp</h4>
-                        <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+               if (isConnected) return null;
+               if (statusFilter === 'Connected') return null;
+               if (platformFilter !== 'All platforms' && platformFilter !== plat.name) return null;
+
+               return (
+                  <div key={plat.name} className="connection-card" style={{ width: '100%', height: '100%', border: '1px dashed #d1d5db', borderRadius: '12px', padding: '20px', background: '#fafafa', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#f3f4f6', border: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <plat.icon size={22} color="#9ca3af" />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                          <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>{plat.name}</h4>
+                          <span style={{ display: 'inline-block', background: '#f3f4f6', color: '#6b7280', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>not connected</span>
+                        </div>
                       </div>
                     </div>
-                    <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`WhatsApp connected`, 'info')} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                       <span style={{ fontSize: '0.85rem', color: '#6b7280' }}>Click to connect and automate.</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
+                      <button 
+                        onClick={() => triggerConnect(plat.name)}
+                        style={{ flex: 1, padding: '10px', background: plat.enabled ? '#0f172a' : '#e5e7eb', border: 'none', borderRadius: '8px', color: 'white', fontSize: '0.85rem', fontWeight: '600', cursor: plat.enabled ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'background 0.2s' }}
+                        onMouseOver={(e) => { if(plat.enabled) e.currentTarget.style.background = '#334155'; }}
+                        onMouseOut={(e) => { if(plat.enabled) e.currentTarget.style.background = '#0f172a'; }}
+                      >
+                        <Plus size={14} /> Connect
+                      </button>
+                    </div>
                   </div>
-                  
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>@{settings.whatsappDisplayName || 'WhatsApp Business'}</span>
-                    <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
-                  </div>
-                  
-                  <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%', flexWrap: 'wrap' }}>
-                    <button onClick={() => setSelectedSettingsPlatform({ id: 'whatsapp', name: 'WhatsApp', username: settings.whatsappDisplayName, isAutomationEnabled: true, color: '#22c55e' })}
-                      style={{ flex: '1 1 100%', padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                      onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-                      onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
-                    >
-                      <Sliders size={14} /> Settings
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            )}
+               );
+            })}
 
+            </div>
           </>
-        ) : (
-          /* Empty Connections slot matching screenshot exactly */
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 24px', textAlign: 'center' }}>
-            <span style={{ color: '#4b5563', fontSize: '0.95rem', fontWeight: '500', marginBottom: '16px' }}>
-              No accounts connected yet.
-            </span>
-            
-            <button 
-              onClick={() => setShowConnectModal(true)}
-              style={{ 
-                background: 'white', 
-                color: '#374151', 
-                padding: '8px 16px', 
-                borderRadius: '8px', 
-                fontWeight: '600', 
-                fontSize: '0.88rem',
-                border: '1px solid #d1d5db', 
-                cursor: 'pointer', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-                transition: 'border 0.2s'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.borderColor = '#9ca3af'}
-onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
-            >
-              <Plus size={16} /> Connect an account
-            </button>
-          </div>
-        )}
+        </>
         </div>
       </div>
 
@@ -1702,6 +1731,14 @@ function ThreadsIcon({ size = 18, color = 'currentColor' }) {
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 2a10 10 0 1 0 10 10H12Z" />
       <path d="M12 12a4 4 0 1 0 4 4h-4Z" />
+    </svg>
+  );
+}
+
+function PinterestIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.951-7.252 4.182 0 7.437 2.981 7.437 6.933 0 4.156-2.62 7.508-6.262 7.508-1.22 0-2.368-.636-2.763-1.385l-.754 2.878c-.274 1.042-1.016 2.348-1.513 3.141 1.144.336 2.347.514 3.585.514 6.62 0 11.988-5.367 11.988-11.988 0-6.62-5.368-11.987-11.988-11.987z"/>
     </svg>
   );
 }

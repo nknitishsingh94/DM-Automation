@@ -329,6 +329,7 @@ function convertOutgoing(doc, tableName) {
       'linkedinAccessToken', 'isLinkedInConnected', 'linkedinAutomationEnabled', 'connectedLinkedInName', 'linkedinPages',
       'isGoogleBusinessConnected', 'connectedGoogleBusinessName', 'googleBusinessAccessToken', 'googleBusinessRefreshToken', 'googleBusinessAccountId', 'googleBusinessLocationId',
       'isThreadsConnected', 'threadsAccessToken', 'threadsPageId', 'connectedThreadsName',
+      'isPinterestConnected', 'pinterestAccessToken', 'pinterestRefreshToken', 'connectedPinterestName', 'connectedPinterestId',
       'aiFallbackMessage', 'aiName', 'aiTone', 'aiKnowledgeBase', 'aiTemperature'
     ];
     

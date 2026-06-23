@@ -74,10 +74,10 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
                 return btn.url ? {
                   type: "web_url",
                   url: safeUrl,
-                  title: btn.text
+                  title: (btn.text || "").substring(0, 20)
                 } : {
                   type: "postback",
-                  title: btn.text,
+                  title: (btn.text || "").substring(0, 20),
                   payload: btn.payload || btn.text
                 };
               })
@@ -98,7 +98,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
                 text: safeText || "Options:",
                 buttons: [{
                   type: "postback",
-                  title: effectiveButtonText,
+                  title: (effectiveButtonText || "").substring(0, 20),
                   payload: buttonPayload
                 }]
               }
@@ -120,7 +120,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
                 buttons: [{
                   type: "web_url",
                   url: safeUrl,
-                  title: effectiveButtonText
+                  title: (effectiveButtonText || "").substring(0, 20)
                 }]
               }
             }
@@ -134,7 +134,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
             text: safeText || "Options:",
             quick_replies: [{
               content_type: "text",
-              title: effectiveButtonText,
+              title: (effectiveButtonText || "").substring(0, 20),
               payload: effectiveButtonText
             }]
           }
@@ -161,10 +161,10 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
         if (payload.message?.attachment?.type === 'template' && postError.response?.data?.error?.code !== 190) {
           console.log(`⚠️ Template rejected by Meta. Falling back to plain text...`);
           let fallbackText = safeText;
-          if (mediaUrl) fallbackText += `\n\n🔗 ${mediaUrl.trim()}`;
+          if (mediaUrl) fallbackText += `\n\n👉 ${mediaUrl.trim()}`;
           
           if (effectiveButtons && effectiveButtons.length > 0) {
-            fallbackText += `\n\n🔗 Links:\n` + effectiveButtons.map(b => `- ${b.text}: ${b.url}`).join('\n');
+            fallbackText += `\n\n👉 Links:\n` + effectiveButtons.map(b => `- ${b.text}: ${b.url}`).join('\n');
           }
           
           const fallbackPayload = {

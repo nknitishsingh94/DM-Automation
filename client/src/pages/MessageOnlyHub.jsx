@@ -184,8 +184,16 @@ const MessageOnlyHub = () => {
       isConnected: settings && settings.isTwitterConnected,
       accountName: settings?.connectedTwitterName || 'Twitter User'
     },
-
-
+    {
+      id: 'pinterest',
+      name: 'Pinterest',
+      description: 'Schedule pins, reply to comments, and manage boards automatically.',
+      icon: <PinterestIcon size={40} color="#E60023" />,
+      color: '#E60023',
+      gradient: 'linear-gradient(135deg, #E60023, #bd081c)',
+      isConnected: settings && settings.isPinterestConnected,
+      accountName: settings?.connectedPinterestName || 'Pinterest User'
+    },
     {
       id: 'telegram',
       name: 'Telegram',
@@ -658,6 +666,14 @@ function ThreadsIcon({ size = 18, color = 'currentColor' }) {
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 2a10 10 0 1 0 10 10H12Z" />
       <path d="M12 12a4 4 0 1 0 4 4h-4Z" />
+    </svg>
+  );
+}
+
+function PinterestIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.951-7.252 4.182 0 7.437 2.981 7.437 6.933 0 4.156-2.62 7.508-6.262 7.508-1.22 0-2.368-.636-2.763-1.385l-.754 2.878c-.274 1.042-1.016 2.348-1.513 3.141 1.144.336 2.347.514 3.585.514 6.62 0 11.988-5.367 11.988-11.988 0-6.62-5.368-11.987-11.988-11.987z"/>
     </svg>
   );
 }

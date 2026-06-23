@@ -224,6 +224,14 @@ function ThreadsIcon({ size = 18, color = 'currentColor' }) {
   );
 }
 
+function PinterestIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.951-7.252 4.182 0 7.437 2.981 7.437 6.933 0 4.156-2.62 7.508-6.262 7.508-1.22 0-2.368-.636-2.763-1.385l-.754 2.878c-.274 1.042-1.016 2.348-1.513 3.141 1.144.336 2.347.514 3.585.514 6.62 0 11.988-5.367 11.988-11.988 0-6.62-5.368-11.987-11.988-11.987z"/>
+    </svg>
+  );
+}
+
 export default function Scheduling() {
   const { user } = useAuth();
   const { notify } = useNotification();
@@ -1119,6 +1127,7 @@ export default function Scheduling() {
       { id: 'youtube', label: 'YouTube', icon: <Film size={14} />, color: '#ff0000', handle: '', connected: false },
       { id: 'linkedin', label: 'LinkedIn', icon: <Globe size={14} />, color: '#0a66c2', handle: '', connected: false },
       { id: 'twitter', label: 'Twitter/X', icon: <X size={14} />, color: '#000000', handle: '', connected: false },
+      { id: 'pinterest', label: 'Pinterest', icon: <PinterestIcon size={14} color="#E60023" />, color: '#E60023', handle: '', connected: false },
       { id: 'google-business', label: 'Google Business', icon: <MapPin size={14} />, color: '#4285f4', handle: '', connected: false },
       { id: 'whatsapp', label: 'WhatsApp', icon: <MessageCircle size={14} />, color: '#25d366', handle: '', connected: false }
     ];
@@ -1149,7 +1158,10 @@ export default function Scheduling() {
         p.connected = true;
       }
       if (p.id === 'twitter' && (parsedSettings.isTwitterConnected || settings.isTwitterConnected)) {
-        p.connected = true;
+        p.connected = true; p.handle = parsedSettings.connectedTwitterName || settings.connectedTwitterName || '';
+      }
+      if (p.id === 'pinterest' && (parsedSettings.isPinterestConnected || settings.isPinterestConnected)) {
+        p.connected = true; p.handle = parsedSettings.connectedPinterestName || settings.connectedPinterestName || '';
       }
       if (p.id === 'google-business' && (parsedSettings.isGoogleBusinessConnected || settings.isGoogleBusinessConnected)) {
         p.connected = true; p.handle = settings.connectedGoogleBusinessName || parsedSettings.connectedGoogleBusinessName || '';
@@ -1176,6 +1188,7 @@ export default function Scheduling() {
       if (pLabel === 'youtube' && post.platform !== 'youtube') return false;
       if (pLabel === 'linkedin' && post.platform !== 'linkedin') return false;
       if (pLabel === 'twitter/x' && post.platform !== 'twitter') return false;
+      if (pLabel === 'pinterest' && post.platform !== 'pinterest') return false;
       if (pLabel === 'google business' && post.platform !== 'google-business') return false;
     }
 
@@ -2447,13 +2460,14 @@ export default function Scheduling() {
                     <div style={{
                       fontSize: '0.65rem', fontWeight: '800', 
                       color: 'white',
-                      background: post.platform === 'facebook' ? '#1877f2' : post.platform === 'threads' ? '#000000' : post.platform === 'youtube' ? '#ff0000' : post.platform === 'google-business' ? '#4285f4' : post.platform === 'linkedin' ? '#0a66c2' : post.platform === 'twitter' ? '#000000' : post.platform === 'whatsapp' ? '#25d366' : '#e1306c',
+                      background: post.platform === 'facebook' ? '#1877f2' : post.platform === 'threads' ? '#000000' : post.platform === 'pinterest' ? '#E60023' : post.platform === 'youtube' ? '#ff0000' : post.platform === 'google-business' ? '#4285f4' : post.platform === 'linkedin' ? '#0a66c2' : post.platform === 'twitter' ? '#000000' : post.platform === 'whatsapp' ? '#25d366' : '#e1306c',
                       padding: '4px 8px', borderRadius: '8px',
                       display: 'flex', alignItems: 'center', gap: '4px',
                       boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                     }}>
                       {post.platform === 'facebook' ? <Facebook size={10} fill="white" /> : 
                        post.platform === 'threads' ? <ThreadsIcon size={10} color="white" /> :
+                       post.platform === 'pinterest' ? <PinterestIcon size={10} color="white" /> :
                        post.platform === 'youtube' ? <Film size={10} color="white" /> :
                        post.platform === 'google-business' ? <MapPin size={10} color="white" /> :
                        post.platform === 'linkedin' ? <Globe size={10} color="white" /> :

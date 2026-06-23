@@ -581,6 +581,107 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
 });
 
 // ==========================================
+// PINTEREST OAUTH FLOW
+// ==========================================
+
+// Step 1: Redirect to Pinterest OAuth
+router.get('/pinterest', verifyToken, (req, res) => {
+  const clientId = process.env.PINTEREST_CLIENT_ID;
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+  if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+
+  const redirectUri = `${baseUrl}/api/oauth/pinterest/callback`;
+  const scope = 'boards:read,pins:read,boards:write,pins:write,user_accounts:read';
+  const state = req.user.userId + (req.workspaceId ? `_ws_${req.workspaceId}` : '');
+
+  if (!clientId) {
+    return res.status(500).json({ error: "Missing PINTEREST_CLIENT_ID in environment variables" });
+  }
+
+  const authUrl = `https://www.pinterest.com/oauth/?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}`;
+  res.redirect(authUrl);
+});
+
+// Step 2: Handle Pinterest OAuth Callback
+router.get('/pinterest/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  
+  if (error || !code) {
+    return res.redirect(`${frontendUrl}/connections?error=pinterest_oauth_failed`);
+  }
+
+  let workspaceId = '';
+  const wsMatch = state && state.match(/_ws_([a-f0-9-]{36})/i);
+  if (wsMatch) {
+    workspaceId = wsMatch[1];
+  }
+  let userId = state ? state.replace(/_ws_([a-f0-9-]{36})/i, '') : null;
+
+  try {
+    const clientId = process.env.PINTEREST_CLIENT_ID;
+    const clientSecret = process.env.PINTEREST_CLIENT_SECRET;
+    let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/oauth/pinterest/callback`;
+
+    // 1. Exchange code for token
+    const tokenUrl = 'https://api.pinterest.com/v5/oauth/token';
+    const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+    
+    const tokenRes = await axios.post(tokenUrl, new URLSearchParams({
+      grant_type: 'authorization_code',
+      code: code,
+      redirect_uri: redirectUri
+    }).toString(), {
+      headers: { 
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${authHeader}`
+      }
+    });
+
+    const accessToken = tokenRes.data.access_token;
+    const refreshToken = tokenRes.data.refresh_token;
+
+    // 2. Get User Profile info
+    const profileRes = await axios.get('https://api.pinterest.com/v5/user_account', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    
+    const pinterestId = profileRes.data.account_type; // Using account_type or custom if needed
+    const pinterestUsername = profileRes.data.username || 'Pinterest Account';
+
+    // Save to Database
+    const updateData = {
+      isPinterestConnected: true,
+      pinterestAccessToken: accessToken,
+      pinterestRefreshToken: refreshToken || null,
+      connectedPinterestId: profileRes.data.username,
+      connectedPinterestName: pinterestUsername
+    };
+
+    let settingsQuery = { userId };
+    if (workspaceId) {
+      settingsQuery.workspaceId = workspaceId;
+    }
+    
+    await Settings.findOneAndUpdate(
+      settingsQuery,
+      updateData,
+      { upsert: true, new: true }
+    );
+
+    res.redirect(`${frontendUrl}/connections?success=pinterest_connected`);
+  } catch (err) {
+    console.error("Pinterest Exchange Failed:", err.response?.data || err.message);
+    const errorMsg = err.response?.data?.message || err.message || 'unknown';
+    res.redirect(`${frontendUrl}/connections?error=pinterest_oauth_failed&reason=${encodeURIComponent(errorMsg)}`);
+  }
+});
+
+// ==========================================
 // THREADS OAUTH FLOW
 // ==========================================
 
