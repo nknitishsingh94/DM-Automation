@@ -846,6 +846,7 @@ export default function Scheduling() {
           threadCustomCaption: threadCustomCaption,
           threadPosts: currentThreadPosts,
           scheduledFor: tempPosts[0].scheduledFor,
+          status: 'Uploading',
           triggerKeyword: payloadBase.triggerKeyword,
           autoResponse: payloadBase.autoResponse,
           type: currentType,
