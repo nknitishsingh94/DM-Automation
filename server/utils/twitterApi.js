@@ -49,6 +49,8 @@ export async function publishTwitterContent(userId, post, workspaceId) {
       connectedPageName: JSON.stringify(virtualFields)
     }).eq('userId', userId);
 
+    const finalClient = refreshedClient;
+
     const uploadMedia = async (url) => {
       try {
         let mediaUrl = url;
