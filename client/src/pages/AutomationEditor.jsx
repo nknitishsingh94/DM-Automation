@@ -45,8 +45,7 @@ export default function AutomationEditor() {
 
   // State
   const [selectedPlatform, setSelectedPlatform] = useState(isUniversal ? 'all' : (channel || 'instagram'));
-  // For DM-only templates, no post selection needed (anyStory=true means skip post pick)
-  const isDmOnlyTemplate = template && !['comments', 'auto_dm_links', 'gen_leads_stories', 'sell_reel_comments', 'grow_followers_comments_flow', 'grow_followers_comments_quick', 'reply_story_mentions', 'send_offers_live', 'give_coupons_stories', 'auto_thank_positive', 'auto_thank_positive_comments', 'trigger_dms_live', 'auto_reply_comment_dm'].includes(template);
+  const isDmOnlyTemplate = template && !['comments', 'auto_dm_links', 'sell_reel_comments', 'grow_followers_comments_flow', 'grow_followers_comments_quick', 'send_offers_live', 'auto_thank_positive', 'auto_thank_positive_comments', 'trigger_dms_live', 'auto_reply_comment_dm'].includes(template);
   const [anyStory, setAnyStory] = useState(isUniversal ? true : isDmOnlyTemplate ? true : false);
   const [anyKeyword, setAnyKeyword] = useState(false);
   const [keywords, setKeywords] = useState([]);
