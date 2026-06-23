@@ -155,37 +155,38 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     }
 
     if (payload) {
-      await axios.post(url, payload);
+      try {
+        await axios.post(url, payload);
+      } catch (postError) {
+        console.error(`❌ SEND FAIL (${platform}):`, JSON.stringify(postError.response?.data || postError.message, null, 2));
+        
+        // FALLBACK: If a template message fails (e.g., invalid URL format, title too long), send as plain text
+        if (payload.message?.attachment?.type === 'template' && postError.response?.data?.error?.code !== 190) {
+          console.log(`⚠️ Template rejected by Meta. Falling back to plain text...`);
+          let fallbackText = safeText;
+          if (mediaUrl) fallbackText += `\n\n🔗 ${mediaUrl.trim()}`;
+          
+          const fallbackPayload = {
+            recipient,
+            messaging_type: "RESPONSE",
+            message: { text: fallbackText }
+          };
+          
+          try {
+            await axios.post(url, fallbackPayload);
+            return true;
+          } catch (fbErr) {
+            console.error(`❌ FALLBACK FAIL:`, JSON.stringify(fbErr.response?.data || fbErr.message, null, 2));
+          }
+        }
+        return null;
+      }
       return true;
     }
 
     return true;
   } catch (error) {
     console.error(`❌ SEND FAIL (${platform}):`, JSON.stringify(error.response?.data || error.message, null, 2));
-    
-    // FALLBACK: If a template message fails (e.g., invalid URL format, title too long), send as plain text
-    if (payload && payload.message?.attachment?.type === 'template' && error.response?.data?.error?.code !== 190) {
-      console.log(`⚠️ Template rejected by Meta. Falling back to plain text...`);
-      let fallbackText = safeText;
-      if (mediaUrl) fallbackText += `\n\n🔗 ${mediaUrl.trim()}`;
-      
-      const fallbackPayload = {
-        recipient: { id: recipientId },
-        messaging_type: "RESPONSE",
-        message: { text: fallbackText }
-      };
-      
-      try {
-        const fallbackUrl = `https://graph.facebook.com/v21.0/${pageId}/messages`;
-        const res = await axios.post(fallbackUrl, fallbackPayload, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        return res.data;
-      } catch (fbErr) {
-        console.error(`❌ FALLBACK FAIL:`, JSON.stringify(fbErr.response?.data || fbErr.message, null, 2));
-      }
-    }
-    
     return null;
   }
 };
