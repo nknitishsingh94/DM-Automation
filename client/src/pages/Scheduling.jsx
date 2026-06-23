@@ -1491,12 +1491,19 @@ export default function Scheduling() {
                 )}
 
                 {/* Threads Specific Block */}
-                {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('threads') && (
+                {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['threads', 'twitter'].includes(p)) && (
                   <div style={{ marginTop: '24px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
                     <div style={{ padding: '16px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div style={{ background: '#000', color: '#fff', borderRadius: '4px', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>@</div>
-                        <span style={{ fontWeight: '700', fontSize: '0.95rem', color: '#334155' }}>Threads</span>
+                        <span style={{ fontWeight: '700', fontSize: '0.95rem', color: '#334155' }}>
+                          {(() => {
+                            const platforms = newPost.platforms || (newPost.platform ? [newPost.platform] : []);
+                            if (platforms.includes('threads') && platforms.includes('twitter')) return 'Threads / X (Twitter)';
+                            if (platforms.includes('twitter')) return 'X (Twitter) Threads';
+                            return 'Threads';
+                          })()}
+                        </span>
                       </div>
                       <div 
                         onClick={() => setIsThreadMode(!isThreadMode)}
