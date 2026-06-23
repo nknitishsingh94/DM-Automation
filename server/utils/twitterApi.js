@@ -69,9 +69,15 @@ export async function publishTwitterContent(userId, post, workspaceId) {
       return null;
     };
 
-    let mainMediaId = null;
-    if (post.mediaUrl && post.mediaUrl !== 'null' && post.mediaUrl !== '{}') {
-      mainMediaId = await uploadMedia(post.mediaUrl);
+    let mediaIds = [];
+    if (post.type === 'carousel' && post.carouselItems && post.carouselItems.length > 0) {
+      for (const itemUrl of post.carouselItems.slice(0, 4)) {
+        const mId = await uploadMedia(itemUrl);
+        if (mId) mediaIds.push(mId);
+      }
+    } else if (post.mediaUrl && post.mediaUrl !== 'null' && post.mediaUrl !== '{}') {
+      const mId = await uploadMedia(post.mediaUrl);
+      if (mId) mediaIds.push(mId);
     }
 
     const isThread = post.threadPosts && Array.isArray(post.threadPosts) && post.threadPosts.length > 0;
@@ -80,7 +86,7 @@ export async function publishTwitterContent(userId, post, workspaceId) {
     if (isThread) {
       const tweets = [];
       const firstTweet = { text: post.caption || ' ' };
-      if (mainMediaId) firstTweet.media = { media_ids: [mainMediaId] };
+      if (mediaIds.length > 0) firstTweet.media = { media_ids: mediaIds };
       tweets.push(firstTweet);
 
       for (const tPost of post.threadPosts) {
@@ -96,8 +102,8 @@ export async function publishTwitterContent(userId, post, workspaceId) {
       tweetRes = { data: tweetRes[0].data }; // Use the first tweet for the returned URL
     } else {
       const tweetPayload = { text: post.caption || ' ' };
-      if (mainMediaId) {
-        tweetPayload.media = { media_ids: [mainMediaId] };
+      if (mediaIds.length > 0) {
+        tweetPayload.media = { media_ids: mediaIds };
       }
       tweetRes = await finalClient.v2.tweet(tweetPayload);
     }

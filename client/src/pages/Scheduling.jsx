@@ -621,7 +621,7 @@ export default function Scheduling() {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
-    const isMetaPlatform = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p));
+    const isMetaPlatform = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads', 'twitter'].includes(p));
     const isYoutubeOnly = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('youtube') && !isMetaPlatform;
 
     if (isYoutubeOnly) {
@@ -663,11 +663,21 @@ export default function Scheduling() {
       }
     }
 
-    const totalFiles = [...selectedFiles, ...files].slice(0, 10);
+    const selectedPlatforms = newPost.platforms || (newPost.platform ? [newPost.platform] : []);
+    const isTwitterIncluded = selectedPlatforms.includes('twitter');
+    let maxFiles = 10;
+    if (isTwitterIncluded && postType === 'carousel') {
+      maxFiles = 5;
+      if ([...selectedFiles, ...files].length > 5) {
+        notify("For X (Twitter), maximum 5 images are allowed in a Carousel.", "warning");
+      }
+    }
+
+    const totalFiles = [...selectedFiles, ...files].slice(0, maxFiles);
 
     const newPreviews = [...previews];
     files.forEach(file => {
-      if (newPreviews.length < 10) {
+      if (newPreviews.length < maxFiles) {
         newPreviews.push(URL.createObjectURL(file));
       }
     });
@@ -893,7 +903,7 @@ export default function Scheduling() {
 
         // Upload media once
         let mediaUrls = [];
-        const isMetaPlatform = activePlatforms.some(p => ['instagram', 'facebook', 'threads'].includes(p.id));
+        const isMetaPlatform = activePlatforms.some(p => ['instagram', 'facebook', 'threads', 'twitter'].includes(p.id));
         const isYoutubeOnly = activePlatforms.some(p => p.id === 'youtube') && !isMetaPlatform;
 
 
@@ -1249,7 +1259,7 @@ export default function Scheduling() {
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>content</label>
                 
-                    {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p)) && (
+                    {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads', 'twitter'].includes(p)) && (
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
                         <div
                           onClick={() => {
@@ -1437,12 +1447,12 @@ export default function Scheduling() {
                       ref={fileInputRef} 
                       style={{ display: 'none' }} 
                       multiple={(() => {
-                        const isMeta = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p));
+                        const isMeta = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads', 'twitter'].includes(p));
                         if (isMeta) return postType === 'carousel';
                         return true;
                       })()}
                       accept={(() => {
-                        const isMeta = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads'].includes(p));
+                        const isMeta = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads', 'twitter'].includes(p));
                         if (isMeta) {
                           if (postType === 'video') return 'video/*';
                           return 'image/*';
