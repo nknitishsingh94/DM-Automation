@@ -205,7 +205,7 @@ router.post('/webhook', async (req, res) => {
                 if (match.isAI) {
                    console.log(`🤖 Postback has AI response enabled. Generating dynamic response...`);
                    try {
-                     const { generateAIResponse } = await import('./utils/aiHandler.js');
+                     const { generateAIResponse } = await import('../utils/aiHandler.js');
                      // Note: We use a descriptive prompt for the AI since there's no user text for a button click
                      const generated = await generateAIResponse(match.userId, `User just clicked the button to get the link for campaign "${match.trigger}". Give a very warm, short, friendly one-sentence reply handing them the link.`);
                      if (generated) {
@@ -301,7 +301,7 @@ router.post('/webhook', async (req, res) => {
                 let finalResponse = match.response;
                 if (match.isAI) {
                    try {
-                     const { generateAIResponse } = await import('./utils/aiHandler.js');
+                     const { generateAIResponse } = await import('../utils/aiHandler.js');
                      const generated = await generateAIResponse(match.userId, `User just confirmed they want the link. Warmly deliver the content for "${match.trigger}".`);
                      if (generated) {
                        if (finalResponse === "[AI Agent will generate a custom neural reply here]" || !finalResponse.trim()) {
@@ -435,6 +435,18 @@ router.post('/webhook', async (req, res) => {
                   const sharedUids = getSharedUserIdsSync(targetUserId, targetWorkspaceId);
                   const contact = await Contact.findOne({ userId: { $in: sharedUids }, chatId: senderId, workspaceId: targetWorkspaceId });
                   const contactUserId = contact ? contact.userId : targetUserId;
+
+                  // Deduplication check via database to handle Vercel Serverless race conditions
+                  await new Promise(r => setTimeout(r, Math.random() * 1000));
+                  const recentDuplicate = await Message.findOne({
+                    chatId: senderId,
+                    text: `[Comment] ${text}`,
+                    timestamp: { $gte: new Date(Date.now() - 10000) }
+                  });
+                  if (recentDuplicate) {
+                    console.log(`🔕 Duplicate comment detected via DB! Skipping processing for ${senderId}.`);
+                    return;
+                  }
 
                   const incoming = new Message({
                     userId: contactUserId, chatId: senderId, sender: 'user', text: `[Comment] ${text}`,
