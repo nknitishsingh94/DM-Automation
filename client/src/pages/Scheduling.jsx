@@ -753,7 +753,8 @@ export default function Scheduling() {
     const currentFiles = [...selectedFiles];
     const currentPreviews = [...previews];
     const currentType = postType;
-    const currentThreadPosts = threadPosts.map(p => ({
+    const currentThreadPostsWithFiles = [...threadPosts];
+      const currentThreadPosts = threadPosts.map(p => ({
       caption: p.caption,
       mediaUrl: p.preview || ''
     }));
@@ -939,7 +940,7 @@ export default function Scheduling() {
               // Only upload if it's a blob url
               if (tPost.mediaUrl && tPost.mediaUrl.startsWith('blob:')) {
                 // Find the actual file from the original threadPosts state
-                const originalThreadPost = threadPosts[index];
+                const originalThreadPost = currentThreadPostsWithFiles[index];
                 if (originalThreadPost && originalThreadPost.file) {
                   const file = await compressImage(originalThreadPost.file);
                   const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-thread-${index}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
