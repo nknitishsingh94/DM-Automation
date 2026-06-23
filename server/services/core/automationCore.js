@@ -54,15 +54,9 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     console.log(`📡 [DESKTOP FALLBACK] User ${chatId} has pending campaign ${contact.pendingCampaignId}. Checking follow status...`);
     
     const pendingId = contact.pendingCampaignId;
-    const match = await Campaign.findById(pendingId);
-    
     if (match && match.status === 'Active') {
-      let isFollowing = false;
-      if (platform === 'facebook') {
-        isFollowing = true; // Trust-based bypass for Facebook since we can't verify
-      } else {
-        isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
-      }
+      // Honor system for Facebook: We can't verify follow status via API, so we trust them if they clicked the button.
+      let isFollowing = platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings);
       
       const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
       
@@ -151,12 +145,8 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     if (incomingText === 'yes' || incomingText.includes("i've followed") || incomingText.includes("ive followed")) {
       const match = await Campaign.findById(contact.pendingCampaignId);
       if (match && match.status === 'Active') {
-        let isFollowing = false;
-        if (platform === 'facebook') {
-          isFollowing = true;
-        } else {
-          isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
-        }
+        // Honor system for Facebook
+        let isFollowing = platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings);
 
         if (isFollowing) {
           console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied correctly to Follow Gate.`);
@@ -265,8 +255,8 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     let activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
 
     if (match.requireFollow) {
-      console.log(`🛡️ UNIVERSAL GATING: Checking follower status for ${chatId}...`);
-      const isFollowing = platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings);
+      console.log(`🚀 UNIVERSAL GATING: Checking follower status for ${chatId}...`);
+      const isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
 
       if (!isFollowing) {
         const followText = match.unfollowedResponse || "Hey! Please follow our account first to get the link! 👇";
