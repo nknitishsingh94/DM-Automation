@@ -2420,6 +2420,9 @@ async function runSchedulingWorker() {
         } else if (post.platform === 'whatsapp') {
           const { publishWhatsAppContent } = await import('./services/platforms/whatsapp.js');
           publishResult = await publishWhatsAppContent(post.userId, post, post.workspaceId);
+        } else if (post.platform === 'twitter') {
+          const { publishTwitterContent } = await import('./utils/twitterApi.js');
+          publishResult = await publishTwitterContent(post.userId, post, post.workspaceId);
         } else {
           // Default to instagram
           const { publishInstagramContent } = await import('./utils/metaApi.js');
