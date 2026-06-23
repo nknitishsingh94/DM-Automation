@@ -449,10 +449,6 @@ function Sidebar({ isMobileOpen, onClose }) {
 
         <div className="sidebar-middle-scroll">
           <nav className="nav-links">
-            <NavLink to="/campaigns" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Zap size={18} />
-              <span>Active Automations</span>
-            </NavLink>
             <NavLink to="/connections" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Link2 size={18} />
               <span>Connections</span>
