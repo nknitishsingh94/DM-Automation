@@ -93,12 +93,14 @@ router.post('/api/webhook', async (req, res) => {
           delete messaging.message; // prevent text handler from double processing it
         }
 
-        // 1.1 Handle Messages (Text/Story)
-        if (messaging.message?.text || messaging.message?.story || messaging.message?.reply_to?.story) {
-          const isStoryMention = !!(messaging.message?.story || messaging.message?.reply_to?.story);
+        if (messaging.message?.text || messaging.message?.story || messaging.message?.reply_to?.story || messaging.message?.attachments) {
+          // Meta sends story mentions either in 'story' object or as an attachment of type 'story_mention'
+          const hasStoryMentionAttachment = messaging.message?.attachments?.some(a => a.type === 'story_mention');
+          const isStoryMention = !!(messaging.message?.story || hasStoryMentionAttachment);
+          
           const messageText = messaging.message?.text || (isStoryMention ? "[Story Mention]" : "");
 
-          console.log(`📬 INCOMING DM: ${isStoryMention ? 'Story' : 'DM'} | Sender: ${senderId} | Msg: ${messageText}`);
+          console.log(`📬 INCOMING DM: ${isStoryMention ? 'Story Mention' : (messaging.message?.reply_to?.story ? 'Story Reply (DM)' : 'DM')} | Sender: ${senderId} | Msg: ${messageText}`);
 
           const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
           let allMatchingSettings = await Settings.find({
