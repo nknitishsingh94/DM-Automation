@@ -3,7 +3,6 @@ import axios from 'axios';
 import crypto from 'crypto';
 import Settings from '../models/Settings.js';
 import User from '../models/User.js';
-import OAuthSession from '../models/OAuthSession.js';
 import verifyToken from '../middleware/auth.js';
 import Campaign from '../models/Campaign.js';
 import ScheduledPost from '../models/ScheduledPost.js';
@@ -1302,18 +1301,22 @@ router.get('/twitter', verifyToken, async (req, res) => {
   const client = new TwitterApi({ appKey, appSecret });
   
   try {
-    const authLink = await client.generateAuthLink(redirectUri, { linkMode: 'authorize' });
+    // Pass custom state via query params to the callback URL (Twitter OAuth 1.0a allows query params in callback URL)
+    const customCallbackUri = `${redirectUri}?userId=${req.user.userId}&workspaceId=${req.workspaceId || ''}&onboarding=${req.query.onboarding === 'true'}`;
+    const finalAuthLink = await client.generateAuthLink(customCallbackUri, { linkMode: 'authorize' });
+
+    // We store oauthTokenSecret temporarily in the user's settings (in twitterRefreshToken column)
+    const connectionsQuery = { userId: req.user.userId };
+    if (req.workspaceId) {
+      connectionsQuery.workspaceId = req.workspaceId;
+    }
+    await Settings.findOneAndUpdate(
+      connectionsQuery,
+      { twitterRefreshToken: finalAuthLink.oauth_token_secret },
+      { upsert: true, new: true }
+    );
     
-    // Save oauth_token_secret securely
-    await OAuthSession.create({
-      oauthToken: authLink.oauth_token,
-      oauthTokenSecret: authLink.oauth_token_secret,
-      userId: req.user.userId,
-      workspaceId: req.workspaceId || '',
-      isFromOnboarding: req.query.onboarding === 'true'
-    });
-    
-    res.redirect(authLink.url);
+    res.redirect(finalAuthLink.url);
   } catch (err) {
     console.error("Twitter Auth Link Gen Error:", err);
     return res.status(500).json({ error: "Failed to generate Twitter Auth Link. Ensure your API keys are correct and OAuth 1.0a is enabled in the Developer Portal." });
@@ -1322,20 +1325,25 @@ router.get('/twitter', verifyToken, async (req, res) => {
 
 // Step 2: Handle Twitter OAuth 1.0a Callback
 router.get('/twitter/callback', async (req, res) => {
-  const { oauth_token, oauth_verifier, denied } = req.query;
+  const { oauth_token, oauth_verifier, denied, userId, workspaceId, onboarding } = req.query;
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
-  if (denied || !oauth_token || !oauth_verifier) {
+  if (denied || !oauth_token || !oauth_verifier || !userId) {
     return res.redirect(`${frontendUrl}/connections?oauth_error=declined`);
   }
 
   try {
-    const session = await OAuthSession.findOne({ oauthToken: oauth_token });
-    if (!session) {
+    // Find user's settings to retrieve the oauthTokenSecret
+    const connectionsQuery = { userId: userId };
+    if (workspaceId) {
+      connectionsQuery.workspaceId = workspaceId;
+    }
+    const settings = await Settings.findOne(connectionsQuery);
+    if (!settings || !settings.twitterRefreshToken) {
       throw new Error("Session expired or invalid");
     }
 
-    const { userId, workspaceId, isFromOnboarding, oauthTokenSecret } = session;
+    const oauthTokenSecret = settings.twitterRefreshToken;
 
     const appKey = process.env.TWITTER_API_KEY;
     const appSecret = process.env.TWITTER_API_SECRET;
@@ -1362,16 +1370,11 @@ router.get('/twitter/callback', async (req, res) => {
       console.warn("Could not fetch Twitter profile name:", profileErr.message);
     }
 
-    const connectionsQuery = { userId: userId };
-    if (workspaceId) {
-      connectionsQuery.workspaceId = workspaceId;
-    }
-
     const updateData = {};
     updateData.isTwitterConnected = true;
     updateData.connectedTwitterName = profileName;
     updateData.twitterAccessToken = accessToken;
-    updateData.twitterRefreshToken = accessSecret; // We store accessSecret in the existing column to avoid schema issues
+    updateData.twitterRefreshToken = accessSecret; // We store permanent accessSecret here
     updateData.connectedTwitterId = profileId;
 
     await Settings.findOneAndUpdate(
@@ -1380,12 +1383,9 @@ router.get('/twitter/callback', async (req, res) => {
       { upsert: true, new: true }
     );
 
-    // Cleanup session
-    await OAuthSession.deleteOne({ _id: session._id });
-
     console.log(`✅ Twitter OAuth 1.0a Success for user ${userId}. Profile: ${profileName}`);
     
-    if (isFromOnboarding) {
+    if (onboarding === 'true') {
       res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=twitter`);
     } else {
       res.redirect(`${frontendUrl}/connections?oauth_success=true&platform=twitter`);
