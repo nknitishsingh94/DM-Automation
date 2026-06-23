@@ -249,11 +249,9 @@ const webhookLimiter = rateLimit({
 });
 
 app.get('/', (req, res) => { res.status(200).json({ message: '🚀 Instagram DM Automation AI API is running!', status: 'Healthy' }); });
-app.use('/api', webhookRoutes);
 app.use('/api/auth', authLimiter);
 app.use('/api', apiLimiter);
 app.use('/api/webhook', webhookLimiter);
-app.use('/api/support', supportRoutes);
 
 app.use(compression());
 app.use(morgan('combined'));
@@ -292,6 +290,8 @@ app.use((req, res, next) => {
 
 app.use(hpp());
 
+app.use('/api', webhookRoutes);
+app.use('/api/support', supportRoutes);
 app.use('/api/youtube', youtubeRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/analytics', analyticsRoutes);
