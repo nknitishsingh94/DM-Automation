@@ -110,10 +110,12 @@ router.post('/webhook', async (req, res) => {
           // Meta sends story mentions either in 'story' object or as an attachment of type 'story_mention'
           const hasStoryMentionAttachment = messaging.message?.attachments?.some(a => a.type === 'story_mention');
           const isStoryMention = !!(messaging.message?.story || hasStoryMentionAttachment);
+          const isStoryReply = !!messaging.message?.reply_to?.story;
+          const isStoryEvent = isStoryMention || isStoryReply;
           
           const messageText = messaging.message?.text || (isStoryMention ? "[Story Mention]" : "");
 
-          console.log(`📬 INCOMING DM: ${isStoryMention ? 'Story Mention' : (messaging.message?.reply_to?.story ? 'Story Reply (DM)' : 'DM')} | Sender: ${senderId} | Msg: ${messageText}`);
+          console.log(`🚀 INCOMING DM: ${isStoryMention ? 'Story Mention' : (isStoryReply ? 'Story Reply (DM)' : 'DM')} | Sender: ${senderId} | Msg: ${messageText}`);
 
           const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
           let allMatchingSettings = await Settings.find({
@@ -139,9 +141,9 @@ router.post('/webhook', async (req, res) => {
           const targetUserId = userSettings?.userId;
           const targetWorkspaceId = userSettings?.workspaceId;
           if (targetUserId) {
-            console.log(`✅ [ID MATCH]: Processing message for User ${targetUserId} in workspace ${targetWorkspaceId}`);
+            console.log(`⚡ [ID MATCH]: Processing message for User ${targetUserId} in workspace ${targetWorkspaceId}`);
             // 1. Send Reply FIRST (Nitro Speed)
-            const replyPromise = processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryMention ? "story_mention" : "dm", null, null, null, targetWorkspaceId)
+            const replyPromise = processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryEvent ? "story_mention" : "dm", null, null, null, targetWorkspaceId)
               .catch(err => console.error("🔥 Nitro Reply error:", err));
 
             // 2. Log in background
