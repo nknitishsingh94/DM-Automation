@@ -582,6 +582,707 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
 });
 
 // ==========================================
+// PINTEREST OAUTH FLOW
+// ==========================================
+
+// Step 1: Redirect to Pinterest OAuth
+router.get('/pinterest', verifyToken, (req, res) => {
+  const clientId = process.env.PINTEREST_CLIENT_ID;
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+  if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+
+  const redirectUri = `${baseUrl}/api/oauth/pinterest/callback`;
+  const scope = 'boards:read,pins:read,boards:write,pins:write,user_accounts:read';
+  const state = req.user.userId + (req.workspaceId ? `_ws_${req.workspaceId}` : '');
+
+  if (!clientId) {
+    return res.status(500).json({ error: "Missing PINTEREST_CLIENT_ID in environment variables" });
+  }
+
+  const authUrl = `https://www.pinterest.com/oauth/?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&state=${state}`;
+  res.redirect(authUrl);
+});
+
+// Step 2: Handle Pinterest OAuth Callback
+router.get('/pinterest/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  
+  if (error || !code) {
+    return res.redirect(`${frontendUrl}/connections?error=pinterest_oauth_failed`);
+  }
+
+  let workspaceId = '';
+  const wsMatch = state && state.match(/_ws_([a-f0-9-]{36})/i);
+  if (wsMatch) {
+    workspaceId = wsMatch[1];
+  }
+  let userId = state ? state.replace(/_ws_([a-f0-9-]{36})/i, '') : null;
+
+  try {
+    const clientId = process.env.PINTEREST_CLIENT_ID;
+    const clientSecret = process.env.PINTEREST_CLIENT_SECRET;
+    let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/oauth/pinterest/callback`;
+
+    // 1. Exchange code for token
+    const tokenUrl = 'https://api.pinterest.com/v5/oauth/token';
+    const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+    
+    const tokenRes = await axios.post(tokenUrl, new URLSearchParams({
+      grant_type: 'authorization_code',
+      code: code,
+      redirect_uri: redirectUri
+    }).toString(), {
+      headers: { 
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${authHeader}`
+      }
+    });
+
+    const accessToken = tokenRes.data.access_token;
+    const refreshToken = tokenRes.data.refresh_token;
+
+    // 2. Get User Profile info
+    const profileRes = await axios.get('https://api.pinterest.com/v5/user_account', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    
+    const pinterestId = profileRes.data.account_type; // Using account_type or custom if needed
+    const pinterestUsername = profileRes.data.username || 'Pinterest Account';
+
+    // Save to Database
+    const updateData = {
+      isPinterestConnected: true,
+      pinterestAccessToken: accessToken,
+      pinterestRefreshToken: refreshToken || null,
+      connectedPinterestId: profileRes.data.username,
+      connectedPinterestName: pinterestUsername
+    };
+
+    let settingsQuery = { userId };
+    if (workspaceId) {
+      settingsQuery.workspaceId = workspaceId;
+    }
+    
+    await Settings.findOneAndUpdate(
+      settingsQuery,
+      updateData,
+      { upsert: true, new: true }
+    );
+
+    res.redirect(`${frontendUrl}/connections?success=pinterest_connected`);
+  } catch (err) {
+    console.error("Pinterest Exchange Failed:", err.response?.data || err.message);
+    const errorMsg = err.response?.data?.message || err.message || 'unknown';
+    res.redirect(`${frontendUrl}/connections?error=pinterest_oauth_failed&reason=${encodeURIComponent(errorMsg)}`);
+  }
+});
+
+// ==========================================
+// THREADS OAUTH FLOW
+// ==========================================
+
+// Step 1: Redirect to Threads OAuth
+router.get('/threads', verifyToken, (req, res) => {
+  const appId = process.env.THREADS_APP_ID || process.env.META_APP_ID;
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+
+  if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+
+  const redirectUri = encodeURIComponent(`${baseUrl}/api/oauth/threads/callback`);
+  const scope = 'threads_basic,threads_content_publish';
+  const state = req.user.userId + 
+                (req.workspaceId ? `_ws_${req.workspaceId}` : '');
+
+  if (!appId) {
+    return res.status(500).json({ error: "Missing META_APP_ID or THREADS_APP_ID in environment variables" });
+  }
+
+  const authUrl = `https://threads.net/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
+  res.redirect(authUrl);
+});
+
+// Step 2: Handle Threads OAuth Callback
+router.get('/threads/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  
+  if (error || !code) {
+    return res.redirect(`${frontendUrl}/connections?error=threads_oauth_failed`);
+  }
+
+  let workspaceId = '';
+  const wsMatch = state && state.match(/_ws_([a-f0-9-]{36})/i);
+  if (wsMatch) {
+    workspaceId = wsMatch[1];
+  }
+  let userId = state ? state.replace(/_ws_([a-f0-9-]{36})/i, '') : null;
+
+  try {
+    const appId = process.env.THREADS_APP_ID || process.env.META_APP_ID;
+    const appSecret = process.env.THREADS_APP_SECRET || process.env.META_APP_SECRET;
+    let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/oauth/threads/callback`;
+
+    // 1. Exchange code for short-lived token
+    const tokenRes = await axios.post('https://graph.threads.net/oauth/access_token', new URLSearchParams({
+      client_id: appId,
+      client_secret: appSecret,
+      grant_type: 'authorization_code',
+      redirect_uri: redirectUri,
+      code: code
+    }).toString(), {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+
+    const shortLivedToken = tokenRes.data.access_token;
+
+    // 2. Exchange short-lived token for long-lived token
+    const longTokenRes = await axios.get('https://graph.threads.net/access_token', {
+      params: {
+        grant_type: 'th_exchange_token',
+        client_secret: appSecret,
+        access_token: shortLivedToken
+      }
+    });
+
+    const longLivedToken = longTokenRes.data.access_token;
+    
+    // 3. Get User Profile info to get threadsPageId and Username
+    const profileRes = await axios.get('https://graph.threads.net/v1.0/me', {
+      params: {
+        fields: 'id,username,name',
+        access_token: longLivedToken
+      }
+    });
+    
+    const threadsPageId = profileRes.data.id;
+    const threadsUsername = profileRes.data.username || profileRes.data.name;
+
+    // Save to Database
+    const updateData = {
+      isThreadsConnected: true,
+      threadsAccessToken: longLivedToken,
+      threadsPageId: threadsPageId,
+      connectedThreadsName: threadsUsername || 'Threads Account'
+    };
+
+    let settingsQuery = { userId };
+    if (workspaceId) {
+      settingsQuery.workspaceId = workspaceId;
+    }
+    
+    await Settings.findOneAndUpdate(
+      settingsQuery,
+      updateData,
+      { upsert: true, new: true }
+    );
+
+    res.redirect(`${frontendUrl}/connections?success=threads_connected`);
+  } catch (err) {
+    console.error("Threads Exchange Failed:", err.response?.data || err.message);
+    const errorMsg = err.response?.data?.error?.message || err.response?.data?.error_message || err.message || 'unknown';
+    res.redirect(`${frontendUrl}/connections?error=threads_oauth_failed&reason=${encodeURIComponent(errorMsg)}`);
+  }
+});
+// YOUTUBE OAUTH FLOW
+// ==========================================
+
+// Step 1: Redirect to Google OAuth
+router.get('/youtube', verifyToken, (req, res) => {
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+  if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+  const redirectUri = `${baseUrl}/api/oauth/youtube/callback`;
+  
+  const oauth2Client = getGoogleClient(redirectUri);
+
+  const state = req.user.userId + 
+                (req.query.onboarding === 'true' ? '_onboarding' : '') + 
+                (req.workspaceId ? `_ws_${req.workspaceId}` : '');
+
+  const authUrl = oauth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: [
+      'https://www.googleapis.com/auth/youtube.upload',
+      'https://www.googleapis.com/auth/youtube.readonly'
+    ],
+    state: state,
+    prompt: 'consent' // Force to get refresh token
+  });
+
+  res.redirect(authUrl);
+});
+
+// Step 2: Handle Google OAuth Callback
+router.get('/youtube/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+  const isFromOnboarding = state && state.includes('_onboarding');
+  
+  let workspaceId = '';
+  const wsMatch = state && state.match(/_ws_([a-f0-9-]{36})/i);
+  if (wsMatch) {
+    workspaceId = wsMatch[1];
+  }
+
+  let userId = state
+    ? state
+        .replace('_onboarding', '')
+        .replace(new RegExp(`_ws_${workspaceId}`, 'i'), '')
+    : '';
+
+  if (error) {
+    console.error("YouTube OAuth Error:", error);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=declined`);
+  }
+
+  if (!code || !state) {
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=missing_parameters`);
+  }
+
+  try {
+    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5001');
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/oauth/youtube/callback`;
+
+    const oauth2Client = getGoogleClient(redirectUri);
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+
+    // Fetch YouTube Channel Name
+    let channelName = 'YouTube Channel';
+    try {
+      const channelRes = await axios.get('https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true', {
+        headers: { Authorization: `Bearer ${tokens.access_token}` }
+      });
+      if (channelRes.data && channelRes.data.items && channelRes.data.items.length > 0) {
+        channelName = channelRes.data.items[0].snippet.customUrl || channelRes.data.items[0].snippet.title;
+      }
+    } catch (ytErr) {
+      console.warn("Could not fetch YouTube channel name:", ytErr.message);
+    }
+
+    // Save tokens in the database metadata field since strict schema might drop new fields
+    // Actually, we can just save it. Supabase schema accepts it if it exists, or we use metadata.
+    const connectionsQuery = { userId: userId };
+    if (workspaceId) {
+      connectionsQuery.workspaceId = workspaceId;
+    }
+
+    const updateData = {};
+    updateData.isYouTubeConnected = true;
+    updateData.connectedYouTubeName = channelName;
+    updateData.youtubeAccessToken = tokens.access_token;
+    updateData.youtubeRefreshToken = tokens.refresh_token || null;
+
+    await Settings.findOneAndUpdate(
+      connectionsQuery,
+      updateData,
+      { upsert: true, new: true }
+    );
+
+    console.log(`✅ YouTube OAuth Success for user ${userId}. Channel: ${channelName}`);
+    
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=youtube`);
+    } else {
+      res.redirect(`${frontendUrl}/connections?oauth_success=true&platform=youtube`);
+    }
+
+  } catch (err) {
+    console.error("YouTube Exchange Failed:", err.message);
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
+    } else {
+      res.redirect(`${frontendUrl}/connections?oauth_error=exchange_failed`);
+    }
+  }
+});
+// ==========================================
+// LINKEDIN OAUTH FLOW
+// ==========================================
+
+// Step 1: Redirect to LinkedIn OAuth
+router.get('/linkedin', verifyToken, (req, res) => {
+  const clientId = process.env.LINKEDIN_CLIENT_ID;
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+  if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+  const redirectUri = `${baseUrl}/api/oauth/linkedin/callback`;
+  
+  const isBusiness = req.query.type === 'business';
+  const state = req.user.userId + 
+                (req.query.onboarding === 'true' ? '_onboarding' : '') + 
+                (req.workspaceId ? `_ws_${req.workspaceId}` : '') +
+                (isBusiness ? '_type_business' : '_type_personal');
+
+  if (!clientId) {
+    return res.status(500).json({ error: "Missing LINKEDIN_CLIENT_ID in environment variables" });
+  }
+
+  const scope = isBusiness 
+    ? 'openid%20profile%20w_member_social%20w_organization_social%20r_organization_admin%20email' 
+    : 'openid%20profile%20w_member_social%20email';
+
+  const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
+  res.redirect(authUrl);
+});
+
+// Step 2: Handle LinkedIn OAuth Callback
+router.get('/linkedin/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+  const isFromOnboarding = state && state.includes('_onboarding');
+  
+  let workspaceId = '';
+  const wsMatch = state && state.match(/_ws_([a-f0-9-]{36})/i);
+  if (wsMatch) {
+    workspaceId = wsMatch[1];
+  }
+
+  let userId = state
+    ? state
+        .replace('_onboarding', '')
+        .replace('_type_business', '')
+        .replace('_type_personal', '')
+        .replace(new RegExp(`_ws_${workspaceId}`, 'i'), '')
+    : '';
+
+  if (error) {
+    console.error("LinkedIn OAuth Error:", error);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=declined`);
+  }
+
+  if (!code || !state) {
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=missing_parameters`);
+  }
+
+  try {
+    const clientId = process.env.LINKEDIN_CLIENT_ID;
+    const clientSecret = process.env.LINKEDIN_CLIENT_SECRET;
+    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5001');
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/oauth/linkedin/callback`;
+
+    // 1. Exchange code for access token
+    const tokenRes = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', null, {
+      params: {
+        grant_type: 'authorization_code',
+        code: code,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri
+      },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+
+    const accessToken = tokenRes.data.access_token;
+    
+    // 2. Fetch User Profile
+    let profileName = 'LinkedIn Member';
+    let personUrn = '';
+    try {
+      const profileRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      if (profileRes.data) {
+        if (profileRes.data.sub) {
+          personUrn = `urn:li:person:${profileRes.data.sub}`;
+        }
+        if (profileRes.data.name) {
+          profileName = profileRes.data.name;
+        } else if (profileRes.data.given_name) {
+          profileName = `${profileRes.data.given_name} ${profileRes.data.family_name || ''}`.trim();
+        }
+      }
+    } catch (profileErr) {
+      console.warn("Could not fetch LinkedIn profile name:", profileErr.response?.data || profileErr.message);
+    }
+
+    // Fetch Organization Pages (targets) user administers (only if it is a Business connection)
+    let pages = [];
+    if (personUrn) {
+      pages.push({
+        urn: personUrn,
+        name: `${profileName} (Personal)`,
+        type: 'profile'
+      });
+    }
+
+    const isBusiness = state && state.includes('_type_business');
+    if (isBusiness) {
+      try {
+        console.log("📡 [LinkedIn] Fetching organization access list using /organizationAcls...");
+        const aclRes = await axios.get('https://api.linkedin.com/v2/organizationAcls', {
+          params: {
+            q: 'roleAssignee',
+            role: 'ADMINISTRATOR',
+            projection: '(elements*(organization~(localizedName)))'
+          },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'X-Restli-Protocol-Version': '2.0.0'
+          }
+        });
+        if (aclRes.data && aclRes.data.elements) {
+          for (const elem of aclRes.data.elements) {
+            const targetUrn = elem.organization;
+            const targetDetails = elem['organization~'];
+            if (targetUrn && targetDetails) {
+              pages.push({
+                urn: targetUrn,
+                name: targetDetails.localizedName || targetUrn,
+                type: 'page'
+              });
+            }
+          }
+        }
+      } catch (aclErr) {
+        console.warn("⚠️ LinkedIn /organizationAcls failed, trying legacy /organizationalEntityAcls...", aclErr.response?.data || aclErr.message);
+        try {
+          const legacyAclRes = await axios.get('https://api.linkedin.com/v2/organizationalEntityAcls', {
+            params: {
+              q: 'roleAssignee',
+              role: 'ADMINISTRATOR',
+              projection: '(elements*(organizationalTarget~(localizedName)))'
+            },
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'X-Restli-Protocol-Version': '2.0.0'
+            }
+          });
+          if (legacyAclRes.data && legacyAclRes.data.elements) {
+            for (const elem of legacyAclRes.data.elements) {
+              const targetUrn = elem.organizationalTarget;
+              const targetDetails = elem['organizationalTarget~'];
+              if (targetUrn && targetDetails) {
+                pages.push({
+                  urn: targetUrn,
+                  name: targetDetails.localizedName || targetUrn,
+                  type: 'page'
+                });
+              }
+            }
+          }
+        } catch (legacyAclErr) {
+          console.error("❌ Both LinkedIn organization endpoints failed:", legacyAclErr.response?.data || legacyAclErr.message);
+        }
+      }
+    }
+
+    // 3. Save to DB
+    const connectionsQuery = { userId: userId };
+    if (workspaceId) {
+      connectionsQuery.workspaceId = workspaceId;
+    }
+
+    const updateData = {};
+    updateData.isLinkedInConnected = true;
+    updateData.connectedLinkedInName = profileName;
+    updateData.linkedinAccessToken = accessToken;
+    updateData.linkedinPages = pages;
+
+    await Settings.findOneAndUpdate(
+      connectionsQuery,
+      updateData,
+      { upsert: true, new: true }
+    );
+
+    console.log(`✅ LinkedIn OAuth Success for user ${userId}. Profile: ${profileName}`);
+    
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=linkedin`);
+    } else {
+      res.redirect(`${frontendUrl}/connections?oauth_success=true&platform=linkedin`);
+    }
+
+  } catch (err) {
+    console.error("LinkedIn Exchange Failed:", err.response?.data || err.message);
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
+    } else {
+      res.redirect(`${frontendUrl}/connections?oauth_error=exchange_failed`);
+    }
+  }
+});
+// ==========================================
+// GOOGLE BUSINESS OAUTH FLOW
+// ==========================================
+
+// Step 1: Redirect to Google OAuth for Business Profile
+router.get('/google-business', verifyToken, (req, res) => {
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+  if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+  const redirectUri = `${baseUrl}/api/oauth/google-business/callback`;
+  
+  const oauth2Client = getGoogleClient(redirectUri);
+
+  const state = req.user.userId + 
+                (req.query.onboarding === 'true' ? '_onboarding' : '') + 
+                (req.workspaceId ? `_ws_${req.workspaceId}` : '');
+
+  const authUrl = oauth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: [
+      'https://www.googleapis.com/auth/business.manage',
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email'
+    ],
+    state: state,
+    prompt: 'consent' // Force to get refresh token
+  });
+
+  res.redirect(authUrl);
+});
+
+// Step 2: Handle Google Business OAuth Callback
+router.get('/google-business/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+  const isFromOnboarding = state && state.includes('_onboarding');
+  
+  let workspaceId = '';
+  const wsMatch = state && state.match(/_ws_([a-f0-9-]{36})/i);
+  if (wsMatch) {
+    workspaceId = wsMatch[1];
+  }
+
+  let userId = state
+    ? state
+        .replace('_onboarding', '')
+        .replace(new RegExp(`_ws_${workspaceId}`, 'i'), '')
+    : '';
+
+  if (error) {
+    console.error("Google Business OAuth Error:", error);
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=declined`);
+  }
+
+  if (!code || !state) {
+    return res.redirect(`${frontendUrl}/${isFromOnboarding ? 'onboarding' : 'connections'}?oauth_error=missing_parameters`);
+  }
+
+  try {
+    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5001');
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/oauth/google-business/callback`;
+
+    const oauth2Client = getGoogleClient(redirectUri);
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+
+    // Fetch Google Business Account Name
+    
+    let googleUserName = '';
+    let businessName = 'Google Business Account';
+    try {
+      const userInfoRes = await axios.get('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
+        headers: { Authorization: `Bearer ${tokens.access_token}` }
+      });
+      if (userInfoRes.data && userInfoRes.data.name) {
+        googleUserName = userInfoRes.data.name;
+        businessName = googleUserName;
+      }
+    } catch(err) {
+      console.warn('Could not fetch Google user info:', err.message);
+    }
+
+    let gmbFetched = false;
+    let gmbAccountId = null;
+    let gmbLocationId = null;
+    try {
+      const accountsRes = await axios.get('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', {
+        headers: { Authorization: `Bearer ${tokens.access_token}` }
+      });
+      if (accountsRes.data && accountsRes.data.accounts && accountsRes.data.accounts.length > 0) {
+        const account = accountsRes.data.accounts[0];
+        businessName = account.accountName || account.name;
+        gmbAccountId = account.name; // e.g. "accounts/123456789"
+        gmbFetched = true;
+        
+        try {
+          const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations?readMask=name,title`, {
+            headers: { Authorization: `Bearer ${tokens.access_token}` }
+          });
+          if (locationsRes.data && locationsRes.data.locations && locationsRes.data.locations.length > 0) {
+            const location = locationsRes.data.locations[0];
+            businessName = location.title;
+            gmbLocationId = location.name; // e.g. "locations/987654321"
+          }
+        } catch (locErr) {
+          console.warn('Could not fetch Google Business locations:', locErr.message);
+        }
+      }
+    } catch (gbErr) {
+      console.warn("Could not fetch Google Business account name:", gbErr.message);
+    }
+
+    const connectionsQuery = { userId: userId };
+    if (workspaceId) {
+      connectionsQuery.workspaceId = workspaceId;
+    }
+
+    // Preserve existing custom business name if GMB API failed
+    if (!gmbFetched) {
+      try {
+        const existingSettings = await Settings.findOne(connectionsQuery);
+        if (existingSettings && existingSettings.connectedGoogleBusinessName) {
+          businessName = existingSettings.connectedGoogleBusinessName;
+        }
+      } catch (dbErr) {
+        console.warn("Could not fetch existing settings to preserve GMB name:", dbErr.message);
+      }
+    }
+
+    // Default 'Nitish Singh' to 'smart10X' for the user's connection
+    if (businessName === 'Nitish Singh') {
+      businessName = 'smart10X';
+    }
+
+    const updateData = {};
+    updateData.isGoogleBusinessConnected = true;
+    updateData.connectedGoogleBusinessName = businessName;
+    updateData.googleBusinessAccessToken = tokens.access_token;
+    updateData.googleBusinessRefreshToken = tokens.refresh_token || null;
+    // ✅ Save Account & Location IDs at connect time to avoid 429 quota errors later
+    if (gmbAccountId) updateData.googleBusinessAccountId = gmbAccountId;
+    if (gmbLocationId) updateData.googleBusinessLocationId = gmbLocationId;
+
+    await Settings.findOneAndUpdate(
+      connectionsQuery,
+      updateData,
+      { upsert: true, new: true }
+    );
+
+    if (gmbAccountId && gmbLocationId) {
+      console.log(`✅ [GMB] Account ID & Location ID saved at connect time: ${gmbAccountId}, ${gmbLocationId}`);
+    }
+
+    console.log(`✅ Google Business OAuth Success for user ${userId}. Account: ${businessName}`);
+    
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=google-business`);
+    } else {
+      res.redirect(`${frontendUrl}/connections?oauth_success=true&platform=google-business`);
+    }
+
+  } catch (err) {
+    console.error("Google Business Exchange Failed:", err.message);
+    if (isFromOnboarding) {
+      res.redirect(`${frontendUrl}/onboarding?oauth_error=exchange_failed`);
+    } else {
+      res.redirect(`${frontendUrl}/connections?oauth_error=exchange_failed`);
+    }
+  }
+});
+// ==========================================
 // TWITTER / X OAUTH FLOW (OAuth 1.0a)
 // ==========================================
 
