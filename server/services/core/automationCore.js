@@ -18,7 +18,6 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
   let userSettingsQuery = { userId };
   let contactQuery = { userId, chatId };
   if (workspaceId) {
-    const { getSharedUserIdsSync } = await import('../utils/workspace.js');
     const sharedUids = getSharedUserIdsSync(userId, workspaceId);
     userSettingsQuery.workspaceId = workspaceId;
     contactQuery = { userId: { $in: sharedUids }, chatId, workspaceId };
