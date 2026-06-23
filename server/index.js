@@ -248,6 +248,7 @@ const webhookLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+app.get('/', (req, res) => { res.status(200).json({ message: '🚀 Instagram DM Automation AI API is running!', status: 'Healthy' }); });
 app.use('/api', webhookRoutes);
 app.use('/api/auth', authLimiter);
 app.use('/api', apiLimiter);
