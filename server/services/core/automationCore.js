@@ -62,7 +62,9 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
       
       if (isFollowing) {
         console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} has now followed! Triggering pending campaign.`);
-        await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
+        let updatedTags = Array.isArray(contact.tags) ? [...contact.tags] : [];
+        if (platform === 'facebook' && !updatedTags.includes('FacebookFollower')) updatedTags.push('FacebookFollower');
+        await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 }, tags: updatedTags });
         
         if (match.openingMessage && match.openingMessageText) {
           console.log(`📩 Sending OPENING MESSAGE after follow for ${match.name}`);
@@ -150,7 +152,9 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
 
         if (isFollowing) {
           console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied correctly to Follow Gate.`);
-          await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
+          let updatedTags = Array.isArray(contact.tags) ? [...contact.tags] : [];
+          if (platform === 'facebook' && !updatedTags.includes('FacebookFollower')) updatedTags.push('FacebookFollower');
+          await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 }, tags: updatedTags });
           const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
           
           let finalResponse = match.response;
@@ -256,7 +260,12 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
 
     if (match.requireFollow) {
       console.log(`🚀 UNIVERSAL GATING: Checking follower status for ${chatId}...`);
-      const isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
+      let isFollowing = false;
+      if (platform === 'facebook') {
+        isFollowing = Array.isArray(contact?.tags) && contact.tags.includes('FacebookFollower');
+      } else {
+        isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
+      }
 
       if (!isFollowing) {
         const followText = match.unfollowedResponse || "Hey! Please follow our account first to get the link! 👇";
