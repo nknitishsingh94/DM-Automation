@@ -3,6 +3,7 @@ import Settings from '../models/Settings.js';
 import { publishInstagramContent, publishFacebookContent } from '../utils/metaApi.js';
 import { publishYouTubeVideo } from '../utils/youtubeApi.js';
 import { publishGoogleBusinessContent } from '../utils/googleBusinessApi.js';
+import { publishTwitterContent } from '../utils/twitterApi.js';
 import { supabase } from '../utils/supabase.js';
 
 export async function runSchedulingWorker() {
@@ -196,6 +197,8 @@ export async function runSchedulingWorker() {
           }, settings);
         } else if (post.platform === 'google-business') {
           result = await publishGoogleBusinessContent(post.userId, post, post.workspaceId);
+        } else if (post.platform === 'twitter') {
+          result = await publishTwitterContent(post.userId, post, post.workspaceId);
         } else {
           result = await publishInstagramContent(post.userId, {
             type: post.type,
