@@ -128,6 +128,7 @@ function Sidebar({ isMobileOpen, onClose }) {
   const { logout, user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const { notify } = useNotification();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [workspaces, setWorkspaces] = useState([]);
   const [activeWorkspace, setActiveWorkspace] = useState(null);
@@ -477,10 +478,11 @@ function Sidebar({ isMobileOpen, onClose }) {
                     <LayoutTemplate size={16} />
                     <span>All Template</span>
                   </div>
-                  <NavLink to="/communication" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div onClick={() => notify("Communication integration is coming soon!", "info")} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                     <MessageSquare size={16} />
-                    <span style={{ fontWeight: '600' }}>Communication</span>
-                  </NavLink>
+                    <span style={{ fontWeight: '600', color: '#9ca3af' }}>Communication</span>
+                    <span style={{ fontSize: '0.62rem', background: '#f3f4f6', color: '#9ca3af', padding: '2px 6px', borderRadius: '4px', marginLeft: 'auto', textTransform: 'uppercase', fontWeight: '700' }}>Soon</span>
+                  </div>
                   {activeWorkspace?.isTelegramConnected && (
                     <NavLink to="/autoops/telegram" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <MessageSquare size={16} color="#3b82f6" />

@@ -81,8 +81,8 @@ export default function Connections() {
     { name: 'Threads', icon: Activity, color: '#000000', enabled: true },
     { name: 'Pinterest', icon: PinterestIcon, color: '#E60023', enabled: true },
     { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: true },
-    { name: 'Telegram', icon: Send, color: '#0088cc', enabled: true },
-    { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: true }
+    { name: 'Telegram', icon: Send, color: '#0088cc', enabled: false },
+    { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: false }
   ];
 
   useEffect(() => {
@@ -653,7 +653,7 @@ export default function Connections() {
                   >
                     <plat.icon size={15} color={plat.enabled ? plat.color : '#9ca3af'} />
                     <span>{plat.name}</span>
-                    {!plat.enabled && <span style={{ fontSize: '0.65rem', marginLeft: 'auto', background: '#f3f4f6', padding: '2px 6px', borderRadius: '4px' }}>locked</span>}
+                    {!plat.enabled && <span style={{ fontSize: '0.65rem', marginLeft: 'auto', background: '#f3f4f6', padding: '2px 6px', borderRadius: '4px' }}>coming soon</span>}
                   </div>
                 ))}
               </div>
@@ -1230,7 +1230,7 @@ export default function Connections() {
                       display: 'block', fontSize: '0.62rem', color: '#9ca3af', 
                       fontWeight: '700', marginTop: '4px', textTransform: 'uppercase'
                     }}>
-                      locked
+                      coming soon
                     </span>
                   )}
                 </div>
