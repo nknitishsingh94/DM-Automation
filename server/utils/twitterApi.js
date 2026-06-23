@@ -114,9 +114,6 @@ export async function publishTwitterContent(userId, post, workspaceId) {
     };
   } catch (err) {
     console.error("Twitter Publish Error:", err);
-    return {
-      status: 'FAILED',
-      error: err.message
-    };
+    throw err;
   }
 }
