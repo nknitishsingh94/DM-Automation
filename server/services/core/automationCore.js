@@ -421,8 +421,11 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
 
       if (openingSent) {
         // Track that this user is waiting for an opening message confirmation (using pendingCampaignId with OPENING: prefix)
+        const queryForUpsert = { chatId, userId };
+        if (workspaceId) queryForUpsert.workspaceId = workspaceId;
+
         await Contact.findOneAndUpdate(
-          contactQuery,
+          queryForUpsert,
           { pendingCampaignId: `OPENING:${match._id}`, lastActive: new Date() },
           { upsert: true }
         );
