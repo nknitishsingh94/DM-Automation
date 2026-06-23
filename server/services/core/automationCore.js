@@ -232,7 +232,8 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
 
     const sourceMatch = (source === 'dm' && triggerDms) ||
       (source === 'comment' && triggerComments) ||
-      (source === 'story_mention' && triggerStories);
+      (source === 'story_mention' && triggerStories) ||
+      (platform === 'facebook' && source === 'dm' && triggerStories);
 
     const cleanUserMsg = text.toLowerCase().replace(/\s+/g, ' ').trim();
     const keywords = (c.trigger || '').split(',').map(k => k.toLowerCase().replace(/\s+/g, ' ').trim());
