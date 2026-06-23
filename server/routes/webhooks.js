@@ -352,7 +352,7 @@ router.post('/api/webhook', async (req, res) => {
           const text = val.text || val.message;
           const senderId = val.from?.id;
           const commentId = val.comment_id || val.id;
-          const mediaId = val.media?.id || val.post_id || val.video_id;
+          const mediaId = val.media?.id || val.post_id || val.video_id || val.photo_id;
           console.log(`[webhook DEBUG] Extracted comment values: text="${text}", senderId="${senderId}", commentId="${commentId}", mediaId="${mediaId}", item="${val.item || 'N/A'}" (from val.media?.id="${val.media?.id}", val.post_id="${val.post_id}", val.video_id="${val.video_id}")`);
 
           // Handle all interaction types (Comment, Post, Video, etc.)

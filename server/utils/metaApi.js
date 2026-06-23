@@ -234,11 +234,13 @@ export const sendPublicComment = async (platform, commentId, text, userId = null
 
     if (!accessToken) return false;
 
-    const url = `https://graph.facebook.com/v19.0/${commentId}/replies`;
+    const edge = platform === 'facebook' ? 'comments' : 'replies';
+    const url = `https://graph.facebook.com/v19.0/${commentId}/${edge}`;
     await axios.post(url, { message: text, access_token: accessToken });
-    return true;
+    return { success: true };
   } catch (err) {
-    return false;
+    console.error(`❌ PUBLIC COMMENT FAIL (${platform}):`, JSON.stringify(err.response?.data || err.message, null, 2));
+    return { success: false, error: err.response?.data || err.message };
   }
 };
 
