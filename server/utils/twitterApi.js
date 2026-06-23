@@ -22,34 +22,25 @@ export async function publishTwitterContent(userId, post, workspaceId) {
     }
 
     const twitterAccessToken = settings.twitterAccessToken || virtualFields.twitterAccessToken;
-    const twitterRefreshToken = settings.twitterRefreshToken || virtualFields.twitterRefreshToken;
+    const twitterAccessSecret = settings.twitterRefreshToken || virtualFields.twitterRefreshToken;
 
-    if (!twitterAccessToken || !twitterRefreshToken) {
-      throw new Error("Twitter is not connected. Missing access or refresh token.");
+    if (!twitterAccessToken || !twitterAccessSecret) {
+      throw new Error("Twitter is not connected. Missing access token or secret. Please reconnect your account.");
     }
 
-    const clientId = process.env.TWITTER_CLIENT_ID;
-    const clientSecret = process.env.TWITTER_CLIENT_SECRET;
+    const appKey = process.env.TWITTER_API_KEY;
+    const appSecret = process.env.TWITTER_API_SECRET;
 
-    if (!clientId || !clientSecret) {
-      throw new Error('Twitter OAuth credentials missing on server');
+    if (!appKey || !appSecret) {
+      throw new Error('Twitter OAuth 1.0a credentials missing on server. Set TWITTER_API_KEY and TWITTER_API_SECRET.');
     }
 
-    const client = new TwitterApi({
-      clientId: clientId,
-      clientSecret: clientSecret
+    const finalClient = new TwitterApi({
+      appKey: appKey,
+      appSecret: appSecret,
+      accessToken: twitterAccessToken,
+      accessSecret: twitterAccessSecret
     });
-
-    const { client: refreshedClient, accessToken, refreshToken: newRefreshToken } = await client.refreshOAuth2Token(twitterRefreshToken);
-
-    virtualFields.twitterAccessToken = accessToken;
-    virtualFields.twitterRefreshToken = newRefreshToken || twitterRefreshToken;
-    
-    await supabase.from('settings').update({
-      connectedPageName: JSON.stringify(virtualFields)
-    }).eq('userId', userId);
-
-    const finalClient = refreshedClient;
 
     const uploadMedia = async (url) => {
       try {
@@ -67,6 +58,7 @@ export async function publishTwitterContent(userId, post, workspaceId) {
         }
       } catch (mediaErr) {
         console.error("Twitter Media Upload Error:", mediaErr);
+        throw new Error("Media upload failed: " + mediaErr.message);
       }
       return null;
     };
