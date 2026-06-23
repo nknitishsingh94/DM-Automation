@@ -2979,6 +2979,8 @@ app.use((err, req, res, next) => {
   });
 });
 
+const PORT = process.env.PORT || 5001;
+
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🔒 Security: Rate limiting, Helmet CSP, CORS whitelist, NoSQL sanitization, XSS protection active`);
@@ -3011,3 +3013,5 @@ export default app;
 
 // Trigger backend deployment on Vercel
 
+
+export { getSharedUserIdsSync, settingsCache, campaignsCache, io, runFlow };
