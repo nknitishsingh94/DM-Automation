@@ -324,8 +324,11 @@ export default function AutomationEditor() {
   const selectedMedia = realMedia.find(m => m.id === selectedContentId);
 
   React.useEffect(() => {
-    if (!anyStory && (selectedPlatform === 'instagram' || selectedPlatform === 'facebook')) {
+    if (!anyStory && selectedPlatform === 'instagram') {
       fetchRealMedia();
+    }
+    if (triggerOnStories && selectedPlatform === 'facebook') {
+      setAnyStory(true);
     }
   }, [anyStory, template, selectedPlatform, triggerOnStories]);
 
@@ -1135,7 +1138,12 @@ export default function AutomationEditor() {
                   <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>{triggerOnStories ? 'Select a Story' : 'Select a Post'}</h3>
                 </div>
               <div style={{ padding: '14px 18px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #f1f5f9' }}>
-                {triggerOnStories ? (
+                {triggerOnStories && selectedPlatform === 'facebook' ? (
+                   <div style={{ padding: '10px', color: '#475569', fontSize: '0.9rem', fontWeight: '500' }}>
+                     This automation will trigger for ANY of your active Facebook Stories. 
+                     <br/><span style={{ fontSize: '0.8rem', color: '#64748b' }}>(Facebook does not support selecting specific stories)</span>
+                   </div>
+                ) : triggerOnStories ? (
                   <>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: !anyStory ? '10px' : '0' }}>
                       <span style={{ fontWeight: '700', color: '#475569', fontSize: '0.85rem' }}>Any story</span>
