@@ -724,11 +724,13 @@ export default function Connections() {
         padding: '24px'
       }}>
         
-        {/* ALWAYS SHOW THE GRID OF ACCOUNTS */}
-        <>
+        {/* Check if ANY channel is connected based on active filters */}
+        {(hasSocialConnected || hasWhatsAppConnected) ? (
           <>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#111827', marginBottom: '16px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>Channels & Platforms</h3>
-            <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'stretch' }}>
+          {hasSocialConnected && (
+            <>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#111827', marginBottom: '16px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>Social Account connection</h3>
+              <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'stretch' }}>
 
             {/* ---- INSTAGRAM CARD ---- */}
             {settings.isAccountConnected && (platformFilter === 'All platforms' || platformFilter === 'Instagram') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
@@ -1062,58 +1064,80 @@ export default function Connections() {
             </div>
             )}
 
-            {/* ---- DISCONNECTED PLATFORMS ---- */}
-            {platformsList.map(plat => {
-               let isConnected = false;
-               if (plat.name === 'Instagram') isConnected = settings.isAccountConnected;
-               else if (plat.name === 'Facebook') isConnected = settings.isFacebookConnected;
-               else if (plat.name === 'YouTube') isConnected = settings.isYouTubeConnected;
-               else if (plat.name === 'LinkedIn Profile') return null; // skip
-               else if (plat.name === 'LinkedIn Business') isConnected = settings.isLinkedInConnected;
-               else if (plat.name === 'Twitter/X') isConnected = settings.isTwitterConnected;
-               else if (plat.name === 'Threads') isConnected = settings.isThreadsConnected;
-               else if (plat.name === 'Pinterest') isConnected = settings.isPinterestConnected;
-               else if (plat.name === 'Google Business') isConnected = settings.isGoogleBusinessConnected;
-               else if (plat.name === 'Telegram') isConnected = settings.isTelegramConnected;
-               else if (plat.name === 'WhatsApp') isConnected = settings.isWhatsAppConnected;
+            </div>
+            </>
+          )}
 
-               if (isConnected) return null;
-               if (statusFilter === 'Connected') return null;
-               if (platformFilter !== 'All platforms' && platformFilter !== plat.name) return null;
-
-               return (
-                  <div key={plat.name} className="connection-card" style={{ width: '100%', height: '100%', border: '1px dashed #d1d5db', borderRadius: '12px', padding: '20px', background: '#fafafa', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#f3f4f6', border: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <plat.icon size={22} color="#9ca3af" />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                          <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>{plat.name}</h4>
-                          <span style={{ display: 'inline-block', background: '#f3f4f6', color: '#6b7280', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>not connected</span>
-                        </div>
+            {/* ---- WHATSAPP CARD (Communication Channel) ---- */}
+            {hasWhatsAppConnected && (
+            <div style={{ marginTop: hasSocialConnected ? '32px' : '0px' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#111827', marginBottom: '16px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>Communication Channels</h3>
+              <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'stretch' }}>
+                <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#f0fdf4', border: '1px solid #dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <MessageSquare size={22} color="#22c55e" />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                        <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>WhatsApp</h4>
+                        <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                       <span style={{ fontSize: '0.85rem', color: '#6b7280' }}>Click to connect and automate.</span>
-                    </div>
-                    <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
-                      <button 
-                        onClick={() => triggerConnect(plat.name)}
-                        style={{ flex: 1, padding: '10px', background: plat.enabled ? '#0f172a' : '#e5e7eb', border: 'none', borderRadius: '8px', color: 'white', fontSize: '0.85rem', fontWeight: '600', cursor: plat.enabled ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'background 0.2s' }}
-                        onMouseOver={(e) => { if(plat.enabled) e.currentTarget.style.background = '#334155'; }}
-                        onMouseOut={(e) => { if(plat.enabled) e.currentTarget.style.background = '#0f172a'; }}
-                      >
-                        <Plus size={14} /> Connect
-                      </button>
-                    </div>
+                    <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`WhatsApp connected`, 'info')} />
                   </div>
-               );
-            })}
-
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#374151' }}>@{settings.whatsappDisplayName || 'WhatsApp Business'}</span>
+                    <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%', flexWrap: 'wrap' }}>
+                    <button onClick={() => setSelectedSettingsPlatform({ id: 'whatsapp', name: 'WhatsApp', username: settings.whatsappDisplayName, isAutomationEnabled: true, color: '#22c55e' })}
+                      style={{ flex: '1 1 100%', padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#374151', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                      onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
+                    >
+                      <Sliders size={14} /> Settings
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
+            )}
+
           </>
-        </>
+        ) : (
+          /* Empty Connections slot matching screenshot exactly */
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 24px', textAlign: 'center' }}>
+            <span style={{ color: '#4b5563', fontSize: '0.95rem', fontWeight: '500', marginBottom: '16px' }}>
+              No accounts connected yet.
+            </span>
+            
+            <button 
+              onClick={() => setShowConnectModal(true)}
+              style={{ 
+                background: 'white', 
+                color: '#374151', 
+                padding: '8px 16px', 
+                borderRadius: '8px', 
+                fontWeight: '600', 
+                fontSize: '0.88rem',
+                border: '1px solid #d1d5db', 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                transition: 'border 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.borderColor = '#9ca3af'}
+              onMouseOut={(e) => e.currentTarget.style.borderColor = '#d1d5db'}
+            >
+              <Plus size={16} /> Connect an account
+            </button>
+          </div>
+        )}
         </div>
       </div>
 
