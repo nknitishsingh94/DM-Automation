@@ -36,10 +36,18 @@ export async function publishYouTubeVideo(userId, postData, settings) {
       process.env.YOUTUBE_CLIENT_SECRET
     );
 
-    oauth2Client.setCredentials({
-      access_token: youtubeAccessToken,
-      refresh_token: youtubeRefreshToken || ''
-    });
+    if (youtubeRefreshToken) {
+      oauth2Client.setCredentials({ refresh_token: youtubeRefreshToken });
+      try {
+        const { credentials } = await oauth2Client.refreshAccessToken();
+        oauth2Client.setCredentials(credentials);
+      } catch (e) {
+        console.error("YouTube Token Refresh Error:", e.message);
+        oauth2Client.setCredentials({ access_token: youtubeAccessToken });
+      }
+    } else {
+      oauth2Client.setCredentials({ access_token: youtubeAccessToken });
+    }
 
     const youtube = google.youtube({
       version: 'v3',
