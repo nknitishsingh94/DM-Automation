@@ -108,8 +108,8 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
             }
           }
         };
-      } else if (mediaUrl && (mediaUrl.startsWith('http') || mediaUrl.includes('.'))) {
-        let safeUrl = mediaUrl;
+      } else if (mediaUrl && (mediaUrl.trim().startsWith('http') || mediaUrl.includes('.'))) {
+        let safeUrl = mediaUrl.trim();
         if (!safeUrl.startsWith('http')) safeUrl = 'https://' + safeUrl;
         payload = {
           recipient,
@@ -160,10 +160,33 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     }
 
     return true;
-  } catch (err) {
-    const errorData = err.response?.data || err.message;
-    console.error(`❌ SEND FAIL (${platform}):`, JSON.stringify(errorData, null, 2));
-    return false;
+  } catch (error) {
+    console.error(`❌ SEND FAIL (${platform}):`, JSON.stringify(error.response?.data || error.message, null, 2));
+    
+    // FALLBACK: If a template message fails (e.g., invalid URL format, title too long), send as plain text
+    if (payload && payload.message?.attachment?.type === 'template' && error.response?.data?.error?.code !== 190) {
+      console.log(`⚠️ Template rejected by Meta. Falling back to plain text...`);
+      let fallbackText = safeText;
+      if (mediaUrl) fallbackText += `\n\n🔗 ${mediaUrl.trim()}`;
+      
+      const fallbackPayload = {
+        recipient: { id: recipientId },
+        messaging_type: "RESPONSE",
+        message: { text: fallbackText }
+      };
+      
+      try {
+        const fallbackUrl = `https://graph.facebook.com/v21.0/${pageId}/messages`;
+        const res = await axios.post(fallbackUrl, fallbackPayload, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return res.data;
+      } catch (fbErr) {
+        console.error(`❌ FALLBACK FAIL:`, JSON.stringify(fbErr.response?.data || fbErr.message, null, 2));
+      }
+    }
+    
+    return null;
   }
 };
 
