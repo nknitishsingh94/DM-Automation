@@ -370,11 +370,6 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
           ];
           let publicGated = match.publicReplyText || thanksReplies[Math.floor(Math.random() * thanksReplies.length)];
           
-          // Anti-Spam: Facebook blocks identical rapid public replies. Append a tiny invisible/random char or ID.
-          if (platform === 'facebook') {
-             publicGated += ` [ID: ${Math.floor(Math.random() * 10000)}]`;
-          }
-          
           const commentResult = await sendPublicComment(platform, commentId, publicGated, userId, activeToken);
           if (commentResult?.success === false) {
              console.error(`⚠️ GATED PUBLIC COMMENT FAILED for ${commentId}. Reason:`, commentResult?.error);
@@ -408,9 +403,6 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
       if (source === 'comment' && commentId) {
         console.log(`💬 Sending CUSTOM public comment reply to ${commentId} (Opening Message)`);
         let replyText = match.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
-        if (platform === 'facebook') {
-           replyText += ` [ID: ${Math.floor(Math.random() * 10000)}]`;
-        }
         await sendPublicComment(platform, commentId, replyText, userId, activeToken).catch(e => console.error("Public comment failed:", e));
       }
 
@@ -465,10 +457,6 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
         "Check your DMs! I just sent it over. Thanks! ✨"
       ];
       let replyText = match.publicReplyText || thanksReplies[Math.floor(Math.random() * thanksReplies.length)];
-      // Anti-Spam: Facebook blocks identical rapid public replies. Append a random ID.
-      if (platform === 'facebook') {
-        replyText += ` [ID: ${Math.floor(Math.random() * 10000)}]`;
-      }
       commentPromise = sendPublicComment(platform, commentId, replyText, userId, activeToken);
     }
 

@@ -358,7 +358,13 @@ router.post('/webhook', async (req, res) => {
 
           // CRITICAL: For Facebook 'feed' webhooks, only process actual comments, not posts/likes/reactions/shares
           if (change.field === 'feed' && val.item && val.item !== 'comment') {
-            console.log(`⏭️ Skipping non-comment feed event. item="${val.item}", verb="${val.verb || 'N/A'}"`);
+            console.log(`🔕 Skipping non-comment feed event. item="${val.item}", verb="${val.verb || 'N/A'}"`);
+            continue;
+          }
+
+          // Prevent duplicate triggers from edit/delete verbs
+          if (change.field === 'feed' && val.verb && val.verb !== 'add') {
+            console.log(`🔕 Skipping non-add feed event. verb="${val.verb}"`);
             continue;
           }
 
