@@ -76,8 +76,7 @@ export default function Connections() {
     { name: 'Instagram', icon: Instagram, color: '#ec4899', enabled: true },
     { name: 'Facebook', icon: Facebook, color: '#1877f2', enabled: true },
     { name: 'YouTube', icon: Youtube, color: '#ff0000', enabled: true },
-    { name: 'LinkedIn Profile', icon: Linkedin, color: '#0077b5', enabled: true },
-    { name: 'LinkedIn Business', icon: Linkedin, color: '#0077b5', enabled: true },
+    { name: 'LinkedIn', icon: Linkedin, color: '#0077b5', enabled: true },
     { name: 'Twitter/X', icon: Twitter, color: '#0f1419', enabled: true },
     { name: 'Threads', icon: Activity, color: '#000000', enabled: true },
     { name: 'Pinterest', icon: PinterestIcon, color: '#E60023', enabled: true },
@@ -430,11 +429,7 @@ export default function Connections() {
       window.location.href = `${API_BASE_URL}/api/youtube/auth?token=${localStorage.getItem('insta_agent_token')}`;
       return;
     }
-    if (platformName.toLowerCase() === 'linkedin profile') {
-      window.location.href = `${API_BASE_URL}/api/oauth/linkedin?type=personal&token=${localStorage.getItem('insta_agent_token')}`;
-      return;
-    }
-    if (platformName.toLowerCase() === 'linkedin business') {
+    if (platformName.toLowerCase() === 'linkedin') {
       window.location.href = `${API_BASE_URL}/api/oauth/linkedin?type=business&token=${localStorage.getItem('insta_agent_token')}`;
       return;
     }
