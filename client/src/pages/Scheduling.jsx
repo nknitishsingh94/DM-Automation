@@ -930,7 +930,41 @@ export default function Scheduling() {
             return publicUrl;
           });
           mediaUrls = await Promise.all(uploadPromises);
-        }
+          }
+
+          // Upload thread media if any
+          const finalThreadPosts = [...currentThreadPosts];
+          if (currentThreadPosts && currentThreadPosts.length > 0) {
+            const threadUploadPromises = currentThreadPosts.map(async (tPost, index) => {
+              // Only upload if it's a blob url
+              if (tPost.mediaUrl && tPost.mediaUrl.startsWith('blob:')) {
+                // Find the actual file from the original threadPosts state
+                const originalThreadPost = threadPosts[index];
+                if (originalThreadPost && originalThreadPost.file) {
+                  const file = await compressImage(originalThreadPost.file);
+                  const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-thread-${index}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+                  
+                  const signRes = await fetch(`${API_BASE_URL}/api/storage/sign`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fileName, contentType: file.type })
+                  });
+                  if (!signRes.ok) throw new Error("Failed to secure upload channel for thread media.");
+                  const { uploadUrl, publicUrl } = await signRes.json();
+      
+                  const uploadRes = await fetch(uploadUrl, {
+                    method: 'PUT',
+                    body: file,
+                    headers: { 'Content-Type': file.type }
+                  });
+                  if (!uploadRes.ok) throw new Error(`Network failed during thread file upload.`);
+                  
+                  finalThreadPosts[index].mediaUrl = publicUrl;
+                }
+              }
+            });
+            await Promise.all(threadUploadPromises);
+          }
 
         const finalMediaUrl = mediaUrls.length > 0 ? mediaUrls[0] : payloadBase.mediaUrl;
         
