@@ -50,9 +50,9 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     let payload = null;
     const isPrivateReply = !!commentId;
     let effectiveButtons = isPrivateReply ? [] : (buttons || []);
-    let effectiveButtonText = isPrivateReply ? null : buttonText;
+    let effectiveButtonText = isPrivateReply ? null : (buttonText || (mediaUrl ? "Click Here" : ""));
 
-    if (isPrivateReply && (buttonText || (buttons && buttons.length > 0))) {
+    if (isPrivateReply && (buttonText || (buttons && buttons.length > 0) || mediaUrl)) {
       safeText = safeText + `\n\n👉 (Reply "Yes" to receive it!)`;
     }
 
