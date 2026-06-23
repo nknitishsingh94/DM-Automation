@@ -54,6 +54,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     console.log(`📡 [DESKTOP FALLBACK] User ${chatId} has pending campaign ${contact.pendingCampaignId}. Checking follow status...`);
     
     const pendingId = contact.pendingCampaignId;
+    const match = await Campaign.findById(pendingId);
     if (match && match.status === 'Active') {
       // Honor system for Facebook: We can't verify follow status via API, so we trust them if they clicked the button.
       let isFollowing = platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings);
