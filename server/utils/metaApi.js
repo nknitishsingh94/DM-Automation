@@ -46,7 +46,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     let safeText = text || '';
     safeText = safeText.replace(/(^|\s)(www\.[^\s]+)/g, '$1https://$2');
 
-    const recipient = (platform === 'instagram' && commentId) ? { comment_id: commentId } : { id: recipientId };
+    const recipient = commentId ? { comment_id: commentId } : { id: recipientId };
     let payload = null;
     const isPrivateReply = !!commentId;
     let effectiveButtons = isPrivateReply ? [] : (buttons || []);
@@ -56,10 +56,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
       safeText = safeText + `\n\n👉 (Reply "Yes" to receive it!)`;
     }
 
-    if (platform === 'facebook' && commentId) {
-      url = `https://graph.facebook.com/v19.0/${commentId}/private_replies?access_token=${accessToken}`;
-      payload = { message: safeText };
-    } else if (effectiveButtons.length > 0) {
+    if (effectiveButtons.length > 0) {
       payload = {
         recipient,
         messaging_type: "RESPONSE",
@@ -211,8 +208,8 @@ export const sendPrivateReply = async (platform, commentId, text, userId = null)
 
     if (!accessToken) return false;
 
-    const url = `https://graph.facebook.com/v19.0/${commentId}/private_replies?access_token=${accessToken}`;
-    await axios.post(url, { message: text });
+    const url = `https://graph.facebook.com/v19.0/me/messages?access_token=${accessToken}`;
+    await axios.post(url, { recipient: { comment_id: commentId }, message: { text } });
     return true;
   } catch (err) {
     return false;
