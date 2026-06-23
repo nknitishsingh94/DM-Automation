@@ -33,7 +33,20 @@ function isDuplicateEvent(eventId) {
 
 const router = express.Router();
 
-router.post('/api/webhook', async (req, res) => {
+router.get('/webhook', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+  if (mode && token) {
+    if (mode === 'subscribe' && token === process.env.VERIFY_TOKEN) {
+      res.status(200).send(challenge);
+    } else {
+      res.sendStatus(403);
+    }
+  }
+});
+
+router.post('/webhook', async (req, res) => {
   const body = req.body;
   
   console.log('🚀 [SUPER LOG] Webhook Received! Object:', body.object);
