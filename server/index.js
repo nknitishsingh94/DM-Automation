@@ -3824,7 +3824,16 @@ async function runSchedulingWorker() {
 
       } catch (postErr) {
         console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);
-        const currentRetryCount = (post.retryCount || 0) + 1;
+        let existingRetryCount = 0;
+        let updatedMetaObj = {};
+        if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
+          try { 
+            updatedMetaObj = JSON.parse(post.mediaUrl); 
+            existingRetryCount = updatedMetaObj.retryCount || 0;
+          } catch(e){}
+        }
+
+        const currentRetryCount = existingRetryCount + 1;
         const MAX_RETRIES = 5;
         const MAX_RETRY_WINDOW = 2880;
         const scheduledAt = new Date(post.scheduledFor);
@@ -3859,10 +3868,17 @@ async function runSchedulingWorker() {
             await new PostLog({ post_id: postId, status: 'failed', platform: post.platform || 'instagram', response: { error: errorMsg }, user_id: post.userId, workspace_id: post.workspaceId }).save();
           } catch(e) {}
         } else if (currentRetryCount <= MAX_RETRIES && minutesSinceScheduled < MAX_RETRY_WINDOW) {
-          const delayMinutes = 5 * currentRetryCount;
+          // Add exponentially longer delays for rate limits (15 min, 1h, 4h, 12h, 24h)
+          let delayMinutes = 5 * currentRetryCount;
+          if (lowerError.includes('quota') || lowerError.includes('429') || lowerError.includes('limit')) {
+             const backoffs = [15, 60, 240, 720, 1440];
+             delayMinutes = backoffs[Math.min(currentRetryCount - 1, 4)];
+          }
+          
+          updatedMetaObj.retryCount = currentRetryCount;
           const nextRunTime = new Date(Date.now() + delayMinutes * 60 * 1000).toISOString();
           console.log(`⚠️ Post ${postId} failed. Rescheduling for retry in ${delayMinutes} mins at ${nextRunTime}.`);
-          await safeUpdate(postId, { status: 'Scheduled', scheduledFor: nextRunTime, lastError: errorMsg, retryCount: currentRetryCount });
+          await safeUpdate(postId, { status: 'Scheduled', scheduledFor: nextRunTime, lastError: errorMsg, mediaUrl: JSON.stringify(updatedMetaObj) });
         } else {
           await safeUpdate(postId, { status: 'Failed', lastError: errorMsg });
           
