@@ -762,7 +762,7 @@ export default function Scheduling() {
     setShowCreate(false);
     setNewPost({ 
       platform: 'instagram',
-      caption: '', customCaption: '', threadPosts: [], scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', pinterestTitle: '', pinterestLink: '', pinterestBoard: '', pinterestIsAIModified: false, pinterestIsAIGeneratedPerson: false, pinterestAllowComments: true, pinterestShowSimilarProducts: true, pinterestAltText: '', 
+      caption: '', customCaption: '', threadPosts: [], scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', pinterestTitle: '', pinterestLink: '', pinterestBoard: '', pinterestIsAIModified: false, pinterestIsAIGeneratedPerson: false, pinterestAllowComments: true, pinterestShowSimilarProducts: true, pinterestAltText: '',
       triggerKeyword: '', autoResponse: '', coverUrl: '',
       requireFollow: true, unfollowedResponse: "Hey! Please follow our account first to get the link! 😍",
       publicReply: "Check your DMs! 🚀",
@@ -1794,6 +1794,77 @@ export default function Scheduling() {
                           placeholder="e.g. My Awesome Board"
                           style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem' }}
                         />
+                      </div>
+
+                      <div style={{ marginTop: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div
+                            onClick={() => setNewPost({ ...newPost, pinterestIsAIModified: !newPost.pinterestIsAIModified })}
+                            style={{ width: '44px', height: '24px', borderRadius: '12px', background: newPost.pinterestIsAIModified ? '#2563eb' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                            <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: newPost.pinterestIsAIModified ? '23px' : '3px', transition: '0.3s' }}></div>
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: '600', fontSize: '0.9rem', color: '#1e293b' }}>Mark as AI-Modified</div>
+                            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Content that was made completely or partly with AI</div>
+                          </div>
+                        </div>
+                        
+                        {newPost.pinterestIsAIModified && (
+                          <div style={{ marginLeft: '56px', marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <input 
+                              type="checkbox" 
+                              checked={newPost.pinterestIsAIGeneratedPerson || false}
+                              onChange={(e) => setNewPost({ ...newPost, pinterestIsAIGeneratedPerson: e.target.checked })}
+                              style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: '#2563eb' }}
+                            />
+                            <span style={{ fontSize: '0.85rem', color: '#334155', fontWeight: '500' }}>This Pin includes an AI-generated person</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div style={{ marginTop: '12px', borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: '700', color: '#334155', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          More options <ChevronDown size={16} />
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div
+                              onClick={() => setNewPost({ ...newPost, pinterestAllowComments: newPost.pinterestAllowComments === false ? true : false })}
+                              style={{ width: '44px', height: '24px', borderRadius: '12px', background: newPost.pinterestAllowComments !== false ? '#2563eb' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                              <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: newPost.pinterestAllowComments !== false ? '23px' : '3px', transition: '0.3s' }}></div>
+                            </div>
+                            <div style={{ fontWeight: '600', fontSize: '0.9rem', color: '#1e293b' }}>Allow people to comment</div>
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                            <div
+                              onClick={() => setNewPost({ ...newPost, pinterestShowSimilarProducts: newPost.pinterestShowSimilarProducts === false ? true : false })}
+                              style={{ width: '44px', height: '24px', borderRadius: '12px', background: newPost.pinterestShowSimilarProducts !== false ? '#2563eb' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s', flexShrink: 0 }}>
+                              <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: newPost.pinterestShowSimilarProducts !== false ? '23px' : '3px', transition: '0.3s' }}></div>
+                            </div>
+                            <div>
+                              <div style={{ fontWeight: '600', fontSize: '0.9rem', color: '#1e293b', marginBottom: '4px' }}>Show similar products</div>
+                              <div style={{ fontSize: '0.75rem', color: '#64748b', lineHeight: '1.4' }}>
+                                People can shop products similar to what's shown in this Pin using visual search.<br/>
+                                Shopping recommendations aren't available for Idea ads and Pins with tagged products or paid partnership label.
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{ marginTop: '8px' }}>
+                            <div style={{ border: '1px solid #cbd5e1', borderRadius: '8px', padding: '12px 16px', background: '#f8fafc' }}>
+                              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '700', color: '#64748b', marginBottom: '4px' }}>Alt Text</label>
+                              <textarea 
+                                value={newPost.pinterestAltText || ''}
+                                onChange={(e) => setNewPost({ ...newPost, pinterestAltText: e.target.value })}
+                                placeholder="Describe your Pin's visual details"
+                                rows={2}
+                                style={{ width: '100%', border: 'none', background: 'transparent', outline: 'none', fontSize: '0.9rem', color: '#334155', resize: 'none' }}
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
