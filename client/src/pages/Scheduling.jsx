@@ -762,7 +762,7 @@ export default function Scheduling() {
     setShowCreate(false);
     setNewPost({ 
       platform: 'instagram',
-      caption: '', customCaption: '', threadPosts: [], scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', pinterestTitle: '', pinterestLink: '', pinterestBoard: '', 
+      caption: '', customCaption: '', threadPosts: [], scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', pinterestTitle: '', pinterestLink: '', pinterestBoard: '', pinterestIsAIModified: false, pinterestIsAIGeneratedPerson: false, pinterestAllowComments: true, pinterestShowSimilarProducts: true, pinterestAltText: '', 
       triggerKeyword: '', autoResponse: '', coverUrl: '',
       requireFollow: true, unfollowedResponse: "Hey! Please follow our account first to get the link! 😍",
       publicReply: "Check your DMs! 🚀",
@@ -846,6 +846,11 @@ export default function Scheduling() {
             pinterestTitle: newPost.pinterestTitle,
             pinterestLink: newPost.pinterestLink,
             pinterestBoard: newPost.pinterestBoard,
+            pinterestIsAIModified: newPost.pinterestIsAIModified,
+            pinterestIsAIGeneratedPerson: newPost.pinterestIsAIGeneratedPerson,
+            pinterestAllowComments: newPost.pinterestAllowComments,
+            pinterestShowSimilarProducts: newPost.pinterestShowSimilarProducts,
+            pinterestAltText: newPost.pinterestAltText,
           caption: payloadBase.caption,
           threadCustomCaption: threadCustomCaption,
           threadPosts: currentThreadPosts,
