@@ -762,7 +762,7 @@ export default function Scheduling() {
     setShowCreate(false);
     setNewPost({ 
       platform: 'instagram',
-      caption: '', customCaption: '', threadPosts: [], scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', 
+      caption: '', customCaption: '', threadPosts: [], scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', pinterestTitle: '', pinterestLink: '', pinterestBoard: '', 
       triggerKeyword: '', autoResponse: '', coverUrl: '',
       requireFollow: true, unfollowedResponse: "Hey! Please follow our account first to get the link! 😍",
       publicReply: "Check your DMs! 🚀",
@@ -843,6 +843,9 @@ export default function Scheduling() {
       let createdDbIds = [];
       try {
         const initialPayloadBase = {
+            pinterestTitle: newPost.pinterestTitle,
+            pinterestLink: newPost.pinterestLink,
+            pinterestBoard: newPost.pinterestBoard,
           caption: payloadBase.caption,
           threadCustomCaption: threadCustomCaption,
           threadPosts: currentThreadPosts,
@@ -1750,7 +1753,47 @@ export default function Scheduling() {
                   </div>
                 )}
 
-                {/* Google Business Specific Settings */}
+                {/* Pinterest Specific Settings */}
+                  {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('pinterest') && (
+                    <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', marginBottom: '8px' }}>
+                        <span style={{ color: '#E60023' }}><PinterestIcon size={18} color="#E60023" /></span>
+                        <span style={{ fontWeight: '600', color: '#334155' }}>Pinterest Settings</span>
+                      </div>
+  
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>pin title</label>
+                        <input 
+                          value={newPost.pinterestTitle || ''}
+                          onChange={(e) => setNewPost({ ...newPost, pinterestTitle: e.target.value })}
+                          placeholder="Enter Pin title..."
+                          style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem' }}
+                        />
+                      </div>
+  
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>destination link</label>
+                        <input 
+                          value={newPost.pinterestLink || ''}
+                          onChange={(e) => setNewPost({ ...newPost, pinterestLink: e.target.value })}
+                          placeholder="https://..."
+                          style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem' }}
+                        />
+                      </div>
+  
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>board name</label>
+                        <input 
+                          value={newPost.pinterestBoard || ''}
+                          onChange={(e) => setNewPost({ ...newPost, pinterestBoard: e.target.value })}
+                          placeholder="e.g. My Awesome Board"
+                          style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem' }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Google Business Specific Settings */}
                 {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('google-business') && (
                   <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', marginBottom: '8px' }}>
