@@ -244,6 +244,17 @@ export default function Scheduling() {
   const [submitting, setSubmitting] = useState(false);
   const [settings, setSettings] = useState(null);
   const [pinterestBoards, setPinterestBoards] = useState([]);
+
+  const getSafeImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return url;
+    if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
+      const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'https://dm-automation-w9a4.vercel.app' 
+        : 'https://dm-automation-w9a4.vercel.app';
+      return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
+    }
+    return url;
+  };
   const [showNewPinterestBoardInput, setShowNewPinterestBoardInput] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [createdPost, setCreatedPost] = useState(null);
@@ -1024,18 +1035,7 @@ export default function Scheduling() {
                    fileSize: ytFile.size, 
                    contentType: ytFile.type, 
                    title: newPost.youtubeTitle || payloadBase.caption,
-                   description: newPost.youtubeTags ? `${payloadBase.caption}\
-const getSafeImageUrl = (url) => {
-  if (!url || typeof url !== 'string') return url;
-  if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
-    const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? 'https://dm-automation-w9a4.vercel.app' 
-      : 'https://dm-automation-w9a4.vercel.app';
-    return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
-  }
-  return url;
-};
-n\n${newPost.youtubeTags}` : payloadBase.caption
+                   description: newPost.youtubeTags ? `${payloadBase.caption}\n\n${newPost.youtubeTags}` : payloadBase.caption
                  })
                });
                if (ytUrlRes.ok) {
