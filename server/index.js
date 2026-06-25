@@ -2425,6 +2425,12 @@ async function runSchedulingWorker() {
         } else if (post.platform === 'google-business') {
           const { publishGoogleBusinessContent } = await import('./utils/googleBusinessApi.js');
           publishResult = await publishGoogleBusinessContent(post.userId, post, post.workspaceId);
+        } else if (post.platform === 'twitter') {
+          const { publishTwitterContent } = await import('./utils/twitterApi.js');
+          publishResult = await publishTwitterContent(post.userId, post, post.workspaceId);
+        } else if (post.platform === 'pinterest') {
+          const { publishPinterestContent } = await import('./utils/pinterestApi.js');
+          publishResult = await publishPinterestContent(post.userId, post, post.workspaceId);
         } else if (post.platform === 'linkedin') {
           const { publishLinkedInContent } = await import('./utils/linkedinApi.js');
           publishResult = await publishLinkedInContent(post.userId, post, post.workspaceId);
