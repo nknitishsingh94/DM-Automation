@@ -427,7 +427,7 @@ export default function Scheduling() {
     buttons: [],
     automationStatus: 'Active',
     anyKeyword: false,
-    publicReply: "Check your DMs! 🚀 I've sent you the info.",
+    publicReply: "Check your DMs! 🚀",
     youtubeFirstComment: '',
     youtubeVisibility: 'Public',
     youtubeTitle: '',
@@ -447,7 +447,8 @@ export default function Scheduling() {
     gmbProductPrice: '',
     whatsappNumbers: '',
     threadPosts: [],
-    linkedinTargets: []
+    linkedinTargets: [],
+    pinterestPostType: 'pin'
   });
 
   const chatRef = useRef(null);
@@ -804,7 +805,7 @@ export default function Scheduling() {
     setShowCreate(false);
     setNewPost({ 
       platform: 'instagram',
-      caption: '', customCaption: '', threadPosts: [], scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', pinterestTitle: '', pinterestLink: '', pinterestBoard: '', pinterestIsAIModified: false, pinterestIsAIGeneratedPerson: false, pinterestAllowComments: true, pinterestShowSimilarProducts: true, pinterestAltText: '',
+      caption: '', customCaption: '', threadPosts: [], scheduledFor: getCurrentTimeInTimezone('browser'), mediaUrl: '', pinterestTitle: '', pinterestLink: '', pinterestBoard: '', pinterestIsAIModified: false, pinterestIsAIGeneratedPerson: false, pinterestAllowComments: true, pinterestShowSimilarProducts: true, pinterestAltText: '', pinterestPostType: 'pin',
       triggerKeyword: '', autoResponse: '', coverUrl: '',
       requireFollow: true, unfollowedResponse: "Hey! Please follow our account first to get the link! 😍",
       publicReply: "Check your DMs! 🚀",
@@ -893,6 +894,7 @@ export default function Scheduling() {
             pinterestAllowComments: newPost.pinterestAllowComments,
             pinterestShowSimilarProducts: newPost.pinterestShowSimilarProducts,
             pinterestAltText: newPost.pinterestAltText,
+            pinterestPostType: newPost.pinterestPostType || 'pin',
           caption: payloadBase.caption,
           threadCustomCaption: threadCustomCaption,
           threadPosts: currentThreadPosts,
@@ -1885,8 +1887,77 @@ export default function Scheduling() {
                               style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: '#2563eb' }}
                             />
                             <span style={{ fontSize: '0.85rem', color: '#334155', fontWeight: '500' }}>This Pin includes an AI-generated person</span>
-                          </div>
-                        )}
+                       </div>
+                     )}
+
+                     {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('pinterest') && (
+                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
+                         <div
+                           onClick={() => {
+                             setPostType('image');
+                             setNewPost({ ...newPost, pinterestPostType: 'pin' });
+                             if (selectedFiles.length > 1) {
+                               setSelectedFiles([selectedFiles[0]]);
+                               setPreviews([previews[0]]);
+                               notify("Pinterest Pin accepts a single image.", "info");
+                             }
+                           }}
+                           style={{
+                             padding: '16px 12px', borderRadius: '12px',
+                             background: newPost.pinterestPostType === 'pin' ? '#eef2ff' : '#f8fafc',
+                             border: newPost.pinterestPostType === 'pin' ? '2px solid #E60023' : '2px solid transparent',
+                             color: newPost.pinterestPostType === 'pin' ? '#E60023' : '#64748b',
+                             cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                             transition: 'all 0.2s', textAlign: 'center',
+                             boxShadow: newPost.pinterestPostType === 'pin' ? '0 4px 12px rgba(230, 0, 35, 0.15)' : 'none'
+                           }}
+                         >
+                           <ImageIcon size={24} />
+                           <div style={{ fontSize: '0.9rem', fontWeight: '700', color: newPost.pinterestPostType === 'pin' ? '#E60023' : '#334155' }}>Pin</div>
+                           <div style={{ fontSize: '0.7rem', color: newPost.pinterestPostType === 'pin' ? '#E60023' : '#94a3b8' }}>Single image</div>
+                         </div>
+
+                         <div
+                           onClick={() => {
+                             setPostType('carousel');
+                             setNewPost({ ...newPost, pinterestPostType: 'board' });
+                           }}
+                           style={{
+                             padding: '16px 12px', borderRadius: '12px',
+                             background: newPost.pinterestPostType === 'board' ? '#eef2ff' : '#f8fafc',
+                             border: newPost.pinterestPostType === 'board' ? '2px solid #E60023' : '2px solid transparent',
+                             color: newPost.pinterestPostType === 'board' ? '#E60023' : '#64748b',
+                             cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                             transition: 'all 0.2s', textAlign: 'center',
+                             boxShadow: newPost.pinterestPostType === 'board' ? '0 4px 12px rgba(230, 0, 35, 0.15)' : 'none'
+                           }}
+                         >
+                           <Layers size={24} />
+                           <div style={{ fontSize: '0.9rem', fontWeight: '700', color: newPost.pinterestPostType === 'board' ? '#E60023' : '#334155' }}>Board</div>
+                           <div style={{ fontSize: '0.7rem', color: newPost.pinterestPostType === 'board' ? '#E60023' : '#94a3b8' }}>Multiple photos</div>
+                         </div>
+
+                         <div
+                           onClick={() => {
+                             setPostType('carousel');
+                             setNewPost({ ...newPost, pinterestPostType: 'collage' });
+                           }}
+                           style={{
+                             padding: '16px 12px', borderRadius: '12px',
+                             background: newPost.pinterestPostType === 'collage' ? '#eef2ff' : '#f8fafc',
+                             border: newPost.pinterestPostType === 'collage' ? '2px solid #E60023' : '2px solid transparent',
+                             color: newPost.pinterestPostType === 'collage' ? '#E60023' : '#64748b',
+                             cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                             transition: 'all 0.2s', textAlign: 'center',
+                             boxShadow: newPost.pinterestPostType === 'collage' ? '0 4px 12px rgba(230, 0, 35, 0.15)' : 'none'
+                           }}
+                         >
+                           <Layers size={24} />
+                           <div style={{ fontSize: '0.9rem', fontWeight: '700', color: newPost.pinterestPostType === 'collage' ? '#E60023' : '#334155' }}>Collage</div>
+                           <div style={{ fontSize: '0.7rem', color: newPost.pinterestPostType === 'collage' ? '#E60023' : '#94a3b8' }}>Multiple images</div>
+                         </div>
+                       </div>
+                     )}
                       </div>
 
                       <div style={{ marginTop: '12px', borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
@@ -2658,8 +2729,8 @@ export default function Scheduling() {
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
-          {visiblePosts.map(post => {
-            let mediaData = { type: post.type || 'image', mediaUrl: post.mediaUrl };
+           {visiblePosts.map(post => {
+            let mediaData = { type: post.type || 'image', mediaUrl: post.mediaUrl, pinterestPostType: '' };
             try {
               if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
                 mediaData = JSON.parse(post.mediaUrl);
@@ -2760,14 +2831,14 @@ export default function Scheduling() {
                        <Instagram size={10} color="white" />}
                       <span>{post.platform ? post.platform.replace('-', ' ').toUpperCase() : 'INSTAGRAM'}</span>
                     </div>
-                    {/* Post Type Badge */}
-                    <div style={{
-                      fontSize: '0.65rem', fontWeight: '800', color: '#1e293b', textTransform: 'uppercase',
-                      background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(4px)', padding: '4px 8px', borderRadius: '8px',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
-                    }}>
-                      {mediaData.type || 'IMAGE'}
-                    </div>
+                     {/* Post Type Badge */}
+                     <div style={{
+                       fontSize: '0.65rem', fontWeight: '800', color: '#1e293b', textTransform: 'uppercase',
+                       background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(4px)', padding: '4px 8px', borderRadius: '8px',
+                       boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
+                     }}>
+                       {post.platform === 'pinterest' && mediaData.pinterestPostType ? mediaData.pinterestPostType.toUpperCase() : (mediaData.type || 'IMAGE')}
+                     </div>
                   </div>
 
                   {/* Automation Toggle Overlay on Bottom-Right */}
