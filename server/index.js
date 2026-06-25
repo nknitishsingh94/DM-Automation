@@ -2367,6 +2367,12 @@ async function runSchedulingWorker() {
         }
 
         if (finalCarousel && finalCarousel.length > 0) {
+          const hasInvalidCarouselItem = finalCarousel.some(item => item && item.startsWith('blob:'));
+          if (hasInvalidCarouselItem) {
+            console.error(`❌ Blob URL detected in carousel items for post ${post._id}.`);
+            await safeUpdate(postId, { status: 'Failed', lastError: 'Invalid media URL (blob:) in carousel. Please re-upload the media — blob URLs cannot be used for publishing.' });
+            return;
+          }
           finalCarousel = finalCarousel.map(item => (item && item.startsWith('/uploads/')) ? `${SERVER_PUBLIC_URL}${item}` : item);
         }
 
@@ -2376,6 +2382,12 @@ async function runSchedulingWorker() {
            return;
         }
         
+        if (finalMedia && finalMedia.startsWith('blob:')) {
+          console.error(`❌ Blob URL detected for post ${post._id}. Blob URLs are not accessible from the server.`);
+          await safeUpdate(postId, { status: 'Failed', lastError: 'Invalid media URL (blob:). Please re-upload the media — blob URLs cannot be used for publishing.' });
+          return;
+        }
+
         if (finalMedia && (finalMedia.includes('127.0.0.1') || finalMedia.includes('localhost'))) {
           console.error(`❌ No publicly accessible media URL for post ${post._id}.`);
           await safeUpdate(postId, { status: 'Failed', lastError: 'No public media URL. Use Supabase Storage or a public image URL.' });
