@@ -245,7 +245,7 @@ export default function Scheduling() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [createdPost, setCreatedPost] = useState(null);
   const [isPlatformDropdownOpen, setIsPlatformDropdownOpen] = useState(false);
-  const [isPostNow, setIsPostNow] = useState(true);
+  const [isPostNow, setIsPostNow] = useState(false);
 
   // Filters State
   const [postStatusFilter, setPostStatusFilter] = useState('All posts');
@@ -2212,7 +2212,18 @@ export default function Scheduling() {
               {/* Date & Timezone */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>date & time</label>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', margin: 0 }}>date & time</label>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem', color: '#475569' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={isPostNow} 
+                          onChange={(e) => setIsPostNow(e.target.checked)} 
+                          style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: '#4f46e5' }}
+                        />
+                        Post Immediately
+                      </label>
+                    </div>
                   <div style={{ position: 'relative' }}>
                     <input
                       type="datetime-local"
