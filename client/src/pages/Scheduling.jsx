@@ -1065,6 +1065,7 @@ export default function Scheduling() {
 
   const [previewMode, setPreviewMode] = useState('post');
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showPinterestMoreOptions, setShowPinterestMoreOptions] = useState(false);
   const [currentPreviewIndex] = useState(0);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [editingLinkIndex, setEditingLinkIndex] = useState(null);
@@ -1823,11 +1824,14 @@ export default function Scheduling() {
                       </div>
 
                       <div style={{ marginTop: '12px', borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
-                        <div style={{ fontSize: '0.9rem', fontWeight: '700', color: '#334155', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          More options <ChevronDown size={16} />
+                        <div 
+                          onClick={() => setShowPinterestMoreOptions(!showPinterestMoreOptions)}
+                          style={{ fontSize: '0.9rem', fontWeight: '700', color: '#334155', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                          More options <ChevronDown size={16} style={{ transform: showPinterestMoreOptions ? 'rotate(180deg)' : 'none', transition: '0.3s' }} />
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        {showPinterestMoreOptions && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <div
                               onClick={() => setNewPost({ ...newPost, pinterestAllowComments: newPost.pinterestAllowComments === false ? true : false })}
@@ -1865,6 +1869,7 @@ export default function Scheduling() {
                             </div>
                           </div>
                         </div>
+                        )}
                       </div>
                     </div>
                   )}

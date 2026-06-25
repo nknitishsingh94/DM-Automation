@@ -784,10 +784,13 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
     // Normalize date to ISO string for consistent comparison in background worker
     let scheduledDate = req.body.scheduledFor;
     try {
-      if (scheduledDate) {
+      if (!scheduledDate || (typeof scheduledDate === 'string' && scheduledDate.trim() === '')) {
+        scheduledDate = new Date().toISOString();
+      } else {
         scheduledDate = new Date(scheduledDate).toISOString();
       }
     } catch (e) {
+      scheduledDate = new Date().toISOString();
       console.error("⚠️ Date parsing error:", e.message);
     }
 
