@@ -4,6 +4,7 @@ import { publishInstagramContent, publishFacebookContent } from '../utils/metaAp
 import { publishYouTubeVideo } from '../utils/youtubeApi.js';
 import { publishGoogleBusinessContent } from '../utils/googleBusinessApi.js';
 import { publishTwitterContent } from '../utils/twitterApi.js';
+import { publishPinterestContent } from '../utils/pinterestApi.js';
 import { supabase } from '../utils/supabase.js';
 
 export async function runSchedulingWorker() {
@@ -66,15 +67,19 @@ export async function runSchedulingWorker() {
           post.type = parsedMeta.type || 'image';
           post.carouselItems = parsedMeta.carouselItems || [];
           post.mediaUrl = parsedMeta.mediaUrl || '';
+          post.pinterestTitle = parsedMeta.pinterestTitle;
+          post.pinterestLink = parsedMeta.pinterestLink;
+          post.pinterestBoard = parsedMeta.pinterestBoard;
+          post.pinterestAltText = parsedMeta.pinterestAltText;
         } catch (e) {
           console.warn(`⚠️ [Worker] Failed to parse mediaUrl JSON for post ${post._id}`);
         }
       }
       
       try {
-        if (!post.platform || (post.platform !== 'instagram' && post.platform !== 'facebook' && post.platform !== 'youtube' && post.platform !== 'google-business')) {
+        if (!post.platform || (post.platform !== 'instagram' && post.platform !== 'facebook' && post.platform !== 'youtube' && post.platform !== 'google-business' && post.platform !== 'twitter' && post.platform !== 'pinterest')) {
           console.log(`⏭️ [Worker] Skipping post ${post._id} - Platform is not supported (${post.platform})`);
-          await safeUpdate(post.id, { status: 'Failed', errorLog: 'Only Instagram, Facebook, YouTube, and Google Business are supported via this worker.' });
+          await safeUpdate(post.id, { status: 'Failed', errorLog: 'Platform not supported via this worker.' });
           await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', errorLog: 'Unsupported platform.' });
           continue;
         }
@@ -100,6 +105,13 @@ export async function runSchedulingWorker() {
         if (post.platform === 'google-business' && !settings.googleBusinessAccessToken) {
           console.log(`❌ [Worker] Failed post ${post._id} - Missing Google Business Token`);
           await safeUpdate(post.id, { status: 'Failed', errorLog: 'Google Business API tokens missing. Please reconnect.' });
+          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', errorLog: 'Tokens missing' });
+          continue;
+        }
+
+        if (post.platform === 'pinterest' && !settings.pinterestAccessToken) {
+          console.log(`❌ [Worker] Failed post ${post._id} - Missing Pinterest Token`);
+          await safeUpdate(post.id, { status: 'Failed', errorLog: 'Pinterest API tokens missing. Please reconnect.' });
           await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', errorLog: 'Tokens missing' });
           continue;
         }
@@ -199,6 +211,8 @@ export async function runSchedulingWorker() {
           result = await publishGoogleBusinessContent(post.userId, post, post.workspaceId);
         } else if (post.platform === 'twitter') {
           result = await publishTwitterContent(post.userId, post, post.workspaceId);
+        } else if (post.platform === 'pinterest') {
+          result = await publishPinterestContent(post.userId, post, post.workspaceId);
         } else {
           result = await publishInstagramContent(post.userId, {
             type: post.type,
