@@ -1038,11 +1038,16 @@ app.delete('/api/captions/:id', verifyToken, async (req, res) => {
 app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    const postToUpdate = await ScheduledPost.findOne({ 
-      _id: req.params.id, 
-      userId: { $in: sharedUserIds },
-      workspaceId: req.workspaceId
-    });
+
+    // Use direct Supabase query to avoid userId UUID mapping issues
+    const { supabase: _sbPut } = await import('./utils/supabase.js');
+    const { data: putRows, error: putFetchErr } = await _sbPut
+      .from('scheduled_posts')
+      .select('*')
+      .eq('id', req.params.id)
+      .limit(1);
+    if (putFetchErr) throw new Error(putFetchErr.message);
+    const postToUpdate = putRows && putRows.length > 0 ? ScheduledPost(putRows[0]) : null;
     if (!postToUpdate) return res.status(404).json({ error: 'Post not found' });
 
     const updateData = { ...req.body };
@@ -1137,7 +1142,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     delete updateData.youtubeVideoId;
 
     const updatedPost = await ScheduledPost.findOneAndUpdate(
-      { _id: req.params.id, userId: { $in: sharedUserIds } },
+      { id: req.params.id },
       updateData,
       { new: true }
     );
