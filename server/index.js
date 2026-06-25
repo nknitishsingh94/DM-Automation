@@ -811,6 +811,15 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
     let mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
     let carouselItems = mediaFiles.length > 0 ? mediaFiles : (req.body.carouselItems || []);
 
+    // Unwrap JSON-stringified media metadata sent by the frontend (e.g. blob URL payloads)
+    if (typeof mediaUrl === 'string' && mediaUrl.startsWith('{')) {
+      try {
+        const nested = JSON.parse(mediaUrl);
+        if (nested.mediaUrl) mediaUrl = nested.mediaUrl;
+        if (nested.carouselItems && Array.isArray(nested.carouselItems)) carouselItems = nested.carouselItems;
+      } catch (e) {}
+    }
+
     // Ensure carouselItems is always an array (Multer might send it as a string if it was FormData)
     if (typeof carouselItems === 'string') {
       try { carouselItems = JSON.parse(carouselItems); } catch (e) { carouselItems = [carouselItems]; }
@@ -2457,6 +2466,14 @@ async function runSchedulingWorker() {
           }
         }
 
+        // Unwrap any nested JSON-encoded media metadata (defensive against double-encoding from older records)
+        if (finalMedia && typeof finalMedia === 'string' && finalMedia.startsWith('{')) {
+          try {
+            const nested = JSON.parse(finalMedia);
+            if (nested.mediaUrl) finalMedia = nested.mediaUrl;
+          } catch (e) {}
+        }
+
         // If the media URL is a local path, convert it to a public URL
         if (finalMedia && finalMedia.startsWith('/uploads/')) {
           finalMedia = `${SERVER_PUBLIC_URL}${finalMedia}`;
@@ -2574,7 +2591,7 @@ async function runSchedulingWorker() {
           }
           publishResult = await publishYouTubeVideo(post.userId, {
             type: finalType,
-            mediaUrl: post.mediaUrl,
+            mediaUrl: finalMedia,
             caption: post.caption
           }, youtubeSettings);
         } else if (post.platform === 'google-business') {
