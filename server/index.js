@@ -2477,7 +2477,7 @@ async function runSchedulingWorker() {
         const rewriteSupabasePublicToProxy = (url) => {
           if (!url || typeof url !== 'string') return url;
           const match = url.match(/https?:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/media(?:\/|\?)(.+)/);
-          if (match) return `${SERVER_PUBLIC_URL}/api/storage/view?path=media/${match[1]}`;
+          if (match) return `${SERVER_PUBLIC_URL}/api/storage/view?path=${match[1]}`;
           return url;
         };
 
