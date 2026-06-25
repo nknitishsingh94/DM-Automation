@@ -1260,15 +1260,25 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
   try {
-    console.log(`🗑️ DELETE scheduled post requested. ID: ${req.params.id}, User: ${req.user.userId}`);
-    const sharedUserIds = getSharedUserIdsSync(req.user.userId);
-    const postToDelete = await ScheduledPost.findOne({ 
-      _id: req.params.id, 
-      userId: { $in: sharedUserIds },
-      workspaceId: req.workspaceId
-    });
-    
+    const postId = req.params.id;
+    console.log(`🗑️ DELETE scheduled post requested. ID: ${postId}, User: ${req.user.userId}`);
+
+    // Import supabase directly to avoid userId UUID mapping issues in ScheduledPost.findOne
+    const { supabase: _sb } = await import('./utils/supabase.js');
+
+    // Fetch the post by its Supabase UUID directly
+    const { data: postRows, error: fetchErr } = await _sb
+      .from('scheduled_posts')
+      .select('*')
+      .eq('id', postId)
+      .limit(1);
+
+    if (fetchErr) throw new Error(fetchErr.message);
+
+    const postToDelete = postRows && postRows.length > 0 ? postRows[0] : null;
+
     if (postToDelete) {
+      // Parse associated media IDs for campaign cleanup
       let igMediaId = null;
       if (postToDelete.mediaUrl && postToDelete.mediaUrl.startsWith('{')) {
         try {
@@ -1282,27 +1292,32 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
       if (igMediaId) postIds.push(igMediaId);
 
       if (postIds.length > 0) {
-        console.log(`🗑️ Deleting associated campaigns for scheduled post IDs:`, postIds);
+        console.log(`🗑️ Deleting associated campaigns for post IDs:`, postIds);
+        const sharedUserIds = getSharedUserIdsSync(req.user.userId);
         await Campaign.deleteMany({
           userId: { $in: sharedUserIds },
           workspaceId: req.workspaceId,
           postId: { $in: postIds }
         });
-        await refreshGlobalCache(); // Instant Sync
+        await refreshGlobalCache();
       }
-      
-      await ScheduledPost.findByIdAndDelete(req.params.id);
-      console.log(`✅ Successfully deleted scheduled post: ${req.params.id}`);
+
+      // Delete directly from Supabase by UUID
+      const { error: deleteErr } = await _sb.from('scheduled_posts').delete().eq('id', postId);
+      if (deleteErr) throw new Error(deleteErr.message);
+
+      console.log(`✅ Successfully deleted scheduled post: ${postId}`);
       return res.json({ success: true });
     }
-    
-    console.warn(`⚠️ Scheduled post not found or unauthorized for ID: ${req.params.id}`);
+
+    console.warn(`⚠️ Scheduled post not found for ID: ${postId}`);
     res.status(404).json({ error: "Post not found or unauthorized" });
   } catch (err) {
     console.error(`❌ Error in DELETE /api/scheduling/:id:`, err);
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // Messages API (Inbox)
 app.get('/api/messages', verifyToken, async (req, res) => {
