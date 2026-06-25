@@ -748,19 +748,20 @@ export default function Scheduling() {
       return;
     }
 
-    const platformList = newPost.platforms || (newPost.platform ? [newPost.platform] : []);
+const platformList = newPost.platforms || (newPost.platform ? [newPost.platform] : []);
     
-      if (platformList.includes('pinterest')) {
-        if (!newPost.pinterestBoard || newPost.pinterestBoard.trim() === '') {
-          notify("Please select or create a Pinterest Board!", "error");
-          return;
-        }
-        if (!newPost.mediaUrl && (!newPost.carouselItems || newPost.carouselItems.length === 0)) {
-          notify("An image is required for Pinterest Pins!", "error");
-          return;
-        }
+    if (platformList.includes('pinterest')) {
+      if (!newPost.pinterestBoard || newPost.pinterestBoard.trim() === '') {
+        notify("Please select or create a Pinterest Board!", "error");
+        return;
       }
-      if (platformList.includes('google-business')) {
+      if (previews.length === 0 && !newPost.mediaUrl && (!newPost.carouselItems || newPost.carouselItems.length === 0)) {
+        notify("An image is required for Pinterest Pins!", "error");
+        return;
+      }
+    }
+    
+    if (platformList.includes('google-business')) {
       if (newPost.gmbCtaEnabled && newPost.gmbActionType !== 'CALL' && !newPost.gmbSearchUrl) {
         notify("URL required when CTA is enabled for Google Business!", "error");
         return;
@@ -851,10 +852,11 @@ export default function Scheduling() {
       } else {
         activePlatforms.push({ id: plat, targetUrn: null });
       }
-    });
-
+});
+    
     const tempPosts = activePlatforms.map((platObj, index) => {
       const targetName = platObj.targetUrn ? (settings.linkedinPages?.find(p => p.urn === platObj.targetUrn)?.name || '') : '';
+      const previewUrl = currentPreviews.length > 0 ? currentPreviews[0] : payloadBase.mediaUrl;
       return {
         _id: 'temp-' + platObj.id + '-' + (platObj.targetUrn ? platObj.targetUrn.replace(/:/g, '_') : index) + '-' + Date.now(),
         status: 'Uploading',
@@ -862,12 +864,12 @@ export default function Scheduling() {
         platform: platObj.id,
         type: currentType,
         scheduledFor: isPostNow ? '' : convertLocalToUTC(payloadBase.scheduledFor, selectedTimezone),
-        mediaUrl: JSON.stringify({
+        mediaUrl: platObj.id === 'linkedin' ? JSON.stringify({
           type: currentType,
-          mediaUrl: currentPreviews.length > 0 ? currentPreviews[0] : payloadBase.mediaUrl,
+          mediaUrl: previewUrl || '',
           linkedinTarget: platObj.targetUrn,
           linkedinTargetName: targetName
-        }),
+        }) : (previewUrl || ''),
         isUploading: true
       };
     });
