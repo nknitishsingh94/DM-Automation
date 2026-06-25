@@ -260,18 +260,6 @@ export default function Scheduling() {
   const [createdPost, setCreatedPost] = useState(null);
   const [isPlatformDropdownOpen, setIsPlatformDropdownOpen] = useState(false);
   const [isPostNow, setIsPostNow] = useState(false);
-  const [showCreateDropdown, setShowCreateDropdown] = useState(false);
-  const createDropdownRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (createDropdownRef.current && !createDropdownRef.current.contains(e.target)) {
-        setShowCreateDropdown(false);
-      }
-    };
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
 
 
   // Filters State
@@ -2429,67 +2417,15 @@ export default function Scheduling() {
           <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '800', color: '#1e293b' }}>Posts</h2>
           <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#64748b', fontWeight: '500' }}>Manage and schedule your social media content</p>
         </div>
-        <div ref={createDropdownRef} style={{ position: 'relative' }}>
-          <button 
-            onClick={(e) => { e.stopPropagation(); setShowCreateDropdown(!showCreateDropdown); }}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '8px',
-              background: '#3b82f6', color: 'white', border: 'none',
-              padding: '10px 20px', borderRadius: '8px', fontWeight: '600',
-              fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s',
-              boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)'
-            }}
-            onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(124, 58, 237, 0.35)'; }}
-            onMouseOut={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.25)'; }}
-          >
-            <Plus size={16} /> Create post <ChevronDown size={14} />
-          </button>
-          {showCreateDropdown && (
-            <div style={{
-              position: 'absolute', top: 'calc(100% + 8px)', right: '0',
-              background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px',
-              boxShadow: '0 10px 25px rgba(0,0,0,0.1)', zIndex: 100, minWidth: '180px',
-              padding: '8px 0', display: 'flex', flexDirection: 'column', gap: '4px'
-            }}>
-              <div
-                onClick={() => { setPostType('image'); setShowCreate(true); setShowCreateDropdown(false); }}
-                style={{
-                  padding: '12px 20px', fontSize: '0.95rem', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', gap: '10px', color: '#334155',
-                  transition: 'background 0.2s', fontWeight: '500'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
-                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
-              >
-                <ImageIcon size={18} color="#6366f1" /> Pin
-              </div>
-              <div
-                onClick={() => { setPostType('carousel'); setShowCreate(true); setShowCreateDropdown(false); }}
-                style={{
-                  padding: '12px 20px', fontSize: '0.95rem', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', gap: '10px', color: '#334155',
-                  transition: 'background 0.2s', fontWeight: '500'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
-                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
-              >
-                <Layers size={18} color="#6366f1" /> Board
-              </div>
-              <div
-                onClick={() => { setPostType('carousel'); setShowCreate(true); setShowCreateDropdown(false); }}
-                style={{
-                  padding: '12px 20px', fontSize: '0.95rem', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', gap: '10px', color: '#334155',
-                  transition: 'background 0.2s', fontWeight: '500'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
-                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
-              >
-                <Layers size={18} color="#6366f1" /> Collage
-              </div>
-            </div>
-          )}
-        </div>
+        <button onClick={() => setShowCreate(true)} style={{
+          display: 'flex', alignItems: 'center', gap: '8px',
+          background: '#3b82f6', color: 'white', border: 'none',
+          padding: '10px 20px', borderRadius: '8px', fontWeight: '600',
+          fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s',
+          boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)'
+        }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(124, 58, 237, 0.35)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.25)'; }}>
+          <Plus size={16} /> Create post
+        </button>
       </div>
 
       {/* Filters Row */}
@@ -2709,68 +2645,16 @@ export default function Scheduling() {
           <h2 style={{ margin: '0 0 12px 0', fontSize: '1.5rem', fontWeight: '800', color: '#1e293b' }}>No posts yet</h2>
           <p style={{ margin: '0 0 32px 0', color: '#64748b', fontSize: '1rem' }}>Create your first social media post</p>
           
-          <div ref={createDropdownRef} style={{ position: 'relative' }}>
-            <button 
-              onClick={(e) => { e.stopPropagation(); setShowCreateDropdown(!showCreateDropdown); }}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '8px',
-                background: '#3b82f6', color: 'white', border: 'none',
-                padding: '14px 48px', borderRadius: '8px', fontWeight: '600',
-                fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s',
-                width: '300px', justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)'
-              }}
-              onMouseOver={(e) => { e.currentTarget.style.background = '#6d28d9'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(124, 58, 237, 0.35)'; }}
-              onMouseOut={(e) => { e.currentTarget.style.background = '#3b82f6'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.25)'; }}
-            >
-              <Plus size={20} /> Create post <ChevronDown size={16} />
-            </button>
-            {showCreateDropdown && (
-              <div style={{
-                position: 'absolute', bottom: '100%', right: '0', marginBottom: '8px',
-                background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.1)', zIndex: 100, minWidth: '180px',
-                padding: '8px 0', display: 'flex', flexDirection: 'column', gap: '4px'
-              }}>
-                <div
-                  onClick={() => { setPostType('image'); setShowCreate(true); setShowCreateDropdown(false); }}
-                  style={{
-                    padding: '12px 20px', fontSize: '0.95rem', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: '10px', color: '#334155',
-                    transition: 'background 0.2s', fontWeight: '500'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
-                  onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
-                >
-                  <ImageIcon size={18} color="#6366f1" /> Pin
-                </div>
-                <div
-                  onClick={() => { setPostType('carousel'); setShowCreate(true); setShowCreateDropdown(false); }}
-                  style={{
-                    padding: '12px 20px', fontSize: '0.95rem', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: '10px', color: '#334155',
-                    transition: 'background 0.2s', fontWeight: '500'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
-                  onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
-                >
-                  <Layers size={18} color="#6366f1" /> Board
-                </div>
-                <div
-                  onClick={() => { setPostType('carousel'); setShowCreate(true); setShowCreateDropdown(false); }}
-                  style={{
-                    padding: '12px 20px', fontSize: '0.95rem', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: '10px', color: '#334155',
-                    transition: 'background 0.2s', fontWeight: '500'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
-                  onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
-                >
-                  <Layers size={18} color="#6366f1" /> Collage
-                </div>
-              </div>
-            )}
-          </div>
+          <button onClick={() => setShowCreate(true)} style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            background: '#3b82f6', color: 'white', border: 'none',
+            padding: '14px 48px', borderRadius: '8px', fontWeight: '600',
+            fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s',
+            width: '300px', justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)'
+          }} onMouseOver={(e) => { e.currentTarget.style.background = '#6d28d9'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(124, 58, 237, 0.35)'; }} onMouseOut={(e) => { e.currentTarget.style.background = '#3b82f6'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.25)'; }}>
+            <Plus size={20} /> Create post
+          </button>
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
