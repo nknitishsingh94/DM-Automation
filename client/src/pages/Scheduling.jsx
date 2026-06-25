@@ -2656,16 +2656,9 @@ export default function Scheduling() {
 
             const rawMediaSource = mediaData.localMediaUrl || (mediaData.carouselItems && mediaData.carouselItems.length > 0 ? mediaData.carouselItems[0] : null) || mediaData.mediaUrl;
 
-            const isInstagramCdn = !!(rawMediaSource && (
-              rawMediaSource.includes('cdninstagram.com') ||
-              rawMediaSource.includes('scontent-') ||
-              rawMediaSource.includes('fbcdn.net')
-            ));
-            const finalMediaUrl = isInstagramCdn
-              ? null
-              : (rawMediaSource && rawMediaSource.startsWith('http')
-                  ? rawMediaSource
-                  : (rawMediaSource ? `${API_BASE_URL}${rawMediaSource}` : null));
+            const finalMediaUrl = rawMediaSource && rawMediaSource.startsWith('http')
+              ? rawMediaSource
+              : (rawMediaSource ? `${API_BASE_URL}${rawMediaSource}` : null);
 
             return (
               <div
