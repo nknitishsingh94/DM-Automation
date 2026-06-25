@@ -855,7 +855,6 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
         pinterestAllowComments: req.body.pinterestAllowComments !== undefined ? req.body.pinterestAllowComments : true,
         pinterestShowSimilarProducts: req.body.pinterestShowSimilarProducts !== undefined ? req.body.pinterestShowSimilarProducts : true,
         pinterestAltText: req.body.pinterestAltText || '',
-        pinterestPostType: req.body.pinterestPostType || 'pin',
       gmbEventStartDate: req.body.gmbEventStartDate || '',
       gmbEventEndDate: req.body.gmbEventEndDate || '',
       gmbOfferCouponCode: req.body.gmbOfferCouponCode || '',
@@ -2457,7 +2456,6 @@ async function runSchedulingWorker() {
             finalCarousel = meta.carouselItems || [];
             finalMedia = meta.mediaUrl || (finalCarousel.length > 0 ? finalCarousel[0] : '');
             hasYouTubeVideoId = !!meta.youtubeVideoId;
-            post.pinterestPostType = meta.pinterestPostType || 'pin';
             post.pinterestTitle = meta.pinterestTitle || '';
             post.pinterestLink = meta.pinterestLink || '';
             post.pinterestBoard = meta.pinterestBoard || '';

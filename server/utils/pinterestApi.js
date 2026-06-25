@@ -57,8 +57,7 @@ async function getOrCreateBoard(accessToken, boardName) {
  */
 export async function publishPinterestContent(userId, post, workspaceId) {
   try {
-    const pinterestType = post.pinterestPostType || 'pin';
-    console.log(`📌 [Pinterest] Publishing ${pinterestType.toUpperCase()} for User: ${userId}. Board: ${post.pinterestBoard || 'Default'}`);
+    console.log(`📌 [Pinterest] Publishing for User: ${userId}. Board: ${post.pinterestBoard || 'Default'}`);
     
     // 1. Get User's Pinterest Tokens
     const query = { userId };
