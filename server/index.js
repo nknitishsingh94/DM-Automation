@@ -61,13 +61,16 @@ import postsRoutes from './routes/posts.js';
 import analyticsRoutes from './routes/analytics.js';
 import { setupSwagger } from './swagger.js';
 import { generateAIResponse } from './utils/aiHandler.js';
-import { supabase, convertObjectIDToUUID } from './utils/supabase.js';
+import { supabase, supabaseAdmin, convertObjectIDToUUID } from './utils/supabase.js';
 import Workspace from './models/Workspace.js';
 import { processYouTubeComments } from './utils/youtube-automation.js';
 
 // --- GLOBAL CACHE (Nitro Speed) ---
 const settingsCache = new Map();
 const campaignsCache = new Map();
+
+// Media proxy base URL used across routes and workers
+const SERVER_PUBLIC_URL = process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
 
 // Periodic Cache Refresh (Every 30s)
 async function refreshGlobalCache() {
@@ -707,7 +710,8 @@ app.post('/api/storage/sign', verifyToken, async (req, res) => {
     if (!fileName) return res.status(400).json({ error: 'fileName is required' });
 
     console.log(`🔐 Generating Signed URL for: ${fileName}`);
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabaseAdmin
+      .storage
       .from('media')
       .createSignedUploadUrl(fileName);
 
@@ -2354,9 +2358,6 @@ async function runSchedulingWorker() {
         console.error(`⚠️ [Worker] _updatePost silently failed for post ${id}:`, upErr.message || upErr);
       }
     };
-
-    // If the media URL is a local path, convert it to a public URL
-    const SERVER_PUBLIC_URL = process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
 
     // Process up to 20 posts per run to handle many users scheduling at the same time
     const postsToProcess = duePosts.slice(0, 20);

@@ -25,6 +25,8 @@ try {
   }
 } catch (e) {}
 
+export { supabaseAdmin };
+
 export const uploadToSupabase = async (fileBuffer, fileName, contentType) => {
   const client = supabaseAdmin || supabase;
   if (!client) return null;
