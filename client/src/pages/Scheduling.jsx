@@ -2656,9 +2656,19 @@ export default function Scheduling() {
 
             const rawMediaSource = mediaData.localMediaUrl || (mediaData.carouselItems && mediaData.carouselItems.length > 0 ? mediaData.carouselItems[0] : null) || mediaData.mediaUrl;
 
-            const finalMediaUrl = rawMediaSource && rawMediaSource.startsWith('http')
-              ? rawMediaSource
-              : (rawMediaSource ? `${API_BASE_URL}${rawMediaSource}` : null);
+            const rewriteSupabasePublicToProxy = (url) => {
+              if (!url || typeof url !== 'string') return url;
+              const match = url.match(/https?:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/media\/(.+)/);
+              if (match) return `${API_BASE_URL}/api/storage/view?path=media/${match[1]}`;
+              return url;
+            };
+
+            let resolvedMedia = rewriteSupabasePublicToProxy(rawMediaSource);
+            const resolvedCarouselItems = (mediaData.carouselItems || []).map(rewriteSupabasePublicToProxy);
+
+            const finalMediaUrl = resolvedMedia && resolvedMedia.startsWith('http')
+              ? resolvedMedia
+              : (resolvedMedia ? `${API_BASE_URL}${resolvedMedia}` : null);
 
             return (
               <div
