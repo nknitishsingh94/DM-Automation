@@ -983,6 +983,31 @@ export default function Scheduling() {
           mediaUrls = await Promise.all(uploadPromises);
           }
 
+        let thumbnailMediaUrl = null;
+        if (youtubeThumbnailFile && activePlatforms.some(p => p.id === 'youtube')) {
+          try {
+            const thumbFileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${youtubeThumbnailFile.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+            const thumbSignRes = await fetch(`${API_BASE_URL}/api/storage/sign`, {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ fileName: thumbFileName, contentType: youtubeThumbnailFile.type })
+            });
+            if (thumbSignRes.ok) {
+              const { uploadUrl: thumbUploadUrl, publicUrl: thumbPublicUrl } = await thumbSignRes.json();
+              const thumbUploadRes = await fetch(thumbUploadUrl, {
+                method: 'PUT',
+                body: youtubeThumbnailFile,
+                headers: { 'Content-Type': youtubeThumbnailFile.type }
+              });
+              if (thumbUploadRes.ok) {
+                thumbnailMediaUrl = thumbPublicUrl;
+              }
+            }
+          } catch (thumbErr) {
+            console.error("Thumbnail upload failed:", thumbErr);
+          }
+        }
+
           // Upload thread media if any
           const finalThreadPosts = [...currentThreadPosts];
           if (currentThreadPosts && currentThreadPosts.length > 0) {
@@ -1057,10 +1082,20 @@ export default function Scheduling() {
             }
           }
 
+          let updateMediaUrl = customMediaUrl;
+          if (plat === 'youtube' && thumbnailMediaUrl) {
+            updateMediaUrl = JSON.stringify({
+              type: currentType,
+              mediaUrl: customMediaUrl,
+              thumbnail: thumbnailMediaUrl,
+              youtubeVideoId: customVideoId
+            });
+          }
+
           const updateRes = await fetch(`${API_BASE_URL}/api/scheduling/${dbId}`, {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mediaUrl: customMediaUrl, carouselItems: mediaUrls, status: 'Scheduled', youtubeVideoId: customVideoId })
+            body: JSON.stringify({ mediaUrl: updateMediaUrl, carouselItems: mediaUrls, status: 'Scheduled', youtubeVideoId: customVideoId })
           });
 
           const updatedData = await updateRes.json();

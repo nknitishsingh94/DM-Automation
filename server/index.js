@@ -2599,7 +2599,7 @@ async function runSchedulingWorker() {
           }
           publishResult = await publishYouTubeVideo(post.userId, {
             type: finalType,
-            mediaUrl: finalMedia,
+            mediaUrl: post.mediaUrl,
             caption: post.caption
           }, youtubeSettings);
         } else if (post.platform === 'google-business') {
