@@ -39,6 +39,17 @@ export default function YoutubeDashboard() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDraggingThumb, setIsDraggingThumb] = useState(false);
 
+  const getSafeImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return url;
+    if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
+      const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'https://dm-automation-w9a4.vercel.app' 
+        : 'https://dm-automation-w9a4.vercel.app';
+      return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
+    }
+    return url;
+  };
+
   const handleDragOverThumb = (e) => {
     e.preventDefault();
     setIsDraggingThumb(true);
@@ -311,18 +322,7 @@ export default function YoutubeDashboard() {
         setScheduleData(s => ({
           ...s,
           title: data.titles[0], // Pick the first suggested title
-          description: data.description + '\
-const getSafeImageUrl = (url) => {
-  if (!url || typeof url !== 'string') return url;
-  if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
-    const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? 'https://dm-automation-w9a4.vercel.app' 
-      : 'https://dm-automation-w9a4.vercel.app';
-    return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
-  }
-  return url;
-};
-n\n#Tags:\n' + data.tags
+          description: data.description + '\n\n#Tags:\n' + data.tags
         }));
         notify('AI metadata applied successfully!', 'success');
         setShowAIModal(false);
@@ -595,7 +595,7 @@ n\n#Tags:\n' + data.tags
                     <button onClick={() => thumbInputRef.current.click()} style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '10px 16px', borderRadius: '8px', fontWeight: '600', color: '#475569', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <ImageIcon size={16} /> {scheduleData.thumbnail ? 'Change Thumbnail' : 'Upload Thumbnail'}
                     </button>
-                    {scheduleData.thumbnail && <div style={{ width: '40px', height: '40px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}><img referrerPolicy="no-referrer" src={getSafeImageUrl(scheduleData.thumbnail.startsWith('/uploads') ? `${API_BASE_URL)}${scheduleData.thumbnail}` : scheduleData.thumbnail} alt="thumb" style={{width:'100%', height:'100%', objectFit:'cover'}} /></div>}
+                    {scheduleData.thumbnail && <div style={{ width: '40px', height: '40px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}><img referrerPolicy="no-referrer" src={getSafeImageUrl(scheduleData.thumbnail.startsWith('/uploads') ? `${API_BASE_URL}${scheduleData.thumbnail}` : scheduleData.thumbnail)} alt="thumb" style={{width:'100%', height:'100%', objectFit:'cover'}} /></div>}
                   </div>
                 </div>
               </div>
