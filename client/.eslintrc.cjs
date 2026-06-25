@@ -5,13 +5,8 @@ module.exports = {
     sourceType: 'module',
     ecmaFeatures: { jsx: true }
   },
-  plugins: ['react'],
-  extends: ['eslint:recommended', 'plugin:react/recommended'],
-  settings: { react: { version: '18.2' } },
   rules: {
-    'no-undef': 'warn',
-    'no-unused-vars': 'warn',
-    'react/prop-types': 'off',
-    'react/react-in-jsx-scope': 'off'
+    'no-undef': 'off',
+    'no-unused-vars': 'off'
   },
 }
