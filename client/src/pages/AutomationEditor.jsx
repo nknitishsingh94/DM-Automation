@@ -1,3 +1,14 @@
+
+const getSafeImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
+    const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'https://dm-automation-w9a4.vercel.app' 
+      : 'https://dm-automation-w9a4.vercel.app';
+    return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
+  }
+  return url;
+};
 import React, { useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { 
@@ -602,7 +613,7 @@ export default function AutomationEditor() {
                         </div>
                       ) : (!anyStory && selectedMedia) ? (
                         <img referrerPolicy="no-referrer" 
-                          src={selectedMedia.thumbnail_url || selectedMedia.media_url} 
+                          src={getSafeImageUrl(selectedMedia.thumbnail_url || selectedMedia.media_url)} 
                           alt="Selected Post" 
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                         />
@@ -1193,7 +1204,7 @@ export default function AutomationEditor() {
                                 }}
                               >
                                 <img referrerPolicy="no-referrer" 
-                                  src={item.thumbnail_url || item.media_url} 
+                                  src={getSafeImageUrl(item.thumbnail_url || item.media_url)} 
                                   alt="IG Media" 
                                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                                 />
@@ -1299,7 +1310,7 @@ export default function AutomationEditor() {
                                 }}
                               >
                                 <img referrerPolicy="no-referrer" 
-                                  src={item.thumbnail_url || item.media_url} 
+                                  src={getSafeImageUrl(item.thumbnail_url || item.media_url)} 
                                   alt="IG Media" 
                                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                                 />

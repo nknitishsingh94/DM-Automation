@@ -1,3 +1,14 @@
+
+const getSafeImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
+    const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'https://dm-automation-w9a4.vercel.app' 
+      : 'https://dm-automation-w9a4.vercel.app';
+    return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
+  }
+  return url;
+};
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, Target, Zap, Heart, Shield, ArrowRight } from 'lucide-react';

@@ -1024,7 +1024,18 @@ export default function Scheduling() {
                    fileSize: ytFile.size, 
                    contentType: ytFile.type, 
                    title: newPost.youtubeTitle || payloadBase.caption,
-                   description: newPost.youtubeTags ? `${payloadBase.caption}\n\n${newPost.youtubeTags}` : payloadBase.caption
+                   description: newPost.youtubeTags ? `${payloadBase.caption}\
+const getSafeImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
+    const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'https://dm-automation-w9a4.vercel.app' 
+      : 'https://dm-automation-w9a4.vercel.app';
+    return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
+  }
+  return url;
+};
+n\n${newPost.youtubeTags}` : payloadBase.caption
                  })
                });
                if (ytUrlRes.ok) {
@@ -1550,7 +1561,7 @@ export default function Scheduling() {
                             {selectedFiles[idx]?.type?.startsWith('video') ? (
                               <video src={src} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             ) : (
-                              <img referrerPolicy="no-referrer" src={src} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+                              <img referrerPolicy="no-referrer" src={getSafeImageUrl(src)} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
                             )}
                             <button
                               onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
@@ -1639,7 +1650,7 @@ export default function Scheduling() {
                                   {post.file?.type?.startsWith('video') ? (
                                     <video src={post.preview} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                   ) : (
-                                    <img referrerPolicy="no-referrer" src={post.preview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+                                    <img referrerPolicy="no-referrer" src={getSafeImageUrl(post.preview)} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
                                   )}
                                   <button
                                     onClick={() => removeThreadMedia(index)}
@@ -1720,7 +1731,7 @@ export default function Scheduling() {
                         <input type="file" ref={thumbnailInputRef} style={{ display: 'none' }} accept="image/*" onChange={handleThumbnailChange} />
                         {youtubeThumbnailPreview ? (
                           <>
-                            <img referrerPolicy="no-referrer" src={youtubeThumbnailPreview} alt="Thumbnail Preview" style={{ width: '100%', maxHeight: '160px', objectFit: 'cover', borderRadius: '8px' }} />
+                            <img referrerPolicy="no-referrer" src={getSafeImageUrl(youtubeThumbnailPreview)} alt="Thumbnail Preview" style={{ width: '100%', maxHeight: '160px', objectFit: 'cover', borderRadius: '8px' }} />
                             <button
                               onClick={(e) => { e.stopPropagation(); setYoutubeThumbnailFile(null); setYoutubeThumbnailPreview(null); }}
                               style={{ position: 'absolute', top: '8px', right: '8px', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
@@ -2695,7 +2706,7 @@ export default function Scheduling() {
                     </div>
                   ) : (
                     <img referrerPolicy="no-referrer" 
-                      src={finalMediaUrl} 
+                      src={getSafeImageUrl(finalMediaUrl)} 
                       alt="Preview" 
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                       onError={(e) => {

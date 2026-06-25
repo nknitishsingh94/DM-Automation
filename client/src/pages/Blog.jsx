@@ -1,3 +1,14 @@
+
+const getSafeImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
+    const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'https://dm-automation-w9a4.vercel.app' 
+      : 'https://dm-automation-w9a4.vercel.app';
+    return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
+  }
+  return url;
+};
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Calendar, Clock, ArrowRight, Zap } from 'lucide-react';
@@ -58,7 +69,7 @@ export default function Blog() {
           {blogPosts.map((post, index) => (
             <div key={post.id} className={`blog-card glass-morphism animate-slide-up delay-${index + 1}`}>
               <div className="card-image">
-                <img referrerPolicy="no-referrer" src={post.image} alt={post.title} />
+                <img referrerPolicy="no-referrer" src={getSafeImageUrl(post.image)} alt={post.title} />
                 <span className={`post-category ${post.color}`}>{post.category}</span>
               </div>
               <div className="card-content">

@@ -1,3 +1,14 @@
+
+const getSafeImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
+    const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'https://dm-automation-w9a4.vercel.app' 
+      : 'https://dm-automation-w9a4.vercel.app';
+    return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
+  }
+  return url;
+};
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Star, MessageSquare, Image as ImageIcon, Instagram, Facebook, MessageCircle } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -257,7 +268,7 @@ const WriteReview = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
               <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '2px dashed #cbd5e1', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
                 {newReview.avatarUrl ? (
-                  <img referrerPolicy="no-referrer" src={newReview.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img referrerPolicy="no-referrer" src={getSafeImageUrl(newReview.avatarUrl)} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <ImageIcon size={28} color="#94a3b8" />
                 )}

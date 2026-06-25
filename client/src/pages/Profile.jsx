@@ -1,3 +1,14 @@
+
+const getSafeImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
+    const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'https://dm-automation-w9a4.vercel.app' 
+      : 'https://dm-automation-w9a4.vercel.app';
+    return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
+  }
+  return url;
+};
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Info, Save, User as UserIcon, LogOut } from 'lucide-react';
@@ -61,7 +72,7 @@ export default function Profile() {
             boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
           }}>
             {profileData.profilePhoto ? (
-              <img referrerPolicy="no-referrer" src={profileData.profilePhoto} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/placeholder-ig.png'; e.currentTarget.onerror = null; }} />
+              <img referrerPolicy="no-referrer" src={getSafeImageUrl(profileData.profilePhoto)} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/placeholder-ig.png'; e.currentTarget.onerror = null; }} />
             ) : (
               profileData.username.charAt(0).toUpperCase()
             )}

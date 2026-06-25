@@ -755,6 +755,33 @@ app.get('/api/storage/view', async (req, res) => {
   }
 });
 
+app.get('/api/storage/proxy-external', async (req, res) => {
+  try {
+    const targetUrl = req.query.url;
+    if (!targetUrl) return res.status(400).json({ error: 'url is required' });
+
+    const response = await fetch(targetUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
+      }
+    });
+
+    if (!response.ok) {
+      console.log('⚠️ Proxy external image failed: ' + response.status + ' ' + targetUrl);
+      return res.redirect(302, 'https://placehold.co/400x400/f1f5f9/94a3b8.png?text=Expired');
+    }
+
+    const buffer = Buffer.from(await response.arrayBuffer());
+    res.setHeader('Content-Type', response.headers.get('content-type') || 'image/jpeg');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.send(buffer);
+  } catch (err) {
+    console.error('❌ External Storage proxy error:', err.message);
+    res.redirect(302, 'https://placehold.co/400x400/f1f5f9/94a3b8.png?text=Error');
+  }
+});
+
 app.post('/api/scheduling', verifyToken, (req, res, next) => {
   // If request is JSON, skip multer and move to handler
   if (req.is('json')) {

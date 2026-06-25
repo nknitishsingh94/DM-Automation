@@ -1,3 +1,14 @@
+
+const getSafeImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
+    const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'https://dm-automation-w9a4.vercel.app' 
+      : 'https://dm-automation-w9a4.vercel.app';
+    return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
+  }
+  return url;
+};
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, Clock, ArrowLeft, Share2, Facebook, Instagram, Twitter, MessageSquare } from 'lucide-react';
@@ -100,7 +111,7 @@ export default function BlogPost() {
             {relatedPosts.map(p => (
               <Link key={p.id} to={`/blog/${p.id}`} className="related-card glass-morphism">
                 <div className="related-thumb">
-                  <img referrerPolicy="no-referrer" src={p.image} alt={p.title} />
+                  <img referrerPolicy="no-referrer" src={getSafeImageUrl(p.image)} alt={p.title} />
                 </div>
                 <div className="related-info">
                   <h4>{p.title}</h4>

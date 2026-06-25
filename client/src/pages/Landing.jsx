@@ -1,3 +1,14 @@
+
+const getSafeImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
+    const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'https://dm-automation-w9a4.vercel.app' 
+      : 'https://dm-automation-w9a4.vercel.app';
+    return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
+  }
+  return url;
+};
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Bot, Zap, Facebook, Instagram, Youtube, Linkedin, MessageCircle, Infinity, Heart, Check, MessageSquare, Clock, Calendar, Globe, Image, Radio, Star, Sparkles } from 'lucide-react';
@@ -408,7 +419,7 @@ export default function Landing() {
                   <div className="feedback-author">
                     <div className="feedback-user-img">
                       {review.avatarUrl ? (
-                        <img referrerPolicy="no-referrer" src={review.avatarUrl} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                        <img referrerPolicy="no-referrer" src={getSafeImageUrl(review.avatarUrl)} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                       ) : (
                         <div className="feedback-user-initial">
                           {(review.name || 'User').split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase()}
@@ -619,7 +630,7 @@ export default function Landing() {
                   <label className="form-label">Profile Picture (Optional)</label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     {newReview.avatarUrl && (
-                      <img referrerPolicy="no-referrer" src={newReview.avatarUrl} alt="Avatar Preview" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                      <img referrerPolicy="no-referrer" src={getSafeImageUrl(newReview.avatarUrl)} alt="Avatar Preview" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
                     )}
                     <input
                       type="file"
