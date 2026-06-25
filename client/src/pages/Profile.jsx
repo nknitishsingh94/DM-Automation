@@ -61,7 +61,7 @@ export default function Profile() {
             boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
           }}>
             {profileData.profilePhoto ? (
-              <img src={profileData.profilePhoto} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={profileData.profilePhoto} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/placeholder-ig.png'; e.currentTarget.onerror = null; }} />
             ) : (
               profileData.username.charAt(0).toUpperCase()
             )}

@@ -312,7 +312,7 @@ const MessageOnlyHub = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#dfe5e7', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                 {user?.profilePhoto ? (
-                  <img src={user.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={user.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
                 ) : (
                   <User size={24} color="#aebac1" />
                 )}
@@ -413,7 +413,7 @@ const MessageOnlyHub = () => {
                   >
                     {/* User Avatar with Platform Badge */}
                     <div style={{ position: 'relative', flexShrink: 0 }}>
-                      <img src={chat.avatar} alt={chat.userName} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} />
+                      <img src={chat.avatar} alt={chat.userName} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
                       <div style={{ 
                         position: 'absolute', bottom: -2, right: -2, 
                         width: '20px', height: '20px', borderRadius: '50%', 
@@ -457,7 +457,7 @@ const MessageOnlyHub = () => {
             {/* Chat Header */}
             <div style={{ padding: '10px 16px', background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #d1d7db', height: '60px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                <img src={activeChat.avatar} alt="Avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                <img src={activeChat.avatar} alt="Avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
                 <div>
                   <h3 style={{ margin: 0, fontSize: '1rem', color: '#111b21', fontWeight: '500' }}>{activeChat.userName}</h3>
                   <span style={{ fontSize: '0.8rem', color: '#667781' }}>click here for contact info</span>

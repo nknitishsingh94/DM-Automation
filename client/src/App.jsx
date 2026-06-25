@@ -293,7 +293,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                   overflow: 'hidden'
                 }}>
                   {user.profilePhoto ? (
-                    <img src={user.profilePhoto} alt="Nk" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={user.profilePhoto} alt="Nk" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
                   ) : (
                     user.username.charAt(0).toUpperCase()
                   )}
