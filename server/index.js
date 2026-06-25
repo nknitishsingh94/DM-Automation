@@ -717,12 +717,12 @@ app.post('/api/storage/sign', verifyToken, async (req, res) => {
 
     if (error) throw error;
 
-    const proxyBase = `${SERVER_PUBLIC_URL}/api/storage/view?path=media/${encodeURIComponent(fileName)}`;
+    const publicUrl = supabaseAdmin.storage.from('media').getPublicUrl(fileName).data.publicUrl;
 
     res.json({ 
       uploadUrl: data.signedUrl, 
       token: data.token,
-      publicUrl: proxyBase
+      publicUrl
     });
   } catch (err) {
     console.error('❌ Signed URL Error:', err.message);
@@ -730,25 +730,15 @@ app.post('/api/storage/sign', verifyToken, async (req, res) => {
   }
 });
 
-app.get('/api/storage/view', verifyToken, async (req, res) => {
+app.get('/api/storage/view', async (req, res) => {
   try {
     const filePath = req.query.path;
     if (!filePath) return res.status(400).json({ error: 'path is required' });
 
-    const { data, error } = await supabaseAdmin
-      .storage
-      .from('media')
-      .download(filePath);
+    const publicUrl = supabaseAdmin.storage.from('media').getPublicUrl(filePath).data.publicUrl;
+    if (!publicUrl) return res.status(404).json({ error: 'File not found' });
 
-    if (error || !data) {
-      console.error('❌ Proxy download error:', error?.message || 'no data');
-      return res.status(404).json({ error: 'File not found' });
-    }
-
-    const buffer = Buffer.from(await data.arrayBuffer());
-    res.setHeader('Content-Type', data.type || 'application/octet-stream');
-    res.setHeader('Cache-Control', 'public, max-age=3600');
-    res.send(buffer);
+    res.redirect(302, publicUrl);
   } catch (err) {
     console.error('❌ Storage proxy error:', err.message);
     res.status(500).json({ error: err.message });
