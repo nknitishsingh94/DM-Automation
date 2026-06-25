@@ -244,6 +244,7 @@ export default function Scheduling() {
   const [submitting, setSubmitting] = useState(false);
   const [settings, setSettings] = useState(null);
   const [pinterestBoards, setPinterestBoards] = useState([]);
+  const [showNewPinterestBoardInput, setShowNewPinterestBoardInput] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [createdPost, setCreatedPost] = useState(null);
   const [isPlatformDropdownOpen, setIsPlatformDropdownOpen] = useState(false);
@@ -736,7 +737,18 @@ export default function Scheduling() {
     }
 
     const platformList = newPost.platforms || (newPost.platform ? [newPost.platform] : []);
-    if (platformList.includes('google-business')) {
+    
+      if (platformList.includes('pinterest')) {
+        if (!newPost.pinterestBoard || newPost.pinterestBoard.trim() === '') {
+          notify("Please select or create a Pinterest Board!", "error");
+          return;
+        }
+        if (!newPost.mediaUrl && (!newPost.carouselItems || newPost.carouselItems.length === 0)) {
+          notify("An image is required for Pinterest Pins!", "error");
+          return;
+        }
+      }
+      if (platformList.includes('google-business')) {
       if (newPost.gmbCtaEnabled && newPost.gmbActionType !== 'CALL' && !newPost.gmbSearchUrl) {
         notify("URL required when CTA is enabled for Google Business!", "error");
         return;
@@ -1806,16 +1818,32 @@ export default function Scheduling() {
                       </div>
   
                       <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>board name</label>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>{showNewPinterestBoardInput ? 'new board name' : 'select board'}</label>
                         
-<datalist id="pinterest-boards-list">
-  {pinterestBoards.map((b, i) => (
-    <option key={b.id || i} value={b.name} />
-  ))}
-</datalist>
-<input 
-  list="pinterest-boards-list"
-  value={newPost.pinterestBoard || ''}
+
+                          <select
+                            value={showNewPinterestBoardInput ? 'NEW_BOARD' : (newPost.pinterestBoard || '')}
+                            onChange={(e) => {
+                              if (e.target.value === 'NEW_BOARD') {
+                                setShowNewPinterestBoardInput(true);
+                                setNewPost({ ...newPost, pinterestBoard: '' });
+                              } else {
+                                setShowNewPinterestBoardInput(false);
+                                setNewPost({ ...newPost, pinterestBoard: e.target.value });
+                              }
+                            }}
+                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', marginBottom: showNewPinterestBoardInput ? '8px' : '0' }}
+                          >
+                            <option value="" disabled>Select a Board</option>
+                            {pinterestBoards.map((b, i) => (
+                              <option key={b.id || i} value={b.name}>{b.name}</option>
+                            ))}
+                            <option value="NEW_BOARD">+ Create New Board</option>
+                          </select>
+
+                          {showNewPinterestBoardInput && (
+                            <input 
+                              value={newPost.pinterestBoard || ''}
                           onChange={(e) => setNewPost({ ...newPost, pinterestBoard: e.target.value })}
                           placeholder="e.g. My Awesome Board"
                           style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem' }}
