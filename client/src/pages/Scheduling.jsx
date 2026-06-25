@@ -1844,11 +1844,12 @@ export default function Scheduling() {
                           {showNewPinterestBoardInput && (
                             <input 
                               value={newPost.pinterestBoard || ''}
-                          onChange={(e) => setNewPost({ ...newPost, pinterestBoard: e.target.value })}
-                          placeholder="e.g. My Awesome Board"
-                          style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem' }}
-                        />
-                      </div>
+                              onChange={(e) => setNewPost({ ...newPost, pinterestBoard: e.target.value })}
+                              placeholder="e.g. My Awesome Board"
+                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem' }}
+                            />
+                          )}
+                        </div>
 
                       <div style={{ marginTop: '8px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
