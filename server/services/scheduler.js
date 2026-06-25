@@ -56,6 +56,27 @@ export async function runSchedulingWorker() {
 
     if (duePosts.length === 0) return { skipped: true, reason: 'No posts due' };
 
+    // Helper: Convert proxy URLs to direct Supabase public CDN URLs
+    // Meta Graph API does NOT follow HTTP 302 redirects, so we must resolve
+    // /api/storage/view?path=... → https://<supabase>/storage/v1/object/public/media/...
+    const resolveMediaUrl = (url) => {
+      if (!url || typeof url !== 'string') return url;
+      // Already a direct Supabase public URL — keep as-is
+      if (url.includes('.supabase.co/storage/v1/object/public/')) return url;
+      // Proxy URL: /api/storage/view?path=<filename>
+      const proxyMatch = url.match(/\/api\/storage\/view\?path=([^&]+)/);
+      if (proxyMatch) {
+        const path = decodeURIComponent(proxyMatch[1]);
+        const supabaseHost = process.env.SUPABASE_URL
+          ? new URL(process.env.SUPABASE_URL).hostname
+          : 'vsrtgwvudallfqnozifu.supabase.co';
+        const resolved = `https://${supabaseHost}/storage/v1/object/public/media/${path}`;
+        console.log(`🔗 [Worker] Resolved proxy → direct: ${resolved}`);
+        return resolved;
+      }
+      return url;
+    };
+
     for (let post of duePosts) {
       console.log(`\n===========================================`);
       console.log(`⚙️ [Worker] Processing Post ID: ${post._id}`);
@@ -75,6 +96,15 @@ export async function runSchedulingWorker() {
           console.warn(`⚠️ [Worker] Failed to parse mediaUrl JSON for post ${post._id}`);
         }
       }
+
+      // ✅ CRITICAL FIX: Resolve proxy URLs → direct Supabase CDN URLs
+      // Meta Graph API cannot follow 302 redirects — must get the actual file URL
+      post.mediaUrl = resolveMediaUrl(post.mediaUrl);
+      if (Array.isArray(post.carouselItems)) {
+        post.carouselItems = post.carouselItems.map(resolveMediaUrl);
+      }
+      console.log(`📎 [Worker] Final mediaUrl for Meta: ${post.mediaUrl || '(none)'}`);
+
       
       try {
         if (!post.platform || (post.platform !== 'instagram' && post.platform !== 'facebook' && post.platform !== 'youtube' && post.platform !== 'google-business' && post.platform !== 'twitter' && post.platform !== 'pinterest')) {
