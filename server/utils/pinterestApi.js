@@ -71,12 +71,22 @@ export async function publishPinterestContent(userId, post, workspaceId) {
     const accessToken = settings.pinterestAccessToken;
 
     // 2. Validate Media (Pinterest currently only supports image_url in this quick flow)
-    const fileExt = post.mediaUrl ? post.mediaUrl.split('?')[0].split('.').pop().toLowerCase() : '';
+    let mediaUrl = post.mediaUrl;
+    if (mediaUrl && typeof mediaUrl === 'string' && mediaUrl.startsWith('{')) {
+      try {
+        const parsed = JSON.parse(mediaUrl);
+        mediaUrl = parsed.mediaUrl || '';
+      } catch (e) {
+        console.warn('⚠️ [Pinterest] Failed to parse mediaUrl JSON');
+      }
+    }
+
+    const fileExt = mediaUrl ? mediaUrl.split('?')[0].split('.').pop().toLowerCase() : '';
     if (fileExt === 'mp4' || fileExt === 'mov' || post.type === 'video') {
       throw new Error('Video uploads to Pinterest are not currently supported by this automation. Please use an image.');
     }
 
-    if (!post.mediaUrl) {
+    if (!mediaUrl) {
       throw new Error('A media URL (image) is required for Pinterest pins.');
     }
 
@@ -88,7 +98,7 @@ export async function publishPinterestContent(userId, post, workspaceId) {
       board_id: boardId,
       media_source: {
         source_type: 'image_url',
-        url: post.mediaUrl
+        url: mediaUrl
       }
     };
 
