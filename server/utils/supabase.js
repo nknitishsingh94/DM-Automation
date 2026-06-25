@@ -2,8 +2,9 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || '';
-// Service role key bypasses RLS — used ONLY for server-side storage uploads
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseKey;
+
+export const getServerPublicUrl = () => process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
 
 export let supabase = null;
 try {
@@ -38,11 +39,8 @@ export const uploadToSupabase = async (fileBuffer, fileName, contentType) => {
     
     if (error) throw error;
     
-    const { data: { publicUrl } } = client.storage
-      .from('media')
-      .getPublicUrl(fileName);
-      
-    return publicUrl;
+    const proxyBase = getServerPublicUrl();
+    return `${proxyBase}/api/storage/view?path=media/${encodeURIComponent(fileName)}`;
   } catch (err) {
     console.error('❌ Supabase Upload Error:', err.message);
     return null;
