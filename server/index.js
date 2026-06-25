@@ -2411,6 +2411,11 @@ async function runSchedulingWorker() {
             finalCarousel = meta.carouselItems || [];
             finalMedia = meta.mediaUrl || (finalCarousel.length > 0 ? finalCarousel[0] : '');
             hasYouTubeVideoId = !!meta.youtubeVideoId;
+            // Enforce retry delay — skip if nextRetryAt has not been reached yet
+            if (meta.nextRetryAt && new Date() < new Date(meta.nextRetryAt)) {
+              console.log(`⏳ [Worker] Post ${postId} retry not due until ${meta.nextRetryAt}. Skipping.`);
+              return;
+            }
           } catch (e) {
             console.warn("⚠️ Metadata parse failed, using raw mediaUrl");
           }
@@ -2751,10 +2756,11 @@ async function runSchedulingWorker() {
              delayMinutes = backoffs[Math.min(currentRetryCount - 1, 4)];
           }
           
+          // Store retry time in metadata — DO NOT overwrite scheduledFor so user's original time is preserved
           updatedMetaObj.retryCount = currentRetryCount;
-          const nextRunTime = new Date(Date.now() + delayMinutes * 60 * 1000).toISOString();
-          console.log(`⚠️ Post ${postId} failed. Rescheduling for retry in ${delayMinutes} mins at ${nextRunTime}.`);
-          await safeUpdate(postId, { status: 'Scheduled', scheduledFor: nextRunTime, lastError: errorMsg, mediaUrl: JSON.stringify(updatedMetaObj) });
+          updatedMetaObj.nextRetryAt = new Date(Date.now() + delayMinutes * 60 * 1000).toISOString();
+          console.log(`⚠️ Post ${postId} failed. Next retry in ${delayMinutes} mins at ${updatedMetaObj.nextRetryAt}. scheduledFor unchanged.`);
+          await safeUpdate(postId, { status: 'Retrying', lastError: errorMsg, mediaUrl: JSON.stringify(updatedMetaObj) });
         } else {
           await safeUpdate(postId, { status: 'Failed', lastError: errorMsg });
           
