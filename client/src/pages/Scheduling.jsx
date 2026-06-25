@@ -1550,7 +1550,7 @@ export default function Scheduling() {
                             {selectedFiles[idx]?.type?.startsWith('video') ? (
                               <video src={src} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             ) : (
-                              <img src={src} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              <img src={src} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/placeholder-ig.png'; e.currentTarget.onerror = null; }} />
                             )}
                             <button
                               onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
@@ -1639,7 +1639,7 @@ export default function Scheduling() {
                                   {post.file?.type?.startsWith('video') ? (
                                     <video src={post.preview} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                   ) : (
-                                    <img src={post.preview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <img src={post.preview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/placeholder-ig.png'; e.currentTarget.onerror = null; }} />
                                   )}
                                   <button
                                     onClick={() => removeThreadMedia(index)}
@@ -2679,7 +2679,22 @@ export default function Scheduling() {
                       </div>
                     </div>
                   ) : (
-                    <img src={finalMediaUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img 
+                      src={finalMediaUrl} 
+                      alt="Preview" 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        const parent = e.currentTarget.parentNode;
+                        if (parent && !parent.querySelector('.img-expired-msg')) {
+                          const msg = document.createElement('div');
+                          msg.className = 'img-expired-msg';
+                          msg.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f1f5f9;color:#94a3b8;font-size:0.8rem;gap:6px;';
+                          msg.innerHTML = '<span style="font-size:2rem;">🖼️</span><span>Image preview expired</span>';
+                          parent.appendChild(msg);
+                        }
+                      }}
+                    />
                   )}
 
                   {/* Overlays inside media preview */}
