@@ -159,7 +159,7 @@ export default function ChannelSelector() {
           transform: 'rotate(-5deg)',
           opacity: 0.05
         }}></div>
-        <img 
+        <img referrerPolicy="no-referrer" 
           src={promoImg} 
           alt="Kick Things Off" 
           style={{ 

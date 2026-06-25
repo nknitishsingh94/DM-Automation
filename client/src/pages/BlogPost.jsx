@@ -30,7 +30,7 @@ export default function BlogPost() {
         <div className="header-content" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div className="header-logo">
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
-              <img src="/zenxchat-logo.png" alt="smart10X Logo" style={{ width: '32px', height: '32px' }} />
+              <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="smart10X Logo" style={{ width: '32px', height: '32px' }} />
               <span className="logo-text" style={{ color: '#0f172a' }}>smart10X</span>
             </Link>
           </div>
@@ -100,7 +100,7 @@ export default function BlogPost() {
             {relatedPosts.map(p => (
               <Link key={p.id} to={`/blog/${p.id}`} className="related-card glass-morphism">
                 <div className="related-thumb">
-                  <img src={p.image} alt={p.title} />
+                  <img referrerPolicy="no-referrer" src={p.image} alt={p.title} />
                 </div>
                 <div className="related-info">
                   <h4>{p.title}</h4>
@@ -119,7 +119,7 @@ export default function BlogPost() {
       <section className="article-cta">
         <div className="cta-content glass-morphism">
           <div className="cta-logo">
-            <img src="/zenxchat-logo.png" alt="smart10X" />
+            <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="smart10X" />
             <span>smart10X</span>
           </div>
           <h2>Ready to transform your social presence?</h2>

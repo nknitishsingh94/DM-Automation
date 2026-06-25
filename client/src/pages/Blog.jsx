@@ -16,7 +16,7 @@ export default function Blog() {
         <div className="header-content" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div className="header-logo">
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
-              <img src="/zenxchat-logo.png" alt="smart10X Logo" style={{ width: '32px', height: '32px' }} />
+              <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="smart10X Logo" style={{ width: '32px', height: '32px' }} />
               <span className="logo-text" style={{ color: '#0f172a' }}>smart10X</span>
             </Link>
           </div>
@@ -40,7 +40,7 @@ export default function Blog() {
           </div>
           <div className="hero-image-side animate-scale-in">
             <div className="blog-hero-img-wrapper">
-              <img src="/blog-hero.png" alt="ZenXchat Blog Hero" className="blog-hero-main-img" />
+              <img referrerPolicy="no-referrer" src="/blog-hero.png" alt="ZenXchat Blog Hero" className="blog-hero-main-img" />
               <div className="hero-img-glow"></div>
             </div>
           </div>
@@ -58,7 +58,7 @@ export default function Blog() {
           {blogPosts.map((post, index) => (
             <div key={post.id} className={`blog-card glass-morphism animate-slide-up delay-${index + 1}`}>
               <div className="card-image">
-                <img src={post.image} alt={post.title} />
+                <img referrerPolicy="no-referrer" src={post.image} alt={post.title} />
                 <span className={`post-category ${post.color}`}>{post.category}</span>
               </div>
               <div className="card-content">
@@ -117,7 +117,7 @@ export default function Blog() {
       <section className="article-cta">
         <div className="cta-content glass-morphism">
           <div className="cta-logo">
-            <img src="/zenxchat-logo.png" alt="smart10X" />
+            <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="smart10X" />
             <span>smart10X</span>
           </div>
           <h2>Ready to automate your social growth?</h2>

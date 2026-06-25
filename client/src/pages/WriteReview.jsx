@@ -257,7 +257,7 @@ const WriteReview = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
               <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '2px dashed #cbd5e1', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
                 {newReview.avatarUrl ? (
-                  <img src={newReview.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img referrerPolicy="no-referrer" src={newReview.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <ImageIcon size={28} color="#94a3b8" />
                 )}

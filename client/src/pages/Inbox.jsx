@@ -347,7 +347,7 @@ export default function Inbox() {
               overflow: 'hidden'
             }}>
               {user?.profilePhoto ? (
-                <img src={user.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+                <img referrerPolicy="no-referrer" src={user.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
               ) : (
                 user?.username?.charAt(0).toUpperCase() || 'A'
               )}
@@ -381,7 +381,7 @@ export default function Inbox() {
             overflow: 'hidden'
           }}>
             {user?.profilePhoto ? (
-              <img src={user.profilePhoto} alt="Header Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+              <img referrerPolicy="no-referrer" src={user.profilePhoto} alt="Header Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
             ) : (
               user?.username?.charAt(0).toUpperCase() || 'A'
             )}

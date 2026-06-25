@@ -11,7 +11,7 @@ export default function About() {
         <div className="header-content" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between' }}>
           <div className="header-logo">
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
-              <img src="/zenxchat-logo.png" alt="smart10X Logo" style={{ width: '32px', height: '32px' }} />
+              <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="smart10X Logo" style={{ width: '32px', height: '32px' }} />
               <span className="logo-text" style={{ color: '#0f172a' }}>smart10X</span>
             </Link>
           </div>

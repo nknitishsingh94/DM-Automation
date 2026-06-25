@@ -601,7 +601,7 @@ export default function AutomationEditor() {
                           Story
                         </div>
                       ) : (!anyStory && selectedMedia) ? (
-                        <img 
+                        <img referrerPolicy="no-referrer" 
                           src={selectedMedia.thumbnail_url || selectedMedia.media_url} 
                           alt="Selected Post" 
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
@@ -1192,7 +1192,7 @@ export default function AutomationEditor() {
                                   position: 'relative'
                                 }}
                               >
-                                <img 
+                                <img referrerPolicy="no-referrer" 
                                   src={item.thumbnail_url || item.media_url} 
                                   alt="IG Media" 
                                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
@@ -1298,7 +1298,7 @@ export default function AutomationEditor() {
                                   position: 'relative'
                                 }}
                               >
-                                <img 
+                                <img referrerPolicy="no-referrer" 
                                   src={item.thumbnail_url || item.media_url} 
                                   alt="IG Media" 
                                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} 

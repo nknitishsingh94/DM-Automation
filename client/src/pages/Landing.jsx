@@ -96,7 +96,7 @@ export default function Landing() {
         <div className="header-content">
           <div className="header-left">
             <div className="header-logo">
-              <img src="/zenxchat-logo.png" alt="smart10X Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
+              <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="smart10X Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
               <span className="logo-text">smart10X</span>
             </div>
             <div className="header-divider"></div>
@@ -273,7 +273,7 @@ export default function Landing() {
 
           <div className="feature-row">
             <div className="phone-mockup-wrapper">
-              <img src="/features/reel-mockup.png" alt="Auto-Reply to Reels" />
+              <img referrerPolicy="no-referrer" src="/features/reel-mockup.png" alt="Auto-Reply to Reels" />
             </div>
             <div className="feature-text-content">
               <h3>Turn Reel Views into Customers</h3>
@@ -285,7 +285,7 @@ export default function Landing() {
 
           <div className="feature-row reverse">
             <div className="phone-mockup-wrapper">
-              <img src="/features/post-mockup.png" alt="Auto-Reply to Posts" />
+              <img referrerPolicy="no-referrer" src="/features/post-mockup.png" alt="Auto-Reply to Posts" />
             </div>
             <div className="feature-text-content">
               <h3>Smart Post Engagement</h3>
@@ -297,7 +297,7 @@ export default function Landing() {
 
           <div className="feature-row">
             <div className="phone-mockup-wrapper">
-              <img src="/features/story-reply-mockup.png" alt="Auto-Respond to Story Replies" />
+              <img referrerPolicy="no-referrer" src="/features/story-reply-mockup.png" alt="Auto-Respond to Story Replies" />
             </div>
             <div className="feature-text-content">
               <h3>Scale Your Story Sales</h3>
@@ -309,7 +309,7 @@ export default function Landing() {
 
           <div className="feature-row reverse">
             <div className="phone-mockup-wrapper">
-              <img src="/features/story-mention-mockup.png" alt="Auto-Reply to Story Mentions" />
+              <img referrerPolicy="no-referrer" src="/features/story-mention-mockup.png" alt="Auto-Reply to Story Mentions" />
             </div>
             <div className="feature-text-content">
               <h3>Gratitude on Autopilot</h3>
@@ -321,7 +321,7 @@ export default function Landing() {
 
           <div className="feature-row">
             <div className="phone-mockup-wrapper">
-              <img src="/features/ad-mockup.png" alt="Auto-Reply to Sponsored Ad Comments" />
+              <img referrerPolicy="no-referrer" src="/features/ad-mockup.png" alt="Auto-Reply to Sponsored Ad Comments" />
             </div>
             <div className="feature-text-content">
               <h3>Maximize Ad ROI</h3>
@@ -408,7 +408,7 @@ export default function Landing() {
                   <div className="feedback-author">
                     <div className="feedback-user-img">
                       {review.avatarUrl ? (
-                        <img src={review.avatarUrl} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                        <img referrerPolicy="no-referrer" src={review.avatarUrl} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                       ) : (
                         <div className="feedback-user-initial">
                           {(review.name || 'User').split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase()}
@@ -619,7 +619,7 @@ export default function Landing() {
                   <label className="form-label">Profile Picture (Optional)</label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     {newReview.avatarUrl && (
-                      <img src={newReview.avatarUrl} alt="Avatar Preview" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                      <img referrerPolicy="no-referrer" src={newReview.avatarUrl} alt="Avatar Preview" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
                     )}
                     <input
                       type="file"

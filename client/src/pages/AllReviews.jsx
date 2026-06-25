@@ -70,7 +70,7 @@ export default function AllReviews() {
           </Link>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <img src="/zenxchat-logo.png" alt="Logo" style={{ height: '24px' }} onError={(e) => { e.target.style.display = 'none'; }} />
+            <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="Logo" style={{ height: '24px' }} onError={(e) => { e.target.style.display = 'none'; }} />
             <span style={{ fontWeight: '800', color: '#0f172a', fontSize: '1.1rem', letterSpacing: '-0.3px' }}>smart10X</span>
           </div>
         </div>
@@ -241,7 +241,7 @@ export default function AllReviews() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
                   <div style={{ width: '48px', height: '48px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, position: 'relative', border: '2px solid #fff', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
                     {review.avatarUrl ? (
-                      <img src={review.avatarUrl} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img referrerPolicy="no-referrer" src={review.avatarUrl} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
                       <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.9rem' }}>
                         {(review.name || 'U').split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase()}
