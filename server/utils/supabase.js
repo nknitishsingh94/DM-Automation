@@ -41,11 +41,8 @@ export const uploadToSupabase = async (fileBuffer, fileName, contentType) => {
     
     if (error) throw error;
     
-    const { data: { publicUrl } } = client.storage
-      .from('media')
-      .getPublicUrl(fileName);
-       
-    return publicUrl;
+    const proxyBase = getServerPublicUrl();
+    return `${proxyBase}/api/storage/view?path=${encodeURIComponent(fileName)}`;
   } catch (err) {
     console.error('❌ Supabase Upload Error:', err.message);
     return null;
