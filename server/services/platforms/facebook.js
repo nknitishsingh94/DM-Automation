@@ -499,13 +499,13 @@ export const publishFacebookContent = async (userId, { type, mediaUrl, caption =
       });
       publishedId = publishRes.data.id;
     } else if (mediaUrl) {
-      const isVideo = mediaUrl.match(/\.(mp4|mov|webm)/i) || type === 'video' || type === 'reel';
+      const isVideo = directMediaUrl && (directMediaUrl.match(/\.(mp4|mov|webm)/i) || type === 'video' || type === 'reel');
       if (isVideo) {
         console.log(`🎬 Publishing Video to FB Page for user ${userId}`);
         publishRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/videos`, null, {
           params: {
             access_token: accessToken,
-            file_url: mediaUrl,
+            file_url: directMediaUrl,
             description: caption
           }
         });
@@ -515,7 +515,7 @@ export const publishFacebookContent = async (userId, { type, mediaUrl, caption =
         publishRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/photos`, null, {
           params: {
             access_token: accessToken,
-            url: mediaUrl,
+            url: directMediaUrl,
             message: caption
           }
         });
