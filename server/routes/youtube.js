@@ -4,6 +4,7 @@ import Settings from '../models/Settings.js';
 import verifyToken from '../middleware/auth.js';
 import ScheduledPost from '../models/ScheduledPost.js';
 import OpenAI from 'openai';
+import { OAuth2Client } from 'google-auth-library';
 
 // Initialize OpenAI client lazily to prevent crash on boot if API key is missing
 const getOpenAIClient = () => {
@@ -253,6 +254,27 @@ router.post('/get-upload-url', verifyToken, async (req, res) => {
     }
 
     const { fileSize, contentType, title, description } = req.body;
+    let accessToken = settings.youtubeAccessToken;
+
+    const oauth2Client = new OAuth2Client(process.env.YOUTUBE_CLIENT_ID, process.env.YOUTUBE_CLIENT_SECRET);
+
+    if (settings.youtubeRefreshToken) {
+      oauth2Client.setCredentials({ refresh_token: settings.youtubeRefreshToken });
+      try {
+        const { credentials } = await oauth2Client.refreshAccessToken();
+        accessToken = credentials.access_token;
+        if (credentials.refresh_token) {
+          settings.youtubeRefreshToken = credentials.refresh_token;
+        }
+        await Settings.findOneAndUpdate(
+          { userId: req.user.userId },
+          { youtubeAccessToken: accessToken, youtubeRefreshToken: settings.youtubeRefreshToken },
+          { upsert: true }
+        );
+      } catch (refreshErr) {
+        console.warn('⚠️ [YouTube] Token refresh failed, using existing access token:', refreshErr.message);
+      }
+    }
 
     const response = await axios.post(
       'https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',
@@ -267,7 +289,7 @@ router.post('/get-upload-url', verifyToken, async (req, res) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${settings.youtubeAccessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           'X-Upload-Content-Length': fileSize,
           'X-Upload-Content-Type': contentType,
           'Content-Type': 'application/json',

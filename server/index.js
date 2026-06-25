@@ -6,6 +6,7 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { OAuth2Client } from 'google-auth-library';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1418,6 +1419,26 @@ app.post('/api/youtube/get-upload-url', verifyToken, async (req, res) => {
     }
 
     const { default: axios } = await import('axios');
+    let accessToken = settings.youtubeAccessToken;
+    const oauth2Client = new OAuth2Client(process.env.YOUTUBE_CLIENT_ID, process.env.YOUTUBE_CLIENT_SECRET);
+
+    if (settings.youtubeRefreshToken) {
+      oauth2Client.setCredentials({ refresh_token: settings.youtubeRefreshToken });
+      try {
+        const { credentials } = await oauth2Client.refreshAccessToken();
+        accessToken = credentials.access_token;
+        if (credentials.refresh_token) {
+          settings.youtubeRefreshToken = credentials.refresh_token;
+        }
+        await Settings.findOneAndUpdate(
+          { userId: req.user.userId },
+          { youtubeAccessToken: accessToken, youtubeRefreshToken: settings.youtubeRefreshToken },
+          { upsert: true }
+        );
+      } catch (refreshErr) {
+        console.warn('⚠️ [YouTube] Token refresh failed, using existing access token:', refreshErr.message);
+      }
+    }
 
     const response = await axios.post(
       'https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',
@@ -1432,7 +1453,7 @@ app.post('/api/youtube/get-upload-url', verifyToken, async (req, res) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${settings.youtubeAccessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           'X-Upload-Content-Length': fileSize,
           'X-Upload-Content-Type': contentType,
           'Content-Type': 'application/json'
