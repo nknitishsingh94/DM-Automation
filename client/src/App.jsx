@@ -593,27 +593,6 @@ function Sidebar({ isMobileOpen, onClose }) {
             }}>
               <Crown size={15} color="#3b82f6" /> Upgrade Now
             </NavLink>
-
-            <a href={`${API_BASE_URL || 'http://localhost:5000'}/api-docs`} target="_blank" rel="noopener noreferrer" style={{
-              width: '100%',
-              padding: '12px',
-              fontSize: '13px',
-              borderRadius: '10px',
-              justifyContent: 'center',
-              background: 'transparent',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              color: '#cbd5e1',
-              fontWeight: '700',
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              textAlign: 'center',
-              marginTop: '10px',
-              transition: 'all 0.2s'
-            }} onMouseOver={(e) => { e.currentTarget.style.color = '#ffffff'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)' }} onMouseOut={(e) => { e.currentTarget.style.color = '#cbd5e1'; e.currentTarget.style.background = 'transparent' }}>
-              <FileText size={15} /> API Documentation
-            </a>
           </div>
         </div>
 
