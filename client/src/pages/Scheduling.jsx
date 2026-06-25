@@ -2656,9 +2656,17 @@ export default function Scheduling() {
 
             const rawMediaSource = mediaData.localMediaUrl || (mediaData.carouselItems && mediaData.carouselItems.length > 0 ? mediaData.carouselItems[0] : null) || mediaData.mediaUrl;
 
-            const finalMediaUrl = rawMediaSource && rawMediaSource.startsWith('http')
-              ? rawMediaSource
-              : (rawMediaSource ? `${API_BASE_URL}${rawMediaSource}` : '/placeholder-ig.png');
+            // Instagram/Facebook CDN URLs expire — skip them to avoid 403 errors
+            const isInstagramCdn = !!(rawMediaSource && (
+              rawMediaSource.includes('cdninstagram.com') ||
+              rawMediaSource.includes('scontent-') ||
+              rawMediaSource.includes('fbcdn.net')
+            ));
+            const finalMediaUrl = isInstagramCdn
+              ? null
+              : (rawMediaSource && rawMediaSource.startsWith('http')
+                  ? rawMediaSource
+                  : (rawMediaSource ? `${API_BASE_URL}${rawMediaSource}` : null));
 
             return (
               <div
@@ -2671,7 +2679,12 @@ export default function Scheduling() {
               >
                 {/* Media Preview Header */}
                 <div style={{ width: '100%', height: '180px', borderRadius: '16px', background: '#f8fafc', overflow: 'hidden', position: 'relative' }}>
-                  {mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i)) ? (
+                  {!finalMediaUrl ? (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f1f5f9', color: '#94a3b8', gap: '6px' }}>
+                      <span style={{ fontSize: '2.5rem' }}>🖼️</span>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 500 }}>No preview available</span>
+                    </div>
+                  ) : mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i)) ? (
                     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
                       <video src={finalMediaUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)' }}>
