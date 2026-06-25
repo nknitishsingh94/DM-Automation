@@ -21,7 +21,7 @@ export default function Profile() {
       const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -46,14 +46,14 @@ export default function Profile() {
     <div style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
       <div className="table-card" style={{ padding: '32px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-          <div style={{ 
-            width: '80px', 
-            height: '80px', 
-            borderRadius: '50%', 
-            background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
+          <div style={{
+            width: '80px',
+            height: '80px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
             overflow: 'hidden',
             display: 'flex',
-            alignItems: 'center', 
+            alignItems: 'center',
             justifyContent: 'center',
             fontSize: '32px',
             fontWeight: 'bold',
@@ -76,29 +76,29 @@ export default function Profile() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
             <div className="input-group">
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', fontWeight: '500' }}>Display Name</label>
-              <input 
+              <input
                 type="text"
                 value={profileData.username}
-                onChange={(e) => setProfileData({...profileData, username: e.target.value})}
+                onChange={(e) => setProfileData({ ...profileData, username: e.target.value })}
                 style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '14px', borderRadius: '10px', color: 'var(--text-main)', outline: 'none' }}
               />
             </div>
             <div className="input-group">
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', fontWeight: '500' }}>Profile Photo URL</label>
-              <input 
+              <input
                 type="text"
                 placeholder="https://example.com/avatar.gif"
                 value={profileData.profilePhoto}
-                onChange={(e) => setProfileData({...profileData, profilePhoto: e.target.value})}
+                onChange={(e) => setProfileData({ ...profileData, profilePhoto: e.target.value })}
                 style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '14px', borderRadius: '10px', color: 'var(--text-main)', outline: 'none' }}
               />
             </div>
           </div>
 
           {message.text && (
-            <div style={{ 
-              padding: '12px 16px', 
-              borderRadius: '8px', 
+            <div style={{
+              padding: '12px 16px',
+              borderRadius: '8px',
               background: message.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
               color: message.type === 'success' ? '#34d399' : '#f87171',
               fontSize: '0.9rem',
@@ -111,14 +111,14 @@ export default function Profile() {
             </div>
           )}
 
-          <button 
-            type="submit" 
-            disabled={savingProfile} 
-            className="send-btn" 
-            style={{ 
-              borderRadius: '10px', 
-              width: 'fit-content', 
-              padding: '12px 32px', 
+          <button
+            type="submit"
+            disabled={savingProfile}
+            className="send-btn"
+            style={{
+              borderRadius: '10px',
+              width: 'fit-content',
+              padding: '12px 32px',
               alignSelf: 'flex-start',
               background: 'var(--accent-color)',
               color: 'white',
@@ -145,13 +145,13 @@ export default function Profile() {
         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}>
           Once you log out, you will need to sign back in with your credentials to access your dashboard.
         </p>
-        <button 
+        <button
           onClick={logout}
-          style={{ 
-            background: 'rgba(239, 68, 68, 0.1)', 
-            color: '#f87171', 
-            padding: '12px 24px', 
-            borderRadius: '10px', 
+          style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            color: '#f87171',
+            padding: '12px 24px',
+            borderRadius: '10px',
             fontWeight: '600',
             border: '1px solid rgba(239, 68, 68, 0.2)',
             display: 'flex',
