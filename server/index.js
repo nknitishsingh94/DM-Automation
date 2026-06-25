@@ -2472,15 +2472,12 @@ async function runSchedulingWorker() {
         const unwriteProxyToSupabasePublic = (url) => {
           if (!url || typeof url !== 'string') return url;
           
-          // If it's already a Supabase public URL, keep it
           if (url.includes('.supabase.co/storage/v1/object/public/media')) return url;
           
-          // If it's the proxy URL, extract the path and convert to direct Supabase public URL
-          // This ensures Meta/Facebook crawlers hit the CDN directly and avoid 302 redirect issues!
           const match = url.match(/\/api\/storage\/view\?path=(.+)/);
           if (match) {
-             const path = match[1].split('&')[0]; // Remove any extra query params
-             return `https://${process.env.SUPABASE_URL ? new URL(process.env.SUPABASE_URL).hostname : 'vsrtgwvudallfqnozifu.supabase.co'}/storage/v1/object/public/media/${path}`;
+             const path = match[1].split('&')[0];
+             return `https://vsrtgwvudallfqnozifu.supabase.co/storage/v1/object/public/media/${path}`;
           }
           return url;
         };
