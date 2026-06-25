@@ -413,6 +413,40 @@ export const publishFacebookContent = async (userId, { type, mediaUrl, caption =
     if (!settings) {
       settings = await Settings.findOne({ userId });
     }
+    
+    // Ensure mediaUrl is a plain URL string (not JSON)
+    let parsedMedia = null;
+    if (typeof mediaUrl === 'string' && mediaUrl.trim().startsWith('{')) {
+      try {
+        parsedMedia = JSON.parse(mediaUrl);
+      } catch (e) {
+        console.warn('Failed to parse mediaUrl JSON, using raw value');
+      }
+    }
+    const finalMediaUrl = parsedMedia && parsedMedia.mediaUrl ? parsedMedia.mediaUrl : mediaUrl;
+    // For carousel items, ensure they are plain URLs (may be JSON string as well)
+    const finalCarouselItems = Array.isArray(carouselItems) ? carouselItems.map(item => {
+      if (typeof item === 'string' && item.trim().startsWith('{')) {
+        try { return JSON.parse(item).mediaUrl || item; } catch { return item; }
+      }
+      return item;
+    }) : [];
+    // Helper to convert proxy URLs to direct Supabase public URLs
+    const unwriteProxyToSupabasePublic = (url) => {
+      if (!url || typeof url !== 'string') return url;
+      if (url.includes('.supabase.co/storage/v1/object/public/media')) return url;
+      const match = url.match(/\/api\/storage\/view\?path=([^&]+)/);
+      if (match) {
+        const path = match[1];
+        const hostname = process.env.SUPABASE_URL ? new URL(process.env.SUPABASE_URL).hostname : 'vsrtgwvudallfqnozifu.supabase.co';
+        return `https://${hostname}/storage/v1/object/public/media/${path}`;
+      }
+      return url;
+    };
+    // Apply conversion to mediaUrl and carousel items
+    const directMediaUrl = unwriteProxyToSupabasePublic(finalMediaUrl);
+    const directCarouselItems = finalCarouselItems.map(unwriteProxyToSupabasePublic);
+
     if (!settings || !settings.facebookAccessToken || !settings.facebookPageId) {
       console.log(`⚠️ Settings missing for user ${userId}. Attempting fallback to any active connected settings for this user...`);
       settings = await Settings.findOne({ 
@@ -431,15 +465,16 @@ export const publishFacebookContent = async (userId, { type, mediaUrl, caption =
     let publishRes = null;
     let publishedId = null;
 
-    if (type === 'carousel' && carouselItems && carouselItems.length > 0) {
+    if (type === 'carousel' && directCarouselItems && directCarouselItems.length > 0) {
       console.log(`🎬 Publishing Carousel to FB Page for user ${userId}`);
-      const childPromises = carouselItems.map(async (itemUrl) => {
-        const isVideo = itemUrl.match(/\.(mp4|mov|webm)/i);
+      const childPromises = directCarouselItems.map(async (itemUrl) => {
+        const url = typeof itemUrl === 'string' ? itemUrl : String(itemUrl);
+        const isVideo = url.match(/\.(mp4|mov|webm)/i);
         if (isVideo) {
           const childRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/videos`, null, {
             params: {
               access_token: accessToken,
-              file_url: itemUrl,
+              file_url: url,
               published: false
             }
           });
@@ -448,7 +483,7 @@ export const publishFacebookContent = async (userId, { type, mediaUrl, caption =
           const childRes = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/photos`, null, {
             params: {
               access_token: accessToken,
-              url: itemUrl,
+              url: url,
               published: false
             }
           });
@@ -460,7 +495,6 @@ export const publishFacebookContent = async (userId, { type, mediaUrl, caption =
         params: {
           access_token: accessToken,
           message: caption,
-          attached_media: JSON.stringify(attachedMedia)
         }
       });
       publishedId = publishRes.data.id;
