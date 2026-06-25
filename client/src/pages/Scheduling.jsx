@@ -235,6 +235,7 @@ function PinterestIcon({ size = 18, color = 'currentColor' }) {
 export default function Scheduling() {
   const { user } = useAuth();
   const { notify } = useNotification();
+  const navigate = useNavigate();
 
   // High-level States
   const [posts, setPosts] = useState([]);
