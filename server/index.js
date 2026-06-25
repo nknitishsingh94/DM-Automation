@@ -2469,19 +2469,27 @@ async function runSchedulingWorker() {
           return;
         }
 
-        const rewriteSupabasePublicToProxy = (url) => {
+        const unwriteProxyToSupabasePublic = (url) => {
           if (!url || typeof url !== 'string') return url;
-          const match = url.match(/https?:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/media(?:\/|\?)(.+)/);
-          if (match) return `${SERVER_PUBLIC_URL}/api/storage/view?path=${match[1]}`;
+          
+          // If it's already a Supabase public URL, keep it
+          if (url.includes('.supabase.co/storage/v1/object/public/media')) return url;
+          
+          // If it's the proxy URL, extract the path and convert to direct Supabase public URL
+          // This ensures Meta/Facebook crawlers hit the CDN directly and avoid 302 redirect issues!
+          const match = url.match(/\/api\/storage\/view\?path=(.+)/);
+          if (match) {
+             const path = match[1].split('&')[0]; // Remove any extra query params
+             return `https://${process.env.SUPABASE_URL ? new URL(process.env.SUPABASE_URL).hostname : 'vsrtgwvudallfqnozifu.supabase.co'}/storage/v1/object/public/media/${path}`;
+          }
           return url;
         };
 
-        if (finalMedia && finalMedia.includes('.supabase.co/storage/v1/object/public/media')) {
-          finalMedia = rewriteSupabasePublicToProxy(finalMedia);
-        }
+        // Ensure we pass the DIRECT Supabase CDN url to Meta APIs, not the Vercel proxy!
+        finalMedia = unwriteProxyToSupabasePublic(finalMedia);
 
         if (finalCarousel && finalCarousel.length > 0) {
-          finalCarousel = finalCarousel.map(item => item && item.includes('.supabase.co/storage/v1/object/public/media') ? rewriteSupabasePublicToProxy(item) : item);
+          finalCarousel = finalCarousel.map(item => unwriteProxyToSupabasePublic(item));
         }
 
         // Atomic claim: directly update status to 'Processing'
