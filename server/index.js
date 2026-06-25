@@ -602,6 +602,30 @@ function parseScheduledPost(post) {
   return p;
 }
 
+// Pinterest Boards API
+app.get('/api/pinterest/boards', verifyToken, async (req, res) => {
+  try {
+    const query = { userId: req.user.userId };
+    if (req.workspaceId) query.workspaceId = req.workspaceId;
+    const Settings = (await import('./models/Settings.js')).default;
+    const settings = await Settings.findOne(query);
+    
+    if (!settings || !settings.pinterestAccessToken) {
+      return res.status(400).json({ error: 'Pinterest not connected.' });
+    }
+
+    const { default: axios } = await import('axios');
+    const axiosRes = await axios.get('https://api.pinterest.com/v5/boards', {
+      headers: { Authorization: `Bearer ${settings.pinterestAccessToken}` }
+    });
+    
+    return res.json({ boards: axiosRes.data.items || [] });
+  } catch (err) {
+    console.error('❌ Error fetching Pinterest boards:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Failed to fetch Pinterest boards.' });
+  }
+});
+
 // Scheduling API
 app.get('/api/scheduling', verifyToken, async (req, res) => {
   try {

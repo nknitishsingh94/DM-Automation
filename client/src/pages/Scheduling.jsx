@@ -243,6 +243,7 @@ export default function Scheduling() {
   const [showCreate, setShowCreate] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [settings, setSettings] = useState(null);
+  const [pinterestBoards, setPinterestBoards] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [createdPost, setCreatedPost] = useState(null);
   const [isPlatformDropdownOpen, setIsPlatformDropdownOpen] = useState(false);
@@ -495,6 +496,21 @@ export default function Scheduling() {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
   }, [newPost?.autoResponse, newPost?.buttons, newPost?.requireFollow]);
+
+  const fetchPinterestBoards = async () => {
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const wsId = localStorage.getItem('active_workspace_id');
+      const res = await axios.get(`${API_BASE_URL}/api/pinterest/boards`, {
+        headers: { 'Authorization': `Bearer ${token}`, 'x-workspace-id': wsId || '' }
+      });
+      if (res.data && res.data.boards) {
+        setPinterestBoards(res.data.boards);
+      }
+    } catch (e) {
+      console.warn("Failed to fetch Pinterest boards:", e);
+    }
+  };
 
   const fetchSettings = async () => {
     try {
@@ -1791,8 +1807,15 @@ export default function Scheduling() {
   
                       <div>
                         <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>board name</label>
-                        <input 
-                          value={newPost.pinterestBoard || ''}
+                        
+<datalist id="pinterest-boards-list">
+  {pinterestBoards.map((b, i) => (
+    <option key={b.id || i} value={b.name} />
+  ))}
+</datalist>
+<input 
+  list="pinterest-boards-list"
+  value={newPost.pinterestBoard || ''}
                           onChange={(e) => setNewPost({ ...newPost, pinterestBoard: e.target.value })}
                           placeholder="e.g. My Awesome Board"
                           style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem' }}
