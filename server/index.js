@@ -735,20 +735,15 @@ app.get('/api/storage/view', async (req, res) => {
     const filePath = req.query.path;
     if (!filePath) return res.status(400).json({ error: 'path is required' });
 
-    const { data, error } = await supabaseAdmin
-      .storage
-      .from('media')
-      .download(filePath);
-
-    if (error || !data) {
-      console.error('❌ Proxy download error:', error?.message || 'no data');
-      return res.status(404).json({ error: 'File not found' });
+    // Redirect to Supabase public URL so Meta's crawlers can use HTTP Range
+    // requests for video downloads (the old buffered proxy returned HTTP 400
+    // to Meta because it didn't support Range headers).
+    const { data } = supabaseAdmin.storage.from('media').getPublicUrl(filePath);
+    if (data && data.publicUrl) {
+      return res.redirect(302, data.publicUrl);
     }
 
-    const buffer = Buffer.from(await data.arrayBuffer());
-    res.setHeader('Content-Type', data.type || 'application/octet-stream');
-    res.setHeader('Cache-Control', 'public, max-age=3600');
-    res.send(buffer);
+    return res.status(404).json({ error: 'File not found' });
   } catch (err) {
     console.error('❌ Storage proxy error:', err.message);
     res.status(500).json({ error: err.message });
@@ -1232,7 +1227,7 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     }
     
     // OPTIMIZATION: Trigger the scheduling worker immediately if scheduled for now/past
-    const isDue = (updatedPost.status === 'Scheduled' || updatedPost.status === 'Retrying') &&
+    const isDue = (updatedPost.status === 'Scheduled') &&
                   (!updatedPost.scheduledFor || new Date(updatedPost.scheduledFor) <= new Date());
     if (isDue) {
       console.log(`🚀 [Scheduling] Post ${updatedPost.id || updatedPost._id} is updated and due immediately. Triggering worker...`);
@@ -2205,7 +2200,7 @@ app.get('/api/debug/scheduled', verifyToken, async (req, res) => {
       .from('scheduled_posts')
       .select('id, platform, status, scheduledFor, lastError')
       .eq('userId', req.user.userId)
-      .in('status', ['Scheduled', 'Retrying', 'Processing'])
+      .in('status', ['Scheduled', 'Processing'])
       .lte('scheduledFor', now);
 
     const settings = await Settings.findOne({ userId: req.user.userId });
@@ -2497,7 +2492,7 @@ async function runSchedulingWorker() {
           .from('scheduled_posts')
           .update({ status: 'Processing', updatedAt: new Date().toISOString() })
           .eq('id', postId)
-          .or(`status.in.(Scheduled,Retrying),and(status.eq.Processing,updatedAt.lt.${twoMinutesAgo})`)
+          .or(`status.in.(Scheduled),and(status.eq.Processing,updatedAt.lt.${twoMinutesAgo})`)
           .select()
           .limit(1);
 
