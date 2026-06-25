@@ -16,7 +16,7 @@ export async function runSchedulingWorker() {
 
     const duePosts = await ScheduledPost.find({
       scheduledFor: { $lte: nowISO },
-      status: { $in: ['Scheduled', 'Retrying', 'Processing'] }
+      status: { $in: ['Scheduled', 'Processing'] }
     });
 
     console.log(`🔥 [Worker] Processing ${duePosts.length} posts...`);
@@ -34,7 +34,7 @@ export async function runSchedulingWorker() {
       try {
         const { data: stuckData, error: stuckErr } = await supabase
           .from('scheduled_posts')
-          .update({ status: 'Retrying', updatedAt: new Date().toISOString() })
+          .update({ status: 'Scheduled', updatedAt: new Date().toISOString() })
           .eq('status', 'Processing')
           .lt('updatedAt', stuckBoundary)
           .select('id');
@@ -156,12 +156,12 @@ export async function runSchedulingWorker() {
                 if (publishRes && publishRes.status === 'PUBLISHED') {
                   const finalLiveUrl = publishRes.url || post.mediaUrl;
                   await safeUpdate(post.id, { 
-                    status: 'Published', 
+                    status: 'Posted', 
                     publishedUrl: finalLiveUrl, 
                     publishedAt: new Date().toISOString(),
                     containerId: null // clear it
                   });
-                  await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Published', publishedUrl: finalLiveUrl });
+                  await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted', publishedUrl: finalLiveUrl });
                   console.log(`✅ [Worker] Post ${post._id} published successfully! URL: ${finalLiveUrl}`);
                 }
               } catch (pubErr) {
@@ -176,9 +176,9 @@ export async function runSchedulingWorker() {
               console.log(`⏳ [Worker] Container ${post.containerId} is STILL processing. Waiting for next cron cycle.`);
               const processingStart = new Date(post.updatedAt).getTime();
               if (Date.now() - processingStart > 15 * 60 * 1000) {
-                 console.log(`⚠️ [Worker] Container ${post.containerId} timed out. Resetting to Retrying.`);
-                 await safeUpdate(post.id, { status: 'Retrying', containerId: null });
-                 await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Retrying' });
+                 console.log(`⚠️ [Worker] Container ${post.containerId} timed out. Resetting to Scheduled.`);
+                 await safeUpdate(post.id, { status: 'Scheduled', containerId: null });
+                 await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Scheduled' });
               }
             }
           } catch (readyErr) {
@@ -225,11 +225,11 @@ export async function runSchedulingWorker() {
         if (result && result.status === 'PUBLISHED') {
           const finalLiveUrl = result.url || post.mediaUrl;
           await safeUpdate(post.id, { 
-            status: 'Published', 
+            status: 'Posted', 
             publishedUrl: finalLiveUrl, 
             publishedAt: new Date().toISOString() 
           });
-          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Published', publishedUrl: finalLiveUrl });
+          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted', publishedUrl: finalLiveUrl });
           console.log(`✅ [Worker] Post ${post._id} published successfully! URL: ${finalLiveUrl}`);
         } 
         else if (result && result.status === 'IG_PROCESSING' && result.containerId) {
@@ -246,7 +246,7 @@ export async function runSchedulingWorker() {
         
         let newStatus = 'Failed';
         if (err.message && (err.message.includes('timeout') || err.message.includes('network'))) {
-           newStatus = 'Retrying';
+           newStatus = 'Scheduled'; // Using Scheduled to retry later since Retrying is invalid in schema
         }
         
         await safeUpdate(post.id, { status: newStatus, errorLog: err.message });

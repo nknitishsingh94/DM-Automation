@@ -2362,7 +2362,7 @@ async function runSchedulingWorker() {
 
     const duePosts = await ScheduledPost.find({
       scheduledFor: { $lte: nowISO },
-      status: { $in: ['Scheduled', 'Retrying', 'Processing'] }
+      status: { $in: ['Scheduled', 'Processing'] }
     });
 
     console.log(`🔥 [Worker] Processing ${duePosts.length} posts...`);
@@ -2780,7 +2780,7 @@ async function runSchedulingWorker() {
           updatedMetaObj.retryCount = currentRetryCount;
           updatedMetaObj.nextRetryAt = new Date(Date.now() + delayMinutes * 60 * 1000).toISOString();
           console.log(`⚠️ Post ${postId} failed. Next retry in ${delayMinutes} mins at ${updatedMetaObj.nextRetryAt}. scheduledFor unchanged.`);
-          await safeUpdate(postId, { status: 'Retrying', lastError: errorMsg, mediaUrl: JSON.stringify(updatedMetaObj) });
+          await safeUpdate(postId, { status: 'Scheduled', lastError: errorMsg, mediaUrl: JSON.stringify(updatedMetaObj) });
         } else {
           await safeUpdate(postId, { status: 'Failed', lastError: errorMsg });
           
