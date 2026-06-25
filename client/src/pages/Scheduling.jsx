@@ -245,6 +245,7 @@ export default function Scheduling() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [createdPost, setCreatedPost] = useState(null);
   const [isPlatformDropdownOpen, setIsPlatformDropdownOpen] = useState(false);
+  const [isPostNow, setIsPostNow] = useState(true);
 
   // Filters State
   const [postStatusFilter, setPostStatusFilter] = useState('All posts');
@@ -819,7 +820,7 @@ export default function Scheduling() {
         caption: payloadBase.caption,
         platform: platObj.id,
         type: currentType,
-        scheduledFor: convertLocalToUTC(payloadBase.scheduledFor, selectedTimezone),
+        scheduledFor: isPostNow ? '' : convertLocalToUTC(payloadBase.scheduledFor, selectedTimezone),
         mediaUrl: JSON.stringify({
           type: currentType,
           mediaUrl: currentPreviews.length > 0 ? currentPreviews[0] : payloadBase.mediaUrl,
