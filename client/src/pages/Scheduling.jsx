@@ -942,7 +942,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               ...initialPayloadBase,
               platform: platObj.id,
               mediaUrl: tempPosts[i].mediaUrl,
-              status: 'Scheduled'
+              status: 'Uploading'  // Keep as Uploading until media is fully uploaded — cron skips Uploading posts
             })
           });
           

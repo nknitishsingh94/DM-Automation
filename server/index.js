@@ -2490,8 +2490,8 @@ async function runSchedulingWorker() {
         if (finalCarousel && finalCarousel.length > 0) {
           const hasInvalidCarouselItem = finalCarousel.some(item => item && item.startsWith('blob:'));
           if (hasInvalidCarouselItem) {
-            console.error(`❌ Blob URL detected in carousel items for post ${post._id}.`);
-            await safeUpdate(postId, { status: 'Failed', lastError: 'Invalid media URL (blob:) in carousel. Please re-upload the media — blob URLs cannot be used for publishing.' });
+            console.warn(`⚠️ Blob URL in carousel for post ${postId}. Upload still in progress — resetting to Uploading.`);
+            await safeUpdate(postId, { status: 'Uploading', lastError: 'Carousel media upload still in progress. Will retry once upload completes.' });
             return;
           }
           finalCarousel = finalCarousel.map(item => (item && item.startsWith('/uploads/')) ? `${SERVER_PUBLIC_URL}${item}` : item);
@@ -2505,9 +2505,11 @@ async function runSchedulingWorker() {
            return;
         }
         
+        // Blob URL means the frontend hasn't finished uploading the file yet.
+        // Reset to 'Uploading' instead of hard-failing — the real URL will be updated soon.
         if (finalMedia && finalMedia.startsWith('blob:')) {
-          console.error(`❌ Blob URL detected for post ${post._id}. Blob URLs are not accessible from the server.`);
-          await safeUpdate(postId, { status: 'Failed', lastError: 'Invalid media URL (blob:). Please re-upload the media — blob URLs cannot be used for publishing.' });
+          console.warn(`⚠️ Blob URL detected for post ${postId}. Upload still in progress — resetting to Uploading.`);
+          await safeUpdate(postId, { status: 'Uploading', lastError: 'Media upload still in progress. Will retry once upload completes.' });
           return;
         }
 
