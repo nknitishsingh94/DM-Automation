@@ -2807,6 +2807,8 @@ async function runSchedulingWorker() {
           lowerError.includes('scope') || 
           lowerError.includes('permission') || 
           lowerError.includes('insufficient') ||
+          lowerError.includes('credits') ||
+          lowerError.includes('creditsdepleted') ||
           lowerError.includes('403') ||
           lowerError.includes('400') ||
           lowerError.includes('bad request')) &&

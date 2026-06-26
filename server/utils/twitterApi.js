@@ -33,6 +33,10 @@ export async function publishTwitterContent(userId, post, workspaceId) {
     return await _doPublish(userSettings[0], post);
   } catch (err) {
     console.error("Twitter Publish Error:", err);
+    if (err.code === 402 || (err.data && err.data.type === 'https://api.twitter.com/2/problems/credits')) {
+      const detail = err.data?.detail || 'Your Twitter account does not have enough credits to publish. Please add credits to your Twitter account and try again.';
+      throw new Error(`Twitter Credits Depleted: ${detail}`);
+    }
     throw err;
   }
 }
