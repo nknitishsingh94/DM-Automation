@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import {
   Plus, Calendar, Clock, Video, Image as ImageIcon, Send, X, Check, ChevronLeft, ChevronRight,
   ChevronDown, Trash2, Globe, AlertCircle, Info, Sparkles, Zap, Heart, MessageCircle, Home,
@@ -1867,38 +1868,69 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       </div>
   
                       <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>{showNewPinterestBoardInput ? 'new board name' : 'select board'}</label>
-                        
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                          <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#64748b' }}>
+                            {showNewPinterestBoardInput ? 'new board name' : 'select board'} <span style={{ color: '#E60023' }}>*</span>
+                          </label>
+                          {!showNewPinterestBoardInput && (
+                            <button
+                              type="button"
+                              onClick={fetchPinterestBoards}
+                              style={{ fontSize: '0.75rem', color: '#E60023', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', padding: '2px 6px', borderRadius: '4px' }}
+                            >
+                              ↻ Refresh
+                            </button>
+                          )}
+                        </div>
 
-                          <select
-                            value={showNewPinterestBoardInput ? 'NEW_BOARD' : (newPost.pinterestBoard || '')}
-                            onChange={(e) => {
-                              if (e.target.value === 'NEW_BOARD') {
-                                setShowNewPinterestBoardInput(true);
-                                setNewPost({ ...newPost, pinterestBoard: '' });
-                              } else {
-                                setShowNewPinterestBoardInput(false);
-                                setNewPost({ ...newPost, pinterestBoard: e.target.value });
-                              }
-                            }}
-                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', marginBottom: showNewPinterestBoardInput ? '8px' : '0' }}
-                          >
-                            <option value="" disabled>Select a Board</option>
-                            {pinterestBoards.map((b, i) => (
-                              <option key={b.id || i} value={b.name}>{b.name}</option>
-                            ))}
-                            <option value="NEW_BOARD">+ Create New Board</option>
-                          </select>
-
-                          {showNewPinterestBoardInput && (
-                            <input 
+                        {!showNewPinterestBoardInput ? (
+                          <>
+                            <select
+                              value={newPost.pinterestBoard || ''}
+                              onChange={(e) => {
+                                if (e.target.value === 'NEW_BOARD') {
+                                  setShowNewPinterestBoardInput(true);
+                                  setNewPost({ ...newPost, pinterestBoard: '' });
+                                } else {
+                                  setNewPost({ ...newPost, pinterestBoard: e.target.value });
+                                }
+                              }}
+                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: `1px solid ${!newPost.pinterestBoard ? '#fca5a5' : '#cbd5e1'}`, outline: 'none', fontSize: '0.95rem', background: 'white', color: '#334155', cursor: 'pointer' }}
+                            >
+                              <option value="" disabled>
+                                {pinterestBoards.length === 0 ? '⏳ Loading boards...' : '— Select a Board —'}
+                              </option>
+                              {pinterestBoards.map((b, i) => (
+                                <option key={b.id || i} value={b.name}>{b.name}</option>
+                              ))}
+                              <option value="NEW_BOARD">+ Create New Board</option>
+                            </select>
+                            {pinterestBoards.length === 0 && (
+                              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '6px' }}>
+                                No boards found. <button type="button" onClick={fetchPinterestBoards} style={{ color: '#E60023', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '0.75rem' }}>Click Refresh</button> or create a new one.
+                              </p>
+                            )}
+                          </>
+                        ) : (
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <input
+                              autoFocus
                               value={newPost.pinterestBoard || ''}
                               onChange={(e) => setNewPost({ ...newPost, pinterestBoard: e.target.value })}
                               placeholder="e.g. My Awesome Board"
-                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem' }}
+                              style={{ flex: 1, padding: '12px 16px', borderRadius: '8px', border: '1px solid #E60023', outline: 'none', fontSize: '0.95rem' }}
                             />
-                          )}
-                        </div>
+                            <button
+                              type="button"
+                              onClick={() => { setShowNewPinterestBoardInput(false); setNewPost({ ...newPost, pinterestBoard: '' }); }}
+                              style={{ padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '0.85rem', color: '#64748b', whiteSpace: 'nowrap' }}
+                            >
+                              ← Back
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
 
                       <div style={{ marginTop: '8px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -2270,11 +2302,15 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                             }
                             setNewPost(prev => {
                               const current = prev.platforms || (prev.platform ? [prev.platform] : []);
-                              if (current.includes(plat.id)) {
-                                  return { ...prev, platforms: current.filter(p => p !== plat.id) };
-                              } else {
-                                  return { ...prev, platforms: [...current, plat.id] };
+                              const isNowSelected = !current.includes(plat.id);
+                              const newPlatforms = isNowSelected
+                                ? [...current, plat.id]
+                                : current.filter(p => p !== plat.id);
+                              // Auto-fetch Pinterest boards when Pinterest is selected
+                              if (plat.id === 'pinterest' && isNowSelected && pinterestBoards.length === 0) {
+                                fetchPinterestBoards();
                               }
+                              return { ...prev, platforms: newPlatforms };
                             });
                           }}
                           style={{
