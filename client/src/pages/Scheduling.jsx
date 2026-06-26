@@ -942,7 +942,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               ...initialPayloadBase,
               platform: platObj.id,
               mediaUrl: tempPosts[i].mediaUrl,
-              status: 'Uploading'  // Keep as Uploading until media is fully uploaded — cron skips Uploading posts
+              status: 'Processing'  // 'Processing' is in DB constraint; worker has 2-min cooldown before picking it up, giving time for upload to finish
             })
           });
           
