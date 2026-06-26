@@ -2611,6 +2611,11 @@ async function runSchedulingWorker() {
           publishResult = await publishGoogleBusinessContent(post.userId, post, post.workspaceId);
         } else if (post.platform === 'twitter') {
           const { publishTwitterContent } = await import('./utils/twitterApi.js');
+          // Check if Twitter publishing is paused due to credits depletion
+          const { data: twSettings, error: twSetErr } = await _sb.from('settings').select('*').eq('workspaceId', post.workspaceId).limit(1);
+          if (!twSetErr && twSettings && twSettings.length > 0 && twSettings[0].twitterPaused) {
+            throw new Error(`TWITTER_PAUSED: ${twSettings[0].twitterPauseReason || 'Twitter publishing is paused. Please add credits to resume.'}`);
+          }
           // Pass resolved URLs (finalMedia + finalCarousel) so proxy URLs are unwrapped
           publishResult = await publishTwitterContent(post.userId, {
             ...post,
@@ -2823,6 +2828,18 @@ async function runSchedulingWorker() {
           console.log(`🚫 [Worker] Fatal/Client Error for Post ${postId}. Marking as Failed immediately.`);
           await safeUpdate(postId, { status: 'Failed', lastError: errorMsg });
           await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', lastError: errorMsg });
+          
+          // If Twitter credits are depleted, pause all future Twitter posts for this user/workspace
+          if (post.platform === 'twitter' && (lowerError.includes('credits') || lowerError.includes('creditsdepleted'))) {
+            try {
+              const pauseReason = 'Twitter account credits depleted. Please add credits to resume publishing.';
+              await _sb.from('settings').update({ twitterPaused: true, twitterPauseReason: pauseReason })
+                .eq('workspaceId', post.workspaceId);
+              console.log(`⏸️ [Worker] Paused Twitter publishing for workspace ${post.workspaceId}`);
+            } catch (pauseErr) {
+              console.error(`⚠️ [Worker] Failed to pause Twitter publishing:`, pauseErr.message);
+            }
+          }
           
           try {
             await new PostLog({ post_id: postId, status: 'failed', platform: post.platform || 'instagram', response: { error: errorMsg }, user_id: post.userId, workspace_id: post.workspaceId }).save();
