@@ -2612,7 +2612,13 @@ async function runSchedulingWorker() {
         } else if (post.platform === 'twitter') {
           const { publishTwitterContent } = await import('./utils/twitterApi.js');
           // Check if Twitter publishing is paused due to credits depletion
-          const { data: twSettings, error: twSetErr } = await _sb.from('settings').select('*').eq('workspaceId', post.workspaceId).limit(1);
+          let twSettingsQuery = _sb.from('settings').select('*').limit(1);
+          if (post.workspaceId) {
+            twSettingsQuery = twSettingsQuery.eq('workspaceId', post.workspaceId);
+          } else {
+            twSettingsQuery = twSettingsQuery.eq('userId', post.userId);
+          }
+          const { data: twSettings, error: twSetErr } = await twSettingsQuery;
           if (!twSetErr && twSettings && twSettings.length > 0 && twSettings[0].twitterPaused) {
             throw new Error(`TWITTER_PAUSED: ${twSettings[0].twitterPauseReason || 'Twitter publishing is paused. Please add credits to resume.'}`);
           }
@@ -2833,9 +2839,14 @@ async function runSchedulingWorker() {
           if (post.platform === 'twitter' && (lowerError.includes('credits') || lowerError.includes('creditsdepleted'))) {
             try {
               const pauseReason = 'Twitter account credits depleted. Please add credits to resume publishing.';
-              await _sb.from('settings').update({ twitterPaused: true, twitterPauseReason: pauseReason })
-                .eq('workspaceId', post.workspaceId);
-              console.log(`⏸️ [Worker] Paused Twitter publishing for workspace ${post.workspaceId}`);
+              let pauseQuery = _sb.from('settings').update({ twitterPaused: true, twitterPauseReason: pauseReason });
+              if (post.workspaceId) {
+                pauseQuery = pauseQuery.eq('workspaceId', post.workspaceId);
+              } else {
+                pauseQuery = pauseQuery.eq('userId', post.userId);
+              }
+              await pauseQuery;
+              console.log(`⏸️ [Worker] Paused Twitter publishing for workspace ${post.workspaceId || 'user ' + post.userId}`);
             } catch (pauseErr) {
               console.error(`⚠️ [Worker] Failed to pause Twitter publishing:`, pauseErr.message);
             }
