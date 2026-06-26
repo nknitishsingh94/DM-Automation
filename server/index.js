@@ -2822,6 +2822,7 @@ async function runSchedulingWorker() {
         if (isFatalError) {
           console.log(`🚫 [Worker] Fatal/Client Error for Post ${postId}. Marking as Failed immediately.`);
           await safeUpdate(postId, { status: 'Failed', lastError: errorMsg });
+          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', lastError: errorMsg });
           
           try {
             await new PostLog({ post_id: postId, status: 'failed', platform: post.platform || 'instagram', response: { error: errorMsg }, user_id: post.userId, workspace_id: post.workspaceId }).save();
@@ -2839,8 +2840,10 @@ async function runSchedulingWorker() {
           updatedMetaObj.nextRetryAt = new Date(Date.now() + delayMinutes * 60 * 1000).toISOString();
           console.log(`⚠️ Post ${postId} failed. Next retry in ${delayMinutes} mins at ${updatedMetaObj.nextRetryAt}. scheduledFor unchanged.`);
           await safeUpdate(postId, { status: 'Scheduled', lastError: errorMsg, mediaUrl: JSON.stringify(updatedMetaObj) });
+          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Scheduled', lastError: errorMsg, mediaUrl: JSON.stringify(updatedMetaObj) });
         } else {
           await safeUpdate(postId, { status: 'Failed', lastError: errorMsg });
+          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', lastError: errorMsg });
           
           try {
             await new PostLog({ post_id: postId, status: 'failed', platform: post.platform || 'instagram', response: { error: errorMsg }, user_id: post.userId, workspace_id: post.workspaceId }).save();
