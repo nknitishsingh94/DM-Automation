@@ -2497,6 +2497,8 @@ async function runSchedulingWorker() {
           finalCarousel = finalCarousel.map(item => (item && item.startsWith('/uploads/')) ? `${SERVER_PUBLIC_URL}${item}` : item);
         }
 
+        // Only Instagram and YouTube (without pre-uploaded video ID) strictly require media.
+        // Twitter, LinkedIn, Pinterest, GMB, etc. can post text-only.
         const requiresMedia = !post.platform || post.platform === 'instagram' || (post.platform === 'youtube' && !hasYouTubeVideoId);
         if (requiresMedia && !finalMedia) {
            console.log(`⏭️ Post ${postId} has no media URL yet (likely still uploading). Skipping.`);
@@ -2607,7 +2609,13 @@ async function runSchedulingWorker() {
           publishResult = await publishGoogleBusinessContent(post.userId, post, post.workspaceId);
         } else if (post.platform === 'twitter') {
           const { publishTwitterContent } = await import('./utils/twitterApi.js');
-          publishResult = await publishTwitterContent(post.userId, post, post.workspaceId);
+          // Pass resolved URLs (finalMedia + finalCarousel) so proxy URLs are unwrapped
+          publishResult = await publishTwitterContent(post.userId, {
+            ...post,
+            mediaUrl: finalMedia,
+            carouselItems: finalCarousel && finalCarousel.length > 0 ? finalCarousel : (post.carouselItems || []),
+            type: finalType
+          }, post.workspaceId);
         } else if (post.platform === 'pinterest') {
           const { publishPinterestContent } = await import('./utils/pinterestApi.js');
           publishResult = await publishPinterestContent(post.userId, post, post.workspaceId);
@@ -2617,9 +2625,6 @@ async function runSchedulingWorker() {
         } else if (post.platform === 'whatsapp') {
           const { publishWhatsAppContent } = await import('./services/platforms/whatsapp.js');
           publishResult = await publishWhatsAppContent(post.userId, post, post.workspaceId);
-        } else if (post.platform === 'twitter') {
-          const { publishTwitterContent } = await import('./utils/twitterApi.js');
-          publishResult = await publishTwitterContent(post.userId, post, post.workspaceId);
         } else {
           // Default to instagram
           const { publishInstagramContent } = await import('./utils/metaApi.js');
@@ -2770,7 +2775,7 @@ async function runSchedulingWorker() {
           console.error(`⚠️ Failed to save success log for Post ${postId}:`, logErr.message);
         }
 
-        console.log(`✅ SUCCESS: Post ${postId} is now LIVE on ${post.platform === 'facebook' ? 'Facebook' : 'Instagram'}.`);
+        console.log(`✅ SUCCESS: Post ${postId} is now LIVE on ${post.platform || 'Instagram'}.`);
 
       } catch (postErr) {
         console.error(`❌ PUBLISH FAILED for Post ${post._id}:`, postErr.message);
