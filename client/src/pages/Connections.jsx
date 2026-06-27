@@ -1463,17 +1463,38 @@ export default function Connections() {
                     </div>
                   </div>
                   
-                  <button 
-                    onClick={() => {
-                      triggerConnect(selectedSettingsPlatform.id);
-                      setSelectedSettingsPlatform(null);
-                    }}
-                    style={{ background: 'white', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 16px', color: '#334155', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
-                    onMouseOver={(e) => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#94a3b8'; }}
-                    onMouseOut={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.borderColor = '#cbd5e1'; }}
-                  >
-                    <Activity size={16} /> Refresh permissions
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button 
+                      onClick={() => {
+                        let logoutUrl = '';
+                        if (selectedSettingsPlatform.id === 'linkedin') logoutUrl = 'https://www.linkedin.com/m/logout/';
+                        else if (selectedSettingsPlatform.id === 'instagram' || selectedSettingsPlatform.id === 'facebook') logoutUrl = 'https://www.facebook.com/';
+                        else if (selectedSettingsPlatform.id === 'twitter/x') logoutUrl = 'https://twitter.com/logout';
+                        else if (selectedSettingsPlatform.id === 'pinterest') logoutUrl = 'https://www.pinterest.com/logout/';
+                        else if (selectedSettingsPlatform.id === 'youtube' || selectedSettingsPlatform.id === 'google-business' || selectedSettingsPlatform.id === 'google business') logoutUrl = 'https://accounts.google.com/Logout';
+
+                        if (window.confirm(`To switch ${selectedSettingsPlatform.name} accounts, you must first log out in your browser.\n\nClick OK to open the logout page. After logging out, close that tab and click 'Reconnect' here.`)) {
+                          if (logoutUrl) window.open(logoutUrl, '_blank');
+                        }
+                      }}
+                      style={{ background: 'white', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 16px', color: '#475569', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
+                      onMouseOver={(e) => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#475569'; }}
+                    >
+                      <Key size={16} /> Switch Account
+                    </button>
+                    <button 
+                      onClick={() => {
+                        triggerConnect(selectedSettingsPlatform.id);
+                        setSelectedSettingsPlatform(null);
+                      }}
+                      style={{ background: '#3b82f6', border: '1px solid #2563eb', borderRadius: '8px', padding: '8px 16px', color: '#ffffff', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
+                      onMouseOver={(e) => { e.currentTarget.style.background = '#2563eb'; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background = '#3b82f6'; }}
+                    >
+                      <Activity size={16} /> Reconnect
+                    </button>
+                  </div>
                 </div>
 
                 {selectedSettingsPlatform.id === 'linkedin' && settings.linkedinPages && Array.isArray(settings.linkedinPages) && (
@@ -1550,20 +1571,6 @@ export default function Connections() {
                 >
                   <Trash2 size={16} /> Remove account
                 </button>
-                {selectedSettingsPlatform.id === 'linkedin' && (
-                  <button 
-                    onClick={() => {
-                      if (window.confirm("To switch LinkedIn accounts, you must first log out of LinkedIn.\n\nClick OK to open the LinkedIn logout page in a new tab. After it loads, close that tab and click 'Reconnect' here.")) {
-                        window.open('https://www.linkedin.com/m/logout/', '_blank');
-                      }
-                    }}
-                    style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '8px 16px', color: '#d97706', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
-                    onMouseOver={(e) => { e.currentTarget.style.background = '#fef3c7'; e.currentTarget.style.borderColor = '#fcd34d'; }}
-                    onMouseOut={(e) => { e.currentTarget.style.background = '#fffbeb'; e.currentTarget.style.borderColor = '#fde68a'; }}
-                  >
-                    <Key size={16} /> Switch Account
-                  </button>
-                )}
               </div>
 
               {/* Threads Capabilities Section */}
