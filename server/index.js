@@ -48,6 +48,7 @@ import { runFlow } from './utils/FlowRunner.js';
 import { sendMessageToInstagram, sendWhatsAppMessage, sendPrivateReply, sendPublicComment } from './utils/metaApi.js';
 import authRoutes from './routes/auth.js';
 import ChatMessage from './models/ChatMessage.js';
+import { runLinkedInScraperWorker } from './services/linkedinScraperCron.js';
 import Caption from './models/Caption.js';
 import Review from './models/Review.js';
 import paymentRoutes from './routes/payment.js';
@@ -2631,6 +2632,17 @@ async function runSchedulingWorker() {
           }, post.workspaceId);
         } else if (post.platform === 'pinterest') {
           const { publishPinterestContent } = await import('./utils/pinterestApi.js');
+          // Check if Pinterest publishing is paused (e.g., trial access limitations)
+          let pinSettingsQuery = _sb.from('settings').select('*').limit(1);
+          if (post.workspaceId) {
+            pinSettingsQuery = pinSettingsQuery.eq('workspaceId', post.workspaceId);
+          } else {
+            pinSettingsQuery = pinSettingsQuery.eq('userId', post.userId);
+          }
+          const { data: pinSettings, error: pinSetErr } = await pinSettingsQuery;
+          if (!pinSetErr && pinSettings && pinSettings.length > 0 && pinSettings[0].pinterestPaused) {
+            throw new Error(`PINTEREST_PAUSED: ${pinSettings[0].pinterestPauseReason || 'Pinterest publishing is paused.'}`);
+          }
           publishResult = await publishPinterestContent(post.userId, post, post.workspaceId);
         } else if (post.platform === 'linkedin') {
           const { publishLinkedInContent } = await import('./utils/linkedinApi.js');
@@ -2820,6 +2832,10 @@ async function runSchedulingWorker() {
           lowerError.includes('insufficient') ||
           lowerError.includes('credits') ||
           lowerError.includes('creditsdepleted') ||
+          lowerError.includes('trial access') ||
+          lowerError.includes('sandbox') ||
+          lowerError.includes('twitter_paused') ||
+          lowerError.includes('pinterest_paused') ||
           lowerError.includes('403') ||
           lowerError.includes('400') ||
           lowerError.includes('bad request')) &&
@@ -3256,6 +3272,13 @@ httpServer.listen(PORT, () => {
         console.error("❌ Error in persistent local YouTube scheduler:", err.message);
       });
     }, 30 * 60 * 1000);
+
+    // Run LinkedIn Scraper & Publisher every 1 hour
+    setInterval(() => {
+      runLinkedInScraperWorker().catch(err => {
+        console.error("❌ Error in persistent local LinkedIn Scraper scheduler:", err.message);
+      });
+    }, 60 * 60 * 1000);
   }
 });
 export default app;
