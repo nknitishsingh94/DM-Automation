@@ -108,7 +108,7 @@ export async function runSchedulingWorker() {
 
       
       try {
-        if (!post.platform || (post.platform !== 'instagram' && post.platform !== 'facebook' && post.platform !== 'youtube' && post.platform !== 'google-business' && post.platform !== 'twitter' && post.platform !== 'pinterest')) {
+        if (!post.platform || (post.platform !== 'instagram' && post.platform !== 'facebook' && post.platform !== 'youtube' && post.platform !== 'google-business' && post.platform !== 'twitter' && post.platform !== 'pinterest' && post.platform !== 'linkedin')) {
           console.log(`⏭️ [Worker] Skipping post ${post._id} - Platform is not supported (${post.platform})`);
           await safeUpdate(post.id, { status: 'Failed', errorLog: 'Platform not supported via this worker.' });
           await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', errorLog: 'Unsupported platform.' });

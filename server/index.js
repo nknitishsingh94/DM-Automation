@@ -1113,7 +1113,10 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     if (updateData.gmbProductName !== undefined) currentMetadata.gmbProductName = updateData.gmbProductName;
     if (updateData.gmbProductPrice !== undefined) currentMetadata.gmbProductPrice = updateData.gmbProductPrice;
     if (updateData.youtubeVideoId !== undefined) currentMetadata.youtubeVideoId = updateData.youtubeVideoId;
-
+    if (updateData.pinterestTitle !== undefined) currentMetadata.pinterestTitle = updateData.pinterestTitle;
+    if (updateData.pinterestLink !== undefined) currentMetadata.pinterestLink = updateData.pinterestLink;
+    if (updateData.pinterestBoard !== undefined) currentMetadata.pinterestBoard = updateData.pinterestBoard;
+    if (updateData.pinterestAltText !== undefined) currentMetadata.pinterestAltText = updateData.pinterestAltText;
     updateData.mediaUrl = JSON.stringify(currentMetadata);
 
     // Clean up fields that might not exist in the Supabase schema
@@ -1146,6 +1149,10 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     delete updateData.gmbProductName;
     delete updateData.gmbProductPrice;
     delete updateData.youtubeVideoId;
+    delete updateData.pinterestTitle;
+    delete updateData.pinterestLink;
+    delete updateData.pinterestBoard;
+    delete updateData.pinterestAltText;
 
     const updatedPost = await ScheduledPost.findOneAndUpdate(
       { id: req.params.id },

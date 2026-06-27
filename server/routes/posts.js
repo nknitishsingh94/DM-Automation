@@ -28,7 +28,7 @@ router.post('/', verifyApiKey, async (req, res) => {
       return res.status(400).json({ error: 'platforms must be a non-empty array.' });
     }
 
-    const validPlatforms = ['instagram', 'facebook', 'threads', 'youtube'];
+    const validPlatforms = ['instagram', 'facebook', 'threads', 'youtube', 'linkedin', 'pinterest', 'twitter', 'google-business'];
     const invalidPlats = platforms.filter(p => !validPlatforms.includes(p.toLowerCase()));
     if (invalidPlats.length > 0) {
       return res.status(400).json({ error: `Unsupported platform(s): ${invalidPlats.join(', ')}. Valid options are: ${validPlatforms.join(', ')}` });
