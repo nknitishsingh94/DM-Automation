@@ -1550,6 +1550,20 @@ export default function Connections() {
                 >
                   <Trash2 size={16} /> Remove account
                 </button>
+                {selectedSettingsPlatform.id === 'linkedin' && (
+                  <button 
+                    onClick={() => {
+                      if (window.confirm("To switch LinkedIn accounts, you must first log out of LinkedIn.\n\nClick OK to open the LinkedIn logout page in a new tab. After it loads, close that tab and click 'Reconnect' here.")) {
+                        window.open('https://www.linkedin.com/m/logout/', '_blank');
+                      }
+                    }}
+                    style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '8px 16px', color: '#d97706', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
+                    onMouseOver={(e) => { e.currentTarget.style.background = '#fef3c7'; e.currentTarget.style.borderColor = '#fcd34d'; }}
+                    onMouseOut={(e) => { e.currentTarget.style.background = '#fffbeb'; e.currentTarget.style.borderColor = '#fde68a'; }}
+                  >
+                    <Key size={16} /> Switch Account
+                  </button>
+                )}
               </div>
 
               {/* Threads Capabilities Section */}
