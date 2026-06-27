@@ -1485,11 +1485,11 @@ export default function Connections() {
                           if (logoutUrl) window.open(logoutUrl, '_blank');
                         }
                       }}
-                      style={{ background: 'white', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 16px', color: '#475569', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
-                      onMouseOver={(e) => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }}
-                      onMouseOut={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#475569'; }}
+                      style={{ background: 'linear-gradient(135deg, #fffbeb, #fef3c7)', border: '1px solid #fde68a', borderRadius: '8px', padding: '8px 16px', color: '#b45309', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s', boxShadow: '0 2px 4px rgba(251, 191, 36, 0.1)' }}
+                      onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(251, 191, 36, 0.15)'; e.currentTarget.style.borderColor = '#fcd34d'; }}
+                      onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 4px rgba(251, 191, 36, 0.1)'; e.currentTarget.style.borderColor = '#fde68a'; }}
                     >
-                      <Key size={16} /> Switch Account
+                      <Globe size={16} /> Switch Account
                     </button>
                     <button 
                       onClick={() => {
