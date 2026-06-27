@@ -1093,7 +1093,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               thumbnail: thumbnailMediaUrl,
               youtubeVideoId: customVideoId
             });
-          } else if (plat === 'linkedin') {
+          } else {
             const tempPost = tempPosts.find(p => p._id === tempId);
             if (tempPost && tempPost.mediaUrl && tempPost.mediaUrl.startsWith('{')) {
               try {

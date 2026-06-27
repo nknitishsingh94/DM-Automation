@@ -147,6 +147,20 @@ export async function runSchedulingWorker() {
           continue;
         }
 
+        if (post.platform === 'linkedin' && !settings.linkedinAccessToken) {
+          console.log(`❌ [Worker] Failed post ${post._id} - Missing LinkedIn Token`);
+          await safeUpdate(post.id, { status: 'Failed', errorLog: 'LinkedIn API tokens missing. Please reconnect.' });
+          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', errorLog: 'Tokens missing' });
+          continue;
+        }
+
+        if (post.platform === 'twitter' && !settings.twitterAccessToken) {
+          console.log(`❌ [Worker] Failed post ${post._id} - Missing Twitter Token`);
+          await safeUpdate(post.id, { status: 'Failed', errorLog: 'Twitter API tokens missing. Please reconnect.' });
+          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', errorLog: 'Tokens missing' });
+          continue;
+        }
+
         if ((post.platform === 'instagram' || post.platform === 'facebook') && (!settings.instagramAccessToken || !settings.businessAccountId)) {
           console.log(`❌ [Worker] Failed post ${post._id} - Missing Meta Tokens`);
           await safeUpdate(post.id, { status: 'Failed', errorLog: 'Meta API tokens missing. Please reconnect.' });
