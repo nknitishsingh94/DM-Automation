@@ -5,6 +5,7 @@ import { publishYouTubeVideo } from '../utils/youtubeApi.js';
 import { publishGoogleBusinessContent } from '../utils/googleBusinessApi.js';
 import { publishTwitterContent } from '../utils/twitterApi.js';
 import { publishPinterestContent } from '../utils/pinterestApi.js';
+import { publishLinkedInContent } from '../utils/linkedinApi.js';
 import { supabase } from '../utils/supabase.js';
 
 export async function runSchedulingWorker() {
@@ -243,6 +244,8 @@ export async function runSchedulingWorker() {
           result = await publishTwitterContent(post.userId, post, post.workspaceId);
         } else if (post.platform === 'pinterest') {
           result = await publishPinterestContent(post.userId, post, post.workspaceId);
+        } else if (post.platform === 'linkedin') {
+          result = await publishLinkedInContent(post.userId, post, post.workspaceId);
         } else {
           result = await publishInstagramContent(post.userId, {
             type: post.type,
