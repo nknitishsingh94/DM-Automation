@@ -400,7 +400,15 @@ export default function Connections() {
       cleared = { ...cleared, youtubeAccessToken: null, youtubeRefreshToken: null, connectedYouTubeName: null, isYouTubeConnected: false, youtubeChannelId: null, isYoutubeConnected: false, youtubeChannelName: null };
     } else if (platformId === 'linkedin') {
       delete pageData.isLinkedInConnected; delete pageData.connectedLinkedInName; delete pageData.linkedinAccessToken;
-      cleared = { ...cleared, linkedinAccessToken: null, connectedLinkedInName: null, isLinkedInConnected: false };
+      cleared = { 
+        ...cleared, 
+        linkedinAccessToken: null, 
+        connectedLinkedInName: null, 
+        isLinkedInConnected: false,
+        linkedinPages: null,
+        linkedinPageId: null,
+        linkedinOrganizationId: null
+      };
     } else if (platformId === 'twitter') {
       delete pageData.isTwitterConnected; delete pageData.connectedTwitterName; delete pageData.twitterAccessToken; delete pageData.twitterRefreshToken; delete pageData.connectedTwitterId;
       cleared = { ...cleared, twitterAccessToken: null, connectedTwitterName: null, isTwitterConnected: false, twitterRefreshToken: null, connectedTwitterId: null };

@@ -1084,6 +1084,10 @@ router.get('/linkedin/callback', async (req, res) => {
     updateData.connectedLinkedInName = profileName;
     updateData.linkedinAccessToken = accessToken;
     updateData.linkedinPages = pages;
+    
+    // Reset selected page to avoid issues when switching accounts
+    updateData.linkedinPageId = null;
+    updateData.linkedinOrganizationId = null;
 
     await Settings.findOneAndUpdate(
       connectionsQuery,
