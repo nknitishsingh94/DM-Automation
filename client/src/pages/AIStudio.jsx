@@ -142,7 +142,14 @@ export default function AIStudio() {
         alignItems: 'center', 
         justifyContent: 'space-between',
         padding: isMobile ? '16px 20px' : '24px 40px',
-        gap: '12px'
+        gap: '12px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid #e5e7eb',
+        margin: isMobile ? '-20px -20px 20px -20px' : '-40px -40px 32px -40px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '20px' }}>
           <div className="brain-glow" style={{ width: isMobile ? '36px' : '48px', height: isMobile ? '36px' : '48px' }}>

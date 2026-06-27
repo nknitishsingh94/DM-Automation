@@ -45,14 +45,27 @@ export default function Settings() {
     <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', padding: '0 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
       
       {/* Settings Header */}
-      <div className="settings-header" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
+      <div className="settings-header" style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: '20px', 
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        paddingTop: '20px',
+        margin: '0 -16px',
+        paddingLeft: '16px',
+        paddingRight: '16px',
+        borderBottom: '1px solid #e5e7eb'
+      }}>
         <h2 style={{ fontSize: '1.8rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>Settings</h2>
         
         {/* Tab Navigation */}
         <div style={{ 
           display: 'flex', 
           gap: '32px', 
-          borderBottom: '1px solid #e5e7eb',
           paddingBottom: '0px'
         }}>
           {[
