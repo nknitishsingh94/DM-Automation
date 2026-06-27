@@ -137,6 +137,7 @@ export default function AIStudio() {
       
       {/* Header */}
       <div className="studio-header" style={{ 
+        display: 'flex',
         flexDirection: 'row', 
         alignItems: 'center', 
         justifyContent: 'space-between',
