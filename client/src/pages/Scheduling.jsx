@@ -1093,6 +1093,15 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               thumbnail: thumbnailMediaUrl,
               youtubeVideoId: customVideoId
             });
+          } else if (plat === 'linkedin') {
+            const tempPost = tempPosts.find(p => p._id === tempId);
+            if (tempPost && tempPost.mediaUrl && tempPost.mediaUrl.startsWith('{')) {
+              try {
+                const parsed = JSON.parse(tempPost.mediaUrl);
+                parsed.mediaUrl = customMediaUrl;
+                updateMediaUrl = JSON.stringify(parsed);
+              } catch (e) {}
+            }
           }
 
           const updateRes = await fetch(`${API_BASE_URL}/api/scheduling/${dbId}`, {

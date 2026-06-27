@@ -589,36 +589,6 @@ export default function Connections() {
           <div style={{ display: 'flex', gap: '10px' }}>
             <button 
               className="settings-header-btn"
-              onClick={() => {
-                if (!(hasSocialConnected || hasWhatsAppConnected)) {
-                  notify("Please connect at least one account to start scheduling.", "error");
-                  return;
-                }
-                navigate('/scheduling');
-              }}
-              style={{ 
-                background: '#10b981', 
-                color: 'white', 
-                padding: '10px 20px', 
-                borderRadius: '8px', 
-                fontWeight: '600', 
-                fontSize: '0.95rem',
-                border: 'none', 
-                cursor: 'pointer', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '6px',
-                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)',
-                transition: 'background 0.2s, transform 0.2s',
-                whiteSpace: 'nowrap'
-              }}
-              onMouseOver={(e) => { e.currentTarget.style.background = '#059669'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-              onMouseOut={(e) => { e.currentTarget.style.background = '#10b981'; e.currentTarget.style.transform = 'translateY(0)'; }}
-            >
-              <Rocket size={18} /> Schedule Post
-            </button>
-            <button 
-              className="settings-header-btn"
               onClick={() => setShowConnectModal(true)}
               style={{ 
                 background: '#7c3aed', 
