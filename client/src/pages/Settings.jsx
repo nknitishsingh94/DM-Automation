@@ -46,11 +46,12 @@ export default function Settings() {
       
       {/* Settings Header */}
       <div className="settings-header" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
-
+        <h2 style={{ fontSize: '1.8rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>Settings</h2>
+        
         {/* Tab Navigation */}
         <div style={{ 
           display: 'flex', 
-          gap: '48px', 
+          gap: '32px', 
           borderBottom: '1px solid #e5e7eb',
           paddingBottom: '0px'
         }}>
