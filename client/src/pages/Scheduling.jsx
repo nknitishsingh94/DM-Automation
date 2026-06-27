@@ -1049,7 +1049,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
         
         // Finalize all posts
         let finalPosts = [];
-        for (const { dbId, plat } of createdDbIds) {
+        for (const { dbId, plat, tempId } of createdDbIds) {
           let customMediaUrl = finalMediaUrl;
           let customVideoId = null;
 
