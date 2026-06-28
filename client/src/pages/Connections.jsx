@@ -434,19 +434,20 @@ export default function Connections() {
   const triggerConnect = (platformName = 'instagram') => {
     setRedirectingInsta(true);
     if (platformName.toLowerCase() === 'youtube') {
-      window.location.href = `${API_BASE_URL}/api/youtube/auth?token=${localStorage.getItem('insta_agent_token')}`;
+      window.location.href = `${API_BASE_URL}/api/youtube/auth?token=${localStorage.getItem('insta_agent_token')}&workspaceId=${localStorage.getItem('active_workspace_id') || ''}`;
       return;
     }
+    const wsParam = `&workspaceId=${localStorage.getItem('active_workspace_id') || ''}`;
     if (platformName.toLowerCase() === 'linkedin') {
-      window.location.href = `${API_BASE_URL}/api/oauth/linkedin?type=business&token=${localStorage.getItem('insta_agent_token')}`;
+      window.location.href = `${API_BASE_URL}/api/oauth/linkedin?type=business&token=${localStorage.getItem('insta_agent_token')}${wsParam}`;
       return;
     }
     if (platformName.toLowerCase() === 'google business' || platformName.toLowerCase() === 'google-business') {
-      window.location.href = `${API_BASE_URL}/api/oauth/google-business?token=${localStorage.getItem('insta_agent_token')}`;
+      window.location.href = `${API_BASE_URL}/api/oauth/google-business?token=${localStorage.getItem('insta_agent_token')}${wsParam}`;
       return;
     }
     if (platformName.toLowerCase() === 'pinterest') {
-      window.location.href = `${API_BASE_URL}/api/oauth/pinterest?token=${localStorage.getItem('insta_agent_token')}`;
+      window.location.href = `${API_BASE_URL}/api/oauth/pinterest?token=${localStorage.getItem('insta_agent_token')}${wsParam}`;
       return;
     }
     if (platformName.toLowerCase() === 'whatsapp') {
@@ -454,11 +455,11 @@ export default function Connections() {
       return;
     }
     if (platformName.toLowerCase() === 'threads') {
-      window.location.href = `${API_BASE_URL}/api/oauth/threads?token=${localStorage.getItem('insta_agent_token')}`;
+      window.location.href = `${API_BASE_URL}/api/oauth/threads?token=${localStorage.getItem('insta_agent_token')}${wsParam}`;
       return;
     }
     if (platformName.toLowerCase() === 'twitter/x' || platformName.toLowerCase() === 'twitter') {
-      window.location.href = `${API_BASE_URL}/api/oauth/twitter?token=${localStorage.getItem('insta_agent_token')}`;
+      window.location.href = `${API_BASE_URL}/api/oauth/twitter?token=${localStorage.getItem('insta_agent_token')}${wsParam}`;
       return;
     }
     if (platformName.toLowerCase() === 'telegram') {
@@ -470,7 +471,7 @@ export default function Connections() {
       : platformName.toLowerCase() === 'whatsapp' ? 'whatsapp'
       : platformName.toLowerCase() === 'threads' ? 'threads'
       : 'instagram';
-    window.location.href = `${API_BASE_URL}/api/oauth/facebook?connectType=${connectType}&token=${localStorage.getItem('insta_agent_token')}`;
+    window.location.href = `${API_BASE_URL}/api/oauth/facebook?connectType=${connectType}&token=${localStorage.getItem('insta_agent_token')}${wsParam}`;
   };
 
   const handleDisconnectFacebook = () => {
