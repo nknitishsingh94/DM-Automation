@@ -369,7 +369,7 @@ export default function Scheduling() {
   };
 
   const addThreadPost = () => {
-    setThreadPosts(prev => [...prev, { caption: '', preview: '', file: null }]);
+    setThreadPosts(prev => [...prev, { caption: '', previews: [], files: [] }]);
   };
 
   const removeThreadPost = (index) => {
@@ -381,16 +381,25 @@ export default function Scheduling() {
   };
 
   const handleThreadFileChange = (index, e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const preview = URL.createObjectURL(file);
-    setThreadPosts(prev => prev.map((post, i) => i === index ? { ...post, file, preview } : post));
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    const previews = files.map(file => URL.createObjectURL(file));
+    setThreadPosts(prev => prev.map((post, i) => i === index ? { ...post, files: [...(post.files || []), ...files], previews: [...(post.previews || []), ...previews] } : post));
   };
 
-  const removeThreadMedia = (index) => {
+  const removeThreadMedia = (index, mediaIndex) => {
     setThreadPosts(prev => prev.map((post, i) => {
-      if (i === index && post.preview) URL.revokeObjectURL(post.preview);
-      return i === index ? { ...post, preview: '', file: null } : post;
+      if (i === index) {
+        if (post.previews && post.previews[mediaIndex]) {
+          URL.revokeObjectURL(post.previews[mediaIndex]);
+        }
+        const newFiles = [...(post.files || [])];
+        const newPreviews = [...(post.previews || [])];
+        newFiles.splice(mediaIndex, 1);
+        newPreviews.splice(mediaIndex, 1);
+        return { ...post, files: newFiles, previews: newPreviews };
+      }
+      return post;
     }));
   };
 
@@ -1015,31 +1024,32 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
           const finalThreadPosts = [...currentThreadPosts];
           if (currentThreadPosts && currentThreadPosts.length > 0) {
             const threadUploadPromises = currentThreadPosts.map(async (tPost, index) => {
-              // Only upload if it's a blob url
-              if (tPost.mediaUrl && tPost.mediaUrl.startsWith('blob:')) {
-                // Find the actual file from the original threadPosts state
-                const originalThreadPost = currentThreadPostsWithFiles[index];
-                if (originalThreadPost && originalThreadPost.file) {
-                  const file = await compressImage(originalThreadPost.file);
-                  const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-thread-${index}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+              const originalThreadPost = currentThreadPostsWithFiles[index];
+              if (originalThreadPost && originalThreadPost.files && originalThreadPost.files.length > 0) {
+                const uploadedUrls = [];
+                for (let i = 0; i < originalThreadPost.files.length; i++) {
+                  const file = originalThreadPost.files[i];
+                  const compressedFile = await compressImage(file);
+                  const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-thread-${index}-${i}-${compressedFile.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
                   
                   const signRes = await fetch(`${API_BASE_URL}/api/storage/sign`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fileName, contentType: file.type })
+                    body: JSON.stringify({ fileName, contentType: compressedFile.type })
                   });
                   if (!signRes.ok) throw new Error("Failed to secure upload channel for thread media.");
                   const { uploadUrl, publicUrl } = await signRes.json();
       
                   const uploadRes = await fetch(uploadUrl, {
                     method: 'PUT',
-                    body: file,
-                    headers: { 'Content-Type': file.type }
+                    body: compressedFile,
+                    headers: { 'Content-Type': compressedFile.type }
                   });
                   if (!uploadRes.ok) throw new Error(`Network failed during thread file upload.`);
                   
-                  finalThreadPosts[index].mediaUrl = publicUrl;
+                  uploadedUrls.push(publicUrl);
                 }
+                finalThreadPosts[index].mediaUrls = uploadedUrls;
               }
             });
             await Promise.all(threadUploadPromises);
@@ -1107,7 +1117,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
           const updateRes = await fetch(`${API_BASE_URL}/api/scheduling/${dbId}`, {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mediaUrl: updateMediaUrl, carouselItems: mediaUrls, status: 'Scheduled', youtubeVideoId: customVideoId })
+            body: JSON.stringify({ mediaUrl: updateMediaUrl, carouselItems: mediaUrls, status: 'Scheduled', youtubeVideoId: customVideoId, threadPosts: finalThreadPosts })
           });
 
           const updatedData = await updateRes.json();
@@ -1679,32 +1689,42 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #f1f5f9', background: '#fafafa' }}>
                             <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Post {index + 2}</span>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: '600' }}>{(post.caption || '').length}/500</span>
                               <button onClick={() => removeThreadPost(index)} style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600' }}>remove</button>
                             </div>
                           </div>
                           <div style={{ padding: '12px' }}>
-                            <textarea
-                              value={post.caption}
-                              onChange={(e) => { if (e.target.value.length <= 500) updateThreadPost(index, 'caption', e.target.value); }}
-                              placeholder={`Post ${index + 2} content...`}
-                              style={{ width: '100%', minHeight: '60px', border: 'none', outline: 'none', fontSize: '0.9rem', resize: 'vertical', color: '#334155' }}
-                            />
                             
                             {/* Thread Post Media */}
                             <div style={{ marginTop: '10px' }}>
-                              {post.preview ? (
-                                <div style={{ width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', position: 'relative', border: '1px solid #e2e8f0' }}>
-                                  {post.file?.type?.startsWith('video') ? (
-                                    <video src={post.preview} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                  ) : (
-                                    <img referrerPolicy="no-referrer" src={getSafeImageUrl(post.preview)} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
-                                  )}
+                              {post.previews && post.previews.length > 0 ? (
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                  {post.previews.map((prevImg, mIdx) => (
+                                    <div key={mIdx} style={{ width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', position: 'relative', border: '1px solid #e2e8f0' }}>
+                                      {post.files && post.files[mIdx]?.type?.startsWith('video') ? (
+                                        <video src={prevImg} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                      ) : (
+                                        <img referrerPolicy="no-referrer" src={getSafeImageUrl(prevImg)} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+                                      )}
+                                      <button
+                                        onClick={() => removeThreadMedia(index, mIdx)}
+                                        style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
+                                      >
+                                        <X size={12} />
+                                      </button>
+                                    </div>
+                                  ))}
                                   <button
-                                    onClick={() => removeThreadMedia(index)}
-                                    style={{ position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
+                                    onClick={() => {
+                                      const input = document.createElement('input');
+                                      input.type = 'file';
+                                      input.accept = 'image/*,video/*';
+                                      input.multiple = true;
+                                      input.onchange = (e) => handleThreadFileChange(index, e);
+                                      input.click();
+                                    }}
+                                    style={{ width: '80px', height: '80px', background: 'transparent', border: '1px dashed #cbd5e1', borderRadius: '8px', color: '#64748b', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: '500' }}
                                   >
-                                    <X size={12} />
+                                    <Plus size={14} /> Add
                                   </button>
                                 </div>
                               ) : (
@@ -1713,6 +1733,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                                     const input = document.createElement('input');
                                     input.type = 'file';
                                     input.accept = 'image/*,video/*';
+                                    input.multiple = true;
                                     input.onchange = (e) => handleThreadFileChange(index, e);
                                     input.click();
                                   }}

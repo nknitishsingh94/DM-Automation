@@ -127,11 +127,20 @@ async function _doPublish(settings, post) {
 
     for (const tPost of post.threadPosts) {
       const tPayload = { text: tPost.caption || ' ' };
-      const tMediaUrl = tPost.mediaUrl || '';
-      if (tMediaUrl && tMediaUrl !== 'null' && tMediaUrl !== '{}') {
-        const tMediaId = await uploadMedia(tMediaUrl);
-        if (tMediaId) tPayload.media = { media_ids: [tMediaId] };
+      let tMediaIds = [];
+      if (tPost.mediaUrls && Array.isArray(tPost.mediaUrls)) {
+        for (const tUrl of tPost.mediaUrls) {
+          const tMediaId = await uploadMedia(tUrl);
+          if (tMediaId) tMediaIds.push(tMediaId);
+        }
+      } else {
+        const tMediaUrl = tPost.mediaUrl || '';
+        if (tMediaUrl && tMediaUrl !== 'null' && tMediaUrl !== '{}') {
+          const tMediaId = await uploadMedia(tMediaUrl);
+          if (tMediaId) tMediaIds.push(tMediaId);
+        }
       }
+      if (tMediaIds.length > 0) tPayload.media = { media_ids: tMediaIds.slice(0, 4) };
       tweets.push(tPayload);
     }
 
