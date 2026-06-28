@@ -1019,7 +1019,6 @@ router.get('/linkedin/callback', async (req, res) => {
         const aclRes = await axios.get('https://api.linkedin.com/v2/organizationAcls', {
           params: {
             q: 'roleAssignee',
-            role: 'ADMINISTRATOR',
             projection: '(elements*(organization~(localizedName)))'
           },
           headers: {
@@ -1044,11 +1043,10 @@ router.get('/linkedin/callback', async (req, res) => {
         console.warn("⚠️ LinkedIn /organizationAcls failed, trying legacy /organizationalEntityAcls...", aclErr.response?.data || aclErr.message);
         try {
           const legacyAclRes = await axios.get('https://api.linkedin.com/v2/organizationalEntityAcls', {
-            params: {
-              q: 'roleAssignee',
-              role: 'ADMINISTRATOR',
-              projection: '(elements*(organizationalTarget~(localizedName)))'
-            },
+          params: {
+            q: 'roleAssignee',
+            projection: '(elements*(organizationalTarget~(localizedName)))'
+          },
             headers: {
               Authorization: `Bearer ${accessToken}`,
               'X-Restli-Protocol-Version': '2.0.0'
