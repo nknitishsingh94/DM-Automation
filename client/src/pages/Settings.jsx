@@ -47,21 +47,24 @@ export default function Settings() {
       {/* Settings Header */}
       <div className="settings-header" style={{ 
         display: 'flex', 
-        flexDirection: 'column', 
-        gap: '12px', 
+        flexDirection: 'row', 
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '16px', 
         position: 'sticky',
         top: 0,
         zIndex: 50,
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(10px)',
-        paddingTop: '16px',
-        paddingBottom: '16px',
+        paddingTop: '12px',
+        paddingBottom: '0px',
         margin: '0 -16px',
-        paddingLeft: '16px',
-        paddingRight: '16px',
+        paddingLeft: '24px',
+        paddingRight: '24px',
         borderBottom: '1px solid #e5e7eb'
       }}>
-        <h2 style={{ fontSize: '1.8rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>Settings</h2>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px', paddingBottom: '12px' }}>Settings</h2>
         
         {/* Tab Navigation */}
         <div style={{ 
