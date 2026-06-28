@@ -13,14 +13,18 @@ const processedPosts = new Set();
 export async function runLinkedInScraperWorker() {
   console.log('📡 [ScraperCron] Starting LinkedIn Profile Scraper Worker...');
 
-  // Configuration for the target profile
-  const TARGET_PROFILE_URL = 'https://www.linkedin.com/in/sujata-sangwan/';
+  // Configuration for the target profile RSS Feed
+  const TARGET_PROFILE_URL = process.env.LINKEDIN_RSS_FEED_URL;
   
   // These could be fetched from the database per-user configuration in a multi-tenant system.
   const DEFAULT_HEADER = process.env.LINKEDIN_DEFAULT_HEADER || '📢 Industry Update:\n';
   const DEFAULT_FOOTER = process.env.LINKEDIN_DEFAULT_FOOTER || '\n\n#CompanyUpdate #Automation';
   
   try {
+    if (!TARGET_PROFILE_URL) {
+      console.log('📡 [ScraperCron] Missing LINKEDIN_RSS_FEED_URL in .env. Skipping.');
+      return;
+    }
     // 1. Fetch latest posts
     const posts = await scrapeLatestLinkedInPosts(TARGET_PROFILE_URL);
     

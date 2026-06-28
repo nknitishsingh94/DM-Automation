@@ -1,55 +1,34 @@
-import axios from 'axios';
+import Parser from 'rss-parser';
+
+const parser = new Parser();
 
 /**
- * Scrapes the latest posts from a LinkedIn profile.
+ * Scrapes the latest posts from a LinkedIn profile using an RSS feed.
  * 
- * Note: Direct scraping of LinkedIn is blocked. This utility uses a third-party API 
- * structure (like RapidAPI LinkedIn Data API or PhantomBuster).
- * 
- * @param {string} profileUrl - The LinkedIn profile URL to scrape
+ * @param {string} feedUrl - The RSS feed URL for the LinkedIn profile (e.g. from rss.app)
  * @returns {Promise<Array>} - Array of post objects { id, text, mediaUrl, postUrl }
  */
-export async function scrapeLatestLinkedInPosts(profileUrl) {
-  // Replace this with your actual scraping API URL (e.g., from RapidAPI)
-  const SCRAPING_API_URL = process.env.LINKEDIN_SCRAPING_API_URL || '';
-  const SCRAPING_API_KEY = process.env.LINKEDIN_SCRAPING_API_KEY || '';
+export async function scrapeLatestLinkedInPosts(feedUrl) {
+  // If no specific feed URL is provided, fallback to env var
+  const rssUrl = feedUrl || process.env.LINKEDIN_RSS_FEED_URL || '';
 
-  if (!SCRAPING_API_URL || !SCRAPING_API_KEY) {
-    console.warn('⚠️ [Scraper] Missing LINKEDIN_SCRAPING_API_URL or LINKEDIN_SCRAPING_API_KEY in .env');
-    console.warn('⚠️ [Scraper] Returning empty array. Please configure a third-party scraper (e.g., RapidAPI) to fetch actual data.');
-    
-    // For testing purposes, you could return a mocked post here
-    // return [{
-    //   id: 'urn:li:activity:7476193793088724993',
-    //   text: 'Sample post from Sujata Sangwan! #company #update',
-    //   mediaUrl: '',
-    //   postUrl: 'https://www.linkedin.com/feed/update/urn:li:activity:7476193793088724993/'
-    // }];
+  if (!rssUrl) {
+    console.warn('⚠️ [Scraper] Missing LINKEDIN_RSS_FEED_URL in .env');
     return [];
   }
 
   try {
-    const response = await axios.get(SCRAPING_API_URL, {
-      headers: {
-        'x-api-key': SCRAPING_API_KEY
-      },
-      params: {
-        url: profileUrl
-      }
-    });
-
-    // Map the response based on your chosen API's format
-    // This is a generic mapping example
-    const posts = response.data.data || [];
+    const feed = await parser.parseURL(rssUrl);
+    const posts = feed.items || [];
     
     return posts.map(post => ({
-      id: post.urn || post.id,
-      text: post.text || post.content || '',
-      mediaUrl: post.image_url || post.video_url || '',
-      postUrl: post.url || `https://www.linkedin.com/feed/update/${post.urn}`
+      id: post.guid || post.link,
+      text: post.contentSnippet || post.content || post.title || '',
+      mediaUrl: '', // RSS feeds usually embed media in content, we might extract it if needed
+      postUrl: post.link
     }));
   } catch (error) {
-    console.error('❌ [Scraper] Error fetching LinkedIn posts:', error.message);
+    console.error('❌ [Scraper] Error fetching RSS feed:', error.message);
     return [];
   }
 }
