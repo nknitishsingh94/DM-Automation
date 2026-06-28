@@ -132,7 +132,7 @@ export default function AIStudio() {
   };
 
   return (
-    <div className="studio-container" style={{ padding: isMobile ? '20px' : '40px' }}>
+    <div className="studio-container" style={{ padding: isMobile ? '0 20px 20px' : '0 40px 40px' }}>
       <Toaster position="top-right" />
       
       {/* Header */}
@@ -141,7 +141,7 @@ export default function AIStudio() {
         flexDirection: 'row', 
         alignItems: 'center', 
         justifyContent: 'space-between',
-        padding: isMobile ? '16px 20px' : '24px 40px',
+        padding: isMobile ? '12px 20px' : '16px 40px',
         gap: '12px',
         position: 'sticky',
         top: 0,
@@ -149,7 +149,7 @@ export default function AIStudio() {
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(10px)',
         borderBottom: '1px solid #e5e7eb',
-        margin: isMobile ? '-20px -20px 20px -20px' : '-40px -40px 32px -40px'
+        margin: isMobile ? '0 -20px 20px -20px' : '0 -40px 32px -40px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '20px' }}>
           <div className="brain-glow" style={{ width: isMobile ? '36px' : '48px', height: isMobile ? '36px' : '48px' }}>
