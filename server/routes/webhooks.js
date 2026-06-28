@@ -1,4 +1,5 @@
 import express from 'express';
+import crypto from 'crypto';
 import { processAutoReply } from '../services/core/automationCore.js';
 import Settings from '../models/Settings.js';
 import Campaign from '../models/Campaign.js';
@@ -45,6 +46,56 @@ router.get('/webhook', (req, res) => {
     }
   }
 });
+
+// ==========================================
+// TWITTER WEBHOOK ROUTES
+// ==========================================
+
+// Twitter CRC (Challenge-Response Check)
+router.get('/webhook/twitter', (req, res) => {
+  const crcToken = req.query.crc_token;
+  if (crcToken) {
+    const consumerSecret = process.env.TWITTER_API_SECRET;
+    if (!consumerSecret) {
+      console.error('Missing TWITTER_API_SECRET environment variable for CRC check.');
+      return res.status(500).send('Server configuration error');
+    }
+    const hash = crypto.createHmac('sha256', consumerSecret).update(crcToken).digest('base64');
+    res.status(200).json({ response_token: `sha256=${hash}` });
+  } else {
+    res.status(400).send('Error: crc_token missing from request.');
+  }
+});
+
+// Twitter Event Webhook Listener
+router.post('/webhook/twitter', async (req, res) => {
+  const body = req.body;
+  
+  console.log('🐦 [TWITTER WEBHOOK] Received Event!');
+  console.log('📦 Payload Keys:', Object.keys(body));
+  
+  // Acknowledge receipt to Twitter immediately
+  res.status(200).send('EVENT_RECEIVED');
+
+  try {
+    // Basic detection of event types for logging
+    if (body.direct_message_events) {
+      console.log(`💬 Received ${body.direct_message_events.length} Direct Message(s)`);
+      // Here you can integrate with processAutoReply or standard messaging later
+    }
+    
+    if (body.tweet_create_events) {
+      console.log(`🐦 Received ${body.tweet_create_events.length} Tweet Create Event(s)`);
+    }
+
+  } catch (error) {
+    console.error('❌ Error processing Twitter webhook:', error);
+  }
+});
+
+// ==========================================
+// META WEBHOOK ROUTE (Instagram / Facebook)
+// ==========================================
 
 router.post('/webhook', async (req, res) => {
   const body = req.body;
