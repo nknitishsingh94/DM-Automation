@@ -44,6 +44,7 @@ const Audiences = lazyRetry(() => import('./pages/Audiences'));
 const Subscription = lazyRetry(() => import('./pages/Subscription'));
 const HelpCenter = lazyRetry(() => import('./pages/HelpCenter'));
 const AIStudio = lazyRetry(() => import('./pages/AIStudio'));
+const ApiKeys = lazyRetry(() => import('./pages/ApiKeys'));
 const Forms = lazyRetry(() => import('./pages/Forms'));
 const FormDetail = lazyRetry(() => import('./pages/FormDetail'));
 const Referral = lazyRetry(() => import('./pages/Referral'));
@@ -749,6 +750,7 @@ function MainLayout() {
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/upgrade" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
               <Route path="/ai-studio" element={<ProtectedRoute><AIStudio /></ProtectedRoute>} />
+              <Route path="/developer" element={<ProtectedRoute><ApiKeys /></ProtectedRoute>} />
               <Route path="/forms" element={<ProtectedRoute><Forms /></ProtectedRoute>} />
               <Route path="/forms/:id" element={<ProtectedRoute><FormDetail /></ProtectedRoute>} />
               <Route path="/broadcasts" element={<ProtectedRoute><Broadcasts /></ProtectedRoute>} />
