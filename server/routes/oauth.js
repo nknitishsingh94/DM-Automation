@@ -926,7 +926,7 @@ router.get('/linkedin', verifyToken, (req, res) => {
 
   // Include organization scopes if the user wants to connect business pages
   const scope = isBusiness 
-    ? 'openid%20profile%20email%20w_member_social%20w_organization_social%20r_organization_social%20rw_organization_admin' 
+    ? 'openid%20profile%20email%20w_member_social%20w_organization_social%20r_organization_social' 
     : 'openid%20profile%20email%20w_member_social';
 
   const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
