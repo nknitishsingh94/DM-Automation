@@ -44,7 +44,6 @@ const Audiences = lazyRetry(() => import('./pages/Audiences'));
 const Subscription = lazyRetry(() => import('./pages/Subscription'));
 const HelpCenter = lazyRetry(() => import('./pages/HelpCenter'));
 const AIStudio = lazyRetry(() => import('./pages/AIStudio'));
-const ApiKeys = lazyRetry(() => import('./pages/ApiKeys'));
 const Forms = lazyRetry(() => import('./pages/Forms'));
 const FormDetail = lazyRetry(() => import('./pages/FormDetail'));
 const Referral = lazyRetry(() => import('./pages/Referral'));
