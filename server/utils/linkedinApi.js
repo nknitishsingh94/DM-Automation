@@ -27,26 +27,26 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
     } catch (e) {}
   }
 
-  let targetUrn = selectedTargetUrn;
-  if (!targetUrn) {
-    console.log('📡 [LinkedIn] No explicit target URN provided, fetching profile info as fallback...');
-    let profileRes;
-    try {
-      profileRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      });
-    } catch (err) {
-      console.error('❌ [LinkedIn] Fetch profile failed:', err.response?.data || err.message);
-      const apiError = err.response?.data?.message || err.message;
-      throw new Error(`LinkedIn API failed to fetch profile: ${apiError}`);
-    }
-
-    const sub = profileRes.data.sub;
-    if (!sub) {
-      throw new Error('Could not retrieve URN (sub) from LinkedIn profile.');
-    }
-    targetUrn = `urn:li:person:${sub}`;
+  let targetUrn = null; // FORCE personal profile by ignoring selectedTargetUrn for now
+  
+  // Temporarily overriding company page selection as requested by user
+  console.log('📡 [LinkedIn] Forcing personal profile posting as requested, fetching profile info...');
+  let profileRes;
+  try {
+    profileRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+  } catch (err) {
+    console.error('❌ [LinkedIn] Fetch profile failed:', err.response?.data || err.message);
+    const apiError = err.response?.data?.message || err.message;
+    throw new Error(`LinkedIn API failed to fetch profile: ${apiError}`);
   }
+
+  const sub = profileRes.data.sub;
+  if (!sub) {
+    throw new Error('Could not retrieve URN (sub) from LinkedIn profile.');
+  }
+  targetUrn = `urn:li:person:${sub}`;
 
   console.log(`✅ [LinkedIn] Target URN to publish: ${targetUrn}`);
 
