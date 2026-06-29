@@ -146,7 +146,7 @@ export default function AIStudio() {
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        background: 'rgba(255, 255, 255, 0.95)',
+        background: 'var(--bg-card)',
         backdropFilter: 'blur(10px)',
         borderBottom: '1px solid var(--border-subtle)',
         margin: isMobile ? '0 -20px 20px -20px' : '0 -40px 32px -40px'

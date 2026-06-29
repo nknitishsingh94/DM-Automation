@@ -540,40 +540,40 @@ function Sidebar({ isMobileOpen, onClose }) {
           <div style={{
             padding: '18px',
             borderRadius: '16px',
-            background: 'var(--text-main)',
-            border: '1px solid #1e293b',
+            background: 'linear-gradient(135deg, #1e293b, #0f172a)',
+            border: '1px solid rgba(255,255,255,0.1)',
             display: 'flex',
             flexDirection: 'column',
             gap: '14px',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+            boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
           }}>
             <div>
-              <h3 style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px' }}>
+              <h3 style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', margin: '0 0 6px 0' }}>
                 Premium Access
               </h3>
-              <p style={{ fontSize: '14px', color: 'var(--sidebar-bg)', fontWeight: '600', lineHeight: '1.4' }}>
+              <p style={{ fontSize: '14px', color: '#f8fafc', fontWeight: '600', lineHeight: '1.4', margin: 0 }}>
                 Unlock all advanced features
               </p>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '14px 0', borderTop: '1px solid rgba(255, 255, 255, 0.08)', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontWeight: '600' }}>
-                <span style={{ color: 'var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{ padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                    <Sparkles size={12} color="#3b82f6" />
+                    <Sparkles size={12} color="#60a5fa" />
                   </div>
                   AI Credits
                 </span>
-                <span style={{ color: 'var(--sidebar-bg)', fontWeight: '800' }}>1X</span>
+                <span style={{ color: '#f8fafc', fontWeight: '800' }}>1X</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontWeight: '600' }}>
-                <span style={{ color: 'var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{ padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                    <Zap size={12} color="#3b82f6" />
+                    <Zap size={12} color="#60a5fa" />
                   </div>
                   Automations
                 </span>
-                <span style={{ color: 'var(--sidebar-bg)', fontWeight: '800' }}>Infinite</span>
+                <span style={{ color: '#f8fafc', fontWeight: '800' }}>Infinite</span>
               </div>
 
             </div>
@@ -584,16 +584,18 @@ function Sidebar({ isMobileOpen, onClose }) {
               fontSize: '13px',
               borderRadius: '10px',
               justifyContent: 'center',
-              background: 'var(--bg-card)',
-              color: 'var(--text-main)',
+              background: '#3b82f6',
+              color: '#ffffff',
               fontWeight: '800',
               textDecoration: 'none',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              textAlign: 'center'
+              textAlign: 'center',
+              transition: 'background 0.2s',
+              border: 'none'
             }}>
-              <Crown size={15} color="#3b82f6" /> Upgrade Now
+              <Crown size={15} color="#ffffff" /> Upgrade Now
             </NavLink>
           </div>
         </div>
