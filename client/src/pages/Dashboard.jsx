@@ -195,7 +195,8 @@ export default function Dashboard() {
                           to={item.link} 
                           className="landing-cta" 
                           style={{ 
-                            background: 'var(--text-main)', 
+                            background: 'var(--accent-color)', 
+                            color: '#ffffff',
                             padding: '10px 24px', 
                             fontSize: '13px', 
                             borderRadius: '12px', 
@@ -218,7 +219,7 @@ export default function Dashboard() {
         {!hasReviewed && (
           <div className="stat-card" style={{ 
             padding: '24px', 
-            background: 'linear-gradient(135deg, #ffffff 0%, #fcf9ff 100%)', 
+            background: 'var(--bg-card)', 
             border: '1px solid var(--border-subtle)', 
             borderRadius: '24px', 
             boxShadow: '0 4px 6px rgba(0,0,0,0.02)',
@@ -384,7 +385,7 @@ export default function Dashboard() {
 
       {/* Right Column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-        <div className="stat-card funnel-card" style={{ background: 'linear-gradient(145deg, #ffffff 0%, #f3f4f6 100%)', border: '1px solid var(--border-subtle)', padding: '24px' }}>
+        <div className="stat-card funnel-card" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#4f46e5' }}>
               <div style={{ padding: '8px', background: '#e0e7ff', borderRadius: '10px' }}>
@@ -442,7 +443,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="stat-card" style={{ background: 'linear-gradient(145deg, #ffffff 0%, #f3f4f6 100%)', border: '1px solid var(--border-subtle)', padding: '24px' }}>
+        <div className="stat-card" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ec4899' }}>
                <div style={{ padding: '8px', background: '#fce7f3', borderRadius: '10px' }}>
