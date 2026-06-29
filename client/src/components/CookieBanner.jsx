@@ -95,19 +95,19 @@ export default function CookieBanner() {
       `}</style>
 
       <div className={`cookie-banner${animateOut ? ' out' : ''}`}>
-        <div style={{ background: 'white', borderRadius: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.15)', border: '1px solid rgba(139,92,246,0.1)', overflow: 'hidden' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.15)', border: '1px solid rgba(139,92,246,0.1)', overflow: 'hidden' }}>
           <div style={{ padding: '24px' }}>
             <div style={{ display: 'flex', gap: '16px' }}>
               <div style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <Cookie size={20} color="white" />
               </div>
               <div style={{ flex: 1 }}>
-                <h3 style={{ fontSize: '14px', fontWeight: '800', color: '#0f172a', margin: '0 0 4px 0' }}>Cookies 🍪</h3>
-                <p style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5', margin: 0 }}>
+                <h3 style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 4px 0' }}>Cookies 🍪</h3>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.5', margin: 0 }}>
                   We use cookies to improve your experience. <Link to="/cookies" style={{ color: '#8b5cf6', fontWeight: '700' }}>Learn more</Link>
                 </p>
               </div>
-              <button onClick={rejectAll} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
+              <button onClick={rejectAll} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
                 <X size={18} />
               </button>
             </div>
@@ -125,7 +125,7 @@ export default function CookieBanner() {
             <div style={{ borderTop: '1px solid #f1f5f9', padding: '20px', background: '#fafafa', maxHeight: '300px', overflowY: 'auto' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {preferences.map(p => (
-                  <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                  <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       {p.icon}
                       <div>
@@ -135,7 +135,7 @@ export default function CookieBanner() {
                     {p.locked ? (
                       <span style={{ fontSize: '10px', fontWeight: '700', color: '#10b981' }}>Essential</span>
                     ) : (
-                      <button className="cookie-toggle" style={{ background: prefs[p.id] ? '#8b5cf6' : '#cbd5e1' }} onClick={() => setPrefs(prev => ({ ...prev, [p.id]: !prev[p.id] }))}>
+                      <button className="cookie-toggle" style={{ background: prefs[p.id] ? '#8b5cf6' : 'var(--border-subtle)' }} onClick={() => setPrefs(prev => ({ ...prev, [p.id]: !prev[p.id] }))}>
                         <div className="cookie-toggle-thumb" style={{ left: prefs[p.id] ? '19px' : '3px' }} />
                       </button>
                     )}

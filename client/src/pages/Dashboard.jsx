@@ -148,14 +148,14 @@ export default function Dashboard() {
       {/* Left Column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
         {/* PEHLE WALA PART (RESTORED TO TOP) */}
-        <div className="stat-card" style={{ padding: '24px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '24px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
+        <div className="stat-card" style={{ padding: '24px', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '24px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-             <div style={{ width: '36px', height: '36px', background: '#f8fafc', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+             <div style={{ width: '36px', height: '36px', background: 'var(--sidebar-bg)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                <Sparkles size={18} color="#64748b" />
              </div>
              <div>
-               <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#1e293b', margin: 0 }}>Discover Features</h3>
-               <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Automate your growth and engagement</p>
+               <h3 style={{ fontSize: '16px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>Discover Features</h3>
+               <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>Automate your growth and engagement</p>
              </div>
           </div>
 
@@ -173,11 +173,11 @@ export default function Dashboard() {
                 onClick={() => setOpenItem(openItem === (index + 10) ? -1 : (index + 10))}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--sidebar-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {item.icon}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <h4 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: 0 }}>
+                    <h4 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: 0 }}>
                       {item.title}
                       <ChevronDown 
                         size={16} 
@@ -190,12 +190,12 @@ export default function Dashboard() {
                     </h4>
                     {openItem === (index + 10) && (
                       <div style={{ animation: 'fadeIn 0.3s ease', marginTop: '12px' }}>
-                        <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px', lineHeight: '1.5' }}>{item.desc}</p>
+                        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px', lineHeight: '1.5' }}>{item.desc}</p>
                         <Link 
                           to={item.link} 
                           className="landing-cta" 
                           style={{ 
-                            background: '#0f172a', 
+                            background: 'var(--text-main)', 
                             padding: '10px 24px', 
                             fontSize: '13px', 
                             borderRadius: '12px', 
@@ -230,11 +230,11 @@ export default function Dashboard() {
                 <Star size={18} color="#db2777" fill="#db2777" />
               </div>
               <div>
-                <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#1e293b', margin: 0 }}>Write a Review</h3>
-                <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Share your feedback with us</p>
+                <h3 style={{ fontSize: '16px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>Write a Review</h3>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>Share your feedback with us</p>
               </div>
             </div>
-            <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '20px', lineHeight: '1.6' }}>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: '1.6' }}>
               Enjoying our automation tools? We'd love to hear your thoughts! Help other creators and brands discover us by leaving a review.
             </p>
             <Link 
@@ -247,7 +247,7 @@ export default function Dashboard() {
                 borderRadius: '12px', 
                 display: 'inline-flex',
                 fontWeight: '700',
-                color: 'white',
+                color: 'var(--bg-card)',
                 textDecoration: 'none',
                 boxShadow: '0 4px 12px rgba(124,58,237,0.25)',
                 transition: 'transform 0.2s'
@@ -261,7 +261,7 @@ export default function Dashboard() {
         )}
 
         {/* NAYA SETUP PART (MOVED BELOW) */}
-        <div className="stat-card" style={{ padding: '24px', background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', border: 'none', color: 'white', borderRadius: '24px' }}>
+        <div className="stat-card" style={{ padding: '24px', background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', border: 'none', color: 'var(--bg-card)', borderRadius: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -269,7 +269,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <h2 style={{ fontSize: '18px', fontWeight: '800', margin: 0 }}>Launch Readiness</h2>
-                  <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Complete setup to unlock full power</p>
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>Complete setup to unlock full power</p>
                 </div>
              </div>
              <div style={{ textAlign: 'right' }}>
@@ -288,7 +288,7 @@ export default function Dashboard() {
                 <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.profileDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Star size={14} color="white" />
                 </div>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.profileDone ? 'white' : '#94a3b8' }}>Account Verification</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.profileDone ? 'var(--bg-card)' : 'var(--text-muted)' }}>Account Verification</span>
               </div>
               {setupStatus.profileDone && <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>}
             </div>
@@ -300,7 +300,7 @@ export default function Dashboard() {
                   <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.metaDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Users size={14} color="white" />
                   </div>
-                  <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.metaDone ? 'white' : '#94a3b8' }}>
+                  <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.metaDone ? 'var(--bg-card)' : 'var(--text-muted)' }}>
                     {setupStatus.metaDone ? 'Platforms Connected' : 'Connect Platforms'}
                   </span>
                 </div>
@@ -323,8 +323,8 @@ export default function Dashboard() {
               }}>
                 {!setupStatus.metaDone && (
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
-                    <span style={{ color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#64748b' }}></span>
+                    <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-muted)' }}></span>
                       No accounts connected yet
                     </span>
                   </div>
@@ -374,7 +374,7 @@ export default function Dashboard() {
                 <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.flowDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Zap size={14} color="white" />
                 </div>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.flowDone ? 'white' : '#94a3b8' }}>Create First Automation</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.flowDone ? 'var(--bg-card)' : 'var(--text-muted)' }}>Create First Automation</span>
               </div>
               {setupStatus.flowDone ? <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span> : <Link to="/hub" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>BUILD</Link>}
             </div>
@@ -390,17 +390,17 @@ export default function Dashboard() {
               <div style={{ padding: '8px', background: '#e0e7ff', borderRadius: '10px' }}>
                 <Activity size={18} />
               </div>
-              <span style={{ fontWeight: '800', fontSize: '16px', color: '#1e293b' }}>Performance Funnel</span>
+              <span style={{ fontWeight: '800', fontSize: '16px', color: 'var(--text-main)' }}>Performance Funnel</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: '#ffffff', borderRadius: '20px', border: '1px solid #e2e8f0', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', position: 'relative' }} onClick={() => toggleDropdown('funnel')}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid #e2e8f0', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', position: 'relative' }} onClick={() => toggleDropdown('funnel')}>
                <Calendar size={13} color="#64748b" />
-               <span style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>{getFilterText()}</span>
+               <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)' }}>{getFilterText()}</span>
                <ChevronDown size={14} color="#94a3b8" />
                {activeDropdown === 'funnel' && (
-                 <div style={{ position: 'absolute', top: '110%', right: '0', background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', zIndex: 10, width: '140px', overflow: 'hidden' }}>
-                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('7d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: '#1e293b', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 7 Days</div>
-                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('30d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: '#1e293b', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 30 Days</div>
-                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('all'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: '#1e293b', cursor: 'pointer' }}>All Time</div>
+                 <div style={{ position: 'absolute', top: '110%', right: '0', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', zIndex: 10, width: '140px', overflow: 'hidden' }}>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('7d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 7 Days</div>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('30d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 30 Days</div>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('all'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', cursor: 'pointer' }}>All Time</div>
                  </div>
                )}
             </div>
@@ -448,17 +448,17 @@ export default function Dashboard() {
                <div style={{ padding: '8px', background: '#fce7f3', borderRadius: '10px' }}>
                  <Users size={18} />
                </div>
-              <span style={{ fontWeight: '800', fontSize: '16px', color: '#1e293b' }}>Audience Growth</span>
+              <span style={{ fontWeight: '800', fontSize: '16px', color: 'var(--text-main)' }}>Audience Growth</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: '#ffffff', borderRadius: '20px', border: '1px solid #e2e8f0', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', position: 'relative' }} onClick={() => toggleDropdown('audience')}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid #e2e8f0', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', position: 'relative' }} onClick={() => toggleDropdown('audience')}>
                <Calendar size={13} color="#64748b" />
-               <span style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>{getFilterText()}</span>
+               <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)' }}>{getFilterText()}</span>
                <ChevronDown size={14} color="#94a3b8" />
                {activeDropdown === 'audience' && (
-                 <div style={{ position: 'absolute', top: '110%', right: '0', background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', zIndex: 10, width: '140px', overflow: 'hidden' }}>
-                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('7d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: '#1e293b', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 7 Days</div>
-                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('30d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: '#1e293b', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 30 Days</div>
-                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('all'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: '#1e293b', cursor: 'pointer' }}>All Time</div>
+                 <div style={{ position: 'absolute', top: '110%', right: '0', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', zIndex: 10, width: '140px', overflow: 'hidden' }}>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('7d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 7 Days</div>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('30d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 30 Days</div>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('all'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', cursor: 'pointer' }}>All Time</div>
                  </div>
                )}
             </div>
@@ -467,11 +467,11 @@ export default function Dashboard() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
             {/* KPI Block 1 */}
             <Link to="/audiences" style={{ textDecoration: 'none' }}>
-              <div className="interactive-card" style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', height: '100%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '13px', fontWeight: '700', marginBottom: '12px' }}>
+              <div className="interactive-card" style={{ background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', height: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: '700', marginBottom: '12px' }}>
                   <Users size={16} color="#94a3b8" /> New Followers
                 </div>
-                <div style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', marginBottom: '8px', letterSpacing: '-0.5px' }}>{displayStats.newFollowers}</div>
+                <div style={{ fontSize: '32px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px', letterSpacing: '-0.5px' }}>{displayStats.newFollowers}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#10b981', fontWeight: '700', background: '#d1fae5', padding: '4px 8px', borderRadius: '6px', alignSelf: 'flex-start' }}>
                   +14% <span style={{ color: '#047857', fontWeight: '600' }}>vs last period</span>
                 </div>
@@ -480,11 +480,11 @@ export default function Dashboard() {
             
             {/* KPI Block 2 */}
             <Link to="/campaigns" style={{ textDecoration: 'none' }}>
-              <div className="interactive-card" style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', height: '100%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '13px', fontWeight: '700', marginBottom: '12px' }}>
+              <div className="interactive-card" style={{ background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', height: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: '700', marginBottom: '12px' }}>
                   <MessageCircle size={16} color="#94a3b8" /> Automations Fired
                 </div>
-                <div style={{ fontSize: '32px', fontWeight: '800', color: '#1e293b', marginBottom: '8px', letterSpacing: '-0.5px' }}>{displayStats.automationsFired}</div>
+                <div style={{ fontSize: '32px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px', letterSpacing: '-0.5px' }}>{displayStats.automationsFired}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#10b981', fontWeight: '700', background: '#d1fae5', padding: '4px 8px', borderRadius: '6px', alignSelf: 'flex-start' }}>
                   +24% <span style={{ color: '#047857', fontWeight: '600' }}>vs last period</span>
                 </div>

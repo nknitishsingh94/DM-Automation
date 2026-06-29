@@ -20,9 +20,13 @@ window.fetch = async (url, options = {}) => {
   return originalFetch(url, options);
 };
 
+import { ThemeProvider } from './context/ThemeContext.jsx'
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>,
 )
 

@@ -274,7 +274,7 @@ export default function Signup() {
                 style={{
                   width: '100%',
                   padding: '12px 12px 12px 40px',
-                  background: 'white',
+                  background: 'var(--bg-card)',
                   border: '1px solid var(--border-subtle)',
                   borderRadius: '12px',
                   color: 'var(--text-main)',
@@ -301,7 +301,7 @@ export default function Signup() {
                 style={{
                   width: '100%',
                   padding: '12px 12px 12px 40px',
-                  background: 'white',
+                  background: 'var(--bg-card)',
                   border: '1px solid var(--border-subtle)',
                   borderRadius: '12px',
                   color: 'var(--text-main)',
@@ -330,7 +330,7 @@ export default function Signup() {
                 style={{
                   width: '100%',
                   padding: '12px 45px 12px 40px',
-                  background: 'white',
+                  background: 'var(--bg-card)',
                   border: '1px solid var(--border-subtle)',
                   borderRadius: '12px',
                   color: 'var(--text-main)',
@@ -370,7 +370,7 @@ export default function Signup() {
             disabled={loading}
             style={{
               background: 'var(--accent-color)',
-              color: 'white',
+              color: 'var(--bg-card)',
               padding: '10px 24px',
               borderRadius: '8px',
               fontWeight: '600',

@@ -138,7 +138,7 @@ export default function Audiences() {
       'Spam': { bg: '#fef2f2', text: '#b91c1c', border: '#fee2e2' },
       'Interested': { bg: '#eff6ff', text: '#1d4ed8', border: '#dbeafe' }
     };
-    return colors[tag] || { bg: '#f8fafc', text: '#475569', border: '#e2e8f0' };
+    return colors[tag] || { bg: 'var(--sidebar-bg)', text: 'var(--text-muted)', border: 'var(--border-subtle)' };
   };
 
   const getPlatformIcon = (platform) => {
@@ -171,7 +171,7 @@ export default function Audiences() {
                 width: '80px', height: '80px', borderRadius: '50%', 
                 background: 'linear-gradient(135deg, #8b5cf6, #d946ef)', 
                 display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                color: 'white', fontSize: '2rem', fontWeight: '700', flexShrink: 0 
+                color: 'var(--bg-card)', fontSize: '2rem', fontWeight: '700', flexShrink: 0 
               }}>
                 {String(selectedContact?.name || selectedContact?.chatId || '?').charAt(0).toUpperCase()}
               </div>
@@ -223,8 +223,8 @@ export default function Audiences() {
                         }}>
                           <div style={{ 
                             width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
-                            background: isAI ? 'rgba(139, 92, 246, 0.1)' : (isAdmin ? 'rgba(16, 185, 129, 0.1)' : '#f1f5f9'),
-                            color: isAI ? 'var(--accent-color)' : (isAdmin ? '#059669' : '#475569'),
+                            background: isAI ? 'rgba(139, 92, 246, 0.1)' : (isAdmin ? 'rgba(16, 185, 129, 0.1)' : 'var(--bg-dark)'),
+                            color: isAI ? 'var(--accent-color)' : (isAdmin ? '#059669' : 'var(--text-muted)'),
                             display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.75rem'
                           }}>
                             {isAI ? 'AI' : (isAdmin ? 'ME' : 'U')}
@@ -268,7 +268,7 @@ export default function Audiences() {
                 <button 
                   onClick={addTag}
                   disabled={isUpdating}
-                  style={{ background: 'var(--accent-color)', color: 'white', padding: '8px', borderRadius: '8px', display: 'flex', alignItems: 'center' }}
+                  style={{ background: 'var(--accent-color)', color: 'var(--bg-card)', padding: '8px', borderRadius: '8px', display: 'flex', alignItems: 'center' }}
                 >
                   <Plus size={18} />
                 </button>
@@ -307,7 +307,7 @@ export default function Audiences() {
                 disabled={isUpdating}
                 style={{ 
                   width: '100%', padding: '10px', borderRadius: '8px', background: isUpdating ? 'var(--text-muted)' : 'var(--accent-color)', 
-                  color: 'white', fontSize: '0.9rem', fontWeight: '600', transition: 'all 0.2s' 
+                  color: 'var(--bg-card)', fontSize: '0.9rem', fontWeight: '600', transition: 'all 0.2s' 
                 }}
               >
                 {isUpdating ? 'Saving...' : 'Save Notes'}
@@ -322,7 +322,7 @@ export default function Audiences() {
   return (
     <div style={{ maxWidth: '1200px', animation: 'fadeIn 0.5s ease-out' }}>
       {/* Stunning Header Banner */}
-      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', borderRadius: '24px', padding: 'var(--page-padding)', color: 'white', marginBottom: '32px', position: 'relative', overflow: 'hidden', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.2)' }}>
+      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', borderRadius: '24px', padding: 'var(--page-padding)', color: 'var(--bg-card)', marginBottom: '32px', position: 'relative', overflow: 'hidden', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.2)' }}>
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
             <div style={{ background: 'rgba(255,255,255,0.1)', padding: '10px', borderRadius: '14px', backdropFilter: 'blur(10px)' }}>
@@ -331,7 +331,7 @@ export default function Audiences() {
             <span style={{ color: '#a78bfa', fontWeight: '700', letterSpacing: '1px', fontSize: '0.85rem', textTransform: 'uppercase' }}>Audience Manager</span>
           </div>
           <h2 style={{ fontSize: '2.5rem', fontWeight: '800', letterSpacing: '-1px', marginBottom: '12px', lineHeight: '1.1' }}>Manage your<br/>growing community.</h2>
-          <p style={{ color: '#94a3b8', fontSize: '1.05rem', maxWidth: '400px', margin: 0, lineHeight: '1.5' }}>Categorize interactions, assign tags, and track how your AI Agent is converting leads into loyal customers.</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', maxWidth: '400px', margin: 0, lineHeight: '1.5' }}>Categorize interactions, assign tags, and track how your AI Agent is converting leads into loyal customers.</p>
         </div>
         
         {/* Decorative Background Elements */}
@@ -342,21 +342,21 @@ export default function Audiences() {
 
       {/* Advanced Search & Filter Bar */}
       <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', flexWrap: 'wrap' }}>
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '18px', padding: '14px 24px', flex: 1, display: 'flex', alignItems: 'center', minWidth: '300px', transition: 'all 0.3s ease', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}
-             onMouseOver={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.05)'; }}
-             onMouseOut={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.02)'; }}>
+        <div style={{ background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '18px', padding: '14px 24px', flex: 1, display: 'flex', alignItems: 'center', minWidth: '300px', transition: 'all 0.3s ease', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}
+             onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.05)'; }}
+             onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.02)'; }}>
           <Search size={20} style={{ color: '#8b5cf6', marginRight: '16px' }} />
           <input 
             type="text" 
             placeholder="Search by name, ID, or private notes..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: '100%', padding: '0', background: 'transparent', border: 'none', outline: 'none', fontSize: '1rem', color: '#1e293b', fontWeight: '500' }}
+            style={{ width: '100%', padding: '0', background: 'transparent', border: 'none', outline: 'none', fontSize: '1rem', color: 'var(--text-main)', fontWeight: '500' }}
           />
         </div>
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '18px', padding: '14px 24px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', transition: 'all 0.3s ease' }}
-             onMouseOver={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.05)'; }}
-             onMouseOut={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.02)'; }}>
+        <div style={{ background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '18px', padding: '14px 24px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', transition: 'all 0.3s ease' }}
+             onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.05)'; }}
+             onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.02)'; }}>
           <Filter size={20} style={{ color: '#8b5cf6' }} />
           <select 
             value={selectedTagFilter} 
@@ -370,30 +370,30 @@ export default function Audiences() {
       </div>
 
       {/* Premium Data Table Container */}
-      <div style={{ background: '#ffffff', borderRadius: '24px', border: '1px solid #f1f5f9', overflowX: 'auto', boxShadow: '0 12px 40px rgba(0,0,0,0.04)', width: '100%' }}>
+      <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #f1f5f9', overflowX: 'auto', boxShadow: '0 12px 40px rgba(0,0,0,0.04)', width: '100%' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '700px' }}>
           <thead>
             <tr style={{ background: 'rgba(248, 250, 252, 0.5)', borderBottom: '1px solid #f1f5f9' }}>
-              <th style={{ padding: '24px', textAlign: 'left', color: '#94a3b8', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Contact Identity</th>
-              <th style={{ padding: '24px', textAlign: 'left', color: '#94a3b8', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Category Tags</th>
-              <th style={{ padding: '24px', textAlign: 'left', color: '#94a3b8', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Total Interactions</th>
-              <th style={{ padding: '24px', textAlign: 'left', color: '#94a3b8', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Last Active</th>
+              <th style={{ padding: '24px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Contact Identity</th>
+              <th style={{ padding: '24px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Category Tags</th>
+              <th style={{ padding: '24px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Total Interactions</th>
+              <th style={{ padding: '24px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Last Active</th>
             </tr>
           </thead>
           <tbody>
             {filteredContacts.length === 0 ? (
               <tr>
-                <td colSpan="4" style={{ textAlign: 'center', padding: '100px 20px', background: '#ffffff' }}>
+                <td colSpan="4" style={{ textAlign: 'center', padding: '100px 20px', background: 'var(--bg-card)' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', animation: 'fadeIn 0.5s ease-out' }}>
                     <div style={{ position: 'relative' }}>
                       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(139,92,246,0.2) 0%, rgba(255,255,255,0) 70%)', borderRadius: '50%', zIndex: 0 }}></div>
-                      <div style={{ background: '#ffffff', padding: '24px', borderRadius: '50%', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', position: 'relative', zIndex: 1 }}>
+                      <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '50%', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', position: 'relative', zIndex: 1 }}>
                         <Users size={56} style={{ color: '#c084fc' }} />
                       </div>
                     </div>
                     <div>
-                      <div style={{ fontSize: '1.4rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>No Audience Found</div>
-                      <div style={{ color: '#64748b', fontSize: '1rem', maxWidth: '300px', margin: '0 auto' }}>Try adjusting your search filters or wait for new AI interactions.</div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px' }}>No Audience Found</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '1rem', maxWidth: '300px', margin: '0 auto' }}>Try adjusting your search filters or wait for new AI interactions.</div>
                     </div>
                   </div>
                 </td>
@@ -402,16 +402,16 @@ export default function Audiences() {
               <tr 
                 key={contact._id} 
                 onClick={() => setSelectedContact(contact)}
-                style={{ cursor: 'pointer', borderBottom: '1px solid #f1f5f9', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', background: '#ffffff' }}
+                style={{ cursor: 'pointer', borderBottom: '1px solid #f1f5f9', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', background: 'var(--bg-card)' }}
                 onMouseOver={(e) => { 
-                  e.currentTarget.style.background = '#f8fafc'; 
+                  e.currentTarget.style.background = 'var(--sidebar-bg)'; 
                   e.currentTarget.style.transform = 'translateY(-2px)'; 
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0,0,0,0.05)'; 
                   e.currentTarget.style.zIndex = '10';
                   e.currentTarget.style.position = 'relative';
                 }}
                 onMouseOut={(e) => { 
-                  e.currentTarget.style.background = '#ffffff'; 
+                  e.currentTarget.style.background = 'var(--bg-card)'; 
                   e.currentTarget.style.transform = 'none'; 
                   e.currentTarget.style.boxShadow = 'none'; 
                   e.currentTarget.style.zIndex = '1';
@@ -423,13 +423,13 @@ export default function Audiences() {
                         width: '46px', height: '46px', borderRadius: '14px', 
                         background: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)', 
                         display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                        color: 'white', fontWeight: '800', fontSize: '1.2rem', boxShadow: '0 4px 14px rgba(168, 85, 247, 0.3)'
+                        color: 'var(--bg-card)', fontWeight: '800', fontSize: '1.2rem', boxShadow: '0 4px 14px rgba(168, 85, 247, 0.3)'
                       }}>
                        {String(contact?.name || contact?.chatId || '?').charAt(0).toUpperCase()}
                      </div>
                      <div>
-                       <div style={{ fontWeight: '800', color: '#1e293b', fontSize: '1.05rem', marginBottom: '4px' }}>{contact?.name || contact?.chatId || 'Unknown'}</div>
-                       <div style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
+                       <div style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '1.05rem', marginBottom: '4px' }}>{contact?.name || contact?.chatId || 'Unknown'}</div>
+                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
                          {getPlatformIcon(contact.platform)} <span style={{ textTransform: 'capitalize' }}>{contact.platform}</span>
                        </div>
                      </div>
@@ -439,7 +439,7 @@ export default function Audiences() {
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     {contact.tags.length > 0 ? contact.tags.map(tag => (
                       <span key={tag} style={{ ...getTagColor(tag), padding: '4px 12px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: '700', border: `1px solid ${getTagColor(tag).border}` }}>{tag}</span>
-                    )) : <span style={{ color: '#94a3b8', fontSize: '0.8rem', fontStyle: 'italic', fontWeight: '500' }}>Untagged</span>}
+                    )) : <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontStyle: 'italic', fontWeight: '500' }}>Untagged</span>}
                   </div>
                 </td>
                 <td style={{ padding: '20px 24px' }}>
@@ -451,8 +451,8 @@ export default function Audiences() {
                   </div>
                 </td>
                 <td style={{ padding: '20px 24px' }}>
-                  <div style={{ color: '#1e293b', fontWeight: '600', fontSize: '0.95rem', marginBottom: '2px' }}>{new Date(contact.lastActive).toLocaleDateString()}</div>
-                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: '500' }}>{new Date(contact.lastActive).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                  <div style={{ color: 'var(--text-main)', fontWeight: '600', fontSize: '0.95rem', marginBottom: '2px' }}>{new Date(contact.lastActive).toLocaleDateString()}</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{new Date(contact.lastActive).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
                 </td>
               </tr>
             ))}

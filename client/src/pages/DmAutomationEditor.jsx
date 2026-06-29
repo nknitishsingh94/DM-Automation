@@ -279,7 +279,7 @@ export default function DmAutomationEditor() {
 
   if (loadingEdit) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#f8fafc' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'var(--sidebar-bg)' }}>
         <div style={{ width: '40px', height: '40px', border: '3px solid #e2e8f0', borderTopColor: '#7c3aed', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
       </div>
     );
@@ -288,7 +288,7 @@ export default function DmAutomationEditor() {
   return (
     <div style={{ 
       minHeight: '100vh', 
-      background: '#f8fafc', 
+      background: 'var(--sidebar-bg)', 
       fontFamily: "'Outfit', sans-serif",
       display: 'flex',
       flexDirection: 'column'
@@ -296,8 +296,8 @@ export default function DmAutomationEditor() {
 
       <div className="editor-layout">
         {/* Left Side: Preview */}
-        <div className="editor-preview" style={{ background: '#f8fafc' }}>
-          <div style={{ color: '#64748b', fontWeight: '700', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
+        <div className="editor-preview" style={{ background: 'var(--sidebar-bg)' }}>
+          <div style={{ color: 'var(--text-muted)', fontWeight: '700', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
             <Smartphone size={18} /> Preview Automation
           </div>
           
@@ -323,12 +323,12 @@ export default function DmAutomationEditor() {
                   <div style={{ padding: '30px 16px 12px', background: '#008069', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <ArrowLeft size={20} color="white" />
                     <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#ccc', overflow: 'hidden' }}>
-                      <div style={{ width: '100%', height: '100%', background: '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ color: 'white', fontWeight: '800', fontSize: '1rem' }}>B</span>
+                      <div style={{ width: '100%', height: '100%', background: 'var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ color: 'var(--bg-card)', fontWeight: '800', fontSize: '1rem' }}>B</span>
                       </div>
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ color: 'white', fontWeight: 'bold', fontSize: '0.9rem' }}>WhatsApp Business</div>
+                      <div style={{ color: 'var(--bg-card)', fontWeight: 'bold', fontSize: '0.9rem' }}>WhatsApp Business</div>
                       <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.7rem' }}>online</div>
                     </div>
                     <Video size={20} color="white" />
@@ -370,11 +370,11 @@ export default function DmAutomationEditor() {
 
                         {/* Opening Message Flow */}
                         {openingMessage && (
-                          <div style={{ alignSelf: 'flex-start', maxWidth: '80%', background: '#ffffff', padding: '6px 8px 6px 12px', borderRadius: '0 8px 8px 8px', fontSize: '0.85rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', position: 'relative' }}>
+                          <div style={{ alignSelf: 'flex-start', maxWidth: '80%', background: 'var(--bg-card)', padding: '6px 8px 6px 12px', borderRadius: '0 8px 8px 8px', fontSize: '0.85rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', position: 'relative' }}>
                             <span style={{ paddingRight: '45px', display: 'inline-block', whiteSpace: 'pre-line' }}>{openingMessageText}</span>
                             <span style={{ fontSize: '0.65rem', color: '#667781', position: 'absolute', bottom: '4px', right: '8px' }}>9:41 am</span>
                             <div style={{ marginTop: '8px', borderTop: '1px solid #f0f2f5', paddingTop: '8px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                              <div style={{ color: '#00a884', fontWeight: 'bold', textAlign: 'center', padding: '4px 0', background: '#f0f2f5', borderRadius: '8px', fontSize: '0.8rem' }}>
+                              <div style={{ color: '#00a884', fontWeight: 'bold', textAlign: 'center', padding: '4px 0', background: 'var(--bg-dark)', borderRadius: '8px', fontSize: '0.8rem' }}>
                                 {openingMessageButton}
                               </div>
                             </div>
@@ -393,7 +393,7 @@ export default function DmAutomationEditor() {
 
                         {/* AI Response Card */}
                         {isAI ? (
-                          <div style={{ alignSelf: 'flex-start', maxWidth: '80%', background: '#ffffff', padding: '6px 8px 6px 12px', borderRadius: '0 8px 8px 8px', fontSize: '0.85rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', position: 'relative' }}>
+                          <div style={{ alignSelf: 'flex-start', maxWidth: '80%', background: 'var(--bg-card)', padding: '6px 8px 6px 12px', borderRadius: '0 8px 8px 8px', fontSize: '0.85rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', position: 'relative' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
                               <Sparkles size={12} color="#c084fc" />
                               <span style={{ color: '#c084fc', fontSize: '0.7rem', fontWeight: '800' }}>AI Reply</span>
@@ -404,7 +404,7 @@ export default function DmAutomationEditor() {
                             {buttons.length > 0 && (
                               <div style={{ marginTop: '8px', borderTop: '1px solid #f0f2f5', paddingTop: '8px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                                 {buttons.map((btn, idx) => (
-                                  <div key={idx} style={{ color: '#00a884', fontWeight: 'bold', textAlign: 'center', padding: '4px 0', background: '#f0f2f5', borderRadius: '8px', fontSize: '0.8rem' }}>
+                                  <div key={idx} style={{ color: '#00a884', fontWeight: 'bold', textAlign: 'center', padding: '4px 0', background: 'var(--bg-dark)', borderRadius: '8px', fontSize: '0.8rem' }}>
                                     {btn.text || "Visit Link"}
                                   </div>
                                 ))}
@@ -412,14 +412,14 @@ export default function DmAutomationEditor() {
                             )}
                           </div>
                         ) : message && (
-                          <div style={{ alignSelf: 'flex-start', maxWidth: '80%', background: '#ffffff', padding: '6px 8px 6px 12px', borderRadius: '0 8px 8px 8px', fontSize: '0.85rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', position: 'relative' }}>
+                          <div style={{ alignSelf: 'flex-start', maxWidth: '80%', background: 'var(--bg-card)', padding: '6px 8px 6px 12px', borderRadius: '0 8px 8px 8px', fontSize: '0.85rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', position: 'relative' }}>
                             <span style={{ paddingRight: '45px', display: 'inline-block', whiteSpace: 'pre-line' }}>{message}</span>
                             <span style={{ fontSize: '0.65rem', color: '#667781', position: 'absolute', bottom: '4px', right: '8px' }}>9:42 am</span>
                             
                             {buttons.length > 0 && (
                               <div style={{ marginTop: '8px', borderTop: '1px solid #f0f2f5', paddingTop: '8px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                                 {buttons.map((btn, idx) => (
-                                  <div key={idx} style={{ color: '#00a884', fontWeight: 'bold', textAlign: 'center', padding: '4px 0', background: '#f0f2f5', borderRadius: '8px', fontSize: '0.8rem' }}>
+                                  <div key={idx} style={{ color: '#00a884', fontWeight: 'bold', textAlign: 'center', padding: '4px 0', background: 'var(--bg-dark)', borderRadius: '8px', fontSize: '0.8rem' }}>
                                     {btn.text || "Visit Link"}
                                   </div>
                                 ))}
@@ -432,8 +432,8 @@ export default function DmAutomationEditor() {
                   </div>
 
                   {/* Bottom Input Area */}
-                  <div style={{ padding: '8px', display: 'flex', alignItems: 'center', gap: '8px', background: '#f0f2f5' }}>
-                    <div style={{ flex: 1, background: 'white', borderRadius: '24px', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
+                  <div style={{ padding: '8px', display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg-dark)' }}>
+                    <div style={{ flex: 1, background: 'var(--bg-card)', borderRadius: '24px', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
                       <Smile size={24} color="#858e93" />
                       <span style={{ flex: 1, color: '#858e93', fontSize: '0.9rem' }}>Message</span>
                       <Paperclip size={20} color="#858e93" style={{ transform: 'rotate(-45deg)' }} />
@@ -448,10 +448,10 @@ export default function DmAutomationEditor() {
              <div style={{ height: '100%', background: '#000', display: 'flex', flexDirection: 'column', position: 'relative' }}>
                 <div style={{ padding: '30px 20px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <ChevronLeft size={20} color="white" />
-                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: '800', color: 'white' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: '800', color: 'var(--bg-card)' }}>
                     {(connectedSettings?.connectedInstagramName || user?.username || 'IG').substring(0, 2).toUpperCase()}
                   </div>
-                  <div style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>
+                  <div style={{ color: 'var(--bg-card)', fontSize: '0.8rem', fontWeight: '700' }}>
                     {selectedPlatform === 'facebook' 
                       ? (connectedSettings?.connectedFacebookName || 'Facebook Page')
                       : selectedPlatform === 'youtube' ? 'YouTube Channel'
@@ -470,12 +470,12 @@ export default function DmAutomationEditor() {
                         <div style={{ width: '60px', height: '60px', borderRadius: '20px', background: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 30px rgba(59, 130, 246, 0.4)', marginBottom: '16px' }}>
                            <Zap size={30} color="white" fill="white" />
                         </div>
-                        <div style={{ color: 'white', fontWeight: '800', fontSize: '0.8rem', opacity: 0.5 }}>Previewing...</div>
+                        <div style={{ color: 'var(--bg-card)', fontWeight: '800', fontSize: '0.8rem', opacity: 0.5 }}>Previewing...</div>
                      </div>
                    ) : (
                      <>
                         {/* Trigger Message */}
-                        <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#0095f6', color: 'white', padding: '8px 12px', borderRadius: '14px 14px 2px 14px', fontSize: '0.75rem' }}>
+                        <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#0095f6', color: 'var(--bg-card)', padding: '8px 12px', borderRadius: '14px 14px 2px 14px', fontSize: '0.75rem' }}>
                            {anyKeyword ? 'hi' : (keywords[0] || 'hi')}
                         </div>
 
@@ -484,7 +484,7 @@ export default function DmAutomationEditor() {
                            <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
                               <div style={{ background: '#262626', borderRadius: '14px 14px 14px 2px', overflow: 'hidden' }}>
                                  <div style={{ padding: '10px 12px', borderBottom: '1px solid #333' }}>
-                                    <div style={{ color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>{openingMessageText}</div>
+                                    <div style={{ color: 'var(--bg-card)', fontSize: '0.75rem', lineHeight: '1.4' }}>{openingMessageText}</div>
                                  </div>
                                   <div style={{ padding: '8px 12px', display: 'flex', justifyContent: 'center' }}>
                                      <div style={{ 
@@ -510,7 +510,7 @@ export default function DmAutomationEditor() {
 
                         {/* User Clicks Button (Visual Hint) */}
                         {openingMessage && (
-                           <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#0095f6', color: 'white', padding: '8px 12px', borderRadius: '14px 14px 2px 14px', fontSize: '0.75rem' }}>
+                           <div style={{ alignSelf: 'flex-end', maxWidth: '80%', background: '#0095f6', color: 'var(--bg-card)', padding: '8px 12px', borderRadius: '14px 14px 2px 14px', fontSize: '0.75rem' }}>
                               {openingMessageButton}
                            </div>
                         )}
@@ -529,7 +529,7 @@ export default function DmAutomationEditor() {
                                      <Sparkles size={12} color="#c084fc" className="animate-pulse" />
                                      <span style={{ color: '#c084fc', fontSize: '0.65rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI Neural Reply</span>
                                   </div>
-                                  <div style={{ padding: '10px 12px', color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>
+                                  <div style={{ padding: '10px 12px', color: 'var(--bg-card)', fontSize: '0.75rem', lineHeight: '1.4' }}>
                                      {message && message !== "[AI Agent will generate a custom neural reply here]" ? message : "Generates premium custom response using your custom business AI knowledge base profile..."}
                                   </div>
                                   <div style={{ padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center', borderTop: buttons.length > 0 ? '1px solid rgba(192, 132, 252, 0.2)' : 'none' }}>
@@ -558,7 +558,7 @@ export default function DmAutomationEditor() {
                            <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
                               <div style={{ background: '#262626', borderRadius: '14px 14px 14px 2px', overflow: 'hidden' }}>
                                  <div style={{ padding: '10px 12px', borderBottom: buttons.length > 0 ? '1px solid #333' : 'none' }}>
-                                    <div style={{ color: 'white', fontSize: '0.75rem', lineHeight: '1.4' }}>{message}</div>
+                                    <div style={{ color: 'var(--bg-card)', fontSize: '0.75rem', lineHeight: '1.4' }}>{message}</div>
                                  </div>
                                   <div style={{ padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center', borderTop: buttons.length > 0 ? '1px solid #333' : 'none' }}>
                                      {buttons.map((btn, idx) => (
@@ -628,9 +628,9 @@ export default function DmAutomationEditor() {
                     navigate(`/campaigns?platform=${selectedPlatform}`);
                   }
                 }} 
-                onMouseEnter={(e) => { e.target.style.background = '#f1f5f9'; e.target.style.transform = 'translateX(-4px)'; }}
-                onMouseLeave={(e) => { e.target.style.background = 'white'; e.target.style.transform = 'translateX(0)'; }}
-                style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: '16px', padding: '12px', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}
+                onMouseEnter={(e) => { e.target.style.background = 'var(--bg-dark)'; e.target.style.transform = 'translateX(-4px)'; }}
+                onMouseLeave={(e) => { e.target.style.background = 'var(--bg-card)'; e.target.style.transform = 'translateX(0)'; }}
+                style={{ background: 'var(--bg-card)', border: '1.5px solid #e2e8f0', borderRadius: '16px', padding: '12px', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}
               >
                  <ArrowLeft size={22} />
               </button>
@@ -658,7 +658,7 @@ export default function DmAutomationEditor() {
            {!isUniversal && (
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#f59e0b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(245, 158, 11, 0.15)' }}>0</div>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#f59e0b', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(245, 158, 11, 0.15)' }}>0</div>
                  <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Target Platform</h3>
               </div>
               <div style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', border: '1.5px solid #e2e8f0', borderRadius: '20px', padding: '18px 22px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.04)' }}>
@@ -668,10 +668,10 @@ export default function DmAutomationEditor() {
                       padding: '12px 16px',
                       borderRadius: '12px',
                       border: '1.5px solid #e2e8f0',
-                      background: '#f8fafc',
+                      background: 'var(--sidebar-bg)',
                       fontSize: '0.95rem',
                       fontWeight: '700',
-                      color: '#475569',
+                      color: 'var(--text-muted)',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px'
@@ -691,7 +691,7 @@ export default function DmAutomationEditor() {
                         fontSize: '0.95rem',
                         fontWeight: '700',
                         color: '#1e1b4b',
-                        background: '#f8fafc',
+                        background: 'var(--sidebar-bg)',
                         cursor: 'pointer'
                       }}
                    >
@@ -709,7 +709,7 @@ export default function DmAutomationEditor() {
                       <option value="google_business">📍 Google Business</option>
                    </select>
                   )}
-                  {!params.get('channel') && <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.8rem', fontWeight: '500' }}>Only connected platforms are shown here.</p>}
+                  {!params.get('channel') && <p style={{ margin: '8px 0 0 0', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: '500' }}>Only connected platforms are shown here.</p>}
               </div>
            </div>
            )}
@@ -718,14 +718,14 @@ export default function DmAutomationEditor() {
            {selectedPlatform !== 'youtube' && (
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(16, 185, 129, 0.15)' }}>1</div>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#10b981', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(16, 185, 129, 0.15)' }}>1</div>
                  <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Follower Growth Gating</h3>
               </div>
               <div style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', border: '1.5px solid #e2e8f0', borderRadius: '20px', padding: '18px 22px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.04)' }}>
                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: requireFollow ? '14px' : '0' }}>
-                    <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem', fontWeight: '500' }}>Only respond to users who follow you.</p>
-                    <div onClick={() => setRequireFollow(!requireFollow)} style={{ width: '50px', height: '24px', borderRadius: '12px', background: requireFollow ? '#10b981' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-                       <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: requireFollow ? '29px' : '3px', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}></div>
+                    <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500' }}>Only respond to users who follow you.</p>
+                    <div onClick={() => setRequireFollow(!requireFollow)} style={{ width: '50px', height: '24px', borderRadius: '12px', background: requireFollow ? '#10b981' : 'var(--border-subtle)', position: 'relative', cursor: 'pointer', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+                       <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'var(--bg-card)', position: 'absolute', top: '3px', left: requireFollow ? '29px' : '3px', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}></div>
                     </div>
                  </div>
                  {requireFollow && (
@@ -745,27 +745,27 @@ export default function DmAutomationEditor() {
            {/* Step 2: Trigger Settings */}
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>2</div>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#7c3aed', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>2</div>
                  <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Trigger Settings</h3>
               </div>
               <div style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', border: '1.5px solid #e2e8f0', borderRadius: '20px', padding: '18px 22px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.04)' }}>
                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: !anyKeyword ? '14px' : '0' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem', fontWeight: '500' }}>{template === 'stories' ? 'Trigger on Story Replies' : 'Trigger on specific keywords'}</p>
+                      <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500' }}>{template === 'stories' ? 'Trigger on Story Replies' : 'Trigger on specific keywords'}</p>
                       {!anyKeyword && (
                          <button onClick={() => handleGenerateAI('keywords')} style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #e9d5ff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                            <Sparkles size={12} /> Auto-Gen Keywords
                          </button>
                       )}
                     </div>
-                    <div onClick={() => setAnyKeyword(!anyKeyword)} style={{ width: '50px', height: '24px', borderRadius: '12px', background: anyKeyword ? '#7c3aed' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-                       <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: anyKeyword ? '29px' : '3px', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}></div>
+                    <div onClick={() => setAnyKeyword(!anyKeyword)} style={{ width: '50px', height: '24px', borderRadius: '12px', background: anyKeyword ? '#7c3aed' : 'var(--border-subtle)', position: 'relative', cursor: 'pointer', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+                       <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'var(--bg-card)', position: 'absolute', top: '3px', left: anyKeyword ? '29px' : '3px', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}></div>
                     </div>
                  </div>
                  {!anyKeyword && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', background: '#f8fafc', padding: '14px 18px', borderRadius: '14px', border: '1.5px solid #e2e8f0' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', background: 'var(--sidebar-bg)', padding: '14px 18px', borderRadius: '14px', border: '1.5px solid #e2e8f0' }}>
                        {keywords.map((k, i) => (
-                          <span key={i} style={{ padding: '6px 12px', background: 'white', color: '#7c3aed', borderRadius: '8px', fontWeight: '800', fontSize: '0.85rem', border: '1.5px solid #ddd6fe', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 4px -1px rgba(124, 58, 237, 0.05)' }}>
+                          <span key={i} style={{ padding: '6px 12px', background: 'var(--bg-card)', color: '#7c3aed', borderRadius: '8px', fontWeight: '800', fontSize: '0.85rem', border: '1.5px solid #ddd6fe', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 4px -1px rgba(124, 58, 237, 0.05)' }}>
                              {k} <X size={14} style={{ cursor: 'pointer', color: '#ec4899' }} onClick={() => setKeywords(keywords.filter((_, idx) => idx !== i))} />
                           </span>
                        ))}
@@ -795,24 +795,24 @@ export default function DmAutomationEditor() {
               }}>
                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                       <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(59, 130, 246, 0.15)' }}>3</div>
+                       <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#3b82f6', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(59, 130, 246, 0.15)' }}>3</div>
                        <div>
                           <h3 style={{ fontSize: '1.1rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Advanced: Opening Message</h3>
-                          <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '2px 0 0 0', fontWeight: '500' }}>Send a greeting button before the final response.</p>
+                          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', margin: '2px 0 0 0', fontWeight: '500' }}>Send a greeting button before the final response.</p>
                        </div>
                     </div>
-                    <div onClick={() => setOpeningMessage(!openingMessage)} style={{ width: '50px', height: '24px', borderRadius: '12px', background: openingMessage ? '#3b82f6' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-                      <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: openingMessage ? '29px' : '3px', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}></div>
+                    <div onClick={() => setOpeningMessage(!openingMessage)} style={{ width: '50px', height: '24px', borderRadius: '12px', background: openingMessage ? '#3b82f6' : 'var(--border-subtle)', position: 'relative', cursor: 'pointer', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+                      <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'var(--bg-card)', position: 'absolute', top: '3px', left: openingMessage ? '29px' : '3px', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}></div>
                     </div>
                  </div>
 
                  {openingMessage && (
-                   <div style={{ marginTop: '16px', padding: '16px 20px', borderRadius: '14px', background: 'white', border: '1.5px solid #f1f5f9', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.01)' }}>
+                   <div style={{ marginTop: '16px', padding: '16px 20px', borderRadius: '14px', background: 'var(--bg-card)', border: '1.5px solid #f1f5f9', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.01)' }}>
                       <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: '900', color: '#3b82f6', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>GREETING TEXT</label>
                       <textarea 
                         value={openingMessageText} 
                         onChange={(e) => setOpeningMessageText(e.target.value)} 
-                        style={{ width: '100%', height: '60px', padding: '12px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', resize: 'none', marginBottom: '14px', background: '#f8fafc', fontWeight: '500', color: '#1e1b4b' }}
+                        style={{ width: '100%', height: '60px', padding: '12px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', resize: 'none', marginBottom: '14px', background: 'var(--sidebar-bg)', fontWeight: '500', color: '#1e1b4b' }}
                       />
                       <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: '900', color: '#3b82f6', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>BUTTON TEXT</label>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -822,7 +822,7 @@ export default function DmAutomationEditor() {
                          <input 
                            value={openingMessageButton} 
                            onChange={(e) => setOpeningMessageButton(e.target.value)} 
-                           style={{ flex: 1, padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', fontWeight: '800', background: '#f8fafc', color: '#1e1b4b' }} 
+                           style={{ flex: 1, padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', fontWeight: '800', background: 'var(--sidebar-bg)', color: '#1e1b4b' }} 
                          />
                       </div>
                    </div>
@@ -834,7 +834,7 @@ export default function DmAutomationEditor() {
            {/* Step 4: Automated DM Response */}
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>4</div>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#7c3aed', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>4</div>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>
                     {selectedPlatform === 'youtube' ? 'Automated Comment Reply' : 'Automated DM Response'}
                   </h3>
@@ -862,7 +862,7 @@ export default function DmAutomationEditor() {
                         <Sparkles size={14} style={{ color: '#7c3aed' }} />
                         <span>AI Neural Studio Reply</span>
                       </div>
-                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                         {selectedPlatform === 'youtube' ? 'Let our AI Agent reply dynamically to Comments' : 'Let our AI Agent reply dynamically to DMs'}
                       </span>
                     </div>
@@ -877,12 +877,12 @@ export default function DmAutomationEditor() {
                        }
                      }}
                      style={{ 
-                       width: '40px', height: '22px', borderRadius: '11px', background: isAI ? 'linear-gradient(135deg, #7c3aed, #0ea5e9)' : '#cbd5e1', 
+                       width: '40px', height: '22px', borderRadius: '11px', background: isAI ? 'linear-gradient(135deg, #7c3aed, #0ea5e9)' : 'var(--border-subtle)', 
                        position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
                      }}
                    >
                      <div style={{ 
-                       width: '16px', height: '16px', borderRadius: '50%', background: 'white', 
+                       width: '16px', height: '16px', borderRadius: '50%', background: 'var(--bg-card)', 
                        position: 'absolute', top: '3px', left: isAI ? '21px' : '3px', transition: 'all 0.3s' 
                      }}></div>
                    </div>
@@ -899,7 +899,7 @@ export default function DmAutomationEditor() {
                         placeholder="Type your final message here..." 
                         value={message} 
                         onChange={(e) => setMessage(e.target.value)} 
-                        style={{ width: '100%', height: '80px', padding: '14px 18px', borderRadius: '14px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '0.95rem', resize: 'none', marginBottom: '16px', fontWeight: '500', color: '#1e1b4b', lineHeight: '1.5' }}
+                        style={{ width: '100%', height: '80px', padding: '14px 18px', borderRadius: '14px', border: 'none', background: 'var(--sidebar-bg)', outline: 'none', fontSize: '0.95rem', resize: 'none', marginBottom: '16px', fontWeight: '500', color: '#1e1b4b', lineHeight: '1.5' }}
                       />
                     </div>
                  ) : (
@@ -914,7 +914,7 @@ export default function DmAutomationEditor() {
                         <Brain size={16} color="#7c3aed" />
                         <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7c3aed' }}>AI Neural Responder Active</span>
                       </div>
-                      <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0, lineHeight: '1.4' }}>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>
                         The AI Agent will use your AI Neural Studio profile/knowledge base to reply dynamically. 
                         If AI is offline, it will fall back to:
                       </p>
@@ -924,14 +924,14 @@ export default function DmAutomationEditor() {
                         onChange={(e) => setMessage(e.target.value || "[AI Agent will generate a custom neural reply here]")}
                         style={{ 
                           width: '100%', height: '60px', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', 
-                          outline: 'none', fontSize: '0.85rem', resize: 'none', marginTop: '8px', lineHeight: '1.4', background: 'white'
+                          outline: 'none', fontSize: '0.85rem', resize: 'none', marginTop: '8px', lineHeight: '1.4', background: 'var(--bg-card)'
                         }}
                       ></textarea>
                     </div>
                  )}
                  
                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
-                    <div style={{ fontWeight: '900', color: '#64748b', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Interactive Elements</div>
+                    <div style={{ fontWeight: '900', color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Interactive Elements</div>
                     <button 
                       onClick={openAddLinkModal} 
                       onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 10px -3px rgba(124, 58, 237, 0.15)'; }}
@@ -944,7 +944,7 @@ export default function DmAutomationEditor() {
 
                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
                     {buttons.map((btn, idx) => (
-                      <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'white', borderRadius: '12px', border: '1.5px solid #e2e8f0', boxShadow: '0 2px 4px -1px rgba(0,0,0,0.02)' }}>
+                      <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--bg-card)', borderRadius: '12px', border: '1.5px solid #e2e8f0', boxShadow: '0 2px 4px -1px rgba(0,0,0,0.02)' }}>
                         <span style={{ fontWeight: '800', color: '#1e1b4b', fontSize: '0.9rem' }}>{btn.text}</span>
                         <Trash2 size={16} onClick={() => setButtons(buttons.filter((_, i) => i !== idx))} style={{ cursor: 'pointer', color: '#ef4444', transition: '0.3s' }} />
                       </div>
@@ -965,7 +965,7 @@ export default function DmAutomationEditor() {
                   padding: '16px 24px',
                    borderRadius: '18px',
                    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-                   color: 'white',
+                   color: 'var(--bg-card)',
                    border: 'none',
                    fontWeight: '800',
                    fontSize: '1rem',
@@ -996,13 +996,13 @@ export default function DmAutomationEditor() {
       {/* Link Modal */}
       {showLinkModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: 'white', padding: '40px', borderRadius: '32px', width: '100%', maxWidth: '400px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+          <div style={{ background: 'var(--bg-card)', padding: '40px', borderRadius: '32px', width: '100%', maxWidth: '400px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
             <h3 style={{ fontSize: '1.4rem', fontWeight: '900', marginBottom: '24px' }}>Add Link Button</h3>
             <input value={tempLinkTitle} onChange={(e) => setTempLinkTitle(e.target.value)} placeholder="Button Text" style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', marginBottom: '16px', outline: 'none', fontWeight: '700' }} />
             <input value={tempLinkUrl} onChange={(e) => setTempLinkUrl(e.target.value)} placeholder="https://..." style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', marginBottom: '24px', outline: 'none', color: '#7c3aed', fontWeight: '700' }} />
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={handleSaveLink} style={{ flex: 1, padding: '16px', background: '#7c3aed', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Save</button>
-              <button onClick={() => setShowLinkModal(false)} style={{ flex: 1, padding: '16px', background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Cancel</button>
+              <button onClick={handleSaveLink} style={{ flex: 1, padding: '16px', background: '#7c3aed', color: 'var(--bg-card)', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Save</button>
+              <button onClick={() => setShowLinkModal(false)} style={{ flex: 1, padding: '16px', background: 'var(--bg-dark)', color: 'var(--text-muted)', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Cancel</button>
             </div>
           </div>
         </div>

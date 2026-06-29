@@ -37,7 +37,7 @@ const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor
             top: '-8px',
             right: '-8px',
             background: '#ef4444',
-            color: 'white',
+            color: 'var(--bg-card)',
             borderRadius: '50%',
             width: '20px',
             height: '20px',
@@ -63,7 +63,7 @@ const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor
           height: '24px', 
           borderRadius: '50%', 
           background: color, 
-          color: 'white', 
+          color: 'var(--bg-card)', 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center', 
@@ -77,7 +77,7 @@ const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor
       )}
       <div style={{ 
         width: '260px', 
-        background: bgColor || 'white', 
+        background: bgColor || 'var(--bg-card)', 
         border: `1.5px solid ${borderColor || color}`, 
         borderRadius: '8px',
         boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
@@ -94,8 +94,8 @@ const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor
           <Icon size={18} strokeWidth={2.5} />
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', marginBottom: '2px' }}>{title}</div>
-          <div style={{ fontSize: '11px', color: '#64748b', lineHeight: '1.4' }}>{subtitle}</div>
+          <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)', marginBottom: '2px' }}>{title}</div>
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.4' }}>{subtitle}</div>
         </div>
         <Handle type="source" position={Position.Bottom} style={{ background: color, border: 'none', width: '8px', height: '8px' }} />
       </div>
@@ -137,19 +137,19 @@ const initialNodes = [
 ];
 
 const initialEdges = [
-  { id: 'e1-2', source: '1', target: '2', animated: true, style: { stroke: '#94a3b8', strokeWidth: 1.5 } },
-  { id: 'e2-3', source: '2', target: '3', animated: true, style: { stroke: '#94a3b8', strokeWidth: 1.5 } },
+  { id: 'e1-2', source: '1', target: '2', animated: true, style: { stroke: 'var(--text-muted)', strokeWidth: 1.5 } },
+  { id: 'e2-3', source: '2', target: '3', animated: true, style: { stroke: 'var(--text-muted)', strokeWidth: 1.5 } },
   
   // Branch edges
   { id: 'e3-4a', source: '3', target: '4a', label: 'User Reply', labelStyle: { fill: '#10b981', fontWeight: 700, fontSize: 10 }, style: { stroke: '#10b981', strokeWidth: 1.5 }, labelBgStyle: { fill: '#ecfdf5', rx: 4, ry: 4 }, labelBgPadding: [4, 2] },
   { id: 'e3-4b', source: '3', target: '4b', label: 'No Reply', labelStyle: { fill: '#ef4444', fontWeight: 700, fontSize: 10 }, style: { stroke: '#ef4444', strokeWidth: 1.5 }, labelBgStyle: { fill: '#fef2f2', rx: 4, ry: 4 }, labelBgPadding: [4, 2] },
   
   // Converge edges
-  { id: 'e4a-5', source: '4a', target: '5', style: { stroke: '#94a3b8', strokeWidth: 1.5 }, type: 'smoothstep' },
-  { id: 'e4b-5', source: '4b', target: '5', style: { stroke: '#94a3b8', strokeWidth: 1.5 }, type: 'smoothstep' },
+  { id: 'e4a-5', source: '4a', target: '5', style: { stroke: 'var(--text-muted)', strokeWidth: 1.5 }, type: 'smoothstep' },
+  { id: 'e4b-5', source: '4b', target: '5', style: { stroke: 'var(--text-muted)', strokeWidth: 1.5 }, type: 'smoothstep' },
   
-  { id: 'e5-6', source: '5', target: '6', animated: true, style: { stroke: '#94a3b8', strokeWidth: 1.5 } },
-  { id: 'e6-7', source: '6', target: '7', animated: true, style: { stroke: '#94a3b8', strokeWidth: 1.5 } },
+  { id: 'e5-6', source: '5', target: '6', animated: true, style: { stroke: 'var(--text-muted)', strokeWidth: 1.5 } },
+  { id: 'e6-7', source: '6', target: '7', animated: true, style: { stroke: 'var(--text-muted)', strokeWidth: 1.5 } },
 ];
 
 const explanationSteps = [
@@ -345,35 +345,35 @@ export default function UniversalTriggers() {
   };
 
   return (
-    <div style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column', background: '#f8fafc' }}>
+    <div style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column', background: 'var(--sidebar-bg)' }}>
       
       {/* Top Header */}
-      <div style={{ padding: '16px 24px', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10, flexShrink: 0 }}>
+      <div style={{ padding: '16px 24px', background: 'var(--bg-card)', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button onClick={() => navigate('/hub')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b' }}><ArrowLeft size={20} /></button>
+          <button onClick={() => navigate('/hub')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><ArrowLeft size={20} /></button>
           <div>
-            <h1 style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', margin: 0 }}>Universal Trigger Engine</h1>
-            <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0 0' }}>Create once, run everywhere</p>
+            <h1 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>Universal Trigger Engine</h1>
+            <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>Create once, run everywhere</p>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button 
             onClick={() => setShowListModal(true)}
-            style={{ padding: '8px 16px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#0f172a', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+            style={{ padding: '8px 16px', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '8px', color: 'var(--text-main)', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
           >
             <List size={16} /> My Triggers
           </button>
           <button 
             onClick={handleTest}
             disabled={isTesting}
-            style={{ padding: '8px 16px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#4f46e5', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: isTesting ? 'wait' : 'pointer', opacity: isTesting ? 0.7 : 1 }}
+            style={{ padding: '8px 16px', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#4f46e5', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: isTesting ? 'wait' : 'pointer', opacity: isTesting ? 0.7 : 1 }}
           >
             <TestTube size={16} /> {isTesting ? 'Testing...' : 'Test Workflow'}
           </button>
           <button 
             onClick={handlePublish}
             disabled={isPublishing}
-            style={{ padding: '8px 24px', background: '#4f46e5', border: 'none', borderRadius: '8px', color: 'white', fontWeight: '600', fontSize: '13px', cursor: isPublishing ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px', opacity: isPublishing ? 0.7 : 1 }}
+            style={{ padding: '8px 24px', background: '#4f46e5', border: 'none', borderRadius: '8px', color: 'var(--bg-card)', fontWeight: '600', fontSize: '13px', cursor: isPublishing ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px', opacity: isPublishing ? 0.7 : 1 }}
           >
             <Send size={16} /> {isPublishing ? 'Publishing...' : 'Publish'}
           </button>
@@ -385,13 +385,13 @@ export default function UniversalTriggers() {
         {/* Main Canvas Area */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
           <div style={{ position: 'absolute', top: 16, left: 16, zIndex: 50, display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>Workflow Builder</span>
-            <span style={{ background: '#e2e8f0', color: '#475569', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: '700' }}>Draft</span>
+            <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)' }}>Workflow Builder</span>
+            <span style={{ background: 'var(--border-subtle)', color: 'var(--text-muted)', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: '700' }}>Draft</span>
           </div>
 
 
           
-          <div style={{ position: 'absolute', top: 60, left: 16, zIndex: 50, background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', padding: '8px 0' }}>
+          <div style={{ position: 'absolute', top: 60, left: 16, zIndex: 50, background: 'var(--bg-card)', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', padding: '8px 0' }}>
             {[
               { id: 'Pointer', icon: MousePointer2 },
               { id: 'Plus', icon: Plus },
@@ -432,7 +432,7 @@ export default function UniversalTriggers() {
                       setTimeout(() => setActiveTool('Pointer'), 200);
                     }
                   }}
-                  style={{ padding: '10px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: isActive ? '#f8fafc' : 'transparent', borderRight: isActive ? '3px solid #4f46e5' : '3px solid transparent', color: isActive ? '#4f46e5' : '#64748b' }}
+                  style={{ padding: '10px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: isActive ? 'var(--sidebar-bg)' : 'transparent', borderRight: isActive ? '3px solid #4f46e5' : '3px solid transparent', color: isActive ? '#4f46e5' : 'var(--text-muted)' }}
                 >
                   <btn.icon size={18} />
                 </div>
@@ -458,9 +458,9 @@ export default function UniversalTriggers() {
         </div>
 
         {/* Right Configuration Sidebar */}
-        <div style={{ width: '300px', background: 'white', borderLeft: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ width: '300px', background: 'var(--bg-card)', borderLeft: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '20px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '14px', fontWeight: '700', color: '#0f172a', margin: 0 }}>Trigger Configuration</h2>
+            <h2 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: 0 }}>Trigger Configuration</h2>
           </div>
           
           <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
@@ -468,14 +468,14 @@ export default function UniversalTriggers() {
 
             {/* Keywords */}
             <div style={{ marginBottom: '24px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '700', color: '#1e293b', display: 'block', marginBottom: '10px' }}>Keywords</label>
+              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Keywords</label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
                 {keywords.map((kw, i) => (
-                  <span key={i} style={{ padding: '4px 8px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '11px', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span key={i} style={{ padding: '4px 8px', background: 'var(--bg-dark)', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     {kw} 
                     <span 
                       onClick={() => setKeywords(keywords.filter((_, index) => index !== i))} 
-                      style={{ cursor: 'pointer', color: '#94a3b8' }}>
+                      style={{ cursor: 'pointer', color: 'var(--text-muted)' }}>
                       ×
                     </span>
                   </span>
@@ -494,13 +494,13 @@ export default function UniversalTriggers() {
                 }}
                 style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none' }} 
               />
-              <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '6px' }}>Press Enter to add more keywords</div>
+              <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '6px' }}>Press Enter to add more keywords</div>
             </div>
 
             {/* Match Type */}
             <div style={{ marginBottom: '24px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '700', color: '#1e293b', display: 'block', marginBottom: '10px' }}>Match Type</label>
-              <select style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none', background: 'white', color: '#0f172a' }}>
+              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Match Type</label>
+              <select style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-main)' }}>
                 <option>Any Keyword</option>
                 <option>Exact Match</option>
                 <option>Contains</option>
@@ -509,11 +509,11 @@ export default function UniversalTriggers() {
 
             {/* Platforms */}
             <div style={{ marginBottom: '24px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '700', color: '#1e293b', display: 'block', marginBottom: '10px' }}>Platforms</label>
+              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Platforms</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {platforms.map((plat, i) => (
                   <label key={plat.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: '#334155', cursor: 'pointer' }}>
-                    <div style={{ width: '16px', height: '16px', borderRadius: '4px', background: plat.checked ? plat.color : 'white', border: `1px solid ${plat.checked ? plat.color : '#cbd5e1'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: '16px', height: '16px', borderRadius: '4px', background: plat.checked ? plat.color : 'var(--bg-card)', border: `1px solid ${plat.checked ? plat.color : 'var(--border-subtle)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {plat.checked && <Check size={12} color="white" strokeWidth={3} />}
                     </div>
                     {plat.label}
@@ -525,11 +525,11 @@ export default function UniversalTriggers() {
             {/* Type & Platforms */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               <div>
-                <label style={{ fontSize: '11px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '6px', textTransform: 'uppercase' }}>Trigger Type</label>
+                <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', marginBottom: '6px', textTransform: 'uppercase' }}>Trigger Type</label>
                 <select 
                   value={triggerType}
                   onChange={(e) => setTriggerType(e.target.value)}
-                  style={{ width: '100%', padding: '10px', fontSize: '12px', fontWeight: '600', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none', background: '#f8fafc', color: '#0f172a', cursor: 'pointer' }}
+                  style={{ width: '100%', padding: '10px', fontSize: '12px', fontWeight: '600', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none', background: 'var(--sidebar-bg)', color: 'var(--text-main)', cursor: 'pointer' }}
                 >
                   <option value="Keyword">Keyword Match</option>
                   <option value="AI Intent">AI Intent (Smart)</option>
@@ -542,21 +542,21 @@ export default function UniversalTriggers() {
 
             {/* Trigger Condition */}
             <div>
-              <label style={{ fontSize: '12px', fontWeight: '700', color: '#1e293b', display: 'block', marginBottom: '10px' }}>Trigger Condition</label>
-              <select style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none', background: 'white', color: '#0f172a' }}>
+              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Trigger Condition</label>
+              <select style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-main)' }}>
                 <option>Allow Re-entry</option>
                 <option>Once per user</option>
               </select>
-              <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '6px' }}>Allow user to trigger again after completion</div>
+              <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '6px' }}>Allow user to trigger again after completion</div>
             </div>
             
           </div>
           
-          <div style={{ padding: '20px', borderTop: '1px solid #e2e8f0', background: '#f8fafc' }}>
+          <div style={{ padding: '20px', borderTop: '1px solid #e2e8f0', background: 'var(--sidebar-bg)' }}>
             <button 
               onClick={handleSaveTrigger}
               disabled={isSaving}
-              style={{ width: '100%', padding: '12px', background: isSaving ? '#94a3b8' : '#4f46e5', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '700', fontSize: '13px', cursor: isSaving ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              style={{ width: '100%', padding: '12px', background: isSaving ? 'var(--text-muted)' : '#4f46e5', color: 'var(--bg-card)', border: 'none', borderRadius: '8px', fontWeight: '700', fontSize: '13px', cursor: isSaving ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
             >
               <Check size={16} /> {isSaving ? 'Saving...' : 'Save Trigger'}
             </button>
@@ -569,13 +569,13 @@ export default function UniversalTriggers() {
       {/* Existing Triggers Modal */}
       {showListModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: 'white', width: '600px', maxHeight: '80vh', borderRadius: '16px', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+          <div style={{ background: 'var(--bg-card)', width: '600px', maxHeight: '80vh', borderRadius: '16px', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
             <div style={{ padding: '20px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', margin: 0 }}>My Universal Triggers</h2>
-                <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0 0' }}>Manage your created cross-platform automation rules.</p>
+                <h2 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>My Universal Triggers</h2>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>Manage your created cross-platform automation rules.</p>
               </div>
-              <button onClick={() => setShowListModal(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
+              <button onClick={() => setShowListModal(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
                 <X size={24} />
               </button>
             </div>
@@ -583,11 +583,11 @@ export default function UniversalTriggers() {
             <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
               {existingTriggers.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-                  <div style={{ width: '64px', height: '64px', background: '#f1f5f9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#94a3b8' }}>
+                  <div style={{ width: '64px', height: '64px', background: 'var(--bg-dark)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: 'var(--text-muted)' }}>
                     <List size={32} />
                   </div>
-                  <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>No Triggers Yet</h3>
-                  <p style={{ fontSize: '13px', color: '#64748b', maxWidth: '300px', margin: '0 auto' }}>You haven't created any Universal Triggers. Build one from the canvas and click "Save Trigger".</p>
+                  <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px' }}>No Triggers Yet</h3>
+                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '300px', margin: '0 auto' }}>You haven't created any Universal Triggers. Build one from the canvas and click "Save Trigger".</p>
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -608,24 +608,24 @@ export default function UniversalTriggers() {
                     }
                     
                     return (
-                      <div key={idx} style={{ padding: '16px', border: '1px solid #e2e8f0', borderRadius: '12px', background: '#f8fafc' }}>
+                      <div key={idx} style={{ padding: '16px', border: '1px solid #e2e8f0', borderRadius: '12px', background: 'var(--sidebar-bg)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                           <div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                              <h4 style={{ fontSize: '14px', fontWeight: '800', color: '#0f172a', margin: 0 }}>
+                              <h4 style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
                                 {trig.trigger ? `"${trig.trigger}"` : 'Any Trigger'}
                               </h4>
-                              <span style={{ padding: '2px 8px', background: trig.status === 'Active' ? '#dcfce7' : '#f1f5f9', color: trig.status === 'Active' ? '#166534' : '#475569', borderRadius: '12px', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase' }}>
+                              <span style={{ padding: '2px 8px', background: trig.status === 'Active' ? '#dcfce7' : 'var(--bg-dark)', color: trig.status === 'Active' ? '#166534' : 'var(--text-muted)', borderRadius: '12px', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase' }}>
                                 {trig.status || 'Active'}
                               </span>
                             </div>
-                            <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
                               <Type size={12} /> {trigType}
                             </span>
                           </div>
                         </div>
-                        <div style={{ background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '13px', color: '#334155', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                          <span style={{ fontSize: '10px', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase' }}>Auto-Response Preview</span>
+                        <div style={{ background: 'var(--bg-card)', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '13px', color: '#334155', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <span style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Auto-Response Preview</span>
                           {responsePreview.substring(0, 100)}{responsePreview.length > 100 ? '...' : ''}
                         </div>
                       </div>
@@ -635,8 +635,8 @@ export default function UniversalTriggers() {
               )}
             </div>
             
-            <div style={{ padding: '16px 24px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', background: '#f8fafc', borderBottomLeftRadius: '16px', borderBottomRightRadius: '16px' }}>
-              <button onClick={() => setShowListModal(false)} style={{ padding: '8px 24px', background: '#0f172a', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>Close</button>
+            <div style={{ padding: '16px 24px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', background: 'var(--sidebar-bg)', borderBottomLeftRadius: '16px', borderBottomRightRadius: '16px' }}>
+              <button onClick={() => setShowListModal(false)} style={{ padding: '8px 24px', background: 'var(--text-main)', color: 'var(--bg-card)', border: 'none', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>Close</button>
             </div>
           </div>
         </div>

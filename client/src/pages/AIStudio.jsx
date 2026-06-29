@@ -157,7 +157,7 @@ export default function AIStudio() {
           </div>
           <div>
             <h2 style={{ fontSize: isMobile ? '1.1rem' : '1.8rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>AI Neural Studio</h2>
-            {!isMobile && <p style={{ color: '#94a3b8', margin: 0 }}>Configure and train your custom AI personality</p>}
+            {!isMobile && <p style={{ color: 'var(--text-muted)', margin: 0 }}>Configure and train your custom AI personality</p>}
           </div>
         </div>
         
@@ -211,7 +211,7 @@ export default function AIStudio() {
 
             <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '20px', marginBottom: '20px' }}>
               <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8', marginBottom: '8px', textTransform: 'uppercase' }}>Agent Identity</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Agent Identity</label>
                 <input 
                   className="training-input"
                   value={aiSettings.aiName}
@@ -220,7 +220,7 @@ export default function AIStudio() {
                 />
               </div>
               <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8', marginBottom: '8px', textTransform: 'uppercase' }}>Vocal Tone</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Vocal Tone</label>
                 <input 
                   className="training-input"
                   value={aiSettings.aiTone}
@@ -230,7 +230,7 @@ export default function AIStudio() {
               </div>
             </div>
 
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8', marginBottom: '8px', textTransform: 'uppercase' }}>Knowledge Base & Context</label>
+            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Knowledge Base & Context</label>
             <textarea 
               className="training-input"
               rows={8}
@@ -244,7 +244,7 @@ export default function AIStudio() {
              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                   <h4 style={{ margin: 0, fontWeight: '800' }}>Neural Creativity</h4>
-                  <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>Higher values make the bot more creative.</p>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Higher values make the bot more creative.</p>
                 </div>
                 <div style={{ fontSize: '1.5rem', fontWeight: '900', color: '#8b5cf6' }}>{aiSettings.aiTemperature.toFixed(1)}</div>
              </div>
@@ -267,7 +267,7 @@ export default function AIStudio() {
         }}>
           <div className="simulator-top">
              <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%' }}></div>
-             <div style={{ fontSize: '0.75rem', fontWeight: '800', color: '#94a3b8' }}>LIVE NEURAL INTERFACE</div>
+             <div style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)' }}>LIVE NEURAL INTERFACE</div>
           </div>
           
           <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -289,9 +289,9 @@ export default function AIStudio() {
               value={testMessage}
               onChange={e => setTestMessage(e.target.value)}
               placeholder="Test your AI here..."
-              style={{ border: 'none', background: '#26658C', color: 'white' }}
+              style={{ border: 'none', background: '#26658C', color: 'var(--bg-card)' }}
             />
-            <button type="submit" disabled={!testMessage.trim()} style={{ background: '#8b5cf6', border: 'none', width: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}>
+            <button type="submit" disabled={!testMessage.trim()} style={{ background: '#8b5cf6', border: 'none', width: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)', cursor: 'pointer' }}>
                <Send size={18} />
             </button>
           </form>

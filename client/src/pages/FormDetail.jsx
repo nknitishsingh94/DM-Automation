@@ -80,7 +80,7 @@ export default function FormDetail() {
       <div className="card">
         <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div className="search-box" style={{ width: '300px', position: 'relative' }}>
-            <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+            <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input 
               type="text" 
               placeholder="Search leads..." 
@@ -98,7 +98,7 @@ export default function FormDetail() {
 
         <div className="card-body" style={{ padding: 0 }}>
           {filteredSubmissions.length === 0 ? (
-            <div style={{ padding: '64px', textAlign: 'center', color: '#94a3b8' }}>
+            <div style={{ padding: '64px', textAlign: 'center', color: 'var(--text-muted)' }}>
               <Users size={48} style={{ opacity: 0.1, marginBottom: '16px' }} />
               <p>No submissions found matching your search.</p>
             </div>
@@ -120,7 +120,7 @@ export default function FormDetail() {
                     <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
                       <td style={{ padding: '16px 24px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>
+                          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>
                             {sub.contactId?.name?.charAt(0) || 'U'}
                           </div>
                           <div>
@@ -132,7 +132,7 @@ export default function FormDetail() {
                       {Object.values(sub.responses || {}).map((val, j) => (
                         <td key={j} style={{ padding: '16px 24px', fontSize: '13px' }}>{val}</td>
                       ))}
-                      <td style={{ padding: '16px 24px', fontSize: '13px', color: '#94a3b8' }}>
+                      <td style={{ padding: '16px 24px', fontSize: '13px', color: 'var(--text-muted)' }}>
                         {new Date(sub.submittedAt).toLocaleDateString()}
                       </td>
                       <td style={{ padding: '16px 24px' }}>

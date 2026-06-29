@@ -134,11 +134,11 @@ export default function Landing() {
                     paddingTop: '12px', zIndex: 1000, animation: 'fadeIn 0.2s ease'
                   }}>
                     <div style={{
-                      background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+                      background: 'var(--bg-card)', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
                       border: '1px solid #e2e8f0', padding: '24px', width: '560px'
                     }}>
                       {/* Arrow */}
-                      <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'white', border: '1px solid #e2e8f0', borderBottom: 'none', borderRight: 'none', rotate: '45deg', zIndex: 1 }} />
+                      <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderBottom: 'none', borderRight: 'none', rotate: '45deg', zIndex: 1 }} />
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0' }}>
                       {/* Core Features Column */}
@@ -157,8 +157,8 @@ export default function Landing() {
                           >
                             <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
                             <div>
-                              <p style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 2px 0' }}>{item.title}</p>
-                              <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{item.desc}</p>
+                              <p style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 2px 0' }}>{item.title}</p>
+                              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>{item.desc}</p>
                             </div>
                           </Link>
                         ))}
@@ -180,8 +180,8 @@ export default function Landing() {
                           >
                             <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
                             <div>
-                              <p style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 2px 0' }}>{item.title}</p>
-                              <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{item.desc}</p>
+                              <p style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 2px 0' }}>{item.title}</p>
+                              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>{item.desc}</p>
                             </div>
                           </Link>
                         ))}
@@ -388,7 +388,7 @@ export default function Landing() {
           {reviewsLoading ? (
             <LoadingSpinner minHeight="150px" size={36} />
           ) : reviews.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
+            <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
               <p>No reviews yet. Be the first to share your experience!</p>
             </div>
           ) : (
@@ -463,7 +463,7 @@ export default function Landing() {
               }}
               onMouseOver={(e) => {
                 e.currentTarget.style.background = 'linear-gradient(135deg, #7c3aed, #6d28d9)';
-                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.color = 'var(--bg-card)';
                 e.currentTarget.style.transform = 'translateY(-2px)';
                 e.currentTarget.style.boxShadow = '0 8px 24px rgba(124, 58, 237, 0.3)';
               }}
@@ -579,7 +579,7 @@ export default function Landing() {
                         className={`star-btn ${star <= newReview.rating ? 'active' : ''}`}
                         onClick={() => setNewReview({ ...newReview, rating: star })}
                       >
-                        <Star size={32} fill={star <= newReview.rating ? '#fbbf24' : 'none'} stroke={star <= newReview.rating ? 'none' : '#cbd5e1'} />
+                        <Star size={32} fill={star <= newReview.rating ? '#fbbf24' : 'none'} stroke={star <= newReview.rating ? 'none' : 'var(--border-subtle)'} />
                       </button>
                     ))}
                   </div>
@@ -639,7 +639,7 @@ export default function Landing() {
                       disabled={uploadingAvatar}
                       style={{ fontSize: '14px' }}
                     />
-                    {uploadingAvatar && <span style={{ fontSize: '12px', color: '#64748b' }}>Uploading...</span>}
+                    {uploadingAvatar && <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Uploading...</span>}
                   </div>
                 </div>
 

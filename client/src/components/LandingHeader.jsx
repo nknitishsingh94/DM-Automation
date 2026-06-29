@@ -40,10 +40,10 @@ export default function LandingHeader() {
                   paddingTop: '12px', zIndex: 1000, animation: 'fadeIn 0.2s ease'
                 }}>
                   <div style={{
-                    background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+                    background: 'var(--bg-card)', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
                     border: '1px solid #e2e8f0', padding: '24px', width: '560px'
                   }}>
-                    <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'white', border: '1px solid #e2e8f0', borderBottom: 'none', borderRight: 'none', rotate: '45deg', zIndex: 1 }} />
+                    <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderBottom: 'none', borderRight: 'none', rotate: '45deg', zIndex: 1 }} />
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0' }}>
                       <div style={{ paddingRight: '24px' }}>
@@ -55,12 +55,12 @@ export default function LandingHeader() {
                           { icon: <Calendar size={18} color="#64748b" />, title: 'Schedule with AutoDM', desc: 'Post + automation together', link: '/features/scheduling' },
                         ].map((item, i) => (
                           <Link key={i} to={item.link} onClick={() => setFeaturesOpen(false)}
-                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: '#1e293b' }}
+                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: 'var(--text-main)' }}
                           >
                             <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
                             <div>
-                              <p style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 2px 0' }}>{item.title}</p>
-                              <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{item.desc}</p>
+                              <p style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 2px 0' }}>{item.title}</p>
+                              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>{item.desc}</p>
                             </div>
                           </Link>
                         ))}
@@ -75,12 +75,12 @@ export default function LandingHeader() {
                           { icon: <Radio size={18} color="#64748b" />, title: 'Live Comment Auto DM', desc: 'DM viewers during lives', link: '/campaigns' },
                         ].map((item, i) => (
                           <Link key={i} to={item.link} onClick={() => setFeaturesOpen(false)}
-                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: '#1e293b' }}
+                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: 'var(--text-main)' }}
                           >
                             <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
                             <div>
-                              <p style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 2px 0' }}>{item.title}</p>
-                              <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{item.desc}</p>
+                              <p style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 2px 0' }}>{item.title}</p>
+                              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>{item.desc}</p>
                             </div>
                           </Link>
                         ))}
@@ -96,7 +96,7 @@ export default function LandingHeader() {
         <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {user ? (
             <Link to="/dashboard" style={{
-              background: '#0f172a', color: 'white', padding: '10px 24px', borderRadius: '50px',
+              background: 'var(--text-main)', color: 'var(--bg-card)', padding: '10px 24px', borderRadius: '50px',
               fontSize: '0.9rem', fontWeight: '700', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px',
               boxShadow: '0 10px 20px rgba(15, 23, 42, 0.1)'
             }}>
@@ -104,9 +104,9 @@ export default function LandingHeader() {
             </Link>
           ) : (
             <>
-              <Link to="/login" style={{ fontSize: '0.95rem', fontWeight: '700', color: '#475569', textDecoration: 'none', padding: '0 12px' }}>Sign In</Link>
+              <Link to="/login" style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-muted)', textDecoration: 'none', padding: '0 12px' }}>Sign In</Link>
               <Link to="/signup" style={{
-                background: '#7c3aed', color: 'white', padding: '10px 24px', borderRadius: '50px',
+                background: '#7c3aed', color: 'var(--bg-card)', padding: '10px 24px', borderRadius: '50px',
                 fontSize: '0.95rem', fontWeight: '800', textDecoration: 'none', boxShadow: '0 10px 20px rgba(124, 58, 237, 0.2)'
               }}>
                 Get Started

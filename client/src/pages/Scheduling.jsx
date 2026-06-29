@@ -1375,21 +1375,21 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
     return (
       <div style={{
         padding: '16px 0 0 0', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', height: '100%',
-        display: 'flex', flexDirection: 'column', background: '#f8fafc', overflow: 'hidden'
+        display: 'flex', flexDirection: 'column', background: 'var(--sidebar-bg)', overflow: 'hidden'
       }}>
         <div style={{
-          background: '#f8fafc', width: '100%', maxWidth: 'none', margin: '0',
+          background: 'var(--sidebar-bg)', width: '100%', maxWidth: 'none', margin: '0',
           display: 'flex', flexDirection: 'column', height: '100%'
         }}>
           {/* Header */}
           <div style={{ padding: '24px', background: 'transparent', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
             <div>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e293b', margin: '0 0 4px 0' }}>Create Post</h3>
-              <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b' }}>create & publish content</p>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 4px 0' }}>Create Post</h3>
+              <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>create & publish content</p>
             </div>
             <button
               onClick={() => setShowCreate(false)}
-              style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px' }}
+              style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px' }}
             >
               <X size={24} />
             </button>
@@ -1401,7 +1401,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
             {/* Left Column - Content & Media */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', paddingRight: '12px', height: '100%' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>content</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>content</label>
                 
                     {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads', 'twitter'].includes(p)) && (
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
@@ -1416,9 +1416,9 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                           }}
                           style={{
                             padding: '16px 12px', borderRadius: '12px',
-                            background: postType === 'image' ? '#eef2ff' : '#f8fafc',
+                            background: postType === 'image' ? '#eef2ff' : 'var(--sidebar-bg)',
                             border: postType === 'image' ? '2px solid #6366f1' : '2px solid transparent',
-                            color: postType === 'image' ? '#4f46e5' : '#64748b',
+                            color: postType === 'image' ? '#4f46e5' : 'var(--text-muted)',
                             cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
                             transition: 'all 0.2s', textAlign: 'center',
                             boxShadow: postType === 'image' ? '0 4px 12px rgba(99, 102, 241, 0.15)' : 'none'
@@ -1426,7 +1426,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         >
                           <ImageIcon size={24} />
                           <div style={{ fontSize: '0.9rem', fontWeight: '700', color: postType === 'image' ? '#312e81' : '#334155' }}>Image</div>
-                          <div style={{ fontSize: '0.7rem', color: postType === 'image' ? '#4f46e5' : '#94a3b8' }}>Single photo</div>
+                          <div style={{ fontSize: '0.7rem', color: postType === 'image' ? '#4f46e5' : 'var(--text-muted)' }}>Single photo</div>
                         </div>
 
                         <div
@@ -1440,9 +1440,9 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                           }}
                           style={{
                             padding: '16px 12px', borderRadius: '12px',
-                            background: postType === 'video' ? '#eef2ff' : '#f8fafc',
+                            background: postType === 'video' ? '#eef2ff' : 'var(--sidebar-bg)',
                             border: postType === 'video' ? '2px solid #6366f1' : '2px solid transparent',
-                            color: postType === 'video' ? '#4f46e5' : '#64748b',
+                            color: postType === 'video' ? '#4f46e5' : 'var(--text-muted)',
                             cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
                             transition: 'all 0.2s', textAlign: 'center',
                             boxShadow: postType === 'video' ? '0 4px 12px rgba(99, 102, 241, 0.15)' : 'none'
@@ -1450,16 +1450,16 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         >
                           <Film size={24} />
                           <div style={{ fontSize: '0.9rem', fontWeight: '700', color: postType === 'video' ? '#312e81' : '#334155' }}>Video</div>
-                          <div style={{ fontSize: '0.7rem', color: postType === 'video' ? '#4f46e5' : '#94a3b8' }}>Reel or Video</div>
+                          <div style={{ fontSize: '0.7rem', color: postType === 'video' ? '#4f46e5' : 'var(--text-muted)' }}>Reel or Video</div>
                         </div>
 
                         <div
                           onClick={() => setPostType('carousel')}
                           style={{
                             padding: '16px 12px', borderRadius: '12px',
-                            background: postType === 'carousel' ? '#eef2ff' : '#f8fafc',
+                            background: postType === 'carousel' ? '#eef2ff' : 'var(--sidebar-bg)',
                             border: postType === 'carousel' ? '2px solid #6366f1' : '2px solid transparent',
-                            color: postType === 'carousel' ? '#4f46e5' : '#64748b',
+                            color: postType === 'carousel' ? '#4f46e5' : 'var(--text-muted)',
                             cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
                             transition: 'all 0.2s', textAlign: 'center',
                             boxShadow: postType === 'carousel' ? '0 4px 12px rgba(99, 102, 241, 0.15)' : 'none'
@@ -1467,7 +1467,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         >
                           <Layers size={24} />
                           <div style={{ fontSize: '0.9rem', fontWeight: '700', color: postType === 'carousel' ? '#312e81' : '#334155' }}>Carousel</div>
-                          <div style={{ fontSize: '0.7rem', color: postType === 'carousel' ? '#4f46e5' : '#94a3b8' }}>Multiple photos</div>
+                          <div style={{ fontSize: '0.7rem', color: postType === 'carousel' ? '#4f46e5' : 'var(--text-muted)' }}>Multiple photos</div>
                         </div>
                       </div>
                     )}
@@ -1482,7 +1482,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         }}
                         style={{
                           padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1',
-                          background: 'white', color: '#475569', fontSize: '0.85rem', outline: 'none', cursor: 'pointer', maxWidth: '60%'
+                          background: 'var(--bg-card)', color: 'var(--text-muted)', fontSize: '0.85rem', outline: 'none', cursor: 'pointer', maxWidth: '60%'
                         }}
                       >
                         <option value="">Use saved caption...</option>
@@ -1511,7 +1511,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         style={{
                           width: '100%', minHeight: '120px', padding: '12px', paddingBottom: '40px',
                           borderRadius: '10px', border: '1px solid #e2e8f0',
-                          background: 'white', outline: 'none', fontSize: '0.9rem',
+                          background: 'var(--bg-card)', outline: 'none', fontSize: '0.9rem',
                           resize: 'vertical', color: '#334155', lineHeight: '1.5'
                         }}
                       />
@@ -1528,28 +1528,28 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         <button
                           onClick={() => applyFormatting('mention')}
                           style={{
-                            background: '#f1f5f9', border: 'none', fontSize: '0.85rem',
+                            background: 'var(--bg-dark)', border: 'none', fontSize: '0.85rem',
                             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            padding: '4px 10px', borderRadius: '6px', fontWeight: '600', color: '#475569',
+                            padding: '4px 10px', borderRadius: '6px', fontWeight: '600', color: 'var(--text-muted)',
                             transition: 'all 0.2s'
                           }}
                           title="Mention (@)"
-                          onMouseOver={(e) => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#1e293b'; }}
-                          onMouseOut={(e) => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#475569'; }}
+                          onMouseOver={(e) => { e.currentTarget.style.background = 'var(--border-subtle)'; e.currentTarget.style.color = 'var(--text-main)'; }}
+                          onMouseOut={(e) => { e.currentTarget.style.background = 'var(--bg-dark)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
                         >
                           @ Mention
                         </button>
                         <button
                           onClick={() => applyFormatting('hashtag')}
                           style={{
-                            background: '#f1f5f9', border: 'none', fontSize: '0.85rem',
+                            background: 'var(--bg-dark)', border: 'none', fontSize: '0.85rem',
                             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            padding: '4px 10px', borderRadius: '6px', fontWeight: '600', color: '#475569',
+                            padding: '4px 10px', borderRadius: '6px', fontWeight: '600', color: 'var(--text-muted)',
                             transition: 'all 0.2s'
                           }}
                           title="Hashtag (#)"
-                          onMouseOver={(e) => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#1e293b'; }}
-                          onMouseOut={(e) => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#475569'; }}
+                          onMouseOver={(e) => { e.currentTarget.style.background = 'var(--border-subtle)'; e.currentTarget.style.color = 'var(--text-main)'; }}
+                          onMouseOut={(e) => { e.currentTarget.style.background = 'var(--bg-dark)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
                         >
                           # Hashtag
                         </button>
@@ -1583,7 +1583,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     style={{
                       width: '100%', padding: '24px', border: '1.5px dashed #94a3b8', borderRadius: '12px',
                       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                      cursor: 'pointer', background: '#e2e8f0', color: '#475569', fontWeight: '600', fontSize: '0.95rem'
+                      cursor: 'pointer', background: 'var(--border-subtle)', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.95rem'
                     }}
                   >
                     <input 
@@ -1631,7 +1631,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         ))}
                       </div>
                     ) : (
-                      <div style={{ textAlign: 'center', padding: '32px 16px', color: '#94a3b8' }}>
+                      <div style={{ textAlign: 'center', padding: '32px 16px', color: 'var(--text-muted)' }}>
                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: '0 auto 12px', display: 'block' }}>
                           <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                           <circle cx="8.5" cy="8.5" r="1.5" />
@@ -1646,7 +1646,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
 
                 {/* Threads Specific Block */}
                 {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['threads', 'twitter'].includes(p)) && (
-                  <div style={{ marginTop: '24px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+                  <div style={{ marginTop: '24px', background: 'var(--sidebar-bg)', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
                     <div style={{ padding: '16px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div style={{ background: '#000', color: '#fff', borderRadius: '4px', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>@</div>
@@ -1663,7 +1663,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         onClick={() => setIsThreadMode(!isThreadMode)}
                         style={{ 
                           width: '36px', height: '20px', 
-                          background: isThreadMode ? '#000' : '#cbd5e1', 
+                          background: isThreadMode ? '#000' : 'var(--border-subtle)', 
                           borderRadius: '10px', position: 'relative', cursor: 'pointer',
                           transition: 'background 0.3s ease'
                         }}
@@ -1677,19 +1677,19 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     </div>
                     {isThreadMode && (
                     <div style={{ padding: '16px' }}>
-                      <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '16px', fontWeight: '500' }}>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '16px', fontWeight: '500' }}>
                         Main content + media become post 1. Add more below.
                       </div>
                       
                       {threadPosts.map((post, index) => (
                         <div key={index} style={{
-                          background: 'white', borderRadius: '10px', border: '1px solid #e2e8f0',
+                          background: 'var(--bg-card)', borderRadius: '10px', border: '1px solid #e2e8f0',
                           overflow: 'hidden', marginBottom: '16px'
                         }}>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #f1f5f9', background: '#fafafa' }}>
-                            <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Post {index + 2}</span>
+                            <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Post {index + 2}</span>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <button onClick={() => removeThreadPost(index)} style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600' }}>remove</button>
+                              <button onClick={() => removeThreadPost(index)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600' }}>remove</button>
                             </div>
                           </div>
                           <div style={{ padding: '12px' }}>
@@ -1722,7 +1722,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                                       input.onchange = (e) => handleThreadFileChange(index, e);
                                       input.click();
                                     }}
-                                    style={{ width: '80px', height: '80px', background: 'transparent', border: '1px dashed #cbd5e1', borderRadius: '8px', color: '#64748b', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: '500' }}
+                                    style={{ width: '80px', height: '80px', background: 'transparent', border: '1px dashed #cbd5e1', borderRadius: '8px', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: '500' }}
                                   >
                                     <Plus size={14} /> Add
                                   </button>
@@ -1737,7 +1737,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                                     input.onchange = (e) => handleThreadFileChange(index, e);
                                     input.click();
                                   }}
-                                  style={{ background: 'transparent', border: '1px dashed #cbd5e1', padding: '8px', borderRadius: '6px', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', fontWeight: '500' }}
+                                  style={{ background: 'transparent', border: '1px dashed #cbd5e1', padding: '8px', borderRadius: '6px', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', fontWeight: '500' }}
                                 >
                                   <ImageIcon size={14} /> Add Media
                                 </button>
@@ -1753,14 +1753,14 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
 
                       <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#64748b' }}>custom caption</span>
-                          <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: '600' }}>{(threadCustomCaption || '').length}/500</span>
+                          <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)' }}>custom caption</span>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: '600' }}>{(threadCustomCaption || '').length}/500</span>
                         </div>
                         <textarea
                           value={threadCustomCaption}
                           onChange={(e) => { if (e.target.value.length <= 500) setThreadCustomCaption(e.target.value); }}
                           placeholder="Leave blank to use main content..."
-                          style={{ width: '100%', minHeight: '60px', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', outline: 'none', fontSize: '0.9rem', resize: 'vertical', color: '#334155' }}
+                          style={{ width: '100%', minHeight: '60px', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'var(--bg-card)', outline: 'none', fontSize: '0.9rem', resize: 'vertical', color: '#334155' }}
                         />
                       </div>
                     </div>
@@ -1778,7 +1778,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
 
                     {/* YouTube Thumbnail Upload */}
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>custom thumbnail (optional)</label>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>custom thumbnail (optional)</label>
                       <div
                         onClick={() => thumbnailInputRef.current.click()}
                         onDragOver={(e) => e.preventDefault()}
@@ -1793,7 +1793,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         style={{
                           width: '100%', padding: '16px', border: '1.5px dashed #94a3b8', borderRadius: '12px',
                           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                          cursor: 'pointer', background: '#e2e8f0', color: '#475569', fontWeight: '600', fontSize: '0.9rem',
+                          cursor: 'pointer', background: 'var(--border-subtle)', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.9rem',
                           position: 'relative', overflow: 'hidden'
                         }}
                       >
@@ -1818,32 +1818,32 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     </div>
 
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>title & description (optional)</label>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>title & description (optional)</label>
                       <input 
                         value={newPost.youtubeTitle || ''}
                         onChange={(e) => setNewPost({ ...newPost, youtubeTitle: e.target.value })}
                         placeholder="Custom title for your video..."
-                        style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: 'none', background: '#e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                        style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: 'none', background: 'var(--border-subtle)', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
                       />
                     </div>
 
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>tags (optional)</label>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>tags (optional)</label>
                       <input 
                         value={newPost.youtubeTags || ''}
                         onChange={(e) => setNewPost({ ...newPost, youtubeTags: e.target.value })}
                         placeholder="Type a tag and press Enter..."
-                        style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: 'none', background: '#e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                        style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: 'none', background: 'var(--border-subtle)', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
                       />
                     </div>
 
                     <div style={{ display: 'flex', gap: '16px' }}>
                       <div style={{ flex: 1 }}>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>visibility</label>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>visibility</label>
                         <select 
                           value={newPost.youtubeVisibility || 'Public'}
                           onChange={(e) => setNewPost({ ...newPost, youtubeVisibility: e.target.value })}
-                          style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: 'none', background: '#e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
+                          style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: 'none', background: 'var(--border-subtle)', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
                         >
                           <option value="Public">Public (Anyone)</option>
                           <option value="Unlisted">Unlisted (Link only)</option>
@@ -1852,11 +1852,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       </div>
 
                       <div style={{ flex: 1 }}>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>category</label>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>category</label>
                         <select 
                           value={newPost.youtubeCategory || 'People & Blogs'}
                           onChange={(e) => setNewPost({ ...newPost, youtubeCategory: e.target.value })}
-                          style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: 'none', background: '#e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
+                          style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: 'none', background: 'var(--border-subtle)', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
                         >
                           <option value="People & Blogs">People & Blogs</option>
                           <option value="Education">Education</option>
@@ -1878,7 +1878,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       </div>
   
                       <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>pin title</label>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>pin title</label>
                         <input 
                           value={newPost.pinterestTitle || ''}
                           onChange={(e) => setNewPost({ ...newPost, pinterestTitle: e.target.value })}
@@ -1888,7 +1888,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       </div>
   
                       <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>destination link</label>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>destination link</label>
                         <input 
                           value={newPost.pinterestLink || ''}
                           onChange={(e) => setNewPost({ ...newPost, pinterestLink: e.target.value })}
@@ -1899,7 +1899,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
   
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                          <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#64748b' }}>
+                          <label style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)' }}>
                             {showNewPinterestBoardInput ? 'new board name' : 'select board'} <span style={{ color: '#E60023' }}>*</span>
                           </label>
                           {!showNewPinterestBoardInput && (
@@ -1925,7 +1925,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                                   setNewPost({ ...newPost, pinterestBoard: e.target.value });
                                 }
                               }}
-                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: `1px solid ${!newPost.pinterestBoard ? '#fca5a5' : '#cbd5e1'}`, outline: 'none', fontSize: '0.95rem', background: 'white', color: '#334155', cursor: 'pointer' }}
+                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: `1px solid ${!newPost.pinterestBoard ? '#fca5a5' : 'var(--border-subtle)'}`, outline: 'none', fontSize: '0.95rem', background: 'var(--bg-card)', color: '#334155', cursor: 'pointer' }}
                             >
                               <option value="" disabled>
                                 {pinterestBoards.length === 0 ? '⏳ Loading boards...' : '— Select a Board —'}
@@ -1936,7 +1936,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                               <option value="NEW_BOARD">+ Create New Board</option>
                             </select>
                             {pinterestBoards.length === 0 && (
-                              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '6px' }}>
+                              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '6px' }}>
                                 No boards found. <button type="button" onClick={fetchPinterestBoards} style={{ color: '#E60023', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '0.75rem' }}>Click Refresh</button> or create a new one.
                               </p>
                             )}
@@ -1953,7 +1953,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                             <button
                               type="button"
                               onClick={() => { setShowNewPinterestBoardInput(false); setNewPost({ ...newPost, pinterestBoard: '' }); }}
-                              style={{ padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '0.85rem', color: '#64748b', whiteSpace: 'nowrap' }}
+                              style={{ padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'var(--sidebar-bg)', cursor: 'pointer', fontSize: '0.85rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}
                             >
                               ← Back
                             </button>
@@ -1966,12 +1966,12 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           <div
                             onClick={() => setNewPost({ ...newPost, pinterestIsAIModified: !newPost.pinterestIsAIModified })}
-                            style={{ width: '44px', height: '24px', borderRadius: '12px', background: newPost.pinterestIsAIModified ? '#2563eb' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
-                            <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: newPost.pinterestIsAIModified ? '23px' : '3px', transition: '0.3s' }}></div>
+                            style={{ width: '44px', height: '24px', borderRadius: '12px', background: newPost.pinterestIsAIModified ? '#2563eb' : 'var(--border-subtle)', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                            <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'var(--bg-card)', position: 'absolute', top: '3px', left: newPost.pinterestIsAIModified ? '23px' : '3px', transition: '0.3s' }}></div>
                           </div>
                           <div>
-                            <div style={{ fontWeight: '600', fontSize: '0.9rem', color: '#1e293b' }}>Mark as AI-Modified</div>
-                            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Content that was made completely or partly with AI</div>
+                            <div style={{ fontWeight: '600', fontSize: '0.9rem', color: 'var(--text-main)' }}>Mark as AI-Modified</div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Content that was made completely or partly with AI</div>
                           </div>
                         </div>
                         
@@ -2000,21 +2000,21 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <div
                               onClick={() => setNewPost({ ...newPost, pinterestAllowComments: newPost.pinterestAllowComments === false ? true : false })}
-                              style={{ width: '44px', height: '24px', borderRadius: '12px', background: newPost.pinterestAllowComments !== false ? '#2563eb' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
-                              <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: newPost.pinterestAllowComments !== false ? '23px' : '3px', transition: '0.3s' }}></div>
+                              style={{ width: '44px', height: '24px', borderRadius: '12px', background: newPost.pinterestAllowComments !== false ? '#2563eb' : 'var(--border-subtle)', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                              <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'var(--bg-card)', position: 'absolute', top: '3px', left: newPost.pinterestAllowComments !== false ? '23px' : '3px', transition: '0.3s' }}></div>
                             </div>
-                            <div style={{ fontWeight: '600', fontSize: '0.9rem', color: '#1e293b' }}>Allow people to comment</div>
+                            <div style={{ fontWeight: '600', fontSize: '0.9rem', color: 'var(--text-main)' }}>Allow people to comment</div>
                           </div>
 
                           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                             <div
                               onClick={() => setNewPost({ ...newPost, pinterestShowSimilarProducts: newPost.pinterestShowSimilarProducts === false ? true : false })}
-                              style={{ width: '44px', height: '24px', borderRadius: '12px', background: newPost.pinterestShowSimilarProducts !== false ? '#2563eb' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s', flexShrink: 0 }}>
-                              <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: newPost.pinterestShowSimilarProducts !== false ? '23px' : '3px', transition: '0.3s' }}></div>
+                              style={{ width: '44px', height: '24px', borderRadius: '12px', background: newPost.pinterestShowSimilarProducts !== false ? '#2563eb' : 'var(--border-subtle)', position: 'relative', cursor: 'pointer', transition: '0.3s', flexShrink: 0 }}>
+                              <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'var(--bg-card)', position: 'absolute', top: '3px', left: newPost.pinterestShowSimilarProducts !== false ? '23px' : '3px', transition: '0.3s' }}></div>
                             </div>
                             <div>
-                              <div style={{ fontWeight: '600', fontSize: '0.9rem', color: '#1e293b', marginBottom: '4px' }}>Show similar products</div>
-                              <div style={{ fontSize: '0.75rem', color: '#64748b', lineHeight: '1.4' }}>
+                              <div style={{ fontWeight: '600', fontSize: '0.9rem', color: 'var(--text-main)', marginBottom: '4px' }}>Show similar products</div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
                                 People can shop products similar to what's shown in this Pin using visual search.<br/>
                                 Shopping recommendations aren't available for Idea ads and Pins with tagged products or paid partnership label.
                               </div>
@@ -2022,8 +2022,8 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                           </div>
 
                           <div style={{ marginTop: '8px' }}>
-                            <div style={{ border: '1px solid #cbd5e1', borderRadius: '8px', padding: '12px 16px', background: '#f8fafc' }}>
-                              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '700', color: '#64748b', marginBottom: '4px' }}>Alt Text</label>
+                            <div style={{ border: '1px solid #cbd5e1', borderRadius: '8px', padding: '12px 16px', background: 'var(--sidebar-bg)' }}>
+                              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '4px' }}>Alt Text</label>
                               <textarea 
                                 value={newPost.pinterestAltText || ''}
                                 onChange={(e) => setNewPost({ ...newPost, pinterestAltText: e.target.value })}
@@ -2048,11 +2048,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     </div>
 
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>post type</label>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>post type</label>
                       <select 
                         value={newPost.gmbTopicType || 'STANDARD'}
                         onChange={(e) => setNewPost({ ...newPost, gmbTopicType: e.target.value })}
-                        style={{ width: '100%', maxWidth: '280px', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
+                        style={{ width: '100%', maxWidth: '280px', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'var(--bg-card)', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
                       >
                         <option value="STANDARD">Update (Standard)</option>
                         <option value="EVENT">Event</option>
@@ -2062,36 +2062,36 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     </div>
 
                     {(newPost.gmbTopicType === 'EVENT' || newPost.gmbTopicType === 'OFFER') && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                        <div style={{ fontWeight: '600', fontSize: '0.9rem', color: '#475569' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--sidebar-bg)', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                        <div style={{ fontWeight: '600', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                           {newPost.gmbTopicType === 'EVENT' ? 'Event Details' : 'Offer Details'}
                         </div>
                         <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>event/offer title</label>
+                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>event/offer title</label>
                           <input 
                             value={newPost.gmbEventTitle || ''}
                             onChange={(e) => setNewPost({ ...newPost, gmbEventTitle: e.target.value })}
                             placeholder={newPost.gmbTopicType === 'EVENT' ? "e.g., Summer Special Gathering" : "e.g., 20% Off All Items"}
-                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'var(--bg-card)', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
                           />
                         </div>
                         <div style={{ display: 'flex', gap: '12px' }}>
                           <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>start date & time</label>
+                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>start date & time</label>
                             <input 
                               type="datetime-local"
                               value={newPost.gmbEventStartDate || ''}
                               onChange={(e) => setNewPost({ ...newPost, gmbEventStartDate: e.target.value })}
-                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'var(--bg-card)', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
                             />
                           </div>
                           <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>end date & time</label>
+                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>end date & time</label>
                             <input 
                               type="datetime-local"
                               value={newPost.gmbEventEndDate || ''}
                               onChange={(e) => setNewPost({ ...newPost, gmbEventEndDate: e.target.value })}
-                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'var(--bg-card)', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
                             />
                           </div>
                         </div>
@@ -2099,30 +2099,30 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         {newPost.gmbTopicType === 'OFFER' && (
                           <>
                             <div>
-                              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>coupon code (optional)</label>
+                              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>coupon code (optional)</label>
                               <input 
                                 value={newPost.gmbOfferCouponCode || ''}
                                 onChange={(e) => setNewPost({ ...newPost, gmbOfferCouponCode: e.target.value })}
                                 placeholder="e.g., SUMMER20"
-                                style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                                style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'var(--bg-card)', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
                               />
                             </div>
                             <div>
-                              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>redemption link (optional)</label>
+                              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>redemption link (optional)</label>
                               <input 
                                 value={newPost.gmbOfferRedeemUrl || ''}
                                 onChange={(e) => setNewPost({ ...newPost, gmbOfferRedeemUrl: e.target.value })}
                                 placeholder="https://example.com/redeem"
-                                style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                                style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'var(--bg-card)', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
                               />
                             </div>
                             <div>
-                              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>terms & conditions (optional)</label>
+                              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>terms & conditions (optional)</label>
                               <textarea 
                                 value={newPost.gmbOfferTerms || ''}
                                 onChange={(e) => setNewPost({ ...newPost, gmbOfferTerms: e.target.value })}
                                 placeholder="One coupon per customer. Cannot be combined with other offers."
-                                style={{ width: '100%', padding: '12px 16px', minHeight: '60px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155', resize: 'vertical' }}
+                                style={{ width: '100%', padding: '12px 16px', minHeight: '60px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'var(--bg-card)', outline: 'none', fontSize: '0.95rem', color: '#334155', resize: 'vertical' }}
                               />
                             </div>
                           </>
@@ -2131,24 +2131,24 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     )}
 
                     {newPost.gmbTopicType === 'PRODUCT' && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                        <div style={{ fontWeight: '600', fontSize: '0.9rem', color: '#475569' }}>Product Details</div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--sidebar-bg)', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                        <div style={{ fontWeight: '600', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Product Details</div>
                         <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>product name</label>
+                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>product name</label>
                           <input 
                             value={newPost.gmbProductName || ''}
                             onChange={(e) => setNewPost({ ...newPost, gmbProductName: e.target.value })}
                             placeholder="e.g., Deluxe Leather Wallet"
-                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'var(--bg-card)', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
                           />
                         </div>
                         <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>product price</label>
+                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>product price</label>
                           <input 
                             value={newPost.gmbProductPrice || ''}
                             onChange={(e) => setNewPost({ ...newPost, gmbProductPrice: e.target.value })}
                             placeholder="e.g., $49.99"
-                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'var(--bg-card)', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
                           />
                         </div>
                       </div>
@@ -2168,13 +2168,13 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     </div>
 
                     {newPost.gmbCtaEnabled && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--sidebar-bg)', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                         <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>button type</label>
+                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>button type</label>
                           <select 
                             value={newPost.gmbActionType || 'LEARN_MORE'}
                             onChange={(e) => setNewPost({ ...newPost, gmbActionType: e.target.value })}
-                            style={{ width: '100%', maxWidth: '280px', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
+                            style={{ width: '100%', maxWidth: '280px', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'var(--bg-card)', outline: 'none', fontSize: '0.95rem', color: '#334155', cursor: 'pointer' }}
                           >
                             <option value="LEARN_MORE">Learn More</option>
                             <option value="BOOK">Book</option>
@@ -2186,12 +2186,12 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         </div>
                         {newPost.gmbActionType !== 'CALL' && (
                           <div>
-                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>destination url</label>
+                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>destination url</label>
                             <input 
                               value={newPost.gmbSearchUrl || ''}
                               onChange={(e) => setNewPost({ ...newPost, gmbSearchUrl: e.target.value })}
                               placeholder="https://example.com/book"
-                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'white', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
+                              style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: 'var(--bg-card)', outline: 'none', fontSize: '0.95rem', color: '#334155' }}
                             />
                             {!newPost.gmbSearchUrl && <div style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '6px' }}>URL required when CTA is enabled</div>}
                           </div>
@@ -2200,12 +2200,12 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     )}
 
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>custom caption</label>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>custom caption</label>
                       <textarea 
                         value={newPost.gmbCustomCaption || ''}
                         onChange={(e) => setNewPost({ ...newPost, gmbCustomCaption: e.target.value })}
                         placeholder="Leave blank to use main content..."
-                        style={{ width: '100%', padding: '12px 16px', minHeight: '80px', borderRadius: '8px', border: 'none', background: '#e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#334155', resize: 'vertical' }}
+                        style={{ width: '100%', padding: '12px 16px', minHeight: '80px', borderRadius: '8px', border: 'none', background: 'var(--border-subtle)', outline: 'none', fontSize: '0.95rem', color: '#334155', resize: 'vertical' }}
                       />
                     </div>
                   </div>
@@ -2231,7 +2231,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         placeholder="919876543210, 919876543211..."
                         style={{
                           width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #bbf7d0',
-                          outline: 'none', fontSize: '0.85rem', minHeight: '80px', resize: 'vertical', background: 'white', color: '#334155'
+                          outline: 'none', fontSize: '0.85rem', minHeight: '80px', resize: 'vertical', background: 'var(--bg-card)', color: '#334155'
                         }}
                       />
                     </div>
@@ -2261,8 +2261,8 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                                   alignItems: 'center', 
                                   gap: '10px', 
                                   padding: '10px 12px', 
-                                  background: 'white', 
-                                  border: `1.5px solid ${isChecked ? '#3b82f6' : '#e2e8f0'}`, 
+                                  background: 'var(--bg-card)', 
+                                  border: `1.5px solid ${isChecked ? '#3b82f6' : 'var(--border-subtle)'}`, 
                                   borderRadius: '8px', 
                                   cursor: 'pointer',
                                   transition: 'all 0.15s ease'
@@ -2287,7 +2287,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                                   <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#334155' }}>
                                     {target.name}
                                   </span>
-                                  <span style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
                                     {target.type === 'profile' ? '👤 Personal Profile' : '🏢 Business Page'}
                                   </span>
                                 </div>
@@ -2296,7 +2296,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                           })}
                         </div>
                       ) : (
-                        <div style={{ fontSize: '0.85rem', color: '#64748b', fontStyle: 'italic' }}>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
                           No targets found. Please reconnect your LinkedIn account on the Connections page.
                         </div>
                       )}
@@ -2316,7 +2316,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               
               {/* Platforms */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '12px' }}>platforms</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '12px' }}>platforms</label>
                   <div style={{
                     width: '100%', display: 'flex', flexWrap: 'wrap', gap: '12px'
                   }}>
@@ -2345,8 +2345,8 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                           }}
                           style={{
                             display: 'flex', alignItems: 'center', gap: '8px',
-                            background: isSelected ? `${plat.color}15` : 'white',
-                            border: `2px solid ${isSelected ? plat.color : '#e2e8f0'}`,
+                            background: isSelected ? `${plat.color}15` : 'var(--bg-card)',
+                            border: `2px solid ${isSelected ? plat.color : 'var(--border-subtle)'}`,
                             padding: '10px 16px', borderRadius: '12px',
                             cursor: 'pointer', transition: 'all 0.2s ease',
                             opacity: plat.connected ? 1 : 0.5,
@@ -2356,20 +2356,20 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         >
                           <div style={{ 
                             width: '28px', height: '28px', borderRadius: '8px', 
-                            background: isSelected ? plat.color : '#f1f5f9',
+                            background: isSelected ? plat.color : 'var(--bg-dark)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            color: isSelected ? 'white' : plat.color
+                            color: isSelected ? 'var(--bg-card)' : plat.color
                           }}>
                             {plat.icon}
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#334155' }}>{plat.label}</span>
                             {plat.handle && (
-                              <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{plat.handle}</span>
+                              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{plat.handle}</span>
                             )}
                           </div>
                           {isSelected && (
-                            <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', borderRadius: '50%', border: `4px solid ${plat.color}`, background: 'white' }}></div>
+                            <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', borderRadius: '50%', border: `4px solid ${plat.color}`, background: 'var(--bg-card)' }}></div>
                           )}
                         </div>
                       );
@@ -2381,8 +2381,8 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', margin: 0 }}>date & time</label>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem', color: '#475569' }}>
+                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', margin: 0 }}>date & time</label>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                         <input 
                           type="checkbox" 
                           checked={isPostNow} 
@@ -2400,20 +2400,20 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       style={{
                         width: '100%', padding: '12px 14px', borderRadius: '8px',
                         border: 'none', outline: 'none', fontSize: '0.9rem',
-                        color: '#334155', background: 'white'
+                        color: '#334155', background: 'var(--bg-card)'
                       }}
                     />
                   </div>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>timezone</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>timezone</label>
                   <select
                     value={selectedTimezone}
                     onChange={e => handleTimezoneChange(e.target.value)}
                     style={{
                       width: '100%', padding: '12px 14px', borderRadius: '8px',
                       border: 'none', outline: 'none', fontSize: '0.9rem',
-                      color: '#334155', background: 'white'
+                      color: '#334155', background: 'var(--bg-card)'
                     }}
                   >
                     {timezoneOptions.map(opt => (
@@ -2445,7 +2445,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       </svg>
                       <div>
                         <div style={{ fontWeight: '700', color: '#ef4444', fontSize: '0.85rem', marginBottom: '4px' }}>Threads Not Connected</div>
-                        <div style={{ fontSize: '0.8rem', color: '#64748b', lineHeight: '1.5', marginBottom: '12px' }}>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: '12px' }}>
                           Please connect your Threads account in settings to create posts for this platform.
                         </div>
                         <button
@@ -2453,7 +2453,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                           style={{
                             padding: '8px 16px',
                             background: '#ef4444',
-                            color: 'white',
+                            color: 'var(--bg-card)',
                             border: 'none',
                             borderRadius: '10px',
                             fontWeight: '700',
@@ -2490,8 +2490,8 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               onClick={handleAddSubmit}
               disabled={submitting}
               style={{
-                background: submitting ? '#94a3b8' : '#3b82f6',
-                color: 'white', border: 'none', padding: '14px 36px',
+                background: submitting ? 'var(--text-muted)' : '#3b82f6',
+                color: 'var(--bg-card)', border: 'none', padding: '14px 36px',
                 borderRadius: '12px', fontSize: '1.05rem', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer',
                 display: 'flex', alignItems: 'center', gap: '8px',
                 boxShadow: submitting ? 'none' : '0 4px 15px rgba(59, 130, 246, 0.3)',
@@ -2517,12 +2517,12 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
       {/* Top Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px 0 24px' }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '800', color: '#1e293b' }}>Posts</h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#64748b', fontWeight: '500' }}>Manage and schedule your social media content</p>
+          <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)' }}>Posts</h2>
+          <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>Manage and schedule your social media content</p>
         </div>
         <button onClick={() => setShowCreate(true)} style={{
           display: 'flex', alignItems: 'center', gap: '8px',
-          background: '#3b82f6', color: 'white', border: 'none',
+          background: '#3b82f6', color: 'var(--bg-card)', border: 'none',
           padding: '10px 20px', borderRadius: '8px', fontWeight: '600',
           fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s',
           boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)'
@@ -2541,7 +2541,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               onClick={(e) => { e.stopPropagation(); setShowPostStatusDropdown(!showPostStatusDropdown); setShowPlatformDropdown(false); setShowDateDropdown(false); }}
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
-                background: postStatusFilter !== 'All posts' ? '#f8fafc' : 'white', color: '#475569', border: '1px solid #cbd5e1',
+                background: postStatusFilter !== 'All posts' ? 'var(--sidebar-bg)' : 'var(--bg-card)', color: 'var(--text-muted)', border: '1px solid #cbd5e1',
                 padding: '8px 12px', borderRadius: '6px', fontSize: '0.85rem',
                 fontWeight: '500', cursor: 'pointer'
               }}
@@ -2551,7 +2551,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
             {showPostStatusDropdown && (
               <div style={{
                 position: 'absolute', top: '100%', left: 0, marginTop: '4px',
-                background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px',
+                background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '8px',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 50, minWidth: '160px',
                 padding: '4px 0'
               }}>
@@ -2562,11 +2562,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     style={{
                       padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer',
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      background: postStatusFilter === status ? '#f1f5f9' : 'white',
+                      background: postStatusFilter === status ? 'var(--bg-dark)' : 'var(--bg-card)',
                       color: '#334155'
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
-                    onMouseOut={(e) => e.currentTarget.style.background = postStatusFilter === status ? '#f1f5f9' : 'white'}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'var(--sidebar-bg)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = postStatusFilter === status ? 'var(--bg-dark)' : 'var(--bg-card)'}
                   >
                     {status}
                     {postStatusFilter === status && <Check size={14} color="#0f172a" />}
@@ -2582,7 +2582,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               onClick={(e) => { e.stopPropagation(); setShowPlatformDropdown(!showPlatformDropdown); setShowPostStatusDropdown(false); setShowDateDropdown(false); }}
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
-                background: platformFilter !== 'All platforms' ? '#f8fafc' : 'white', color: '#475569', border: '1px solid #cbd5e1',
+                background: platformFilter !== 'All platforms' ? 'var(--sidebar-bg)' : 'var(--bg-card)', color: 'var(--text-muted)', border: '1px solid #cbd5e1',
                 padding: '8px 12px', borderRadius: '6px', fontSize: '0.85rem',
                 fontWeight: '500', cursor: 'pointer'
               }}
@@ -2592,7 +2592,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
             {showPlatformDropdown && (
               <div style={{
                 position: 'absolute', top: '100%', left: 0, marginTop: '4px',
-                background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px',
+                background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '8px',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 50, minWidth: '160px',
                 padding: '4px 0', maxHeight: '300px', overflowY: 'auto'
               }}>
@@ -2601,11 +2601,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                   style={{
                     padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    background: platformFilter === 'All platforms' ? '#f1f5f9' : 'white',
+                    background: platformFilter === 'All platforms' ? 'var(--bg-dark)' : 'var(--bg-card)',
                     color: '#334155'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
-                  onMouseOut={(e) => e.currentTarget.style.background = platformFilter === 'All platforms' ? '#f1f5f9' : 'white'}
+                  onMouseOver={(e) => e.currentTarget.style.background = 'var(--sidebar-bg)'}
+                  onMouseOut={(e) => e.currentTarget.style.background = platformFilter === 'All platforms' ? 'var(--bg-dark)' : 'var(--bg-card)'}
                 >
                   All platforms
                   {platformFilter === 'All platforms' && <Check size={14} color="#0f172a" />}
@@ -2617,11 +2617,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     style={{
                       padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer',
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      background: platformFilter === plat.label ? '#f1f5f9' : 'white',
+                      background: platformFilter === plat.label ? 'var(--bg-dark)' : 'var(--bg-card)',
                       color: '#334155'
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
-                    onMouseOut={(e) => e.currentTarget.style.background = platformFilter === plat.label ? '#f1f5f9' : 'white'}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'var(--sidebar-bg)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = platformFilter === plat.label ? 'var(--bg-dark)' : 'var(--bg-card)'}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span style={{ color: plat.color, display: 'flex', alignItems: 'center' }}>{plat.icon}</span>
@@ -2640,7 +2640,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               onClick={(e) => { e.stopPropagation(); setShowDateDropdown(!showDateDropdown); setShowPostStatusDropdown(false); setShowPlatformDropdown(false); }}
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
-                background: dateFilter !== 'All dates' ? '#f8fafc' : 'white', color: '#475569', border: '1px solid #cbd5e1',
+                background: dateFilter !== 'All dates' ? 'var(--sidebar-bg)' : 'var(--bg-card)', color: 'var(--text-muted)', border: '1px solid #cbd5e1',
                 padding: '8px 12px', borderRadius: '6px', fontSize: '0.85rem',
                 fontWeight: '500', cursor: 'pointer'
               }}
@@ -2651,7 +2651,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
             {showDateDropdown && (
               <div style={{
                 position: 'absolute', top: '100%', left: 0, marginTop: '4px',
-                background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px',
+                background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '8px',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 50, minWidth: '160px',
                 padding: '4px 0'
               }}>
@@ -2662,11 +2662,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     style={{
                       padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer',
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      background: dateFilter === range ? '#f1f5f9' : 'white',
+                      background: dateFilter === range ? 'var(--bg-dark)' : 'var(--bg-card)',
                       color: '#334155'
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
-                    onMouseOut={(e) => e.currentTarget.style.background = dateFilter === range ? '#f1f5f9' : 'white'}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'var(--sidebar-bg)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = dateFilter === range ? 'var(--bg-dark)' : 'var(--bg-card)'}
                   >
                     {range}
                     {dateFilter === range && <Check size={14} color="#0f172a" />}
@@ -2684,7 +2684,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               onClick={(e) => { e.stopPropagation(); setShowSortDropdown(!showSortDropdown); setShowDateDropdown(false); setShowPostStatusDropdown(false); setShowPlatformDropdown(false); }}
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
-                background: sortFilter !== 'Scheduled (new)' ? '#f8fafc' : 'white', color: '#475569', border: '1px solid #cbd5e1',
+                background: sortFilter !== 'Scheduled (new)' ? 'var(--sidebar-bg)' : 'var(--bg-card)', color: 'var(--text-muted)', border: '1px solid #cbd5e1',
                 padding: '8px 12px', borderRadius: '6px', fontSize: '0.85rem',
                 fontWeight: '500', cursor: 'pointer'
               }}
@@ -2695,7 +2695,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
             {showSortDropdown && (
               <div style={{
                 position: 'absolute', top: '100%', right: 0, marginTop: '4px',
-                background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px',
+                background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '8px',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 50, minWidth: '180px',
                 padding: '4px 0'
               }}>
@@ -2706,11 +2706,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     style={{
                       padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer',
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      background: sortFilter === opt ? '#f1f5f9' : 'white',
+                      background: sortFilter === opt ? 'var(--bg-dark)' : 'var(--bg-card)',
                       color: '#334155'
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
-                    onMouseOut={(e) => e.currentTarget.style.background = sortFilter === opt ? '#f1f5f9' : 'white'}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'var(--sidebar-bg)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = sortFilter === opt ? 'var(--bg-dark)' : 'var(--bg-card)'}
                   >
                     {opt}
                     {sortFilter === opt && <Check size={14} color="#0f172a" />}
@@ -2726,7 +2726,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
       <div style={{ flex: 1, overflow: 'auto', padding: '0 24px 24px 24px' }}>
       {visiblePosts.length === 0 ? (
         <div style={{ 
-          background: 'white', 
+          background: 'var(--bg-card)', 
           border: '1px solid #e2e8f0', 
           borderRadius: '12px', 
           height: '100%',
@@ -2745,12 +2745,12 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
             <Sparkles size={36} color="#3b82f6" />
           </div>
           
-          <h2 style={{ margin: '0 0 12px 0', fontSize: '1.5rem', fontWeight: '800', color: '#1e293b' }}>No posts yet</h2>
-          <p style={{ margin: '0 0 32px 0', color: '#64748b', fontSize: '1rem' }}>Create your first social media post</p>
+          <h2 style={{ margin: '0 0 12px 0', fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)' }}>No posts yet</h2>
+          <p style={{ margin: '0 0 32px 0', color: 'var(--text-muted)', fontSize: '1rem' }}>Create your first social media post</p>
           
           <button onClick={() => setShowCreate(true)} style={{
             display: 'flex', alignItems: 'center', gap: '8px',
-            background: '#3b82f6', color: 'white', border: 'none',
+            background: '#3b82f6', color: 'var(--bg-card)', border: 'none',
             padding: '14px 48px', borderRadius: '8px', fontWeight: '600',
             fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s',
             width: '300px', justifyContent: 'center',
@@ -2789,15 +2789,15 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               <div
                 key={post._id || post.id}
                 style={{
-                  background: 'white', borderRadius: '24px', padding: '16px',
+                  background: 'var(--bg-card)', borderRadius: '24px', padding: '16px',
                   border: '1.5px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
                   transition: 'all 0.3s ease', display: 'flex', flexDirection: 'column', gap: '16px'
                 }}
               >
                 {/* Media Preview Header */}
-                <div style={{ width: '100%', height: '180px', borderRadius: '16px', background: '#f8fafc', overflow: 'hidden', position: 'relative' }}>
+                <div style={{ width: '100%', height: '180px', borderRadius: '16px', background: 'var(--sidebar-bg)', overflow: 'hidden', position: 'relative' }}>
                   {!finalMediaUrl ? (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f1f5f9', color: '#94a3b8', gap: '6px' }}>
+                    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-dark)', color: 'var(--text-muted)', gap: '6px' }}>
                       <span style={{ fontSize: '2.5rem' }}>🖼️</span>
                       <span style={{ fontSize: '0.8rem', fontWeight: 500 }}>No preview available</span>
                     </div>
@@ -2832,13 +2832,13 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     {/* Status Badge */}
                     <div style={{
                       background: post.status === 'Posted' ? '#10b981' : (post.status === 'Failed' ? '#ef4444' : ((post.status === 'Processing' || (post.status === 'Scheduled' && mediaData.igContainerId)) ? '#3b82f6' : '#3b82f6')),
-                      color: 'white', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px',
+                      color: 'var(--bg-card)', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px',
                       fontSize: '0.65rem', fontWeight: '800', boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                     }}>
                       {(post.status === 'Retrying' || post.status === 'Processing' || (post.status === 'Scheduled' && mediaData.igContainerId)) ? (
                         <div style={{ width: '8px', height: '8px', borderRadius: '50%', border: '1.5px solid white', borderTopColor: 'transparent', animation: 'spin 1s linear infinite' }} />
                       ) : (
-                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'white' }} />
+                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--bg-card)' }} />
                       )}
                       <span>{post.status === 'Retrying' ? `Retrying` : ((post.status === 'Scheduled' && mediaData.igContainerId) ? 'Processing' : (post.status || 'SCHEDULED'))}</span>
                     </div>
@@ -2846,7 +2846,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     {/* Platform Badge */}
                     <div style={{
                       fontSize: '0.65rem', fontWeight: '800', 
-                      color: 'white',
+                      color: 'var(--bg-card)',
                       background: post.platform === 'facebook' ? '#1877f2' : post.platform === 'threads' ? '#000000' : post.platform === 'pinterest' ? '#E60023' : post.platform === 'youtube' ? '#ff0000' : post.platform === 'google-business' ? '#4285f4' : post.platform === 'linkedin' ? '#0a66c2' : post.platform === 'twitter' ? '#000000' : post.platform === 'whatsapp' ? '#25d366' : '#e1306c',
                       padding: '4px 8px', borderRadius: '8px',
                       display: 'flex', alignItems: 'center', gap: '4px',
@@ -2865,7 +2865,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     </div>
                      {/* Post Type Badge */}
                      <div style={{
-                       fontSize: '0.65rem', fontWeight: '800', color: '#1e293b', textTransform: 'uppercase',
+                       fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-main)', textTransform: 'uppercase',
                        background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(4px)', padding: '4px 8px', borderRadius: '8px',
                        boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
                      }}>
@@ -2884,14 +2884,14 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         }}
                         style={{
                           background: post.automationStatus === 'Paused' ? 'rgba(241, 245, 249, 0.95)' : 'rgba(16, 185, 129, 0.95)',
-                          color: post.automationStatus === 'Paused' ? '#64748b' : 'white',
+                          color: post.automationStatus === 'Paused' ? 'var(--text-muted)' : 'var(--bg-card)',
                           padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px',
                           cursor: 'pointer', fontSize: '0.65rem', fontWeight: '800', boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
                           backdropFilter: 'blur(4px)'
                         }}
                         title="Toggle Automation"
                       >
-                        <Zap size={10} fill={post.automationStatus === 'Paused' ? 'none' : 'white'} />
+                        <Zap size={10} fill={post.automationStatus === 'Paused' ? 'none' : 'var(--bg-card)'} />
                         <span>{post.automationStatus === 'Paused' ? 'Paused' : 'Active'}</span>
                       </div>
                     </div>
@@ -2911,7 +2911,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                   {(() => {
                     const tzData = formatInTimezone(post.scheduledFor, displayTimezone);
                     return (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontSize: '0.75rem', fontWeight: '600', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: '600', flexWrap: 'wrap' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <Calendar size={12} />
                           <span>{tzData.date}</span>
@@ -2984,11 +2984,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       width: '38px', height: '38px', borderRadius: '12px', border: '1px solid #fee2e2',
-                      background: 'white', color: '#ef4444', cursor: 'pointer',
+                      background: 'var(--bg-card)', color: '#ef4444', cursor: 'pointer',
                       transition: 'all 0.2s'
                     }}
                     onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
-                    onMouseOut={(e) => e.currentTarget.style.background = 'white'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'var(--bg-card)'}
                     title="Cancel/Delete Post"
                   >
                     <Trash2 size={16} />
@@ -3010,7 +3010,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3000, padding: '16px'
         }}>
           <div style={{
-            background: 'white', borderRadius: '28px', width: '95%', maxWidth: '400px',
+            background: 'var(--bg-card)', borderRadius: '28px', width: '95%', maxWidth: '400px',
             maxHeight: '90vh', overflowY: 'auto',
             padding: '32px 24px', textAlign: 'center', boxShadow: '0 40px 80px rgba(0,0,0,0.2)',
             animation: 'scaleIn 0.3s ease-out'
@@ -3019,14 +3019,14 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               <Check size={32} />
             </div>
             <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '8px' }}>Post Scheduled!</h2>
-            <p style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: '500', marginBottom: '24px' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500', marginBottom: '24px' }}>
               Your content is ready to go live on Instagram. Now, set up your marketing automation!
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button
                 onClick={() => { setShowSuccess(false); setPreviews([]); }}
-                style={{ width: '100%', padding: '14px', borderRadius: '14px', background: '#ea4335', color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(234, 67, 53, 0.2)' }}
+                style={{ width: '100%', padding: '14px', borderRadius: '14px', background: '#ea4335', color: 'var(--bg-card)', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(234, 67, 53, 0.2)' }}
               >
                 Close
               </button>
@@ -3054,7 +3054,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
           padding: '20px'
         }}>
           <div style={{
-            background: 'white', 
+            background: 'var(--bg-card)', 
             width: '100%', 
             maxWidth: '800px', 
             height: isMobile ? '100%' : '90vh', 
@@ -3074,22 +3074,22 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       onClick={() => setCreatedPost({ ...createdPost, automationStatus: createdPost.automationStatus === 'Active' ? 'Paused' : 'Active' })}
                       style={{
                         width: '40px', height: '20px', borderRadius: '10px',
-                        background: createdPost.automationStatus === 'Active' ? '#10b981' : '#cbd5e1',
+                        background: createdPost.automationStatus === 'Active' ? '#10b981' : 'var(--border-subtle)',
                         position: 'relative', cursor: 'pointer', transition: '0.3s'
                       }}
                     >
                       <div style={{
-                        width: '16px', height: '16px', borderRadius: '50%', background: 'white',
+                        width: '16px', height: '16px', borderRadius: '50%', background: 'var(--bg-card)',
                         position: 'absolute', top: '2px', left: createdPost.automationStatus === 'Active' ? '22px' : '2px',
                         transition: '0.3s'
                       }}></div>
                     </div>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: createdPost.automationStatus === 'Active' ? '#10b981' : '#64748b' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: createdPost.automationStatus === 'Active' ? '#10b981' : 'var(--text-muted)' }}>
                       Automation {createdPost.automationStatus === 'Active' ? 'Active' : 'Paused'}
                     </span>
                   </div>
                 </div>
-                <button onClick={() => setShowAdvanced(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '8px', cursor: 'pointer', color: '#64748b' }}>
+                <button onClick={() => setShowAdvanced(false)} style={{ background: 'var(--bg-dark)', border: 'none', borderRadius: '12px', padding: '8px', cursor: 'pointer', color: 'var(--text-muted)' }}>
                   <X size={20} />
                 </button>
               </div>
@@ -3118,7 +3118,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                   <div style={{ 
                     flex: 1, 
                     minWidth: '70px',
-                    background: 'white', 
+                    background: 'var(--bg-card)', 
                     border: '1.5px solid #cbd5e1', 
                     borderRadius: '12px', 
                     padding: '10px 6px', 
@@ -3126,19 +3126,19 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     boxShadow: '0 4px 10px rgba(0,0,0,0.02)',
                     zIndex: 2
                   }}>
-                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>Trigger Post</div>
+                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>Trigger Post</div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                       <ImageIcon size={12} color="#3b82f6" />
                       <span style={{ fontSize: '0.75rem', fontWeight: '900', color: '#1e1b4b' }}>This Post</span>
                     </div>
                   </div>
 
-                  <div style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>→</div>
+                  <div style={{ color: 'var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>→</div>
 
                   <div style={{ 
                     flex: 1.5, 
                     minWidth: '100px',
-                    background: 'white', 
+                    background: 'var(--bg-card)', 
                     border: '1.5px solid #cbd5e1', 
                     borderRadius: '12px', 
                     padding: '10px 6px', 
@@ -3146,18 +3146,18 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     boxShadow: '0 4px 10px rgba(0,0,0,0.02)',
                     zIndex: 2
                   }}>
-                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>Comment Trigger</div>
+                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>Comment Trigger</div>
                     <span style={{ fontSize: '0.75rem', fontWeight: '900', color: '#10b981' }}>
                       {createdPost.anyKeyword ? 'Any Comment' : `Word: "${createdPost.triggerKeyword || 'none'}"`}
                     </span>
                   </div>
 
-                  <div style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>→</div>
+                  <div style={{ color: 'var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>→</div>
 
                   <div style={{ 
                     flex: 1.5, 
                     minWidth: '100px',
-                    background: 'white', 
+                    background: 'var(--bg-card)', 
                     border: '1.5px solid #cbd5e1', 
                     borderRadius: '12px', 
                     padding: '10px 6px', 
@@ -3165,19 +3165,19 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     boxShadow: '0 4px 10px rgba(0,0,0,0.02)',
                     zIndex: 2
                   }}>
-                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>Public Reply</div>
+                    <div style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>Public Reply</div>
                     <span style={{ fontSize: '0.75rem', fontWeight: '900', color: '#8b5cf6' }}>
                       "{createdPost.publicReply || 'Sent DM!'}"
                     </span>
                   </div>
 
-                  <div style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>→</div>
+                  <div style={{ color: 'var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>→</div>
 
                   <div style={{ 
                     flex: 2, 
                     minWidth: '120px',
                     background: 'linear-gradient(135deg, #3b82f6, #2563eb)', 
-                    color: 'white',
+                    color: 'var(--bg-card)',
                     borderRadius: '12px', 
                     padding: '10px 6px', 
                     textAlign: 'center',
@@ -3196,20 +3196,20 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               <div style={{ background: '#f0fdf4', padding: '24px', borderRadius: '24px', border: '1.5px solid #bbf7d0', boxShadow: '0 4px 20px rgba(0,0,0,0.01)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>1</div>
+                    <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#10b981', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>1</div>
                     <div>
                       <h4 style={{ margin: 0, fontWeight: '900', color: '#1e1b4b', fontSize: '1rem' }}>Require Follow (Recommended)</h4>
-                      <p style={{ margin: '2px 0 0 0', fontSize: '0.75rem', color: '#64748b', fontWeight: '500' }}>User must follow you to receive the DM response automatically.</p>
+                      <p style={{ margin: '2px 0 0 0', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '500' }}>User must follow you to receive the DM response automatically.</p>
                     </div>
                   </div>
                   <div
                     onClick={() => setCreatedPost({ ...createdPost, requireFollow: !createdPost.requireFollow })}
-                    style={{ width: '44px', height: '24px', borderRadius: '12px', background: createdPost.requireFollow ? '#10b981' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
-                    <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: createdPost.requireFollow ? '23px' : '3px', transition: '0.3s' }}></div>
+                    style={{ width: '44px', height: '24px', borderRadius: '12px', background: createdPost.requireFollow ? '#10b981' : 'var(--border-subtle)', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                    <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'var(--bg-card)', position: 'absolute', top: '3px', left: createdPost.requireFollow ? '23px' : '3px', transition: '0.3s' }}></div>
                   </div>
                 </div>
 
-                <div style={{ border: '1.5px solid #bbf7d0', borderRadius: '20px', padding: '20px', background: 'white', marginTop: '16px' }}>
+                <div style={{ border: '1.5px solid #bbf7d0', borderRadius: '20px', padding: '20px', background: 'var(--bg-card)', marginTop: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <label style={{ fontSize: '0.75rem', fontWeight: '800', color: '#10b981' }}>UNFOLLOWED MESSAGE</label>
                     <button
@@ -3222,38 +3222,38 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                   <textarea
                     value={createdPost.unfollowedResponse}
                     onChange={(e) => setCreatedPost({ ...createdPost, unfollowedResponse: e.target.value })}
-                    style={{ width: '100%', height: '80px', padding: '16px', borderRadius: '16px', border: '1.5px solid #10b981', outline: 'none', fontSize: '0.9rem', resize: 'none', background: 'white' }}
+                    style={{ width: '100%', height: '80px', padding: '16px', borderRadius: '16px', border: '1.5px solid #10b981', outline: 'none', fontSize: '0.9rem', resize: 'none', background: 'var(--bg-card)' }}
                   />
                 </div>
               </div>
 
               {/* 2. Select a Post */}
-              <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #e2e8f0' }}>
+              <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '24px', border: '1.5px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>2</div>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#3b82f6', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>2</div>
                   <h4 style={{ margin: 0, fontWeight: '900', color: '#1e1b4b', fontSize: '1rem' }}>Select a Post</h4>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontWeight: '800', color: '#475569', fontSize: '0.9rem' }}>Any post</div>
-                  <div style={{ width: '44px', height: '24px', borderRadius: '12px', background: '#cbd5e1', position: 'relative', cursor: 'not-allowed' }}>
-                    <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: '3px' }}></div>
+                  <div style={{ fontWeight: '800', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Any post</div>
+                  <div style={{ width: '44px', height: '24px', borderRadius: '12px', background: 'var(--border-subtle)', position: 'relative', cursor: 'not-allowed' }}>
+                    <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'var(--bg-card)', position: 'absolute', top: '3px', left: '3px' }}></div>
                   </div>
                 </div>
               </div>
 
               {/* 3. Comment Trigger */}
-              <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #e2e8f0' }}>
+              <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '24px', border: '1.5px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>3</div>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#1e1b4b', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>3</div>
                   <h4 style={{ margin: 0, fontWeight: '900', color: '#1e1b4b', fontSize: '1rem' }}>Comment Trigger</h4>
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <div style={{ fontWeight: '800', color: '#475569', fontSize: '0.9rem' }}>Any keyword</div>
+                  <div style={{ fontWeight: '800', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Any keyword</div>
                   <div
                     onClick={() => setCreatedPost({ ...createdPost, anyKeyword: !createdPost.anyKeyword, triggerKeyword: !createdPost.anyKeyword ? '*' : '' })}
-                    style={{ width: '44px', height: '24px', borderRadius: '12px', background: createdPost.anyKeyword ? '#3b82f6' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
-                    <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: createdPost.anyKeyword ? '23px' : '3px', transition: '0.3s' }}></div>
+                    style={{ width: '44px', height: '24px', borderRadius: '12px', background: createdPost.anyKeyword ? '#3b82f6' : 'var(--border-subtle)', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                    <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'var(--bg-card)', position: 'absolute', top: '3px', left: createdPost.anyKeyword ? '23px' : '3px', transition: '0.3s' }}></div>
                   </div>
                 </div>
 
@@ -3287,7 +3287,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                             setKeywordInput('');
                           }
                         }}
-                        style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                        style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: '#3b82f6', color: 'var(--bg-card)', border: 'none', borderRadius: '8px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                         <Plus size={18} />
                       </button>
                     </div>
@@ -3314,19 +3314,19 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               </div>
 
               {/* 4. Opening Message */}
-              <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #cbd5e1', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+              <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '24px', border: '1.5px solid #cbd5e1', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>4</div>
+                    <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#3b82f6', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>4</div>
                     <div>
                       <h4 style={{ margin: 0, fontWeight: '900', color: '#1e1b4b', fontSize: '1rem' }}>Advanced: Opening Message</h4>
-                      <p style={{ margin: '2px 0 0 0', fontSize: '0.75rem', color: '#64748b', fontWeight: '500' }}>Send a greeting button before the final response.</p>
+                      <p style={{ margin: '2px 0 0 0', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '500' }}>Send a greeting button before the final response.</p>
                     </div>
                   </div>
                   <div
                     onClick={() => setCreatedPost({ ...createdPost, openingMessage: !createdPost.openingMessage })}
-                    style={{ width: '44px', height: '24px', borderRadius: '12px', background: createdPost.openingMessage ? '#3b82f6' : '#cbd5e1', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
-                    <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'white', position: 'absolute', top: '3px', left: createdPost.openingMessage ? '23px' : '3px', transition: '0.3s' }}></div>
+                    style={{ width: '44px', height: '24px', borderRadius: '12px', background: createdPost.openingMessage ? '#3b82f6' : 'var(--border-subtle)', position: 'relative', cursor: 'pointer', transition: '0.3s' }}>
+                    <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'var(--bg-card)', position: 'absolute', top: '3px', left: createdPost.openingMessage ? '23px' : '3px', transition: '0.3s' }}></div>
                   </div>
                 </div>
 
@@ -3344,7 +3344,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     <textarea
                       value={createdPost.openingMessageText || ''}
                       onChange={(e) => setCreatedPost({ ...createdPost, openingMessageText: e.target.value })}
-                      style={{ width: '100%', height: '80px', padding: '16px', borderRadius: '16px', border: '1.5px solid #3b82f6', outline: 'none', fontSize: '0.9rem', resize: 'none', background: 'white', marginBottom: '16px' }}
+                      style={{ width: '100%', height: '80px', padding: '16px', borderRadius: '16px', border: '1.5px solid #3b82f6', outline: 'none', fontSize: '0.9rem', resize: 'none', background: 'var(--bg-card)', marginBottom: '16px' }}
                     />
 
                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '800', color: '#0369a1', marginBottom: '8px' }}>BUTTON TEXT</label>
@@ -3352,16 +3352,16 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       type="text"
                       value={createdPost.openingMessageButton || ''}
                       onChange={(e) => setCreatedPost({ ...createdPost, openingMessageButton: e.target.value })}
-                      style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #3b82f6', outline: 'none', fontSize: '0.9rem', fontWeight: '800', background: 'white' }}
+                      style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #3b82f6', outline: 'none', fontSize: '0.9rem', fontWeight: '800', background: 'var(--bg-card)' }}
                     />
                   </div>
                 )}
               </div>
 
               {/* 5. Send a DM */}
-              <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #cbd5e1', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+              <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '24px', border: '1.5px solid #cbd5e1', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>5</div>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#3b82f6', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900' }}>5</div>
                   <h4 style={{ margin: 0, fontWeight: '900', color: '#1e1b4b', fontSize: '1rem' }}>Send a DM</h4>
                 </div>
 
@@ -3381,7 +3381,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     value={createdPost.autoResponse || ''}
                     onChange={(e) => setCreatedPost({ ...createdPost, autoResponse: e.target.value })}
                     placeholder="Enter your final message here... (e.g. Here is your link!)"
-                    style={{ width: '100%', height: '120px', padding: '16px', borderRadius: '16px', border: 'none', background: '#f8fafc', outline: 'none', fontSize: '0.95rem', resize: 'none' }}
+                    style={{ width: '100%', height: '120px', padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--sidebar-bg)', outline: 'none', fontSize: '0.95rem', resize: 'none' }}
                   />
 
                   <div style={{ marginTop: '20px', borderTop: '1.5px solid #f1f5f9', paddingTop: '20px' }}>
@@ -3396,19 +3396,19 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
                       {(createdPost.buttons || []).map((btn, idx) => (
-                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px', background: '#f8fafc', borderRadius: '16px', border: '1.5px solid #e2e8f0' }}>
+                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px', background: 'var(--sidebar-bg)', borderRadius: '16px', border: '1.5px solid #e2e8f0' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <LinkIcon size={14} color="#3b82f6" />
                             <span style={{ fontWeight: '800', fontSize: '0.9rem' }}>{btn.text}</span>
                           </div>
                           <div style={{ display: 'flex', gap: '12px' }}>
-                            <Pencil size={16} onClick={() => openEditLinkModal(idx)} style={{ cursor: 'pointer', color: '#64748b' }} />
+                            <Pencil size={16} onClick={() => openEditLinkModal(idx)} style={{ cursor: 'pointer', color: 'var(--text-muted)' }} />
                             <Trash2 size={16} onClick={() => removeLink(idx)} style={{ cursor: 'pointer', color: '#ef4444' }} />
                           </div>
                         </div>
                       ))}
                       {(createdPost.buttons || []).length === 0 && (
-                        <div style={{ textAlign: 'center', padding: '16px', color: '#94a3b8', fontSize: '0.85rem', fontStyle: 'italic' }}>
+                        <div style={{ textAlign: 'center', padding: '16px', color: 'var(--text-muted)', fontSize: '0.85rem', fontStyle: 'italic' }}>
                           No buttons added yet.
                         </div>
                       )}
@@ -3418,11 +3418,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               </div>
 
               {/* Public Comment Reply */}
-              <div style={{ background: 'white', padding: '24px', borderRadius: '24px', border: '1.5px solid #e2e8f0' }}>
+              <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '24px', border: '1.5px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <h4 style={{ margin: 0, fontWeight: '900', color: '#1e1b4b', fontSize: '1rem' }}>Public Comment Reply</h4>
                 </div>
-                <p style={{ color: '#64748b', fontSize: '0.8rem', marginBottom: '24px' }}>Grow your audience faster — with smart, hands-free engagement.</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '24px' }}>Grow your audience faster — with smart, hands-free engagement.</p>
 
                 <div style={{ background: '#eff6ff', border: '1.5px solid #ddd6fe', borderRadius: '20px', padding: '24px', marginTop: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
@@ -3440,7 +3440,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       value={createdPost.publicReply || ''}
                       onChange={(e) => setCreatedPost({ ...createdPost, publicReply: e.target.value })}
                       placeholder="e.g. Check your DMs! 🚀"
-                      style={{ width: '100%', padding: '16px 50px 16px 16px', borderRadius: '16px', border: '1.5px solid #ddd6fe', outline: 'none', fontSize: '0.95rem', fontWeight: '600', background: 'white' }}
+                      style={{ width: '100%', padding: '16px 50px 16px 16px', borderRadius: '16px', border: '1.5px solid #ddd6fe', outline: 'none', fontSize: '0.95rem', fontWeight: '600', background: 'var(--bg-card)' }}
                     />
                   </div>
                 </div>
@@ -3450,7 +3450,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                   bottom: '-40px',
                   left: 0,
                   right: 0,
-                  background: 'white',
+                  background: 'var(--bg-card)',
                   padding: '24px 0 0 0',
                   borderTop: '1.5px solid #f1f5f9',
                   marginTop: '20px',
@@ -3485,7 +3485,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         }
                       } catch (err) { notify("Network error while saving", "error"); }
                     }}
-                    style={{ width: '100%', padding: '18px', borderRadius: '20px', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', border: 'none', fontWeight: '900', fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 25px rgba(124, 58, 237, 0.3)' }}
+                    style={{ width: '100%', padding: '18px', borderRadius: '20px', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'var(--bg-card)', border: 'none', fontWeight: '900', fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', boxShadow: '0 10px 25px rgba(124, 58, 237, 0.3)' }}
                   >
                     <Zap size={24} fill="white" /> Create Automation
                   </button>
@@ -3503,18 +3503,18 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5000, padding: '20px'
         }}>
           <div style={{
-            background: 'white', padding: '40px', borderRadius: '32px', width: '100%', maxWidth: '450px',
+            background: 'var(--bg-card)', padding: '40px', borderRadius: '32px', width: '100%', maxWidth: '450px',
             boxShadow: '0 30px 70px rgba(0,0,0,0.3)', animation: 'modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
               <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>{editingLinkIndex !== null ? 'Edit Button' : 'Add Link Button'}</h3>
-              <button onClick={() => setShowLinkModal(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '10px', padding: '8px', cursor: 'pointer', color: '#64748b' }}>
+              <button onClick={() => setShowLinkModal(false)} style={{ background: 'var(--bg-dark)', border: 'none', borderRadius: '10px', padding: '8px', cursor: 'pointer', color: 'var(--text-muted)' }}>
                 <X size={20} />
               </button>
             </div>
 
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>BUTTON TEXT</label>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '8px' }}>BUTTON TEXT</label>
               <input
                 value={tempLinkTitle}
                 onChange={(e) => setTempLinkTitle(e.target.value)}
@@ -3524,7 +3524,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
             </div>
 
             <div style={{ marginBottom: '32px' }}>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>URL LINK</label>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '8px' }}>URL LINK</label>
               <input
                 value={tempLinkUrl}
                 onChange={(e) => setTempLinkUrl(e.target.value)}
@@ -3536,11 +3536,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
             <div style={{ display: 'flex', gap: '12px' }}>
               <button
                 onClick={handleSaveLink}
-                style={{ flex: 1.5, padding: '16px', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', boxShadow: '0 8px 20px rgba(124, 58, 237, 0.2)' }}
+                style={{ flex: 1.5, padding: '16px', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'var(--bg-card)', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', boxShadow: '0 8px 20px rgba(124, 58, 237, 0.2)' }}
               >
                 Save Button
               </button>
-              <button onClick={() => setShowLinkModal(false)} style={{ flex: 1, padding: '16px', background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => setShowLinkModal(false)} style={{ flex: 1, padding: '16px', background: 'var(--bg-dark)', color: 'var(--text-muted)', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer' }}>Cancel</button>
             </div>
           </div>
         </div>
@@ -3561,7 +3561,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: 'white',
+              background: 'var(--bg-card)',
               borderRadius: '28px',
               padding: '36px 32px',
               maxWidth: '380px',
@@ -3581,19 +3581,19 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
             <h3 style={{ fontSize: '1.3rem', fontWeight: '900', color: '#1e1b4b', margin: '0 0 10px 0' }}>
               Delete Scheduled Post?
             </h3>
-            <p style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: '500', margin: '0 0 28px 0', lineHeight: '1.5' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500', margin: '0 0 28px 0', lineHeight: '1.5' }}>
               This will permanently cancel and remove this scheduled post. This action cannot be undone.
             </p>
             <div style={{ display: 'flex', gap: '12px' }}>
               <button
                 onClick={() => setDeleteConfirmId(null)}
                 style={{
-                  flex: 1, padding: '14px', background: '#f1f5f9', color: '#64748b',
+                  flex: 1, padding: '14px', background: 'var(--bg-dark)', color: 'var(--text-muted)',
                   border: 'none', borderRadius: '14px', fontWeight: '800',
                   cursor: 'pointer', fontSize: '0.9rem', transition: 'all 0.2s'
                 }}
-                onMouseOver={(e) => e.currentTarget.style.background = '#e2e8f0'}
-                onMouseOut={(e) => e.currentTarget.style.background = '#f1f5f9'}
+                onMouseOver={(e) => e.currentTarget.style.background = 'var(--border-subtle)'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'var(--bg-dark)'}
               >
                 Cancel
               </button>
@@ -3602,7 +3602,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                 style={{
                   flex: 1, padding: '14px',
                   background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                  color: 'white', border: 'none', borderRadius: '14px',
+                  color: 'var(--bg-card)', border: 'none', borderRadius: '14px',
                   fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem',
                   boxShadow: '0 8px 20px rgba(239, 68, 68, 0.3)',
                   transition: 'all 0.2s'

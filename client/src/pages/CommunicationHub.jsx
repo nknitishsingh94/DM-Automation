@@ -86,7 +86,7 @@ export default function CommunicationHub() {
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
         borderRadius: '24px',
         padding: '48px',
-        color: 'white',
+        color: 'var(--bg-card)',
         marginBottom: '48px',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
         position: 'relative',
@@ -123,7 +123,7 @@ export default function CommunicationHub() {
         </div>
       </div>
 
-      <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', marginBottom: '24px' }}>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '24px' }}>
         {platforms.filter(p => p.isConnected).length > 0 ? 'Active Channels' : 'Get Started'}
       </h2>
       
@@ -132,7 +132,7 @@ export default function CommunicationHub() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
           {platforms.filter(p => p.isConnected).map(platform => (
             <div key={platform.id} style={{
-              background: 'white',
+              background: 'var(--bg-card)',
               borderRadius: '24px',
               border: '1px solid #e2e8f0',
               padding: '32px',
@@ -150,7 +150,7 @@ export default function CommunicationHub() {
             onMouseOut={e => {
               e.currentTarget.style.transform = 'translateY(0)';
               e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)';
-              e.currentTarget.style.borderColor = '#e2e8f0';
+              e.currentTarget.style.borderColor = 'var(--border-subtle)';
             }}>
               
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
@@ -165,8 +165,8 @@ export default function CommunicationHub() {
                 )}
               </div>
 
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem', fontWeight: '800', color: '#0f172a' }}>{platform.name}</h3>
-              <p style={{ margin: '0 0 24px 0', fontSize: '0.95rem', color: '#64748b', lineHeight: '1.5', minHeight: '44px' }}>
+              <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>{platform.name}</h3>
+              <p style={{ margin: '0 0 24px 0', fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.5', minHeight: '44px' }}>
                 {platform.desc}
               </p>
 
@@ -181,7 +181,7 @@ export default function CommunicationHub() {
                   padding: '12px',
                   borderRadius: '12px',
                   border: 'none',
-                  background: '#f8fafc',
+                  background: 'var(--sidebar-bg)',
                   color: platform.color,
                   fontWeight: '700',
                   fontSize: '0.95rem',
@@ -196,7 +196,7 @@ export default function CommunicationHub() {
                   e.currentTarget.style.background = `${platform.color}11`;
                 }}
                 onMouseOut={e => {
-                  e.currentTarget.style.background = '#f8fafc';
+                  e.currentTarget.style.background = 'var(--sidebar-bg)';
                 }}>
                 Configure AutoOps <ArrowRight size={16} />
               </button>
@@ -205,7 +205,7 @@ export default function CommunicationHub() {
         </div>
       ) : (
         <div style={{
-          background: 'white',
+          background: 'var(--bg-card)',
           borderRadius: '24px',
           border: '1px solid #e2e8f0',
           padding: '48px 32px',
@@ -220,22 +220,22 @@ export default function CommunicationHub() {
           animation: 'fadeIn 0.5s ease-out'
         }}>
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginBottom: '8px' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 10px 15px -3px rgba(16, 185, 129, 0.2)' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)', boxShadow: '0 10px 15px -3px rgba(16, 185, 129, 0.2)' }}>
               <MessageCircle size={28} />
             </div>
-            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.2)' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)', boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.2)' }}>
               <Send size={28} />
             </div>
-            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 10px 15px -3px rgba(139, 92, 246, 0.2)' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)', boxShadow: '0 10px 15px -3px rgba(139, 92, 246, 0.2)' }}>
               <MessageSquare size={28} />
             </div>
           </div>
           
           <div>
-            <h3 style={{ margin: '0 0 12px 0', fontSize: '1.4rem', fontWeight: '800', color: '#0f172a' }}>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)' }}>
               Connect Your Channels
             </h3>
-            <p style={{ margin: 0, fontSize: '1rem', color: '#64748b', lineHeight: '1.6', maxWidth: '460px' }}>
+            <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-muted)', lineHeight: '1.6', maxWidth: '460px' }}>
               You don't have any channels connected to this workspace yet. Link your WhatsApp Business, Telegram Bot, or Discord Bot to start automating.
             </p>
           </div>
@@ -247,7 +247,7 @@ export default function CommunicationHub() {
               borderRadius: '12px',
               border: 'none',
               background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-              color: 'white',
+              color: 'var(--bg-card)',
               fontWeight: '700',
               fontSize: '1rem',
               display: 'flex',

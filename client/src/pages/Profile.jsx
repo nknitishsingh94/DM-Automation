@@ -91,7 +91,7 @@ export default function Profile() {
                 type="text"
                 value={profileData.username}
                 onChange={(e) => setProfileData({ ...profileData, username: e.target.value })}
-                style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '14px', borderRadius: '10px', color: 'var(--text-main)', outline: 'none' }}
+                style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', padding: '14px', borderRadius: '10px', color: 'var(--text-main)', outline: 'none' }}
               />
             </div>
             <div className="input-group">
@@ -101,7 +101,7 @@ export default function Profile() {
                 placeholder="https://example.com/avatar.gif"
                 value={profileData.profilePhoto}
                 onChange={(e) => setProfileData({ ...profileData, profilePhoto: e.target.value })}
-                style={{ width: '100%', background: 'white', border: '1px solid var(--border-subtle)', padding: '14px', borderRadius: '10px', color: 'var(--text-main)', outline: 'none' }}
+                style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', padding: '14px', borderRadius: '10px', color: 'var(--text-main)', outline: 'none' }}
               />
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function Profile() {
               padding: '12px 32px',
               alignSelf: 'flex-start',
               background: 'var(--accent-color)',
-              color: 'white',
+              color: 'var(--bg-card)',
               fontWeight: '600',
               display: 'flex',
               alignItems: 'center',

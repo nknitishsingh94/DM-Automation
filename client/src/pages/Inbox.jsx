@@ -340,7 +340,7 @@ export default function Inbox() {
               onClick={toggleMute}
               style={{
                 background: isBotMuted ? '#ef4444' : '#10b981',
-                color: 'white', border: 'none', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
+                color: 'var(--bg-card)', border: 'none', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
               }}
             >
               {isBotMuted ? '🔇 AI Paused' : '🤖 AI Active'}
@@ -350,7 +350,7 @@ export default function Inbox() {
         <div className="inbox-list">
           <div className="chat-item active" onClick={() => setIsChatViewMobile(true)}>
             <div className="chat-avatar" style={{ 
-              color: 'white', 
+              color: 'var(--bg-card)', 
               background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
               display: 'flex', 
               alignItems: 'center', 
@@ -373,7 +373,7 @@ export default function Inbox() {
         </div>
       </div>
       
-      <div className={`inbox-main ${!isChatViewMobile ? 'mobile-hide' : ''}`} style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'white', minWidth: 0, height: '100%' }}>
+      <div className={`inbox-main ${!isChatViewMobile ? 'mobile-hide' : ''}`} style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', minWidth: 0, height: '100%' }}>
         <div className="chat-header">
           <button 
             onClick={() => setIsChatViewMobile(false)}
@@ -384,7 +384,7 @@ export default function Inbox() {
           </button>
 
           <div className="chat-avatar" style={{ 
-            color: 'white', 
+            color: 'var(--bg-card)', 
             background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
             display: 'flex', 
             alignItems: 'center', 
@@ -431,7 +431,7 @@ export default function Inbox() {
                 top: '100%',
                 right: '0',
                 marginTop: '10px',
-                background: 'white',
+                background: 'var(--bg-card)',
                 border: '1px solid #e5e7eb',
                 borderRadius: '12px',
                 boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
@@ -553,8 +553,8 @@ export default function Inbox() {
 
                 <div className={`message ${isSentByMe ? 'msg-sent' : 'msg-received'}`} 
                      style={{ 
-                       background: msg.sender === 'AI Agent' ? '#f3f0ff' : (isSentByMe ? 'var(--accent-color)' : '#ffffff'),
-                       color: msg.sender === 'AI Agent' ? '#5b21b6' : (isSentByMe ? '#ffffff' : '#111827'), // High contrast Black/White
+                       background: msg.sender === 'AI Agent' ? '#f3f0ff' : (isSentByMe ? 'var(--accent-color)' : 'var(--bg-card)'),
+                       color: msg.sender === 'AI Agent' ? '#5b21b6' : (isSentByMe ? 'var(--bg-card)' : '#111827'), // High contrast Black/White
                        border: isSentByMe ? 'none' : '1px solid #d1d5db',
                        padding: '14px 22px',
                        borderRadius: '22px',
@@ -596,7 +596,7 @@ export default function Inbox() {
                           alignItems: 'center', 
                           gap: '8px', 
                           background: isSentByMe ? 'rgba(255,255,255,0.2)' : 'rgba(139, 92, 246, 0.1)', 
-                          color: isSentByMe ? 'white' : 'var(--accent-color)', 
+                          color: isSentByMe ? 'var(--bg-card)' : 'var(--accent-color)', 
                           padding: '10px 16px', 
                           borderRadius: '12px', 
                           fontSize: '0.85rem', 
@@ -638,7 +638,7 @@ export default function Inbox() {
         <form 
           className="chat-input" 
           onSubmit={handleSendMessage} 
-          style={{ display: 'flex', gap: '8px', alignItems: 'center', padding: '16px', background: '#f8fafc', borderTop: '1px solid var(--border-subtle)', flexWrap: 'wrap' }}
+          style={{ display: 'flex', gap: '8px', alignItems: 'center', padding: '16px', background: 'var(--sidebar-bg)', borderTop: '1px solid var(--border-subtle)', flexWrap: 'wrap' }}
         >
           <div style={{ display: 'flex', gap: '8px', width: '100%', marginBottom: '8px' }} className="mobile-show">
             <select 
@@ -663,7 +663,7 @@ export default function Inbox() {
           <select 
             value={selectedPlatform}
             onChange={(e) => setSelectedPlatform(e.target.value)}
-            style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: '#f8fafc', outline: 'none', cursor: 'pointer' }}
+            style={{ padding: '10px', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'var(--sidebar-bg)', outline: 'none', cursor: 'pointer' }}
           >
             <option value="instagram">IG</option>
             <option value="facebook">FB</option>
@@ -678,7 +678,7 @@ export default function Inbox() {
             autoFocus
             style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid var(--border-subtle)', outline: 'none' }}
           />
-          <button type="submit" className="send-btn" style={{ padding: '12px', borderRadius: '12px', background: 'var(--accent-color)', color: 'white' }}>
+          <button type="submit" className="send-btn" style={{ padding: '12px', borderRadius: '12px', background: 'var(--accent-color)', color: 'var(--bg-card)' }}>
             <Send size={20} />
           </button>
         </form>
@@ -698,7 +698,7 @@ export default function Inbox() {
           padding: '20px'
         }}>
           <div style={{
-            background: 'white',
+            background: 'var(--bg-card)',
             borderRadius: '20px',
             padding: '30px',
             width: '100%',
@@ -731,7 +731,7 @@ export default function Inbox() {
                   padding: '12px',
                   borderRadius: '12px',
                   border: '1px solid #e5e7eb',
-                  background: 'white',
+                  background: 'var(--bg-card)',
                   fontWeight: '600',
                   color: '#374151',
                   cursor: 'pointer'
@@ -748,7 +748,7 @@ export default function Inbox() {
                   border: 'none',
                   background: '#ef4444',
                   fontWeight: '600',
-                  color: 'white',
+                  color: 'var(--bg-card)',
                   cursor: 'pointer'
                 }}
               >

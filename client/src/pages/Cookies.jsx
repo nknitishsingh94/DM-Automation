@@ -105,11 +105,11 @@ export default function Cookies() {
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
 
         {/* ── Hero Header ── */}
-        <div style={{ background: 'white', borderRadius: '40px', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.1)', padding: '60px', marginBottom: '32px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '40px', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.1)', padding: '60px', marginBottom: '32px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '280px', height: '280px', background: 'radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%)', zIndex: 0 }} />
           <div style={{ position: 'absolute', bottom: '-60px', left: '-60px', width: '220px', height: '220px', background: 'radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 70%)', zIndex: 0 }} />
 
-          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#64748b', textDecoration: 'none', marginBottom: '40px', fontWeight: '700', fontSize: '15px', position: 'relative', zIndex: 1 }}>
+          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', textDecoration: 'none', marginBottom: '40px', fontWeight: '700', fontSize: '15px', position: 'relative', zIndex: 1 }}>
             <ArrowLeft size={18} /> Back to Dashboard
           </Link>
 
@@ -117,22 +117,22 @@ export default function Cookies() {
             <div style={{ width: '88px', height: '88px', background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', borderRadius: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 28px', boxShadow: '0 12px 28px rgba(217,119,6,0.3)' }}>
               <Cookie size={44} color="white" />
             </div>
-            <h1 style={{ fontSize: '48px', fontWeight: '900', color: '#0f172a', marginBottom: '12px', letterSpacing: '-2px', lineHeight: 1.1 }}>Cookie Statement</h1>
-            <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: '600', marginBottom: '16px' }}>smart10X, Inc. — Effective Date: April 1, 2026</p>
-            <p style={{ color: '#94a3b8', fontSize: '0.9rem', maxWidth: '620px', margin: '0 auto', lineHeight: '1.7' }}>
+            <h1 style={{ fontSize: '48px', fontWeight: '900', color: 'var(--text-main)', marginBottom: '12px', letterSpacing: '-2px', lineHeight: 1.1 }}>Cookie Statement</h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: '600', marginBottom: '16px' }}>smart10X, Inc. — Effective Date: April 1, 2026</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '620px', margin: '0 auto', lineHeight: '1.7' }}>
               This Cookie Statement explains how smart10X uses cookies and similar tracking technologies when you use our platform. It describes what these technologies are, why we use them, and your rights to control our use of them.
             </p>
           </div>
         </div>
 
         {/* ── What Are Cookies ── */}
-        <div style={{ background: '#0f172a', color: 'white', borderRadius: '24px', padding: '36px 40px', marginBottom: '32px' }}>
+        <div style={{ background: 'var(--text-main)', color: 'var(--bg-card)', borderRadius: '24px', padding: '36px 40px', marginBottom: '32px' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
             <div style={{ width: '48px', height: '48px', background: 'rgba(251,191,36,0.15)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Cookie size={24} color="#fbbf24" />
             </div>
             <div>
-              <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '12px', color: 'white' }}>What Are Cookies?</h2>
+              <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '12px', color: 'var(--bg-card)' }}>What Are Cookies?</h2>
               <p style={{ color: 'rgba(255,255,255,0.75)', lineHeight: '1.75', fontSize: '0.95rem', marginBottom: '12px' }}>
                 Cookies are small text files placed on your device when you visit a website. They serve many purposes — from keeping you logged in to helping us understand how our platform is used. Some cookies are essential for the site to work; others are optional and help us improve your experience.
               </p>
@@ -144,22 +144,22 @@ export default function Cookies() {
         </div>
 
         {/* ── Cookie Categories ── */}
-        <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>Cookie Categories</h2>
-          <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '28px' }}>Click each category to learn more and see which specific cookies we use.</p>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+          <h2 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px' }}>Cookie Categories</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '28px' }}>Click each category to learn more and see which specific cookies we use.</p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {cookieCategories.map(cat => (
-              <div key={cat.id} style={{ border: `1px solid ${openCategory === cat.id ? cat.border : '#e2e8f0'}`, borderRadius: '18px', overflow: 'hidden', transition: 'all 0.3s', boxShadow: openCategory === cat.id ? `0 8px 24px ${cat.color}18` : 'none' }}>
+              <div key={cat.id} style={{ border: `1px solid ${openCategory === cat.id ? cat.border : 'var(--border-subtle)'}`, borderRadius: '18px', overflow: 'hidden', transition: 'all 0.3s', boxShadow: openCategory === cat.id ? `0 8px 24px ${cat.color}18` : 'none' }}>
                 <button onClick={() => setOpenCategory(openCategory === cat.id ? null : cat.id)}
-                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px', background: openCategory === cat.id ? cat.bg : 'white', border: 'none', cursor: 'pointer', textAlign: 'left', transition: 'background 0.3s' }}>
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px', background: openCategory === cat.id ? cat.bg : 'var(--bg-card)', border: 'none', cursor: 'pointer', textAlign: 'left', transition: 'background 0.3s' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: openCategory === cat.id ? 'white' : cat.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', flexShrink: 0 }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: openCategory === cat.id ? 'var(--bg-card)' : cat.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', flexShrink: 0 }}>
                       {cat.icon}
                     </div>
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b' }}>{cat.title}</span>
+                        <span style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-main)' }}>{cat.title}</span>
                         {cat.required && (
                           <span style={{ fontSize: '11px', fontWeight: '700', background: '#dcfce7', color: '#15803d', padding: '2px 10px', borderRadius: '100px', border: '1px solid #bbf7d0' }}>Always Active</span>
                         )}
@@ -169,8 +169,8 @@ export default function Cookies() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     {!cat.required && (
                       <div onClick={e => { e.stopPropagation(); setConsent(prev => ({ ...prev, [cat.id]: !prev[cat.id] })); }}
-                        style={{ width: '44px', height: '24px', borderRadius: '12px', background: consent[cat.id] ? cat.color : '#cbd5e1', cursor: 'pointer', position: 'relative', transition: 'background 0.3s', flexShrink: 0 }}>
-                        <div style={{ width: '18px', height: '18px', background: 'white', borderRadius: '50%', position: 'absolute', top: '3px', left: consent[cat.id] ? '23px' : '3px', transition: 'left 0.3s', boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }} />
+                        style={{ width: '44px', height: '24px', borderRadius: '12px', background: consent[cat.id] ? cat.color : 'var(--border-subtle)', cursor: 'pointer', position: 'relative', transition: 'background 0.3s', flexShrink: 0 }}>
+                        <div style={{ width: '18px', height: '18px', background: 'var(--bg-card)', borderRadius: '50%', position: 'absolute', top: '3px', left: consent[cat.id] ? '23px' : '3px', transition: 'left 0.3s', boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }} />
                       </div>
                     )}
                     <ChevronDown size={18} color="#94a3b8" style={{ transform: openCategory === cat.id ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.3s', flexShrink: 0 }} />
@@ -179,18 +179,18 @@ export default function Cookies() {
 
                 {openCategory === cat.id && (
                   <div style={{ padding: '0 24px 24px', background: cat.bg, borderTop: `1px solid ${cat.border}` }}>
-                    <p style={{ color: '#475569', lineHeight: '1.75', fontSize: '0.93rem', padding: '20px 0 16px', margin: 0 }}>{cat.description}</p>
-                    <div style={{ background: 'white', borderRadius: '14px', border: `1px solid ${cat.border}`, overflow: 'hidden' }}>
+                    <p style={{ color: 'var(--text-muted)', lineHeight: '1.75', fontSize: '0.93rem', padding: '20px 0 16px', margin: 0 }}>{cat.description}</p>
+                    <div style={{ background: 'var(--bg-card)', borderRadius: '14px', border: `1px solid ${cat.border}`, overflow: 'hidden' }}>
                       <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 2fr 100px', gap: '0', background: cat.bg, padding: '10px 20px', borderBottom: `1px solid ${cat.border}` }}>
-                        <span style={{ fontSize: '11px', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Cookie Name</span>
-                        <span style={{ fontSize: '11px', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Purpose</span>
-                        <span style={{ fontSize: '11px', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Duration</span>
+                        <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Cookie Name</span>
+                        <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Purpose</span>
+                        <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Duration</span>
                       </div>
                       {cat.examples.map((ex, i) => (
                         <div key={i} style={{ display: 'grid', gridTemplateColumns: '1.5fr 2fr 100px', gap: '0', padding: '14px 20px', borderBottom: i < cat.examples.length - 1 ? '1px solid #f1f5f9' : 'none', alignItems: 'start' }}>
                           <code style={{ fontSize: '12px', fontWeight: '700', color: cat.color, background: cat.bg, padding: '3px 8px', borderRadius: '6px', width: 'fit-content' }}>{ex.name}</code>
-                          <span style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.5', paddingRight: '12px' }}>{ex.purpose}</span>
-                          <span style={{ fontSize: '12px', fontWeight: '700', color: '#94a3b8', background: '#f8fafc', padding: '3px 10px', borderRadius: '8px', width: 'fit-content' }}>{ex.duration}</span>
+                          <span style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5', paddingRight: '12px' }}>{ex.purpose}</span>
+                          <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', background: 'var(--sidebar-bg)', padding: '3px 10px', borderRadius: '8px', width: 'fit-content' }}>{ex.duration}</span>
                         </div>
                       ))}
                     </div>
@@ -202,8 +202,8 @@ export default function Cookies() {
         </div>
 
         {/* ── How to Control Cookies ── */}
-        <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '20px' }}>How to Control Cookies</h2>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+          <h2 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '20px' }}>How to Control Cookies</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
             {[
               { browser: 'Google Chrome', icon: '🌐', steps: 'Settings → Privacy and Security → Cookies and other site data' },
@@ -211,10 +211,10 @@ export default function Cookies() {
               { browser: 'Apple Safari', icon: '🧭', steps: 'Preferences → Privacy → Manage Website Data' },
               { browser: 'Microsoft Edge', icon: '🔷', steps: 'Settings → Cookies and site permissions → Manage and delete cookies' },
             ].map((b, i) => (
-              <div key={i} style={{ background: '#f8fafc', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0' }}>
+              <div key={i} style={{ background: 'var(--sidebar-bg)', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0' }}>
                 <div style={{ fontSize: '28px', marginBottom: '10px' }}>{b.icon}</div>
-                <h4 style={{ fontSize: '14px', fontWeight: '800', color: '#1e293b', marginBottom: '6px' }}>{b.browser}</h4>
-                <p style={{ fontSize: '12.5px', color: '#64748b', lineHeight: '1.5', margin: 0 }}>{b.steps}</p>
+                <h4 style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '6px' }}>{b.browser}</h4>
+                <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', lineHeight: '1.5', margin: 0 }}>{b.steps}</p>
               </div>
             ))}
           </div>
@@ -237,19 +237,19 @@ export default function Cookies() {
         </div>
 
         {/* ── FAQ Accordion ── */}
-        <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '20px' }}>Frequently Asked Questions</h2>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+          <h2 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '20px' }}>Frequently Asked Questions</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {faqs.map((faq, i) => (
-              <div key={i} style={{ border: `1px solid ${openFaq === i ? '#bfdbfe' : '#f1f5f9'}`, borderRadius: '14px', overflow: 'hidden', transition: 'all 0.3s' }}>
+              <div key={i} style={{ border: `1px solid ${openFaq === i ? '#bfdbfe' : 'var(--bg-dark)'}`, borderRadius: '14px', overflow: 'hidden', transition: 'all 0.3s' }}>
                 <button onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', background: openFaq === i ? '#eff6ff' : 'white', border: 'none', cursor: 'pointer', textAlign: 'left', gap: '12px' }}>
-                  <span style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>{faq.q}</span>
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', background: openFaq === i ? '#eff6ff' : 'var(--bg-card)', border: 'none', cursor: 'pointer', textAlign: 'left', gap: '12px' }}>
+                  <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)' }}>{faq.q}</span>
                   <ChevronDown size={16} color="#94a3b8" style={{ transform: openFaq === i ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.3s', flexShrink: 0 }} />
                 </button>
                 {openFaq === i && (
                   <div style={{ padding: '0 20px 18px', borderTop: '1px solid #bfdbfe', background: '#eff6ff' }}>
-                    <p style={{ color: '#475569', lineHeight: '1.75', fontSize: '0.9rem', margin: '14px 0 0 0' }}>{faq.a}</p>
+                    <p style={{ color: 'var(--text-muted)', lineHeight: '1.75', fontSize: '0.9rem', margin: '14px 0 0 0' }}>{faq.a}</p>
                   </div>
                 )}
               </div>
@@ -258,29 +258,29 @@ export default function Cookies() {
         </div>
 
         {/* ── Contact ── */}
-        <div style={{ background: 'white', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
-          <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>Questions About Our Cookie Use?</h3>
-          <p style={{ color: '#64748b', marginBottom: '28px', fontSize: '0.95rem', maxWidth: '500px', margin: '0 auto 28px' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+          <h3 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '12px' }}>Questions About Our Cookie Use?</h3>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '0.95rem', maxWidth: '500px', margin: '0 auto 28px' }}>
             If you have any questions about how smart10X uses cookies or this Cookie Statement, please contact our Privacy team.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
-            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(217,119,6,0.25)' }}>
+            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'var(--bg-card)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(217,119,6,0.25)' }}>
               <Mail size={18} /> smart10x.support@gmail.com
             </a>
-            <Link to="/privacy" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#f8fafc', color: '#1e293b', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid #e2e8f0' }}>
+            <Link to="/privacy" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid #e2e8f0' }}>
               Privacy Policy
             </Link>
-            <Link to="/terms" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#f8fafc', color: '#1e293b', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid #e2e8f0' }}>
+            <Link to="/terms" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid #e2e8f0' }}>
               Terms of Service
             </Link>
           </div>
         </div>
 
-        <footer style={{ textAlign: 'center', marginTop: '40px', color: '#94a3b8', fontSize: '14px', fontWeight: '600' }}>
+        <footer style={{ textAlign: 'center', marginTop: '40px', color: 'var(--text-muted)', fontSize: '14px', fontWeight: '600' }}>
           © 2026 smart10X AI. All rights reserved. ·{' '}
-          <Link to="/privacy" style={{ color: '#94a3b8', textDecoration: 'none' }}>Privacy Policy</Link>
+          <Link to="/privacy" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Privacy Policy</Link>
           {' · '}
-          <Link to="/terms" style={{ color: '#94a3b8', textDecoration: 'none' }}>Terms of Service</Link>
+          <Link to="/terms" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Terms of Service</Link>
         </footer>
       </div>
     </div>

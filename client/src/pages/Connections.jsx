@@ -601,7 +601,7 @@ export default function Connections() {
               onClick={() => setShowConnectModal(true)}
               style={{ 
                 background: '#7c3aed', 
-                color: 'white', 
+                color: 'var(--bg-card)', 
                 padding: '10px 20px', 
                 borderRadius: '8px', 
                 fontWeight: '600', 
@@ -644,7 +644,7 @@ export default function Connections() {
             <button 
               onClick={() => setShowPlatformDropdown(!showPlatformDropdown)}
               style={{ 
-                background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '8px 16px', 
+                background: 'var(--bg-card)', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '8px 16px', 
                 fontSize: '0.88rem', color: '#374151', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: '150px', justifyContent: 'space-between'
               }}
             >
@@ -676,7 +676,7 @@ export default function Connections() {
             <button 
               onClick={() => setShowStatusDropdown(!showStatusDropdown)}
               style={{ 
-                background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '8px 16px', 
+                background: 'var(--bg-card)', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '8px 16px', 
                 fontSize: '0.88rem', color: '#374151', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: '130px', justifyContent: 'space-between'
               }}
             >
@@ -718,7 +718,7 @@ export default function Connections() {
 
       {/* Main Connection Table Card (matches screenshot empty slots or renders connected card) */}
       <div style={{ 
-        background: '#ffffff', 
+        background: 'var(--bg-card)', 
         borderRadius: '12px', 
         border: '1px solid #e5e7eb', 
         boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
@@ -740,7 +740,7 @@ export default function Connections() {
 
             {/* ---- INSTAGRAM CARD ---- */}
             {settings.isAccountConnected && (platformFilter === 'All platforms' || platformFilter === 'Instagram') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#fdf2f8', border: '1px solid #fce7f3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -748,7 +748,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Instagram</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Instagram connected`, 'info')} />
@@ -762,9 +762,9 @@ export default function Connections() {
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); window.open(`https://instagram.com/${settings.connectedInstagramName || ''}`, '_blank'); }}
-                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
-                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
+                  onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
                   Profile
                 </button>
@@ -780,7 +780,7 @@ export default function Connections() {
 
             {/* ---- FACEBOOK CARD ---- */}
             {settings.isFacebookConnected && (platformFilter === 'All platforms' || platformFilter === 'Facebook') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#eff6ff', border: '1px solid #dbeafe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -788,7 +788,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Facebook</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Facebook connected`, 'info')} />
@@ -802,9 +802,9 @@ export default function Connections() {
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); window.open(`https://facebook.com/${settings.facebookPageId || settings.connectedFacebookName || ''}`, '_blank'); }}
-                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
-                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
+                  onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
                   Profile
                 </button>
@@ -820,7 +820,7 @@ export default function Connections() {
 
             {/* ---- YOUTUBE CARD ---- */}
             {settings.isYouTubeConnected && (platformFilter === 'All platforms' || platformFilter === 'YouTube') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#fef2f2', border: '1px solid #fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -828,7 +828,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>YouTube</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`YouTube: Channel ID ${settings.youtubeChannelId || 'N/A'}`, 'info')} />
@@ -852,9 +852,9 @@ export default function Connections() {
                     const cleanName = name.startsWith('@') ? name.substring(1) : name;
                     window.open(`https://youtube.com/@${cleanName}`, '_blank');
                   }}
-                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
-                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
+                  onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
                   Profile
                 </button>
@@ -870,7 +870,7 @@ export default function Connections() {
 
             {/* ---- LINKEDIN CARD ---- */}
             {settings.isLinkedInConnected && (platformFilter === 'All platforms' || platformFilter === 'LinkedIn') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#eff6ff', border: '1px solid #dbeafe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -878,7 +878,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>LinkedIn</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`LinkedIn connected`, 'info')} />
@@ -896,9 +896,9 @@ export default function Connections() {
                     const vanityName = (settings.connectedLinkedInName || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
                     window.open(`https://www.linkedin.com/in/${vanityName}`, '_blank'); 
                   }}
-                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
-                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
+                  onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
                   Profile
                 </button>
@@ -914,15 +914,15 @@ export default function Connections() {
 
             {/* ---- TWITTER/X CARD ---- */}
             {settings.isTwitterConnected && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#f1f5f9', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'var(--bg-dark)', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Twitter size={22} color="#0f1419" />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Twitter / X</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Twitter connected`, 'info')} />
@@ -936,9 +936,9 @@ export default function Connections() {
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); window.open(`https://x.com/${settings.connectedTwitterName || ''}`, '_blank'); }}
-                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
-                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
+                  onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
                   Profile
                 </button>
@@ -954,7 +954,7 @@ export default function Connections() {
 
             {/* ---- GOOGLE BUSINESS CARD ---- */}
             {settings.isGoogleBusinessConnected && (platformFilter === 'All platforms' || platformFilter === 'Google Business') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#eff6ff', border: '1px solid #dbeafe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -962,7 +962,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Google Business</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Google Business connected`, 'info')} />
@@ -976,9 +976,9 @@ export default function Connections() {
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); window.open('https://business.google.com', '_blank'); }}
-                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
-                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
+                  onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
                   Profile
                 </button>
@@ -996,7 +996,7 @@ export default function Connections() {
 
             {/* ---- PINTEREST CARD ---- */}
             {settings.isPinterestConnected && (platformFilter === 'All platforms' || platformFilter === 'Pinterest') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#fef2f2', border: '1px solid #fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1004,7 +1004,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Pinterest</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Pinterest connected`, 'info')} />
@@ -1018,9 +1018,9 @@ export default function Connections() {
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); window.open(`https://pinterest.com/${settings.connectedPinterestName || ''}`, '_blank'); }}
-                  style={{ flex: 1, padding: '10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
-                  onMouseOut={(e) => e.currentTarget.style.background='#f8fafc'}
+                  style={{ flex: 1, padding: '10px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
+                  onMouseOut={(e) => e.currentTarget.style.background='var(--sidebar-bg)'}
                 >
                   Profile
                 </button>
@@ -1036,7 +1036,7 @@ export default function Connections() {
 
             {/* ---- THREADS CARD ---- */}
             {settings.isThreadsConnected && (platformFilter === 'All platforms' || platformFilter === 'Threads') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
-            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+            <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#f3f4f6', border: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1044,7 +1044,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Threads</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Threads connected`, 'info')} />
@@ -1058,9 +1058,9 @@ export default function Connections() {
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); window.open(`https://threads.net/@${settings.connectedThreadsName || settings.connectedInstagramName || ''}`, '_blank'); }}
-                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.background='#e2e8f0'}
-                  onMouseOut={(e) => e.currentTarget.style.background='#f1f5f9'}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
+                  onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
                   Profile
                 </button>
@@ -1083,7 +1083,7 @@ export default function Connections() {
             <div style={{ marginTop: hasSocialConnected ? '32px' : '0px' }}>
               <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#111827', marginBottom: '16px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>Communication Channels</h3>
               <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'stretch' }}>
-                <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+                <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: '#f0fdf4', border: '1px solid #dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1091,7 +1091,7 @@ export default function Connections() {
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                         <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>WhatsApp</h4>
-                        <span style={{ display: 'inline-block', background: '#10b981', color: '#ffffff', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                        <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                       </div>
                     </div>
                     <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`WhatsApp connected`, 'info')} />
@@ -1127,7 +1127,7 @@ export default function Connections() {
             <button 
               onClick={() => setShowConnectModal(true)}
               style={{ 
-                background: 'white', 
+                background: 'var(--bg-card)', 
                 color: '#374151', 
                 padding: '8px 16px', 
                 borderRadius: '8px', 
@@ -1161,7 +1161,7 @@ export default function Connections() {
           animation: 'fadeIn 0.2s ease-out'
         }}>
           <div style={{ 
-            background: 'white', borderRadius: '20px', width: '100%', maxWidth: '640px', 
+            background: 'var(--bg-card)', borderRadius: '20px', width: '100%', maxWidth: '640px', 
             padding: '32px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             border: '1px solid #e5e7eb', position: 'relative', margin: '20px',
             animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -1222,7 +1222,7 @@ export default function Connections() {
                     width: '42px', height: '42px', borderRadius: '12px', 
                     background: platform.enabled ? 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)' : '#e5e7eb',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    margin: '0 auto 12px auto', color: platform.enabled ? 'white' : '#9ca3af'
+                    margin: '0 auto 12px auto', color: platform.enabled ? 'var(--bg-card)' : '#9ca3af'
                   }}>
                     <platform.icon size={22} />
                   </div>
@@ -1234,7 +1234,7 @@ export default function Connections() {
                   {platform.enabled ? (
                     <span style={{ 
                       position: 'absolute', top: '-8px', right: '10px', 
-                      background: '#ec4899', color: 'white', fontSize: '0.62rem', 
+                      background: '#ec4899', color: 'var(--bg-card)', fontSize: '0.62rem', 
                       padding: '2px 8px', borderRadius: '10px', fontWeight: '800',
                       boxShadow: '0 2px 4px rgba(236,72,153,0.2)'
                     }}>
@@ -1264,7 +1264,7 @@ export default function Connections() {
           animation: 'fadeIn 0.2s ease-out'
         }}>
           <div style={{ 
-            background: 'white', borderRadius: '24px', width: '100%', maxWidth: '500px', 
+            background: 'var(--bg-card)', borderRadius: '24px', width: '100%', maxWidth: '500px', 
             padding: '36px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             border: '1px solid #e2e8f0', position: 'relative', margin: '20px',
             animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -1272,28 +1272,28 @@ export default function Connections() {
             {/* Close Button */}
             <button 
               onClick={() => setShowTelegramModal(false)}
-              style={{ position: 'absolute', top: '24px', right: '24px', background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '6px', borderRadius: '50%' }}
-              onMouseOver={(e) => e.currentTarget.style.color = '#1e293b'}
-              onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}
+              style={{ position: 'absolute', top: '24px', right: '24px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '6px', borderRadius: '50%' }}
+              onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-main)'}
+              onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
             >
               <X size={20} />
             </button>
 
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)' }}>
                 <Send size={24} />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>Connect Telegram Bot</h3>
-                <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '500' }}>Community & Bot Engagement</span>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>Connect Telegram Bot</h3>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>Community & Bot Engagement</span>
               </div>
             </div>
 
             {/* Instructions */}
-            <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '16px', border: '1px solid #e2e8f0', marginBottom: '24px' }}>
+            <div style={{ background: 'var(--sidebar-bg)', borderRadius: '16px', padding: '16px', border: '1px solid #e2e8f0', marginBottom: '24px' }}>
               <h4 style={{ margin: '0 0 8px 0', fontSize: '0.85rem', fontWeight: '700', color: '#334155' }}>How to get a Bot Token:</h4>
-              <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.82rem', color: '#475569', lineHeight: '1.6' }}>
+              <ol style={{ margin: 0, paddingLeft: '20px', fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
                 <li>Open Telegram and start a chat with <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6', fontWeight: '700', textDecoration: 'underline' }}>@BotFather</a></li>
                 <li>Send the command <strong>/newbot</strong> to create your bot</li>
                 <li>Choose a display name and a unique username</li>
@@ -1303,7 +1303,7 @@ export default function Connections() {
 
             {/* Token Input */}
             <div style={{ marginBottom: '24px' }}>
-              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: '800', color: '#475569', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>
                 Telegram Bot Token
               </label>
               <input
@@ -1318,11 +1318,11 @@ export default function Connections() {
                   border: '1.5px solid #e2e8f0',
                   outline: 'none',
                   fontSize: '0.9rem',
-                  color: '#0f172a',
+                  color: 'var(--text-main)',
                   transition: 'border-color 0.2s'
                 }}
                 onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--border-subtle)'}
               />
             </div>
 
@@ -1335,13 +1335,13 @@ export default function Connections() {
                   borderRadius: '12px',
                   border: '1.5px solid #cbd5e1',
                   background: 'transparent',
-                  color: '#475569',
+                  color: 'var(--text-muted)',
                   fontWeight: '700',
                   fontSize: '0.9rem',
                   cursor: 'pointer',
                   transition: 'background 0.2s'
                 }}
-                onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
+                onMouseOver={(e) => e.currentTarget.style.background = 'var(--bg-dark)'}
                 onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
               >
                 Cancel
@@ -1361,7 +1361,7 @@ export default function Connections() {
                   borderRadius: '12px',
                   border: 'none',
                   background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                  color: 'white',
+                  color: 'var(--bg-card)',
                   fontWeight: '700',
                   fontSize: '0.9rem',
                   cursor: 'pointer',
@@ -1387,18 +1387,18 @@ export default function Connections() {
           animation: 'fadeIn 0.2s ease-out'
         }}>
           <div style={{ 
-            background: '#f8fafc', borderRadius: '16px', width: '100%', maxWidth: '580px', 
+            background: 'var(--sidebar-bg)', borderRadius: '16px', width: '100%', maxWidth: '580px', 
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             border: '1px solid #e2e8f0', position: 'relative', margin: '20px',
             overflow: 'hidden', animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
             display: 'flex', flexDirection: 'column'
           }}>
-            <div style={{ padding: '24px', background: 'white', borderBottom: '1px solid #e2e8f0' }}>
+            <div style={{ padding: '24px', background: 'var(--bg-card)', borderBottom: '1px solid #e2e8f0' }}>
               <button 
                 onClick={() => setSelectedSettingsPlatform(null)}
-                style={{ position: 'absolute', top: '24px', right: '24px', background: '#f1f5f9', border: 'none', color: '#64748b', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
-                onMouseOver={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.background = '#e2e8f0'; }}
-                onMouseOut={(e) => { e.currentTarget.style.color = '#64748b'; e.currentTarget.style.background = '#f1f5f9'; }}
+                style={{ position: 'absolute', top: '24px', right: '24px', background: 'var(--bg-dark)', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
+                onMouseOver={(e) => { e.currentTarget.style.color = 'var(--text-main)'; e.currentTarget.style.background = 'var(--border-subtle)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'var(--bg-dark)'; }}
               >
                 <X size={18} />
               </button>
@@ -1407,25 +1407,25 @@ export default function Connections() {
                 <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: `${selectedSettingsPlatform.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Activity size={20} color={selectedSettingsPlatform.color} />
                 </div>
-                <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#0f172a', margin: 0 }}>{selectedSettingsPlatform.name} settings</h2>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>{selectedSettingsPlatform.name} settings</h2>
               </div>
-              <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0, paddingLeft: '52px' }}>Manage your {selectedSettingsPlatform.name} account connection and messaging preferences.</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0, paddingLeft: '52px' }}>Manage your {selectedSettingsPlatform.name} account connection and messaging preferences.</p>
             </div>
 
             <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
               {/* Account Connection Section */}
-              <div style={{ background: 'white', borderRadius: '12px', padding: '20px', border: '1px solid #e2e8f0' }}>
-                <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#0f172a', margin: '0 0 6px 0' }}>Account connection</h3>
-                <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '0 0 20px 0' }}>Your connected {selectedSettingsPlatform.name} account and connection status.</p>
+              <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '20px', border: '1px solid #e2e8f0' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 6px 0' }}>Account connection</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 20px 0' }}>Your connected {selectedSettingsPlatform.name} account and connection status.</p>
                 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#f1f5f9', color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: '700' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--bg-dark)', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: '700' }}>
                       {selectedSettingsPlatform.username ? selectedSettingsPlatform.username.substring(0, 2).toUpperCase() : 'UI'}
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.9rem', fontWeight: '600', color: '#0f172a' }}>Connected account</div>
+                      <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--text-main)' }}>Connected account</div>
                       <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#334155', marginTop: '2px' }}>
                         {selectedSettingsPlatform.username && !selectedSettingsPlatform.username.startsWith('@') ? '@' : ''}{selectedSettingsPlatform.username || 'unknown'}
                       </div>
@@ -1457,7 +1457,7 @@ export default function Connections() {
                         triggerConnect(selectedSettingsPlatform.id);
                         setSelectedSettingsPlatform(null);
                       }}
-                      style={{ background: '#3b82f6', border: '1px solid #2563eb', borderRadius: '8px', padding: '8px 16px', color: '#ffffff', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
+                      style={{ background: '#3b82f6', border: '1px solid #2563eb', borderRadius: '8px', padding: '8px 16px', color: 'var(--bg-card)', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
                       onMouseOver={(e) => { e.currentTarget.style.background = '#2563eb'; }}
                       onMouseOut={(e) => { e.currentTarget.style.background = '#3b82f6'; }}
                     >
@@ -1468,17 +1468,17 @@ export default function Connections() {
 
                 {selectedSettingsPlatform.id === 'linkedin' && settings.linkedinPages && Array.isArray(settings.linkedinPages) && (
                   <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #f1f5f9' }}>
-                    <div style={{ fontSize: '0.9rem', fontWeight: '700', color: '#0f172a', marginBottom: '12px' }}>
+                    <div style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '12px' }}>
                       Discovered targets (Profiles & Pages):
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '10px', maxHeight: '200px', overflowY: 'auto', paddingRight: '4px' }}>
                       {settings.linkedinPages.map(page => (
-                        <div key={page.urn} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                        <div key={page.urn} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--sidebar-bg)', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <div style={{ fontSize: '1.2rem' }}>{page.type === 'profile' ? '👤' : '🏢'}</div>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#1e293b' }}>{page.name}</span>
-                              <span style={{ fontSize: '0.65rem', color: '#64748b', wordBreak: 'break-all' }}>{page.urn}</span>
+                              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)' }}>{page.name}</span>
+                              <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', wordBreak: 'break-all' }}>{page.urn}</span>
                             </div>
                           </div>
                           <span style={{ fontSize: '0.65rem', padding: '2px 8px', borderRadius: '6px', background: page.type === 'profile' ? '#eff6ff' : '#f0fdf4', color: page.type === 'profile' ? '#1d4ed8' : '#15803d', fontWeight: '700' }}>
@@ -1493,17 +1493,17 @@ export default function Connections() {
 
               {/* Automation Channel Section */}
               {['instagram', 'facebook', 'whatsapp'].includes(selectedSettingsPlatform.id) && (
-                <div style={{ background: 'white', borderRadius: '12px', padding: '20px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '20px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#0f172a', margin: '0 0 6px 0' }}>{selectedSettingsPlatform.name} channel</h3>
-                    <p style={{ color: '#64748b', fontSize: '0.85rem', margin: 0 }}>
+                    <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 6px 0' }}>{selectedSettingsPlatform.name} channel</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>
                       {selectedSettingsPlatform.isAutomationEnabled ? 'Channel is active and receiving messages' : 'Channel is currently paused'}
                     </p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <span style={{ 
-                      background: selectedSettingsPlatform.isAutomationEnabled ? '#dcfce7' : '#f1f5f9', 
-                      color: selectedSettingsPlatform.isAutomationEnabled ? '#166534' : '#64748b', 
+                      background: selectedSettingsPlatform.isAutomationEnabled ? '#dcfce7' : 'var(--bg-dark)', 
+                      color: selectedSettingsPlatform.isAutomationEnabled ? '#166534' : 'var(--text-muted)', 
                       padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700' 
                     }}>
                       {selectedSettingsPlatform.isAutomationEnabled ? 'Enabled' : 'Disabled'}
@@ -1514,9 +1514,9 @@ export default function Connections() {
                         setSelectedSettingsPlatform({ ...selectedSettingsPlatform, isAutomationEnabled: newVal });
                         handleSaveSettings(null, { ...settings, [`${selectedSettingsPlatform.id}AutomationEnabled`]: newVal }, selectedSettingsPlatform.id);
                       }}
-                      style={{ background: 'white', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 16px', color: '#334155', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
-                      onMouseOver={(e) => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#94a3b8'; }}
-                      onMouseOut={(e) => { e.currentTarget.style.background = 'white', e.currentTarget.style.borderColor = '#bd5e1'; }}
+                      style={{ background: 'var(--bg-card)', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 16px', color: '#334155', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
+                      onMouseOver={(e) => { e.currentTarget.style.background = 'var(--sidebar-bg)'; e.currentTarget.style.borderColor = 'var(--text-muted)'; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background = 'var(--bg-card)', e.currentTarget.style.borderColor = '#bd5e1'; }}
                     >
                       <Sliders size={16} /> {selectedSettingsPlatform.isAutomationEnabled ? 'Disable channel' : 'Enable channel'}
                     </button>
@@ -1534,9 +1534,9 @@ export default function Connections() {
                 </div>
                 <button 
                   onClick={() => handleRemoveAccount(selectedSettingsPlatform.id)}
-                  style={{ background: 'white', border: '1px solid #fecaca', borderRadius: '8px', padding: '8px 16px', color: '#e11d48', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap', transition: 'all 0.2s' }}
+                  style={{ background: 'var(--bg-card)', border: '1px solid #fecaca', borderRadius: '8px', padding: '8px 16px', color: '#e11d48', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap', transition: 'all 0.2s' }}
                   onMouseOver={(e) => { e.currentTarget.style.background = '#fff5f5'; e.currentTarget.style.borderColor = '#fca5a5'; }}
-                  onMouseOut={(e) => { e.currentTarget.style.background = 'white', e.currentTarget.style.borderColor = '#fecaca'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.background = 'var(--bg-card)', e.currentTarget.style.borderColor = '#fecaca'; }}
                 >
                   <Trash2 size={16} /> Remove account
                 </button>

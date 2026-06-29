@@ -62,7 +62,7 @@ const TwitterTest = () => {
       <div style={{ marginBottom: '30px', display: 'flex', gap: '15px' }}>
         <button 
           onClick={handleConnect}
-          style={{ padding: '10px 20px', backgroundColor: '#1DA1F2', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
+          style={{ padding: '10px 20px', backgroundColor: '#1DA1F2', color: 'var(--bg-card)', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
         >
           1. Connect Twitter
         </button>
@@ -78,7 +78,7 @@ const TwitterTest = () => {
         <button 
           onClick={handlePostTweet}
           disabled={loading || !tweetText.trim()}
-          style={{ padding: '10px 20px', backgroundColor: loading ? '#ccc' : '#1DA1F2', color: 'white', border: 'none', borderRadius: '5px', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
+          style={{ padding: '10px 20px', backgroundColor: loading ? '#ccc' : '#1DA1F2', color: 'var(--bg-card)', border: 'none', borderRadius: '5px', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
         >
           {loading ? 'Posting...' : 'Post Test Tweet'}
         </button>

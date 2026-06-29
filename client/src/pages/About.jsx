@@ -23,7 +23,7 @@ export default function About() {
           <div className="header-logo">
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
               <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="smart10X Logo" style={{ width: '32px', height: '32px' }} />
-              <span className="logo-text" style={{ color: '#0f172a' }}>smart10X</span>
+              <span className="logo-text" style={{ color: 'var(--text-main)' }}>smart10X</span>
             </Link>
           </div>
           <nav className="header-nav">

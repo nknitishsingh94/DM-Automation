@@ -1,7 +1,7 @@
 import React from 'react';
 import './TypingDots.css';
 
-export default function TypingDots({ size = 6, color = '#cbd5e1', interval = 1500 }) {
+export default function TypingDots({ size = 6, color = 'var(--border-subtle)', interval = 1500 }) {
   const dotStyle = {
     width: size,
     height: size,

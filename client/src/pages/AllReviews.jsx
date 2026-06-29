@@ -43,14 +43,14 @@ export default function AllReviews() {
   return (
     <div className="all-reviews-page" style={{ 
       minHeight: '100vh', 
-      background: '#f8fafc',
+      background: 'var(--sidebar-bg)',
       display: 'flex',
       flexDirection: 'column'
     }}>
       
       {/* Navigation Top Bar */}
       <nav style={{
-        background: '#ffffff',
+        background: 'var(--bg-card)',
         borderBottom: '1px solid #e2e8f0',
         padding: '16px 24px',
         position: 'sticky',
@@ -69,20 +69,20 @@ export default function AllReviews() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            color: '#64748b',
+            color: 'var(--text-muted)',
             fontWeight: '600',
             fontSize: '0.95rem',
             transition: 'color 0.2s'
           }}
           onMouseOver={(e) => e.currentTarget.style.color = '#7c3aed'}
-          onMouseOut={(e) => e.currentTarget.style.color = '#64748b'}
+          onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
           >
             <ArrowLeft size={18} /> Back to Home
           </Link>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="Logo" style={{ height: '24px' }} onError={(e) => { e.target.style.display = 'none'; }} />
-            <span style={{ fontWeight: '800', color: '#0f172a', fontSize: '1.1rem', letterSpacing: '-0.3px' }}>smart10X</span>
+            <span style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '1.1rem', letterSpacing: '-0.3px' }}>smart10X</span>
           </div>
         </div>
       </nav>
@@ -90,7 +90,7 @@ export default function AllReviews() {
       {/* Header Section */}
       <header style={{
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-        color: '#ffffff',
+        color: 'var(--bg-card)',
         padding: '80px 24px',
         textAlign: 'center',
         position: 'relative',
@@ -137,7 +137,7 @@ export default function AllReviews() {
           
           <p style={{
             fontSize: '1.2rem',
-            color: '#94a3b8',
+            color: 'var(--text-muted)',
             maxWidth: '600px',
             margin: '0 auto',
             lineHeight: '1.6'
@@ -159,14 +159,14 @@ export default function AllReviews() {
         {loading ? (
           <LoadingSpinner minHeight="200px" size={40} />
         ) : reviews.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '80px 20px', background: '#ffffff', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
-            <p style={{ color: '#64748b', fontSize: '1.1rem', fontWeight: '500' }}>No reviews submitted yet. Be the first to share your experience!</p>
+          <div style={{ textAlign: 'center', padding: '80px 20px', background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: '500' }}>No reviews submitted yet. Be the first to share your experience!</p>
             <Link to="/write-review" style={{
               marginTop: '16px',
               display: 'inline-flex',
               padding: '12px 24px',
               background: 'linear-gradient(135deg, #7c3aed, #db2777)',
-              color: 'white',
+              color: 'var(--bg-card)',
               borderRadius: '12px',
               fontWeight: '700',
               textDecoration: 'none'
@@ -184,7 +184,7 @@ export default function AllReviews() {
               <div 
                 key={review.id || review._id || Math.random()} 
                 style={{
-                  background: '#ffffff',
+                  background: 'var(--bg-card)',
                   border: '1px solid rgba(226, 232, 240, 0.8)',
                   borderRadius: '24px',
                   padding: '32px',
@@ -254,7 +254,7 @@ export default function AllReviews() {
                     {review.avatarUrl ? (
                       <img referrerPolicy="no-referrer" src={getSafeImageUrl(review.avatarUrl)} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                      <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.9rem' }}>
+                      <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.9rem' }}>
                         {(review.name || 'U').split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase()}
                       </div>
                     )}
@@ -264,7 +264,7 @@ export default function AllReviews() {
                         bottom: 0,
                         right: 0,
                         background: '#22c55e',
-                        color: 'white',
+                        color: 'var(--bg-card)',
                         width: '14px',
                         height: '14px',
                         borderRadius: '50%',
@@ -278,9 +278,9 @@ export default function AllReviews() {
                     )}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                    <span style={{ fontSize: '0.95rem', fontWeight: '700', color: '#0f172a' }}>{review.name}</span>
-                    <span style={{ fontSize: '0.8rem', color: '#64748b' }}>{review.handle || `@${review.name.toLowerCase().replace(/\s+/g, '')}`}</span>
-                    <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: '600', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{review.role}</span>
+                    <span style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-main)' }}>{review.name}</span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{review.handle || `@${review.name.toLowerCase().replace(/\s+/g, '')}`}</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{review.role}</span>
                   </div>
                 </div>
               </div>

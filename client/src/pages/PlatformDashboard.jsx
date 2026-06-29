@@ -32,12 +32,12 @@ const PlatformDashboard = () => {
           <button 
             onClick={() => navigate('/hub')}
             style={{ 
-              background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '10px', 
-              cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'var(--bg-dark)', border: 'none', borderRadius: '12px', padding: '10px', 
+              cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center',
               transition: 'all 0.2s'
             }}
-            onMouseOver={e => e.currentTarget.style.background = '#e2e8f0'}
-            onMouseOut={e => e.currentTarget.style.background = '#f1f5f9'}
+            onMouseOver={e => e.currentTarget.style.background = 'var(--border-subtle)'}
+            onMouseOut={e => e.currentTarget.style.background = 'var(--bg-dark)'}
           >
             <ArrowLeft size={20} />
           </button>
@@ -48,8 +48,8 @@ const PlatformDashboard = () => {
             </svg>
           </div>
           <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#0f172a', margin: 0 }}>Threads Workspace</h1>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b', fontWeight: '500' }}>Manage automations specifically for Threads</p>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--text-main)', margin: 0 }}>Threads Workspace</h1>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '500' }}>Manage automations specifically for Threads</p>
           </div>
         </div>
 
@@ -60,7 +60,7 @@ const PlatformDashboard = () => {
           justifyContent: 'center' 
         }}>
           <div style={{
-            background: 'white',
+            background: 'var(--bg-card)',
             borderRadius: '20px',
             border: '1px solid #fee2e2',
             padding: '32px',
@@ -86,10 +86,10 @@ const PlatformDashboard = () => {
                 <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
             </div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px' }}>
               Threads Not Connected
             </h2>
-            <p style={{ color: '#64748b', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '20px' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '20px' }}>
               Your Threads account is not connected. Please connect your Threads account to manage posts and automations.
             </p>
             <button 
@@ -97,7 +97,7 @@ const PlatformDashboard = () => {
               style={{
                 padding: '12px 24px',
                 background: '#000000',
-                color: 'white',
+                color: 'var(--bg-card)',
                 border: 'none',
                 borderRadius: '12px',
                 fontWeight: '700',
@@ -127,12 +127,12 @@ const PlatformDashboard = () => {
         <button 
           onClick={() => navigate('/hub')}
           style={{ 
-            background: '#f1f5f9', border: 'none', borderRadius: '12px', padding: '10px', 
-            cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'var(--bg-dark)', border: 'none', borderRadius: '12px', padding: '10px', 
+            cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center',
             transition: 'all 0.2s'
           }}
-          onMouseOver={e => e.currentTarget.style.background = '#e2e8f0'}
-          onMouseOut={e => e.currentTarget.style.background = '#f1f5f9'}
+          onMouseOver={e => e.currentTarget.style.background = 'var(--border-subtle)'}
+          onMouseOut={e => e.currentTarget.style.background = 'var(--bg-dark)'}
         >
           <ArrowLeft size={20} />
         </button>
@@ -142,8 +142,8 @@ const PlatformDashboard = () => {
         </div>
         
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#0f172a', margin: 0 }}>{details.name} Workspace</h1>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b', fontWeight: '500' }}>Manage automations specifically for {details.name}</p>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--text-main)', margin: 0 }}>{details.name} Workspace</h1>
+          <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '500' }}>Manage automations specifically for {details.name}</p>
         </div>
       </div>
 

@@ -178,17 +178,17 @@ export default function WhatsAppDashboard() {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #f0f9ff 100%)', fontFamily: "'Inter', sans-serif" }}>
 
       {/* Header */}
-      <div style={{ background: 'white', borderBottom: '1px solid #e2e8f0', padding: '0 24px', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+      <div style={{ background: 'var(--bg-card)', borderBottom: '1px solid #e2e8f0', padding: '0 24px', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '16px', height: '64px' }}>
-          <button onClick={() => navigate(-1)} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#475569', transition: 'all 0.2s' }}>
+          <button onClick={() => navigate(-1)} style={{ background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)', transition: 'all 0.2s' }}>
             <ArrowLeft size={20} />
           </button>
           <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: WA_GREEN, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <MessageSquare size={22} color="white" fill="white" />
           </div>
           <div>
-            <h1 style={{ margin: 0, fontSize: '1.3rem', fontWeight: '800', color: '#0f172a' }}>WhatsApp Automation</h1>
-            <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>Keyword triggers, auto-replies & smart flows</p>
+            <h1 style={{ margin: 0, fontSize: '1.3rem', fontWeight: '800', color: 'var(--text-main)' }}>WhatsApp Automation</h1>
+            <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>Keyword triggers, auto-replies & smart flows</p>
           </div>
 
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -202,7 +202,7 @@ export default function WhatsAppDashboard() {
                 <AlertCircle size={14} /> Connect WhatsApp
               </button>
             )}
-            <button onClick={() => setShowCreate(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: WA_GREEN, color: 'white', border: 'none', borderRadius: '12px', padding: '10px 20px', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', boxShadow: `0 4px 12px rgba(37,211,102,0.3)` }}>
+            <button onClick={() => setShowCreate(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: WA_GREEN, color: 'var(--bg-card)', border: 'none', borderRadius: '12px', padding: '10px 20px', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', boxShadow: `0 4px 12px rgba(37,211,102,0.3)` }}>
               <Plus size={18} /> New Automation
             </button>
           </div>
@@ -218,13 +218,13 @@ export default function WhatsAppDashboard() {
             { label: 'Active', value: stats.active, icon: <CheckCircle size={20} />, color: WA_GREEN, bg: WA_BG },
             { label: 'Paused', value: stats.paused, icon: <Clock size={20} />, color: '#f59e0b', bg: '#fffbeb' },
           ].map((stat, i) => (
-            <div key={i} style={{ background: 'white', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div key={i} style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '16px' }}>
               <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: stat.bg, color: stat.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {stat.icon}
               </div>
               <div>
-                <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#0f172a', lineHeight: 1 }}>{stat.value}</div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '600', marginTop: '4px' }}>{stat.label}</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--text-main)', lineHeight: 1 }}>{stat.value}</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '600', marginTop: '4px' }}>{stat.label}</div>
               </div>
             </div>
           ))}
@@ -238,19 +238,19 @@ export default function WhatsAppDashboard() {
               <p style={{ margin: 0, fontWeight: '700', color: '#9a3412' }}>WhatsApp Business Account Connect Nahi Hai</p>
               <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#c2410c' }}>Settings mein WhatsApp API Token aur Phone Number ID daalein</p>
             </div>
-            <button onClick={() => navigate('/settings')} style={{ background: '#ea580c', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 20px', fontWeight: '700', cursor: 'pointer', fontSize: '0.85rem' }}>
+            <button onClick={() => navigate('/settings')} style={{ background: '#ea580c', color: 'var(--bg-card)', border: 'none', borderRadius: '10px', padding: '10px 20px', fontWeight: '700', cursor: 'pointer', fontSize: '0.85rem' }}>
               Settings Kholein →
             </button>
           </div>
         )}
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: '4px', background: '#f1f5f9', borderRadius: '12px', padding: '4px', marginBottom: '24px', width: 'fit-content' }}>
+        <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-dark)', borderRadius: '12px', padding: '4px', marginBottom: '24px', width: 'fit-content' }}>
           {[
             { id: 'automations', label: 'Automations', icon: <Zap size={16} /> },
             { id: 'howto', label: 'Kaise Kaam Karta Hai', icon: <Bot size={16} /> },
           ].map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '8px', border: 'none', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', background: activeTab === tab.id ? 'white' : 'transparent', color: activeTab === tab.id ? WA_DARK : '#64748b', boxShadow: activeTab === tab.id ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}>
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '8px', border: 'none', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', background: activeTab === tab.id ? 'var(--bg-card)' : 'transparent', color: activeTab === tab.id ? WA_DARK : 'var(--text-muted)', boxShadow: activeTab === tab.id ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}>
               {tab.icon} {tab.label}
             </button>
           ))}
@@ -261,46 +261,46 @@ export default function WhatsAppDashboard() {
           <div>
             {/* Search */}
             <div style={{ position: 'relative', marginBottom: '16px', maxWidth: '400px' }}>
-              <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+              <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Automation search karein..."
-                style={{ width: '100%', paddingLeft: '36px', paddingRight: '16px', paddingTop: '10px', paddingBottom: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', background: 'white', boxSizing: 'border-box' }}
+                style={{ width: '100%', paddingLeft: '36px', paddingRight: '16px', paddingTop: '10px', paddingBottom: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', background: 'var(--bg-card)', boxSizing: 'border-box' }}
               />
             </div>
 
             {loading ? (
               <LoadingSpinner minHeight="200px" color={WA_GREEN} />
             ) : filteredCampaigns.length === 0 ? (
-              <div style={{ background: 'white', borderRadius: '20px', padding: '60px', textAlign: 'center', border: '2px dashed #e2e8f0' }}>
+              <div style={{ background: 'var(--bg-card)', borderRadius: '20px', padding: '60px', textAlign: 'center', border: '2px dashed #e2e8f0' }}>
                 <div style={{ width: '72px', height: '72px', background: WA_BG, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
                   <MessageSquare size={36} color={WA_GREEN} />
                 </div>
-                <h3 style={{ fontSize: '1.3rem', fontWeight: '800', color: '#0f172a', margin: '0 0 8px' }}>Koi WhatsApp Automation Nahi</h3>
-                <p style={{ color: '#64748b', marginBottom: '24px' }}>Pehla automation banayein aur WhatsApp par auto-replies set karein</p>
-                <button onClick={() => setShowCreate(true)} style={{ background: WA_GREEN, color: 'white', border: 'none', borderRadius: '12px', padding: '12px 24px', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <h3 style={{ fontSize: '1.3rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 8px' }}>Koi WhatsApp Automation Nahi</h3>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>Pehla automation banayein aur WhatsApp par auto-replies set karein</p>
+                <button onClick={() => setShowCreate(true)} style={{ background: WA_GREEN, color: 'var(--bg-card)', border: 'none', borderRadius: '12px', padding: '12px 24px', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                   <Plus size={18} /> Create Automation
                 </button>
               </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '16px' }}>
                 {filteredCampaigns.map(campaign => (
-                  <div key={campaign._id} style={{ background: 'white', borderRadius: '16px', border: `1px solid ${campaign.status === 'Active' ? '#bbf7d0' : '#e2e8f0'}`, padding: '20px', transition: 'all 0.2s', boxShadow: campaign.status === 'Active' ? '0 4px 12px rgba(37,211,102,0.08)' : 'none' }}>
+                  <div key={campaign._id} style={{ background: 'var(--bg-card)', borderRadius: '16px', border: `1px solid ${campaign.status === 'Active' ? '#bbf7d0' : 'var(--border-subtle)'}`, padding: '20px', transition: 'all 0.2s', boxShadow: campaign.status === 'Active' ? '0 4px 12px rgba(37,211,102,0.08)' : 'none' }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <div style={{ width: '40px', height: '40px', background: campaign.status === 'Active' ? WA_BG : '#f8fafc', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Zap size={20} color={campaign.status === 'Active' ? WA_GREEN : '#94a3b8'} fill={campaign.status === 'Active' ? WA_GREEN : 'none'} />
+                        <div style={{ width: '40px', height: '40px', background: campaign.status === 'Active' ? WA_BG : 'var(--sidebar-bg)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Zap size={20} color={campaign.status === 'Active' ? WA_GREEN : 'var(--text-muted)'} fill={campaign.status === 'Active' ? WA_GREEN : 'none'} />
                         </div>
                         <div>
-                          <p style={{ margin: 0, fontWeight: '800', color: '#0f172a', fontSize: '0.95rem' }}>{campaign.name}</p>
-                          <span style={{ fontSize: '0.72rem', fontWeight: '700', padding: '2px 8px', borderRadius: '6px', background: campaign.status === 'Active' ? WA_BG : '#f1f5f9', color: campaign.status === 'Active' ? WA_DARK : '#64748b' }}>
+                          <p style={{ margin: 0, fontWeight: '800', color: 'var(--text-main)', fontSize: '0.95rem' }}>{campaign.name}</p>
+                          <span style={{ fontSize: '0.72rem', fontWeight: '700', padding: '2px 8px', borderRadius: '6px', background: campaign.status === 'Active' ? WA_BG : 'var(--bg-dark)', color: campaign.status === 'Active' ? WA_DARK : 'var(--text-muted)' }}>
                             {campaign.status || 'Active'}
                           </span>
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: '6px' }}>
-                        <button onClick={() => handleToggle(campaign)} title={campaign.status === 'Active' ? 'Pause' : 'Activate'} style={{ background: campaign.status === 'Active' ? '#f0fdf4' : '#f8fafc', border: `1px solid ${campaign.status === 'Active' ? '#bbf7d0' : '#e2e8f0'}`, borderRadius: '8px', padding: '6px', cursor: 'pointer', color: campaign.status === 'Active' ? WA_GREEN : '#94a3b8', display: 'flex', alignItems: 'center' }}>
+                        <button onClick={() => handleToggle(campaign)} title={campaign.status === 'Active' ? 'Pause' : 'Activate'} style={{ background: campaign.status === 'Active' ? '#f0fdf4' : 'var(--sidebar-bg)', border: `1px solid ${campaign.status === 'Active' ? '#bbf7d0' : 'var(--border-subtle)'}`, borderRadius: '8px', padding: '6px', cursor: 'pointer', color: campaign.status === 'Active' ? WA_GREEN : 'var(--text-muted)', display: 'flex', alignItems: 'center' }}>
                           <Power size={15} />
                         </button>
                         <button onClick={() => handleDelete(campaign._id)} style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '6px', cursor: 'pointer', color: '#ef4444', display: 'flex', alignItems: 'center' }}>
@@ -309,20 +309,20 @@ export default function WhatsAppDashboard() {
                       </div>
                     </div>
 
-                    <div style={{ background: '#f8fafc', borderRadius: '10px', padding: '12px', marginBottom: '12px' }}>
+                    <div style={{ background: 'var(--sidebar-bg)', borderRadius: '10px', padding: '12px', marginBottom: '12px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                         <Hash size={13} color={WA_GREEN} />
-                        <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>Trigger</span>
+                        <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Trigger</span>
                       </div>
-                      <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#1e293b', background: WA_BG, padding: '4px 10px', borderRadius: '6px', display: 'inline-block' }}>
+                      <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-main)', background: WA_BG, padding: '4px 10px', borderRadius: '6px', display: 'inline-block' }}>
                         {campaign.isUniversal || campaign.trigger === '*' ? '⭐ Any Message' : `"${campaign.trigger}"`}
                       </p>
                     </div>
 
-                    <div style={{ background: '#f8fafc', borderRadius: '10px', padding: '12px' }}>
+                    <div style={{ background: 'var(--sidebar-bg)', borderRadius: '10px', padding: '12px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                         <Send size={13} color={WA_GREEN} />
-                        <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>Auto Reply</span>
+                        <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Auto Reply</span>
                       </div>
                       <p style={{ margin: 0, fontSize: '0.85rem', color: '#374151', lineHeight: '1.4', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                         {campaign.response || '(No response set)'}
@@ -338,8 +338,8 @@ export default function WhatsAppDashboard() {
         {/* ── HOW IT WORKS TAB ── */}
         {activeTab === 'howto' && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <div style={{ background: 'white', borderRadius: '20px', padding: '28px', border: '1px solid #e2e8f0' }}>
-              <h3 style={{ margin: '0 0 20px', fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ background: 'var(--bg-card)', borderRadius: '20px', padding: '28px', border: '1px solid #e2e8f0' }}>
+              <h3 style={{ margin: '0 0 20px', fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Zap size={20} color={WA_GREEN} /> WhatsApp Automation Flow
               </h3>
               {[
@@ -349,12 +349,12 @@ export default function WhatsAppDashboard() {
                 { step: '4', title: 'Message Delivered', desc: 'Customer ko real WhatsApp message milta hai ✅', icon: <CheckCircle size={18} color={WA_GREEN} /> },
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#f8fafc', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     {item.icon}
                   </div>
                   <div>
-                    <p style={{ margin: '0 0 4px', fontWeight: '800', color: '#0f172a', fontSize: '0.9rem' }}>Step {item.step}: {item.title}</p>
-                    <p style={{ margin: 0, fontSize: '0.82rem', color: '#64748b', lineHeight: '1.5' }}>{item.desc}</p>
+                    <p style={{ margin: '0 0 4px', fontWeight: '800', color: 'var(--text-main)', fontSize: '0.9rem' }}>Step {item.step}: {item.title}</p>
+                    <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: '1.5' }}>{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -376,16 +376,16 @@ export default function WhatsAppDashboard() {
                 ))}
               </div>
 
-              <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0' }}>
-                <h3 style={{ margin: '0 0 14px', fontSize: '1rem', fontWeight: '800', color: '#0f172a' }}>📋 Webhook Configuration</h3>
+              <div style={{ background: 'var(--bg-card)', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0' }}>
+                <h3 style={{ margin: '0 0 14px', fontSize: '1rem', fontWeight: '800', color: 'var(--text-main)' }}>📋 Webhook Configuration</h3>
                 {[
                   { label: 'Callback URL', value: `${API_BASE_URL}/api/webhook` },
                   { label: 'Verify Token', value: 'insta_agent_secret_verify_token' },
                   { label: 'Subscribe Field', value: 'messages' },
                 ].map((item, i) => (
                   <div key={i} style={{ marginBottom: '10px' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase' }}>{item.label}</span>
-                    <div style={{ background: '#f8fafc', borderRadius: '8px', padding: '8px 12px', fontFamily: 'monospace', fontSize: '0.8rem', color: '#1e293b', marginTop: '4px', border: '1px solid #e2e8f0', wordBreak: 'break-all' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>{item.label}</span>
+                    <div style={{ background: 'var(--sidebar-bg)', borderRadius: '8px', padding: '8px 12px', fontFamily: 'monospace', fontSize: '0.8rem', color: 'var(--text-main)', marginTop: '4px', border: '1px solid #e2e8f0', wordBreak: 'break-all' }}>
                       {item.value}
                     </div>
                   </div>
@@ -399,18 +399,18 @@ export default function WhatsAppDashboard() {
       {/* ── CREATE AUTOMATION MODAL ── */}
       {showCreate && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '600px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', maxHeight: '90vh', overflowY: 'auto' }}>
+          <div style={{ background: 'var(--bg-card)', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '600px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ width: '44px', height: '44px', background: WA_BG, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Zap size={22} color={WA_GREEN} fill={WA_GREEN} />
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: '900', color: '#0f172a' }}>New WhatsApp Automation</h3>
-                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b' }}>Keyword trigger + auto-reply set karein</p>
+                  <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: '900', color: 'var(--text-main)' }}>New WhatsApp Automation</h3>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>Keyword trigger + auto-reply set karein</p>
                 </div>
               </div>
-              <button onClick={() => setShowCreate(false)} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
+              <button onClick={() => setShowCreate(false)} style={{ background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)' }}>
                 <X size={18} />
               </button>
             </div>
@@ -439,9 +439,9 @@ export default function WhatsAppDashboard() {
                     { id: 'welcome', label: '👋 Welcome', desc: 'Pehle message pe' },
                   ].map(type => (
                     <button key={type.id} type="button" onClick={() => setNewCamp(p => ({ ...p, triggerType: type.id }))}
-                      style={{ padding: '12px', borderRadius: '10px', border: `2px solid ${newCamp.triggerType === type.id ? WA_GREEN : '#e2e8f0'}`, background: newCamp.triggerType === type.id ? WA_BG : 'white', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s' }}>
-                      <div style={{ fontWeight: '800', fontSize: '0.82rem', color: '#0f172a', marginBottom: '4px' }}>{type.label}</div>
-                      <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{type.desc}</div>
+                      style={{ padding: '12px', borderRadius: '10px', border: `2px solid ${newCamp.triggerType === type.id ? WA_GREEN : 'var(--border-subtle)'}`, background: newCamp.triggerType === type.id ? WA_BG : 'var(--bg-card)', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s' }}>
+                      <div style={{ fontWeight: '800', fontSize: '0.82rem', color: 'var(--text-main)', marginBottom: '4px' }}>{type.label}</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{type.desc}</div>
                     </button>
                   ))}
                 </div>
@@ -459,7 +459,7 @@ export default function WhatsAppDashboard() {
                     placeholder='e.g. "price", "info", "hi", "help"'
                     style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box' }}
                   />
-                  <p style={{ margin: '6px 0 0', fontSize: '0.75rem', color: '#94a3b8' }}>💡 Customer jab ye word likhega, auto-reply jayega</p>
+                  <p style={{ margin: '6px 0 0', fontSize: '0.75rem', color: 'var(--text-muted)' }}>💡 Customer jab ye word likhega, auto-reply jayega</p>
                 </div>
               )}
 
@@ -468,7 +468,7 @@ export default function WhatsAppDashboard() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: '800', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Auto Reply Message *</label>
                   <button type="button" onClick={handleGenerateAI} disabled={generatingAI}
-                    style={{ display: 'flex', alignItems: 'center', gap: '6px', background: generatingAI ? '#f1f5f9' : 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: generatingAI ? '#94a3b8' : 'white', border: 'none', borderRadius: '20px', padding: '5px 14px', fontSize: '0.75rem', fontWeight: '700', cursor: generatingAI ? 'not-allowed' : 'pointer' }}>
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px', background: generatingAI ? 'var(--bg-dark)' : 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: generatingAI ? 'var(--text-muted)' : 'var(--bg-card)', border: 'none', borderRadius: '20px', padding: '5px 14px', fontSize: '0.75rem', fontWeight: '700', cursor: generatingAI ? 'not-allowed' : 'pointer' }}>
                     <Sparkles size={13} /> {generatingAI ? 'Generating...' : 'AI se Generate'}
                   </button>
                 </div>
@@ -495,7 +495,7 @@ export default function WhatsAppDashboard() {
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Link (Optional)</label>
                 <div style={{ position: 'relative' }}>
-                  <Globe size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                  <Globe size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                   <input
                     type="url"
                     value={newCamp.linkUrl}
@@ -508,10 +508,10 @@ export default function WhatsAppDashboard() {
 
               {/* Action Buttons */}
               <div style={{ display: 'flex', gap: '12px', paddingTop: '8px' }}>
-                <button type="button" onClick={() => setShowCreate(false)} style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', background: 'white', color: '#374151', fontWeight: '700', cursor: 'pointer', fontSize: '0.9rem' }}>
+                <button type="button" onClick={() => setShowCreate(false)} style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', background: 'var(--bg-card)', color: '#374151', fontWeight: '700', cursor: 'pointer', fontSize: '0.9rem' }}>
                   Cancel
                 </button>
-                <button type="submit" style={{ flex: 2, padding: '14px', borderRadius: '12px', border: 'none', background: WA_GREEN, color: 'white', fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: `0 4px 12px rgba(37,211,102,0.3)` }}>
+                <button type="submit" style={{ flex: 2, padding: '14px', borderRadius: '12px', border: 'none', background: WA_GREEN, color: 'var(--bg-card)', fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: `0 4px 12px rgba(37,211,102,0.3)` }}>
                   <Zap size={18} fill="white" /> Create WhatsApp Automation
                 </button>
               </div>

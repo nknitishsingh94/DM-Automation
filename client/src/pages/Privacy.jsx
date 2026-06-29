@@ -91,7 +91,7 @@ const sections = [
     ]
   },
   {
-    id: 'retain', num: '6', icon: <Lock size={20} color="#64748b" />, bg: '#f8fafc',
+    id: 'retain', num: '6', icon: <Lock size={20} color="#64748b" />, bg: 'var(--sidebar-bg)',
     title: 'For How Long We Retain Personal Data',
     content: [
       { head: 'Active Account Data', text: 'We retain your account data, campaigns, audiences, flows, and settings for as long as your account is active.' },
@@ -154,20 +154,20 @@ export default function Privacy() {
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
 
         {/* Header */}
-        <div style={{ background: 'white', borderRadius: '40px', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.1)', padding: '60px', marginBottom: '28px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '40px', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.1)', padding: '60px', marginBottom: '28px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '280px', height: '280px', background: 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 70%)', zIndex: 0 }} />
-          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#64748b', textDecoration: 'none', marginBottom: '40px', fontWeight: '700', fontSize: '15px', position: 'relative', zIndex: 1 }}>
+          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', textDecoration: 'none', marginBottom: '40px', fontWeight: '700', fontSize: '15px', position: 'relative', zIndex: 1 }}>
             <ArrowLeft size={18} /> Back to Dashboard
           </Link>
           <div style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
             <div style={{ width: '88px', height: '88px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', borderRadius: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 28px', boxShadow: '0 12px 28px rgba(37,99,235,0.25)' }}>
               <Shield size={44} color="white" />
             </div>
-            <h1 style={{ fontSize: '48px', fontWeight: '900', color: '#0f172a', marginBottom: '12px', letterSpacing: '-2px' }}>Privacy Policy</h1>
-            <p style={{ color: '#64748b', fontSize: '1rem', marginBottom: '16px', lineHeight: '1.6' }}>
+            <h1 style={{ fontSize: '48px', fontWeight: '900', color: 'var(--text-main)', marginBottom: '12px', letterSpacing: '-2px' }}>Privacy Policy</h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginBottom: '16px', lineHeight: '1.6' }}>
               At <strong>smart10X</strong>, we consider the privacy and security of personal data to be extremely important.
             </p>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#f8fafc', padding: '8px 20px', borderRadius: '100px', color: '#64748b', fontWeight: '700', fontSize: '14px', border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--sidebar-bg)', padding: '8px 20px', borderRadius: '100px', color: 'var(--text-muted)', fontWeight: '700', fontSize: '14px', border: '1px solid #e2e8f0' }}>
               <span style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', display: 'inline-block' }} />
               Effective Date: May 5, 2026
             </div>
@@ -175,21 +175,21 @@ export default function Privacy() {
         </div>
 
         {/* Intro */}
-        <div style={{ background: '#0f172a', color: 'white', borderRadius: '24px', padding: '32px 40px', marginBottom: '28px', lineHeight: '1.75', fontSize: '0.95rem' }}>
+        <div style={{ background: 'var(--text-main)', color: 'var(--bg-card)', borderRadius: '24px', padding: '32px 40px', marginBottom: '28px', lineHeight: '1.75', fontSize: '0.95rem' }}>
           <p style={{ color: 'rgba(255,255,255,0.8)', margin: 0 }}>
             We process personal data to provide smart10X services including Instagram DM Automation, AI Studio, Broadcasts, Audiences, Forms, Flow Builder, WhatsApp & Telegram integrations, and Billing. This Privacy Policy explains what data we collect, why, and how we protect it in accordance with applicable data protection laws including <strong style={{ color: '#60a5fa' }}>GDPR, UK GDPR, and LGPD</strong>.
           </p>
         </div>
 
         {/* Security Trust Badges */}
-        <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '28px 32px', marginBottom: '28px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '28px 32px', marginBottom: '28px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg,#10b981,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Shield size={18} color="white" />
             </div>
             <div>
-              <div style={{ fontSize: '15px', fontWeight: '800', color: '#0f172a' }}>Platform Security — Built Into Every Layer</div>
-              <div style={{ fontSize: '12.5px', color: '#64748b' }}>Your data is protected by multiple independent security systems</div>
+              <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-main)' }}>Platform Security — Built Into Every Layer</div>
+              <div style={{ fontSize: '12.5px', color: 'var(--text-muted)' }}>Your data is protected by multiple independent security systems</div>
             </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: '10px' }}>
@@ -207,11 +207,11 @@ export default function Privacy() {
               { icon: '🚨', label: 'Error Hiding', sub: 'No data leaked in errors' },
               { icon: '🔔', label: 'GDPR Breach Notice', sub: '72hr notification policy' },
             ].map((b, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', background: 'var(--sidebar-bg)', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
                 <span style={{ fontSize: '20px', flexShrink: 0 }}>{b.icon}</span>
                 <div>
-                  <div style={{ fontSize: '12.5px', fontWeight: '700', color: '#1e293b' }}>{b.label}</div>
-                  <div style={{ fontSize: '11px', color: '#94a3b8' }}>{b.sub}</div>
+                  <div style={{ fontSize: '12.5px', fontWeight: '700', color: 'var(--text-main)' }}>{b.label}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{b.sub}</div>
                 </div>
               </div>
             ))}
@@ -219,17 +219,17 @@ export default function Privacy() {
         </div>
 
         {/* Table of Contents */}
-        <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '32px', marginBottom: '28px' }}>
-          <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#1e293b', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '32px', marginBottom: '28px' }}>
+          <h3 style={{ fontSize: '17px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Info size={18} color="#3b82f6" /> Table of Contents
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '8px' }}>
             {sections.map(s => (
               <button key={s.id} onClick={() => { setOpen(s.id); setTimeout(() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100); }}
-                style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: '8px 12px', borderRadius: '10px', fontSize: '13.5px', fontWeight: '600', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
+                style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: '8px 12px', borderRadius: '10px', fontSize: '13.5px', fontWeight: '600', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
                 onMouseEnter={e => { e.currentTarget.style.background = '#eff6ff'; e.currentTarget.style.color = '#2563eb'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#475569'; }}>
-                <span style={{ width: '22px', height: '22px', borderRadius: '6px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '800', color: '#64748b', flexShrink: 0 }}>{s.num}</span>
+                onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = 'var(--text-muted)'; }}>
+                <span style={{ width: '22px', height: '22px', borderRadius: '6px', background: 'var(--bg-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', flexShrink: 0 }}>{s.num}</span>
                 {s.title}
               </button>
             ))}
@@ -239,14 +239,14 @@ export default function Privacy() {
         {/* Accordion Sections */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
           {sections.map(s => (
-            <div key={s.id} id={s.id} style={{ background: 'white', borderRadius: '20px', border: `1px solid ${open === s.id ? '#bfdbfe' : '#e2e8f0'}`, boxShadow: open === s.id ? '0 8px 24px rgba(59,130,246,0.07)' : 'none', overflow: 'hidden', transition: 'all 0.3s' }}>
+            <div key={s.id} id={s.id} style={{ background: 'var(--bg-card)', borderRadius: '20px', border: `1px solid ${open === s.id ? '#bfdbfe' : 'var(--border-subtle)'}`, boxShadow: open === s.id ? '0 8px 24px rgba(59,130,246,0.07)' : 'none', overflow: 'hidden', transition: 'all 0.3s' }}>
               <button onClick={() => setOpen(open === s.id ? null : s.id)}
-                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', background: open === s.id ? s.bg : 'white', border: 'none', cursor: 'pointer', textAlign: 'left', transition: 'background 0.3s' }}>
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', background: open === s.id ? s.bg : 'var(--bg-card)', border: 'none', cursor: 'pointer', textAlign: 'left', transition: 'background 0.3s' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: open === s.id ? 'white' : s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: open === s.id ? 'var(--bg-card)' : s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     {s.icon}
                   </div>
-                  <span style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b' }}>{s.num}. {s.title}</span>
+                  <span style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-main)' }}>{s.num}. {s.title}</span>
                 </div>
                 <ChevronDown size={18} color="#94a3b8" style={{ transform: open === s.id ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.3s', flexShrink: 0 }} />
               </button>
@@ -254,9 +254,9 @@ export default function Privacy() {
                 <div style={{ padding: '0 24px 24px', borderTop: '1px solid #f1f5f9', background: s.bg }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', paddingTop: '20px' }}>
                     {s.content.map((item, i) => (
-                      <div key={i} style={{ background: 'white', borderRadius: '14px', padding: '16px 20px', border: '1px solid rgba(0,0,0,0.04)' }}>
-                        <div style={{ fontWeight: '700', color: '#1e293b', fontSize: '14px', marginBottom: '6px' }}>{item.head}</div>
-                        <div style={{ color: '#64748b', fontSize: '13.5px', lineHeight: '1.7' }}>{item.text}</div>
+                      <div key={i} style={{ background: 'var(--bg-card)', borderRadius: '14px', padding: '16px 20px', border: '1px solid rgba(0,0,0,0.04)' }}>
+                        <div style={{ fontWeight: '700', color: 'var(--text-main)', fontSize: '14px', marginBottom: '6px' }}>{item.head}</div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: '1.7' }}>{item.text}</div>
                       </div>
                     ))}
                   </div>
@@ -267,17 +267,17 @@ export default function Privacy() {
         </div>
 
         {/* Contact */}
-        <div style={{ background: 'white', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
-          <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>Questions About Your Privacy?</h3>
-          <p style={{ color: '#64748b', marginBottom: '28px', fontSize: '0.95rem' }}>Our dedicated privacy team is happy to help you with any data-related requests.</p>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+          <h3 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '12px' }}>Questions About Your Privacy?</h3>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '0.95rem' }}>Our dedicated privacy team is happy to help you with any data-related requests.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
-            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
+            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'var(--bg-card)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
               <Mail size={18} /> smart10x.support@gmail.com
             </a>
-            <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#f8fafc', color: '#1e293b', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #e2e8f0' }}>
+            <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #e2e8f0' }}>
               Help Center
             </Link>
-            <Link to="/cookies" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#f8fafc', color: '#1e293b', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #e2e8f0' }}>
+            <Link to="/cookies" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #e2e8f0' }}>
               Cookie Statement
             </Link>
             <button 
@@ -288,11 +288,11 @@ export default function Privacy() {
           </div>
         </div>
 
-        <footer style={{ textAlign: 'center', marginTop: '40px', color: '#94a3b8', fontSize: '14px', fontWeight: '600' }}>
+        <footer style={{ textAlign: 'center', marginTop: '40px', color: 'var(--text-muted)', fontSize: '14px', fontWeight: '600' }}>
           © 2026 smart10X AI. All rights reserved. ·{' '}
-          <Link to="/terms" style={{ color: '#94a3b8', textDecoration: 'none' }}>Terms of Service</Link>
+          <Link to="/terms" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Terms of Service</Link>
           {' · '}
-          <Link to="/cookies" style={{ color: '#94a3b8', textDecoration: 'none' }}>Cookie Statement</Link>
+          <Link to="/cookies" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Cookie Statement</Link>
         </footer>
       </div>
     </div>

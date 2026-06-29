@@ -420,8 +420,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
         gap: '16px'
       }}>
         <div>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0f172a', margin: 0, letterSpacing: '-0.02em' }}>Active Automations</h2>
-          <p style={{ color: '#64748b', margin: '4px 0 0 0', fontSize: '0.9rem', fontWeight: '500' }}>
+          <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-main)', margin: 0, letterSpacing: '-0.02em' }}>Active Automations</h2>
+          <p style={{ color: 'var(--text-muted)', margin: '4px 0 0 0', fontSize: '0.9rem', fontWeight: '500' }}>
             Manage and monitor your live reply automation campaigns.
           </p>
         </div>
@@ -429,7 +429,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
           onClick={() => navigate(location.pathname + '?openTemplates=true')}
           style={{
             background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
-            color: 'white',
+            color: 'var(--bg-card)',
             border: 'none',
             padding: '12px 24px',
             borderRadius: '12px',
@@ -466,7 +466,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
 
               return (
                 <div key={campaign._id} style={{ 
-                  background: 'white', 
+                  background: 'var(--bg-card)', 
                   borderRadius: '24px', 
                   padding: '24px 20px 20px', 
                   border: '1px solid rgba(226, 232, 240, 0.8)',
@@ -514,13 +514,13 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                     </div>
                   )}
 
-                  <h4 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#0f172a', marginBottom: '10px', paddingRight: '80px', letterSpacing: '-0.02em', lineHeight: '1.3' }}>
+                  <h4 style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '10px', paddingRight: '80px', letterSpacing: '-0.02em', lineHeight: '1.3' }}>
                     {campaign.name}
                   </h4>
                   
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px' }}>
                     <MessageCircle size={16} color="#94a3b8" />
-                    <span style={{ fontWeight: '500' }}>Trigger: <strong style={{ color: '#0f172a', background: '#f1f5f9', padding: '3px 8px', borderRadius: '6px', fontFamily: 'monospace', fontSize: '0.85rem', border: '1px solid #e2e8f0' }}>{campaign.trigger === '*' ? 'Any' : campaign.trigger}</strong></span>
+                    <span style={{ fontWeight: '500' }}>Trigger: <strong style={{ color: 'var(--text-main)', background: 'var(--bg-dark)', padding: '3px 8px', borderRadius: '6px', fontFamily: 'monospace', fontSize: '0.85rem', border: '1px solid #e2e8f0' }}>{campaign.trigger === '*' ? 'Any' : campaign.trigger}</strong></span>
                   </div>
 
                   {/* Platforms Row */}
@@ -545,16 +545,16 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                   {/* Stats Board */}
                   <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', padding: '12px 16px', background: 'rgba(248, 250, 252, 0.7)', borderRadius: '18px', border: '1px solid #f1f5f9' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                      <div style={{ fontSize: '0.68rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>DMs Sent</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a' }}>{campaign.dmsSent || 0}</div>
+                      <div style={{ fontSize: '0.68rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>DMs Sent</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>{campaign.dmsSent || 0}</div>
                     </div>
-                    <div style={{ width: '1px', background: '#e2e8f0' }}></div>
+                    <div style={{ width: '1px', background: 'var(--border-subtle)' }}></div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                      <div style={{ fontSize: '0.68rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: '800', color: campaign.status === 'Active' ? '#10b981' : '#64748b', display: 'flex', alignItems: 'center', gap: '5px', marginTop: '2px' }}>
+                      <div style={{ fontSize: '0.68rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: '800', color: campaign.status === 'Active' ? '#10b981' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '5px', marginTop: '2px' }}>
                         <div style={{ 
                           width: '6px', height: '6px', borderRadius: '50%', 
-                          background: campaign.status === 'Active' ? '#10b981' : '#94a3b8',
+                          background: campaign.status === 'Active' ? '#10b981' : 'var(--text-muted)',
                           boxShadow: campaign.status === 'Active' ? '0 0 10px #10b981' : 'none'
                         }}></div>
                         {campaign.status}
@@ -568,8 +568,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                       onClick={() => toggleStatus(campaign._id, campaign.status)} 
                       style={{ 
                         flex: 1, padding: '10px 12px', borderRadius: '12px', 
-                        border: '1px solid #e2e8f0', background: 'white', 
-                        color: '#0f172a', fontWeight: '700', fontSize: '0.8rem', 
+                        border: '1px solid #e2e8f0', background: 'var(--bg-card)', 
+                        color: 'var(--text-main)', fontWeight: '700', fontSize: '0.8rem', 
                         cursor: 'pointer', display: 'flex', alignItems: 'center', 
                         justifyContent: 'center', gap: '6px', transition: 'all 0.2s',
                         whiteSpace: 'nowrap', minWidth: '0', overflow: 'hidden'
@@ -586,12 +586,12 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                         }
                       }}
                       onMouseOut={(e) => {
-                        e.currentTarget.style.background = 'white';
-                        e.currentTarget.style.borderColor = '#e2e8f0';
-                        e.currentTarget.style.color = '#0f172a';
+                        e.currentTarget.style.background = 'var(--bg-card)';
+                        e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                        e.currentTarget.style.color = 'var(--text-main)';
                       }}
                     >
-                      <Power size={13} color={campaign.status === 'Active' ? '#10b981' : '#94a3b8'} />
+                      <Power size={13} color={campaign.status === 'Active' ? '#10b981' : 'var(--text-muted)'} />
                       <span style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
                         {campaign.status === 'Active' ? 'Pause' : 'Activate'}
                       </span>
@@ -600,7 +600,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                       onClick={() => { setEditingCampaign(campaign); setEditForm({ name: campaign.name || '', trigger: campaign.trigger || '', response: campaign.response || '', linkUrl: campaign.linkUrl || (campaign.buttons && campaign.buttons.length > 0 ? campaign.buttons[0].url : ''), buttonText: campaign.buttonText || (campaign.buttons && campaign.buttons.length > 0 ? campaign.buttons[0].text : ''), isUniversal: campaign.isUniversal || false, triggerSource: campaign.triggerSource || 'dm' }); }} 
                       style={{ 
                         padding: '10px', width: '38px', height: '38px', borderRadius: '12px', border: '1px solid #e2e8f0', 
-                        background: 'white', color: '#3b82f6', cursor: 'pointer', transition: 'all 0.2s',
+                        background: 'var(--bg-card)', color: '#3b82f6', cursor: 'pointer', transition: 'all 0.2s',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                       }}
                       onMouseOver={(e) => {
@@ -609,8 +609,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                         e.currentTarget.style.color = '#2563eb';
                       }}
                       onMouseOut={(e) => {
-                        e.currentTarget.style.background = 'white';
-                        e.currentTarget.style.borderColor = '#e2e8f0';
+                        e.currentTarget.style.background = 'var(--bg-card)';
+                        e.currentTarget.style.borderColor = 'var(--border-subtle)';
                         e.currentTarget.style.color = '#3b82f6';
                       }}
                     >
@@ -620,18 +620,18 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                       onClick={() => viewLogs(campaign)} 
                       style={{ 
                         padding: '10px', width: '38px', height: '38px', borderRadius: '12px', border: '1px solid #e2e8f0', 
-                        background: 'white', color: '#64748b', cursor: 'pointer', transition: 'all 0.2s',
+                        background: 'var(--bg-card)', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.2s',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                       }}
                       onMouseOver={(e) => {
-                        e.currentTarget.style.background = '#f8fafc';
-                        e.currentTarget.style.borderColor = '#cbd5e1';
-                        e.currentTarget.style.color = '#1e293b';
+                        e.currentTarget.style.background = 'var(--sidebar-bg)';
+                        e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                        e.currentTarget.style.color = 'var(--text-main)';
                       }}
                       onMouseOut={(e) => {
-                        e.currentTarget.style.background = 'white';
-                        e.currentTarget.style.borderColor = '#e2e8f0';
-                        e.currentTarget.style.color = '#64748b';
+                        e.currentTarget.style.background = 'var(--bg-card)';
+                        e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                        e.currentTarget.style.color = 'var(--text-muted)';
                       }}
                     >
                       <History size={16} />
@@ -640,7 +640,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                       onClick={() => deleteCampaign(campaign._id)} 
                       style={{ 
                         padding: '10px', width: '38px', height: '38px', borderRadius: '12px', border: '1px solid #fee2e2', 
-                        background: 'white', color: '#ef4444', cursor: 'pointer', transition: 'all 0.2s',
+                        background: 'var(--bg-card)', color: '#ef4444', cursor: 'pointer', transition: 'all 0.2s',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                       }}
                       onMouseOver={(e) => {
@@ -649,7 +649,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                         e.currentTarget.style.color = '#dc2626';
                       }}
                       onMouseOut={(e) => {
-                        e.currentTarget.style.background = 'white';
+                        e.currentTarget.style.background = 'var(--bg-card)';
                         e.currentTarget.style.borderColor = '#fee2e2';
                         e.currentTarget.style.color = '#ef4444';
                       }}
@@ -666,7 +666,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
         <div style={{ 
           textAlign: 'center', 
           padding: '80px 20px', 
-          background: 'white', 
+          background: 'var(--bg-card)', 
           borderRadius: '24px', 
           border: '1.5px dashed #e2e8f0',
           boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)',
@@ -679,15 +679,15 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
           }}>
             <Zap size={28} color="#7c3aed" />
           </div>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>No Automations Found</h3>
-          <p style={{ color: '#64748b', fontSize: '0.9rem', maxWidth: '400px', margin: '0 auto 20px', lineHeight: '1.5' }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px' }}>No Automations Found</h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '400px', margin: '0 auto 20px', lineHeight: '1.5' }}>
             You haven't set up any automation rules yet. Start converting comments and DMs into leads with our pre-built templates.
           </p>
           <button
             onClick={() => navigate(location.pathname + '?openTemplates=true')}
             style={{
               background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
-              color: 'white',
+              color: 'var(--bg-card)',
               border: 'none',
               padding: '12px 24px',
               borderRadius: '10px',
@@ -715,12 +715,12 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
             {flows.map((flow) => (
-              <div key={flow._id} style={{ background: 'white', borderRadius: '24px', padding: '24px 20px 20px', border: '1px solid #fce7f3', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', transition: 'all 0.3s', position: 'relative', overflow: 'hidden' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(217,70,239,0.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)'; }}>
+              <div key={flow._id} style={{ background: 'var(--bg-card)', borderRadius: '24px', padding: '24px 20px 20px', border: '1px solid #fce7f3', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', transition: 'all 0.3s', position: 'relative', overflow: 'hidden' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(217,70,239,0.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.02)'; }}>
                 <div style={{ position: 'absolute', top: '24px', right: '20px', padding: '4px 12px', borderRadius: '50px', fontSize: '0.7rem', fontWeight: '800', background: '#fdf4ff', color: '#d946ef', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}><Crown size={12} /> Advanced</div>
                 <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px', paddingRight: '100px' }}>{flow.name || 'Untitled Flow'}</h4>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', marginBottom: '24px' }}><MessageCircle size={16} /><span>Keyword: <strong style={{ color: '#1e1b4b' }}>{flow.triggerKeyword || 'None'}</strong></span></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}><MessageCircle size={16} /><span>Keyword: <strong style={{ color: '#1e1b4b' }}>{flow.triggerKeyword || 'None'}</strong></span></div>
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', padding: '16px', background: '#faf5ff', borderRadius: '16px' }}><div style={{ flex: 1 }}><div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#a855f7', textTransform: 'uppercase', marginBottom: '4px' }}>Nodes</div><div style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b' }}>{flow.nodes ? flow.nodes.length : 0}</div></div><div style={{ width: '1px', background: '#e9d5ff' }}></div><div style={{ flex: 1 }}><div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#a855f7', textTransform: 'uppercase', marginBottom: '4px' }}>Status</div><div style={{ fontSize: '0.9rem', fontWeight: '800', color: flow.status === 'Active' ? '#10b981' : '#a855f7', display: 'flex', alignItems: 'center', gap: '4px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: flow.status === 'Active' ? '#10b981' : '#a855f7' }}></div>{flow.status || 'Active'}</div></div></div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><button onClick={() => navigate(`/flow-builder/${flow._id}`)} style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 100%)', color: 'white', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>Edit Flow</button><button onClick={(e) => deleteFlow(flow._id, e)} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', background: 'white', color: '#ef4444', cursor: 'pointer' }}><Trash2 size={18} /></button></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><button onClick={() => navigate(`/flow-builder/${flow._id}`)} style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 100%)', color: 'var(--bg-card)', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>Edit Flow</button><button onClick={(e) => deleteFlow(flow._id, e)} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', background: 'var(--bg-card)', color: '#ef4444', cursor: 'pointer' }}><Trash2 size={18} /></button></div>
               </div>
             ))}
           </div>
@@ -753,13 +753,13 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
 
               return (
                 <div style={{ display: 'flex', gap: '8px', padding: '12px 24px 0', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b' }}>Platform:</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)' }}>Platform:</span>
                   <button
                     onClick={() => setLogPlatformFilter('all')}
                     style={{
                       padding: '4px 10px', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer',
-                      background: logPlatformFilter === 'all' ? '#1e1b4b' : 'white',
-                      color: logPlatformFilter === 'all' ? 'white' : '#64748b'
+                      background: logPlatformFilter === 'all' ? '#1e1b4b' : 'var(--bg-card)',
+                      color: logPlatformFilter === 'all' ? 'var(--bg-card)' : 'var(--text-muted)'
                     }}
                   >
                     All
@@ -770,8 +770,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                       onClick={() => setLogPlatformFilter(p.id)}
                       style={{
                         padding: '4px 10px', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer',
-                        background: logPlatformFilter === p.id ? '#1e1b4b' : 'white',
-                        color: logPlatformFilter === p.id ? 'white' : '#64748b'
+                        background: logPlatformFilter === p.id ? '#1e1b4b' : 'var(--bg-card)',
+                        color: logPlatformFilter === p.id ? 'var(--bg-card)' : 'var(--text-muted)'
                       }}
                     >
                       {p.label}
@@ -834,7 +834,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
               <h3 style={{ fontSize: '1.6rem', fontWeight: '900', margin: 0, background: 'linear-gradient(135deg, #1e1b4b 0%, #4f46e5 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Edit2 size={24} color="#4f46e5" /> Edit Campaign
               </h3>
-              <button onClick={() => setEditingCampaign(null)} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background='#f1f5f9'} onMouseOut={e => e.currentTarget.style.background='#f8fafc'}>
+              <button onClick={() => setEditingCampaign(null)} style={{ background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background='var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background='var(--sidebar-bg)'}>
                 <X size={20} />
               </button>
             </div>
@@ -844,12 +844,12 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Campaign Name</label>
-                  <input type="text" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required />
+                  <input type="text" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }} required />
                 </div>
                 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Trigger Keyword</label>
-                  <input type="text" value={editForm.trigger} onChange={e => setEditForm({...editForm, trigger: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required />
+                  <input type="text" value={editForm.trigger} onChange={e => setEditForm({...editForm, trigger: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }} required />
                 </div>
                 
 
@@ -859,8 +859,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                     <select 
                       value={editForm.platform === 'all' ? 'instagram' : editForm.platform} 
                       onChange={e => setEditForm({...editForm, platform: e.target.value})}
-                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
-                      onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
+                      onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
                     >
                       {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
                         <option value="instagram">📸 Instagram</option>
@@ -881,27 +881,27 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Bot Response Message</label>
-                    <button type="button" onClick={() => handleGenerateAI(true)} disabled={generatingAI} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', color: 'white', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', opacity: generatingAI ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(236, 72, 153, 0.3)' }} onMouseOver={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1.05)')} onMouseOut={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1)')}>
+                    <button type="button" onClick={() => handleGenerateAI(true)} disabled={generatingAI} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', color: 'var(--bg-card)', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', opacity: generatingAI ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(236, 72, 153, 0.3)' }} onMouseOver={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1.05)')} onMouseOut={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1)')}>
                       {generatingAI ? 'Generating...' : <><Sparkles size={12} /> Auto AI Reply</>}
                     </button>
                   </div>
-                  <textarea value={editForm.response} onChange={e => setEditForm({...editForm, response: e.target.value})} style={{ width: '100%', flex: 1, padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', minHeight: '120px', resize: 'vertical', transition: 'all 0.2s', fontFamily: 'inherit' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required />
+                  <textarea value={editForm.response} onChange={e => setEditForm({...editForm, response: e.target.value})} style={{ width: '100%', flex: 1, padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', minHeight: '120px', resize: 'vertical', transition: 'all 0.2s', fontFamily: 'inherit' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }} required />
                 </div>
                 
                 <div style={{ display: 'flex', gap: '16px' }}>
                   <div style={{ flex: 1 }}>
                     <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Button Text</label>
-                    <input type="text" value={editForm.buttonText} onChange={e => setEditForm({...editForm, buttonText: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} />
+                    <input type="text" value={editForm.buttonText} onChange={e => setEditForm({...editForm, buttonText: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Link URL</label>
-                    <input type="url" value={editForm.linkUrl} onChange={e => setEditForm({...editForm, linkUrl: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} />
+                    <input type="url" value={editForm.linkUrl} onChange={e => setEditForm({...editForm, linkUrl: e.target.value})} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }} />
                   </div>
                 </div>
               </div>
               
               <div style={{ gridColumn: '1 / -1', marginTop: '8px' }}>
-                <button type="submit" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: '800', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(124, 58, 237, 0.4)', transition: 'all 0.3s', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
+                <button type="submit" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)', color: 'var(--bg-card)', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: '800', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(124, 58, 237, 0.4)', transition: 'all 0.3s', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
                   <CheckCircle size={20} /> Save Changes
                 </button>
               </div>
@@ -917,7 +917,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
               <h3 style={{ fontSize: '1.6rem', fontWeight: '900', margin: 0, background: 'linear-gradient(135deg, #1e1b4b 0%, #3b82f6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Sparkles size={24} color="#3b82f6" /> {newCamp.isUniversal ? 'New Universal Trigger' : 'New Automation'}
               </h3>
-              <button onClick={() => setShowAdd(false)} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background='#f1f5f9'} onMouseOut={e => e.currentTarget.style.background='#f8fafc'}>
+              <button onClick={() => setShowAdd(false)} style={{ background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background='var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background='var(--sidebar-bg)'}>
                 <X size={20} />
               </button>
             </div>
@@ -931,8 +931,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                   <input 
                     type="text" value={newCamp.name} onChange={e => setNewCamp({...newCamp, name: e.target.value})}
                     placeholder="e.g. Summer Sale 2024"
-                    style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} 
-                    onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required
+                    style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }} 
+                    onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }} required
                   />
                 </div>
                 
@@ -941,8 +941,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                   <input 
                     type="text" value={newCamp.trigger} onChange={e => setNewCamp({...newCamp, trigger: e.target.value})}
                     placeholder="e.g. PRICE, DISCOUNT"
-                    style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }}
-                    onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required
+                    style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }}
+                    onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }} required
                   />
                 </div>
 
@@ -953,8 +953,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                     <select 
                       value={newCamp.platform} 
                       onChange={e => setNewCamp({...newCamp, platform: e.target.value})}
-                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
-                      onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
+                      onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
                     >
                       <option value="all">🌐 {getConnectedPlatformsText()}</option>
                       {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
@@ -970,7 +970,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: newCamp.isUniversal ? 'rgba(14, 165, 233, 0.08)' : '#f8fafc', borderRadius: '12px', border: newCamp.isUniversal ? '1px solid rgba(14, 165, 233, 0.3)' : '1px solid #e2e8f0', transition: 'all 0.3s' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: newCamp.isUniversal ? 'rgba(14, 165, 233, 0.08)' : 'var(--sidebar-bg)', borderRadius: '12px', border: newCamp.isUniversal ? '1px solid rgba(14, 165, 233, 0.3)' : '1px solid #e2e8f0', transition: 'all 0.3s' }}>
                   <input 
                     type="checkbox" 
                     id="isUniversal"
@@ -978,8 +978,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                     onChange={e => setNewCamp({...newCamp, isUniversal: e.target.checked})}
                     style={{ width: '18px', height: '18px', accentColor: '#0ea5e9', cursor: 'pointer' }}
                   />
-                  <label htmlFor="isUniversal" style={{ fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: newCamp.isUniversal ? '#0284c7' : '#475569' }}>
-                     <Globe size={18} color={newCamp.isUniversal ? '#0ea5e9' : '#94a3b8'} /> 
+                  <label htmlFor="isUniversal" style={{ fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: newCamp.isUniversal ? '#0284c7' : 'var(--text-muted)' }}>
+                     <Globe size={18} color={newCamp.isUniversal ? '#0ea5e9' : 'var(--text-muted)'} /> 
                      Make this a Universal Trigger
                   </label>
                 </div>
@@ -990,15 +990,15 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Bot Response Message</label>
-                    <button type="button" onClick={() => handleGenerateAI(false)} disabled={generatingAI} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', color: 'white', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', opacity: generatingAI ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(236, 72, 153, 0.3)' }} onMouseOver={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1.05)')} onMouseOut={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1)')}>
+                    <button type="button" onClick={() => handleGenerateAI(false)} disabled={generatingAI} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', color: 'var(--bg-card)', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', opacity: generatingAI ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(236, 72, 153, 0.3)' }} onMouseOver={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1.05)')} onMouseOut={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1)')}>
                       {generatingAI ? 'Generating...' : <><Sparkles size={12} /> Auto AI Reply</>}
                     </button>
                   </div>
                   <textarea 
                     value={newCamp.response} onChange={e => setNewCamp({...newCamp, response: e.target.value})}
                     placeholder="What should the bot say?"
-                    style={{ width: '100%', flex: 1, padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', minHeight: '120px', resize: 'vertical', transition: 'all 0.2s', fontFamily: 'inherit' }}
-                    onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }} required
+                    style={{ width: '100%', flex: 1, padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', minHeight: '120px', resize: 'vertical', transition: 'all 0.2s', fontFamily: 'inherit' }}
+                    onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }} required
                   />
                 </div>
                 
@@ -1008,8 +1008,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                     <input 
                       type="text" value={newCamp.buttonText} onChange={e => setNewCamp({...newCamp, buttonText: e.target.value})}
                       placeholder="e.g. Shop Now"
-                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }}
-                      onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }}
+                      onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
                     />
                   </div>
                   <div style={{ flex: 1 }}>
@@ -1017,8 +1017,8 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                     <input 
                       type="url" value={newCamp.linkUrl} onChange={e => setNewCamp({...newCamp, linkUrl: e.target.value})}
                       placeholder="https://..."
-                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }}
-                      onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', transition: 'all 0.2s' }}
+                      onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
                     />
                   </div>
                 </div>
@@ -1033,7 +1033,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                     width: '100%',
                     padding: '16px', 
                     background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)', 
-                    color: 'white', border: 'none', borderRadius: '12px', 
+                    color: 'var(--bg-card)', border: 'none', borderRadius: '12px', 
                     fontSize: '1rem', fontWeight: '800', cursor: 'pointer', 
                     opacity: submitting ? 0.7 : 1,
                     boxShadow: '0 10px 20px -5px rgba(59, 130, 246, 0.4)',

@@ -70,8 +70,8 @@ export default function TemplatesModal({ isOpen, onClose }) {
         
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid #e2e8f0' }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#0f172a' }}>Templates Gallery</h2>
-            <p style={{ margin: 0, fontSize: '13px', color: '#64748b', marginTop: '4px' }}>Discover ready-to-use automations for your business</p>
+            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: 'var(--text-main)' }}>Templates Gallery</h2>
+            <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Discover ready-to-use automations for your business</p>
           </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
@@ -80,7 +80,7 @@ export default function TemplatesModal({ isOpen, onClose }) {
               navigate('/campaigns');
             }}
             style={{
-              background: 'white',
+              background: 'var(--bg-card)',
               border: '1px solid #7c3aed',
               color: '#7c3aed',
               padding: '8px 16px',
@@ -95,22 +95,22 @@ export default function TemplatesModal({ isOpen, onClose }) {
             }}
             onMouseOver={e => {
               e.currentTarget.style.backgroundColor = '#7c3aed';
-              e.currentTarget.style.color = 'white';
+              e.currentTarget.style.color = 'var(--bg-card)';
             }}
             onMouseOut={e => {
-              e.currentTarget.style.backgroundColor = 'white';
+              e.currentTarget.style.backgroundColor = 'var(--bg-card)';
               e.currentTarget.style.color = '#7c3aed';
             }}
           >
             <Zap size={14} /> Active Automations
           </button>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: '4px', borderRadius: '8px', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'} onMouseOut={e => e.currentTarget.style.background = 'none'}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '4px', borderRadius: '8px', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background = 'none'}>
             <X size={24} />
           </button>
         </div>
         </div>
 
-        <div style={{ padding: '24px', overflowY: 'auto', flex: 1, backgroundColor: '#f8fafc' }}>
+        <div style={{ padding: '24px', overflowY: 'auto', flex: 1, backgroundColor: 'var(--sidebar-bg)' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
             {templatesData.map((template, idx) => (
               <div key={idx} style={{
@@ -146,25 +146,25 @@ export default function TemplatesModal({ isOpen, onClose }) {
                   )}
                 </div>
 
-                <h3 style={{ margin: '0 0 10px 0', fontSize: '15px', fontWeight: '800', color: '#1e293b', lineHeight: '1.4' }}>
+                <h3 style={{ margin: '0 0 10px 0', fontSize: '15px', fontWeight: '800', color: 'var(--text-main)', lineHeight: '1.4' }}>
                   {template.title}
                 </h3>
                 
-                <p style={{ margin: 0, fontSize: '13px', color: '#64748b', lineHeight: '1.5', flex: 1 }}>
+                <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5', flex: 1 }}>
                   {template.desc}
                 </p>
 
                 <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     {template.type}
                   </span>
                   <button 
                     onClick={() => handleUseTemplate(template)}
                     style={{
-                    backgroundColor: '#0f172a', color: '#fff', border: 'none', borderRadius: '8px',
+                    backgroundColor: 'var(--text-main)', color: '#fff', border: 'none', borderRadius: '8px',
                     padding: '8px 16px', fontSize: '12px', fontWeight: '700', cursor: 'pointer',
                     transition: 'background 0.2s'
-                  }} onMouseOver={e => e.currentTarget.style.backgroundColor = '#1e293b'} onMouseOut={e => e.currentTarget.style.backgroundColor = '#0f172a'}>
+                  }} onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--text-main)'} onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--text-main)'}>
                     Use
                   </button>
                 </div>

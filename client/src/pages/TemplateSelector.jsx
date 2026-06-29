@@ -105,18 +105,18 @@ export default function TemplateSelector() {
     : templates.filter(t => t.category === activeCategory);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: "'Outfit', sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: 'var(--sidebar-bg)', fontFamily: "'Outfit', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: 'white', padding: '24px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 10 }}>
+      <div style={{ background: 'var(--bg-card)', padding: '24px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 10 }}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>Template Library</h1>
-          <p style={{ color: '#64748b', margin: '4px 0 0 0', fontSize: '0.9rem' }}>Choose a pre-built automation to get started quickly.</p>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>Template Library</h1>
+          <p style={{ color: 'var(--text-muted)', margin: '4px 0 0 0', fontSize: '0.9rem' }}>Choose a pre-built automation to get started quickly.</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
             onClick={() => navigate('/campaigns')}
             style={{
-              background: 'white',
+              background: 'var(--bg-card)',
               border: '1px solid #7c3aed',
               color: '#7c3aed',
               padding: '10px 20px',
@@ -131,10 +131,10 @@ export default function TemplateSelector() {
             }}
             onMouseOver={e => {
               e.currentTarget.style.backgroundColor = '#7c3aed';
-              e.currentTarget.style.color = 'white';
+              e.currentTarget.style.color = 'var(--bg-card)';
             }}
             onMouseOut={e => {
-              e.currentTarget.style.backgroundColor = 'white';
+              e.currentTarget.style.backgroundColor = 'var(--bg-card)';
               e.currentTarget.style.color = '#7c3aed';
             }}
           >
@@ -142,7 +142,7 @@ export default function TemplateSelector() {
           </button>
           <button 
             onClick={() => navigate('/select-channel')}
-            style={{ background: 'white', border: '1px solid #e2e8f0', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}
+            style={{ background: 'var(--bg-card)', border: '1px solid #e2e8f0', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}
           >
             <X size={20} color="#64748b" />
           </button>
@@ -162,7 +162,7 @@ export default function TemplateSelector() {
                   borderRadius: '12px',
                   border: 'none',
                   background: activeCategory === cat ? '#f3e8ff' : 'transparent',
-                  color: activeCategory === cat ? '#7c3aed' : '#64748b',
+                  color: activeCategory === cat ? '#7c3aed' : 'var(--text-muted)',
                   fontWeight: activeCategory === cat ? '700' : '500',
                   textAlign: 'left',
                   cursor: 'pointer',
@@ -177,8 +177,8 @@ export default function TemplateSelector() {
                 {cat !== 'All' && (
                   <span style={{ 
                     fontSize: '11px', 
-                    background: activeCategory === cat ? '#e9d5ff' : '#f1f5f9', 
-                    color: activeCategory === cat ? '#7c3aed' : '#94a3b8',
+                    background: activeCategory === cat ? '#e9d5ff' : 'var(--bg-dark)', 
+                    color: activeCategory === cat ? '#7c3aed' : 'var(--text-muted)',
                     padding: '2px 8px', borderRadius: '10px' 
                   }}>
                     {templates.filter(t => t.category === cat).length}
@@ -205,7 +205,7 @@ export default function TemplateSelector() {
                   }
                 }}
                 style={{
-                  background: 'white',
+                  background: 'var(--bg-card)',
                   padding: '24px',
                   borderRadius: '16px',
                   border: '1px solid #e2e8f0',
@@ -225,13 +225,13 @@ export default function TemplateSelector() {
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05)';
-                  e.currentTarget.style.borderColor = '#e2e8f0';
+                  e.currentTarget.style.borderColor = 'var(--border-subtle)';
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ 
                     width: '40px', height: '40px', borderRadius: '12px', 
-                    background: template.category === 'AI & Support' ? '#faf5ff' : '#f8fafc',
+                    background: template.category === 'AI & Support' ? '#faf5ff' : 'var(--sidebar-bg)',
                     color: template.category === 'AI & Support' ? '#a855f7' : '#3b82f6',
                     display: 'flex', alignItems: 'center', justifyContent: 'center'
                   }}>
@@ -240,17 +240,17 @@ export default function TemplateSelector() {
                   <span style={{ 
                     fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', 
                     padding: '4px 8px', borderRadius: '6px',
-                    background: '#f1f5f9', color: '#64748b', marginLeft: 'auto'
+                    background: 'var(--bg-dark)', color: 'var(--text-muted)', marginLeft: 'auto'
                   }}>
                     {template.category}
                   </span>
                 </div>
 
                 <div>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#1e293b', margin: '0 0 8px 0' }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 8px 0' }}>
                     {template.title}
                   </h3>
-                  <p style={{ color: '#64748b', lineHeight: '1.5', fontSize: '0.9rem', margin: 0 }}>
+                  <p style={{ color: 'var(--text-muted)', lineHeight: '1.5', fontSize: '0.9rem', margin: 0 }}>
                     {template.desc}
                   </p>
                 </div>

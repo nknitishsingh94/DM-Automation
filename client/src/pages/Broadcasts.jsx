@@ -165,7 +165,7 @@ export default function Broadcasts() {
 
             <div className="contacts-scroll">
               {filteredContacts.length === 0 ? (
-                <div style={{ padding: '60px', textAlign: 'center', color: '#94a3b8' }}>No contacts match your filters.</div>
+                <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)' }}>No contacts match your filters.</div>
               ) : filteredContacts.map(contact => {
                 const active = isWithin24h(contact.lastActive);
                 const isSelected = selectedContacts.includes(contact._id);

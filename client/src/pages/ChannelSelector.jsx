@@ -67,7 +67,7 @@ export default function ChannelSelector() {
     <div style={{ 
       minHeight: '100vh', 
       display: 'flex', 
-      background: 'white',
+      background: 'var(--bg-card)',
       fontFamily: "'Outfit', sans-serif" 
     }}>
       {/* Left Content */}
@@ -91,7 +91,7 @@ export default function ChannelSelector() {
           </h1>
           <p style={{ 
             fontSize: '1.2rem', 
-            color: '#64748b', 
+            color: 'var(--text-muted)', 
             marginBottom: '48px',
             lineHeight: '1.5'
           }}>
@@ -111,7 +111,7 @@ export default function ChannelSelector() {
                   padding: '20px 24px',
                   borderRadius: '16px',
                   border: '1px solid #e2e8f0',
-                  background: 'white',
+                  background: 'var(--bg-card)',
                   cursor: 'pointer',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   textAlign: 'left',
@@ -127,7 +127,7 @@ export default function ChannelSelector() {
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05)';
-                  e.currentTarget.style.borderColor = '#e2e8f0';
+                  e.currentTarget.style.borderColor = 'var(--border-subtle)';
                 }}
               >
                 <div style={{
@@ -142,7 +142,7 @@ export default function ChannelSelector() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: '1.2rem', fontWeight: '700', color: '#1e1b4b' }}>{channel.name}</div>
-                  <div style={{ fontSize: '0.9rem', color: '#94a3b8' }}>{channel.desc}</div>
+                  <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{channel.desc}</div>
                 </div>
                 <ArrowRight size={20} color="#94a3b8" />
               </button>
@@ -154,7 +154,7 @@ export default function ChannelSelector() {
       {/* Right Image */}
       <div style={{ 
         flex: 1, 
-        background: '#f8fafc',
+        background: 'var(--sidebar-bg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

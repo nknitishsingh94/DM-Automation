@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
-import { Bot, Home, LayoutDashboard, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2, LayoutTemplate, Terminal, Lock, MessageCircle } from 'lucide-react';
+import { Bot, Home, LayoutDashboard, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2, LayoutTemplate, Terminal, Lock, MessageCircle, Moon, Sun } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { useTheme } from './context/ThemeContext';
 import { API_BASE_URL } from './config';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
@@ -137,6 +138,7 @@ function Sidebar({ isMobileOpen, onClose }) {
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
   const [showAutoOpsDropdown, setShowAutoOpsDropdown] = useState(false);
   const [showTemplatesModal, setShowTemplatesModal] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   // Fetch workspaces
   const fetchWorkspaces = async () => {
@@ -288,7 +290,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                   justifyContent: 'center',
                   fontSize: '14px',
                   fontWeight: '700',
-                  color: 'white',
+                  color: 'var(--bg-card)',
                   flexShrink: 0,
                   overflow: 'hidden'
                 }}>
@@ -299,10 +301,10 @@ function Sidebar({ isMobileOpen, onClose }) {
                   )}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-                  <span style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     {user.username} <ChevronDown size={14} color="#94a3b8" />
                   </span>
-                  <span style={{ fontSize: '11px', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {activeWorkspace?.name || 'Loading...'}
                   </span>
                 </div>
@@ -311,11 +313,11 @@ function Sidebar({ isMobileOpen, onClose }) {
               {showProfileMenu && (
                 <div style={{
                   position: 'absolute', top: '70px', left: '24px', width: '240px',
-                  background: 'white', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                  background: 'var(--bg-card)', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
                   border: '1px solid #f1f5f9', zIndex: 100, padding: '8px'
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 12px 8px' }}>
-                    <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b', fontWeight: '700' }}>
+                    <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', fontWeight: '700' }}>
                       Workspaces
                     </span>
                     {selectedWorkspaces.length > 0 && (
@@ -361,7 +363,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            background: w.id === activeWorkspace?.id ? '#f1f5f9' : 'transparent',
+                            background: w.id === activeWorkspace?.id ? 'var(--bg-dark)' : 'transparent',
                             padding: '8px 12px',
                             borderRadius: '8px',
                             cursor: 'pointer',
@@ -394,7 +396,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
                                 fontWeight: w.id === activeWorkspace?.id ? '700' : '500',
-                                color: '#1e293b',
+                                color: 'var(--text-main)',
                                 fontSize: '13px'
                               }}>
                                 {w.name}
@@ -402,7 +404,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                               {connectionLabel && (
                                 <span style={{
                                   fontSize: '10px',
-                                  color: '#64748b',
+                                  color: 'var(--text-muted)',
                                   fontWeight: 'normal',
                                   whiteSpace: 'nowrap',
                                   overflow: 'hidden',
@@ -416,7 +418,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
                             {w.id === activeWorkspace?.id && (
-                              <span style={{ fontSize: '10px', background: '#8b5cf6', color: 'white', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
+                              <span style={{ fontSize: '10px', background: '#8b5cf6', color: 'var(--bg-card)', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
                                 Active
                               </span>
                             )}
@@ -430,7 +432,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                     <PlusSquare size={16} color="#64748b" /> Add New Workspace
                   </button>
 
-                  <div style={{ height: '1px', background: '#f1f5f9', margin: '4px 0' }}></div>
+                  <div style={{ height: '1px', background: 'var(--bg-dark)', margin: '4px 0' }}></div>
 
                   <Link to="/help" onClick={() => setShowProfileMenu(false)} className="dropdown-item">
                     <FileText size={16} color="#64748b" /> Help Center
@@ -474,11 +476,11 @@ function Sidebar({ isMobileOpen, onClose }) {
               </div>
               {showAutoOpsDropdown && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', paddingLeft: '32px', marginTop: '4px' }}>
-                  <div onClick={() => { navigate(location.pathname + '?openTemplates=true'); setShowTemplatesModal(true); }} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                  <div onClick={() => { navigate(location.pathname + '?openTemplates=true'); setShowTemplatesModal(true); }} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                     <LayoutTemplate size={16} />
                     <span>All Template</span>
                   </div>
-                  <div onClick={() => notify("Communication integration is coming soon!", "info")} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = '#f1f5f9'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                  <div onClick={() => notify("Communication integration is coming soon!", "info")} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                     <MessageSquare size={16} />
                     <span style={{ fontWeight: '600', color: '#9ca3af' }}>Communication</span>
                     <span style={{ fontSize: '0.62rem', background: '#f3f4f6', color: '#9ca3af', padding: '2px 6px', borderRadius: '4px', marginLeft: 'auto', textTransform: 'uppercase', fontWeight: '700' }}>Soon</span>
@@ -529,6 +531,11 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>Settings</span>
             </NavLink>
 
+            <button onClick={toggleTheme} className="nav-item" style={{ width: '100%', textAlign: 'left', background: 'transparent', border: 'none', padding: '8px 14px', marginTop: 'auto', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-muted)', cursor: 'pointer' }}>
+              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+              <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+            </button>
+
 
           </nav>
         </div>
@@ -538,7 +545,7 @@ function Sidebar({ isMobileOpen, onClose }) {
           <div style={{
             padding: '18px',
             borderRadius: '16px',
-            background: '#0f172a',
+            background: 'var(--text-main)',
             border: '1px solid #1e293b',
             display: 'flex',
             flexDirection: 'column',
@@ -546,32 +553,32 @@ function Sidebar({ isMobileOpen, onClose }) {
             boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
           }}>
             <div>
-              <h3 style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px' }}>
+              <h3 style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px' }}>
                 Premium Access
               </h3>
-              <p style={{ fontSize: '14px', color: '#f8fafc', fontWeight: '600', lineHeight: '1.4' }}>
+              <p style={{ fontSize: '14px', color: 'var(--sidebar-bg)', fontWeight: '600', lineHeight: '1.4' }}>
                 Unlock all advanced features
               </p>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '14px 0', borderTop: '1px solid rgba(255, 255, 255, 0.08)', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontWeight: '600' }}>
-                <span style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ color: 'var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{ padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
                     <Sparkles size={12} color="#3b82f6" />
                   </div>
                   AI Credits
                 </span>
-                <span style={{ color: '#f8fafc', fontWeight: '800' }}>1X</span>
+                <span style={{ color: 'var(--sidebar-bg)', fontWeight: '800' }}>1X</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontWeight: '600' }}>
-                <span style={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ color: 'var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{ padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
                     <Zap size={12} color="#3b82f6" />
                   </div>
                   Automations
                 </span>
-                <span style={{ color: '#f8fafc', fontWeight: '800' }}>Infinite</span>
+                <span style={{ color: 'var(--sidebar-bg)', fontWeight: '800' }}>Infinite</span>
               </div>
 
             </div>
@@ -582,8 +589,8 @@ function Sidebar({ isMobileOpen, onClose }) {
               fontSize: '13px',
               borderRadius: '10px',
               justifyContent: 'center',
-              background: '#ffffff',
-              color: '#0f172a',
+              background: 'var(--bg-card)',
+              color: 'var(--text-main)',
               fontWeight: '800',
               textDecoration: 'none',
               display: 'flex',
@@ -603,15 +610,15 @@ function Sidebar({ isMobileOpen, onClose }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
           }}>
             <div style={{
-              background: 'white', padding: '32px', borderRadius: '24px', width: '90%', maxWidth: '400px',
+              background: 'var(--bg-card)', padding: '32px', borderRadius: '24px', width: '90%', maxWidth: '400px',
               boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
             }}>
-              <h3 style={{ fontSize: '20px', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>Create Workspace</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '20px' }}>Organize your settings, campaigns, messages, and contacts under a new workspace.</p>
+              <h3 style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px' }}>Create Workspace</h3>
+              <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px' }}>Organize your settings, campaigns, messages, and contacts under a new workspace.</p>
 
               <form onSubmit={handleCreateWorkspace}>
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '8px', textTransform: 'uppercase' }}>Workspace Name</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Workspace Name</label>
                   <input
                     type="text"
                     value={newWorkspaceName}
@@ -629,13 +636,13 @@ function Sidebar({ isMobileOpen, onClose }) {
                   <button
                     type="button"
                     onClick={() => { setShowWorkspaceModal(false); setNewWorkspaceName(''); }}
-                    style={{ padding: '10px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', background: 'transparent', fontSize: '14px', fontWeight: '600', color: '#475569', cursor: 'pointer' }}
+                    style={{ padding: '10px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', background: 'transparent', fontSize: '14px', fontWeight: '600', color: 'var(--text-muted)', cursor: 'pointer' }}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    style={{ padding: '10px 20px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', fontSize: '14px', fontWeight: '600', color: 'white', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(139, 92, 246, 0.3)' }}
+                    style={{ padding: '10px 20px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', fontSize: '14px', fontWeight: '600', color: 'var(--bg-card)', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(139, 92, 246, 0.3)' }}
                   >
                     Create
                   </button>
@@ -682,10 +689,10 @@ function TopBar({ onMenuClick }) {
   return (
     <header className="topbar" style={{ background: 'transparent', borderBottom: 'none', height: '60px', padding: window.innerWidth < 640 ? '0 16px' : '0 40px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <button onClick={onMenuClick} className="mobile-show" style={{ color: '#1e293b' }}>
+        <button onClick={onMenuClick} className="mobile-show" style={{ color: 'var(--text-main)' }}>
           <MenuIcon size={24} />
         </button>
-        <h1 className="page-title" style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b' }}>{getTitle()}</h1>
+        <h1 className="page-title" style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-main)' }}>{getTitle()}</h1>
       </div>
       <div className="topbar-actions" id="topbar-actions-portal">
         {/* Support button removed */}

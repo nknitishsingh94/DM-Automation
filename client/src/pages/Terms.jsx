@@ -47,11 +47,11 @@ export default function Terms() {
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
 
         {/* Header Card */}
-        <div style={{ background: 'white', borderRadius: '40px', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.1)', padding: '60px', marginBottom: '32px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '40px', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.1)', padding: '60px', marginBottom: '32px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '260px', height: '260px', background: 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 70%)', zIndex: 0 }} />
           <div style={{ position: 'absolute', bottom: '-60px', left: '-60px', width: '200px', height: '200px', background: 'radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 70%)', zIndex: 0 }} />
 
-          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#64748b', textDecoration: 'none', marginBottom: '40px', fontWeight: '700', fontSize: '15px', position: 'relative', zIndex: 1 }}>
+          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', textDecoration: 'none', marginBottom: '40px', fontWeight: '700', fontSize: '15px', position: 'relative', zIndex: 1 }}>
             <ArrowLeft size={18} /> Back to Dashboard
           </Link>
 
@@ -59,8 +59,8 @@ export default function Terms() {
             <div style={{ width: '88px', height: '88px', background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', borderRadius: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 28px', boxShadow: '0 12px 28px rgba(37,99,235,0.25)' }}>
               <Scale size={44} color="white" />
             </div>
-            <h1 style={{ fontSize: '48px', fontWeight: '900', color: '#0f172a', marginBottom: '12px', letterSpacing: '-2px', lineHeight: 1.1 }}>Terms of Service</h1>
-            <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: '600', marginBottom: '8px' }}>smart10X, Inc. — Effective Date: May 5, 2026</p>
+            <h1 style={{ fontSize: '48px', fontWeight: '900', color: 'var(--text-main)', marginBottom: '12px', letterSpacing: '-2px', lineHeight: 1.1 }}>Terms of Service</h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: '600', marginBottom: '8px' }}>smart10X, Inc. — Effective Date: May 5, 2026</p>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#fef9c3', color: '#854d0e', padding: '8px 20px', borderRadius: '100px', fontSize: '13px', fontWeight: '700', border: '1px solid #fde68a' }}>
               ⚠️ This agreement contains a binding arbitration provision — please read carefully
             </div>
@@ -68,9 +68,9 @@ export default function Terms() {
         </div>
 
         {/* Intro Box */}
-        <div style={{ background: '#0f172a', color: 'white', borderRadius: '24px', padding: '32px 40px', marginBottom: '32px', lineHeight: '1.75', fontSize: '0.95rem' }}>
+        <div style={{ background: 'var(--text-main)', color: 'var(--bg-card)', borderRadius: '24px', padding: '32px 40px', marginBottom: '32px', lineHeight: '1.75', fontSize: '0.95rem' }}>
           <p style={{ marginBottom: '16px', color: 'rgba(255,255,255,0.85)' }}>
-            These Terms of Service constitute a legally binding agreement between you and <strong style={{ color: 'white' }}>smart10X, Inc.</strong> ("smart10X", "we," "our" or "us") governing your use of our products, services, mobile application, and website (collectively, the "Services").
+            These Terms of Service constitute a legally binding agreement between you and <strong style={{ color: 'var(--bg-card)' }}>smart10X, Inc.</strong> ("smart10X", "we," "our" or "us") governing your use of our products, services, mobile application, and website (collectively, the "Services").
           </p>
           <p style={{ color: 'rgba(255,255,255,0.85)', margin: 0 }}>
             <strong style={{ color: '#60a5fa' }}>BY CLICKING "I AGREE", REGISTERING FOR AN ACCOUNT, OR USING THE SERVICES, YOU AGREE TO BE BOUND BY THESE TERMS.</strong> If you do not agree, you have no right to access or use the Services.
@@ -78,14 +78,14 @@ export default function Terms() {
         </div>
 
         {/* Table of Contents */}
-        <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#1e293b', marginBottom: '20px' }}>📋 Table of Contents</h3>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '20px' }}>📋 Table of Contents</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '8px' }}>
             {sections.map(s => (
               <button key={s.id} onClick={() => { toggle(s.id); setTimeout(() => document.getElementById(`section-${s.id}`)?.scrollIntoView({ behavior: 'smooth' }), 100); }}
-                style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: '8px 12px', borderRadius: '10px', fontSize: '13.5px', fontWeight: '600', color: '#475569', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '8px' }}
+                style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: '8px 12px', borderRadius: '10px', fontSize: '13.5px', fontWeight: '600', color: 'var(--text-muted)', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '8px' }}
                 onMouseEnter={e => { e.currentTarget.style.background = '#f0f9ff'; e.currentTarget.style.color = '#2563eb'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#475569'; }}>
+                onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = 'var(--text-muted)'; }}>
                 <ChevronRight size={14} /> {s.id}. {s.title}
               </button>
             ))}
@@ -95,16 +95,16 @@ export default function Terms() {
         {/* Accordion Sections */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px' }}>
           {sections.map(s => (
-            <div key={s.id} id={`section-${s.id}`} style={{ background: 'white', borderRadius: '20px', border: `1px solid ${openSection === s.id ? '#bfdbfe' : '#e2e8f0'}`, boxShadow: openSection === s.id ? '0 8px 24px rgba(59,130,246,0.08)' : '0 2px 8px rgba(0,0,0,0.02)', transition: 'all 0.3s', overflow: 'hidden' }}>
+            <div key={s.id} id={`section-${s.id}`} style={{ background: 'var(--bg-card)', borderRadius: '20px', border: `1px solid ${openSection === s.id ? '#bfdbfe' : 'var(--border-subtle)'}`, boxShadow: openSection === s.id ? '0 8px 24px rgba(59,130,246,0.08)' : '0 2px 8px rgba(0,0,0,0.02)', transition: 'all 0.3s', overflow: 'hidden' }}>
               <button onClick={() => toggle(s.id)}
                 style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 28px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: openSection === s.id ? 'linear-gradient(135deg,#3b82f6,#2563eb)' : '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 0.3s' }}>
-                    <span style={{ fontSize: '12px', fontWeight: '800', color: openSection === s.id ? 'white' : '#64748b' }}>{s.id}</span>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: openSection === s.id ? 'linear-gradient(135deg,#3b82f6,#2563eb)' : 'var(--bg-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 0.3s' }}>
+                    <span style={{ fontSize: '12px', fontWeight: '800', color: openSection === s.id ? 'var(--bg-card)' : 'var(--text-muted)' }}>{s.id}</span>
                   </div>
-                  <span style={{ fontSize: '15px', fontWeight: '700', color: openSection === s.id ? '#1e40af' : '#1e293b' }}>{s.title}</span>
+                  <span style={{ fontSize: '15px', fontWeight: '700', color: openSection === s.id ? '#1e40af' : 'var(--text-main)' }}>{s.title}</span>
                 </div>
-                <ChevronDown size={18} color={openSection === s.id ? '#3b82f6' : '#94a3b8'} style={{ transform: openSection === s.id ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.3s', flexShrink: 0 }} />
+                <ChevronDown size={18} color={openSection === s.id ? '#3b82f6' : 'var(--text-muted)'} style={{ transform: openSection === s.id ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.3s', flexShrink: 0 }} />
               </button>
 
               {openSection === s.id && (
@@ -115,10 +115,10 @@ export default function Terms() {
                       line.startsWith('•') ? (
                         <div key={i} style={{ display: 'flex', gap: '10px', marginBottom: '8px', alignItems: 'flex-start' }}>
                           <span style={{ color: '#3b82f6', fontWeight: '700', flexShrink: 0, marginTop: '2px' }}>•</span>
-                          <span style={{ color: '#475569', lineHeight: '1.7', fontSize: '0.95rem' }}>{line.slice(1).trim()}</span>
+                          <span style={{ color: 'var(--text-muted)', lineHeight: '1.7', fontSize: '0.95rem' }}>{line.slice(1).trim()}</span>
                         </div>
                       ) : (
-                        <p key={i} style={{ color: '#475569', lineHeight: '1.8', fontSize: '0.95rem', marginBottom: '12px' }}>{line}</p>
+                        <p key={i} style={{ color: 'var(--text-muted)', lineHeight: '1.8', fontSize: '0.95rem', marginBottom: '12px' }}>{line}</p>
                       )
                     ))}
                   </div>
@@ -129,21 +129,21 @@ export default function Terms() {
         </div>
 
         {/* Contact CTA */}
-        <div style={{ background: 'white', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
-          <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>Questions About These Terms?</h3>
-          <p style={{ color: '#64748b', marginBottom: '28px', fontSize: '0.95rem' }}>Our legal team is happy to clarify anything in this Agreement.</p>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+          <h3 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '12px' }}>Questions About These Terms?</h3>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '0.95rem' }}>Our legal team is happy to clarify anything in this Agreement.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
-            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
+            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'var(--bg-card)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
               <Mail size={18} /> smart10x.support@gmail.com
             </a>
-            <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#f8fafc', color: '#1e293b', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid #e2e8f0' }}>
+            <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid #e2e8f0' }}>
               Help Center
             </Link>
           </div>
         </div>
 
-        <footer style={{ textAlign: 'center', marginTop: '40px', color: '#94a3b8', fontSize: '14px', fontWeight: '600' }}>
-          © 2026 smart10X AI. All rights reserved. · <Link to="/privacy" style={{ color: '#94a3b8', textDecoration: 'none' }}>Privacy Policy</Link>
+        <footer style={{ textAlign: 'center', marginTop: '40px', color: 'var(--text-muted)', fontSize: '14px', fontWeight: '600' }}>
+          © 2026 smart10X AI. All rights reserved. · <Link to="/privacy" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Privacy Policy</Link>
         </footer>
       </div>
     </div>

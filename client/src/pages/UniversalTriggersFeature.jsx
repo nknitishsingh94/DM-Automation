@@ -51,7 +51,7 @@ export default function UniversalTriggersFeature() {
       <main className="feature-page-main">
         <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
 
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', fontWeight: '600', marginBottom: '40px', textDecoration: 'none' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '600', marginBottom: '40px', textDecoration: 'none' }}>
             <ArrowLeft size={16} /> Back to Features
           </Link>
 
@@ -83,7 +83,7 @@ export default function UniversalTriggersFeature() {
                 fontSize: isMobile ? '2.2rem' : '3rem',
                 fontWeight: '900',
                 lineHeight: '1.1',
-                color: '#0f172a',
+                color: 'var(--text-main)',
                 marginBottom: '20px',
                 letterSpacing: '-1px'
               }}>
@@ -91,11 +91,11 @@ export default function UniversalTriggersFeature() {
                 <span style={{ color: '#0ea5e9' }}>Every Single Channel.</span>
               </h1>
 
-              <h2 style={{ fontSize: isMobile ? '1rem' : '1.2rem', fontWeight: '700', color: '#1e293b', marginBottom: '24px' }}>
+              <h2 style={{ fontSize: isMobile ? '1rem' : '1.2rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '24px' }}>
                 Universal Triggers sync your brand across the web.
               </h2>
 
-              <p style={{ fontSize: '1rem', color: '#64748b', lineHeight: '1.6', marginBottom: '40px', maxWidth: isMobile ? '100%' : '600px' }}>
+              <p style={{ fontSize: '1rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '40px', maxWidth: isMobile ? '100%' : '600px' }}>
                 Create a single "Trigger Word" that works instantly on Instagram,
                 Facebook, and WhatsApp. Whether they comment on a Reel or send
                 a DM, your AI Agent responds with the same power and consistency.
@@ -103,7 +103,7 @@ export default function UniversalTriggersFeature() {
 
               <button onClick={handleCTAClick} style={{
                 background: 'linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)',
-                color: 'white',
+                color: 'var(--bg-card)',
                 padding: '12px 28px',
                 borderRadius: '12px',
                 textDecoration: 'none',
@@ -138,7 +138,7 @@ export default function UniversalTriggersFeature() {
                   <div style={{
                     width: '100px',
                     height: '100px',
-                    background: '#ffffff',
+                    background: 'var(--bg-card)',
                     borderRadius: '24px',
                     display: 'flex',
                     flexDirection: 'column',
@@ -149,7 +149,7 @@ export default function UniversalTriggersFeature() {
                     border: '1px solid #e0f2fe'
                   }}>
                     <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#0ea5e9', textTransform: 'uppercase' }}>Keyword</span>
-                    <span style={{ fontSize: '1.2rem', fontWeight: '900', color: '#0f172a' }}>"GO"</span>
+                    <span style={{ fontSize: '1.2rem', fontWeight: '900', color: 'var(--text-main)' }}>"GO"</span>
                   </div>
 
                   {[
@@ -170,7 +170,7 @@ export default function UniversalTriggersFeature() {
                       <div style={{
                         width: '50px',
                         height: '50px',
-                        background: '#ffffff',
+                        background: 'var(--bg-card)',
                         borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
@@ -181,7 +181,7 @@ export default function UniversalTriggersFeature() {
                       }}>
                         {node.icon}
                       </div>
-                      <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b' }}>{node.label}</span>
+                      <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-muted)' }}>{node.label}</span>
                     </div>
                   ))}
                 </div>
@@ -206,8 +206,8 @@ export default function UniversalTriggersFeature() {
               }}>
                 <Workflow size={14} /> System Architecture
               </div>
-              <h3 style={{ fontSize: isMobile ? '1.5rem' : '2.2rem', fontWeight: '800', color: '#0f172a' }}>How The Engine Works</h3>
-              <p style={{ color: '#64748b', maxWidth: '600px', margin: '16px auto 0', lineHeight: '1.6' }}>
+              <h3 style={{ fontSize: isMobile ? '1.5rem' : '2.2rem', fontWeight: '800', color: 'var(--text-main)' }}>How The Engine Works</h3>
+              <p style={{ color: 'var(--text-muted)', maxWidth: '600px', margin: '16px auto 0', lineHeight: '1.6' }}>
                 Your unified connection between Meta's platforms and our powerful intelligent auto-reply system.
               </p>
             </div>
@@ -219,19 +219,19 @@ export default function UniversalTriggersFeature() {
                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', color: '#0ea5e9', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 10px 25px rgba(14, 165, 233, 0.15)', border: '1px solid #bae6fd' }}>
                   <MessageSquare size={28} />
                 </div>
-                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b', textAlign: 'center' }}>Instagram / Facebook</h4>
-                <p style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>Incoming DM or Comment</p>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: 'var(--text-main)', textAlign: 'center' }}>Instagram / Facebook</h4>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '4px' }}>Incoming DM or Comment</p>
               </div>
 
               {isMobile ? <ArrowRight size={24} color="#cbd5e1" style={{ transform: 'rotate(90deg)' }} /> : <ArrowRight size={24} color="#cbd5e1" />}
 
               {/* Step 2 */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: isMobile ? '100%' : '140px' }}>
-                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: '#f8fafc', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', border: '1px dashed #cbd5e1' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'var(--sidebar-bg)', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', border: '1px dashed #cbd5e1' }}>
                   <Webhook size={28} />
                 </div>
-                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b', textAlign: 'center' }}>Webhook</h4>
-                <p style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>Real-time listener</p>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: 'var(--text-main)', textAlign: 'center' }}>Webhook</h4>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '4px' }}>Real-time listener</p>
               </div>
 
               {isMobile ? <ArrowRight size={24} color="#cbd5e1" style={{ transform: 'rotate(90deg)' }} /> : <ArrowRight size={24} color="#cbd5e1" />}
@@ -241,8 +241,8 @@ export default function UniversalTriggersFeature() {
                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%)', color: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 10px 25px rgba(79, 70, 229, 0.15)', border: '1px solid #c7d2fe' }}>
                   <Zap size={28} />
                 </div>
-                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b', textAlign: 'center' }}>Universal Trigger Engine</h4>
-                <p style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>Keyword matching</p>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: 'var(--text-main)', textAlign: 'center' }}>Universal Trigger Engine</h4>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '4px' }}>Keyword matching</p>
               </div>
 
               {isMobile ? <ArrowRight size={24} color="#cbd5e1" style={{ transform: 'rotate(90deg)' }} /> : <ArrowRight size={24} color="#cbd5e1" />}
@@ -252,8 +252,8 @@ export default function UniversalTriggersFeature() {
                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', color: '#8b5cf6', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 10px 25px rgba(139, 92, 246, 0.15)', border: '1px solid #ddd6fe' }}>
                   <Workflow size={28} />
                 </div>
-                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b', textAlign: 'center' }}>Workflow Executor</h4>
-                <p style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>Node traversal</p>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: 'var(--text-main)', textAlign: 'center' }}>Workflow Executor</h4>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '4px' }}>Node traversal</p>
               </div>
 
               {isMobile ? <ArrowRight size={24} color="#cbd5e1" style={{ transform: 'rotate(90deg)' }} /> : <ArrowRight size={24} color="#cbd5e1" />}
@@ -263,8 +263,8 @@ export default function UniversalTriggersFeature() {
                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', color: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 10px 25px rgba(245, 158, 11, 0.15)', border: '1px solid #fde68a', gap: '4px' }}>
                   <Database size={16} /> <Bot size={16} /> <Clock size={16} />
                 </div>
-                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b', textAlign: 'center' }}>Database + AI + Scheduler</h4>
-                <p style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>Process & generate</p>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: 'var(--text-main)', textAlign: 'center' }}>Database + AI + Scheduler</h4>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '4px' }}>Process & generate</p>
               </div>
 
               {isMobile ? <ArrowRight size={24} color="#cbd5e1" style={{ transform: 'rotate(90deg)' }} /> : <ArrowRight size={24} color="#cbd5e1" />}
@@ -274,8 +274,8 @@ export default function UniversalTriggersFeature() {
                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 10px 25px rgba(16, 185, 129, 0.15)', border: '1px solid #a7f3d0' }}>
                   <Send size={28} />
                 </div>
-                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#1e293b', textAlign: 'center' }}>Auto Reply Sent</h4>
-                <p style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>User receives DM</p>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: 'var(--text-main)', textAlign: 'center' }}>Auto Reply Sent</h4>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '4px' }}>User receives DM</p>
               </div>
 
             </div>
@@ -283,7 +283,7 @@ export default function UniversalTriggersFeature() {
 
           <div style={{ marginTop: isMobile ? '80px' : '120px', padding: isMobile ? '40px 0' : '80px 0', borderTop: '1px solid #f1f5f9' }}>
             <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-              <h3 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: '800', color: '#0f172a' }}>Why go Universal?</h3>
+              <h3 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: '800', color: 'var(--text-main)' }}>Why go Universal?</h3>
             </div>
             <div style={{
               display: 'grid',
@@ -295,12 +295,12 @@ export default function UniversalTriggersFeature() {
                 { title: 'Unified Data', desc: 'See how your keyword is performing across all platforms in a single, beautiful dashboard.' },
                 { title: 'Viral Ready', desc: 'When your content goes viral on one platform, you can instantly clone the success to others.' }
               ].map((item, i) => (
-                <div key={i} style={{ padding: '32px', background: '#f8fafc', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
-                  <div style={{ width: '40px', height: '40px', background: '#ffffff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0ea5e9', marginBottom: '20px', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
+                <div key={i} style={{ padding: '32px', background: 'var(--sidebar-bg)', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
+                  <div style={{ width: '40px', height: '40px', background: 'var(--bg-card)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0ea5e9', marginBottom: '20px', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
                     <CheckCircle2 size={20} />
                   </div>
                   <h4 style={{ fontWeight: '800', marginBottom: '12px' }}>{item.title}</h4>
-                  <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.6' }}>{item.desc}</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: '1.6' }}>{item.desc}</p>
                 </div>
               ))}
             </div>

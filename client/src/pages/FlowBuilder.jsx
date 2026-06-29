@@ -29,15 +29,15 @@ const MessageNode = ({ data }) => (
       </div>
     )}
     <div style={{ 
-      padding: '0', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', width: '240px',
+      padding: '0', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid #e2e8f0', width: '240px',
       boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflow: 'hidden', position: 'relative'
     }}>
-      <Handle type="target" position={Position.Left} style={{ background: '#94a3b8', width: '8px', height: '8px' }} />
-      <div style={{ background: '#f8fafc', padding: '12px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <Handle type="target" position={Position.Left} style={{ background: 'var(--text-muted)', width: '8px', height: '8px' }} />
+      <div style={{ background: 'var(--sidebar-bg)', padding: '12px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <div style={{ background: '#ef4444', borderRadius: '50%', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Instagram size={14} color="white" />
         </div>
-        <span style={{ fontSize: '12px', fontWeight: '700', color: '#1e293b', whiteSpace: 'pre-wrap' }}>{data.title || 'Instagram\nSend Message'}</span>
+        <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', whiteSpace: 'pre-wrap' }}>{data.title || 'Instagram\nSend Message'}</span>
       </div>
       <div style={{ padding: '12px', fontSize: '12px', color: '#334155', minHeight: '40px', whiteSpace: 'pre-wrap', lineHeight: '1.4' }}>
         {data.text || <span style={{ opacity: 0.5, fontStyle: 'italic' }}>Click to edit text...</span>}
@@ -45,19 +45,19 @@ const MessageNode = ({ data }) => (
       {data.buttons && data.buttons.length > 0 && (
         <div style={{ padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
           {data.buttons.map(btn => (
-            <div key={btn.id} style={{ position: 'relative', border: '1px solid #e2e8f0', padding: '8px', borderRadius: '6px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#3b82f6', background: 'white' }}>
+            <div key={btn.id} style={{ position: 'relative', border: '1px solid #e2e8f0', padding: '8px', borderRadius: '6px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#3b82f6', background: 'var(--bg-card)' }}>
               {btn.text}
-              <Handle type="source" position={Position.Right} id={btn.id} style={{ background: '#94a3b8', width: '8px', height: '8px', right: '-12px' }} />
+              <Handle type="source" position={Position.Right} id={btn.id} style={{ background: 'var(--text-muted)', width: '8px', height: '8px', right: '-12px' }} />
             </div>
           ))}
         </div>
       )}
       {(!data.buttons || data.buttons.length === 0) && (
-        <Handle type="source" position={Position.Right} style={{ background: '#94a3b8', width: '8px', height: '8px' }} />
+        <Handle type="source" position={Position.Right} style={{ background: 'var(--text-muted)', width: '8px', height: '8px' }} />
       )}
     </div>
     {data.noteBottom && (
-      <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: '12px', background: '#f1f5f9', padding: '8px 12px', borderRadius: '8px', fontSize: '10px', color: '#475569', width: '220px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', whiteSpace: 'pre-wrap' }}>
+      <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: '12px', background: 'var(--bg-dark)', padding: '8px 12px', borderRadius: '8px', fontSize: '10px', color: 'var(--text-muted)', width: '220px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', whiteSpace: 'pre-wrap' }}>
         {data.noteBottom}
       </div>
     )}
@@ -67,12 +67,12 @@ const MessageNode = ({ data }) => (
 const TriggerNode = ({ data }) => (
   <div style={{ position: 'relative' }}>
     <div style={{ 
-      padding: '0', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', width: '240px',
+      padding: '0', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid #e2e8f0', width: '240px',
       boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflow: 'hidden'
     }}>
       <div style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <Zap size={14} color="#64748b" />
-        <span style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b' }}>{data.title || 'When...'}</span>
+        <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)' }}>{data.title || 'When...'}</span>
       </div>
       <div style={{ padding: '12px', borderTop: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <div style={{ background: '#ef4444', borderRadius: '50%', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -82,10 +82,10 @@ const TriggerNode = ({ data }) => (
           {data.text || `User comments on your Post or Reel`}
         </span>
       </div>
-      <Handle type="source" position={Position.Right} style={{ background: '#94a3b8', width: '8px', height: '8px' }} />
+      <Handle type="source" position={Position.Right} style={{ background: 'var(--text-muted)', width: '8px', height: '8px' }} />
     </div>
     {data.noteBottom && (
-      <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: '12px', background: '#f1f5f9', padding: '8px 12px', borderRadius: '8px', fontSize: '10px', color: '#475569', width: '220px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', whiteSpace: 'pre-wrap' }}>
+      <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: '12px', background: 'var(--bg-dark)', padding: '8px 12px', borderRadius: '8px', fontSize: '10px', color: 'var(--text-muted)', width: '220px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', whiteSpace: 'pre-wrap' }}>
         {data.noteBottom}
       </div>
     )}
@@ -94,14 +94,14 @@ const TriggerNode = ({ data }) => (
 
 const ConditionNode = ({ data }) => (
   <div style={{ 
-    padding: '12px', background: 'white', borderRadius: '12px', border: '1px solid #ec4899', minWidth: '180px'
+    padding: '12px', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid #ec4899', minWidth: '180px'
   }}>
     <Handle type="target" position={Position.Top} style={{ background: '#ec4899' }} />
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
       <Activity size={14} color="#ec4899" />
       <span style={{ fontSize: '12px', fontWeight: '800' }}>Wait / Condition</span>
     </div>
-    <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
       <span style={{ color: '#ec4899', fontWeight: 'bold' }}>{data.condition || 'Condition Check'}</span>
     </div>
     <Handle type="source" position={Position.Bottom} id="true" style={{ background: '#10b981', left: '30%' }} />
@@ -333,10 +333,10 @@ export default function FlowBuilder() {
   };
 
   return (
-    <div style={{ height: '100vh', position: 'fixed', top: 0, left: window.innerWidth > 1000 ? '260px' : 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', background: '#f8fafc', zIndex: 10 }}>
+    <div style={{ height: '100vh', position: 'fixed', top: 0, left: window.innerWidth > 1000 ? '260px' : 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', background: 'var(--sidebar-bg)', zIndex: 10 }}>
       
       {/* ManyChat Style Top Header */}
-      <div style={{ height: '60px', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', zIndex: 20, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+      <div style={{ height: '60px', background: 'var(--bg-card)', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', zIndex: 20, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button 
             onClick={() => {
@@ -347,14 +347,14 @@ export default function FlowBuilder() {
                 navigate('/campaigns');
               }
             }} 
-            style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#64748b' }}
+            style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: 'var(--text-muted)' }}
           >
             <ArrowLeft size={20} />
           </button>
           <input 
             value={flowName}
             onChange={(e) => setFlowName(e.target.value)}
-            style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', border: 'none', outline: 'none', background: 'transparent', width: '250px' }}
+            style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-main)', border: 'none', outline: 'none', background: 'transparent', width: '250px' }}
             placeholder="Name your flow..."
           />
           <div style={{ background: '#ecfdf5', color: '#059669', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: '700', border: '1px solid #a7f3d0' }}>
@@ -362,17 +362,17 @@ export default function FlowBuilder() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '600', color: '#64748b', marginRight: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '600', color: 'var(--text-muted)', marginRight: '8px' }}>
             <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
             Live Support
           </div>
-          <button style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>
+          <button style={{ background: 'var(--sidebar-bg)', color: 'var(--text-muted)', border: '1px solid #e2e8f0', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>
             Preview
           </button>
           <button 
             onClick={saveFlow} 
             disabled={isSaving} 
-            style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '8px 24px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+            style={{ background: '#3b82f6', color: 'var(--bg-card)', border: 'none', padding: '8px 24px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
           >
              {isSaving ? 'Updating...' : 'Update'}
           </button>
@@ -382,18 +382,18 @@ export default function FlowBuilder() {
       <div style={{ flex: 1, display: 'flex', position: 'relative' }}>
         {/* Sidebar / Properties Panel - ONLY VISIBLE WHEN A NODE IS SELECTED */}
         {selectedNode && (
-          <div style={{ width: '320px', background: 'white', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', zIndex: 10, boxShadow: '2px 0 8px rgba(0,0,0,0.05)' }}>
+          <div style={{ width: '320px', background: 'var(--bg-card)', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', zIndex: 10, boxShadow: '2px 0 8px rgba(0,0,0,0.05)' }}>
             <div style={{ flex: 1, padding: '24px', overflowY: 'auto' }}>
               <div style={{ padding: '0 0 20px', marginBottom: '20px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <h4 style={{ fontSize: '0.85rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>
+                  <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>
                     Node Properties
                   </h4>
-                  <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
                     Editing {selectedNode.type === 'trigger' ? 'Flow Trigger' : 'Message Action'}
                   </div>
                 </div>
-                <button onClick={() => setSelectedNode(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
+                <button onClick={() => setSelectedNode(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
                   ✕
                 </button>
               </div>
@@ -402,7 +402,7 @@ export default function FlowBuilder() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div className="input-group">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', margin: 0 }}>Keyword Trigger</label>
+                      <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', margin: 0 }}>Keyword Trigger</label>
                       <button onClick={() => handleGenerateAI('keywords')} style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #e9d5ff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                          <Sparkles size={12} /> Auto-Gen
                       </button>
@@ -414,7 +414,7 @@ export default function FlowBuilder() {
                     />
                   </div>
                   <div className="input-group">
-                    <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Public Comment Reply (optional)</label>
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Public Comment Reply (optional)</label>
                     <StableInput 
                       value={selectedNode.data.publicReplyText || ''}
                       onChange={(val) => updateNodeData('publicReplyText', val)}
@@ -428,7 +428,7 @@ export default function FlowBuilder() {
                 <>
                   <div className="input-group" style={{ marginBottom: '16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', margin: 0 }}>Message Text</label>
+                      <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', margin: 0 }}>Message Text</label>
                       <button onClick={() => handleGenerateAI('message')} style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #e9d5ff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                          <Sparkles size={12} /> Auto-Gen
                       </button>
@@ -440,10 +440,10 @@ export default function FlowBuilder() {
                     />
                   </div>
                   <div className="input-group">
-                    <label style={{ fontSize: '12px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>Buttons</label>
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Buttons</label>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px' }}>
                       {(selectedNode.data.buttons || []).map((btn, idx) => (
-                        <div key={btn.id || idx} style={{ border: '1px solid #e2e8f0', padding: '12px', borderRadius: '8px', background: '#f8fafc' }}>
+                        <div key={btn.id || idx} style={{ border: '1px solid #e2e8f0', padding: '12px', borderRadius: '8px', background: 'var(--sidebar-bg)' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                             <input
                               type="text"
@@ -463,7 +463,7 @@ export default function FlowBuilder() {
                                 newButtons[idx] = { ...newButtons[idx], type: e.target.value };
                                 updateNodeData('buttons', newButtons);
                               }}
-                              style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '12px', background: 'white' }}
+                              style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '12px', background: 'var(--bg-card)' }}
                             >
                               <option value="reply">Quick Reply</option>
                               <option value="url">Link (URL)</option>
@@ -487,7 +487,7 @@ export default function FlowBuilder() {
                                   updateNodeData('buttons', newButtons);
                                 }}
                                 placeholder="https://..."
-                                style={{ flex: 1, padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '11px', background: 'white' }}
+                                style={{ flex: 1, padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '11px', background: 'var(--bg-card)' }}
                               />
                             </div>
                           )}
@@ -498,7 +498,7 @@ export default function FlowBuilder() {
                       <button onClick={() => {
                         const newButtons = [...(selectedNode.data.buttons || []), { id: `b${Date.now()}`, text: 'New Button', type: 'reply' }];
                         updateNodeData('buttons', newButtons);
-                      }} style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px dashed #cbd5e1', background: '#f8fafc', color: '#64748b', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                      }} style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px dashed #cbd5e1', background: 'var(--sidebar-bg)', color: 'var(--text-muted)', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                         <Plus size={14} /> Add Button
                       </button>
                     )}
@@ -523,7 +523,7 @@ export default function FlowBuilder() {
                   setNodes(nds => nds.filter(n => n.id !== selectedNode.id));
                   setSelectedNode(null);
                 }}
-                style={{ marginTop: '24px', width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #fee2e2', color: '#ef4444', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                style={{ marginTop: '24px', width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #fee2e2', color: '#ef4444', background: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
               >
                 <Trash2 size={16} /> Delete Node
               </button>
@@ -551,8 +551,8 @@ export default function FlowBuilder() {
 
           {/* Floating Add Node Toolbar */}
           {!selectedNode && (
-            <div style={{ position: 'absolute', bottom: '32px', left: '50%', transform: 'translateX(-50%)', background: 'white', padding: '12px 24px', borderRadius: '100px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', display: 'flex', gap: '16px', zIndex: 10, alignItems: 'center', border: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: '13px', fontWeight: '700', color: '#64748b' }}>Add Node:</span>
+            <div style={{ position: 'absolute', bottom: '32px', left: '50%', transform: 'translateX(-50%)', background: 'var(--bg-card)', padding: '12px 24px', borderRadius: '100px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', display: 'flex', gap: '16px', zIndex: 10, alignItems: 'center', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-muted)' }}>Add Node:</span>
               <button onClick={() => addNode('message')} style={{ border: 'none', background: '#e0e7ff', color: '#4f46e5', padding: '8px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <MessageSquare size={14} /> Message
               </button>

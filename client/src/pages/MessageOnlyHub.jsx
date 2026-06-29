@@ -313,13 +313,13 @@ const MessageOnlyHub = () => {
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: '#e0e0de', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-      <div style={{ display: 'flex', width: '100%', maxWidth: '1600px', margin: '0 auto', background: '#ffffff', boxShadow: '0 6px 18px rgba(0,0,0,0.05)' }}>
+      <div style={{ display: 'flex', width: '100%', maxWidth: '1600px', margin: '0 auto', background: 'var(--bg-card)', boxShadow: '0 6px 18px rgba(0,0,0,0.05)' }}>
         
         {/* Left Sidebar (Chats List) */}
-        <div style={{ width: '35%', minWidth: '320px', maxWidth: '420px', background: '#ffffff', borderRight: '1px solid #d1d7db', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ width: '35%', minWidth: '320px', maxWidth: '420px', background: 'var(--bg-card)', borderRight: '1px solid #d1d7db', display: 'flex', flexDirection: 'column' }}>
           
           {/* Header */}
-          <div style={{ background: '#f0f2f5', padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px' }}>
+          <div style={{ background: 'var(--bg-dark)', padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#dfe5e7', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                 {user?.profilePhoto ? (
@@ -332,7 +332,7 @@ const MessageOnlyHub = () => {
                 value={selectedPlatform}
                 onChange={(e) => setSelectedPlatform(e.target.value)}
                 style={{ 
-                  background: '#ffffff', 
+                  background: 'var(--bg-card)', 
                   border: '1px solid #d1d7db', 
                   padding: '4px 24px 4px 10px', 
                   borderRadius: '16px', 
@@ -359,14 +359,14 @@ const MessageOnlyHub = () => {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#54656f' }}>
               {/* AI Toggle */}
-              <div style={{ display: 'flex', alignItems: 'center', background: isAiEnabled ? '#f3e8ff' : '#f0f2f5', padding: '4px 10px', borderRadius: '20px', border: `1px solid ${isAiEnabled ? '#d8b4fe' : '#d1d7db'}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', background: isAiEnabled ? '#f3e8ff' : 'var(--bg-dark)', padding: '4px 10px', borderRadius: '20px', border: `1px solid ${isAiEnabled ? '#d8b4fe' : '#d1d7db'}` }}>
                 <Bot size={16} color={isAiEnabled ? '#7c3aed' : '#54656f'} style={{ marginRight: '6px' }} />
                 <span style={{ fontSize: '0.8rem', fontWeight: 'bold', color: isAiEnabled ? '#7c3aed' : '#54656f', marginRight: '8px' }}>AI Reply</span>
                 <div 
                   onClick={() => setIsAiEnabled(!isAiEnabled)}
                   style={{ width: '32px', height: '18px', background: isAiEnabled ? '#7c3aed' : '#d1d7db', borderRadius: '10px', position: 'relative', cursor: 'pointer', transition: '0.3s' }}
                 >
-                  <div style={{ width: '14px', height: '14px', background: 'white', borderRadius: '50%', position: 'absolute', top: '2px', left: isAiEnabled ? '16px' : '2px', transition: '0.3s' }}></div>
+                  <div style={{ width: '14px', height: '14px', background: 'var(--bg-card)', borderRadius: '50%', position: 'absolute', top: '2px', left: isAiEnabled ? '16px' : '2px', transition: '0.3s' }}></div>
                 </div>
                 {isAiEnabled && (
                   <SettingsIcon size={14} color="#7c3aed" style={{ marginLeft: '8px', cursor: 'pointer' }} onClick={() => setShowAiSettings(true)} />
@@ -376,8 +376,8 @@ const MessageOnlyHub = () => {
           </div>
 
           {/* Search Bar */}
-          <div style={{ padding: '8px 12px', background: '#ffffff', borderBottom: '1px solid #f2f2f2' }}>
-            <div style={{ background: '#f0f2f5', borderRadius: '8px', display: 'flex', alignItems: 'center', padding: '6px 12px', gap: '12px' }}>
+          <div style={{ padding: '8px 12px', background: 'var(--bg-card)', borderBottom: '1px solid #f2f2f2' }}>
+            <div style={{ background: 'var(--bg-dark)', borderRadius: '8px', display: 'flex', alignItems: 'center', padding: '6px 12px', gap: '12px' }}>
               <Search size={18} color="#54656f" />
               <input 
                 type="text" 
@@ -388,14 +388,14 @@ const MessageOnlyHub = () => {
           </div>
 
           {/* Chats / Users List */}
-          <div style={{ flex: 1, overflowY: 'auto', background: '#ffffff' }}>
+          <div style={{ flex: 1, overflowY: 'auto', background: 'var(--bg-card)' }}>
             {connectedPlatforms.length === 0 ? (
               <div style={{ padding: '40px 20px', textAlign: 'center', color: '#667781' }}>
                 <SettingsIcon size={40} style={{ marginBottom: '16px', opacity: 0.5 }} />
                 <p>No platforms connected yet.</p>
                 <button 
                   onClick={() => navigate('/settings')}
-                  style={{ marginTop: '16px', padding: '8px 24px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', borderRadius: '24px', cursor: 'pointer', fontWeight: 'bold' }}
+                  style={{ marginTop: '16px', padding: '8px 24px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'var(--bg-card)', border: 'none', borderRadius: '24px', cursor: 'pointer', fontWeight: 'bold' }}
                 >
                   Connect in Settings
                 </button>
@@ -430,7 +430,7 @@ const MessageOnlyHub = () => {
                         width: '20px', height: '20px', borderRadius: '50%', 
                         background: plat?.gradient || '#ccc', 
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: 'white', border: '2px solid white'
+                        color: 'var(--bg-card)', border: '2px solid white'
                       }}>
                         <div style={{ transform: 'scale(0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           {plat?.icon}
@@ -449,7 +449,7 @@ const MessageOnlyHub = () => {
                           {chat.lastMessage}
                         </span>
                         {chat.unread > 0 && (
-                          <div style={{ background: '#00a884', color: 'white', fontSize: '0.7rem', fontWeight: 'bold', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <div style={{ background: '#00a884', color: 'var(--bg-card)', fontSize: '0.7rem', fontWeight: 'bold', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             {chat.unread}
                           </div>
                         )}
@@ -466,7 +466,7 @@ const MessageOnlyHub = () => {
         {activeChat ? (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#efeae2', position: 'relative' }}>
             {/* Chat Header */}
-            <div style={{ padding: '10px 16px', background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #d1d7db', height: '60px' }}>
+            <div style={{ padding: '10px 16px', background: 'var(--bg-dark)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #d1d7db', height: '60px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <img referrerPolicy="no-referrer" src={getSafeImageUrl(activeChat.avatar)} alt="Avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
                 <div>
@@ -490,7 +490,7 @@ const MessageOnlyHub = () => {
                       style={{ 
                         alignSelf: isSentByMe ? 'flex-end' : 'flex-start', 
                         maxWidth: '65%', 
-                        background: isSentByMe ? '#d9fdd3' : '#ffffff', 
+                        background: isSentByMe ? '#d9fdd3' : 'var(--bg-card)', 
                         padding: '8px 12px', 
                         borderRadius: isSentByMe ? '8px 8px 0 8px' : '8px 8px 8px 0', 
                         boxShadow: '0 1px 0.5px rgba(11,20,26,.13)', 
@@ -518,12 +518,12 @@ const MessageOnlyHub = () => {
             </div>
 
             {/* Chat Input */}
-            <div style={{ padding: '10px 16px', background: '#f0f2f5', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ padding: '10px 16px', background: 'var(--bg-dark)', display: 'flex', alignItems: 'center', gap: '16px' }}>
               <div style={{ display: 'flex', gap: '16px', color: '#54656f' }}>
                 <Smile size={26} style={{ cursor: 'pointer' }} />
                 <Paperclip size={24} style={{ cursor: 'pointer' }} />
               </div>
-              <div style={{ flex: 1, background: '#ffffff', borderRadius: '8px', padding: '9px 12px', display: 'flex', alignItems: 'center' }}>
+              <div style={{ flex: 1, background: 'var(--bg-card)', borderRadius: '8px', padding: '9px 12px', display: 'flex', alignItems: 'center' }}>
                 <input 
                   type="text" 
                   placeholder="Type a message" 
@@ -537,7 +537,7 @@ const MessageOnlyHub = () => {
                     onClick={handleGenerateAiResponse}
                     style={{ 
                       display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', 
-                      background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', 
+                      background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'var(--bg-card)', 
                       padding: '4px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold',
                       opacity: isGenerating ? 0.7 : 1, pointerEvents: isGenerating ? 'none' : 'auto'
                     }}
@@ -558,7 +558,7 @@ const MessageOnlyHub = () => {
         ) : (
           <div style={{ 
             flex: 1, 
-            background: '#f0f2f5', 
+            background: 'var(--bg-dark)', 
             display: 'flex', 
             flexDirection: 'column',
             alignItems: 'center', 
@@ -606,7 +606,7 @@ const MessageOnlyHub = () => {
       {/* AI Settings Modal */}
       {showAiSettings && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: 'white', padding: '32px', borderRadius: '16px', width: '500px', maxWidth: '90%', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
+          <div style={{ background: 'var(--bg-card)', padding: '32px', borderRadius: '16px', width: '500px', maxWidth: '90%', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#111b21', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Bot size={24} color="#7c3aed" />
@@ -641,7 +641,7 @@ const MessageOnlyHub = () => {
               <select 
                 value={aiContext.tone}
                 onChange={(e) => setAiContext({...aiContext, tone: e.target.value})}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d7db', fontSize: '0.95rem', outline: 'none', background: 'white' }}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d1d7db', fontSize: '0.95rem', outline: 'none', background: 'var(--bg-card)' }}
               >
                 <option value="Professional and helpful">Professional & Helpful</option>
                 <option value="Friendly and casual">Friendly & Casual</option>
@@ -653,13 +653,13 @@ const MessageOnlyHub = () => {
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
               <button 
                 onClick={() => setShowAiSettings(false)}
-                style={{ padding: '10px 20px', background: '#f0f2f5', color: '#54656f', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
+                style={{ padding: '10px 20px', background: 'var(--bg-dark)', color: '#54656f', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
               >
                 Cancel
               </button>
               <button 
                 onClick={() => setShowAiSettings(false)}
-                style={{ padding: '10px 20px', background: '#7c3aed', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
+                style={{ padding: '10px 20px', background: '#7c3aed', color: 'var(--bg-card)', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
               >
                 Save AI Context
               </button>

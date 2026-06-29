@@ -112,7 +112,7 @@ export default function Settings() {
 
       {activeTab === 'danger' && (
         <div style={{ marginTop: '20px' }}>
-          <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', background: 'white', overflow: 'hidden' }}>
+          <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', background: 'var(--bg-card)', overflow: 'hidden' }}>
             <div style={{ padding: '24px', background: '#fff1f2' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#be123c', marginBottom: '12px' }}>
                 <AlertTriangle size={24} />
@@ -127,15 +127,15 @@ export default function Settings() {
                 <button 
                   onClick={() => setShowDeleteConfirm(true)}
                   style={{ 
-                    padding: '10px 20px', background: '#e11d48', color: 'white', border: 'none', 
+                    padding: '10px 20px', background: '#e11d48', color: 'var(--bg-card)', border: 'none', 
                     borderRadius: '8px', fontWeight: '700', fontSize: '0.82rem', cursor: 'pointer' 
                   }}
                 >
                   Delete my account
                 </button>
               ) : (
-                <div style={{ background: 'white', padding: '16px', borderRadius: '8px', border: '1px solid #fecdd3' }}>
-                  <p style={{ margin: '0 0 16px 0', fontSize: '0.85rem', fontWeight: '700', color: '#1e293b' }}>
+                <div style={{ background: 'var(--bg-card)', padding: '16px', borderRadius: '8px', border: '1px solid #fecdd3' }}>
+                  <p style={{ margin: '0 0 16px 0', fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)' }}>
                     Are you absolutely sure? Type 'DELETE' to confirm.
                   </p>
                   <input
@@ -157,7 +157,7 @@ export default function Settings() {
                     <button 
                       onClick={handleDeleteAccount} 
                       disabled={deleting || deleteConfirmationText !== 'DELETE'}
-                      style={{ flex: 1, background: '#e11d48', color: 'white', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: (deleting || deleteConfirmationText !== 'DELETE') ? 'not-allowed' : 'pointer', fontSize: '0.82rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', opacity: (deleting || deleteConfirmationText !== 'DELETE') ? 0.5 : 1 }}
+                      style={{ flex: 1, background: '#e11d48', color: 'var(--bg-card)', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: (deleting || deleteConfirmationText !== 'DELETE') ? 'not-allowed' : 'pointer', fontSize: '0.82rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', opacity: (deleting || deleteConfirmationText !== 'DELETE') ? 0.5 : 1 }}
                     >
                       {deleting ? 'Deleting...' : 'Yes, Delete Everything'}
                     </button>
@@ -166,7 +166,7 @@ export default function Settings() {
                         setShowDeleteConfirm(false);
                         setDeleteConfirmationText('');
                       }} 
-                      style={{ flex: 1, background: '#f1f5f9', color: '#475569', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontSize: '0.82rem' }}
+                      style={{ flex: 1, background: 'var(--bg-dark)', color: 'var(--text-muted)', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontSize: '0.82rem' }}
                     >
                       Cancel
                     </button>

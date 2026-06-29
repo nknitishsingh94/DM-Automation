@@ -106,7 +106,7 @@ export default function Workplace() {
         <button
           onClick={() => navigate('/settings')}
           style={{
-            background: '#ea580c', color: 'white', padding: '10px 18px', borderRadius: '8px',
+            background: '#ea580c', color: 'var(--bg-card)', padding: '10px 18px', borderRadius: '8px',
             fontWeight: '600', fontSize: '0.88rem', border: 'none', cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: '6px',
             boxShadow: '0 1px 3px rgba(0,0,0,0.1)', transition: 'background 0.2s',
@@ -174,7 +174,7 @@ export default function Workplace() {
                 background: '#dcfce7', color: '#166534', fontSize: '0.7rem', fontWeight: '700',
                 padding: '3px 10px', borderRadius: '20px', textTransform: 'uppercase', letterSpacing: '0.04em',
               }}>Connected</span>
-              <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Click to open workbench</span>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Click to open workbench</span>
             </div>
 
             {/* Placeholder stats */}
@@ -184,9 +184,9 @@ export default function Workplace() {
                 { label: 'Active', sub: '—' },
               ].map(s => (
                 <div key={s.label} style={{
-                  background: '#f8fafc', borderRadius: '10px', padding: '12px', textAlign: 'center',
+                  background: 'var(--sidebar-bg)', borderRadius: '10px', padding: '12px', textAlign: 'center',
                 }}>
-                  <div style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: '600', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     {s.label}
                   </div>
                   <div style={{ fontSize: '1.15rem', fontWeight: '800', color: '#374151' }}>{s.sub}</div>
@@ -202,7 +202,7 @@ export default function Workplace() {
               fontSize: '0.82rem', fontWeight: '500', color: '#6b7280',
             }}>
               <span>Open {acc.platform} workbench</span>
-              <ArrowLeft size={15} style={{ transform: 'rotate(180deg)', color: '#94a3b8' }} />
+              <ArrowLeft size={15} style={{ transform: 'rotate(180deg)', color: 'var(--text-muted)' }} />
             </div>
           </div>
         ))}
@@ -214,7 +214,7 @@ export default function Workplace() {
             alignItems: 'center', justifyContent: 'center', padding: '70px 20px', textAlign: 'center',
           }}>
             <div style={{
-              width: '80px', height: '80px', borderRadius: '50%', background: '#f1f5f9',
+              width: '80px', height: '80px', borderRadius: '50%', background: 'var(--bg-dark)',
               display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px',
             }}>
               <Sliders size={32} color="#94a3b8" />
@@ -238,7 +238,7 @@ export default function Workplace() {
             <button
               onClick={() => navigate('/settings')}
               style={{
-                marginTop: '22px', background: '#ea580c', color: 'white',
+                marginTop: '22px', background: '#ea580c', color: 'var(--bg-card)',
                 padding: '12px 24px', borderRadius: '10px', fontWeight: '700',
                 fontSize: '0.95rem', border: 'none', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', gap: '8px',
@@ -404,7 +404,7 @@ function WorkbenchShell({ platform, color, Icon, onBack }) {
 
       {/* ── Info callout ── */}
       <div style={{
-        background: '#f8fafc', borderRadius: '16px', padding: '24px 28px',
+        background: 'var(--sidebar-bg)', borderRadius: '16px', padding: '24px 28px',
         border: '1px solid #e5e7eb', display: 'flex', alignItems: 'flex-start', gap: '14px',
       }}>
         <HelpCircle size={22} color="#7c3aed" style={{ flexShrink: 0, marginTop: '2px' }} />

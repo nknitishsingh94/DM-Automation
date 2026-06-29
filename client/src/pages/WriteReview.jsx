@@ -152,7 +152,7 @@ const WriteReview = () => {
       <Toaster position="bottom-right" />
       
       <div style={{ 
-        background: '#ffffff', 
+        background: 'var(--bg-card)', 
         width: '100%', 
         maxWidth: '650px', 
         borderRadius: '24px', 
@@ -174,23 +174,23 @@ const WriteReview = () => {
           }}>
             <Sparkles size={32} />
           </div>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: '900', color: '#0f172a', marginBottom: '12px', letterSpacing: '-0.5px' }}>
+          <h1 style={{ fontSize: '2.2rem', fontWeight: '900', color: 'var(--text-main)', marginBottom: '12px', letterSpacing: '-0.5px' }}>
             We'd love your feedback!
           </h1>
-          <p style={{ color: '#64748b', fontSize: '1.05rem', maxWidth: '450px', margin: '0 auto', lineHeight: '1.6' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', maxWidth: '450px', margin: '0 auto', lineHeight: '1.6' }}>
             Share your smart10X experience to help other creators and brands discover the power of DM automation.
           </p>
         </div>
 
         {alreadyReviewed ? (
-          <div style={{ textAlign: 'center', padding: '40px 20px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+          <div style={{ textAlign: 'center', padding: '40px 20px', background: 'var(--sidebar-bg)', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
             <div style={{ display: 'inline-flex', padding: '16px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '50%', color: '#22c55e', marginBottom: '20px' }}>
               <Star size={32} fill="#22c55e" />
             </div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', marginBottom: '12px' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '12px' }}>
               Thank You for Your Review!
             </h2>
-            <p style={{ color: '#64748b', fontSize: '1rem', maxWidth: '400px', margin: '0 auto', lineHeight: '1.6' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1rem', maxWidth: '400px', margin: '0 auto', lineHeight: '1.6' }}>
               We really appreciate you taking the time to share your experience with smart10X. Your review helps us grow!
             </p>
           </div>
@@ -199,49 +199,49 @@ const WriteReview = () => {
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Your Name <span style={{color: '#ef4444'}}>*</span></label>
+              <label style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-main)' }}>Your Name <span style={{color: '#ef4444'}}>*</span></label>
               <input 
                 type="text" 
                 required
                 value={newReview.name}
                 onChange={(e) => setNewReview({...newReview, name: e.target.value})}
                 placeholder="e.g. Alex Johnson"
-                style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: '#f8fafc', fontSize: '1rem', transition: 'all 0.2s', focus: { borderColor: '#7c3aed', background: '#fff' } }}
+                style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: 'var(--sidebar-bg)', fontSize: '1rem', transition: 'all 0.2s', focus: { borderColor: '#7c3aed', background: '#fff' } }}
                 onFocus={(e) => { e.target.style.borderColor = '#7c3aed'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
-                onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
               />
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Social Handle</label>
+              <label style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-main)' }}>Social Handle</label>
               <input 
                 type="text" 
                 value={newReview.handle}
                 onChange={(e) => setNewReview({...newReview, handle: e.target.value})}
                 placeholder="e.g. @alex_creates"
-                style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: '#f8fafc', fontSize: '1rem', transition: 'all 0.2s' }}
+                style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: 'var(--sidebar-bg)', fontSize: '1rem', transition: 'all 0.2s' }}
                 onFocus={(e) => { e.target.style.borderColor = '#7c3aed'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
-                onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
               />
             </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Role / Company</label>
+              <label style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-main)' }}>Role / Company</label>
               <input 
                 type="text" 
                 value={newReview.role}
                 onChange={(e) => setNewReview({...newReview, role: e.target.value})}
                 placeholder="e.g. Fitness Coach"
-                style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: '#f8fafc', fontSize: '1rem', transition: 'all 0.2s' }}
+                style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: 'var(--sidebar-bg)', fontSize: '1rem', transition: 'all 0.2s' }}
                 onFocus={(e) => { e.target.style.borderColor = '#7c3aed'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
-                onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
               />
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Rating</label>
+              <label style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-main)' }}>Rating</label>
               <div style={{ display: 'flex', gap: '6px', padding: '10px 0' }}>
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
@@ -263,8 +263,8 @@ const WriteReview = () => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '20px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-            <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Profile Picture</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '20px', background: 'var(--sidebar-bg)', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+            <label style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-main)' }}>Profile Picture</label>
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
               <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '2px dashed #cbd5e1', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
                 {newReview.avatarUrl ? (
@@ -283,9 +283,9 @@ const WriteReview = () => {
                 />
                 <label 
                   htmlFor="avatar-upload" 
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: '#ffffff', color: '#475569', borderRadius: '10px', fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', border: '1px solid #cbd5e1', transition: 'all 0.2s', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: 'var(--bg-card)', color: 'var(--text-muted)', borderRadius: '10px', fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', border: '1px solid #cbd5e1', transition: 'all 0.2s', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
                   onMouseOver={(e) => { e.currentTarget.style.borderColor = '#7c3aed'; e.currentTarget.style.color = '#7c3aed'; }}
-                  onMouseOut={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.color = '#475569'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
                 >
                   {uploadingAvatar ? (
                     <><div className="animate-spin" style={{ width: '16px', height: '16px', border: '2px solid #7c3aed', borderTopColor: 'transparent', borderRadius: '50%' }}></div> Uploading...</>
@@ -293,13 +293,13 @@ const WriteReview = () => {
                     <><ImageIcon size={16} /> Choose Image</>
                   )}
                 </label>
-                <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '8px', margin: 0 }}>Square images work best (JPG, PNG)</p>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '8px', margin: 0 }}>Square images work best (JPG, PNG)</p>
               </div>
             </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Which platform do you use the most?</label>
+            <label style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-main)' }}>Which platform do you use the most?</label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
               {['instagram', 'facebook', 'whatsapp'].map(platform => (
                 <div 
@@ -308,14 +308,14 @@ const WriteReview = () => {
                   style={{ 
                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 12px', 
                     borderRadius: '16px', cursor: 'pointer', fontWeight: '700', fontSize: '0.9rem', textTransform: 'capitalize',
-                    border: `2px solid ${newReview.platform === platform ? '#7c3aed' : '#e2e8f0'}`, 
-                    background: newReview.platform === platform ? 'rgba(124,58,237,0.04)' : '#ffffff', 
-                    color: newReview.platform === platform ? '#7c3aed' : '#64748b',
+                    border: `2px solid ${newReview.platform === platform ? '#7c3aed' : 'var(--border-subtle)'}`, 
+                    background: newReview.platform === platform ? 'rgba(124,58,237,0.04)' : 'var(--bg-card)', 
+                    color: newReview.platform === platform ? '#7c3aed' : 'var(--text-muted)',
                     transition: 'all 0.2s',
                     boxShadow: newReview.platform === platform ? '0 4px 12px rgba(124,58,237,0.1)' : 'none'
                   }}
-                  onMouseOver={(e) => { if(newReview.platform !== platform) e.currentTarget.style.borderColor = '#cbd5e1'; }}
-                  onMouseOut={(e) => { if(newReview.platform !== platform) e.currentTarget.style.borderColor = '#e2e8f0'; }}
+                  onMouseOver={(e) => { if(newReview.platform !== platform) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
+                  onMouseOut={(e) => { if(newReview.platform !== platform) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
                 >
                   {platform === 'instagram' && <Instagram size={24} />}
                   {platform === 'facebook' && <Facebook size={24} />}
@@ -327,16 +327,16 @@ const WriteReview = () => {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1e293b' }}>Your Review <span style={{color: '#ef4444'}}>*</span></label>
+            <label style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-main)' }}>Your Review <span style={{color: '#ef4444'}}>*</span></label>
             <textarea 
               required
               value={newReview.text}
               onChange={(e) => setNewReview({...newReview, text: e.target.value})}
               placeholder="How has smart10X helped you save time or grow your business?"
               rows={5}
-              style={{ padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', background: '#f8fafc', fontSize: '1rem', resize: 'vertical', transition: 'all 0.2s', lineHeight: '1.5' }}
+              style={{ padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', background: 'var(--sidebar-bg)', fontSize: '1rem', resize: 'vertical', transition: 'all 0.2s', lineHeight: '1.5' }}
               onFocus={(e) => { e.target.style.borderColor = '#7c3aed'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
-              onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
             />
           </div>
 
@@ -346,7 +346,7 @@ const WriteReview = () => {
             style={{ 
               marginTop: '16px', width: '100%', padding: '18px', 
               background: 'linear-gradient(135deg, #7c3aed, #db2777)', 
-              color: 'white', borderRadius: '16px', fontWeight: '800', fontSize: '1.1rem', 
+              color: 'var(--bg-card)', borderRadius: '16px', fontWeight: '800', fontSize: '1.1rem', 
               border: 'none', cursor: submitting ? 'not-allowed' : 'pointer', 
               opacity: submitting ? 0.8 : 1, 
               boxShadow: '0 8px 20px rgba(124, 58, 237, 0.3)',

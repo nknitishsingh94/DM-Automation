@@ -161,7 +161,7 @@ export default function Forms() {
       <div className="forms-hero">
         <div className="forms-title-group">
           <h2>Forms & Studio</h2>
-          <p style={{ color: '#64748b', fontSize: '1rem' }}>Collect leads, feedback and data automatically via Instagram DMs.</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>Collect leads, feedback and data automatically via Instagram DMs.</p>
         </div>
         <button className="btn-premium" onClick={() => { setWizardStep(1); setIsModalOpen(true); }}>
           <Plus size={20} /> Create New Form
@@ -195,14 +195,14 @@ export default function Forms() {
             <h3 style={{ fontSize: '1.2rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <Layout size={20} color="#7c3aed" /> Active Form Flows
             </h3>
-            <div style={{ fontSize: '0.85rem', color: '#94a3b8', fontWeight: '600' }}>Manage existing automations</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '600' }}>Manage existing automations</div>
           </div>
           
           <div className="forms-list-body" style={{ minHeight: '400px' }}>
             {loading ? (
               <LoadingSpinner minHeight="300px" />
             ) : forms.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '100px 40px', color: '#94a3b8' }}>
+              <div style={{ textAlign: 'center', padding: '100px 40px', color: 'var(--text-muted)' }}>
                 <FileText size={64} style={{ opacity: 0.1, marginBottom: '16px' }} />
                 <p style={{ fontWeight: '700' }}>No forms found. Start with a template on the right!</p>
               </div>
@@ -214,27 +214,27 @@ export default function Forms() {
                       <FileText size={24} />
                     </div>
                     <div>
-                      <h4 style={{ fontSize: '1rem', fontWeight: '800', marginBottom: '4px', color: '#1e293b' }}>{form.name}</h4>
+                      <h4 style={{ fontSize: '1rem', fontWeight: '800', marginBottom: '4px', color: 'var(--text-main)' }}>{form.name}</h4>
                       <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                         <span className={`badge-premium ${form.active ? 'badge-active-premium' : 'badge-paused-premium'}`}>
                           {form.active ? 'Live' : 'Paused'}
                         </span>
-                        <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: '500' }}>• {form.type}</span>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>• {form.type}</span>
                       </div>
                     </div>
                   </div>
                   
                   <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                     <div style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e293b' }}>{form.submissionsCount || 0}</div>
-                      <div style={{ fontSize: '0.7rem', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase' }}>Leads</div>
+                      <div style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-main)' }}>{form.submissionsCount || 0}</div>
+                      <div style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Leads</div>
                     </div>
                     
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button onClick={() => handleToggle(form._id)} className="btn-icon" title={form.active ? "Pause" : "Resume"}>
                         {form.active ? <ToggleRight size={32} color="#10b981" /> : <ToggleLeft size={32} color="#94a3b8" />}
                       </button>
-                      <button onClick={() => navigate(`/forms/${form._id}`)} className="btn-icon" style={{ background: '#f8fafc', padding: '8px', borderRadius: '10px' }}><Eye size={18} /></button>
+                      <button onClick={() => navigate(`/forms/${form._id}`)} className="btn-icon" style={{ background: 'var(--sidebar-bg)', padding: '8px', borderRadius: '10px' }}><Eye size={18} /></button>
                       <button onClick={() => handleDelete(form._id)} className="btn-icon" style={{ background: '#fff1f2', color: '#ef4444', padding: '8px', borderRadius: '10px' }}><Trash2 size={18} /></button>
                     </div>
                   </div>
@@ -259,13 +259,13 @@ export default function Forms() {
                     </div>
                     <div style={{ fontWeight: '800', fontSize: '0.9rem' }}>{t.title}</div>
                   </div>
-                  <p style={{ fontSize: '0.75rem', color: '#64748b', lineHeight: '1.5' }}>{t.desc}</p>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.5' }}>{t.desc}</p>
                 </div>
               ))}
             </div>
           </div>
           
-          <div style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%)', borderRadius: '24px', padding: '24px', color: 'white', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%)', borderRadius: '24px', padding: '24px', color: 'var(--bg-card)', position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'relative', zIndex: 1 }}>
               <h4 style={{ fontWeight: '800', fontSize: '1.1rem', marginBottom: '8px' }}>Power user?</h4>
               <p style={{ fontSize: '0.8rem', opacity: 0.9, marginBottom: '20px' }}>Create multi-step flows with conditional branching logic in the Flow Builder.</p>
@@ -292,14 +292,14 @@ export default function Forms() {
                   <div className={`step-dot ${wizardStep === 1 ? 'active' : ''}`}></div>
                   <div className={`step-dot ${wizardStep === 2 ? 'active' : ''}`}></div>
                 </div>
-                <h3 style={{ fontSize: '1.8rem', fontWeight: '900', color: '#1e293b' }}>
+                <h3 style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--text-main)' }}>
                   {wizardStep === 1 ? 'New Form Setup' : 'Form Configuration'}
                 </h3>
-                <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                   {wizardStep === 1 ? 'Start by naming your automation flow' : 'Configure the sequential questions to ask'}
                 </p>
               </div>
-              <button className="btn-icon" onClick={() => setIsModalOpen(false)} style={{ background: '#f1f5f9', padding: '8px', borderRadius: '50%' }}>
+              <button className="btn-icon" onClick={() => setIsModalOpen(false)} style={{ background: 'var(--bg-dark)', padding: '8px', borderRadius: '50%' }}>
                 <X size={20} />
               </button>
             </div>
@@ -315,7 +315,7 @@ export default function Forms() {
                   />
 
                   <div style={{ marginTop: '32px' }}>
-                    <label style={{ display: 'block', marginBottom: '12px', fontSize: '0.9rem', fontWeight: '800', color: '#1e293b' }}>Select Template Type</label>
+                    <label style={{ display: 'block', marginBottom: '12px', fontSize: '0.9rem', fontWeight: '800', color: 'var(--text-main)' }}>Select Template Type</label>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
                       {formTypes.map(t => (
                         <div 
@@ -323,13 +323,13 @@ export default function Forms() {
                           onClick={() => setNewForm({...newForm, type: t.title})}
                           style={{ 
                             padding: '16px', borderRadius: '16px', cursor: 'pointer', border: '2px solid', 
-                            borderColor: newForm.type === t.title ? '#7c3aed' : '#f1f5f9',
-                            background: newForm.type === t.title ? '#fdfcff' : '#ffffff',
+                            borderColor: newForm.type === t.title ? '#7c3aed' : 'var(--bg-dark)',
+                            background: newForm.type === t.title ? '#fdfcff' : 'var(--bg-card)',
                             transition: 'all 0.2s'
                           }}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div style={{ color: newForm.type === t.title ? '#7c3aed' : '#94a3b8' }}>{t.icon}</div>
+                            <div style={{ color: newForm.type === t.title ? '#7c3aed' : 'var(--text-muted)' }}>{t.icon}</div>
                             <div style={{ fontSize: '0.9rem', fontWeight: '800' }}>{t.title}</div>
                           </div>
                         </div>
@@ -340,10 +340,10 @@ export default function Forms() {
               ) : (
                 <div style={{ padding: '20px 0' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                    <h4 style={{ fontSize: '1rem', fontWeight: '800', color: '#1e293b' }}>Sequences & Fields</h4>
+                    <h4 style={{ fontSize: '1rem', fontWeight: '800', color: 'var(--text-main)' }}>Sequences & Fields</h4>
                     <button 
                       className="btn-premium" 
-                      style={{ padding: '8px 16px', fontSize: '0.8rem', background: '#f8fafc', color: '#7c3aed', boxShadow: 'none', border: '1px solid #e2e8f0' }}
+                      style={{ padding: '8px 16px', fontSize: '0.8rem', background: 'var(--sidebar-bg)', color: '#7c3aed', boxShadow: 'none', border: '1px solid #e2e8f0' }}
                       onClick={() => {
                         const updatedFields = [...newForm.steps[0].fields, { label: 'New Question', type: 'text', placeholder: '', required: true }];
                         setNewForm({
@@ -359,7 +359,7 @@ export default function Forms() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {newForm.steps[0].fields.map((field, idx) => (
                       <div key={idx} className="field-editor-card">
-                        <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800', flexShrink: 0 }}>
+                        <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#7c3aed', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800', flexShrink: 0 }}>
                           {idx + 1}
                         </div>
                         <div style={{ flex: 1 }}>
@@ -425,7 +425,7 @@ export default function Forms() {
             </div>
 
             {/* Footer Actions */}
-            <div style={{ padding: '30px 40px', borderTop: '1px solid #f1f5f9', background: '#ffffff', display: 'flex', gap: '16px' }}>
+            <div style={{ padding: '30px 40px', borderTop: '1px solid #f1f5f9', background: 'var(--bg-card)', display: 'flex', gap: '16px' }}>
               {wizardStep === 1 ? (
                 <>
                   <button className="btn-secondary" style={{ flex: 1, padding: '14px', borderRadius: '16px' }} onClick={() => setIsModalOpen(false)}>Cancel</button>

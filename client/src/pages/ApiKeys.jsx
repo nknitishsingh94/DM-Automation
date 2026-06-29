@@ -103,13 +103,13 @@ export default function ApiKeys() {
       {/* Header & Create Button */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
         <div>
-          <h1 style={{ margin: '0 0 8px 0', fontSize: '28px', fontWeight: '800', color: '#1e293b' }}>API Keys</h1>
-          <p style={{ margin: 0, color: '#64748b', fontSize: '1.05rem' }}>Authentication tokens for the programmatic API</p>
+          <h1 style={{ margin: '0 0 8px 0', fontSize: '28px', fontWeight: '800', color: 'var(--text-main)' }}>API Keys</h1>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '1.05rem' }}>Authentication tokens for the programmatic API</p>
         </div>
         {!showGenerateForm && (
           <button
             onClick={() => { setShowGenerateForm(true); setNewlyCreatedKey(null); }}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(59, 130, 246, 0.25)' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px', background: '#3b82f6', color: 'var(--bg-card)', border: 'none', borderRadius: '8px', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(59, 130, 246, 0.25)' }}
           >
             <Plus size={18} /> Create key
           </button>
@@ -123,11 +123,11 @@ export default function ApiKeys() {
           <p style={{ margin: '0 0 12px 0', fontSize: '0.8rem', color: '#047857', lineHeight: '1.4' }}>
             For security reasons, this key will only be shown to you this one time. If you leave this page, you won't be able to recover it.
           </p>
-          <div style={{ display: 'flex', alignItems: 'center', background: 'white', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 12px', gap: '8px' }}>
-            <code style={{ fontSize: '0.82rem', color: '#0f172a', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace' }}>{newlyCreatedKey}</code>
+          <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-card)', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 12px', gap: '8px' }}>
+            <code style={{ fontSize: '0.82rem', color: 'var(--text-main)', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace' }}>{newlyCreatedKey}</code>
             <button
               onClick={() => handleCopy(newlyCreatedKey, 'new')}
-              style={{ background: '#f1f5f9', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ background: 'var(--bg-dark)', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               title="Copy API Key"
             >
               {copiedId === 'new' ? <Check size={14} color="#059669" /> : <Copy size={14} color="#64748b" />}
@@ -140,12 +140,12 @@ export default function ApiKeys() {
       <div style={{ width: '100%', overflowX: 'auto', borderTop: '1px solid #cbd5e1' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
-            <tr style={{ background: '#f1f5f9' }}>
-              <th style={{ padding: '18px 20px', fontSize: '0.95rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '20%', borderTopLeftRadius: '8px' }}>Name</th>
-              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '25%' }}>Key</th>
-              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Scope</th>
-              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Status</th>
-              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '20%' }}>Permission</th>
+            <tr style={{ background: 'var(--bg-dark)' }}>
+              <th style={{ padding: '18px 20px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid #cbd5e1', width: '20%', borderTopLeftRadius: '8px' }}>Name</th>
+              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid #cbd5e1', width: '25%' }}>Key</th>
+              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Scope</th>
+              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Status</th>
+              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid #cbd5e1', width: '20%' }}>Permission</th>
               <th style={{ padding: '18px 20px', borderBottom: '1px solid #cbd5e1', width: '5%', borderTopRightRadius: '8px' }}></th>
             </tr>
           </thead>
@@ -158,7 +158,7 @@ export default function ApiKeys() {
               </tr>
             ) : keys.length === 0 ? (
               <tr>
-                <td colSpan="6" style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>
+                <td colSpan="6" style={{ padding: '32px', textAlign: 'center', color: 'var(--text-muted)' }}>
                   <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '500' }}>No active API keys found.</p>
                 </td>
               </tr>
@@ -166,25 +166,25 @@ export default function ApiKeys() {
               keys.map(k => (
                 <tr key={k.id} style={{ borderBottom: '1px solid #cbd5e1' }}>
                   <td style={{ padding: '20px 20px', verticalAlign: 'top' }}>
-                    <div style={{ fontSize: '1rem', fontWeight: '600', color: '#1e293b' }}>{k.name}</div>
-                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '6px' }}>{new Date(k.createdAt).toLocaleDateString()}</div>
+                    <div style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--text-main)' }}>{k.name}</div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '6px' }}>{new Date(k.createdAt).toLocaleDateString()}</div>
                   </td>
                   <td style={{ padding: '20px 12px', verticalAlign: 'top' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <code style={{ fontSize: '0.95rem', color: '#475569', fontFamily: 'monospace' }}>{k.maskedKey || k.key}</code>
+                      <code style={{ fontSize: '0.95rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{k.maskedKey || k.key}</code>
                       <button
                         onClick={() => handleCopy(k.key, k.id)}
-                        style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px', color: '#94a3b8', transition: 'color 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--text-muted)', transition: 'color 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         title="Copy API Key"
                         onMouseOver={(e) => e.currentTarget.style.color = '#3b82f6'}
-                        onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}
+                        onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                       >
                         {copiedId === k.id ? <Check size={16} color="#059669" /> : <Copy size={16} />}
                       </button>
                     </div>
                   </td>
                   <td style={{ padding: '20px 12px', verticalAlign: 'top' }}>
-                    <span style={{ fontSize: '0.95rem', color: '#64748b' }}>All profiles</span>
+                    <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>All profiles</span>
                   </td>
                   <td style={{ padding: '20px 12px', verticalAlign: 'top' }}>
                     <span style={{ display: 'inline-flex', padding: '4px 10px', background: '#dcfce7', color: '#059669', borderRadius: '4px', fontSize: '0.85rem', fontWeight: '600' }}>
@@ -192,17 +192,17 @@ export default function ApiKeys() {
                     </span>
                   </td>
                   <td style={{ padding: '20px 12px', verticalAlign: 'top' }}>
-                    <span style={{ display: 'inline-flex', padding: '6px 12px', background: '#f8fafc', border: '1px solid #cbd5e1', color: '#059669', borderRadius: '12px', fontSize: '0.85rem', fontWeight: '600' }}>
+                    <span style={{ display: 'inline-flex', padding: '6px 12px', background: 'var(--sidebar-bg)', border: '1px solid #cbd5e1', color: '#059669', borderRadius: '12px', fontSize: '0.85rem', fontWeight: '600' }}>
                       Read & Write
                     </span>
                   </td>
                   <td style={{ padding: '20px 20px', verticalAlign: 'top', textAlign: 'right' }}>
                     <button
                       onClick={() => handleRevokeKey(k.id)}
-                      style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8', transition: 'color 0.2s' }}
+                      style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', transition: 'color 0.2s' }}
                       title="Revoke Key"
                       onMouseOver={(e) => e.currentTarget.style.color = '#ef4444'}
-                      onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}
+                      onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                     >
                       <Trash2 size={18} />
                     </button>
@@ -223,15 +223,15 @@ export default function ApiKeys() {
           />
           
           {/* Drawer */}
-          <div style={{ position: 'relative', width: '450px', background: 'white', height: '100%', display: 'flex', flexDirection: 'column', animation: 'slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1)', boxShadow: '-10px 0 25px rgba(0,0,0,0.1)' }}>
+          <div style={{ position: 'relative', width: '450px', background: 'var(--bg-card)', height: '100%', display: 'flex', flexDirection: 'column', animation: 'slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1)', boxShadow: '-10px 0 25px rgba(0,0,0,0.1)' }}>
             
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '32px 32px 16px 32px' }}>
               <div>
-                <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem', fontWeight: '700', color: '#1e293b' }}>Create New API Key</h3>
-                <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b', lineHeight: '1.4' }}>Configure permissions and profile access for your new key.</p>
+                <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-main)' }}>Create New API Key</h3>
+                <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>Configure permissions and profile access for your new key.</p>
               </div>
-              <button onClick={() => setShowGenerateForm(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: '4px' }}>
+              <button onClick={() => setShowGenerateForm(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '4px' }}>
                 <X size={20} />
               </button>
             </div>
@@ -259,14 +259,14 @@ export default function ApiKeys() {
                   <button 
                     type="button" 
                     onClick={() => setPermission('Read & Write')}
-                    style={{ flex: 1, padding: '10px', background: permission === 'Read & Write' ? '#dcfce7' : 'white', color: permission === 'Read & Write' ? '#166534' : '#64748b', border: `1px solid ${permission === 'Read & Write' ? '#bbf7d0' : '#e2e8f0'}`, borderRadius: '8px', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s' }}
+                    style={{ flex: 1, padding: '10px', background: permission === 'Read & Write' ? '#dcfce7' : 'var(--bg-card)', color: permission === 'Read & Write' ? '#166534' : 'var(--text-muted)', border: `1px solid ${permission === 'Read & Write' ? '#bbf7d0' : 'var(--border-subtle)'}`, borderRadius: '8px', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s' }}
                   >
                     Read & Write
                   </button>
                   <button 
                     type="button" 
                     onClick={() => setPermission('Read Only')}
-                    style={{ flex: 1, padding: '10px', background: permission === 'Read Only' ? '#dcfce7' : 'white', color: permission === 'Read Only' ? '#166534' : '#64748b', border: `1px solid ${permission === 'Read Only' ? '#bbf7d0' : '#e2e8f0'}`, borderRadius: '8px', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s' }}
+                    style={{ flex: 1, padding: '10px', background: permission === 'Read Only' ? '#dcfce7' : 'var(--bg-card)', color: permission === 'Read Only' ? '#166534' : 'var(--text-muted)', border: `1px solid ${permission === 'Read Only' ? '#bbf7d0' : 'var(--border-subtle)'}`, borderRadius: '8px', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s' }}
                   >
                     Read Only
                   </button>
@@ -279,11 +279,11 @@ export default function ApiKeys() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div 
                     onClick={() => setFullAccess(!fullAccess)}
-                    style={{ width: '44px', height: '24px', background: fullAccess ? '#3b82f6' : '#cbd5e1', borderRadius: '12px', position: 'relative', cursor: 'pointer', transition: 'background 0.3s' }}
+                    style={{ width: '44px', height: '24px', background: fullAccess ? '#3b82f6' : 'var(--border-subtle)', borderRadius: '12px', position: 'relative', cursor: 'pointer', transition: 'background 0.3s' }}
                   >
-                    <div style={{ position: 'absolute', top: '2px', left: fullAccess ? '22px' : '2px', width: '20px', height: '20px', background: 'white', borderRadius: '50%', transition: 'left 0.3s' }}></div>
+                    <div style={{ position: 'absolute', top: '2px', left: fullAccess ? '22px' : '2px', width: '20px', height: '20px', background: 'var(--bg-card)', borderRadius: '50%', transition: 'left 0.3s' }}></div>
                   </div>
-                  <span style={{ fontSize: '0.95rem', color: '#475569' }}>Full access (all profiles)</span>
+                  <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>Full access (all profiles)</span>
                 </div>
               </div>
 
@@ -295,14 +295,14 @@ export default function ApiKeys() {
                 type="submit"
                 form="create-api-key-form"
                 disabled={submitting}
-                style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: '#3b82f6', color: 'white', fontSize: '0.95rem', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer', boxShadow: '0 4px 6px rgba(59, 130, 246, 0.25)' }}
+                style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: '#3b82f6', color: 'var(--bg-card)', fontSize: '0.95rem', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer', boxShadow: '0 4px 6px rgba(59, 130, 246, 0.25)' }}
               >
                 {submitting ? 'Generating...' : 'Create key'}
               </button>
               <button
                 type="button"
                 onClick={() => setShowGenerateForm(false)}
-                style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: 'transparent', color: '#64748b', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer' }}
+                style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text-muted)', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer' }}
               >
                 Cancel
               </button>
