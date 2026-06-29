@@ -115,6 +115,19 @@ export async function runSchedulingWorker() {
           continue;
         }
 
+        // If a post is Processing but has no containerId, it means the client is still uploading the media.
+        // We give the client 5 minutes to finish uploading and change status to 'Scheduled'.
+        if (post.status === 'Processing' && !post.containerId) {
+          const postAgeMinutes = (Date.now() - new Date(post.createdAt || post.updatedAt).getTime()) / (1000 * 60);
+          if (postAgeMinutes < 5) {
+            console.log(`⏳ [Worker] Skipping post ${post._id} - Client is still uploading media (Processing).`);
+            continue;
+          } else {
+            console.log(`⚠️ [Worker] Post ${post._id} stuck in Processing for > 5 mins. Proceeding anyway, but likely to fail if URL is invalid.`);
+          }
+        }
+
+
         const settingsQuery = { userId: post.userId };
         if (post.workspaceId) settingsQuery.workspaceId = post.workspaceId;
         const settings = await Settings.findOne(settingsQuery);
