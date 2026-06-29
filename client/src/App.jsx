@@ -531,11 +531,6 @@ function Sidebar({ isMobileOpen, onClose }) {
               <span>Settings</span>
             </NavLink>
 
-            <button onClick={toggleTheme} className="nav-item" style={{ width: '100%', textAlign: 'left', background: 'transparent', border: 'none', padding: '8px 14px', marginTop: 'auto', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-muted)', cursor: 'pointer' }}>
-              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-              <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
-            </button>
-
 
           </nav>
         </div>

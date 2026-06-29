@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Moon, Sun } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { API_BASE_URL } from '../config';
 import Subscription from './Subscription';
 import Profile from './Profile';
@@ -9,6 +10,7 @@ import { useNotification } from '../App';
 
 export default function Settings() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const { notify } = useNotification();
   
@@ -55,16 +57,42 @@ export default function Settings() {
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        background: 'rgba(255, 255, 255, 0.95)',
+        background: 'var(--bg-card)',
         backdropFilter: 'blur(10px)',
         paddingTop: '12px',
         paddingBottom: '0px',
         margin: '0 -16px',
         paddingLeft: '24px',
         paddingRight: '24px',
-        borderBottom: '1px solid #e5e7eb'
+        borderBottom: '1px solid var(--border-subtle)'
       }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px', paddingBottom: '12px' }}>Settings</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingBottom: '12px' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>Settings</h2>
+          
+          <button 
+            onClick={toggleTheme}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              padding: '8px 12px',
+              borderRadius: '12px',
+              border: 'none',
+              background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+              color: 'var(--text-main)',
+              cursor: 'pointer',
+              fontSize: '0.8rem',
+              fontWeight: '700',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}
+            onMouseOut={(e) => e.currentTarget.style.background = theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)'}
+          >
+            {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+            {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+          </button>
+        </div>
         
         {/* Tab Navigation */}
         <div style={{ 

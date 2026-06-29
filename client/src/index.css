@@ -30,6 +30,19 @@
   --bg-base: #020617;
 }
 
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] p {
+  color: var(--text-muted);
+}
+
 @media (max-width: 1000px) {
   :root {
     --page-padding: 16px;
