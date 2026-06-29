@@ -50,70 +50,40 @@ async function _doPublish(settings, post) {
   }
 
   const twitterAccessToken = settings.twitterAccessToken || virtualFields.twitterAccessToken;
-  const twitterAccessSecret = settings.twitterRefreshToken || virtualFields.twitterRefreshToken;
+  const twitterRefreshToken = settings.twitterRefreshToken || virtualFields.twitterRefreshToken;
 
-  if (!twitterAccessToken || !twitterAccessSecret) {
-    throw new Error("Twitter is not connected. Missing access token or secret. Please reconnect your account.");
+  if (!twitterAccessToken || !twitterRefreshToken) {
+    throw new Error("Twitter is not connected. Missing access token or refresh token. Please reconnect your account.");
   }
 
-  const appKey = process.env.TWITTER_API_KEY;
-  const appSecret = process.env.TWITTER_API_SECRET;
+  const clientId = process.env.TWITTER_CLIENT_ID;
+  const clientSecret = process.env.TWITTER_CLIENT_SECRET;
 
-  if (!appKey || !appSecret) {
-    throw new Error('Twitter OAuth 1.0a credentials missing on server. Set TWITTER_API_KEY and TWITTER_API_SECRET.');
+  if (!clientId || !clientSecret) {
+    throw new Error('Twitter OAuth 2.0 credentials missing on server. Set TWITTER_CLIENT_ID and TWITTER_CLIENT_SECRET.');
   }
 
-  const finalClient = new TwitterApi({
-    appKey: appKey,
-    appSecret: appSecret,
-    accessToken: twitterAccessToken,
-    accessSecret: twitterAccessSecret
-  });
+  let finalClient = new TwitterApi(twitterAccessToken);
 
-  const uploadMedia = async (url) => {
-    if (!url || url === 'null' || url === '{}' || url === '') return null;
-    try {
-      let mediaUrl = url;
-      // Unwrap JSON-encoded mediaUrl
-      if (typeof mediaUrl === 'string' && mediaUrl.startsWith('{')) {
-        try {
-          const parsed = JSON.parse(mediaUrl);
-          mediaUrl = parsed.mediaUrl || parsed.url || mediaUrl;
-        } catch(e) {}
-      }
+  // Attempt to refresh the OAuth 2.0 token before posting
+  try {
+    const refreshClient = new TwitterApi({ clientId, clientSecret });
+    const { client: refreshedClient, accessToken, refreshToken } = await refreshClient.refreshOAuth2Token(twitterRefreshToken);
+    
+    finalClient = refreshedClient;
 
-      if (!mediaUrl || mediaUrl.startsWith('blob:') || mediaUrl.startsWith('http') === false) {
-        console.warn('⚠️ [Twitter] Skipping invalid media URL:', mediaUrl);
-        return null;
-      }
-
-      console.log(`📎 [Twitter] Uploading media: ${mediaUrl}`);
-      const mediaRes = await fetch(mediaUrl);
-      if (!mediaRes.ok) throw new Error(`Failed to fetch media: ${mediaRes.status} ${mediaRes.statusText}`);
-      const buffer = await mediaRes.arrayBuffer();
-      const mimeType = mediaRes.headers.get('content-type') || 'image/jpeg';
-      return await finalClient.v1.uploadMedia(Buffer.from(buffer), { mimeType });
-    } catch (mediaErr) {
-      console.error("Twitter Media Upload Error:", mediaErr.message);
-      throw new Error("Media upload failed: " + mediaErr.message);
-    }
-  };
-
-  // Resolve carousel items — support both post.carouselItems and finalCarousel patterns
-  const carouselItems = post.carouselItems || [];
-  const hasMedia = (post.mediaUrl && post.mediaUrl !== 'null' && post.mediaUrl !== '{}' && post.mediaUrl !== '');
-  const hasCarousel = (carouselItems.length > 0);
-
-  let mediaIds = [];
-  if (post.type === 'carousel' && hasCarousel) {
-    // Twitter supports up to 4 images in a single tweet
-    for (const itemUrl of carouselItems.slice(0, 4)) {
-      const mId = await uploadMedia(itemUrl);
-      if (mId) mediaIds.push(mId);
-    }
-  } else if (hasMedia) {
-    const mId = await uploadMedia(post.mediaUrl);
-    if (mId) mediaIds.push(mId);
+    // Save the new tokens to the database
+    await supabase.from('settings')
+      .update({ 
+        twitterAccessToken: accessToken, 
+        twitterRefreshToken: refreshToken 
+      })
+      .eq('id', settings.id);
+      
+    console.log(`🔄 [Twitter] Successfully refreshed OAuth 2.0 token for user ${settings.userId}`);
+  } catch (refreshErr) {
+    console.warn(`⚠️ [Twitter] Token refresh failed (maybe still valid). Proceeding with existing token. Error: ${refreshErr.message}`);
+    // We proceed with the existing token; if it's expired, the API call will fail and throw an error.
   }
 
   const isThread = post.threadPosts && Array.isArray(post.threadPosts) && post.threadPosts.length > 0;
@@ -122,25 +92,10 @@ async function _doPublish(settings, post) {
   if (isThread) {
     const tweets = [];
     const firstTweet = { text: post.caption || ' ' };
-    if (mediaIds.length > 0) firstTweet.media = { media_ids: mediaIds };
     tweets.push(firstTweet);
 
     for (const tPost of post.threadPosts) {
       const tPayload = { text: tPost.caption || ' ' };
-      let tMediaIds = [];
-      if (tPost.mediaUrls && Array.isArray(tPost.mediaUrls)) {
-        for (const tUrl of tPost.mediaUrls) {
-          const tMediaId = await uploadMedia(tUrl);
-          if (tMediaId) tMediaIds.push(tMediaId);
-        }
-      } else {
-        const tMediaUrl = tPost.mediaUrl || '';
-        if (tMediaUrl && tMediaUrl !== 'null' && tMediaUrl !== '{}') {
-          const tMediaId = await uploadMedia(tMediaUrl);
-          if (tMediaId) tMediaIds.push(tMediaId);
-        }
-      }
-      if (tMediaIds.length > 0) tPayload.media = { media_ids: tMediaIds.slice(0, 4) };
       tweets.push(tPayload);
     }
 
@@ -149,9 +104,6 @@ async function _doPublish(settings, post) {
   } else {
     const tweetText = post.caption || ' ';
     const tweetPayload = { text: tweetText };
-    if (mediaIds.length > 0) {
-      tweetPayload.media = { media_ids: mediaIds };
-    }
     tweetRes = await finalClient.v2.tweet(tweetPayload);
   }
 

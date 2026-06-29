@@ -1285,82 +1285,107 @@ router.get('/google-business/callback', async (req, res) => {
   }
 });
 // ==========================================
-// TWITTER / X OAUTH FLOW (OAuth 1.0a)
+// TWITTER / X OAUTH FLOW (OAuth 2.0 PKCE)
 // ==========================================
 
-// Step 1: Redirect to Twitter OAuth 1.0a
+// Step 1: Redirect to Twitter OAuth 2.0
 router.get('/twitter', verifyToken, async (req, res) => {
-  const appKey = process.env.TWITTER_API_KEY;
-  const appSecret = process.env.TWITTER_API_SECRET;
+  const clientId = process.env.TWITTER_CLIENT_ID;
+  const clientSecret = process.env.TWITTER_CLIENT_SECRET;
   
-  if (!appKey || !appSecret) {
-    return res.status(500).json({ error: "Missing TWITTER_API_KEY or TWITTER_API_SECRET in environment variables. Please configure Consumer Keys." });
+  if (!clientId || !clientSecret) {
+    return res.status(500).json({ error: "Missing TWITTER_CLIENT_ID or TWITTER_CLIENT_SECRET in environment variables. Please configure OAuth 2.0 credentials." });
   }
 
   let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
   const redirectUri = `${baseUrl}/api/oauth/twitter/callback`;
   
-  const client = new TwitterApi({ appKey, appSecret });
+  const client = new TwitterApi({ clientId, clientSecret });
   
   try {
-    // Pass custom state via query params to the callback URL (Twitter OAuth 1.0a allows query params in callback URL)
-    const customCallbackUri = `${redirectUri}?userId=${req.user.userId}&workspaceId=${req.workspaceId || ''}&onboarding=${req.query.onboarding === 'true'}`;
-    const finalAuthLink = await client.generateAuthLink(customCallbackUri, { linkMode: 'authorize' });
+    const { url, codeVerifier, state } = client.generateOAuth2AuthLink(redirectUri, { 
+      scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'] 
+    });
 
-    // We store oauthTokenSecret temporarily in the user's settings (in twitterRefreshToken column)
+    // Store PKCE details temporarily
+    const pkceSession = {
+      codeVerifier,
+      state,
+      userId: req.user.userId,
+      workspaceId: req.workspaceId || '',
+      onboarding: req.query.onboarding === 'true'
+    };
+
     const connectionsQuery = { userId: req.user.userId };
     if (req.workspaceId) {
       connectionsQuery.workspaceId = req.workspaceId;
     }
+    
+    // Store JSON stringified session in twitterRefreshToken temporarily
     await Settings.findOneAndUpdate(
       connectionsQuery,
-      { twitterRefreshToken: finalAuthLink.oauth_token_secret },
+      { twitterRefreshToken: JSON.stringify(pkceSession) },
       { upsert: true, new: true }
     );
     
-    res.redirect(finalAuthLink.url);
+    res.redirect(url);
   } catch (err) {
-    console.error("Twitter Auth Link Gen Error:", err);
-    return res.status(500).json({ error: "Failed to generate Twitter Auth Link. Ensure your API keys are correct and OAuth 1.0a is enabled in the Developer Portal." });
+    console.error("Twitter OAuth 2.0 Link Gen Error:", err);
+    return res.status(500).json({ error: "Failed to generate Twitter Auth Link." });
   }
 });
 
-// Step 2: Handle Twitter OAuth 1.0a Callback
+// Step 2: Handle Twitter OAuth 2.0 Callback
 router.get('/twitter/callback', async (req, res) => {
-  const { oauth_token, oauth_verifier, denied, userId, workspaceId, onboarding } = req.query;
+  const { code, state, error: twitterError } = req.query;
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
-  if (denied || !oauth_token || !oauth_verifier || !userId) {
+  if (twitterError || !code || !state) {
     return res.redirect(`${frontendUrl}/connections?oauth_error=declined`);
   }
 
   try {
-    // Find user's settings to retrieve the oauthTokenSecret
-    const connectionsQuery = { userId: userId };
-    if (workspaceId) {
-      connectionsQuery.workspaceId = workspaceId;
+    // Find the session that matches this state
+    // We search all settings because we don't have userId in the query anymore
+    // (Callback URL must exactly match Twitter Developer Portal, so we can't add custom query params)
+    
+    const settings = await Settings.find({});
+    let targetSettings = null;
+    let pkceSession = null;
+    
+    for (const s of settings) {
+      if (s.twitterRefreshToken && s.twitterRefreshToken.startsWith('{')) {
+        try {
+          const parsed = JSON.parse(s.twitterRefreshToken);
+          if (parsed.state === state) {
+            targetSettings = s;
+            pkceSession = parsed;
+            break;
+          }
+        } catch(e) {}
+      }
     }
-    const settings = await Settings.findOne(connectionsQuery);
-    if (!settings || !settings.twitterRefreshToken) {
-      throw new Error("Session expired or invalid");
+
+    if (!targetSettings || !pkceSession) {
+      throw new Error("Session expired, invalid state, or not found.");
     }
 
-    const oauthTokenSecret = settings.twitterRefreshToken;
+    const clientId = process.env.TWITTER_CLIENT_ID;
+    const clientSecret = process.env.TWITTER_CLIENT_SECRET;
+    
+    let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    const redirectUri = `${baseUrl}/api/oauth/twitter/callback`;
 
-    const appKey = process.env.TWITTER_API_KEY;
-    const appSecret = process.env.TWITTER_API_SECRET;
+    const client = new TwitterApi({ clientId, clientSecret });
 
-    const client = new TwitterApi({
-      appKey,
-      appSecret,
-      accessToken: oauth_token,
-      accessSecret: oauthTokenSecret,
+    const { client: loggedClient, accessToken, refreshToken } = await client.loginWithOAuth2({ 
+      code, 
+      codeVerifier: pkceSession.codeVerifier, 
+      redirectUri 
     });
 
-    const { client: loggedClient, accessToken, accessSecret } = await client.login(oauth_verifier);
-
-    // Fetch User Profile using loggedClient
     let profileName = 'Twitter User';
     let profileId = '';
     try {
@@ -1377,8 +1402,13 @@ router.get('/twitter/callback', async (req, res) => {
     updateData.isTwitterConnected = true;
     updateData.connectedTwitterName = profileName;
     updateData.twitterAccessToken = accessToken;
-    updateData.twitterRefreshToken = accessSecret; // We store permanent accessSecret here
+    updateData.twitterRefreshToken = refreshToken; 
     updateData.connectedTwitterId = profileId;
+
+    const connectionsQuery = { userId: pkceSession.userId };
+    if (pkceSession.workspaceId) {
+      connectionsQuery.workspaceId = pkceSession.workspaceId;
+    }
 
     await Settings.findOneAndUpdate(
       connectionsQuery,
@@ -1386,9 +1416,9 @@ router.get('/twitter/callback', async (req, res) => {
       { upsert: true, new: true }
     );
 
-    console.log(`✅ Twitter OAuth 1.0a Success for user ${userId}. Profile: ${profileName}`);
+    console.log(`✅ Twitter OAuth 2.0 Success for user ${pkceSession.userId}. Profile: ${profileName}`);
     
-    if (onboarding === 'true') {
+    if (pkceSession.onboarding) {
       res.redirect(`${frontendUrl}/onboarding?oauth_success=true&platform=twitter`);
     } else {
       res.redirect(`${frontendUrl}/connections?oauth_success=true&platform=twitter`);
