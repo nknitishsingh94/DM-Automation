@@ -304,7 +304,7 @@ app.use('/api/support', supportRoutes);
 app.use('/api/youtube', youtubeRoutes);
 app.use('/api/threads', threadsRoutes);
 app.use('/api/ai', aiRoutes);
-app.use('/api/apikeys', apiKeyRoutes);
+app.use('/api/api-keys', apiKeyRoutes);
 app.use('/api/posts', postsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
