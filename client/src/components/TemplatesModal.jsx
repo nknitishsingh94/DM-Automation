@@ -161,10 +161,10 @@ export default function TemplatesModal({ isOpen, onClose }) {
                   <button 
                     onClick={() => handleUseTemplate(template)}
                     style={{
-                    backgroundColor: 'var(--text-main)', color: '#fff', border: 'none', borderRadius: '8px',
+                    backgroundColor: 'var(--accent-color)', color: '#fff', border: 'none', borderRadius: '8px',
                     padding: '8px 16px', fontSize: '12px', fontWeight: '700', cursor: 'pointer',
-                    transition: 'background 0.2s'
-                  }} onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--text-main)'} onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--text-main)'}>
+                    transition: 'opacity 0.2s'
+                  }} onMouseOver={e => e.currentTarget.style.opacity = '0.9'} onMouseOut={e => e.currentTarget.style.opacity = '1'}>
                     Use
                   </button>
                 </div>

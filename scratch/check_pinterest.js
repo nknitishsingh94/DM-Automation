@@ -1,29 +1,19 @@
-import mongoose from 'mongoose';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({ path: './server/.env' });
 
-async function checkFailedPinterestPosts() {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/insta_agent');
+import { supabase } from '../server/utils/supabase.js';
+
+async function check() {
+  const { data, error } = await supabase
+    .from('scheduled_posts')
+    .select('*')
+    .eq('platform', 'pinterest')
+    .eq('status', 'Failed')
+    .order('created_at', { ascending: false })
+    .limit(3);
     
-    // Import the model schema structure without needing the actual model file if complex
-    const ScheduledPostSchema = new mongoose.Schema({}, { strict: false });
-    const ScheduledPost = mongoose.models.ScheduledPost || mongoose.model('ScheduledPost', ScheduledPostSchema);
-    
-    const failedPosts = await ScheduledPost.find({ platform: 'pinterest', status: 'Failed' }).sort({ createdAt: -1 }).limit(5);
-    
-    console.log("Failed Pinterest Posts:");
-    failedPosts.forEach(p => {
-      console.log(`- ID: ${p._id}`);
-      console.log(`  Error: ${p.errorLog}`);
-      console.log(`  MediaUrl: ${p.mediaUrl}`);
-      console.log('---');
-    });
-    
-  } catch (err) {
-    console.error("DB Error:", err);
-  } finally {
-    mongoose.disconnect();
-  }
+  console.log('Error:', error);
+  console.log('Failed posts:', JSON.stringify(data, null, 2));
 }
 
-checkFailedPinterestPosts();
+check();
