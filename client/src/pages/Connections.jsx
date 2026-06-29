@@ -893,8 +893,7 @@ export default function Connections() {
                 <button 
                   onClick={(e) => { 
                     e.stopPropagation(); 
-                    const vanityName = (settings.connectedLinkedInName || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-                    window.open(`https://www.linkedin.com/in/${vanityName}`, '_blank'); 
+                    window.open(`https://www.linkedin.com`, '_blank'); 
                   }}
                   style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
                   onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
