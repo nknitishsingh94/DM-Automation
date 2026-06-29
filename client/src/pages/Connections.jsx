@@ -601,7 +601,7 @@ export default function Connections() {
               onClick={() => setShowConnectModal(true)}
               style={{ 
                 background: '#7c3aed', 
-                color: 'var(--bg-card)', 
+                color: 'white', 
                 padding: '10px 20px', 
                 borderRadius: '8px', 
                 fontWeight: '600', 
@@ -748,7 +748,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Instagram</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Instagram connected`, 'info')} />
@@ -788,7 +788,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Facebook</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Facebook connected`, 'info')} />
@@ -828,7 +828,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>YouTube</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`YouTube: Channel ID ${settings.youtubeChannelId || 'N/A'}`, 'info')} />
@@ -878,7 +878,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>LinkedIn</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`LinkedIn connected`, 'info')} />
@@ -922,7 +922,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Twitter / X</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Twitter connected`, 'info')} />
@@ -962,7 +962,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Google Business</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Google Business connected`, 'info')} />
@@ -1004,7 +1004,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Pinterest</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Pinterest connected`, 'info')} />
@@ -1044,7 +1044,7 @@ export default function Connections() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>Threads</h4>
-                    <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                    <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
                 <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Threads connected`, 'info')} />
@@ -1091,7 +1091,7 @@ export default function Connections() {
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                         <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: '#111827' }}>WhatsApp</h4>
-                        <span style={{ display: 'inline-block', background: '#10b981', color: 'var(--bg-card)', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
+                        <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                       </div>
                     </div>
                     <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`WhatsApp connected`, 'info')} />
@@ -1234,7 +1234,7 @@ export default function Connections() {
                   {platform.enabled ? (
                     <span style={{ 
                       position: 'absolute', top: '-8px', right: '10px', 
-                      background: '#ec4899', color: 'var(--bg-card)', fontSize: '0.62rem', 
+                      background: '#ec4899', color: 'white', fontSize: '0.62rem', 
                       padding: '2px 8px', borderRadius: '10px', fontWeight: '800',
                       boxShadow: '0 2px 4px rgba(236,72,153,0.2)'
                     }}>
@@ -1281,7 +1281,7 @@ export default function Connections() {
 
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
                 <Send size={24} />
               </div>
               <div>
@@ -1361,7 +1361,7 @@ export default function Connections() {
                   borderRadius: '12px',
                   border: 'none',
                   background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                  color: 'var(--bg-card)',
+                  color: 'white',
                   fontWeight: '700',
                   fontSize: '0.9rem',
                   cursor: 'pointer',
@@ -1457,7 +1457,7 @@ export default function Connections() {
                         triggerConnect(selectedSettingsPlatform.id);
                         setSelectedSettingsPlatform(null);
                       }}
-                      style={{ background: '#3b82f6', border: '1px solid #2563eb', borderRadius: '8px', padding: '8px 16px', color: 'var(--bg-card)', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
+                      style={{ background: '#3b82f6', border: '1px solid #2563eb', borderRadius: '8px', padding: '8px 16px', color: 'white', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
                       onMouseOver={(e) => { e.currentTarget.style.background = '#2563eb'; }}
                       onMouseOut={(e) => { e.currentTarget.style.background = '#3b82f6'; }}
                     >

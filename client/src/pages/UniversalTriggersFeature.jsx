@@ -103,7 +103,7 @@ export default function UniversalTriggersFeature() {
 
               <button onClick={handleCTAClick} style={{
                 background: 'linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)',
-                color: 'var(--bg-card)',
+                color: 'white',
                 padding: '12px 28px',
                 borderRadius: '12px',
                 textDecoration: 'none',

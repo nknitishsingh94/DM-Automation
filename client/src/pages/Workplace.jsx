@@ -106,7 +106,7 @@ export default function Workplace() {
         <button
           onClick={() => navigate('/settings')}
           style={{
-            background: '#ea580c', color: 'var(--bg-card)', padding: '10px 18px', borderRadius: '8px',
+            background: '#ea580c', color: 'white', padding: '10px 18px', borderRadius: '8px',
             fontWeight: '600', fontSize: '0.88rem', border: 'none', cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: '6px',
             boxShadow: '0 1px 3px rgba(0,0,0,0.1)', transition: 'background 0.2s',
@@ -238,7 +238,7 @@ export default function Workplace() {
             <button
               onClick={() => navigate('/settings')}
               style={{
-                marginTop: '22px', background: '#ea580c', color: 'var(--bg-card)',
+                marginTop: '22px', background: '#ea580c', color: 'white',
                 padding: '12px 24px', borderRadius: '10px', fontWeight: '700',
                 fontSize: '0.95rem', border: 'none', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', gap: '8px',

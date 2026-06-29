@@ -171,7 +171,7 @@ export default function Audiences() {
                 width: '80px', height: '80px', borderRadius: '50%', 
                 background: 'linear-gradient(135deg, #8b5cf6, #d946ef)', 
                 display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                color: 'var(--bg-card)', fontSize: '2rem', fontWeight: '700', flexShrink: 0 
+                color: 'white', fontSize: '2rem', fontWeight: '700', flexShrink: 0 
               }}>
                 {String(selectedContact?.name || selectedContact?.chatId || '?').charAt(0).toUpperCase()}
               </div>
@@ -268,7 +268,7 @@ export default function Audiences() {
                 <button 
                   onClick={addTag}
                   disabled={isUpdating}
-                  style={{ background: 'var(--accent-color)', color: 'var(--bg-card)', padding: '8px', borderRadius: '8px', display: 'flex', alignItems: 'center' }}
+                  style={{ background: 'var(--accent-color)', color: 'white', padding: '8px', borderRadius: '8px', display: 'flex', alignItems: 'center' }}
                 >
                   <Plus size={18} />
                 </button>
@@ -307,7 +307,7 @@ export default function Audiences() {
                 disabled={isUpdating}
                 style={{ 
                   width: '100%', padding: '10px', borderRadius: '8px', background: isUpdating ? 'var(--text-muted)' : 'var(--accent-color)', 
-                  color: 'var(--bg-card)', fontSize: '0.9rem', fontWeight: '600', transition: 'all 0.2s' 
+                  color: 'white', fontSize: '0.9rem', fontWeight: '600', transition: 'all 0.2s' 
                 }}
               >
                 {isUpdating ? 'Saving...' : 'Save Notes'}
@@ -322,7 +322,7 @@ export default function Audiences() {
   return (
     <div style={{ maxWidth: '1200px', animation: 'fadeIn 0.5s ease-out' }}>
       {/* Stunning Header Banner */}
-      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', borderRadius: '24px', padding: 'var(--page-padding)', color: 'var(--bg-card)', marginBottom: '32px', position: 'relative', overflow: 'hidden', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.2)' }}>
+      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', borderRadius: '24px', padding: 'var(--page-padding)', color: 'white', marginBottom: '32px', position: 'relative', overflow: 'hidden', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.2)' }}>
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
             <div style={{ background: 'rgba(255,255,255,0.1)', padding: '10px', borderRadius: '14px', backdropFilter: 'blur(10px)' }}>
@@ -423,7 +423,7 @@ export default function Audiences() {
                         width: '46px', height: '46px', borderRadius: '14px', 
                         background: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)', 
                         display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                        color: 'var(--bg-card)', fontWeight: '800', fontSize: '1.2rem', boxShadow: '0 4px 14px rgba(168, 85, 247, 0.3)'
+                        color: 'white', fontWeight: '800', fontSize: '1.2rem', boxShadow: '0 4px 14px rgba(168, 85, 247, 0.3)'
                       }}>
                        {String(contact?.name || contact?.chatId || '?').charAt(0).toUpperCase()}
                      </div>

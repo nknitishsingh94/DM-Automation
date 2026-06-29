@@ -97,7 +97,7 @@ const PlatformDashboard = () => {
               style={{
                 padding: '12px 24px',
                 background: '#000000',
-                color: 'var(--bg-card)',
+                color: 'white',
                 border: 'none',
                 borderRadius: '12px',
                 fontWeight: '700',

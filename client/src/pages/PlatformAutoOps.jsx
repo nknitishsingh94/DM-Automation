@@ -71,7 +71,7 @@ export default function PlatformAutoOps() {
         background: currentPlatform.bgGradient,
         borderRadius: '24px',
         padding: '40px',
-        color: 'var(--bg-card)',
+        color: 'white',
         marginBottom: '32px',
         boxShadow: `0 20px 25px -5px ${currentPlatform.primaryColor}33, 0 10px 10px -5px ${currentPlatform.primaryColor}1a`,
         display: 'flex',
@@ -113,7 +113,7 @@ export default function PlatformAutoOps() {
             <Plus size={20} /> Create New Flow
           </button>
           <button style={{
-            background: 'rgba(255,255,255,0.2)', color: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.4)',
+            background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.4)',
             padding: '12px 24px', borderRadius: '12px', fontWeight: '600', fontSize: '0.95rem', cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s', backdropFilter: 'blur(10px)'
           }}
@@ -204,7 +204,7 @@ export default function PlatformAutoOps() {
                 </p>
                 <button 
                   onClick={() => navigate('/automation-editor')}
-                  style={{ background: currentPlatform.primaryColor, color: 'var(--bg-card)', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  style={{ background: currentPlatform.primaryColor, color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                   <Plus size={18} /> Create Workflow
                 </button>
               </div>
@@ -262,7 +262,7 @@ export default function PlatformAutoOps() {
                 </div>
                 <button 
                   onClick={() => navigate('/broadcasts')}
-                  style={{ background: currentPlatform.primaryColor, color: 'var(--bg-card)', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  style={{ background: currentPlatform.primaryColor, color: 'white', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Megaphone size={16} /> New Broadcast
                 </button>
               </div>
@@ -320,7 +320,7 @@ export default function PlatformAutoOps() {
                 {/* Preview Phone Frame */}
                 <div style={{ width: '300px', flexShrink: 0, background: 'var(--border-subtle)', padding: '12px', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
                   <div style={{ background: '#ece5dd', height: '500px', borderRadius: '20px', overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                    <div style={{ background: '#075e54', color: 'var(--bg-card)', padding: '16px 12px 12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ background: '#075e54', color: 'white', padding: '16px 12px 12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{ width: '32px', height: '32px', background: '#fff', borderRadius: '50%' }}></div>
                       <div style={{ fontWeight: '600', fontSize: '0.95rem' }}>Your Business</div>
                     </div>

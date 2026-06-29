@@ -90,7 +90,7 @@ export default function AllReviews() {
       {/* Header Section */}
       <header style={{
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-        color: 'var(--bg-card)',
+        color: 'white',
         padding: '80px 24px',
         textAlign: 'center',
         position: 'relative',
@@ -166,7 +166,7 @@ export default function AllReviews() {
               display: 'inline-flex',
               padding: '12px 24px',
               background: 'linear-gradient(135deg, #7c3aed, #db2777)',
-              color: 'var(--bg-card)',
+              color: 'white',
               borderRadius: '12px',
               fontWeight: '700',
               textDecoration: 'none'
@@ -254,7 +254,7 @@ export default function AllReviews() {
                     {review.avatarUrl ? (
                       <img referrerPolicy="no-referrer" src={getSafeImageUrl(review.avatarUrl)} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                      <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.9rem' }}>
+                      <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.9rem' }}>
                         {(review.name || 'U').split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase()}
                       </div>
                     )}
@@ -264,7 +264,7 @@ export default function AllReviews() {
                         bottom: 0,
                         right: 0,
                         background: '#22c55e',
-                        color: 'var(--bg-card)',
+                        color: 'white',
                         width: '14px',
                         height: '14px',
                         borderRadius: '50%',

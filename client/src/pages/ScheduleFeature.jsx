@@ -238,7 +238,7 @@ export default function ScheduleFeature() {
 
               <button onClick={handleCTAClick} style={{
                 background: 'linear-gradient(135deg, #7c3aed 0%, #6366f1 100%)',
-                color: 'var(--bg-card)',
+                color: 'white',
                 padding: '12px 28px',
                 borderRadius: '12px',
                 textDecoration: 'none',
@@ -337,7 +337,7 @@ export default function ScheduleFeature() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: 'var(--bg-card)',
+                      color: 'white',
                       marginBottom: '24px',
                       boxShadow: '0 12px 24px rgba(16, 185, 129, 0.3)'
                     }}>

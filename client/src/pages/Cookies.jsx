@@ -126,13 +126,13 @@ export default function Cookies() {
         </div>
 
         {/* ── What Are Cookies ── */}
-        <div style={{ background: 'var(--text-main)', color: 'var(--bg-card)', borderRadius: '24px', padding: '36px 40px', marginBottom: '32px' }}>
+        <div style={{ background: 'var(--text-main)', color: 'white', borderRadius: '24px', padding: '36px 40px', marginBottom: '32px' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
             <div style={{ width: '48px', height: '48px', background: 'rgba(251,191,36,0.15)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Cookie size={24} color="#fbbf24" />
             </div>
             <div>
-              <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '12px', color: 'var(--bg-card)' }}>What Are Cookies?</h2>
+              <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '12px', color: 'white' }}>What Are Cookies?</h2>
               <p style={{ color: 'rgba(255,255,255,0.75)', lineHeight: '1.75', fontSize: '0.95rem', marginBottom: '12px' }}>
                 Cookies are small text files placed on your device when you visit a website. They serve many purposes — from keeping you logged in to helping us understand how our platform is used. Some cookies are essential for the site to work; others are optional and help us improve your experience.
               </p>
@@ -264,7 +264,7 @@ export default function Cookies() {
             If you have any questions about how smart10X uses cookies or this Cookie Statement, please contact our Privacy team.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
-            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'var(--bg-card)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(217,119,6,0.25)' }}>
+            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(217,119,6,0.25)' }}>
               <Mail size={18} /> smart10x.support@gmail.com
             </a>
             <Link to="/privacy" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid #e2e8f0' }}>

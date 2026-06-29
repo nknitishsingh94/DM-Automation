@@ -247,7 +247,7 @@ export default function Dashboard() {
                 borderRadius: '12px', 
                 display: 'inline-flex',
                 fontWeight: '700',
-                color: 'var(--bg-card)',
+                color: 'white',
                 textDecoration: 'none',
                 boxShadow: '0 4px 12px rgba(124,58,237,0.25)',
                 transition: 'transform 0.2s'
@@ -261,7 +261,7 @@ export default function Dashboard() {
         )}
 
         {/* NAYA SETUP PART (MOVED BELOW) */}
-        <div className="stat-card" style={{ padding: '24px', background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', border: 'none', color: 'var(--bg-card)', borderRadius: '24px' }}>
+        <div className="stat-card" style={{ padding: '24px', background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', border: 'none', color: 'white', borderRadius: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

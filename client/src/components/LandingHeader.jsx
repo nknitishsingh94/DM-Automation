@@ -96,7 +96,7 @@ export default function LandingHeader() {
         <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {user ? (
             <Link to="/dashboard" style={{
-              background: 'var(--text-main)', color: 'var(--bg-card)', padding: '10px 24px', borderRadius: '50px',
+              background: 'var(--text-main)', color: 'white', padding: '10px 24px', borderRadius: '50px',
               fontSize: '0.9rem', fontWeight: '700', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px',
               boxShadow: '0 10px 20px rgba(15, 23, 42, 0.1)'
             }}>
@@ -106,7 +106,7 @@ export default function LandingHeader() {
             <>
               <Link to="/login" style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-muted)', textDecoration: 'none', padding: '0 12px' }}>Sign In</Link>
               <Link to="/signup" style={{
-                background: '#7c3aed', color: 'var(--bg-card)', padding: '10px 24px', borderRadius: '50px',
+                background: '#7c3aed', color: 'white', padding: '10px 24px', borderRadius: '50px',
                 fontSize: '0.95rem', fontWeight: '800', textDecoration: 'none', boxShadow: '0 10px 20px rgba(124, 58, 237, 0.2)'
               }}>
                 Get Started

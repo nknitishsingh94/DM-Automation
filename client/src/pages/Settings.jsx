@@ -127,7 +127,7 @@ export default function Settings() {
                 <button 
                   onClick={() => setShowDeleteConfirm(true)}
                   style={{ 
-                    padding: '10px 20px', background: '#e11d48', color: 'var(--bg-card)', border: 'none', 
+                    padding: '10px 20px', background: '#e11d48', color: 'white', border: 'none', 
                     borderRadius: '8px', fontWeight: '700', fontSize: '0.82rem', cursor: 'pointer' 
                   }}
                 >
@@ -157,7 +157,7 @@ export default function Settings() {
                     <button 
                       onClick={handleDeleteAccount} 
                       disabled={deleting || deleteConfirmationText !== 'DELETE'}
-                      style={{ flex: 1, background: '#e11d48', color: 'var(--bg-card)', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: (deleting || deleteConfirmationText !== 'DELETE') ? 'not-allowed' : 'pointer', fontSize: '0.82rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', opacity: (deleting || deleteConfirmationText !== 'DELETE') ? 0.5 : 1 }}
+                      style={{ flex: 1, background: '#e11d48', color: 'white', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: (deleting || deleteConfirmationText !== 'DELETE') ? 'not-allowed' : 'pointer', fontSize: '0.82rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', opacity: (deleting || deleteConfirmationText !== 'DELETE') ? 0.5 : 1 }}
                     >
                       {deleting ? 'Deleting...' : 'Yes, Delete Everything'}
                     </button>

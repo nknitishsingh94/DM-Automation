@@ -132,7 +132,7 @@ export default function Profile() {
               padding: '12px 32px',
               alignSelf: 'flex-start',
               background: 'var(--accent-color)',
-              color: 'var(--bg-card)',
+              color: 'white',
               fontWeight: '600',
               display: 'flex',
               alignItems: 'center',

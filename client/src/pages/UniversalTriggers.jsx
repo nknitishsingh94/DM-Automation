@@ -37,7 +37,7 @@ const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor
             top: '-8px',
             right: '-8px',
             background: '#ef4444',
-            color: 'var(--bg-card)',
+            color: 'white',
             borderRadius: '50%',
             width: '20px',
             height: '20px',
@@ -63,7 +63,7 @@ const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor
           height: '24px', 
           borderRadius: '50%', 
           background: color, 
-          color: 'var(--bg-card)', 
+          color: 'white', 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center', 
@@ -373,7 +373,7 @@ export default function UniversalTriggers() {
           <button 
             onClick={handlePublish}
             disabled={isPublishing}
-            style={{ padding: '8px 24px', background: '#4f46e5', border: 'none', borderRadius: '8px', color: 'var(--bg-card)', fontWeight: '600', fontSize: '13px', cursor: isPublishing ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px', opacity: isPublishing ? 0.7 : 1 }}
+            style={{ padding: '8px 24px', background: '#4f46e5', border: 'none', borderRadius: '8px', color: 'white', fontWeight: '600', fontSize: '13px', cursor: isPublishing ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px', opacity: isPublishing ? 0.7 : 1 }}
           >
             <Send size={16} /> {isPublishing ? 'Publishing...' : 'Publish'}
           </button>
@@ -556,7 +556,7 @@ export default function UniversalTriggers() {
             <button 
               onClick={handleSaveTrigger}
               disabled={isSaving}
-              style={{ width: '100%', padding: '12px', background: isSaving ? 'var(--text-muted)' : '#4f46e5', color: 'var(--bg-card)', border: 'none', borderRadius: '8px', fontWeight: '700', fontSize: '13px', cursor: isSaving ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              style={{ width: '100%', padding: '12px', background: isSaving ? 'var(--text-muted)' : '#4f46e5', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '700', fontSize: '13px', cursor: isSaving ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
             >
               <Check size={16} /> {isSaving ? 'Saving...' : 'Save Trigger'}
             </button>
@@ -636,7 +636,7 @@ export default function UniversalTriggers() {
             </div>
             
             <div style={{ padding: '16px 24px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', background: 'var(--sidebar-bg)', borderBottomLeftRadius: '16px', borderBottomRightRadius: '16px' }}>
-              <button onClick={() => setShowListModal(false)} style={{ padding: '8px 24px', background: 'var(--text-main)', color: 'var(--bg-card)', border: 'none', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>Close</button>
+              <button onClick={() => setShowListModal(false)} style={{ padding: '8px 24px', background: 'var(--text-main)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>Close</button>
             </div>
           </div>
         </div>

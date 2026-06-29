@@ -290,7 +290,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                   justifyContent: 'center',
                   fontSize: '14px',
                   fontWeight: '700',
-                  color: 'var(--bg-card)',
+                  color: 'white',
                   flexShrink: 0,
                   overflow: 'hidden'
                 }}>
@@ -418,7 +418,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }} onClick={e => e.stopPropagation()}>
                             {w.id === activeWorkspace?.id && (
-                              <span style={{ fontSize: '10px', background: '#8b5cf6', color: 'var(--bg-card)', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
+                              <span style={{ fontSize: '10px', background: '#8b5cf6', color: 'white', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
                                 Active
                               </span>
                             )}
@@ -642,7 +642,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                   </button>
                   <button
                     type="submit"
-                    style={{ padding: '10px 20px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', fontSize: '14px', fontWeight: '600', color: 'var(--bg-card)', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(139, 92, 246, 0.3)' }}
+                    style={{ padding: '10px 20px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', fontSize: '14px', fontWeight: '600', color: 'white', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(139, 92, 246, 0.3)' }}
                   >
                     Create
                   </button>

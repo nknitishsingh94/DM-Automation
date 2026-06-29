@@ -57,7 +57,7 @@ export default function Referral() {
               </div>
               <button
                 onClick={handleCopy}
-                style={{ padding: '14px 20px', background: copied ? '#10b981' : '#7c3aed', color: 'var(--bg-card)', border: 'none', borderRadius: '12px', fontWeight: '700', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
+                style={{ padding: '14px 20px', background: copied ? '#10b981' : '#7c3aed', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '700', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
               >
                 <Copy size={16} /> {copied ? 'Copied!' : 'Copy Link'}
               </button>

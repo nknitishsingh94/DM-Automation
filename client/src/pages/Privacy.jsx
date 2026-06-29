@@ -175,7 +175,7 @@ export default function Privacy() {
         </div>
 
         {/* Intro */}
-        <div style={{ background: 'var(--text-main)', color: 'var(--bg-card)', borderRadius: '24px', padding: '32px 40px', marginBottom: '28px', lineHeight: '1.75', fontSize: '0.95rem' }}>
+        <div style={{ background: 'var(--text-main)', color: 'white', borderRadius: '24px', padding: '32px 40px', marginBottom: '28px', lineHeight: '1.75', fontSize: '0.95rem' }}>
           <p style={{ color: 'rgba(255,255,255,0.8)', margin: 0 }}>
             We process personal data to provide smart10X services including Instagram DM Automation, AI Studio, Broadcasts, Audiences, Forms, Flow Builder, WhatsApp & Telegram integrations, and Billing. This Privacy Policy explains what data we collect, why, and how we protect it in accordance with applicable data protection laws including <strong style={{ color: '#60a5fa' }}>GDPR, UK GDPR, and LGPD</strong>.
           </p>
@@ -271,7 +271,7 @@ export default function Privacy() {
           <h3 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '12px' }}>Questions About Your Privacy?</h3>
           <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '0.95rem' }}>Our dedicated privacy team is happy to help you with any data-related requests.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
-            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'var(--bg-card)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
+            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
               <Mail size={18} /> smart10x.support@gmail.com
             </a>
             <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #e2e8f0' }}>

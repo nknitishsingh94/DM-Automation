@@ -346,7 +346,7 @@ const WriteReview = () => {
             style={{ 
               marginTop: '16px', width: '100%', padding: '18px', 
               background: 'linear-gradient(135deg, #7c3aed, #db2777)', 
-              color: 'var(--bg-card)', borderRadius: '16px', fontWeight: '800', fontSize: '1.1rem', 
+              color: 'white', borderRadius: '16px', fontWeight: '800', fontSize: '1.1rem', 
               border: 'none', cursor: submitting ? 'not-allowed' : 'pointer', 
               opacity: submitting ? 0.8 : 1, 
               boxShadow: '0 8px 20px rgba(124, 58, 237, 0.3)',

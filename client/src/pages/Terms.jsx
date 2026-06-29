@@ -68,9 +68,9 @@ export default function Terms() {
         </div>
 
         {/* Intro Box */}
-        <div style={{ background: 'var(--text-main)', color: 'var(--bg-card)', borderRadius: '24px', padding: '32px 40px', marginBottom: '32px', lineHeight: '1.75', fontSize: '0.95rem' }}>
+        <div style={{ background: 'var(--text-main)', color: 'white', borderRadius: '24px', padding: '32px 40px', marginBottom: '32px', lineHeight: '1.75', fontSize: '0.95rem' }}>
           <p style={{ marginBottom: '16px', color: 'rgba(255,255,255,0.85)' }}>
-            These Terms of Service constitute a legally binding agreement between you and <strong style={{ color: 'var(--bg-card)' }}>smart10X, Inc.</strong> ("smart10X", "we," "our" or "us") governing your use of our products, services, mobile application, and website (collectively, the "Services").
+            These Terms of Service constitute a legally binding agreement between you and <strong style={{ color: 'white' }}>smart10X, Inc.</strong> ("smart10X", "we," "our" or "us") governing your use of our products, services, mobile application, and website (collectively, the "Services").
           </p>
           <p style={{ color: 'rgba(255,255,255,0.85)', margin: 0 }}>
             <strong style={{ color: '#60a5fa' }}>BY CLICKING "I AGREE", REGISTERING FOR AN ACCOUNT, OR USING THE SERVICES, YOU AGREE TO BE BOUND BY THESE TERMS.</strong> If you do not agree, you have no right to access or use the Services.
@@ -133,7 +133,7 @@ export default function Terms() {
           <h3 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '12px' }}>Questions About These Terms?</h3>
           <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '0.95rem' }}>Our legal team is happy to clarify anything in this Agreement.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
-            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'var(--bg-card)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
+            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
               <Mail size={18} /> smart10x.support@gmail.com
             </a>
             <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid #e2e8f0' }}>

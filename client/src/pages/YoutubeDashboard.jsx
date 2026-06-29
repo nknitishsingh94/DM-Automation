@@ -369,7 +369,7 @@ export default function YoutubeDashboard() {
         </div>
 
         <div style={{ display: 'flex', gap: '12px' }}>
-          <button onClick={() => setShowScheduleModal(true)} style={{ background: '#ff0000', color: 'var(--bg-card)', padding: '10px 20px', borderRadius: '8px', border: 'none', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 4px 6px rgba(255, 0, 0, 0.2)' }}>
+          <button onClick={() => setShowScheduleModal(true)} style={{ background: '#ff0000', color: 'white', padding: '10px 20px', borderRadius: '8px', border: 'none', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 4px 6px rgba(255, 0, 0, 0.2)' }}>
             <Upload size={18} /> Upload Video
           </button>
         </div>
@@ -430,7 +430,7 @@ export default function YoutubeDashboard() {
                 <div key={video.id} style={{ background: 'var(--bg-card)', borderRadius: '16px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', transition: 'transform 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseOut={e => e.currentTarget.style.transform = 'none'}>
                   <div style={{ position: 'relative', height: '170px', background: 'var(--bg-dark)' }}>
                     <img referrerPolicy="no-referrer" src={getSafeImageUrl(video.thumbnail)} alt={video.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', top: '12px', right: '12px', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--bg-card)', background: video.status === 'Published' ? '#10b981' : video.status === 'Scheduled' ? '#3b82f6' : 'var(--text-muted)' }}>
+                    <div style={{ position: 'absolute', top: '12px', right: '12px', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', color: 'white', background: video.status === 'Published' ? '#10b981' : video.status === 'Scheduled' ? '#3b82f6' : 'var(--text-muted)' }}>
                       {video.status}
                     </div>
                   </div>
@@ -481,7 +481,7 @@ export default function YoutubeDashboard() {
                 <button 
                   onClick={(e) => { e.stopPropagation(); generateAIThumbnail(); }} 
                   disabled={isGenerating}
-                  style={{ background: '#ea580c', color: 'var(--bg-card)', padding: '12px 24px', borderRadius: '8px', border: 'none', fontWeight: '700', cursor: isGenerating ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)', opacity: isGenerating ? 0.7 : 1, width: '100%', justifyContent: 'center' }}
+                  style={{ background: '#ea580c', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontWeight: '700', cursor: isGenerating ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)', opacity: isGenerating ? 0.7 : 1, width: '100%', justifyContent: 'center' }}
                 >
                   <Sparkles size={18} /> {isGenerating ? 'Generating...' : 'Generate AI Thumbnail'}
                 </button>
@@ -498,7 +498,7 @@ export default function YoutubeDashboard() {
                 <img referrerPolicy="no-referrer" src={getSafeImageUrl(generatedThumb)} alt="Generated Thumbnail" style={{ width: '100%', maxWidth: '500px', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }} />
                 <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
                   <button onClick={() => setGeneratedThumb('')} style={{ background: 'var(--bg-dark)', color: 'var(--text-muted)', padding: '10px 20px', borderRadius: '8px', border: 'none', fontWeight: '600', cursor: 'pointer' }}>Generate Another</button>
-                  <a href={generatedThumb} download="thumbnail.png" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', background: '#10b981', color: 'var(--bg-card)', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>Download HD</a>
+                  <a href={generatedThumb} download="thumbnail.png" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', background: '#10b981', color: 'white', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>Download HD</a>
                   <button 
                     onClick={() => {
                       setScheduleData(s => ({ ...s, thumbnail: generatedThumb }));
@@ -506,7 +506,7 @@ export default function YoutubeDashboard() {
                       setShowScheduleModal(true);
                       notify('AI Thumbnail applied! You can now schedule your video.', 'success');
                     }} 
-                    style={{ background: '#ff0000', color: 'var(--bg-card)', padding: '10px 20px', borderRadius: '8px', border: 'none', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 6px rgba(255, 0, 0, 0.2)' }}
+                    style={{ background: '#ff0000', color: 'white', padding: '10px 20px', borderRadius: '8px', border: 'none', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 6px rgba(255, 0, 0, 0.2)' }}
                   >
                     <Upload size={18} /> Use for Scheduling
                   </button>
@@ -639,7 +639,7 @@ export default function YoutubeDashboard() {
             )}
             <div style={{ padding: '20px 24px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end', gap: '12px', background: '#fafaf9', borderBottomLeftRadius: '24px', borderBottomRightRadius: '24px' }}>
               <button onClick={() => setShowScheduleModal(false)} disabled={isUploading} style={{ background: 'var(--bg-card)', border: '1px solid #cbd5e1', color: 'var(--text-muted)', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: isUploading ? 'not-allowed' : 'pointer' }}>Cancel</button>
-              <button onClick={handleScheduleSubmit} disabled={isUploading} style={{ background: '#ff0000', border: 'none', color: 'var(--bg-card)', padding: '10px 24px', borderRadius: '8px', fontWeight: '700', cursor: isUploading ? 'not-allowed' : 'pointer', boxShadow: '0 2px 4px rgba(255, 0, 0, 0.2)', opacity: isUploading ? 0.7 : 1 }}>
+              <button onClick={handleScheduleSubmit} disabled={isUploading} style={{ background: '#ff0000', border: 'none', color: 'white', padding: '10px 24px', borderRadius: '8px', fontWeight: '700', cursor: isUploading ? 'not-allowed' : 'pointer', boxShadow: '0 2px 4px rgba(255, 0, 0, 0.2)', opacity: isUploading ? 0.7 : 1 }}>
                 {isUploading ? 'Uploading...' : 'Schedule Video'}
               </button>
             </div>
@@ -671,7 +671,7 @@ export default function YoutubeDashboard() {
 
             <div style={{ display: 'flex', gap: '12px' }}>
               <button onClick={() => setShowAIModal(false)} style={{ flex: 1, background: 'var(--bg-dark)', color: 'var(--text-muted)', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Cancel</button>
-              <button onClick={handleAISuggest} style={{ flex: 2, background: '#8b5cf6', color: 'var(--bg-card)', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <button onClick={handleAISuggest} style={{ flex: 2, background: '#8b5cf6', color: 'white', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                 <Sparkles size={16} /> Generate Magic
               </button>
             </div>

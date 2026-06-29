@@ -429,7 +429,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
           onClick={() => navigate(location.pathname + '?openTemplates=true')}
           style={{
             background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
-            color: 'var(--bg-card)',
+            color: 'white',
             border: 'none',
             padding: '12px 24px',
             borderRadius: '12px',
@@ -687,7 +687,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
             onClick={() => navigate(location.pathname + '?openTemplates=true')}
             style={{
               background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
-              color: 'var(--bg-card)',
+              color: 'white',
               border: 'none',
               padding: '12px 24px',
               borderRadius: '10px',
@@ -720,7 +720,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                 <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '8px', paddingRight: '100px' }}>{flow.name || 'Untitled Flow'}</h4>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}><MessageCircle size={16} /><span>Keyword: <strong style={{ color: '#1e1b4b' }}>{flow.triggerKeyword || 'None'}</strong></span></div>
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', padding: '16px', background: '#faf5ff', borderRadius: '16px' }}><div style={{ flex: 1 }}><div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#a855f7', textTransform: 'uppercase', marginBottom: '4px' }}>Nodes</div><div style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e1b4b' }}>{flow.nodes ? flow.nodes.length : 0}</div></div><div style={{ width: '1px', background: '#e9d5ff' }}></div><div style={{ flex: 1 }}><div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#a855f7', textTransform: 'uppercase', marginBottom: '4px' }}>Status</div><div style={{ fontSize: '0.9rem', fontWeight: '800', color: flow.status === 'Active' ? '#10b981' : '#a855f7', display: 'flex', alignItems: 'center', gap: '4px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: flow.status === 'Active' ? '#10b981' : '#a855f7' }}></div>{flow.status || 'Active'}</div></div></div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><button onClick={() => navigate(`/flow-builder/${flow._id}`)} style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 100%)', color: 'var(--bg-card)', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>Edit Flow</button><button onClick={(e) => deleteFlow(flow._id, e)} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', background: 'var(--bg-card)', color: '#ef4444', cursor: 'pointer' }}><Trash2 size={18} /></button></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><button onClick={() => navigate(`/flow-builder/${flow._id}`)} style={{ flex: 1, padding: '10px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 100%)', color: 'white', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>Edit Flow</button><button onClick={(e) => deleteFlow(flow._id, e)} style={{ padding: '10px', borderRadius: '12px', border: '1px solid #fee2e2', background: 'var(--bg-card)', color: '#ef4444', cursor: 'pointer' }}><Trash2 size={18} /></button></div>
               </div>
             ))}
           </div>
@@ -881,7 +881,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Bot Response Message</label>
-                    <button type="button" onClick={() => handleGenerateAI(true)} disabled={generatingAI} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', color: 'var(--bg-card)', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', opacity: generatingAI ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(236, 72, 153, 0.3)' }} onMouseOver={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1.05)')} onMouseOut={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1)')}>
+                    <button type="button" onClick={() => handleGenerateAI(true)} disabled={generatingAI} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', color: 'white', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', opacity: generatingAI ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(236, 72, 153, 0.3)' }} onMouseOver={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1.05)')} onMouseOut={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1)')}>
                       {generatingAI ? 'Generating...' : <><Sparkles size={12} /> Auto AI Reply</>}
                     </button>
                   </div>
@@ -901,7 +901,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
               </div>
               
               <div style={{ gridColumn: '1 / -1', marginTop: '8px' }}>
-                <button type="submit" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)', color: 'var(--bg-card)', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: '800', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(124, 58, 237, 0.4)', transition: 'all 0.3s', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
+                <button type="submit" style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: '800', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(124, 58, 237, 0.4)', transition: 'all 0.3s', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
                   <CheckCircle size={20} /> Save Changes
                 </button>
               </div>
@@ -990,7 +990,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <label style={{ display: 'block', fontSize: '0.85rem', color: '#334155', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Bot Response Message</label>
-                    <button type="button" onClick={() => handleGenerateAI(false)} disabled={generatingAI} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', color: 'var(--bg-card)', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', opacity: generatingAI ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(236, 72, 153, 0.3)' }} onMouseOver={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1.05)')} onMouseOut={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1)')}>
+                    <button type="button" onClick={() => handleGenerateAI(false)} disabled={generatingAI} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', color: 'white', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', opacity: generatingAI ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 6px -1px rgba(236, 72, 153, 0.3)' }} onMouseOver={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1.05)')} onMouseOut={e => !generatingAI && (e.currentTarget.style.transform = 'scale(1)')}>
                       {generatingAI ? 'Generating...' : <><Sparkles size={12} /> Auto AI Reply</>}
                     </button>
                   </div>
@@ -1033,7 +1033,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                     width: '100%',
                     padding: '16px', 
                     background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)', 
-                    color: 'var(--bg-card)', border: 'none', borderRadius: '12px', 
+                    color: 'white', border: 'none', borderRadius: '12px', 
                     fontSize: '1rem', fontWeight: '800', cursor: 'pointer', 
                     opacity: submitting ? 0.7 : 1,
                     boxShadow: '0 10px 20px -5px rgba(59, 130, 246, 0.4)',

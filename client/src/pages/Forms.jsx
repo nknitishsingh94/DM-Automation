@@ -265,7 +265,7 @@ export default function Forms() {
             </div>
           </div>
           
-          <div style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%)', borderRadius: '24px', padding: '24px', color: 'var(--bg-card)', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%)', borderRadius: '24px', padding: '24px', color: 'white', position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'relative', zIndex: 1 }}>
               <h4 style={{ fontWeight: '800', fontSize: '1.1rem', marginBottom: '8px' }}>Power user?</h4>
               <p style={{ fontSize: '0.8rem', opacity: 0.9, marginBottom: '20px' }}>Create multi-step flows with conditional branching logic in the Flow Builder.</p>
@@ -359,7 +359,7 @@ export default function Forms() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {newForm.steps[0].fields.map((field, idx) => (
                       <div key={idx} className="field-editor-card">
-                        <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#7c3aed', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800', flexShrink: 0 }}>
+                        <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800', flexShrink: 0 }}>
                           {idx + 1}
                         </div>
                         <div style={{ flex: 1 }}>

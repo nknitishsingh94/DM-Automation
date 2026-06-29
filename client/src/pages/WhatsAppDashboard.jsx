@@ -202,7 +202,7 @@ export default function WhatsAppDashboard() {
                 <AlertCircle size={14} /> Connect WhatsApp
               </button>
             )}
-            <button onClick={() => setShowCreate(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: WA_GREEN, color: 'var(--bg-card)', border: 'none', borderRadius: '12px', padding: '10px 20px', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', boxShadow: `0 4px 12px rgba(37,211,102,0.3)` }}>
+            <button onClick={() => setShowCreate(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: WA_GREEN, color: 'white', border: 'none', borderRadius: '12px', padding: '10px 20px', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', boxShadow: `0 4px 12px rgba(37,211,102,0.3)` }}>
               <Plus size={18} /> New Automation
             </button>
           </div>
@@ -238,7 +238,7 @@ export default function WhatsAppDashboard() {
               <p style={{ margin: 0, fontWeight: '700', color: '#9a3412' }}>WhatsApp Business Account Connect Nahi Hai</p>
               <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#c2410c' }}>Settings mein WhatsApp API Token aur Phone Number ID daalein</p>
             </div>
-            <button onClick={() => navigate('/settings')} style={{ background: '#ea580c', color: 'var(--bg-card)', border: 'none', borderRadius: '10px', padding: '10px 20px', fontWeight: '700', cursor: 'pointer', fontSize: '0.85rem' }}>
+            <button onClick={() => navigate('/settings')} style={{ background: '#ea580c', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 20px', fontWeight: '700', cursor: 'pointer', fontSize: '0.85rem' }}>
               Settings Kholein →
             </button>
           </div>
@@ -279,7 +279,7 @@ export default function WhatsAppDashboard() {
                 </div>
                 <h3 style={{ fontSize: '1.3rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 8px' }}>Koi WhatsApp Automation Nahi</h3>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>Pehla automation banayein aur WhatsApp par auto-replies set karein</p>
-                <button onClick={() => setShowCreate(true)} style={{ background: WA_GREEN, color: 'var(--bg-card)', border: 'none', borderRadius: '12px', padding: '12px 24px', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <button onClick={() => setShowCreate(true)} style={{ background: WA_GREEN, color: 'white', border: 'none', borderRadius: '12px', padding: '12px 24px', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                   <Plus size={18} /> Create Automation
                 </button>
               </div>
@@ -511,7 +511,7 @@ export default function WhatsAppDashboard() {
                 <button type="button" onClick={() => setShowCreate(false)} style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', background: 'var(--bg-card)', color: '#374151', fontWeight: '700', cursor: 'pointer', fontSize: '0.9rem' }}>
                   Cancel
                 </button>
-                <button type="submit" style={{ flex: 2, padding: '14px', borderRadius: '12px', border: 'none', background: WA_GREEN, color: 'var(--bg-card)', fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: `0 4px 12px rgba(37,211,102,0.3)` }}>
+                <button type="submit" style={{ flex: 2, padding: '14px', borderRadius: '12px', border: 'none', background: WA_GREEN, color: 'white', fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: `0 4px 12px rgba(37,211,102,0.3)` }}>
                   <Zap size={18} fill="white" /> Create WhatsApp Automation
                 </button>
               </div>

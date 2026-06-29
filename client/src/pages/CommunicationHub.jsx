@@ -86,7 +86,7 @@ export default function CommunicationHub() {
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
         borderRadius: '24px',
         padding: '48px',
-        color: 'var(--bg-card)',
+        color: 'white',
         marginBottom: '48px',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
         position: 'relative',
@@ -220,13 +220,13 @@ export default function CommunicationHub() {
           animation: 'fadeIn 0.5s ease-out'
         }}>
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginBottom: '8px' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)', boxShadow: '0 10px 15px -3px rgba(16, 185, 129, 0.2)' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 10px 15px -3px rgba(16, 185, 129, 0.2)' }}>
               <MessageCircle size={28} />
             </div>
-            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)', boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.2)' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.2)' }}>
               <Send size={28} />
             </div>
-            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)', boxShadow: '0 10px 15px -3px rgba(139, 92, 246, 0.2)' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 10px 15px -3px rgba(139, 92, 246, 0.2)' }}>
               <MessageSquare size={28} />
             </div>
           </div>
@@ -247,7 +247,7 @@ export default function CommunicationHub() {
               borderRadius: '12px',
               border: 'none',
               background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-              color: 'var(--bg-card)',
+              color: 'white',
               fontWeight: '700',
               fontSize: '1rem',
               display: 'flex',

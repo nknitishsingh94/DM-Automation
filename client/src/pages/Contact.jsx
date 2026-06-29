@@ -50,7 +50,7 @@ export default function Contact() {
           <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', marginBottom: '32px' }}>
             Thank you for reaching out. Our support team will get back to you at <strong>{formData.email}</strong> within 24 hours.
           </p>
-          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#7c3aed', color: 'var(--bg-card)', padding: '14px 32px', borderRadius: '14px', fontWeight: '800', textDecoration: 'none' }}>
+          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#7c3aed', color: 'white', padding: '14px 32px', borderRadius: '14px', fontWeight: '800', textDecoration: 'none' }}>
             <ArrowLeft size={20} /> Back to Home
           </Link>
         </div>
@@ -152,7 +152,7 @@ export default function Contact() {
               disabled={submitting}
               style={{ 
                 marginTop: '10px', background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', 
-                color: 'var(--bg-card)', padding: '16px', borderRadius: '16px', fontWeight: '800', 
+                color: 'white', padding: '16px', borderRadius: '16px', fontWeight: '800', 
                 border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
                 boxShadow: '0 10px 20px rgba(124, 58, 237, 0.2)', transition: 'all 0.3s'
               }}

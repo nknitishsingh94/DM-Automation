@@ -289,9 +289,9 @@ export default function AIStudio() {
               value={testMessage}
               onChange={e => setTestMessage(e.target.value)}
               placeholder="Test your AI here..."
-              style={{ border: 'none', background: '#26658C', color: 'var(--bg-card)' }}
+              style={{ border: 'none', background: '#26658C', color: 'white' }}
             />
-            <button type="submit" disabled={!testMessage.trim()} style={{ background: '#8b5cf6', border: 'none', width: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)', cursor: 'pointer' }}>
+            <button type="submit" disabled={!testMessage.trim()} style={{ background: '#8b5cf6', border: 'none', width: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}>
                <Send size={18} />
             </button>
           </form>

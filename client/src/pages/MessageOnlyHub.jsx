@@ -395,7 +395,7 @@ const MessageOnlyHub = () => {
                 <p>No platforms connected yet.</p>
                 <button 
                   onClick={() => navigate('/settings')}
-                  style={{ marginTop: '16px', padding: '8px 24px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'var(--bg-card)', border: 'none', borderRadius: '24px', cursor: 'pointer', fontWeight: 'bold' }}
+                  style={{ marginTop: '16px', padding: '8px 24px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', border: 'none', borderRadius: '24px', cursor: 'pointer', fontWeight: 'bold' }}
                 >
                   Connect in Settings
                 </button>
@@ -430,7 +430,7 @@ const MessageOnlyHub = () => {
                         width: '20px', height: '20px', borderRadius: '50%', 
                         background: plat?.gradient || '#ccc', 
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: 'var(--bg-card)', border: '2px solid white'
+                        color: 'white', border: '2px solid white'
                       }}>
                         <div style={{ transform: 'scale(0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           {plat?.icon}
@@ -449,7 +449,7 @@ const MessageOnlyHub = () => {
                           {chat.lastMessage}
                         </span>
                         {chat.unread > 0 && (
-                          <div style={{ background: '#00a884', color: 'var(--bg-card)', fontSize: '0.7rem', fontWeight: 'bold', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <div style={{ background: '#00a884', color: 'white', fontSize: '0.7rem', fontWeight: 'bold', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             {chat.unread}
                           </div>
                         )}
@@ -537,7 +537,7 @@ const MessageOnlyHub = () => {
                     onClick={handleGenerateAiResponse}
                     style={{ 
                       display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', 
-                      background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'var(--bg-card)', 
+                      background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: 'white', 
                       padding: '4px 10px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold',
                       opacity: isGenerating ? 0.7 : 1, pointerEvents: isGenerating ? 'none' : 'auto'
                     }}
@@ -659,7 +659,7 @@ const MessageOnlyHub = () => {
               </button>
               <button 
                 onClick={() => setShowAiSettings(false)}
-                style={{ padding: '10px 20px', background: '#7c3aed', color: 'var(--bg-card)', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
+                style={{ padding: '10px 20px', background: '#7c3aed', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
               >
                 Save AI Context
               </button>

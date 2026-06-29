@@ -370,7 +370,7 @@ export default function Signup() {
             disabled={loading}
             style={{
               background: 'var(--accent-color)',
-              color: 'var(--bg-card)',
+              color: 'white',
               padding: '10px 24px',
               borderRadius: '8px',
               fontWeight: '600',

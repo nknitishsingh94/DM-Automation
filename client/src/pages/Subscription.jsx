@@ -275,7 +275,7 @@ export default function Subscription() {
                       <span style={{ fontWeight: '700', color: '#1a1a1a', letterSpacing: '0.5px' }}>8795919866@ybl</span>
                       <button 
                         onClick={handleCopyUPI}
-                        style={{ background: copied ? '#10b981' : '#a855f7', color: 'var(--bg-card)', border: 'none', padding: '6px 12px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.3s' }}>
+                        style={{ background: copied ? '#10b981' : '#a855f7', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.3s' }}>
                         {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? 'Copied!' : 'Copy'}
                       </button>
                     </div>
@@ -303,7 +303,7 @@ export default function Subscription() {
                   <input style={inputStyle} placeholder="Card Holder Name" />
                   <button style={{ 
                     background: 'linear-gradient(135deg, #a855f7, #d946ef)', 
-                    color: 'var(--bg-card)', padding: '14px', borderRadius: '12px', border: 'none', fontWeight: '700', cursor: 'pointer' 
+                    color: 'white', padding: '14px', borderRadius: '12px', border: 'none', fontWeight: '700', cursor: 'pointer' 
                   }}>
                     Pay Now ($29)
                   </button>
@@ -385,7 +385,7 @@ function UpiAppButton({ title, color, href }) {
         textDecoration: 'none'
       }}
     >
-      <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)', fontWeight: 'bold', fontSize: '10px' }}>
+      <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '10px' }}>
         {title.charAt(0)}
       </div>
       <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#444' }}>{title}</span>
@@ -398,5 +398,5 @@ const inputStyle = {
 };
 
 const whatsappButtonStyle = {
-  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: '#25D366', color: 'var(--bg-card)', padding: '14px', borderRadius: '12px', fontWeight: '700', textDecoration: 'none', boxShadow: '0 4px 10px rgba(37, 211, 102, 0.2)'
+  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: '#25D366', color: 'white', padding: '14px', borderRadius: '12px', fontWeight: '700', textDecoration: 'none', boxShadow: '0 4px 10px rgba(37, 211, 102, 0.2)'
 };

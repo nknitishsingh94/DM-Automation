@@ -569,12 +569,12 @@ export default function AutomationEditor() {
                 justifyContent: 'center',
                 fontSize: '0.7rem',
                 fontWeight: '800',
-                color: 'var(--bg-card)',
+                color: 'white',
                 flexShrink: 0
               }}>
                 {!user?.profilePhoto && user?.username?.charAt(0).toUpperCase()}
               </div>
-              <div style={{ color: 'var(--bg-card)', fontSize: '0.85rem', fontWeight: '700' }}>
+              <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '700' }}>
                 {selectedPlatform === 'facebook' 
                   ? (connectedSettings?.connectedFacebookName || 'Facebook Page')
                   : (connectedSettings?.connectedInstagramName || user?.username || 'Instagram Account')
@@ -591,7 +591,7 @@ export default function AutomationEditor() {
                   {/* Post Header */}
                   <div style={{ padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1a1a1a' }}>
                     <ChevronLeft size={18} color="white" />
-                    <span style={{ color: 'var(--bg-card)', fontSize: '0.8rem', fontWeight: '700' }}>{triggerOnStories ? 'Story' : 'Posts'}</span>
+                    <span style={{ color: 'white', fontSize: '0.8rem', fontWeight: '700' }}>{triggerOnStories ? 'Story' : 'Posts'}</span>
                     <div style={{ width: '18px' }}></div>
                   </div>
 
@@ -608,7 +608,7 @@ export default function AutomationEditor() {
                       position: 'relative'
                     }}>
                       {triggerOnStories ? (
-                        <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)', fontWeight: '800', fontSize: '1.5rem' }}>
+                        <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '800', fontSize: '1.5rem' }}>
                           Story
                         </div>
                       ) : (!anyStory && selectedMedia) ? (
@@ -638,19 +638,19 @@ export default function AutomationEditor() {
                         zIndex: 5
                       }}>
                       <div style={{ width: '36px', height: '4px', background: '#333', borderRadius: '2px', margin: '0 auto 16px' }}></div>
-                      <div style={{ color: 'var(--bg-card)', fontSize: '0.85rem', fontWeight: '800', textAlign: 'center', marginBottom: '24px' }}>Comments</div>
+                      <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: '800', textAlign: 'center', marginBottom: '24px' }}>Comments</div>
                       
                       <div style={{ display: 'flex', gap: '12px' }}>
                         <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#262626', border: '1px solid #333' }}></div>
                         <div style={{ flex: 1 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ color: 'var(--bg-card)', fontSize: '0.75rem', fontWeight: '800' }}>User</span>
+                            <span style={{ color: 'white', fontSize: '0.75rem', fontWeight: '800' }}>User</span>
                             <span style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>2m</span>
                           </div>
                           <p style={{ margin: '8px 0 0 0', fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: '500' }}>
                             {triggerOnStories ? 'When someone replies to this story...' : (triggerOnComments ? 'When someone comments on this post...' : 'When someone comments this...')}
                           </p>
-                          <div style={{ color: 'var(--bg-card)', fontSize: '0.75rem', marginTop: '3px', fontWeight: '500' }}>
+                          <div style={{ color: 'white', fontSize: '0.75rem', marginTop: '3px', fontWeight: '500' }}>
                             {keywords.length > 0 ? keywords[0] : "Keyword"}
                           </div>
                           <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
@@ -667,10 +667,10 @@ export default function AutomationEditor() {
                           </div>
                           <div style={{ flex: 1 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              <span style={{ color: 'var(--bg-card)', fontSize: '0.75rem', fontWeight: '800' }}>Your Page</span>
+                              <span style={{ color: 'white', fontSize: '0.75rem', fontWeight: '800' }}>Your Page</span>
                               <span style={{ color: '#8e8e8e', fontSize: '0.7rem' }}>Just now</span>
                             </div>
-                            <div style={{ color: 'var(--bg-card)', fontSize: '0.75rem', marginTop: '4px', fontWeight: '500' }}>
+                            <div style={{ color: 'white', fontSize: '0.75rem', marginTop: '4px', fontWeight: '500' }}>
                               {publicReply}
                             </div>
                             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
@@ -697,11 +697,11 @@ export default function AutomationEditor() {
                       <ArrowLeft size={20} color="white" />
                       <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#ccc', overflow: 'hidden' }}>
                         <div style={{ width: '100%', height: '100%', background: 'var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <span style={{ color: 'var(--bg-card)', fontWeight: '800', fontSize: '1rem' }}>B</span>
+                          <span style={{ color: 'white', fontWeight: '800', fontSize: '1rem' }}>B</span>
                         </div>
                       </div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ color: 'var(--bg-card)', fontWeight: 'bold', fontSize: '0.9rem' }}>Business Name</div>
+                        <div style={{ color: 'white', fontWeight: 'bold', fontSize: '0.9rem' }}>Business Name</div>
                         <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.7rem' }}>online</div>
                       </div>
                       <Video size={20} color="white" />
@@ -828,7 +828,7 @@ export default function AutomationEditor() {
                       alignSelf: 'flex-end', 
                       maxWidth: '75%', 
                       background: '#0095f6', 
-                      color: 'var(--bg-card)', 
+                      color: 'white', 
                       padding: '10px 16px', 
                       borderRadius: '18px 18px 4px 18px', 
                       fontSize: '0.85rem', 
@@ -846,7 +846,7 @@ export default function AutomationEditor() {
                       <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
                         <div style={{ background: '#262626', borderRadius: '18px 18px 18px 4px', overflow: 'hidden' }}>
                           <div style={{ padding: '12px 16px', borderBottom: '1px solid #333' }}>
-                            <span style={{ whiteSpace: 'pre-line', color: 'var(--bg-card)', fontSize: '0.8rem', lineHeight: '1.4' }}>{openingMessageText}</span>
+                            <span style={{ whiteSpace: 'pre-line', color: 'white', fontSize: '0.8rem', lineHeight: '1.4' }}>{openingMessageText}</span>
                           </div>
                           <div style={{ padding: '8px 12px', display: 'flex', justifyContent: 'center' }}>
                             <div style={{ 
@@ -872,7 +872,7 @@ export default function AutomationEditor() {
                         alignSelf: 'flex-end', 
                         maxWidth: '75%', 
                         background: '#0095f6', 
-                        color: 'var(--bg-card)', 
+                        color: 'white', 
                         padding: '10px 16px', 
                         borderRadius: '18px 18px 4px 18px', 
                         fontSize: '0.85rem', 
@@ -897,7 +897,7 @@ export default function AutomationEditor() {
                           <Sparkles size={12} color="#c084fc" className="animate-pulse" />
                           <span style={{ color: '#c084fc', fontSize: '0.7rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI Neural Studio Reply</span>
                         </div>
-                        <div style={{ padding: '12px 16px', color: 'var(--bg-card)', fontSize: '0.8rem', lineHeight: '1.4' }}>
+                        <div style={{ padding: '12px 16px', color: 'white', fontSize: '0.8rem', lineHeight: '1.4' }}>
                           {message && message !== "[AI Agent will generate a custom neural reply here]" ? message : "Generates high-fidelity reply using your business custom AI knowledge base profile..."}
                         </div>
                         <div style={{ padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center', borderTop: buttons.length > 0 ? '1px solid rgba(192, 132, 252, 0.2)' : 'none' }}>
@@ -930,7 +930,7 @@ export default function AutomationEditor() {
                         overflow: 'hidden'
                       }}>
                         <div style={{ padding: '12px 16px', borderBottom: buttons.length > 0 ? '1px solid #333' : 'none' }}>
-                          <div style={{ color: 'var(--bg-card)', fontSize: '0.8rem', lineHeight: '1.4' }}>
+                          <div style={{ color: 'white', fontSize: '0.8rem', lineHeight: '1.4' }}>
                             {message}
                           </div>
                         </div>
@@ -1026,7 +1026,7 @@ export default function AutomationEditor() {
             {!isUniversal && (
             <div style={{ position: 'relative', zIndex: 1, marginBottom: '18px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                 <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#f59e0b', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>0</div>
+                 <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#f59e0b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>0</div>
                  <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Target Platform</h3>
               </div>
               <div style={{ padding: '16px 20px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #f1f5f9', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
@@ -1094,7 +1094,7 @@ export default function AutomationEditor() {
             {/* Step 1: Follower Growth Gating (NEW PRIORITY) */}
             <div style={{ marginBottom: '18px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#10b981', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>1</div>
+                <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>1</div>
                 <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Follower Growth Gating</h3>
               </div>
               
@@ -1145,7 +1145,7 @@ export default function AutomationEditor() {
             {(triggerOnComments || triggerOnStories) && !isUniversal && (
               <div style={{ marginBottom: '18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>2</div>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>2</div>
                   <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>{triggerOnStories ? 'Select a Story' : 'Select a Post'}</h3>
                 </div>
               <div style={{ padding: '14px 18px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #f1f5f9' }}>
@@ -1269,7 +1269,7 @@ export default function AutomationEditor() {
                               style={{
                                 marginTop: '4px',
                                 background: '#e11d48',
-                                color: 'var(--bg-card)',
+                                color: 'white',
                                 border: 'none',
                                 borderRadius: '8px',
                                 padding: '6px 12px',
@@ -1341,7 +1341,7 @@ export default function AutomationEditor() {
               style={{ marginBottom: '18px', cursor: 'pointer' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>3</div>
+                <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>3</div>
                 <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>
                   {triggerOnStories ? 'Reply Trigger' : (triggerOnComments ? 'Comment Trigger' : 'Keyword Trigger')}
                 </h3>
@@ -1387,7 +1387,7 @@ export default function AutomationEditor() {
                       style={{ 
                         position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)',
                         width: '28px', height: '28px', borderRadius: '6px', background: '#7c3aed',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
                         cursor: 'pointer', zIndex: 5
                       }}
                     >
@@ -1415,7 +1415,7 @@ export default function AutomationEditor() {
               style={{ marginBottom: '24px', cursor: 'pointer' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>4</div>
+                <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>4</div>
                 <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Send a DM</h3>
               </div>
               
@@ -1664,7 +1664,7 @@ export default function AutomationEditor() {
                 padding: '14px',
                 borderRadius: '12px',
                 background: '#7c3aed',
-                color: 'var(--bg-card)',
+                color: 'white',
                 border: 'none',
                 fontWeight: '800',
                 fontSize: '1rem',
@@ -1777,7 +1777,7 @@ export default function AutomationEditor() {
                   padding: '16px',
                   borderRadius: '16px',
                   background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-                  color: 'var(--bg-card)',
+                  color: 'white',
                   border: 'none',
                   fontWeight: '800',
                   fontSize: '1rem',

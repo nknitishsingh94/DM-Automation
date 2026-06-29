@@ -372,7 +372,7 @@ export default function FlowBuilder() {
           <button 
             onClick={saveFlow} 
             disabled={isSaving} 
-            style={{ background: '#3b82f6', color: 'var(--bg-card)', border: 'none', padding: '8px 24px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+            style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '8px 24px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
           >
              {isSaving ? 'Updating...' : 'Update'}
           </button>

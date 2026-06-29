@@ -340,7 +340,7 @@ export default function Inbox() {
               onClick={toggleMute}
               style={{
                 background: isBotMuted ? '#ef4444' : '#10b981',
-                color: 'var(--bg-card)', border: 'none', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
+                color: 'white', border: 'none', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
               }}
             >
               {isBotMuted ? '🔇 AI Paused' : '🤖 AI Active'}
@@ -350,7 +350,7 @@ export default function Inbox() {
         <div className="inbox-list">
           <div className="chat-item active" onClick={() => setIsChatViewMobile(true)}>
             <div className="chat-avatar" style={{ 
-              color: 'var(--bg-card)', 
+              color: 'white', 
               background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
               display: 'flex', 
               alignItems: 'center', 
@@ -384,7 +384,7 @@ export default function Inbox() {
           </button>
 
           <div className="chat-avatar" style={{ 
-            color: 'var(--bg-card)', 
+            color: 'white', 
             background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
             display: 'flex', 
             alignItems: 'center', 
@@ -678,7 +678,7 @@ export default function Inbox() {
             autoFocus
             style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid var(--border-subtle)', outline: 'none' }}
           />
-          <button type="submit" className="send-btn" style={{ padding: '12px', borderRadius: '12px', background: 'var(--accent-color)', color: 'var(--bg-card)' }}>
+          <button type="submit" className="send-btn" style={{ padding: '12px', borderRadius: '12px', background: 'var(--accent-color)', color: 'white' }}>
             <Send size={20} />
           </button>
         </form>
@@ -748,7 +748,7 @@ export default function Inbox() {
                   border: 'none',
                   background: '#ef4444',
                   fontWeight: '600',
-                  color: 'var(--bg-card)',
+                  color: 'white',
                   cursor: 'pointer'
                 }}
               >
