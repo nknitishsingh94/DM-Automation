@@ -238,7 +238,7 @@ export default function Audiences() {
                                 {new Date(msg.timestamp).toLocaleString()}
                               </span>
                             </div>
-                            <p style={{ color: '#334155', fontSize: '0.9rem', margin: 0 }}>{msg.text}</p>
+                            <p style={{ color: 'var(--text-main)', fontSize: '0.9rem', margin: 0 }}>{msg.text}</p>
                           </div>
                         </div>
                       );
@@ -342,7 +342,7 @@ export default function Audiences() {
 
       {/* Advanced Search & Filter Bar */}
       <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', flexWrap: 'wrap' }}>
-        <div style={{ background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '18px', padding: '14px 24px', flex: 1, display: 'flex', alignItems: 'center', minWidth: '300px', transition: 'all 0.3s ease', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '18px', padding: '14px 24px', flex: 1, display: 'flex', alignItems: 'center', minWidth: '300px', transition: 'all 0.3s ease', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}
              onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.05)'; }}
              onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.02)'; }}>
           <Search size={20} style={{ color: '#8b5cf6', marginRight: '16px' }} />
@@ -354,14 +354,14 @@ export default function Audiences() {
             style={{ width: '100%', padding: '0', background: 'transparent', border: 'none', outline: 'none', fontSize: '1rem', color: 'var(--text-main)', fontWeight: '500' }}
           />
         </div>
-        <div style={{ background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '18px', padding: '14px 24px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', transition: 'all 0.3s ease' }}
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '18px', padding: '14px 24px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', transition: 'all 0.3s ease' }}
              onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.05)'; }}
              onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.02)'; }}>
           <Filter size={20} style={{ color: '#8b5cf6' }} />
           <select 
             value={selectedTagFilter} 
             onChange={(e) => setSelectedTagFilter(e.target.value)}
-            style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '1rem', fontWeight: '600', color: '#334155', cursor: 'pointer' }}
+            style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '1rem', fontWeight: '600', color: 'var(--text-main)', cursor: 'pointer' }}
           >
             <option value="All">All Tags</option>
             {allAvailableTags.map(tag => <option key={tag} value={tag}>{tag}</option>)}
@@ -370,10 +370,10 @@ export default function Audiences() {
       </div>
 
       {/* Premium Data Table Container */}
-      <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #f1f5f9', overflowX: 'auto', boxShadow: '0 12px 40px rgba(0,0,0,0.04)', width: '100%' }}>
+      <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)', overflowX: 'auto', boxShadow: '0 12px 40px rgba(0,0,0,0.04)', width: '100%' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '700px' }}>
           <thead>
-            <tr style={{ background: 'rgba(248, 250, 252, 0.5)', borderBottom: '1px solid #f1f5f9' }}>
+            <tr style={{ background: 'rgba(248, 250, 252, 0.5)', borderBottom: '1px solid var(--border-subtle)' }}>
               <th style={{ padding: '24px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Contact Identity</th>
               <th style={{ padding: '24px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Category Tags</th>
               <th style={{ padding: '24px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Total Interactions</th>
@@ -387,7 +387,7 @@ export default function Audiences() {
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', animation: 'fadeIn 0.5s ease-out' }}>
                     <div style={{ position: 'relative' }}>
                       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(139,92,246,0.2) 0%, rgba(255,255,255,0) 70%)', borderRadius: '50%', zIndex: 0 }}></div>
-                      <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '50%', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', position: 'relative', zIndex: 1 }}>
+                      <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '50%', border: '1px solid var(--border-subtle)', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', position: 'relative', zIndex: 1 }}>
                         <Users size={56} style={{ color: '#c084fc' }} />
                       </div>
                     </div>
@@ -402,7 +402,7 @@ export default function Audiences() {
               <tr 
                 key={contact._id} 
                 onClick={() => setSelectedContact(contact)}
-                style={{ cursor: 'pointer', borderBottom: '1px solid #f1f5f9', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', background: 'var(--bg-card)' }}
+                style={{ cursor: 'pointer', borderBottom: '1px solid var(--border-subtle)', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', background: 'var(--bg-card)' }}
                 onMouseOver={(e) => { 
                   e.currentTarget.style.background = 'var(--sidebar-bg)'; 
                   e.currentTarget.style.transform = 'translateY(-2px)'; 
@@ -443,7 +443,7 @@ export default function Audiences() {
                   </div>
                 </td>
                 <td style={{ padding: '20px 24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '800', fontSize: '1.1rem', color: '#334155' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '800', fontSize: '1.1rem', color: 'var(--text-main)' }}>
                     <div style={{ padding: '8px', background: '#f3e8ff', borderRadius: '10px' }}>
                       <MessageCircle size={16} color="#9333ea" />
                     </div>

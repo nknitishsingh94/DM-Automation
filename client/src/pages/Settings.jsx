@@ -140,7 +140,7 @@ export default function Settings() {
 
       {activeTab === 'danger' && (
         <div style={{ marginTop: '20px' }}>
-          <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', background: 'var(--bg-card)', overflow: 'hidden' }}>
+          <div style={{ border: '1px solid var(--border-subtle)', borderRadius: '12px', background: 'var(--bg-card)', overflow: 'hidden' }}>
             <div style={{ padding: '24px', background: '#fff1f2' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#be123c', marginBottom: '12px' }}>
                 <AlertTriangle size={24} />

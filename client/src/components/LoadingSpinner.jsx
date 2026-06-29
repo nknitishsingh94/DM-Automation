@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LoadingSpinner = ({ size = 40, color = '#7c3aed', minHeight = '300px', inline = false }) => {
+const LoadingSpinner = ({ size = 40, color = 'var(--accent-color)', minHeight = '300px', inline = false }) => {
   const borderWidth = Math.max(2, Math.round(size / 10));
   
   if (inline) {

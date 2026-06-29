@@ -14,7 +14,7 @@ export default function Referral() {
   const rewards = [
     { tier: '1 Referral', reward: '1 Month Free Pro', icon: <Star size={20} />, color: '#f59e0b', locked: false },
     { tier: '3 Referrals', reward: '$10 Cash Reward', icon: <DollarSign size={20} />, color: '#10b981', locked: true },
-    { tier: '10 Referrals', reward: 'Lifetime Pro Access', icon: <Gift size={20} />, color: '#7c3aed', locked: true },
+    { tier: '10 Referrals', reward: 'Lifetime Pro Access', icon: <Gift size={20} />, color: 'var(--accent-color)', locked: true },
   ];
 
   return (
@@ -36,7 +36,7 @@ export default function Referral() {
           {/* Stats */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
             {[
-              { label: 'Total Referrals', value: '0', color: '#7c3aed' },
+              { label: 'Total Referrals', value: '0', color: 'var(--accent-color)' },
               { label: 'Rewards Earned', value: '₹0', color: '#10b981' },
               { label: 'Pending', value: '0', color: '#f59e0b' },
             ].map((s, i) => (
@@ -52,12 +52,12 @@ export default function Referral() {
             <h3 style={{ fontSize: '17px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '6px' }}>Your Referral Link</h3>
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>Share this link with your friends to earn rewards.</p>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <div style={{ flex: 1, padding: '14px 18px', background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', borderRadius: '12px', fontSize: '13px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div style={{ flex: 1, padding: '14px 18px', background: 'var(--sidebar-bg)', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '13px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {referralLink}
               </div>
               <button
                 onClick={handleCopy}
-                style={{ padding: '14px 20px', background: copied ? '#10b981' : '#7c3aed', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '700', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
+                style={{ padding: '14px 20px', background: copied ? '#10b981' : 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '700', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
               >
                 <Copy size={16} /> {copied ? 'Copied!' : 'Copy Link'}
               </button>
@@ -74,7 +74,7 @@ export default function Referral() {
                 { step: '3', title: 'Earn rewards', desc: 'Get exclusive rewards when they become an active user.' },
               ].map((s, i) => (
                 <div key={i} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(124,58,237,0.1)', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '13px', flexShrink: 0 }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(124,58,237,0.1)', color: 'var(--accent-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '13px', flexShrink: 0 }}>
                     {s.step}
                   </div>
                   <div>
@@ -102,7 +102,7 @@ export default function Referral() {
                   <div style={{ fontSize: '14px', fontWeight: '700', color: r.locked ? 'var(--text-muted)' : 'var(--text-main)' }}>{r.reward}</div>
                 </div>
                 {r.locked ? (
-                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '2px solid #e2e8f0' }}></div>
+                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '1px solid var(--border-subtle)' }}></div>
                 ) : (
                   <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: r.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Star size={10} color="white" fill="white" />

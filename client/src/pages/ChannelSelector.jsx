@@ -86,8 +86,8 @@ export default function ChannelSelector() {
             marginBottom: '16px',
             color: '#1e1b4b' 
           }}>
-            Let's <span style={{ color: '#7c3aed' }}>Kick</span><br />
-            Things <span style={{ color: '#7c3aed' }}>Off!</span>
+            Let's <span style={{ color: 'var(--accent-color)' }}>Kick</span><br />
+            Things <span style={{ color: 'var(--accent-color)' }}>Off!</span>
           </h1>
           <p style={{ 
             fontSize: '1.2rem', 
@@ -110,7 +110,7 @@ export default function ChannelSelector() {
                   gap: '20px',
                   padding: '20px 24px',
                   borderRadius: '16px',
-                  border: '1px solid #e2e8f0',
+                  border: '1px solid var(--border-subtle)',
                   background: 'var(--bg-card)',
                   cursor: 'pointer',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',

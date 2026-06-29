@@ -167,7 +167,7 @@ export default function Privacy() {
             <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginBottom: '16px', lineHeight: '1.6' }}>
               At <strong>smart10X</strong>, we consider the privacy and security of personal data to be extremely important.
             </p>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--sidebar-bg)', padding: '8px 20px', borderRadius: '100px', color: 'var(--text-muted)', fontWeight: '700', fontSize: '14px', border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--sidebar-bg)', padding: '8px 20px', borderRadius: '100px', color: 'var(--text-muted)', fontWeight: '700', fontSize: '14px', border: '1px solid var(--border-subtle)' }}>
               <span style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', display: 'inline-block' }} />
               Effective Date: May 5, 2026
             </div>
@@ -182,7 +182,7 @@ export default function Privacy() {
         </div>
 
         {/* Security Trust Badges */}
-        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '28px 32px', marginBottom: '28px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)', padding: '28px 32px', marginBottom: '28px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg,#10b981,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Shield size={18} color="white" />
@@ -207,7 +207,7 @@ export default function Privacy() {
               { icon: '🚨', label: 'Error Hiding', sub: 'No data leaked in errors' },
               { icon: '🔔', label: 'GDPR Breach Notice', sub: '72hr notification policy' },
             ].map((b, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', background: 'var(--sidebar-bg)', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', background: 'var(--sidebar-bg)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
                 <span style={{ fontSize: '20px', flexShrink: 0 }}>{b.icon}</span>
                 <div>
                   <div style={{ fontSize: '12.5px', fontWeight: '700', color: 'var(--text-main)' }}>{b.label}</div>
@@ -219,7 +219,7 @@ export default function Privacy() {
         </div>
 
         {/* Table of Contents */}
-        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '32px', marginBottom: '28px' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)', padding: '32px', marginBottom: '28px' }}>
           <h3 style={{ fontSize: '17px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Info size={18} color="#3b82f6" /> Table of Contents
           </h3>
@@ -251,7 +251,7 @@ export default function Privacy() {
                 <ChevronDown size={18} color="#94a3b8" style={{ transform: open === s.id ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.3s', flexShrink: 0 }} />
               </button>
               {open === s.id && (
-                <div style={{ padding: '0 24px 24px', borderTop: '1px solid #f1f5f9', background: s.bg }}>
+                <div style={{ padding: '0 24px 24px', borderTop: '1px solid var(--border-subtle)', background: s.bg }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', paddingTop: '20px' }}>
                     {s.content.map((item, i) => (
                       <div key={i} style={{ background: 'var(--bg-card)', borderRadius: '14px', padding: '16px 20px', border: '1px solid rgba(0,0,0,0.04)' }}>
@@ -267,17 +267,17 @@ export default function Privacy() {
         </div>
 
         {/* Contact */}
-        <div style={{ background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid var(--border-subtle)', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
           <h3 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '12px' }}>Questions About Your Privacy?</h3>
           <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '0.95rem' }}>Our dedicated privacy team is happy to help you with any data-related requests.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
             <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
               <Mail size={18} /> smart10x.support@gmail.com
             </a>
-            <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #e2e8f0' }}>
+            <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid var(--border-subtle)' }}>
               Help Center
             </Link>
-            <Link to="/cookies" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid #e2e8f0' }}>
+            <Link to="/cookies" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid var(--border-subtle)' }}>
               Cookie Statement
             </Link>
             <button 

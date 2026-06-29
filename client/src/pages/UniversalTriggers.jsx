@@ -348,7 +348,7 @@ export default function UniversalTriggers() {
     <div style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column', background: 'var(--sidebar-bg)' }}>
       
       {/* Top Header */}
-      <div style={{ padding: '16px 24px', background: 'var(--bg-card)', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10, flexShrink: 0 }}>
+      <div style={{ padding: '16px 24px', background: 'var(--bg-card)', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button onClick={() => navigate('/hub')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><ArrowLeft size={20} /></button>
           <div>
@@ -359,14 +359,14 @@ export default function UniversalTriggers() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button 
             onClick={() => setShowListModal(true)}
-            style={{ padding: '8px 16px', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '8px', color: 'var(--text-main)', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+            style={{ padding: '8px 16px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
           >
             <List size={16} /> My Triggers
           </button>
           <button 
             onClick={handleTest}
             disabled={isTesting}
-            style={{ padding: '8px 16px', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#4f46e5', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: isTesting ? 'wait' : 'pointer', opacity: isTesting ? 0.7 : 1 }}
+            style={{ padding: '8px 16px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: '#4f46e5', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: isTesting ? 'wait' : 'pointer', opacity: isTesting ? 0.7 : 1 }}
           >
             <TestTube size={16} /> {isTesting ? 'Testing...' : 'Test Workflow'}
           </button>
@@ -391,7 +391,7 @@ export default function UniversalTriggers() {
 
 
           
-          <div style={{ position: 'absolute', top: 60, left: 16, zIndex: 50, background: 'var(--bg-card)', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', padding: '8px 0' }}>
+          <div style={{ position: 'absolute', top: 60, left: 16, zIndex: 50, background: 'var(--bg-card)', borderRadius: '8px', border: '1px solid var(--border-subtle)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', padding: '8px 0' }}>
             {[
               { id: 'Pointer', icon: MousePointer2 },
               { id: 'Plus', icon: Plus },
@@ -458,8 +458,8 @@ export default function UniversalTriggers() {
         </div>
 
         {/* Right Configuration Sidebar */}
-        <div style={{ width: '300px', background: 'var(--bg-card)', borderLeft: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ padding: '20px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ width: '300px', background: 'var(--bg-card)', borderLeft: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ padding: '20px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h2 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: 0 }}>Trigger Configuration</h2>
           </div>
           
@@ -471,7 +471,7 @@ export default function UniversalTriggers() {
               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Keywords</label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
                 {keywords.map((kw, i) => (
-                  <span key={i} style={{ padding: '4px 8px', background: 'var(--bg-dark)', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span key={i} style={{ padding: '4px 8px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '6px', fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     {kw} 
                     <span 
                       onClick={() => setKeywords(keywords.filter((_, index) => index !== i))} 
@@ -492,7 +492,7 @@ export default function UniversalTriggers() {
                     setKeywordInput('');
                   }
                 }}
-                style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none' }} 
+                style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none' }} 
               />
               <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '6px' }}>Press Enter to add more keywords</div>
             </div>
@@ -500,7 +500,7 @@ export default function UniversalTriggers() {
             {/* Match Type */}
             <div style={{ marginBottom: '24px' }}>
               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Match Type</label>
-              <select style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-main)' }}>
+              <select style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-main)' }}>
                 <option>Any Keyword</option>
                 <option>Exact Match</option>
                 <option>Contains</option>
@@ -512,7 +512,7 @@ export default function UniversalTriggers() {
               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Platforms</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {platforms.map((plat, i) => (
-                  <label key={plat.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: '#334155', cursor: 'pointer' }}>
+                  <label key={plat.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: 'var(--text-main)', cursor: 'pointer' }}>
                     <div style={{ width: '16px', height: '16px', borderRadius: '4px', background: plat.checked ? plat.color : 'var(--bg-card)', border: `1px solid ${plat.checked ? plat.color : 'var(--border-subtle)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {plat.checked && <Check size={12} color="white" strokeWidth={3} />}
                     </div>
@@ -529,7 +529,7 @@ export default function UniversalTriggers() {
                 <select 
                   value={triggerType}
                   onChange={(e) => setTriggerType(e.target.value)}
-                  style={{ width: '100%', padding: '10px', fontSize: '12px', fontWeight: '600', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none', background: 'var(--sidebar-bg)', color: 'var(--text-main)', cursor: 'pointer' }}
+                  style={{ width: '100%', padding: '10px', fontSize: '12px', fontWeight: '600', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none', background: 'var(--sidebar-bg)', color: 'var(--text-main)', cursor: 'pointer' }}
                 >
                   <option value="Keyword">Keyword Match</option>
                   <option value="AI Intent">AI Intent (Smart)</option>
@@ -543,7 +543,7 @@ export default function UniversalTriggers() {
             {/* Trigger Condition */}
             <div>
               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Trigger Condition</label>
-              <select style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-main)' }}>
+              <select style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-main)' }}>
                 <option>Allow Re-entry</option>
                 <option>Once per user</option>
               </select>
@@ -552,7 +552,7 @@ export default function UniversalTriggers() {
             
           </div>
           
-          <div style={{ padding: '20px', borderTop: '1px solid #e2e8f0', background: 'var(--sidebar-bg)' }}>
+          <div style={{ padding: '20px', borderTop: '1px solid var(--border-subtle)', background: 'var(--sidebar-bg)' }}>
             <button 
               onClick={handleSaveTrigger}
               disabled={isSaving}
@@ -570,7 +570,7 @@ export default function UniversalTriggers() {
       {showListModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: 'var(--bg-card)', width: '600px', maxHeight: '80vh', borderRadius: '16px', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <h2 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>My Universal Triggers</h2>
                 <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>Manage your created cross-platform automation rules.</p>
@@ -608,7 +608,7 @@ export default function UniversalTriggers() {
                     }
                     
                     return (
-                      <div key={idx} style={{ padding: '16px', border: '1px solid #e2e8f0', borderRadius: '12px', background: 'var(--sidebar-bg)' }}>
+                      <div key={idx} style={{ padding: '16px', border: '1px solid var(--border-subtle)', borderRadius: '12px', background: 'var(--sidebar-bg)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                           <div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -624,7 +624,7 @@ export default function UniversalTriggers() {
                             </span>
                           </div>
                         </div>
-                        <div style={{ background: 'var(--bg-card)', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '13px', color: '#334155', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div style={{ background: 'var(--bg-card)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontSize: '13px', color: 'var(--text-main)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                           <span style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Auto-Response Preview</span>
                           {responsePreview.substring(0, 100)}{responsePreview.length > 100 ? '...' : ''}
                         </div>
@@ -635,7 +635,7 @@ export default function UniversalTriggers() {
               )}
             </div>
             
-            <div style={{ padding: '16px 24px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', background: 'var(--sidebar-bg)', borderBottomLeftRadius: '16px', borderBottomRightRadius: '16px' }}>
+            <div style={{ padding: '16px 24px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'flex-end', background: 'var(--sidebar-bg)', borderBottomLeftRadius: '16px', borderBottomRightRadius: '16px' }}>
               <button onClick={() => setShowListModal(false)} style={{ padding: '8px 24px', background: 'var(--text-main)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>Close</button>
             </div>
           </div>

@@ -140,7 +140,7 @@ const MessageOnlyHub = () => {
       name: 'Threads',
       description: 'Automate posts, messages, and replies on your Threads account.',
       icon: <ThreadsIcon size={40} />,
-      color: '#000000',
+      color: 'var(--text-main)',
       gradient: 'linear-gradient(135deg, #000000, #333333)',
       isConnected: settings && settings.isThreadsConnected,
       accountName: settings?.connectedThreadsName || 'Threads User'
@@ -360,16 +360,16 @@ const MessageOnlyHub = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#54656f' }}>
               {/* AI Toggle */}
               <div style={{ display: 'flex', alignItems: 'center', background: isAiEnabled ? '#f3e8ff' : 'var(--bg-dark)', padding: '4px 10px', borderRadius: '20px', border: `1px solid ${isAiEnabled ? '#d8b4fe' : '#d1d7db'}` }}>
-                <Bot size={16} color={isAiEnabled ? '#7c3aed' : '#54656f'} style={{ marginRight: '6px' }} />
-                <span style={{ fontSize: '0.8rem', fontWeight: 'bold', color: isAiEnabled ? '#7c3aed' : '#54656f', marginRight: '8px' }}>AI Reply</span>
+                <Bot size={16} color={isAiEnabled ? 'var(--accent-color)' : '#54656f'} style={{ marginRight: '6px' }} />
+                <span style={{ fontSize: '0.8rem', fontWeight: 'bold', color: isAiEnabled ? 'var(--accent-color)' : '#54656f', marginRight: '8px' }}>AI Reply</span>
                 <div 
                   onClick={() => setIsAiEnabled(!isAiEnabled)}
-                  style={{ width: '32px', height: '18px', background: isAiEnabled ? '#7c3aed' : '#d1d7db', borderRadius: '10px', position: 'relative', cursor: 'pointer', transition: '0.3s' }}
+                  style={{ width: '32px', height: '18px', background: isAiEnabled ? 'var(--accent-color)' : '#d1d7db', borderRadius: '10px', position: 'relative', cursor: 'pointer', transition: '0.3s' }}
                 >
                   <div style={{ width: '14px', height: '14px', background: 'var(--bg-card)', borderRadius: '50%', position: 'absolute', top: '2px', left: isAiEnabled ? '16px' : '2px', transition: '0.3s' }}></div>
                 </div>
                 {isAiEnabled && (
-                  <SettingsIcon size={14} color="#7c3aed" style={{ marginLeft: '8px', cursor: 'pointer' }} onClick={() => setShowAiSettings(true)} />
+                  <SettingsIcon size={14} color='var(--accent-color)' style={{ marginLeft: '8px', cursor: 'pointer' }} onClick={() => setShowAiSettings(true)} />
                 )}
               </div>
             </div>
@@ -499,7 +499,7 @@ const MessageOnlyHub = () => {
                       }}
                     >
                       {msg.sender === 'AI Agent' && (
-                        <div style={{ fontSize: '0.65rem', color: '#7c3aed', fontWeight: 'bold', marginBottom: '2px' }}>🤖 AI Agent</div>
+                        <div style={{ fontSize: '0.65rem', color: 'var(--accent-color)', fontWeight: 'bold', marginBottom: '2px' }}>🤖 AI Agent</div>
                       )}
                       <div style={{ fontSize: '0.9rem', color: '#111b21', lineHeight: '19px', wordBreak: 'break-word' }}>{msg.text}</div>
                       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '4px', gap: '4px' }}>
@@ -548,7 +548,7 @@ const MessageOnlyHub = () => {
                 )}
               </div>
               <div 
-                style={{ color: draftMessage.trim() ? '#7c3aed' : '#54656f', cursor: draftMessage.trim() ? 'pointer' : 'default' }}
+                style={{ color: draftMessage.trim() ? 'var(--accent-color)' : '#54656f', cursor: draftMessage.trim() ? 'pointer' : 'default' }}
                 onClick={() => draftMessage.trim() && handleSendMessage()}
               >
                 <Send size={24} />
@@ -583,7 +583,7 @@ const MessageOnlyHub = () => {
                   <rect x="40" y="40" width="80" height="10" rx="5" fill="#D1D7DB" />
                   <rect x="40" y="60" width="240" height="8" rx="4" fill="#D1D7DB" />
                   <rect x="40" y="80" width="200" height="8" rx="4" fill="#D1D7DB" />
-                  <circle cx="160" cy="120" r="20" fill="#7c3aed" opacity="0.8" />
+                  <circle cx="160" cy="120" r="20" fill='var(--accent-color)' opacity="0.8" />
                   <path d="M152 120L158 126L168 114" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
@@ -609,7 +609,7 @@ const MessageOnlyHub = () => {
           <div style={{ background: 'var(--bg-card)', padding: '32px', borderRadius: '16px', width: '500px', maxWidth: '90%', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#111b21', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Bot size={24} color="#7c3aed" />
+                <Bot size={24} color='var(--accent-color)' />
                 AI Auto-Reply Settings
               </h2>
               <X size={24} color="#667781" style={{ cursor: 'pointer' }} onClick={() => setShowAiSettings(false)} />
@@ -659,7 +659,7 @@ const MessageOnlyHub = () => {
               </button>
               <button 
                 onClick={() => setShowAiSettings(false)}
-                style={{ padding: '10px 20px', background: '#7c3aed', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
+                style={{ padding: '10px 20px', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
               >
                 Save AI Context
               </button>

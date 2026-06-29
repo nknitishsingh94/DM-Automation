@@ -29,23 +29,23 @@ const MessageNode = ({ data }) => (
       </div>
     )}
     <div style={{ 
-      padding: '0', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid #e2e8f0', width: '240px',
+      padding: '0', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-subtle)', width: '240px',
       boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflow: 'hidden', position: 'relative'
     }}>
       <Handle type="target" position={Position.Left} style={{ background: 'var(--text-muted)', width: '8px', height: '8px' }} />
-      <div style={{ background: 'var(--sidebar-bg)', padding: '12px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ background: 'var(--sidebar-bg)', padding: '12px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <div style={{ background: '#ef4444', borderRadius: '50%', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Instagram size={14} color="white" />
         </div>
         <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', whiteSpace: 'pre-wrap' }}>{data.title || 'Instagram\nSend Message'}</span>
       </div>
-      <div style={{ padding: '12px', fontSize: '12px', color: '#334155', minHeight: '40px', whiteSpace: 'pre-wrap', lineHeight: '1.4' }}>
+      <div style={{ padding: '12px', fontSize: '12px', color: 'var(--text-main)', minHeight: '40px', whiteSpace: 'pre-wrap', lineHeight: '1.4' }}>
         {data.text || <span style={{ opacity: 0.5, fontStyle: 'italic' }}>Click to edit text...</span>}
       </div>
       {data.buttons && data.buttons.length > 0 && (
         <div style={{ padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
           {data.buttons.map(btn => (
-            <div key={btn.id} style={{ position: 'relative', border: '1px solid #e2e8f0', padding: '8px', borderRadius: '6px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#3b82f6', background: 'var(--bg-card)' }}>
+            <div key={btn.id} style={{ position: 'relative', border: '1px solid var(--border-subtle)', padding: '8px', borderRadius: '6px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#3b82f6', background: 'var(--bg-card)' }}>
               {btn.text}
               <Handle type="source" position={Position.Right} id={btn.id} style={{ background: 'var(--text-muted)', width: '8px', height: '8px', right: '-12px' }} />
             </div>
@@ -67,14 +67,14 @@ const MessageNode = ({ data }) => (
 const TriggerNode = ({ data }) => (
   <div style={{ position: 'relative' }}>
     <div style={{ 
-      padding: '0', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid #e2e8f0', width: '240px',
+      padding: '0', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-subtle)', width: '240px',
       boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflow: 'hidden'
     }}>
       <div style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <Zap size={14} color="#64748b" />
         <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)' }}>{data.title || 'When...'}</span>
       </div>
-      <div style={{ padding: '12px', borderTop: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ padding: '12px', borderTop: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <div style={{ background: '#ef4444', borderRadius: '50%', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Instagram size={12} color="white" />
         </div>
@@ -171,7 +171,7 @@ const StableInput = ({ value, onChange, placeholder, isTextArea = false }) => {
         onChange={(e) => setLocalValue(e.target.value)}
         onBlur={commit}
         placeholder={placeholder}
-        style={{ width: '100%', minHeight: '120px', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', outline: 'none', resize: 'none' }}
+        style={{ width: '100%', minHeight: '120px', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', outline: 'none', resize: 'none' }}
       />
     );
   }
@@ -184,7 +184,7 @@ const StableInput = ({ value, onChange, placeholder, isTextArea = false }) => {
       onBlur={commit}
       onKeyDown={(e) => e.key === 'Enter' && commit()}
       placeholder={placeholder}
-      style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', outline: 'none' }}
+      style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', outline: 'none' }}
     />
   );
 };
@@ -336,7 +336,7 @@ export default function FlowBuilder() {
     <div style={{ height: '100vh', position: 'fixed', top: 0, left: window.innerWidth > 1000 ? '260px' : 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', background: 'var(--sidebar-bg)', zIndex: 10 }}>
       
       {/* ManyChat Style Top Header */}
-      <div style={{ height: '60px', background: 'var(--bg-card)', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', zIndex: 20, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+      <div style={{ height: '60px', background: 'var(--bg-card)', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', zIndex: 20, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button 
             onClick={() => {
@@ -366,7 +366,7 @@ export default function FlowBuilder() {
             <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
             Live Support
           </div>
-          <button style={{ background: 'var(--sidebar-bg)', color: 'var(--text-muted)', border: '1px solid #e2e8f0', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>
+          <button style={{ background: 'var(--sidebar-bg)', color: 'var(--text-muted)', border: '1px solid var(--border-subtle)', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}>
             Preview
           </button>
           <button 
@@ -382,9 +382,9 @@ export default function FlowBuilder() {
       <div style={{ flex: 1, display: 'flex', position: 'relative' }}>
         {/* Sidebar / Properties Panel - ONLY VISIBLE WHEN A NODE IS SELECTED */}
         {selectedNode && (
-          <div style={{ width: '320px', background: 'var(--bg-card)', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', zIndex: 10, boxShadow: '2px 0 8px rgba(0,0,0,0.05)' }}>
+          <div style={{ width: '320px', background: 'var(--bg-card)', borderRight: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', zIndex: 10, boxShadow: '2px 0 8px rgba(0,0,0,0.05)' }}>
             <div style={{ flex: 1, padding: '24px', overflowY: 'auto' }}>
-              <div style={{ padding: '0 0 20px', marginBottom: '20px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ padding: '0 0 20px', marginBottom: '20px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                   <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>
                     Node Properties
@@ -403,7 +403,7 @@ export default function FlowBuilder() {
                   <div className="input-group">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                       <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', margin: 0 }}>Keyword Trigger</label>
-                      <button onClick={() => handleGenerateAI('keywords')} style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #e9d5ff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <button onClick={() => handleGenerateAI('keywords')} style={{ background: '#f5f3ff', color: 'var(--accent-color)', border: '1px solid #e9d5ff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                          <Sparkles size={12} /> Auto-Gen
                       </button>
                     </div>
@@ -429,7 +429,7 @@ export default function FlowBuilder() {
                   <div className="input-group" style={{ marginBottom: '16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                       <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', margin: 0 }}>Message Text</label>
-                      <button onClick={() => handleGenerateAI('message')} style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #e9d5ff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <button onClick={() => handleGenerateAI('message')} style={{ background: '#f5f3ff', color: 'var(--accent-color)', border: '1px solid #e9d5ff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                          <Sparkles size={12} /> Auto-Gen
                       </button>
                     </div>
@@ -443,7 +443,7 @@ export default function FlowBuilder() {
                     <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Buttons</label>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px' }}>
                       {(selectedNode.data.buttons || []).map((btn, idx) => (
-                        <div key={btn.id || idx} style={{ border: '1px solid #e2e8f0', padding: '12px', borderRadius: '8px', background: 'var(--sidebar-bg)' }}>
+                        <div key={btn.id || idx} style={{ border: '1px solid var(--border-subtle)', padding: '12px', borderRadius: '8px', background: 'var(--sidebar-bg)' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                             <input
                               type="text"
@@ -454,7 +454,7 @@ export default function FlowBuilder() {
                                 updateNodeData('buttons', newButtons);
                               }}
                               placeholder="Button Text"
-                              style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '12px' }}
+                              style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '12px' }}
                             />
                             <select
                               value={btn.type || 'reply'}
@@ -463,7 +463,7 @@ export default function FlowBuilder() {
                                 newButtons[idx] = { ...newButtons[idx], type: e.target.value };
                                 updateNodeData('buttons', newButtons);
                               }}
-                              style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '12px', background: 'var(--bg-card)' }}
+                              style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '12px', background: 'var(--bg-card)' }}
                             >
                               <option value="reply">Quick Reply</option>
                               <option value="url">Link (URL)</option>
@@ -487,7 +487,7 @@ export default function FlowBuilder() {
                                   updateNodeData('buttons', newButtons);
                                 }}
                                 placeholder="https://..."
-                                style={{ flex: 1, padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '11px', background: 'var(--bg-card)' }}
+                                style={{ flex: 1, padding: '6px 8px', borderRadius: '6px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '11px', background: 'var(--bg-card)' }}
                               />
                             </div>
                           )}
@@ -507,7 +507,7 @@ export default function FlowBuilder() {
               )}
 
               {selectedNode.type === 'ai' && (
-                <div style={{ padding: '16px', background: '#faf5ff', borderRadius: '12px', border: '1px solid #e9d5ff' }}>
+                <div style={{ padding: '16px', background: 'var(--bg-dark)', borderRadius: '12px', border: '1px solid #e9d5ff' }}>
                   <div style={{ display: 'flex', gap: '8px', color: '#7e22ce', marginBottom: '12px' }}>
                      <Sparkles size={18} /> <span style={{ fontWeight: '800', fontSize: '13px' }}>AI Studio Integration</span>
                   </div>
@@ -546,12 +546,12 @@ export default function FlowBuilder() {
           >
             <Background color="#cbd5e1" variant="dots" />
             <Controls />
-            <MiniMap style={{ borderRadius: '12px', border: '1px solid #f1f5f9' }} />
+            <MiniMap style={{ borderRadius: '12px', border: '1px solid var(--border-subtle)' }} />
           </ReactFlow>
 
           {/* Floating Add Node Toolbar */}
           {!selectedNode && (
-            <div style={{ position: 'absolute', bottom: '32px', left: '50%', transform: 'translateX(-50%)', background: 'var(--bg-card)', padding: '12px 24px', borderRadius: '100px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', display: 'flex', gap: '16px', zIndex: 10, alignItems: 'center', border: '1px solid #e2e8f0' }}>
+            <div style={{ position: 'absolute', bottom: '32px', left: '50%', transform: 'translateX(-50%)', background: 'var(--bg-card)', padding: '12px 24px', borderRadius: '100px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', display: 'flex', gap: '16px', zIndex: 10, alignItems: 'center', border: '1px solid var(--border-subtle)' }}>
               <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-muted)' }}>Add Node:</span>
               <button onClick={() => addNode('message')} style={{ border: 'none', background: '#e0e7ff', color: '#4f46e5', padding: '8px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <MessageSquare size={14} /> Message

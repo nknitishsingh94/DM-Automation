@@ -340,7 +340,7 @@ export default function YoutubeDashboard() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%', padding: '20px', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
       
       {/* HEADER */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', paddingBottom: '20px', borderBottom: '1px solid #e2e8f0' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', paddingBottom: '20px', borderBottom: '1px solid var(--border-subtle)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button 
             onClick={() => navigate('/hub')}
@@ -378,7 +378,7 @@ export default function YoutubeDashboard() {
       {/* STATS ROW */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
         {channelStats.map((stat, i) => (
-          <div key={i} style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div key={i} style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '20px', border: '1px solid var(--border-subtle)', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '600' }}>{stat.label}</span>
               <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: `${stat.color}15`, color: stat.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -394,7 +394,7 @@ export default function YoutubeDashboard() {
       </div>
 
       {/* TABS */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', marginBottom: '24px', gap: '24px' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid var(--border-subtle)', marginBottom: '24px', gap: '24px' }}>
         {['library', 'comments', 'automation', 'thumbnails'].map(tab => (
           <button 
             key={tab}
@@ -418,16 +418,16 @@ export default function YoutubeDashboard() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ position: 'relative', width: '300px' }}>
                 <Search size={18} style={{ position: 'absolute', left: '12px', top: '10px', color: 'var(--text-muted)' }} />
-                <input type="text" placeholder="Search videos..." style={{ width: '100%', padding: '10px 10px 10px 40px', borderRadius: '8px', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.9rem' }} />
+                <input type="text" placeholder="Search videos..." style={{ width: '100%', padding: '10px 10px 10px 40px', borderRadius: '8px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '0.9rem' }} />
               </div>
-              <button style={{ background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <button style={{ background: 'var(--sidebar-bg)', border: '1px solid var(--border-subtle)', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                 <Calendar size={16} /> Filter by Date
               </button>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
               {videoLibrary.map(video => (
-                <div key={video.id} style={{ background: 'var(--bg-card)', borderRadius: '16px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', transition: 'transform 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseOut={e => e.currentTarget.style.transform = 'none'}>
+                <div key={video.id} style={{ background: 'var(--bg-card)', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border-subtle)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', transition: 'transform 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseOut={e => e.currentTarget.style.transform = 'none'}>
                   <div style={{ position: 'relative', height: '170px', background: 'var(--bg-dark)' }}>
                     <img referrerPolicy="no-referrer" src={getSafeImageUrl(video.thumbnail)} alt={video.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     <div style={{ position: 'absolute', top: '12px', right: '12px', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', color: 'white', background: video.status === 'Published' ? '#10b981' : video.status === 'Scheduled' ? '#3b82f6' : 'var(--text-muted)' }}>
@@ -439,7 +439,7 @@ export default function YoutubeDashboard() {
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <Clock size={14} /> {video.date}
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
                       <div style={{ display: 'flex', gap: '16px', color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '600' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Eye size={15} /> {video.views}</span>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><ThumbsUp size={15} /> {video.likes}</span>
@@ -476,7 +476,7 @@ export default function YoutubeDashboard() {
                   value={aiPrompt}
                   onChange={(e) => setAiPrompt(e.target.value)}
                   placeholder="Enter video title or idea..." 
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', marginBottom: '16px' }} 
+                  style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '0.95rem', marginBottom: '16px' }} 
                 />
                 <button 
                   onClick={(e) => { e.stopPropagation(); generateAIThumbnail(); }} 
@@ -488,7 +488,7 @@ export default function YoutubeDashboard() {
                 <div style={{ margin: '16px 0', color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '600' }}>OR</div>
                 <button 
                   onClick={(e) => { e.stopPropagation(); thumbInputRef.current?.click(); }}
-                  style={{ background: 'var(--bg-dark)', color: 'var(--text-muted)', padding: '12px 24px', borderRadius: '8px', border: '1px solid #cbd5e1', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center' }}
+                  style={{ background: 'var(--bg-dark)', color: 'var(--text-muted)', padding: '12px 24px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'center' }}
                 >
                   <Upload size={18} /> Upload Custom Thumbnail
                 </button>
@@ -528,7 +528,7 @@ export default function YoutubeDashboard() {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, animation: 'fadeIn 0.2s ease-out' }}>
           <div style={{ background: 'var(--bg-card)', borderRadius: '24px', width: '100%', maxWidth: '700px', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
             
-            <div style={{ padding: '24px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: 'var(--bg-card)', zIndex: 10 }}>
+            <div style={{ padding: '24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: 'var(--bg-card)', zIndex: 10 }}>
               <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Upload size={24} color="#ff0000" /> Upload & Schedule
               </h2>
@@ -572,7 +572,7 @@ export default function YoutubeDashboard() {
                     value={scheduleData.title}
                     onChange={e => setScheduleData({...scheduleData, title: e.target.value})}
                     placeholder="Add a title that describes your video" 
-                    style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box' }} 
+                    style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box' }} 
                   />
                 </div>
 
@@ -583,7 +583,7 @@ export default function YoutubeDashboard() {
                     onChange={e => setScheduleData({...scheduleData, description: e.target.value})}
                     placeholder="Tell viewers about your video" 
                     rows="4" 
-                    style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box', resize: 'vertical' }} 
+                    style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box', resize: 'vertical' }} 
                   />
                 </div>
 
@@ -592,10 +592,10 @@ export default function YoutubeDashboard() {
                     Thumbnail <span style={{ fontSize: '0.75rem', background: 'var(--bg-dark)', color: 'var(--text-muted)', padding: '2px 8px', borderRadius: '12px' }}>Optional</span>
                   </label>
                   <div style={{ display: 'flex', gap: '12px' }}>
-                    <button onClick={() => thumbInputRef.current.click()} style={{ background: 'var(--bg-dark)', border: '1px solid #cbd5e1', padding: '10px 16px', borderRadius: '8px', fontWeight: '600', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button onClick={() => thumbInputRef.current.click()} style={{ background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', padding: '10px 16px', borderRadius: '8px', fontWeight: '600', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <ImageIcon size={16} /> {scheduleData.thumbnail ? 'Change Thumbnail' : 'Upload Thumbnail'}
                     </button>
-                    {scheduleData.thumbnail && <div style={{ width: '40px', height: '40px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}><img referrerPolicy="no-referrer" src={getSafeImageUrl(scheduleData.thumbnail.startsWith('/uploads') ? `${API_BASE_URL}${scheduleData.thumbnail}` : scheduleData.thumbnail)} alt="thumb" style={{width:'100%', height:'100%', objectFit:'cover'}} /></div>}
+                    {scheduleData.thumbnail && <div style={{ width: '40px', height: '40px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-subtle)' }}><img referrerPolicy="no-referrer" src={getSafeImageUrl(scheduleData.thumbnail.startsWith('/uploads') ? `${API_BASE_URL}${scheduleData.thumbnail}` : scheduleData.thumbnail)} alt="thumb" style={{width:'100%', height:'100%', objectFit:'cover'}} /></div>}
                   </div>
                 </div>
               </div>
@@ -610,7 +610,7 @@ export default function YoutubeDashboard() {
                       type="date" 
                       value={scheduleData.date}
                       onChange={e => setScheduleData({...scheduleData, date: e.target.value})}
-                      style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', boxSizing: 'border-box' }} 
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-subtle)', boxSizing: 'border-box' }} 
                     />
                   </div>
                   <div style={{ flex: 1 }}>
@@ -619,7 +619,7 @@ export default function YoutubeDashboard() {
                       type="time" 
                       value={scheduleData.time}
                       onChange={e => setScheduleData({...scheduleData, time: e.target.value})}
-                      style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', boxSizing: 'border-box' }} 
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-subtle)', boxSizing: 'border-box' }} 
                     />
                   </div>
                 </div>
@@ -637,8 +637,8 @@ export default function YoutubeDashboard() {
                 </div>
               </div>
             )}
-            <div style={{ padding: '20px 24px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end', gap: '12px', background: '#fafaf9', borderBottomLeftRadius: '24px', borderBottomRightRadius: '24px' }}>
-              <button onClick={() => setShowScheduleModal(false)} disabled={isUploading} style={{ background: 'var(--bg-card)', border: '1px solid #cbd5e1', color: 'var(--text-muted)', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: isUploading ? 'not-allowed' : 'pointer' }}>Cancel</button>
+            <div style={{ padding: '20px 24px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'flex-end', gap: '12px', background: '#fafaf9', borderBottomLeftRadius: '24px', borderBottomRightRadius: '24px' }}>
+              <button onClick={() => setShowScheduleModal(false)} disabled={isUploading} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', color: 'var(--text-muted)', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: isUploading ? 'not-allowed' : 'pointer' }}>Cancel</button>
               <button onClick={handleScheduleSubmit} disabled={isUploading} style={{ background: '#ff0000', border: 'none', color: 'white', padding: '10px 24px', borderRadius: '8px', fontWeight: '700', cursor: isUploading ? 'not-allowed' : 'pointer', boxShadow: '0 2px 4px rgba(255, 0, 0, 0.2)', opacity: isUploading ? 0.7 : 1 }}>
                 {isUploading ? 'Uploading...' : 'Schedule Video'}
               </button>
@@ -658,13 +658,13 @@ export default function YoutubeDashboard() {
             <p style={{ margin: '0 0 20px 0', color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.5' }}>Our AI will analyze your video content to generate SEO-optimized titles, descriptions, and high-ranking tags.</p>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: '#334155' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: 'var(--text-main)' }}>
                 <input type="checkbox" defaultChecked /> Generate Catchy Titles (3 options)
               </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: '#334155' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: 'var(--text-main)' }}>
                 <input type="checkbox" defaultChecked /> Write SEO Description
               </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: '#334155' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: 'var(--text-main)' }}>
                 <input type="checkbox" defaultChecked /> Extract Trending Tags
               </label>
             </div>

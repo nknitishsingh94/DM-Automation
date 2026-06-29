@@ -206,7 +206,7 @@ export default function ScheduleFeature() {
                 gap: '8px',
                 padding: '8px 16px',
                 background: 'rgba(124, 58, 237, 0.08)',
-                color: '#7c3aed',
+                color: 'var(--accent-color)',
                 borderRadius: '50px',
                 fontSize: '0.85rem',
                 fontWeight: '700',
@@ -227,7 +227,7 @@ export default function ScheduleFeature() {
               </h1>
 
               <h2 style={{ fontSize: isMobile ? '1.1rem' : '1.3rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '24px' }}>
-                Set your Auto DM triggers <span style={{ color: '#7c3aed' }}>before</span> the post goes live.
+                Set your Auto DM triggers <span style={{ color: 'var(--accent-color)' }}>before</span> the post goes live.
               </h2>
 
               <p style={{ fontSize: '1rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '40px', maxWidth: isMobile ? '100%' : '500px' }}>
@@ -273,7 +273,7 @@ export default function ScheduleFeature() {
                     </div>
                     <div style={{ flex: 1 }}>
                       <p style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px' }}>Caption</p>
-                      <div style={{ background: 'var(--sidebar-bg)', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px', height: '140px' }}>
+                      <div style={{ background: 'var(--sidebar-bg)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '12px', height: '140px' }}>
                         <p style={{ fontSize: '0.85rem', color: 'var(--text-main)', margin: 0 }}>Summer Collection is here! 🌻<br />Comment <span style={{ color: '#2563eb', fontWeight: '800' }}>LINK</span> to shop!</p>
                       </div>
                     </div>
@@ -355,7 +355,7 @@ export default function ScheduleFeature() {
             </div>
           </div>
 
-          <div style={{ marginTop: isMobile ? '80px' : '120px', padding: isMobile ? '40px 0' : '80px 0', borderTop: '1px solid #f1f5f9' }}>
+          <div style={{ marginTop: isMobile ? '80px' : '120px', padding: isMobile ? '40px 0' : '80px 0', borderTop: '1px solid var(--border-subtle)' }}>
             <div style={{ textAlign: 'center', marginBottom: '60px' }}>
               <h3 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: '800', color: 'var(--text-main)' }}>Why automate your scheduling?</h3>
             </div>
@@ -369,8 +369,8 @@ export default function ScheduleFeature() {
                 { icon: <Zap size={20} />, title: 'Higher Engagement', desc: 'Instant replies in the first 10 minutes of a post signal the algorithm to push your content further.' },
                 { icon: <MessageCircle size={20} />, title: 'Consistent Brand Voice', desc: 'Pre-written replies ensure your brand tone is consistent even when you are asleep.' }
               ].map((item, i) => (
-                <div key={i} style={{ padding: '32px', background: 'var(--sidebar-bg)', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
-                  <div style={{ width: '40px', height: '40px', background: 'var(--bg-card)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7c3aed', marginBottom: '20px', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
+                <div key={i} style={{ padding: '32px', background: 'var(--sidebar-bg)', borderRadius: '20px', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ width: '40px', height: '40px', background: 'var(--bg-card)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-color)', marginBottom: '20px', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
                     {item.icon}
                   </div>
                   <h4 style={{ fontWeight: '800', marginBottom: '12px' }}>{item.title}</h4>

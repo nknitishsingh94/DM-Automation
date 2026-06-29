@@ -148,7 +148,7 @@ export default function AIStudio() {
         zIndex: 50,
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid #e5e7eb',
+        borderBottom: '1px solid var(--border-subtle)',
         margin: isMobile ? '0 -20px 20px -20px' : '0 -40px 32px -40px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '20px' }}>
@@ -283,15 +283,15 @@ export default function AIStudio() {
             )}
           </div>
 
-          <form onSubmit={handleTestChat} style={{ padding: '20px', background: '#011C40', display: 'flex', gap: '12px' }}>
+          <form onSubmit={handleTestChat} style={{ padding: '20px', background: 'var(--sidebar-bg)', borderTop: '1px solid var(--border-subtle)', display: 'flex', gap: '12px' }}>
             <input 
               className="training-input"
               value={testMessage}
               onChange={e => setTestMessage(e.target.value)}
               placeholder="Test your AI here..."
-              style={{ border: 'none', background: '#26658C', color: 'white' }}
+              style={{ border: '1px solid var(--border-subtle)', background: 'var(--bg-card)', color: 'var(--text-main)' }}
             />
-            <button type="submit" disabled={!testMessage.trim()} style={{ background: '#8b5cf6', border: 'none', width: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}>
+            <button type="submit" disabled={!testMessage.trim()} style={{ background: 'var(--accent-color)', border: 'none', width: '45px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}>
                <Send size={18} />
             </button>
           </form>

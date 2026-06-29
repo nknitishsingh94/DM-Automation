@@ -144,7 +144,7 @@ export default function Cookies() {
         </div>
 
         {/* ── Cookie Categories ── */}
-        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
           <h2 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px' }}>Cookie Categories</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '28px' }}>Click each category to learn more and see which specific cookies we use.</p>
 
@@ -202,7 +202,7 @@ export default function Cookies() {
         </div>
 
         {/* ── How to Control Cookies ── */}
-        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
           <h2 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '20px' }}>How to Control Cookies</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
             {[
@@ -211,7 +211,7 @@ export default function Cookies() {
               { browser: 'Apple Safari', icon: '🧭', steps: 'Preferences → Privacy → Manage Website Data' },
               { browser: 'Microsoft Edge', icon: '🔷', steps: 'Settings → Cookies and site permissions → Manage and delete cookies' },
             ].map((b, i) => (
-              <div key={i} style={{ background: 'var(--sidebar-bg)', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0' }}>
+              <div key={i} style={{ background: 'var(--sidebar-bg)', borderRadius: '16px', padding: '20px', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ fontSize: '28px', marginBottom: '10px' }}>{b.icon}</div>
                 <h4 style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '6px' }}>{b.browser}</h4>
                 <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', lineHeight: '1.5', margin: 0 }}>{b.steps}</p>
@@ -229,7 +229,7 @@ export default function Cookies() {
         {/* ── Do Not Track ── */}
         <div style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', borderRadius: '24px', border: '1px solid #ddd6fe', padding: '32px 36px', marginBottom: '32px' }}>
           <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#4c1d95', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Shield size={20} color="#7c3aed" /> Do Not Track Signals
+            <Shield size={20} color='var(--accent-color)' /> Do Not Track Signals
           </h2>
           <p style={{ color: '#5b21b6', lineHeight: '1.75', fontSize: '0.93rem', margin: 0 }}>
             Some browsers include a "Do Not Track" (DNT) feature that signals to websites that you visit that you do not want to have your online activity tracked. Because there is not yet a common understanding of how to interpret DNT signals, smart10X does not currently respond to browser DNT signals. You can use the controls described in this Cookie Statement to manage tracking on our platform.
@@ -237,7 +237,7 @@ export default function Cookies() {
         </div>
 
         {/* ── FAQ Accordion ── */}
-        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
           <h2 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '20px' }}>Frequently Asked Questions</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {faqs.map((faq, i) => (
@@ -258,7 +258,7 @@ export default function Cookies() {
         </div>
 
         {/* ── Contact ── */}
-        <div style={{ background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid var(--border-subtle)', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
           <h3 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '12px' }}>Questions About Our Cookie Use?</h3>
           <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '0.95rem', maxWidth: '500px', margin: '0 auto 28px' }}>
             If you have any questions about how smart10X uses cookies or this Cookie Statement, please contact our Privacy team.
@@ -267,10 +267,10 @@ export default function Cookies() {
             <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(217,119,6,0.25)' }}>
               <Mail size={18} /> smart10x.support@gmail.com
             </a>
-            <Link to="/privacy" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid #e2e8f0' }}>
+            <Link to="/privacy" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid var(--border-subtle)' }}>
               Privacy Policy
             </Link>
-            <Link to="/terms" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid #e2e8f0' }}>
+            <Link to="/terms" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid var(--border-subtle)' }}>
               Terms of Service
             </Link>
           </div>

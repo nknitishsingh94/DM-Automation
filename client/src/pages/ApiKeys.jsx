@@ -123,7 +123,7 @@ export default function ApiKeys() {
           <p style={{ margin: '0 0 12px 0', fontSize: '0.8rem', color: '#047857', lineHeight: '1.4' }}>
             For security reasons, this key will only be shown to you this one time. If you leave this page, you won't be able to recover it.
           </p>
-          <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-card)', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '8px 12px', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '8px 12px', gap: '8px' }}>
             <code style={{ fontSize: '0.82rem', color: 'var(--text-main)', wordBreak: 'break-all', flex: 1, fontFamily: 'monospace' }}>{newlyCreatedKey}</code>
             <button
               onClick={() => handleCopy(newlyCreatedKey, 'new')}
@@ -137,23 +137,23 @@ export default function ApiKeys() {
       )}
 
       {/* Table UI */}
-      <div style={{ width: '100%', overflowX: 'auto', borderTop: '1px solid #cbd5e1' }}>
+      <div style={{ width: '100%', overflowX: 'auto', borderTop: '1px solid var(--border-subtle)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ background: 'var(--bg-dark)' }}>
-              <th style={{ padding: '18px 20px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid #cbd5e1', width: '20%', borderTopLeftRadius: '8px' }}>Name</th>
-              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid #cbd5e1', width: '25%' }}>Key</th>
-              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Scope</th>
-              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid #cbd5e1', width: '15%' }}>Status</th>
-              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid #cbd5e1', width: '20%' }}>Permission</th>
-              <th style={{ padding: '18px 20px', borderBottom: '1px solid #cbd5e1', width: '5%', borderTopRightRadius: '8px' }}></th>
+              <th style={{ padding: '18px 20px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-subtle)', width: '20%', borderTopLeftRadius: '8px' }}>Name</th>
+              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-subtle)', width: '25%' }}>Key</th>
+              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-subtle)', width: '15%' }}>Scope</th>
+              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-subtle)', width: '15%' }}>Status</th>
+              <th style={{ padding: '18px 12px', fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-subtle)', width: '20%' }}>Permission</th>
+              <th style={{ padding: '18px 20px', borderBottom: '1px solid var(--border-subtle)', width: '5%', borderTopRightRadius: '8px' }}></th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
                 <td colSpan="6" style={{ padding: '32px', textAlign: 'center' }}>
-                  <div style={{ display: 'inline-block', width: '24px', height: '24px', border: '2px solid #e2e8f0', borderTopColor: '#7c3aed', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                  <div style={{ display: 'inline-block', width: '24px', height: '24px', border: '1px solid var(--border-subtle)', borderTopColor: 'var(--accent-color)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
                 </td>
               </tr>
             ) : keys.length === 0 ? (
@@ -164,7 +164,7 @@ export default function ApiKeys() {
               </tr>
             ) : (
               keys.map(k => (
-                <tr key={k.id} style={{ borderBottom: '1px solid #cbd5e1' }}>
+                <tr key={k.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                   <td style={{ padding: '20px 20px', verticalAlign: 'top' }}>
                     <div style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--text-main)' }}>{k.name}</div>
                     <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '6px' }}>{new Date(k.createdAt).toLocaleDateString()}</div>
@@ -192,7 +192,7 @@ export default function ApiKeys() {
                     </span>
                   </td>
                   <td style={{ padding: '20px 12px', verticalAlign: 'top' }}>
-                    <span style={{ display: 'inline-flex', padding: '6px 12px', background: 'var(--sidebar-bg)', border: '1px solid #cbd5e1', color: '#059669', borderRadius: '12px', fontSize: '0.85rem', fontWeight: '600' }}>
+                    <span style={{ display: 'inline-flex', padding: '6px 12px', background: 'var(--sidebar-bg)', border: '1px solid var(--border-subtle)', color: '#059669', borderRadius: '12px', fontSize: '0.85rem', fontWeight: '600' }}>
                       Read & Write
                     </span>
                   </td>
@@ -241,7 +241,7 @@ export default function ApiKeys() {
               
               {/* Key Name */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '0.9rem', fontWeight: '600', color: '#334155' }}>Key Name</label>
+                <label style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--text-main)' }}>Key Name</label>
                 <input
                   type="text"
                   required
@@ -254,7 +254,7 @@ export default function ApiKeys() {
 
               {/* Permission */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '0.9rem', fontWeight: '600', color: '#334155' }}>Permission</label>
+                <label style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--text-main)' }}>Permission</label>
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <button 
                     type="button" 
@@ -275,7 +275,7 @@ export default function ApiKeys() {
 
               {/* Profile Access */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <label style={{ fontSize: '0.9rem', fontWeight: '600', color: '#334155' }}>Profile Access</label>
+                <label style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--text-main)' }}>Profile Access</label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div 
                     onClick={() => setFullAccess(!fullAccess)}
@@ -290,7 +290,7 @@ export default function ApiKeys() {
             </form>
 
             {/* Footer Buttons */}
-            <div style={{ padding: '24px 32px', borderTop: '1px solid #e2e8f0', display: 'flex', gap: '12px' }}>
+            <div style={{ padding: '24px 32px', borderTop: '1px solid var(--border-subtle)', display: 'flex', gap: '12px' }}>
               <button
                 type="submit"
                 form="create-api-key-form"

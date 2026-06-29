@@ -280,7 +280,7 @@ export default function DmAutomationEditor() {
   if (loadingEdit) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'var(--sidebar-bg)' }}>
-        <div style={{ width: '40px', height: '40px', border: '3px solid #e2e8f0', borderTopColor: '#7c3aed', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+        <div style={{ width: '40px', height: '40px', border: '3px solid #e2e8f0', borderTopColor: 'var(--accent-color)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
       </div>
     );
   }
@@ -350,7 +350,7 @@ export default function DmAutomationEditor() {
                     backgroundColor: 'rgba(239, 234, 226, 0.95)'
                   }}>
                     {/* Date Badge */}
-                    <div style={{ alignSelf: 'center', background: '#fff', padding: '4px 10px', borderRadius: '8px', fontSize: '0.7rem', color: '#555', boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
+                    <div style={{ alignSelf: 'center', background: 'var(--bg-card)', padding: '4px 10px', borderRadius: '8px', fontSize: '0.7rem', color: 'var(--text-muted)', boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
                       TODAY
                     </div>
 
@@ -643,7 +643,7 @@ export default function DmAutomationEditor() {
                       placeholder={isUniversal ? "Universal Automation Name" : "Automation Name"}
                       style={{ fontSize: '1.8rem', fontWeight: '900', color: '#1e1b4b', border: 'none', outline: 'none', background: 'transparent', padding: 0, width: 'auto', letterSpacing: '-0.02em' }} 
                     />
-                    <div style={{ position: 'absolute', bottom: -4, left: 0, width: '40px', height: '3px', background: '#7c3aed', borderRadius: '2px' }}></div>
+                    <div style={{ position: 'absolute', bottom: -4, left: 0, width: '40px', height: '3px', background: 'var(--accent-color)', borderRadius: '2px' }}></div>
                  </div>
                  <Pencil size={18} color="#cbd5e1" style={{ marginTop: '8px' }} />
                  {isUniversal && (
@@ -745,7 +745,7 @@ export default function DmAutomationEditor() {
            {/* Step 2: Trigger Settings */}
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>2</div>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--accent-color)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>2</div>
                  <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Trigger Settings</h3>
               </div>
               <div style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', border: '1.5px solid #e2e8f0', borderRadius: '20px', padding: '18px 22px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.04)' }}>
@@ -753,19 +753,19 @@ export default function DmAutomationEditor() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500' }}>{template === 'stories' ? 'Trigger on Story Replies' : 'Trigger on specific keywords'}</p>
                       {!anyKeyword && (
-                         <button onClick={() => handleGenerateAI('keywords')} style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #e9d5ff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                         <button onClick={() => handleGenerateAI('keywords')} style={{ background: '#f5f3ff', color: 'var(--accent-color)', border: '1px solid #e9d5ff', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                            <Sparkles size={12} /> Auto-Gen Keywords
                          </button>
                       )}
                     </div>
-                    <div onClick={() => setAnyKeyword(!anyKeyword)} style={{ width: '50px', height: '24px', borderRadius: '12px', background: anyKeyword ? '#7c3aed' : 'var(--border-subtle)', position: 'relative', cursor: 'pointer', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+                    <div onClick={() => setAnyKeyword(!anyKeyword)} style={{ width: '50px', height: '24px', borderRadius: '12px', background: anyKeyword ? 'var(--accent-color)' : 'var(--border-subtle)', position: 'relative', cursor: 'pointer', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)' }}>
                        <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'var(--bg-card)', position: 'absolute', top: '3px', left: anyKeyword ? '29px' : '3px', transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}></div>
                     </div>
                  </div>
                  {!anyKeyword && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', background: 'var(--sidebar-bg)', padding: '14px 18px', borderRadius: '14px', border: '1.5px solid #e2e8f0' }}>
                        {keywords.map((k, i) => (
-                          <span key={i} style={{ padding: '6px 12px', background: 'var(--bg-card)', color: '#7c3aed', borderRadius: '8px', fontWeight: '800', fontSize: '0.85rem', border: '1.5px solid #ddd6fe', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 4px -1px rgba(124, 58, 237, 0.05)' }}>
+                          <span key={i} style={{ padding: '6px 12px', background: 'var(--bg-card)', color: 'var(--accent-color)', borderRadius: '8px', fontWeight: '800', fontSize: '0.85rem', border: '1.5px solid #ddd6fe', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 4px -1px rgba(124, 58, 237, 0.05)' }}>
                              {k} <X size={14} style={{ cursor: 'pointer', color: '#ec4899' }} onClick={() => setKeywords(keywords.filter((_, idx) => idx !== i))} />
                           </span>
                        ))}
@@ -778,7 +778,7 @@ export default function DmAutomationEditor() {
                        />
                     </div>
                  )}
-                 {anyKeyword && <div style={{ padding: '14px 18px', background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', borderRadius: '14px', border: '1.5px dashed #7c3aed', textAlign: 'center', color: '#7c3aed', fontWeight: '800', fontSize: '0.9rem' }}>âš¡ Responding to ANY incoming message</div>}
+                 {anyKeyword && <div style={{ padding: '14px 18px', background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', borderRadius: '14px', border: '1.5px dashed #7c3aed', textAlign: 'center', color: 'var(--accent-color)', fontWeight: '800', fontSize: '0.9rem' }}>âš¡ Responding to ANY incoming message</div>}
               </div>
            </div>
 
@@ -834,7 +834,7 @@ export default function DmAutomationEditor() {
            {/* Step 4: Automated DM Response */}
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>4</div>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--accent-color)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>4</div>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>
                     {selectedPlatform === 'youtube' ? 'Automated Comment Reply' : 'Automated DM Response'}
                   </h3>
@@ -858,8 +858,8 @@ export default function DmAutomationEditor() {
                     borderBottom: '1.5px solid #f1f5f9' 
                   }}>
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800', color: '#7c3aed', fontSize: '0.95rem' }}>
-                        <Sparkles size={14} style={{ color: '#7c3aed' }} />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800', color: 'var(--accent-color)', fontSize: '0.95rem' }}>
+                        <Sparkles size={14} style={{ color: 'var(--accent-color)' }} />
                         <span>AI Neural Studio Reply</span>
                       </div>
                       <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
@@ -891,7 +891,7 @@ export default function DmAutomationEditor() {
                  {!isAI ? (
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
-                        <button onClick={() => handleGenerateAI('message')} style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #e9d5ff', padding: '4px 10px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <button onClick={() => handleGenerateAI('message')} style={{ background: '#f5f3ff', color: 'var(--accent-color)', border: '1px solid #e9d5ff', padding: '4px 10px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <Sparkles size={14} /> Write Message with AI
                         </button>
                       </div>
@@ -911,8 +911,8 @@ export default function DmAutomationEditor() {
                       marginBottom: '16px' 
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                        <Brain size={16} color="#7c3aed" />
-                        <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7c3aed' }}>AI Neural Responder Active</span>
+                        <Brain size={16} color='var(--accent-color)' />
+                        <span style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--accent-color)' }}>AI Neural Responder Active</span>
                       </div>
                       <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>
                         The AI Agent will use your AI Neural Studio profile/knowledge base to reply dynamically. 
@@ -923,20 +923,20 @@ export default function DmAutomationEditor() {
                         value={message === "[AI Agent will generate a custom neural reply here]" ? "" : message}
                         onChange={(e) => setMessage(e.target.value || "[AI Agent will generate a custom neural reply here]")}
                         style={{ 
-                          width: '100%', height: '60px', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', 
+                          width: '100%', height: '60px', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', 
                           outline: 'none', fontSize: '0.85rem', resize: 'none', marginTop: '8px', lineHeight: '1.4', background: 'var(--bg-card)'
                         }}
                       ></textarea>
                     </div>
                  )}
                  
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
                     <div style={{ fontWeight: '900', color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Interactive Elements</div>
                     <button 
                       onClick={openAddLinkModal} 
                       onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 10px -3px rgba(124, 58, 237, 0.15)'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
-                      style={{ background: '#f5f3ff', color: '#7c3aed', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s', fontSize: '0.85rem' }}
+                      style={{ background: '#f5f3ff', color: 'var(--accent-color)', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s', fontSize: '0.85rem' }}
                     >
                       <LinkIcon size={16} /> Add Call to Action
                     </button>
@@ -999,9 +999,9 @@ export default function DmAutomationEditor() {
           <div style={{ background: 'var(--bg-card)', padding: '40px', borderRadius: '32px', width: '100%', maxWidth: '400px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
             <h3 style={{ fontSize: '1.4rem', fontWeight: '900', marginBottom: '24px' }}>Add Link Button</h3>
             <input value={tempLinkTitle} onChange={(e) => setTempLinkTitle(e.target.value)} placeholder="Button Text" style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', marginBottom: '16px', outline: 'none', fontWeight: '700' }} />
-            <input value={tempLinkUrl} onChange={(e) => setTempLinkUrl(e.target.value)} placeholder="https://..." style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', marginBottom: '24px', outline: 'none', color: '#7c3aed', fontWeight: '700' }} />
+            <input value={tempLinkUrl} onChange={(e) => setTempLinkUrl(e.target.value)} placeholder="https://..." style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', marginBottom: '24px', outline: 'none', color: 'var(--accent-color)', fontWeight: '700' }} />
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={handleSaveLink} style={{ flex: 1, padding: '16px', background: '#7c3aed', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Save</button>
+              <button onClick={handleSaveLink} style={{ flex: 1, padding: '16px', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Save</button>
               <button onClick={() => setShowLinkModal(false)} style={{ flex: 1, padding: '16px', background: 'var(--bg-dark)', color: 'var(--text-muted)', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Cancel</button>
             </div>
           </div>

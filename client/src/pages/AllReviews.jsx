@@ -51,7 +51,7 @@ export default function AllReviews() {
       {/* Navigation Top Bar */}
       <nav style={{
         background: 'var(--bg-card)',
-        borderBottom: '1px solid #e2e8f0',
+        borderBottom: '1px solid var(--border-subtle)',
         padding: '16px 24px',
         position: 'sticky',
         top: 0,
@@ -74,7 +74,7 @@ export default function AllReviews() {
             fontSize: '0.95rem',
             transition: 'color 0.2s'
           }}
-          onMouseOver={(e) => e.currentTarget.style.color = '#7c3aed'}
+          onMouseOver={(e) => e.currentTarget.style.color = 'var(--accent-color)'}
           onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
           >
             <ArrowLeft size={18} /> Back to Home
@@ -159,7 +159,7 @@ export default function AllReviews() {
         {loading ? (
           <LoadingSpinner minHeight="200px" size={40} />
         ) : reviews.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '80px 20px', background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+          <div style={{ textAlign: 'center', padding: '80px 20px', background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
             <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: '500' }}>No reviews submitted yet. Be the first to share your experience!</p>
             <Link to="/write-review" style={{
               marginTop: '16px',
@@ -239,7 +239,7 @@ export default function AllReviews() {
                   
                   <p style={{
                     fontSize: '1rem',
-                    color: '#334155',
+                    color: 'var(--text-main)',
                     lineHeight: '1.6',
                     fontStyle: 'italic',
                     marginBottom: '24px',
@@ -249,7 +249,7 @@ export default function AllReviews() {
                   </p>
                 </div>
                 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
                   <div style={{ width: '48px', height: '48px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, position: 'relative', border: '2px solid #fff', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
                     {review.avatarUrl ? (
                       <img referrerPolicy="no-referrer" src={getSafeImageUrl(review.avatarUrl)} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

@@ -86,9 +86,9 @@ const TwitterTest = () => {
 
       <div>
         <h3 style={{ borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>Console Logs</h3>
-        <div style={{ backgroundColor: '#1e1e1e', color: '#00ff00', padding: '15px', borderRadius: '8px', fontFamily: 'monospace', height: '400px', overflowY: 'auto' }}>
+        <div style={{ backgroundcolor: 'var(--text-main)', color: '#00ff00', padding: '15px', borderRadius: '8px', fontFamily: 'monospace', height: '400px', overflowY: 'auto' }}>
           {logs.length === 0 ? (
-            <span style={{ color: '#888' }}>No logs yet. Click buttons above to start testing.</span>
+            <span style={{ color: 'var(--text-muted)' }}>No logs yet. Click buttons above to start testing.</span>
           ) : (
             logs.map((log, i) => (
               <div key={i} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '5px' }}>

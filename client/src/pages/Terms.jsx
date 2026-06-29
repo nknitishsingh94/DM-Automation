@@ -78,7 +78,7 @@ export default function Terms() {
         </div>
 
         {/* Table of Contents */}
-        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)', padding: '36px', marginBottom: '32px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
           <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '20px' }}>📋 Table of Contents</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '8px' }}>
             {sections.map(s => (
@@ -108,7 +108,7 @@ export default function Terms() {
               </button>
 
               {openSection === s.id && (
-                <div style={{ padding: '0 28px 28px', borderTop: '1px solid #f1f5f9' }}>
+                <div style={{ padding: '0 28px 28px', borderTop: '1px solid var(--border-subtle)' }}>
                   <div style={{ paddingTop: '20px' }}>
                     {s.content.split('\n').map((line, i) => (
                       line.trim() === '' ? <br key={i} /> :
@@ -129,14 +129,14 @@ export default function Terms() {
         </div>
 
         {/* Contact CTA */}
-        <div style={{ background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid var(--border-subtle)', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
           <h3 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '12px' }}>Questions About These Terms?</h3>
           <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '0.95rem' }}>Our legal team is happy to clarify anything in this Agreement.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
             <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
               <Mail size={18} /> smart10x.support@gmail.com
             </a>
-            <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid #e2e8f0' }}>
+            <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', border: '1px solid var(--border-subtle)' }}>
               Help Center
             </Link>
           </div>

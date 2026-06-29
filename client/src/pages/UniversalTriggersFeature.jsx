@@ -122,7 +122,7 @@ export default function UniversalTriggersFeature() {
               <div style={{
                 borderRadius: '24px',
                 boxShadow: '0 40px 100px rgba(0,0,0,0.1)',
-                border: '1px solid #e2e8f0',
+                border: '1px solid var(--border-subtle)',
                 overflow: 'hidden',
                 position: 'relative',
                 aspectRatio: '1/1',
@@ -190,7 +190,7 @@ export default function UniversalTriggersFeature() {
           </div>
 
           {/* Architecture Pipeline Section */}
-          <div style={{ marginTop: isMobile ? '80px' : '120px', padding: isMobile ? '40px 0' : '80px 0', borderTop: '1px solid #f1f5f9' }}>
+          <div style={{ marginTop: isMobile ? '80px' : '120px', padding: isMobile ? '40px 0' : '80px 0', borderTop: '1px solid var(--border-subtle)' }}>
             <div style={{ textAlign: 'center', marginBottom: '60px' }}>
               <div style={{
                 display: 'inline-flex',
@@ -281,7 +281,7 @@ export default function UniversalTriggersFeature() {
             </div>
           </div>
 
-          <div style={{ marginTop: isMobile ? '80px' : '120px', padding: isMobile ? '40px 0' : '80px 0', borderTop: '1px solid #f1f5f9' }}>
+          <div style={{ marginTop: isMobile ? '80px' : '120px', padding: isMobile ? '40px 0' : '80px 0', borderTop: '1px solid var(--border-subtle)' }}>
             <div style={{ textAlign: 'center', marginBottom: '60px' }}>
               <h3 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: '800', color: 'var(--text-main)' }}>Why go Universal?</h3>
             </div>
@@ -295,7 +295,7 @@ export default function UniversalTriggersFeature() {
                 { title: 'Unified Data', desc: 'See how your keyword is performing across all platforms in a single, beautiful dashboard.' },
                 { title: 'Viral Ready', desc: 'When your content goes viral on one platform, you can instantly clone the success to others.' }
               ].map((item, i) => (
-                <div key={i} style={{ padding: '32px', background: 'var(--sidebar-bg)', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
+                <div key={i} style={{ padding: '32px', background: 'var(--sidebar-bg)', borderRadius: '20px', border: '1px solid var(--border-subtle)' }}>
                   <div style={{ width: '40px', height: '40px', background: 'var(--bg-card)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0ea5e9', marginBottom: '20px', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
                     <CheckCircle2 size={20} />
                   </div>

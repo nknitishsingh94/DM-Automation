@@ -78,15 +78,15 @@ export default function HelpCenter() {
           <div className="help-start-links">
             <Link to="/settings" className="help-start-link">
               <span>Setup Guide: Linking Instagram Business</span>
-              <ChevronRight size={18} color="#7c3aed" />
+              <ChevronRight size={18} color='var(--accent-color)' />
             </Link>
             <Link to="/settings" className="help-start-link">
               <span>Setting up WhatsApp Cloud API for Automations</span>
-              <ChevronRight size={18} color="#7c3aed" />
+              <ChevronRight size={18} color='var(--accent-color)' />
             </Link>
             <Link to="#" className="help-start-link">
               <span>smart10X — Official Meta Partner onboarding roadmap</span>
-              <ChevronRight size={18} color="#7c3aed" />
+              <ChevronRight size={18} color='var(--accent-color)' />
             </Link>
           </div>
         </div>

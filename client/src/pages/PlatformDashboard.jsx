@@ -28,7 +28,7 @@ const PlatformDashboard = () => {
   if (platformId === 'threads') {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid #e2e8f0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid var(--border-subtle)' }}>
           <button 
             onClick={() => navigate('/hub')}
             style={{ 
@@ -41,7 +41,7 @@ const PlatformDashboard = () => {
           >
             <ArrowLeft size={20} />
           </button>
-          <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(0,0,0,0.08)', color: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(0,0,0,0.08)', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2a10 10 0 1 0 10 10H12Z" />
               <path d="M12 12a4 4 0 1 0 4 4h-4Z" />
@@ -123,7 +123,7 @@ const PlatformDashboard = () => {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '20px' }}>
       
       {/* Platform Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid #e2e8f0' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid var(--border-subtle)' }}>
         <button 
           onClick={() => navigate('/hub')}
           style={{ 

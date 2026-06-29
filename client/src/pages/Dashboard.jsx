@@ -148,7 +148,7 @@ export default function Dashboard() {
       {/* Left Column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
         {/* PEHLE WALA PART (RESTORED TO TOP) */}
-        <div className="stat-card" style={{ padding: '24px', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '24px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
+        <div className="stat-card" style={{ padding: '24px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
              <div style={{ width: '36px', height: '36px', background: 'var(--sidebar-bg)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                <Sparkles size={18} color="#64748b" />
@@ -219,7 +219,7 @@ export default function Dashboard() {
           <div className="stat-card" style={{ 
             padding: '24px', 
             background: 'linear-gradient(135deg, #ffffff 0%, #fcf9ff 100%)', 
-            border: '1px solid #e2e8f0', 
+            border: '1px solid var(--border-subtle)', 
             borderRadius: '24px', 
             boxShadow: '0 4px 6px rgba(0,0,0,0.02)',
             position: 'relative',
@@ -384,7 +384,7 @@ export default function Dashboard() {
 
       {/* Right Column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-        <div className="stat-card funnel-card" style={{ background: 'linear-gradient(145deg, #ffffff 0%, #f3f4f6 100%)', border: '1px solid #e5e7eb', padding: '24px' }}>
+        <div className="stat-card funnel-card" style={{ background: 'linear-gradient(145deg, #ffffff 0%, #f3f4f6 100%)', border: '1px solid var(--border-subtle)', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#4f46e5' }}>
               <div style={{ padding: '8px', background: '#e0e7ff', borderRadius: '10px' }}>
@@ -392,14 +392,14 @@ export default function Dashboard() {
               </div>
               <span style={{ fontWeight: '800', fontSize: '16px', color: 'var(--text-main)' }}>Performance Funnel</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid #e2e8f0', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', position: 'relative' }} onClick={() => toggleDropdown('funnel')}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid var(--border-subtle)', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', position: 'relative' }} onClick={() => toggleDropdown('funnel')}>
                <Calendar size={13} color="#64748b" />
                <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)' }}>{getFilterText()}</span>
                <ChevronDown size={14} color="#94a3b8" />
                {activeDropdown === 'funnel' && (
-                 <div style={{ position: 'absolute', top: '110%', right: '0', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', zIndex: 10, width: '140px', overflow: 'hidden' }}>
-                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('7d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 7 Days</div>
-                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('30d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 30 Days</div>
+                 <div style={{ position: 'absolute', top: '110%', right: '0', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', zIndex: 10, width: '140px', overflow: 'hidden' }}>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('7d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', borderBottom: '1px solid var(--border-subtle)', cursor: 'pointer' }}>Past 7 Days</div>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('30d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', borderBottom: '1px solid var(--border-subtle)', cursor: 'pointer' }}>Past 30 Days</div>
                     <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('all'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', cursor: 'pointer' }}>All Time</div>
                  </div>
                )}
@@ -442,7 +442,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="stat-card" style={{ background: 'linear-gradient(145deg, #ffffff 0%, #f3f4f6 100%)', border: '1px solid #e5e7eb', padding: '24px' }}>
+        <div className="stat-card" style={{ background: 'linear-gradient(145deg, #ffffff 0%, #f3f4f6 100%)', border: '1px solid var(--border-subtle)', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ec4899' }}>
                <div style={{ padding: '8px', background: '#fce7f3', borderRadius: '10px' }}>
@@ -450,14 +450,14 @@ export default function Dashboard() {
                </div>
               <span style={{ fontWeight: '800', fontSize: '16px', color: 'var(--text-main)' }}>Audience Growth</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid #e2e8f0', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', position: 'relative' }} onClick={() => toggleDropdown('audience')}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid var(--border-subtle)', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', position: 'relative' }} onClick={() => toggleDropdown('audience')}>
                <Calendar size={13} color="#64748b" />
                <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)' }}>{getFilterText()}</span>
                <ChevronDown size={14} color="#94a3b8" />
                {activeDropdown === 'audience' && (
-                 <div style={{ position: 'absolute', top: '110%', right: '0', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', zIndex: 10, width: '140px', overflow: 'hidden' }}>
-                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('7d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 7 Days</div>
-                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('30d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>Past 30 Days</div>
+                 <div style={{ position: 'absolute', top: '110%', right: '0', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', zIndex: 10, width: '140px', overflow: 'hidden' }}>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('7d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', borderBottom: '1px solid var(--border-subtle)', cursor: 'pointer' }}>Past 7 Days</div>
+                    <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('30d'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', borderBottom: '1px solid var(--border-subtle)', cursor: 'pointer' }}>Past 30 Days</div>
                     <div className="profile-hover" onClick={(e) => { e.stopPropagation(); selectFilter('all'); }} style={{ padding: '10px 14px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', cursor: 'pointer' }}>All Time</div>
                  </div>
                )}
@@ -467,7 +467,7 @@ export default function Dashboard() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
             {/* KPI Block 1 */}
             <Link to="/audiences" style={{ textDecoration: 'none' }}>
-              <div className="interactive-card" style={{ background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', height: '100%' }}>
+              <div className="interactive-card" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', height: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: '700', marginBottom: '12px' }}>
                   <Users size={16} color="#94a3b8" /> New Followers
                 </div>
@@ -480,7 +480,7 @@ export default function Dashboard() {
             
             {/* KPI Block 2 */}
             <Link to="/campaigns" style={{ textDecoration: 'none' }}>
-              <div className="interactive-card" style={{ background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', height: '100%' }}>
+              <div className="interactive-card" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', height: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: '700', marginBottom: '12px' }}>
                   <MessageCircle size={16} color="#94a3b8" /> Automations Fired
                 </div>

@@ -27,7 +27,7 @@ export default function About() {
             </Link>
           </div>
           <nav className="header-nav">
-            <Link to="/about" style={{ fontWeight: '700', color: '#7c3aed' }}>About</Link>
+            <Link to="/about" style={{ fontWeight: '700', color: 'var(--accent-color)' }}>About</Link>
             <Link to="/resources">Resources</Link>
             <Link to="/#pricing">Pricing</Link>
           </nav>

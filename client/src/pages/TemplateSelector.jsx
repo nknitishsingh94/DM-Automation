@@ -107,7 +107,7 @@ export default function TemplateSelector() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--sidebar-bg)', fontFamily: "'Outfit', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: 'var(--bg-card)', padding: '24px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 10 }}>
+      <div style={{ background: 'var(--bg-card)', padding: '24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 10 }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>Template Library</h1>
           <p style={{ color: 'var(--text-muted)', margin: '4px 0 0 0', fontSize: '0.9rem' }}>Choose a pre-built automation to get started quickly.</p>
@@ -118,7 +118,7 @@ export default function TemplateSelector() {
             style={{
               background: 'var(--bg-card)',
               border: '1px solid #7c3aed',
-              color: '#7c3aed',
+              color: 'var(--accent-color)',
               padding: '10px 20px',
               borderRadius: '10px',
               fontWeight: '700',
@@ -130,19 +130,19 @@ export default function TemplateSelector() {
               transition: 'all 0.2s'
             }}
             onMouseOver={e => {
-              e.currentTarget.style.backgroundColor = '#7c3aed';
+              e.currentTarget.style.backgroundColor = 'var(--accent-color)';
               e.currentTarget.style.color = 'var(--bg-card)';
             }}
             onMouseOut={e => {
               e.currentTarget.style.backgroundColor = 'var(--bg-card)';
-              e.currentTarget.style.color = '#7c3aed';
+              e.currentTarget.style.color = 'var(--accent-color)';
             }}
           >
             <Zap size={16} /> Active Automations
           </button>
           <button 
             onClick={() => navigate('/select-channel')}
-            style={{ background: 'var(--bg-card)', border: '1px solid #e2e8f0', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}
           >
             <X size={20} color="#64748b" />
           </button>
@@ -151,7 +151,7 @@ export default function TemplateSelector() {
 
       <div style={{ display: 'flex', maxWidth: '1400px', margin: '0 auto' }}>
         {/* Sidebar Categories */}
-        <div style={{ width: '250px', padding: '32px 24px', borderRight: '1px solid #e2e8f0', height: 'calc(100vh - 85px)', position: 'sticky', top: '85px', overflowY: 'auto' }}>
+        <div style={{ width: '250px', padding: '32px 24px', borderRight: '1px solid var(--border-subtle)', height: 'calc(100vh - 85px)', position: 'sticky', top: '85px', overflowY: 'auto' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {categories.map(cat => (
               <button
@@ -162,7 +162,7 @@ export default function TemplateSelector() {
                   borderRadius: '12px',
                   border: 'none',
                   background: activeCategory === cat ? '#f3e8ff' : 'transparent',
-                  color: activeCategory === cat ? '#7c3aed' : 'var(--text-muted)',
+                  color: activeCategory === cat ? 'var(--accent-color)' : 'var(--text-muted)',
                   fontWeight: activeCategory === cat ? '700' : '500',
                   textAlign: 'left',
                   cursor: 'pointer',
@@ -178,7 +178,7 @@ export default function TemplateSelector() {
                   <span style={{ 
                     fontSize: '11px', 
                     background: activeCategory === cat ? '#e9d5ff' : 'var(--bg-dark)', 
-                    color: activeCategory === cat ? '#7c3aed' : 'var(--text-muted)',
+                    color: activeCategory === cat ? 'var(--accent-color)' : 'var(--text-muted)',
                     padding: '2px 8px', borderRadius: '10px' 
                   }}>
                     {templates.filter(t => t.category === cat).length}
@@ -208,7 +208,7 @@ export default function TemplateSelector() {
                   background: 'var(--bg-card)',
                   padding: '24px',
                   borderRadius: '16px',
-                  border: '1px solid #e2e8f0',
+                  border: '1px solid var(--border-subtle)',
                   cursor: 'pointer',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   position: 'relative',
@@ -220,7 +220,7 @@ export default function TemplateSelector() {
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-4px)';
                   e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1)';
-                  e.currentTarget.style.borderColor = '#7c3aed';
+                  e.currentTarget.style.borderColor = 'var(--accent-color)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
@@ -257,7 +257,7 @@ export default function TemplateSelector() {
 
                 <div style={{ 
                   marginTop: 'auto', display: 'flex', alignItems: 'center', gap: '8px', 
-                  color: '#7c3aed', fontWeight: '700', fontSize: '0.9rem', paddingTop: '16px', borderTop: '1px dashed #e2e8f0'
+                  color: 'var(--accent-color)', fontWeight: '700', fontSize: '0.9rem', paddingTop: '16px', borderTop: '1px dashed #e2e8f0'
                 }}>
                   Use Template <Zap size={14} />
                 </div>

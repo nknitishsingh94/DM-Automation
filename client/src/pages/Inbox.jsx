@@ -432,7 +432,7 @@ export default function Inbox() {
                 right: '0',
                 marginTop: '10px',
                 background: 'var(--bg-card)',
-                border: '1px solid #e5e7eb',
+                border: '1px solid var(--border-subtle)',
                 borderRadius: '12px',
                 boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
                 zIndex: 100,
@@ -489,7 +489,7 @@ export default function Inbox() {
                     Download Chat (.txt)
                   </button>
 
-                  <div style={{ height: '1px', background: '#f3f4f6', margin: '4px 0' }}></div>
+                  <div style={{ height: '1px', background: 'var(--bg-card)', margin: '4px 0' }}></div>
 
                   <button 
                     onClick={deleteAllMessages}
@@ -522,7 +522,7 @@ export default function Inbox() {
         
         <div className="chat-messages">
           {messages.filter(m => (m.platform || 'instagram') === selectedPlatform).length === 0 ? (
-            <div style={{ textAlign: 'center', color: '#666', marginTop: '40px', fontWeight: '500' }}>
+            <div style={{ textAlign: 'center', color: 'var(--text-muted)', marginTop: '40px', fontWeight: '500' }}>
               No messages here. Type below to start!
             </div>
           ) : messages.filter(m => (m.platform || 'instagram') === selectedPlatform).map((msg, index) => {
@@ -720,8 +720,8 @@ export default function Inbox() {
             }}>
               <Trash2 size={30} />
             </div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '10px', color: '#111827' }}>{confirmModal.title}</h3>
-            <p style={{ color: '#6b7280', fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '25px' }}>{confirmModal.message}</p>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '10px', color: 'var(--text-main)' }}>{confirmModal.title}</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '25px' }}>{confirmModal.message}</p>
             
             <div style={{ display: 'flex', gap: '12px' }}>
               <button 
@@ -730,10 +730,10 @@ export default function Inbox() {
                   flex: 1,
                   padding: '12px',
                   borderRadius: '12px',
-                  border: '1px solid #e5e7eb',
+                  border: '1px solid var(--border-subtle)',
                   background: 'var(--bg-card)',
                   fontWeight: '600',
-                  color: '#374151',
+                  color: 'var(--text-main)',
                   cursor: 'pointer'
                 }}
               >

@@ -169,7 +169,7 @@ const WriteReview = () => {
           <div style={{ 
             display: 'inline-flex', padding: '16px', 
             background: 'linear-gradient(135deg, rgba(124,58,237,0.1), rgba(236,72,153,0.1))', 
-            borderRadius: '20px', color: '#7c3aed', marginBottom: '20px',
+            borderRadius: '20px', color: 'var(--accent-color)', marginBottom: '20px',
             boxShadow: 'inset 0 0 0 1px rgba(124,58,237,0.1)'
           }}>
             <Sparkles size={32} />
@@ -183,7 +183,7 @@ const WriteReview = () => {
         </div>
 
         {alreadyReviewed ? (
-          <div style={{ textAlign: 'center', padding: '40px 20px', background: 'var(--sidebar-bg)', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+          <div style={{ textAlign: 'center', padding: '40px 20px', background: 'var(--sidebar-bg)', borderRadius: '16px', border: '1px solid var(--border-subtle)' }}>
             <div style={{ display: 'inline-flex', padding: '16px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '50%', color: '#22c55e', marginBottom: '20px' }}>
               <Star size={32} fill="#22c55e" />
             </div>
@@ -206,8 +206,8 @@ const WriteReview = () => {
                 value={newReview.name}
                 onChange={(e) => setNewReview({...newReview, name: e.target.value})}
                 placeholder="e.g. Alex Johnson"
-                style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: 'var(--sidebar-bg)', fontSize: '1rem', transition: 'all 0.2s', focus: { borderColor: '#7c3aed', background: '#fff' } }}
-                onFocus={(e) => { e.target.style.borderColor = '#7c3aed'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
+                style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: 'var(--sidebar-bg)', fontSize: '1rem', transition: 'all 0.2s', focus: { borderColor: 'var(--accent-color)', background: 'var(--bg-card)' } }}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--accent-color)'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
                 onBlur={(e) => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
               />
             </div>
@@ -220,7 +220,7 @@ const WriteReview = () => {
                 onChange={(e) => setNewReview({...newReview, handle: e.target.value})}
                 placeholder="e.g. @alex_creates"
                 style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: 'var(--sidebar-bg)', fontSize: '1rem', transition: 'all 0.2s' }}
-                onFocus={(e) => { e.target.style.borderColor = '#7c3aed'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--accent-color)'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
                 onBlur={(e) => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
               />
             </div>
@@ -235,7 +235,7 @@ const WriteReview = () => {
                 onChange={(e) => setNewReview({...newReview, role: e.target.value})}
                 placeholder="e.g. Fitness Coach"
                 style={{ padding: '14px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', background: 'var(--sidebar-bg)', fontSize: '1rem', transition: 'all 0.2s' }}
-                onFocus={(e) => { e.target.style.borderColor = '#7c3aed'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--accent-color)'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
                 onBlur={(e) => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
               />
             </div>
@@ -263,10 +263,10 @@ const WriteReview = () => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '20px', background: 'var(--sidebar-bg)', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '20px', background: 'var(--sidebar-bg)', borderRadius: '16px', border: '1px solid var(--border-subtle)' }}>
             <label style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-main)' }}>Profile Picture</label>
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-              <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '2px dashed #cbd5e1', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
+              <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '2px dashed #cbd5e1', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
                 {newReview.avatarUrl ? (
                   <img referrerPolicy="no-referrer" src={getSafeImageUrl(newReview.avatarUrl)} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
@@ -283,8 +283,8 @@ const WriteReview = () => {
                 />
                 <label 
                   htmlFor="avatar-upload" 
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: 'var(--bg-card)', color: 'var(--text-muted)', borderRadius: '10px', fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', border: '1px solid #cbd5e1', transition: 'all 0.2s', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
-                  onMouseOver={(e) => { e.currentTarget.style.borderColor = '#7c3aed'; e.currentTarget.style.color = '#7c3aed'; }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', background: 'var(--bg-card)', color: 'var(--text-muted)', borderRadius: '10px', fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', border: '1px solid var(--border-subtle)', transition: 'all 0.2s', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
+                  onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--accent-color)'; e.currentTarget.style.color = 'var(--accent-color)'; }}
                   onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
                 >
                   {uploadingAvatar ? (
@@ -308,9 +308,9 @@ const WriteReview = () => {
                   style={{ 
                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 12px', 
                     borderRadius: '16px', cursor: 'pointer', fontWeight: '700', fontSize: '0.9rem', textTransform: 'capitalize',
-                    border: `2px solid ${newReview.platform === platform ? '#7c3aed' : 'var(--border-subtle)'}`, 
+                    border: `2px solid ${newReview.platform === platform ? 'var(--accent-color)' : 'var(--border-subtle)'}`, 
                     background: newReview.platform === platform ? 'rgba(124,58,237,0.04)' : 'var(--bg-card)', 
-                    color: newReview.platform === platform ? '#7c3aed' : 'var(--text-muted)',
+                    color: newReview.platform === platform ? 'var(--accent-color)' : 'var(--text-muted)',
                     transition: 'all 0.2s',
                     boxShadow: newReview.platform === platform ? '0 4px 12px rgba(124,58,237,0.1)' : 'none'
                   }}
@@ -335,7 +335,7 @@ const WriteReview = () => {
               placeholder="How has smart10X helped you save time or grow your business?"
               rows={5}
               style={{ padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', background: 'var(--sidebar-bg)', fontSize: '1rem', resize: 'vertical', transition: 'all 0.2s', lineHeight: '1.5' }}
-              onFocus={(e) => { e.target.style.borderColor = '#7c3aed'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
+              onFocus={(e) => { e.target.style.borderColor = 'var(--accent-color)'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}
               onBlur={(e) => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
             />
           </div>

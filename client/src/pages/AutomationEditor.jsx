@@ -723,7 +723,7 @@ export default function AutomationEditor() {
                       backgroundColor: 'rgba(239, 234, 226, 0.95)'
                     }}>
                       {/* Date Badge */}
-                      <div style={{ alignSelf: 'center', background: '#fff', padding: '4px 10px', borderRadius: '8px', fontSize: '0.7rem', color: '#555', boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
+                      <div style={{ alignSelf: 'center', background: 'var(--bg-card)', padding: '4px 10px', borderRadius: '8px', fontSize: '0.7rem', color: 'var(--text-muted)', boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
                         TODAY
                       </div>
 
@@ -1029,7 +1029,7 @@ export default function AutomationEditor() {
                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#f59e0b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>0</div>
                  <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Target Platform</h3>
               </div>
-              <div style={{ padding: '16px 20px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #f1f5f9', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+              <div style={{ padding: '16px 20px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid var(--border-subtle)', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
                   {channel && channel !== 'all' ? (
                     <div style={{
                       width: '100%',
@@ -1068,7 +1068,7 @@ export default function AutomationEditor() {
                         fontSize: '0.95rem',
                         fontWeight: '700',
                         color: '#1e1b4b',
-                        background: '#fff',
+                        background: 'var(--bg-card)',
                         cursor: 'pointer'
                       }}
                    >
@@ -1148,7 +1148,7 @@ export default function AutomationEditor() {
                   <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>2</div>
                   <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>{triggerOnStories ? 'Select a Story' : 'Select a Post'}</h3>
                 </div>
-              <div style={{ padding: '14px 18px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid #f1f5f9' }}>
+              <div style={{ padding: '14px 18px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid var(--border-subtle)' }}>
                 {triggerOnStories && selectedPlatform === 'facebook' ? (
                    <div style={{ padding: '10px', color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500' }}>
                      This automation will trigger for ANY of your active Facebook Stories. 
@@ -1161,7 +1161,7 @@ export default function AutomationEditor() {
                       <div 
                         onClick={() => setAnyStory(!anyStory)}
                         style={{ 
-                          width: '40px', height: '22px', borderRadius: '11px', background: anyStory ? '#7c3aed' : 'var(--border-subtle)', 
+                          width: '40px', height: '22px', borderRadius: '11px', background: anyStory ? 'var(--accent-color)' : 'var(--border-subtle)', 
                           position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
                         }}
                       >
@@ -1211,7 +1211,7 @@ export default function AutomationEditor() {
                                 {selectedContentId === item.id && (
                                   <div style={{ 
                                     position: 'absolute', top: '2px', right: '2px', 
-                                    background: '#7c3aed', borderRadius: '50%', padding: '1px' 
+                                    background: 'var(--accent-color)', borderRadius: '50%', padding: '1px' 
                                   }}>
                                     <CheckCircle2 size={10} color="white" />
                                   </div>
@@ -1230,7 +1230,7 @@ export default function AutomationEditor() {
                       <div 
                         onClick={() => setAnyStory(!anyStory)}
                         style={{ 
-                          width: '40px', height: '22px', borderRadius: '11px', background: anyStory ? '#7c3aed' : 'var(--border-subtle)', 
+                          width: '40px', height: '22px', borderRadius: '11px', background: anyStory ? 'var(--accent-color)' : 'var(--border-subtle)', 
                           position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
                         }}
                       >
@@ -1317,7 +1317,7 @@ export default function AutomationEditor() {
                                 {selectedContentId === item.id && (
                                   <div style={{ 
                                     position: 'absolute', top: '2px', right: '2px', 
-                                    background: '#7c3aed', borderRadius: '50%', padding: '1px' 
+                                    background: 'var(--accent-color)', borderRadius: '50%', padding: '1px' 
                                   }}>
                                     <CheckCircle2 size={10} color="white" />
                                   </div>
@@ -1386,7 +1386,7 @@ export default function AutomationEditor() {
                       }}
                       style={{ 
                         position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)',
-                        width: '28px', height: '28px', borderRadius: '6px', background: '#7c3aed',
+                        width: '28px', height: '28px', borderRadius: '6px', background: 'var(--accent-color)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
                         cursor: 'pointer', zIndex: 5
                       }}
@@ -1434,11 +1434,11 @@ export default function AutomationEditor() {
                   alignItems: 'center', 
                   marginBottom: '18px', 
                   paddingBottom: '14px', 
-                  borderBottom: '1px solid #f1f5f9' 
+                  borderBottom: '1px solid var(--border-subtle)' 
                 }}>
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800', color: '#7c3aed', fontSize: '0.85rem' }}>
-                      <Sparkles size={14} style={{ color: '#7c3aed' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800', color: 'var(--accent-color)', fontSize: '0.85rem' }}>
+                      <Sparkles size={14} style={{ color: 'var(--accent-color)' }} />
                       <span>AI Neural Studio Reply</span>
                     </div>
                     <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Let our AI Agent reply dynamically to DMs</span>
@@ -1475,7 +1475,7 @@ export default function AutomationEditor() {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       style={{ 
-                        width: '100%', height: '80px', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', 
+                        width: '100%', height: '80px', padding: '12px', borderRadius: '10px', border: '1px solid var(--border-subtle)', 
                         outline: 'none', fontSize: '0.85rem', resize: 'none', marginBottom: '4px', lineHeight: '1.4',
                         background: '#fcfaff'
                       }}
@@ -1491,8 +1491,8 @@ export default function AutomationEditor() {
                     marginBottom: '16px' 
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                      <Brain size={16} color="#7c3aed" />
-                      <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#7c3aed' }}>AI Neural Responder Active</span>
+                      <Brain size={16} color='var(--accent-color)' />
+                      <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--accent-color)' }}>AI Neural Responder Active</span>
                     </div>
                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>
                       The AI Agent will use your AI Neural Studio profile/knowledge base to reply dynamically. 
@@ -1503,7 +1503,7 @@ export default function AutomationEditor() {
                       value={message === "[AI Agent will generate a custom neural reply here]" ? "" : message}
                       onChange={(e) => setMessage(e.target.value || "[AI Agent will generate a custom neural reply here]")}
                       style={{ 
-                        width: '100%', height: '60px', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', 
+                        width: '100%', height: '60px', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-subtle)', 
                         outline: 'none', fontSize: '0.8rem', resize: 'none', marginTop: '8px', lineHeight: '1.4', background: 'var(--bg-card)'
                       }}
                     ></textarea>
@@ -1511,7 +1511,7 @@ export default function AutomationEditor() {
                 )}
 
                 {/* Link Section Inside Box */}
-                <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '14px' }}>
+                <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '14px' }}>
                   <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#4338ca', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <LinkIcon size={12} /> Link & Call to Action
                   </div>
@@ -1524,11 +1524,11 @@ export default function AutomationEditor() {
                         justifyContent: 'space-between',
                         padding: '10px 14px',
                         background: 'var(--sidebar-bg)',
-                        border: '1px solid #e2e8f0',
+                        border: '1px solid var(--border-subtle)',
                         borderRadius: '10px'
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <LinkIcon size={14} color="#7c3aed" />
+                          <LinkIcon size={14} color='var(--accent-color)' />
                           <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#1e1b4b' }}>{btn.text}</span>
                         </div>
                         <div style={{ display: 'flex', gap: '10px' }}>
@@ -1557,7 +1557,7 @@ export default function AutomationEditor() {
                           cursor: 'pointer',
                           transition: 'all 0.2s'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.borderColor = '#7c3aed'}
+                        onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--accent-color)'}
                         onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border-subtle)'}
                       >
                         <Plus size={18} /> Add Link
@@ -1569,13 +1569,13 @@ export default function AutomationEditor() {
             </div>
 
             {/* Advanced Automations (Matching Photo) */}
-            <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '16px', paddingBottom: '30px' }}>
+            <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '16px', paddingBottom: '30px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                 <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Advanced Automations</h4>
                 <div 
                   onClick={() => setOpeningMessage(!openingMessage)}
                   style={{ 
-                    width: '40px', height: '22px', borderRadius: '11px', background: openingMessage ? '#7c3aed' : 'var(--border-subtle)', 
+                    width: '40px', height: '22px', borderRadius: '11px', background: openingMessage ? 'var(--accent-color)' : 'var(--border-subtle)', 
                     position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
                   }}
                 >
@@ -1602,7 +1602,7 @@ export default function AutomationEditor() {
                     onChange={(e) => setOpeningMessageText(e.target.value)}
                     placeholder="Enter opening message..."
                     style={{ 
-                      width: '100%', height: '70px', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', 
+                      width: '100%', height: '70px', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-subtle)', 
                       outline: 'none', fontSize: '0.85rem', resize: 'none', marginBottom: '12px', lineHeight: '1.4'
                     }}
                   ></textarea>
@@ -1613,11 +1613,11 @@ export default function AutomationEditor() {
                       onChange={(e) => setOpeningMessageButton(e.target.value)}
                       placeholder="Button Label (e.g. Send me the link)"
                       style={{ 
-                        width: '100%', padding: '10px 10px 10px 36px', borderRadius: '8px', border: '1px solid #e2e8f0', 
+                        width: '100%', padding: '10px 10px 10px 36px', borderRadius: '8px', border: '1px solid var(--border-subtle)', 
                         outline: 'none', fontSize: '0.85rem', fontWeight: '700'
                       }}
                     />
-                    <CheckCircle2 size={16} color="#7c3aed" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                    <CheckCircle2 size={16} color='var(--accent-color)' style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
                   </div>
                 </div>
               )}
@@ -1628,7 +1628,7 @@ export default function AutomationEditor() {
                 <div style={{ marginTop: '16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
                     <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Public Comment Reply</h4>
-                    <span style={{ background: '#f5f3ff', color: '#7c3aed', padding: '2px 6px', borderRadius: '4px', fontSize: '0.6rem', fontWeight: '800' }}>RECOMMENDED</span>
+                    <span style={{ background: '#f5f3ff', color: 'var(--accent-color)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.6rem', fontWeight: '800' }}>RECOMMENDED</span>
                   </div>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     Trigger on ANY {triggerOnStories ? 'Story interaction' : (triggerOnComments ? 'Comment' : 'DM message')}
@@ -1638,7 +1638,7 @@ export default function AutomationEditor() {
                     padding: '10px 14px', 
                     borderRadius: '10px', 
                     background: 'var(--sidebar-bg)', 
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid var(--border-subtle)',
                     marginTop: '6px'
                   }}>
                     <input 
@@ -1647,7 +1647,7 @@ export default function AutomationEditor() {
                       onChange={(e) => setPublicReply(e.target.value)}
                       placeholder="Check your DMs! 🚀"
                       style={{ 
-                        width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', 
+                        width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-subtle)', 
                         outline: 'none', fontSize: '0.85rem', background: 'var(--bg-card)'
                       }}
                     />
@@ -1663,7 +1663,7 @@ export default function AutomationEditor() {
                 width: '100%',
                 padding: '14px',
                 borderRadius: '12px',
-                background: '#7c3aed',
+                background: 'var(--accent-color)',
                 color: 'white',
                 border: 'none',
                 fontWeight: '800',
@@ -1747,7 +1747,7 @@ export default function AutomationEditor() {
                   onChange={(e) => setTempLinkTitle(e.target.value)}
                   placeholder="e.g. Open Link"
                   style={{ 
-                    width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', 
+                    width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-subtle)', 
                     outline: 'none', fontSize: '0.95rem', fontWeight: '600'
                   }}
                 />
@@ -1763,7 +1763,7 @@ export default function AutomationEditor() {
                   onChange={(e) => setTempLinkUrl(e.target.value)}
                   placeholder="https://example.com"
                   style={{ 
-                    width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', 
+                    width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-subtle)', 
                     outline: 'none', fontSize: '0.95rem', fontWeight: '600'
                   }}
                 />

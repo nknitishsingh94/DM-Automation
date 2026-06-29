@@ -135,10 +135,10 @@ export default function Landing() {
                   }}>
                     <div style={{
                       background: 'var(--bg-card)', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-                      border: '1px solid #e2e8f0', padding: '24px', width: '560px'
+                      border: '1px solid var(--border-subtle)', padding: '24px', width: '560px'
                     }}>
                       {/* Arrow */}
-                      <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderBottom: 'none', borderRight: 'none', rotate: '45deg', zIndex: 1 }} />
+                      <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderBottom: 'none', borderRight: 'none', rotate: '45deg', zIndex: 1 }} />
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0' }}>
                       {/* Core Features Column */}
@@ -152,7 +152,7 @@ export default function Landing() {
                         ].map((item, i) => (
                           <Link key={i} to={item.link} onClick={(e) => { if(item.link === '#features') { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); } else { setFeaturesOpen(false); } }}
                             style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: 'inherit' }}
-                            onMouseEnter={e => e.currentTarget.style.color = '#7c3aed'}
+                            onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-color)'}
                             onMouseLeave={e => e.currentTarget.style.color = 'inherit'}
                           >
                             <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
@@ -175,7 +175,7 @@ export default function Landing() {
                         ].map((item, i) => (
                           <Link key={i} to={item.link} onClick={(e) => { if(item.link === '#features') { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); } else { setFeaturesOpen(false); } }}
                             style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: 'inherit' }}
-                            onMouseEnter={e => e.currentTarget.style.color = '#7c3aed'}
+                            onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-color)'}
                             onMouseLeave={e => e.currentTarget.style.color = 'inherit'}
                           >
                             <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
@@ -189,7 +189,7 @@ export default function Landing() {
                     </div>
 
                     {/* View All Features CTA */}
-                    <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #f1f5f9', textAlign: 'right' }}>
+                    <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', textAlign: 'right' }}>
                       <a href="#features" onClick={(e) => { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }}
                         style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '700', color: '#8b5cf6', textDecoration: 'none' }}>
                         View All Features <ArrowRight size={14} />
@@ -263,7 +263,7 @@ export default function Landing() {
           </Link>
 
           <Link to="/features/scheduling" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
-            <div className="feature-icon" style={{ background: 'rgba(124, 58, 237, 0.1)', color: '#7c3aed' }}>
+            <div className="feature-icon" style={{ background: 'rgba(124, 58, 237, 0.1)', color: 'var(--accent-color)' }}>
               <Clock size={24} />
             </div>
             <div className="feature-text">
@@ -453,7 +453,7 @@ export default function Landing() {
                 padding: '14px 32px',
                 borderRadius: '50px',
                 border: '2px solid #7c3aed',
-                color: '#7c3aed',
+                color: 'var(--accent-color)',
                 fontWeight: '800',
                 fontSize: '1rem',
                 background: 'transparent',
@@ -469,7 +469,7 @@ export default function Landing() {
               }}
               onMouseOut={(e) => {
                 e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.color = '#7c3aed';
+                e.currentTarget.style.color = 'var(--accent-color)';
                 e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.05)';
               }}

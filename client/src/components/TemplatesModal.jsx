@@ -62,13 +62,13 @@ export default function TemplatesModal({ isOpen, onClose }) {
       padding: '20px'
     }} onClick={onClose}>
       <div style={{
-        backgroundColor: '#fff', borderRadius: '16px', width: '100%', maxWidth: '1000px',
+        background: 'var(--bg-card)', borderRadius: '16px', width: '100%', maxWidth: '1000px',
         maxHeight: '90vh', display: 'flex', flexDirection: 'column',
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
         overflow: 'hidden'
       }} onClick={e => e.stopPropagation()}>
         
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid #e2e8f0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)' }}>
           <div>
             <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: 'var(--text-main)' }}>Templates Gallery</h2>
             <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Discover ready-to-use automations for your business</p>
@@ -82,7 +82,7 @@ export default function TemplatesModal({ isOpen, onClose }) {
             style={{
               background: 'var(--bg-card)',
               border: '1px solid #7c3aed',
-              color: '#7c3aed',
+              color: 'var(--accent-color)',
               padding: '8px 16px',
               borderRadius: '10px',
               fontWeight: '700',
@@ -94,12 +94,12 @@ export default function TemplatesModal({ isOpen, onClose }) {
               transition: 'all 0.2s'
             }}
             onMouseOver={e => {
-              e.currentTarget.style.backgroundColor = '#7c3aed';
+              e.currentTarget.style.backgroundColor = 'var(--accent-color)';
               e.currentTarget.style.color = 'var(--bg-card)';
             }}
             onMouseOut={e => {
               e.currentTarget.style.backgroundColor = 'var(--bg-card)';
-              e.currentTarget.style.color = '#7c3aed';
+              e.currentTarget.style.color = 'var(--accent-color)';
             }}
           >
             <Zap size={14} /> Active Automations
@@ -114,8 +114,8 @@ export default function TemplatesModal({ isOpen, onClose }) {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
             {templatesData.map((template, idx) => (
               <div key={idx} style={{
-                border: '1px solid #e2e8f0', borderRadius: '14px', padding: '20px',
-                display: 'flex', flexDirection: 'column', backgroundColor: '#fff',
+                border: '1px solid var(--border-subtle)', borderRadius: '14px', padding: '20px',
+                display: 'flex', flexDirection: 'column', background: 'var(--bg-card)',
                 transition: 'all 0.2s ease', cursor: 'pointer',
                 boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
               }} className="template-card-hover">
@@ -133,7 +133,7 @@ export default function TemplatesModal({ isOpen, onClose }) {
                       </span>
                     )}
                     {template.ai && (
-                      <span style={{ fontSize: '10px', fontWeight: '800', backgroundColor: '#ede9fe', color: '#7c3aed', padding: '4px 8px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '4px', letterSpacing: '0.05em' }}>
+                      <span style={{ fontSize: '10px', fontWeight: '800', backgroundColor: '#ede9fe', color: 'var(--accent-color)', padding: '4px 8px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '4px', letterSpacing: '0.05em' }}>
                         <Sparkles size={10} /> AI
                       </span>
                     )}
@@ -154,7 +154,7 @@ export default function TemplatesModal({ isOpen, onClose }) {
                   {template.desc}
                 </p>
 
-                <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     {template.type}
                   </span>

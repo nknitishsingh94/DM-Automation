@@ -41,9 +41,9 @@ export default function LandingHeader() {
                 }}>
                   <div style={{
                     background: 'var(--bg-card)', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-                    border: '1px solid #e2e8f0', padding: '24px', width: '560px'
+                    border: '1px solid var(--border-subtle)', padding: '24px', width: '560px'
                   }}>
-                    <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderBottom: 'none', borderRight: 'none', rotate: '45deg', zIndex: 1 }} />
+                    <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderBottom: 'none', borderRight: 'none', rotate: '45deg', zIndex: 1 }} />
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0' }}>
                       <div style={{ paddingRight: '24px' }}>
@@ -106,7 +106,7 @@ export default function LandingHeader() {
             <>
               <Link to="/login" style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-muted)', textDecoration: 'none', padding: '0 12px' }}>Sign In</Link>
               <Link to="/signup" style={{
-                background: '#7c3aed', color: 'white', padding: '10px 24px', borderRadius: '50px',
+                background: 'var(--accent-color)', color: 'white', padding: '10px 24px', borderRadius: '50px',
                 fontSize: '0.95rem', fontWeight: '800', textDecoration: 'none', boxShadow: '0 10px 20px rgba(124, 58, 237, 0.2)'
               }}>
                 Get Started

@@ -314,7 +314,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                 <div style={{
                   position: 'absolute', top: '70px', left: '24px', width: '240px',
                   background: 'var(--bg-card)', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-                  border: '1px solid #f1f5f9', zIndex: 100, padding: '8px'
+                  border: '1px solid var(--border-subtle)', zIndex: 100, padding: '8px'
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 12px 8px' }}>
                     <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', fontWeight: '700' }}>
@@ -482,8 +482,8 @@ function Sidebar({ isMobileOpen, onClose }) {
                   </div>
                   <div onClick={() => notify("Communication integration is coming soon!", "info")} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                     <MessageSquare size={16} />
-                    <span style={{ fontWeight: '600', color: '#9ca3af' }}>Communication</span>
-                    <span style={{ fontSize: '0.62rem', background: '#f3f4f6', color: '#9ca3af', padding: '2px 6px', borderRadius: '4px', marginLeft: 'auto', textTransform: 'uppercase', fontWeight: '700' }}>Soon</span>
+                    <span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>Communication</span>
+                    <span style={{ fontSize: '0.62rem', background: 'var(--bg-card)', color: 'var(--text-muted)', padding: '2px 6px', borderRadius: '4px', marginLeft: 'auto', textTransform: 'uppercase', fontWeight: '700' }}>Soon</span>
                   </div>
                   {activeWorkspace?.isTelegramConnected && (
                     <NavLink to="/autoops/telegram" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -536,7 +536,7 @@ function Sidebar({ isMobileOpen, onClose }) {
         </div>
 
         {/* Fixed Upgrade Card at the bottom */}
-        <div style={{ padding: '16px', borderTop: '1px solid #f1f5f9', flexShrink: 0 }}>
+        <div style={{ padding: '16px', borderTop: '1px solid var(--border-subtle)', flexShrink: 0 }}>
           <div style={{
             padding: '18px',
             borderRadius: '16px',
@@ -621,7 +621,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                     placeholder="e.g. Acme Marketing"
                     required
                     style={{
-                      width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #cbd5e1',
+                      width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-subtle)',
                       fontSize: '14px', outline: 'none', transition: 'border-color 0.2s'
                     }}
                   />
@@ -631,7 +631,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                   <button
                     type="button"
                     onClick={() => { setShowWorkspaceModal(false); setNewWorkspaceName(''); }}
-                    style={{ padding: '10px 16px', borderRadius: '12px', border: '1px solid #cbd5e1', background: 'transparent', fontSize: '14px', fontWeight: '600', color: 'var(--text-muted)', cursor: 'pointer' }}
+                    style={{ padding: '10px 16px', borderRadius: '12px', border: '1px solid var(--border-subtle)', background: 'transparent', fontSize: '14px', fontWeight: '600', color: 'var(--text-muted)', cursor: 'pointer' }}
                   >
                     Cancel
                   </button>

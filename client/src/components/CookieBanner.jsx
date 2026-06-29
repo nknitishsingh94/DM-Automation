@@ -122,10 +122,10 @@ export default function CookieBanner() {
           </div>
 
           {showCustomize && (
-            <div style={{ borderTop: '1px solid #f1f5f9', padding: '20px', background: '#fafafa', maxHeight: '300px', overflowY: 'auto' }}>
+            <div style={{ borderTop: '1px solid var(--border-subtle)', padding: '20px', background: 'var(--bg-card)', maxHeight: '300px', overflowY: 'auto' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {preferences.map(p => (
-                  <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                  <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       {p.icon}
                       <div>

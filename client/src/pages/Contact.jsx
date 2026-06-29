@@ -50,7 +50,7 @@ export default function Contact() {
           <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', marginBottom: '32px' }}>
             Thank you for reaching out. Our support team will get back to you at <strong>{formData.email}</strong> within 24 hours.
           </p>
-          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#7c3aed', color: 'white', padding: '14px 32px', borderRadius: '14px', fontWeight: '800', textDecoration: 'none' }}>
+          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--accent-color)', color: 'white', padding: '14px 32px', borderRadius: '14px', fontWeight: '800', textDecoration: 'none' }}>
             <ArrowLeft size={20} /> Back to Home
           </Link>
         </div>
@@ -71,7 +71,7 @@ export default function Contact() {
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-              <div style={{ width: '48px', height: '48px', background: 'var(--bg-card)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7c3aed', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+              <div style={{ width: '48px', height: '48px', background: 'var(--bg-card)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-color)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
                 <Mail size={24} />
               </div>
               <div>
@@ -93,7 +93,7 @@ export default function Contact() {
         </div>
 
         {/* Form Column */}
-        <div style={{ background: 'var(--bg-card)', padding: '40px', borderRadius: '32px', boxShadow: '0 20px 40px rgba(0,0,0,0.04)', border: '1px solid #f1f5f9' }}>
+        <div style={{ background: 'var(--bg-card)', padding: '40px', borderRadius: '32px', boxShadow: '0 20px 40px rgba(0,0,0,0.04)', border: '1px solid var(--border-subtle)' }}>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
               <div>
@@ -104,7 +104,7 @@ export default function Contact() {
                   placeholder="John Doe"
                   value={formData.name}
                   onChange={e => setFormData({...formData, name: e.target.value})}
-                  style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', fontSize: '1rem' }}
+                  style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '1rem' }}
                 />
               </div>
               <div>
@@ -115,7 +115,7 @@ export default function Contact() {
                   placeholder="john@example.com"
                   value={formData.email}
                   onChange={e => setFormData({...formData, email: e.target.value})}
-                  style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', fontSize: '1rem' }}
+                  style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '1rem' }}
                 />
               </div>
             </div>
@@ -125,7 +125,7 @@ export default function Contact() {
               <select 
                 value={formData.subject}
                 onChange={e => setFormData({...formData, subject: e.target.value})}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', fontSize: '1rem', appearance: 'none', background: 'var(--bg-card)' }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '1rem', appearance: 'none', background: 'var(--bg-card)' }}
               >
                 <option>General Inquiry</option>
                 <option>Billing Issue</option>
@@ -143,7 +143,7 @@ export default function Contact() {
                 rows="5"
                 value={formData.message}
                 onChange={e => setFormData({...formData, message: e.target.value})}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', fontSize: '1rem', resize: 'vertical' }}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '1rem', resize: 'vertical' }}
               ></textarea>
             </div>
 

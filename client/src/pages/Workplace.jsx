@@ -69,7 +69,7 @@ export default function Workplace() {
               name: parsed.connectedThreadsName || 'Threads Profile',
               platform: 'Threads',
               Icon: ChevronRight,
-              color: '#000000',
+              color: 'var(--text-main)',
             });
           }
         } catch {}
@@ -96,10 +96,10 @@ export default function Workplace() {
       {/* ── Header ── */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
         <div style={{ textAlign: 'left' }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#111827', margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
             Workplace
           </h1>
-          <p style={{ color: '#6b7280', fontSize: '0.95rem', margin: 0, fontWeight: '400' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0, fontWeight: '400' }}>
             Your connected accounts, all in one place.
           </p>
         </div>
@@ -125,8 +125,8 @@ export default function Workplace() {
             key={acc.id}
             onClick={() => navigate(`/workplace/${acc.id}`)}
             style={{
-              border: '1px solid #e5e7eb', borderRadius: '16px', padding: '22px',
-              background: '#fff', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+              border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '22px',
+              background: 'var(--bg-card)', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
               display: 'flex', flexDirection: 'column', gap: '16px',
               cursor: 'pointer',
               transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
@@ -159,10 +159,10 @@ export default function Workplace() {
                 <acc.Icon size={26} color={acc.color} />
               </div>
               <div>
-                <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: '700', color: '#111827' }}>
+                <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: '700', color: 'var(--text-main)' }}>
                   {acc.platform}
                 </h3>
-                <p style={{ margin: '4px 0 0 0', fontSize: '0.82rem', color: '#6b7280' }}>
+                <p style={{ margin: '4px 0 0 0', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                   {acc.name}
                 </p>
               </div>
@@ -189,7 +189,7 @@ export default function Workplace() {
                   <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     {s.label}
                   </div>
-                  <div style={{ fontSize: '1.15rem', fontWeight: '800', color: '#374151' }}>{s.sub}</div>
+                  <div style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--text-main)' }}>{s.sub}</div>
                 </div>
               ))}
             </div>
@@ -197,9 +197,9 @@ export default function Workplace() {
             {/* CTA row */}
             <div style={{
               marginTop: 'auto', padding: '10px 14px', borderRadius: '10px',
-              background: '#f9fafb', border: '1px solid #e5e7eb',
+              background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              fontSize: '0.82rem', fontWeight: '500', color: '#6b7280',
+              fontSize: '0.82rem', fontWeight: '500', color: 'var(--text-muted)',
             }}>
               <span>Open {acc.platform} workbench</span>
               <ArrowLeft size={15} style={{ transform: 'rotate(180deg)', color: 'var(--text-muted)' }} />
@@ -220,16 +220,16 @@ export default function Workplace() {
               <Sliders size={32} color="#94a3b8" />
             </div>
             <h3 style={{
-              margin: '0 0 12px 0', fontSize: '1.4rem', fontWeight: '700', color: '#111827',
+              margin: '0 0 12px 0', fontSize: '1.4rem', fontWeight: '700', color: 'var(--text-main)',
             }}>
               No accounts connected yet
             </h3>
-            <p style={{ color: '#6b7280', fontSize: '1rem', maxWidth: '400px', lineHeight: '1.6' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1rem', maxWidth: '400px', lineHeight: '1.6' }}>
               Connect your Instagram, Facebook, WhatsApp or Threads account in
               <button
                 onClick={() => navigate('/settings')}
                 style={{
-                  background: 'none', border: 'none', color: '#7c3aed',
+                  background: 'none', border: 'none', color: 'var(--accent-color)',
                   fontWeight: '700', cursor: 'pointer', padding: '0 4px', fontSize: '1rem',
                 }}
               >Settings</button>
@@ -288,9 +288,9 @@ function WorkbenchShell({ platform, color, Icon, onBack }) {
         <button
           onClick={onBack}
           style={{
-            background: '#f3f4f6', border: 'none', borderRadius: '10px',
+            background: 'var(--bg-card)', border: 'none', borderRadius: '10px',
             width: '40px', height: '40px', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', cursor: 'pointer', color: '#6b7280',
+            justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)',
             transition: 'all 0.2s',
           }}
           onMouseOver={e => { e.currentTarget.style.background = '#e5e7eb'; e.currentTarget.style.color = '#111827'; }}
@@ -309,13 +309,13 @@ function WorkbenchShell({ platform, color, Icon, onBack }) {
           </div>
           <div style={{ textAlign: 'left' }}>
             <h1 style={{
-              fontSize: '1.7rem', fontWeight: '700', color: '#111827',
+              fontSize: '1.7rem', fontWeight: '700', color: 'var(--text-main)',
               margin: 0,
             }}>
               {platform} Workspace
             </h1>
             <p style={{
-              color: '#6b7280', fontSize: '0.9rem', margin: '4px 0 0 0', fontWeight: '400',
+              color: 'var(--text-muted)', fontSize: '0.9rem', margin: '4px 0 0 0', fontWeight: '400',
             }}>
               Account-specific management and settings
             </p>
@@ -325,8 +325,8 @@ function WorkbenchShell({ platform, color, Icon, onBack }) {
         <button
           onClick={() => navigate('/settings')}
           style={{
-            background: '#f3f4f6', color: '#374151', padding: '8px 16px', borderRadius: '8px',
-            fontWeight: '600', fontSize: '0.82rem', border: '1px solid #e5e7eb',
+            background: 'var(--bg-card)', color: 'var(--text-main)', padding: '8px 16px', borderRadius: '8px',
+            fontWeight: '600', fontSize: '0.82rem', border: '1px solid var(--border-subtle)',
             cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px',
             transition: 'background 0.2s',
           }}
@@ -365,8 +365,8 @@ function WorkbenchShell({ platform, color, Icon, onBack }) {
                                                    navigate('/')
               }
               style={{
-                border: '1px solid #e5e7eb', borderRadius: '14px', padding: '20px',
-                background: '#fff', boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+                border: '1px solid var(--border-subtle)', borderRadius: '14px', padding: '20px',
+                background: 'var(--bg-card)', boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
                 display: 'flex', flexDirection: 'column', gap: '12px',
                 cursor: 'pointer',
                 transition: 'transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease',
@@ -390,10 +390,10 @@ function WorkbenchShell({ platform, color, Icon, onBack }) {
                 <ActionIcon size={22} color={cardColor} />
               </div>
               <div>
-                <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '700', color: '#111827' }}>
+                <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-main)' }}>
                   {label}
                 </h4>
-                <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: '#6b7280', lineHeight: '1.45' }}>
+                <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: '1.45' }}>
                   {desc}
                 </p>
               </div>
@@ -405,20 +405,20 @@ function WorkbenchShell({ platform, color, Icon, onBack }) {
       {/* ── Info callout ── */}
       <div style={{
         background: 'var(--sidebar-bg)', borderRadius: '16px', padding: '24px 28px',
-        border: '1px solid #e5e7eb', display: 'flex', alignItems: 'flex-start', gap: '14px',
+        border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'flex-start', gap: '14px',
       }}>
-        <HelpCircle size={22} color="#7c3aed" style={{ flexShrink: 0, marginTop: '2px' }} />
+        <HelpCircle size={22} color='var(--accent-color)' style={{ flexShrink: 0, marginTop: '2px' }} />
         <div>
-          <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', fontWeight: '700', color: '#111827' }}>
+          <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', fontWeight: '700', color: 'var(--text-main)' }}>
             {platform} Account Management
           </h4>
-          <p style={{ margin: 0, fontSize: '0.88rem', color: '#6b7280', lineHeight: '1.6' }}>
+          <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
             All connections, automation rules, and campaign settings for this {platform} account
             are managed from{' '}
             <button
               onClick={() => navigate('/settings')}
               style={{
-                background: 'none', border: 'none', color: '#7c3aed',
+                background: 'none', border: 'none', color: 'var(--accent-color)',
                 fontWeight: '700', cursor: 'pointer', padding: 0, fontSize: '0.88rem',
               }}
             >Account Settings</button>.
@@ -434,7 +434,7 @@ function WorkbenchShell({ platform, color, Icon, onBack }) {
  * ANCHOR DATA – quick-action cards shared by all WorkbenchShells
  * ───────────────────────────────────────────────────────────────────────────── */
 const QUICK_ACTIONS = [
-  { label: 'Schedule Post', desc: 'Plan publications ahead of time', cardColor: '#7c3aed' },
+  { label: 'Schedule Post', desc: 'Plan publications ahead of time', cardColor: 'var(--accent-color)' },
   { label: 'Auto Replies',  desc: 'AI-powered DM & comment responses', cardColor: '#16a34a' },
   { label: 'Engagement',    desc: 'Growth stats & analytics', cardColor: '#0891b2' },
   { label: 'Audience',      desc: 'Followers & contact directory', cardColor: '#d97706' },

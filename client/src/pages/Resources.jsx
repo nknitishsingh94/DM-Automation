@@ -28,7 +28,7 @@ export default function Resources() {
           </div>
           <nav className="header-nav">
             <Link to="/about">About</Link>
-            <Link to="/resources" style={{ fontWeight: '700', color: '#7c3aed' }}>Resources</Link>
+            <Link to="/resources" style={{ fontWeight: '700', color: 'var(--accent-color)' }}>Resources</Link>
             <Link to="/#pricing">Pricing</Link>
           </nav>
         </div>

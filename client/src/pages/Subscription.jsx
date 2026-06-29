@@ -190,14 +190,14 @@ export default function Subscription() {
           }}>
             <button 
               onClick={() => setShowPayment(false)}
-              style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(0,0,0,0.05)', border: 'none', padding: '8px', borderRadius: '50%', cursor: 'pointer', color: '#666', zIndex: 10 }}>
+              style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(0,0,0,0.05)', border: 'none', padding: '8px', borderRadius: '50%', cursor: 'pointer', color: 'var(--text-muted)', zIndex: 10 }}>
               <X size={20} />
             </button>
 
             {paymentStep !== 'select' && (
               <button 
                 onClick={() => setPaymentStep('select')}
-                style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(0,0,0,0.05)', border: 'none', padding: '8px', borderRadius: '50%', cursor: 'pointer', color: '#666', zIndex: 10 }}>
+                style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(0,0,0,0.05)', border: 'none', padding: '8px', borderRadius: '50%', cursor: 'pointer', color: 'var(--text-muted)', zIndex: 10 }}>
                 <ChevronLeft size={20} />
               </button>
             )}
@@ -207,12 +207,12 @@ export default function Subscription() {
                 <div style={{ width: '50px', height: '50px', background: '#f3f0ff', color: '#a855f7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
                   <Crown size={28} />
                 </div>
-                <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#1a1a1a' }}>
+                <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)' }}>
                   {paymentStep === 'select' ? 'Choose Payment Method' : 
                    paymentStep === 'upi' ? 'Pay via UPI' : 
                    paymentStep === 'card' ? 'Debit / Credit Card' : 'Scan QR Code'}
                 </h3>
-                <p style={{ color: '#666', fontSize: '0.9rem' }}>Total Amount: <strong>${usdPrice} (₹{inrPrice})</strong></p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Total Amount: <strong>${usdPrice} (₹{inrPrice})</strong></p>
               </div>
 
               {paymentStep === 'select' && (
@@ -239,25 +239,25 @@ export default function Subscription() {
                     onClick={() => setPaymentStep('qr')} 
                   />
                   <div style={{ marginTop: '12px', textAlign: 'center' }}>
-                    <p style={{ fontSize: '0.8rem', color: '#888' }}>Secure encrypted payments powered by smart10X</p>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Secure encrypted payments powered by smart10X</p>
                   </div>
                 </div>
               )}
 
               {paymentStep === 'upi' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  <div style={{ background: '#f9fafb', border: '1px solid #eee', borderRadius: '16px', padding: '15px', textAlign: 'center' }}>
+                  <div style={{ background: 'var(--bg-dark)', border: '1px solid #eee', borderRadius: '16px', padding: '15px', textAlign: 'center' }}>
                     <div style={{ width: '140px', height: '140px', background: 'var(--bg-card)', border: '1px solid #ddd', borderRadius: '12px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
                       <Zap size={60} color="#a855f7" strokeWidth={1} style={{ opacity: 0.2 }} />
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '800', color: '#111', textTransform: 'uppercase', textAlign: 'center', padding: '10px' }}>
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '800', color: 'var(--text-main)', textTransform: 'uppercase', textAlign: 'center', padding: '10px' }}>
                         Scan QR to Pay ₹{inrPrice}
                       </div>
                     </div>
-                    <p style={{ fontSize: '0.75rem', color: '#888', marginTop: '10px' }}>Works with any UPI App (GPay, PhonePe, etc.)</p>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '10px' }}>Works with any UPI App (GPay, PhonePe, etc.)</p>
                   </div>
 
                   <div style={{ textAlign: 'center' }}>
-                    <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '12px', fontWeight: '600' }}>Quick Pay Apps (Mobile only)</p>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: '600' }}>Quick Pay Apps (Mobile only)</p>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                       <UpiAppButton title="Google Pay" color="#4285F4" href={upiLink('gpay')} />
                       <UpiAppButton title="PhonePe" color="#6739B7" href={upiLink('phonepe')} />
@@ -267,12 +267,12 @@ export default function Subscription() {
                   </div>
 
                   <div style={{ borderTop: '1px solid #eee', paddingTop: '15px' }}>
-                    <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '10px', textAlign: 'center' }}>Or Copy UPI ID manually</p>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '10px', textAlign: 'center' }}>Or Copy UPI ID manually</p>
                     <div style={{ 
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
-                      background: 'var(--sidebar-bg)', padding: '12px 16px', borderRadius: '12px', border: '1px solid #e2e8f0' 
+                      background: 'var(--sidebar-bg)', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-subtle)' 
                     }}>
-                      <span style={{ fontWeight: '700', color: '#1a1a1a', letterSpacing: '0.5px' }}>8795919866@ybl</span>
+                      <span style={{ fontWeight: '700', color: 'var(--text-main)', letterSpacing: '0.5px' }}>8795919866@ybl</span>
                       <button 
                         onClick={handleCopyUPI}
                         style={{ background: copied ? '#10b981' : '#a855f7', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.3s' }}>
@@ -307,7 +307,7 @@ export default function Subscription() {
                   }}>
                     Pay Now ($29)
                   </button>
-                  <a href={`https://api.whatsapp.com/send?phone=918795919866&text=${getWhatsappMessage('Card')}`} target="_blank" rel="noopener noreferrer" style={{...whatsappButtonStyle, background: '#f3f4f6', color: '#111'}}>
+                  <a href={`https://api.whatsapp.com/send?phone=918795919866&text=${getWhatsappMessage('Card')}`} target="_blank" rel="noopener noreferrer" style={{...whatsappButtonStyle, background: 'var(--bg-card)', color: 'var(--text-main)'}}>
                     <MessageCircle size={18} /> Inform via WhatsApp
                   </a>
                 </div>
@@ -315,10 +315,10 @@ export default function Subscription() {
 
               {paymentStep === 'qr' && (
                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ background: '#f9fafb', border: '2px dashed #e5e7eb', borderRadius: '20px', padding: '20px', marginBottom: '20px' }}>
+                    <div style={{ background: 'var(--bg-dark)', border: '2px dashed #e5e7eb', borderRadius: '20px', padding: '20px', marginBottom: '20px' }}>
                       <div style={{ width: '160px', height: '160px', background: 'var(--bg-card)', border: '1px solid #ddd', borderRadius: '12px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                         <Zap size={80} color="#a855f7" strokeWidth={1} style={{ opacity: 0.3 }} />
-                        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: '800', color: '#111', textTransform: 'uppercase', textAlign: 'center', padding: '15px' }}>
+                        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: '800', color: 'var(--text-main)', textTransform: 'uppercase', textAlign: 'center', padding: '15px' }}>
                           Scan QR to Pay ₹{inrPrice}
                         </div>
                       </div>
@@ -329,7 +329,7 @@ export default function Subscription() {
                  </div>
               )}
 
-              <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', color: '#888', fontSize: '0.75rem' }}>
+              <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
                 <Lock size={12} /> SSL Secure Connection
               </div>
             </div>
@@ -381,20 +381,20 @@ function UpiAppButton({ title, color, href }) {
       href={href}
       style={{ 
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', 
-        borderRadius: '12px', border: '1px solid #f1f5f9', background: 'var(--bg-card)', cursor: 'pointer', transition: 'all 0.2s',
+        borderRadius: '12px', border: '1px solid var(--border-subtle)', background: 'var(--bg-card)', cursor: 'pointer', transition: 'all 0.2s',
         textDecoration: 'none'
       }}
     >
       <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '10px' }}>
         {title.charAt(0)}
       </div>
-      <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#444' }}>{title}</span>
+      <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>{title}</span>
     </a>
   );
 }
 
 const inputStyle = {
-  width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#fff', color: '#1a1a1a', fontSize: '0.9rem', outline: 'none'
+  width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-subtle)', background: 'var(--bg-card)', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none'
 };
 
 const whatsappButtonStyle = {

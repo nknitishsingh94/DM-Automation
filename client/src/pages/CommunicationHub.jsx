@@ -78,7 +78,7 @@ export default function CommunicationHub() {
       maxWidth: '1200px',
       margin: '0 auto',
       minHeight: '100vh',
-      background: '#fafafa',
+      background: 'var(--bg-card)',
       animation: 'fadeIn 0.5s ease-out'
     }}>
       {/* Hero Header Area without 'Overview' text */}
@@ -134,7 +134,7 @@ export default function CommunicationHub() {
             <div key={platform.id} style={{
               background: 'var(--bg-card)',
               borderRadius: '24px',
-              border: '1px solid #e2e8f0',
+              border: '1px solid var(--border-subtle)',
               padding: '32px',
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               position: 'relative',
@@ -207,7 +207,7 @@ export default function CommunicationHub() {
         <div style={{
           background: 'var(--bg-card)',
           borderRadius: '24px',
-          border: '1px solid #e2e8f0',
+          border: '1px solid var(--border-subtle)',
           padding: '48px 32px',
           textAlign: 'center',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',

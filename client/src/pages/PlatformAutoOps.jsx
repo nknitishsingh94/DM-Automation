@@ -63,7 +63,7 @@ export default function PlatformAutoOps() {
       maxWidth: '1200px',
       margin: '0 auto',
       minHeight: '100vh',
-      background: '#fafafa',
+      background: 'var(--bg-card)',
       animation: 'fadeIn 0.4s ease-out'
     }}>
       {/* Header Section */}
@@ -181,7 +181,7 @@ export default function PlatformAutoOps() {
         <div style={{ 
           background: 'var(--bg-card)', 
           borderRadius: '24px', 
-          border: '1px solid #e2e8f0', 
+          border: '1px solid var(--border-subtle)', 
           padding: '40px',
           minHeight: '500px',
           boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)'
@@ -198,7 +198,7 @@ export default function PlatformAutoOps() {
               
               <div style={{ textAlign: 'center', padding: '60px 20px', background: 'var(--sidebar-bg)', borderRadius: '16px', border: '2px dashed #e2e8f0' }}>
                 <Layers size={48} color="#cbd5e1" style={{ marginBottom: '16px' }} />
-                <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#334155', marginBottom: '8px' }}>No {currentPlatform.name} Flows Yet</h3>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px' }}>No {currentPlatform.name} Flows Yet</h3>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', maxWidth: '400px', margin: '0 auto 24px auto', lineHeight: '1.5' }}>
                   Set up your first automation rule. For example, when someone says "Pricing", send them your rate card.
                 </p>
@@ -218,13 +218,13 @@ export default function PlatformAutoOps() {
                   <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 8px 0' }}>Message Templates</h2>
                   <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.95rem' }}>Draft and submit templates to Meta for approval. Required to message users after 24 hours.</p>
                 </div>
-                <button style={{ background: 'var(--bg-dark)', color: 'var(--text-main)', border: '1px solid #e2e8f0', padding: '10px 16px', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button style={{ background: 'var(--bg-dark)', color: 'var(--text-main)', border: '1px solid var(--border-subtle)', padding: '10px 16px', borderRadius: '10px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <ExternalLink size={16} /> Sync from Meta
                 </button>
               </div>
               
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-                <div style={{ padding: '24px', border: '1px solid #e2e8f0', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ padding: '24px', border: '1px solid var(--border-subtle)', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: '0.85rem', fontWeight: '700', background: '#dcfce7', color: '#166534', padding: '4px 10px', borderRadius: '20px' }}>APPROVED</span>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Marketing</span>
@@ -234,8 +234,8 @@ export default function PlatformAutoOps() {
                     Hi {'{{1}}'}! 👋 Welcome to Smart10X. Use code {'{{2}}'} to get 20% off your first purchase!
                   </p>
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
-                    <button style={{ flex: 1, padding: '8px', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#3b82f6', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer' }}>Use in Flow</button>
-                    <button style={{ flex: 1, padding: '8px', background: 'var(--bg-card)', border: '1px solid #e2e8f0', borderRadius: '8px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer' }}>Edit</button>
+                    <button style={{ flex: 1, padding: '8px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: '#3b82f6', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer' }}>Use in Flow</button>
+                    <button style={{ flex: 1, padding: '8px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer' }}>Edit</button>
                   </div>
                 </div>
                 
@@ -247,7 +247,7 @@ export default function PlatformAutoOps() {
                   <div style={{ width: '48px', height: '48px', background: 'var(--bg-card)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
                     <Plus size={24} color={currentPlatform.primaryColor} />
                   </div>
-                  <span style={{ fontWeight: '600', color: '#334155' }}>Create New Template</span>
+                  <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>Create New Template</span>
                 </div>
               </div>
             </div>
@@ -267,8 +267,8 @@ export default function PlatformAutoOps() {
                 </button>
               </div>
 
-              <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px', padding: '16px 24px', background: 'var(--sidebar-bg)', borderBottom: '1px solid #e2e8f0', fontWeight: '700', fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '16px', overflow: 'hidden' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px', padding: '16px 24px', background: 'var(--sidebar-bg)', borderBottom: '1px solid var(--border-subtle)', fontWeight: '700', fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
                   <div>Campaign Name</div>
                   <div>Audience</div>
                   <div>Status</div>
@@ -292,7 +292,7 @@ export default function PlatformAutoOps() {
 
               <div style={{ display: 'flex', gap: '32px' }}>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = currentPlatform.primaryColor} onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border-subtle)'}>
+                  <div style={{ border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '24px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = currentPlatform.primaryColor} onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border-subtle)'}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
                       <div style={{ background: 'var(--bg-dark)', padding: '12px', borderRadius: '12px' }}>
                         <Phone size={24} color="#3b82f6" />
@@ -304,7 +304,7 @@ export default function PlatformAutoOps() {
                     </div>
                   </div>
 
-                  <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = currentPlatform.primaryColor} onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border-subtle)'}>
+                  <div style={{ border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '24px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = currentPlatform.primaryColor} onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border-subtle)'}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
                       <div style={{ background: 'var(--bg-dark)', padding: '12px', borderRadius: '12px' }}>
                         <List size={24} color="#8b5cf6" />
@@ -321,12 +321,12 @@ export default function PlatformAutoOps() {
                 <div style={{ width: '300px', flexShrink: 0, background: 'var(--border-subtle)', padding: '12px', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
                   <div style={{ background: '#ece5dd', height: '500px', borderRadius: '20px', overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
                     <div style={{ background: '#075e54', color: 'white', padding: '16px 12px 12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '32px', height: '32px', background: '#fff', borderRadius: '50%' }}></div>
+                      <div style={{ width: '32px', height: '32px', background: 'var(--bg-card)', borderRadius: '50%' }}></div>
                       <div style={{ fontWeight: '600', fontSize: '0.95rem' }}>Your Business</div>
                     </div>
                     
                     <div style={{ flex: 1, padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div style={{ background: 'var(--bg-card)', padding: '12px', borderRadius: '0 12px 12px 12px', fontSize: '0.9rem', color: '#111', boxShadow: '0 1px 2px rgba(0,0,0,0.1)', maxWidth: '85%' }}>
+                      <div style={{ background: 'var(--bg-card)', padding: '12px', borderRadius: '0 12px 12px 12px', fontSize: '0.9rem', color: 'var(--text-main)', boxShadow: '0 1px 2px rgba(0,0,0,0.1)', maxWidth: '85%' }}>
                         Please choose an option below:
                         <div style={{ height: '1px', background: '#eee', margin: '8px 0' }}></div>
                         <div style={{ color: '#0ea5e9', fontWeight: '600', textAlign: 'center', padding: '4px 0' }}>View Products</div>

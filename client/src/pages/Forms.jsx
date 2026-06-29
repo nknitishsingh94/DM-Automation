@@ -45,7 +45,7 @@ export default function Forms() {
   });
 
   const formTypes = [
-    { icon: <MousePointer size={22} />, title: 'Lead Capture', desc: 'Collect name, email & phone via DM', color: '#7c3aed', bg: 'rgba(124,58,237,0.1)' },
+    { icon: <MousePointer size={22} />, title: 'Lead Capture', desc: 'Collect name, email & phone via DM', color: 'var(--accent-color)', bg: 'rgba(124,58,237,0.1)' },
     { icon: <CheckCircle size={22} />, title: 'Survey & Feedback', desc: 'Ask questions and collect answers', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
     { icon: <BarChart2 size={22} />, title: 'Quiz Flow', desc: 'Interactive quizzes with personalized results', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
     { icon: <FileText size={22} />, title: 'Application Form', desc: 'Multi-step application collection', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)' },
@@ -184,7 +184,7 @@ export default function Forms() {
         </div>
         <div className="forms-stat-card">
           <span className="forms-stat-label">Response rate</span>
-          <span className="forms-stat-value" style={{ color: '#7c3aed' }}>{forms.length > 0 ? '86%' : '0%'}</span>
+          <span className="forms-stat-value" style={{ color: 'var(--accent-color)' }}>{forms.length > 0 ? '86%' : '0%'}</span>
         </div>
       </div>
 
@@ -193,7 +193,7 @@ export default function Forms() {
         <div className="forms-list-card">
           <div className="forms-list-header">
             <h3 style={{ fontSize: '1.2rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Layout size={20} color="#7c3aed" /> Active Form Flows
+              <Layout size={20} color='var(--accent-color)' /> Active Form Flows
             </h3>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '600' }}>Manage existing automations</div>
           </div>
@@ -323,13 +323,13 @@ export default function Forms() {
                           onClick={() => setNewForm({...newForm, type: t.title})}
                           style={{ 
                             padding: '16px', borderRadius: '16px', cursor: 'pointer', border: '2px solid', 
-                            borderColor: newForm.type === t.title ? '#7c3aed' : 'var(--bg-dark)',
+                            borderColor: newForm.type === t.title ? 'var(--accent-color)' : 'var(--bg-dark)',
                             background: newForm.type === t.title ? '#fdfcff' : 'var(--bg-card)',
                             transition: 'all 0.2s'
                           }}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div style={{ color: newForm.type === t.title ? '#7c3aed' : 'var(--text-muted)' }}>{t.icon}</div>
+                            <div style={{ color: newForm.type === t.title ? 'var(--accent-color)' : 'var(--text-muted)' }}>{t.icon}</div>
                             <div style={{ fontSize: '0.9rem', fontWeight: '800' }}>{t.title}</div>
                           </div>
                         </div>
@@ -343,7 +343,7 @@ export default function Forms() {
                     <h4 style={{ fontSize: '1rem', fontWeight: '800', color: 'var(--text-main)' }}>Sequences & Fields</h4>
                     <button 
                       className="btn-premium" 
-                      style={{ padding: '8px 16px', fontSize: '0.8rem', background: 'var(--sidebar-bg)', color: '#7c3aed', boxShadow: 'none', border: '1px solid #e2e8f0' }}
+                      style={{ padding: '8px 16px', fontSize: '0.8rem', background: 'var(--sidebar-bg)', color: 'var(--accent-color)', boxShadow: 'none', border: '1px solid var(--border-subtle)' }}
                       onClick={() => {
                         const updatedFields = [...newForm.steps[0].fields, { label: 'New Question', type: 'text', placeholder: '', required: true }];
                         setNewForm({
@@ -359,7 +359,7 @@ export default function Forms() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {newForm.steps[0].fields.map((field, idx) => (
                       <div key={idx} className="field-editor-card">
-                        <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#7c3aed', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800', flexShrink: 0 }}>
+                        <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'var(--accent-color)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '800', flexShrink: 0 }}>
                           {idx + 1}
                         </div>
                         <div style={{ flex: 1 }}>
@@ -388,7 +388,7 @@ export default function Forms() {
                               steps: [{ ...newForm.steps[0], fields: updatedFields }]
                             });
                           }}
-                          style={{ padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem', outline: 'none' }}
+                          style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontSize: '0.8rem', outline: 'none' }}
                         >
                           <option value="text">Short Text</option>
                           <option value="textarea">Long Text</option>
@@ -425,7 +425,7 @@ export default function Forms() {
             </div>
 
             {/* Footer Actions */}
-            <div style={{ padding: '30px 40px', borderTop: '1px solid #f1f5f9', background: 'var(--bg-card)', display: 'flex', gap: '16px' }}>
+            <div style={{ padding: '30px 40px', borderTop: '1px solid var(--border-subtle)', background: 'var(--bg-card)', display: 'flex', gap: '16px' }}>
               {wizardStep === 1 ? (
                 <>
                   <button className="btn-secondary" style={{ flex: 1, padding: '14px', borderRadius: '16px' }} onClick={() => setIsModalOpen(false)}>Cancel</button>
