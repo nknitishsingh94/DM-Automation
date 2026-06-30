@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ShieldCheck, Instagram, Facebook, MessageSquare, Key, MapPin, Save, Info, 
   CheckCircle, XCircle, Rocket, Trash2, AlertTriangle, Send, Twitter, 
-  Youtube, Linkedin, ChevronDown, ChevronRight, Plus, X, Globe, Sliders, Activity, Sparkles
+  Youtube, Linkedin, ChevronDown, ChevronRight, Plus, X, Globe, Sliders, Activity, Sparkles, RefreshCw
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
@@ -751,7 +751,10 @@ export default function Connections() {
                     <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Instagram connected`, 'info')} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <RefreshCw size={14} color="#6b7280" style={{ cursor: 'pointer' }} onClick={() => triggerConnect('instagram')} title="Refresh Permission" />
+                  <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Instagram connected`, 'info')} />
+                </div>
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -791,7 +794,10 @@ export default function Connections() {
                     <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Facebook connected`, 'info')} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <RefreshCw size={14} color="#6b7280" style={{ cursor: 'pointer' }} onClick={() => triggerConnect('facebook')} title="Refresh Permission" />
+                  <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Facebook connected`, 'info')} />
+                </div>
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -831,7 +837,10 @@ export default function Connections() {
                     <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`YouTube: Channel ID ${settings.youtubeChannelId || 'N/A'}`, 'info')} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <RefreshCw size={14} color="#6b7280" style={{ cursor: 'pointer' }} onClick={() => triggerConnect('youtube')} title="Refresh Permission" />
+                  <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`YouTube: Channel ID ${settings.youtubeChannelId || 'N/A'}`, 'info')} />
+                </div>
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -881,7 +890,10 @@ export default function Connections() {
                     <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`LinkedIn connected`, 'info')} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <RefreshCw size={14} color="#6b7280" style={{ cursor: 'pointer' }} onClick={() => triggerConnect('linkedin')} title="Refresh Permission" />
+                  <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`LinkedIn connected`, 'info')} />
+                </div>
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -924,7 +936,10 @@ export default function Connections() {
                     <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Twitter connected`, 'info')} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <RefreshCw size={14} color="#6b7280" style={{ cursor: 'pointer' }} onClick={() => triggerConnect('twitter')} title="Refresh Permission" />
+                  <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Twitter connected`, 'info')} />
+                </div>
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -964,7 +979,10 @@ export default function Connections() {
                     <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Google Business connected`, 'info')} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <RefreshCw size={14} color="#6b7280" style={{ cursor: 'pointer' }} onClick={() => triggerConnect('google-business')} title="Refresh Permission" />
+                  <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Google Business connected`, 'info')} />
+                </div>
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -1006,7 +1024,10 @@ export default function Connections() {
                     <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Pinterest connected`, 'info')} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <RefreshCw size={14} color="#6b7280" style={{ cursor: 'pointer' }} onClick={() => triggerConnect('pinterest')} title="Refresh Permission" />
+                  <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Pinterest connected`, 'info')} />
+                </div>
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -1046,7 +1067,10 @@ export default function Connections() {
                     <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                   </div>
                 </div>
-                <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Threads connected`, 'info')} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <RefreshCw size={14} color="#6b7280" style={{ cursor: 'pointer' }} onClick={() => triggerConnect('threads')} title="Refresh Permission" />
+                  <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`Threads connected`, 'info')} />
+                </div>
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -1093,7 +1117,10 @@ export default function Connections() {
                         <span style={{ display: 'inline-block', background: '#10b981', color: 'white', fontSize: '0.65rem', fontWeight: '600', padding: '2px 6px', borderRadius: '4px', marginTop: '4px' }}>connected</span>
                       </div>
                     </div>
-                    <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`WhatsApp connected`, 'info')} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <RefreshCw size={14} color="#6b7280" style={{ cursor: 'pointer' }} onClick={() => triggerConnect('whatsapp')} title="Refresh Permission" />
+                  <Info size={16} color="#9ca3af" style={{ cursor: 'pointer' }} onClick={() => notify(`WhatsApp connected`, 'info')} />
+                </div>
                   </div>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
