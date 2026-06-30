@@ -312,7 +312,7 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
           const childParams = { access_token: accessToken, is_carousel_item: true };
           if (isVideo) { childParams.media_type = 'VIDEO'; childParams.video_url = itemUrl; }
           else { childParams.image_url = itemUrl; }
-          const childRes = await axios.post(`https://graph.facebook.com/v19.0/${igId}/media`, null, { params: childParams, timeout: 6000 });
+          const childRes = await axios.post(`https://graph.facebook.com/v19.0/${igId}/media`, null, { params: childParams, timeout: 60000 });
           return childRes.data.id;
         });
         const childrenIds = await Promise.all(childPromises);
@@ -320,7 +320,7 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
         // Note: For carousels on Vercel, we might need a more complex state, 
         // but for now let's hope children process fast or use the same logic
         const carouselParams = { access_token: accessToken, media_type: 'CAROUSEL', children: childrenIds.join(','), caption };
-        const carouselRes = await axios.post(`https://graph.facebook.com/v19.0/${igId}/media`, null, { params: carouselParams, timeout: 6000 });
+        const carouselRes = await axios.post(`https://graph.facebook.com/v19.0/${igId}/media`, null, { params: carouselParams, timeout: 60000 });
         finalCreationId = carouselRes.data.id;
       } else {
         let containerUrl = `https://graph.facebook.com/v19.0/${igId}/media?access_token=${accessToken}`;
@@ -332,7 +332,7 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
           else params.image_url = mediaUrl;
         } else { params.image_url = mediaUrl; }
 
-        const containerRes = await axios.post(containerUrl, params, { timeout: 6000 });
+        const containerRes = await axios.post(containerUrl, params, { timeout: 60000 });
         finalCreationId = containerRes.data.id;
       }
     }
