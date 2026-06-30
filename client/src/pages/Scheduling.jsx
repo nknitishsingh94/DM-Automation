@@ -1131,7 +1131,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
         }));
         
         setCreatedPost(finalPosts[0]);
-        setShowSuccess(true);
+        setPreviews([]);
         notify("Posts scheduled successfully!", "success");
         
         // Trigger background worker immediately so it posts without delay
@@ -3003,48 +3003,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
     </div>
 
         
-      {/* --- SUCCESS MODAL --- */}
-      {showSuccess && createdPost && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(12px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3000, padding: '16px'
-        }}>
-          <div style={{
-            background: 'var(--bg-card)', borderRadius: '28px', width: '95%', maxWidth: '400px',
-            maxHeight: '90vh', overflowY: 'auto',
-            padding: '32px 24px', textAlign: 'center', boxShadow: '0 40px 80px rgba(0,0,0,0.2)',
-            animation: 'scaleIn 0.3s ease-out'
-          }}>
-            <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#eff6ff', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-              <Check size={32} />
-            </div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1e1b4b', marginBottom: '8px' }}>Post Scheduled!</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500', marginBottom: '24px' }}>
-              Your content is ready to go live on Instagram. Now, set up your marketing automation!
-            </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <button
-                onClick={() => { setShowSuccess(false); setPreviews([]); }}
-                style={{ width: '100%', padding: '14px', borderRadius: '14px', background: '#ea4335', color: 'white', border: 'none', fontWeight: '800', cursor: 'pointer', boxShadow: '0 4px 12px rgba(234, 67, 53, 0.2)' }}
-              >
-                Close
-              </button>
-
-              <button
-                onClick={() => { setShowSuccess(false); setShowAdvanced(true); }}
-                style={{
-                  width: '100%', padding: '14px', borderRadius: '14px', background: '#eff6ff',
-                  color: '#3b82f6', border: 'none', fontWeight: '800', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-                }}
-              >
-                <Zap size={16} /> Advanced Automation
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* --- ADVANCED AUTOMATION EDITOR DRAWER/MODAL --- */}
       {showAdvanced && createdPost && (
