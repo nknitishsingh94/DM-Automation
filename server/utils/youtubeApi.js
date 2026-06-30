@@ -137,7 +137,7 @@ export async function publishYouTubeVideo(userId, postData, settings) {
           await youtube.thumbnails.set({
             videoId: videoId,
             media: {
-              body: thumbStream,
+              mimeType: "application/octet-stream", body: thumbStream,
             },
           });
           console.log(`✅ [YouTube API] Thumbnail uploaded successfully for video ID: ${videoId}`);
