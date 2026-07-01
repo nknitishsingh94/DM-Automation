@@ -19,7 +19,6 @@ import { useAuth } from '../context/AuthContext';
 import { Crown } from 'lucide-react';
 import { getTemplateData } from '../utils/flowTemplates';
 
-// --- Custom Node Components ---
 
 const MessageNode = ({ data }) => (
   <div style={{ position: 'relative' }}>
@@ -193,11 +192,9 @@ const nodeTypes = {
   ai: AiNode,
 };
 
-// --- Optimized Input Component to prevent lag/word-loss ---
 const StableInput = ({ value, onChange, placeholder, isTextArea = false }) => {
   const [localValue, setLocalValue] = useState(value);
 
-  // Sync if external value changes (selection change)
   useEffect(() => {
     setLocalValue(value);
   }, [value]);
@@ -233,7 +230,6 @@ const StableInput = ({ value, onChange, placeholder, isTextArea = false }) => {
   );
 };
 
-// --- Main Flow Builder Component ---
 
 export default function FlowBuilder() {
   const { id } = useParams();
@@ -311,7 +307,6 @@ export default function FlowBuilder() {
     const url = id === 'new' ? `${API_BASE_URL}/api/flows` : `${API_BASE_URL}/api/flows/${id}`;
 
     try {
-      // Ensure we have the latest trigger keyword from the nodes array
       const triggerNode = nodes.find(n => n.type === 'trigger');
       const triggerKW = triggerNode?.data?.keyword || '';
 
@@ -361,7 +356,6 @@ export default function FlowBuilder() {
   const updateNodeData = (field, value) => {
     if (!selectedNode) return;
     
-    // Update the nodes array - this is the source of truth for React Flow
     setNodes(nds => nds.map(node => {
       if (node.id === selectedNode.id) {
         return { ...node, data: { ...node.data, [field]: value } };
@@ -369,7 +363,6 @@ export default function FlowBuilder() {
       return node;
     }));
 
-    // Also update the selectedNode snapshot so the input field continues to reflect the change
     setSelectedNode(prev => ({
       ...prev,
       data: { ...prev.data, [field]: value }

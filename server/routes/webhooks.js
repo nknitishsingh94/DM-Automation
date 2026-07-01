@@ -9,14 +9,12 @@ import User from '../models/User.js';
 import { getSharedUserIdsSync, io } from '../index.js';
 import { checkFollowerStatus, sendMessageToInstagram, sendPublicComment } from '../utils/metaApi.js';
 
-// Webhook Event Deduplication Cache
 const webhookCache = new Map();
 
 function isDuplicateEvent(eventId) {
   if (!eventId) return false;
   const now = Date.now();
   
-  // Clean up old entries (older than 2 minutes)
   for (const [key, time] of webhookCache.entries()) {
     if (now - time > 120000) {
       webhookCache.delete(key);
@@ -27,7 +25,6 @@ function isDuplicateEvent(eventId) {
     return true; // It's a duplicate!
   }
 
-  // Mark as processed
   webhookCache.set(eventId, now);
   return false;
 }
@@ -47,11 +44,7 @@ router.get('/webhook', (req, res) => {
   }
 });
 
-// ==========================================
-// TWITTER WEBHOOK ROUTES
-// ==========================================
 
-// Twitter CRC (Challenge-Response Check)
 router.get('/webhook/twitter', (req, res) => {
   const crcToken = req.query.crc_token;
   if (crcToken) {
@@ -67,21 +60,17 @@ router.get('/webhook/twitter', (req, res) => {
   }
 });
 
-// Twitter Event Webhook Listener
 router.post('/webhook/twitter', async (req, res) => {
   const body = req.body;
   
   console.log('🐦 [TWITTER WEBHOOK] Received Event!');
   console.log('📦 Payload Keys:', Object.keys(body));
   
-  // Acknowledge receipt to Twitter immediately
   res.status(200).send('EVENT_RECEIVED');
 
   try {
-    // Basic detection of event types for logging
     if (body.direct_message_events) {
       console.log(`💬 Received ${body.direct_message_events.length} Direct Message(s)`);
-      // Here you can integrate with processAutoReply or standard messaging later
     }
     
     if (body.tweet_create_events) {
@@ -93,9 +82,6 @@ router.post('/webhook/twitter', async (req, res) => {
   }
 });
 
-// ==========================================
-// META WEBHOOK ROUTE (Instagram / Facebook)
-// ==========================================
 
 router.post('/webhook', async (req, res) => {
   const body = req.body;
@@ -103,7 +89,6 @@ router.post('/webhook', async (req, res) => {
   console.log('🚀 [SUPER LOG] Webhook Received! Object:', body.object);
   console.log('📦 Full Payload:', JSON.stringify(body, null, 2));
 
-  // --- WEBHOOK HIT DETECTOR ---
   console.log('---------------------------------------------------------');
   console.log('📡 [WEBHOOK HIT] Incoming Request from Meta!');
   console.log('📅 Time:', new Date().toISOString());
@@ -120,10 +105,8 @@ router.post('/webhook', async (req, res) => {
       const pageId = entry.id;
       console.log(`🏠 Entry ID (Page/Account): ${pageId}`);
 
-      // 1. Handle Messaging (DMs)
       const messagingArray = entry.messaging || [];
       for (const messaging of messagingArray) {
-        // IGNORE ECHOS (Messages sent by the page/app itself)
         if (messaging.message?.is_echo) {
           console.log('⏭️ Skipping echo message (sent by us).');
           continue;
@@ -132,13 +115,11 @@ router.post('/webhook', async (req, res) => {
         const senderId = messaging.sender.id;
         const text = messaging.message?.text;
 
-        // EXTRA SAFETY: If the sender is the page itself, skip it
         if (senderId === pageId) {
           console.log('⏭️ Skipping message from our own Page ID.');
           continue;
         }
 
-        // DEDUPLICATION: Skip duplicate message IDs
         const messageId = messaging.message?.mid;
         if (messageId && isDuplicateEvent(messageId)) {
           console.log(`⏭️ Skipping duplicate message event: ${messageId}`);
@@ -147,7 +128,6 @@ router.post('/webhook', async (req, res) => {
 
         console.log(`📩 Messaging detected from ${senderId}`);
 
-        // 1.0 Intercept Quick Replies (Some Instagram regions/apps convert buttons to quick_replies)
         if (messaging.message?.quick_reply?.payload) {
           console.log(`⚡ QUICK REPLY INTERCEPTED: Converting to postback -> ${messaging.message.quick_reply.payload}`);
           messaging.postback = {
@@ -158,7 +138,6 @@ router.post('/webhook', async (req, res) => {
         }
 
         if (messaging.message?.text || messaging.message?.story || messaging.message?.reply_to?.story || messaging.message?.attachments) {
-          // Meta sends story mentions either in 'story' object or as an attachment of type 'story_mention'
           const hasStoryMentionAttachment = messaging.message?.attachments?.some(a => a.type === 'story_mention');
           const isStoryMention = !!(messaging.message?.story || hasStoryMentionAttachment);
           const isStoryReply = !!messaging.message?.reply_to?.story;
@@ -193,11 +172,9 @@ router.post('/webhook', async (req, res) => {
           const targetWorkspaceId = userSettings?.workspaceId;
           if (targetUserId) {
             console.log(`⚡ [ID MATCH]: Processing message for User ${targetUserId} in workspace ${targetWorkspaceId}`);
-            // 1. Send Reply FIRST (Nitro Speed)
             const replyPromise = processAutoReply(targetUserId.toString(), platform, senderId, messageText, isStoryEvent ? "story_mention" : "dm", null, null, null, targetWorkspaceId)
               .catch(err => console.error("🔥 Nitro Reply error:", err));
 
-            // 2. Log in background
             const saveAndEmitPromise = (async () => {
               try {
                 const sharedUids = getSharedUserIdsSync(targetUserId, targetWorkspaceId);
@@ -219,14 +196,11 @@ router.post('/webhook', async (req, res) => {
               }
             })();
 
-            // We still await the reply to ensure Vercel doesn't kill the function before the DM is fired
             await replyPromise;
-            // Background logging doesn't need to block the response
             saveAndEmitPromise.catch(e => console.error("Logging background fail:", e));
           }
         }
 
-        // 1.2 Handle Postbacks (Button Clicks)
         if (messaging.postback) {
           const postbackKey = `postback_${senderId}_${messaging.timestamp}`;
           if (isDuplicateEvent(postbackKey)) {
@@ -239,7 +213,6 @@ router.post('/webhook', async (req, res) => {
 
           const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
 
-          // A. Opening Message Button Click
           if (payload.startsWith('CAMP_')) {
             const campaignId = payload.split('_')[1];
             try {
@@ -248,7 +221,6 @@ router.post('/webhook', async (req, res) => {
               if (match && match.status === 'Active') {
                 console.log(`🚀 TRIGGERING MAIN RESPONSE for Campaign: ${match.name}`);
                 
-                // Clear the pending state so future triggers work properly!
                 await Contact.findOneAndUpdate({ chatId: senderId, userId: match.userId }, { $unset: { pendingCampaignId: 1 } });
                 
                 const userSettings = await Settings.findOne({ userId: match.userId });
@@ -259,7 +231,6 @@ router.post('/webhook', async (req, res) => {
                    console.log(`🤖 Postback has AI response enabled. Generating dynamic response...`);
                    try {
                      const { generateAIResponse } = await import('../utils/aiHandler.js');
-                     // Note: We use a descriptive prompt for the AI since there's no user text for a button click
                      const generated = await generateAIResponse(match.userId, `User just clicked the button to get the link for campaign "${match.trigger}". Give a very warm, short, friendly one-sentence reply handing them the link.`);
                      if (generated) {
                        if (finalResponse === "[AI Agent will generate a custom neural reply here]" || !finalResponse.trim()) {
@@ -273,7 +244,6 @@ router.post('/webhook', async (req, res) => {
                      finalResponse = "Here is exactly what you requested! 👇";
                    }
                 } else if (finalResponse === "[AI Agent will generate a custom neural reply here]") {
-                   // Fallback in case AI toggle was off but placeholder was saved
                    finalResponse = "Here is your link! 👇";
                 }
 
@@ -285,7 +255,6 @@ router.post('/webhook', async (req, res) => {
             }
           }
 
-          // B. "I've Followed" Button Click
           if (payload.startsWith('CHECK_FOLLOW_')) {
             const campaignId = payload.split('_')[2];
             try {
@@ -312,10 +281,8 @@ router.post('/webhook', async (req, res) => {
                 if (isFollowing) {
                   console.log(`✅ VERIFIED! Sending "Send me the link" button for ${match.name}`);
 
-                  // 1. Clear pending status
                   await Contact.findOneAndUpdate({ chatId: senderId, userId: match.userId }, { $unset: { pendingCampaignId: 1 } });
 
-                  // 2. Send the "Send me the link" intermediate button
                   const followSuccessText = match.openingMessageText || "Verified! Awesome. Click below to receive your link instantly. 🚀";
                   const sendLinkButtonText = match.openingMessageButton || "Send me the link! 🔗";
                   const sendLinkPayload = `SEND_LINK_${match._id}`;
@@ -331,7 +298,6 @@ router.post('/webhook', async (req, res) => {
             }
           }
 
-          // C. "Send me the link" Postback (Final Delivery)
           if (payload.startsWith('SEND_LINK_')) {
             const campaignId = payload.split('_')[2];
             try {
@@ -339,7 +305,6 @@ router.post('/webhook', async (req, res) => {
               if (match && match.status === 'Active') {
                 console.log(`🚀 FINAL DELIVERY: Delivering content for campaign ${match.name}`);
                 
-                // Clear the pending state so future triggers work properly!
                 await Contact.findOneAndUpdate({ chatId: senderId, userId: match.userId }, { $unset: { pendingCampaignId: 1 } });
                 
                 const userSettings = await Settings.findOne({ userId: match.userId });
@@ -379,13 +344,11 @@ router.post('/webhook', async (req, res) => {
         }
       }
 
-      // 2. Handle Comments
       const changes = entry.changes || [];
       if (changes.length === 0 && body.object === 'instagram') {
         console.warn('💡 CONNECTION DOCTOR: Received a webhook but "changes" (Comments) is empty.');
       }
       
-      // DEEP DEBUG LOGGING FOR FACEBOOK COMMENTS
       if (body.object === 'page' && changes.length > 0) {
         try {
           const debugMsg = new Message({
@@ -409,13 +372,11 @@ router.post('/webhook', async (req, res) => {
           console.log('💎 [DEEP DATA] Interaction Detected! Field:', change.field);
           console.log('📦 Value:', JSON.stringify(val, null, 2));
 
-          // CRITICAL: For Facebook 'feed' webhooks, only process actual comments, not posts/likes/reactions/shares
           if (change.field === 'feed' && val.item && val.item !== 'comment') {
             console.log(`🔕 Skipping non-comment feed event. item="${val.item}", verb="${val.verb || 'N/A'}"`);
             continue;
           }
 
-          // Prevent duplicate triggers from edit/delete verbs
           if (change.field === 'feed' && val.verb && val.verb !== 'add') {
             console.log(`🔕 Skipping non-add feed event. verb="${val.verb}"`);
             continue;
@@ -427,10 +388,8 @@ router.post('/webhook', async (req, res) => {
           const mediaId = val.media?.id || val.post_id || val.video_id || val.photo_id;
           console.log(`[webhook DEBUG] Extracted comment values: text="${text}", senderId="${senderId}", commentId="${commentId}", mediaId="${mediaId}", item="${val.item || 'N/A'}" (from val.media?.id="${val.media?.id}", val.post_id="${val.post_id}", val.video_id="${val.video_id}")`);
 
-          // Handle all interaction types (Comment, Post, Video, etc.)
           console.log(`🎯 [REEL DEBUG] Processing interaction from ${change.field}. Item: ${val.item || 'N/A'}`);
 
-          // CRITICAL: Ensure we are not replying to ourselves
           if (senderId === pageId) {
             console.log('⏭️ Skipping change from ourselves.');
             continue;
@@ -446,7 +405,6 @@ router.post('/webhook', async (req, res) => {
 
             const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
 
-            // Identity Search
             let allMatchingSettings = await Settings.find({
               $or: [
                 { instagramPageId: pageId },
@@ -489,7 +447,6 @@ router.post('/webhook', async (req, res) => {
                   const contact = await Contact.findOne({ userId: { $in: sharedUids }, chatId: senderId, workspaceId: targetWorkspaceId });
                   const contactUserId = contact ? contact.userId : targetUserId;
 
-                  // Deduplication check via database to handle Vercel Serverless race conditions
                   await new Promise(r => setTimeout(r, Math.random() * 1000));
                   const recentDuplicate = await Message.findOne({
                     chatId: senderId,
@@ -524,7 +481,6 @@ router.post('/webhook', async (req, res) => {
                 }
               })();
 
-              // CRITICAL (Vercel/Serverless): Must await both promises
               await Promise.all([saveAndEmitPromise, replyPromise]);
             }
           } else {
@@ -532,7 +488,6 @@ router.post('/webhook', async (req, res) => {
           }
         }
 
-        // 3. Handle Relationships (Follows)
         if (change.field === 'relationships') {
           const val = change.value;
           console.log(`👤 RELATIONSHIP CHANGE: ${val.action} from ${val.from_id || val.id}`);
@@ -541,7 +496,6 @@ router.post('/webhook', async (req, res) => {
             const senderId = val.from_id || val.id;
             const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
 
-            // Find if this user has a pending automation under any workspace
             const contacts = await Contact.find({ chatId: senderId, pendingCampaignId: { $ne: null } });
 
             for (const contact of contacts) {
@@ -552,7 +506,6 @@ router.post('/webhook', async (req, res) => {
               const campaignId = contact.pendingCampaignId;
               const targetWorkspaceId = contact.workspaceId;
 
-              // Clear pending status so it doesn't repeat
               await Contact.findByIdAndUpdate(contact._id || contact.id, { $unset: { pendingCampaignId: 1 } });
 
               const match = await Campaign.findById(campaignId);
@@ -575,7 +528,6 @@ router.post('/webhook', async (req, res) => {
     }
     return res.status(200).send('EVENT_RECEIVED');
 
-    // WhatsApp webhook handling
   } else if (body.object === 'whatsapp_business_account') {
     for (const entry of body.entry) {
       const changes = entry.changes || [];
@@ -592,7 +544,6 @@ router.post('/webhook', async (req, res) => {
             if (text) {
               console.log(`📬 WhatsApp Message from ${senderPhone}: ${text}`);
 
-              // Find user by WhatsApp Phone Number ID
               const userSettings = await Settings.findOne({ whatsappPhoneNumberId: phoneNumberId });
               let targetUserId;
               let targetWorkspaceId = null;
@@ -633,7 +584,6 @@ router.post('/webhook', async (req, res) => {
                   console.error("⚠️ Failed to save incoming WhatsApp message to DB:", dbErr.message);
                 }
 
-                // Auto-reply
                 await processAutoReply(targetUserId.toString(), 'whatsapp', senderPhone, text, 'dm', null, null, null, targetWorkspaceId);
               }
             }
@@ -643,7 +593,6 @@ router.post('/webhook', async (req, res) => {
     }
     res.status(200).send('EVENT_RECEIVED');
   } else if (body.object === 'threads') {
-    // Threads Webhook Handling
     if (body.entry && Array.isArray(body.entry)) {
       for (const entry of body.entry) {
         const pageId = entry.id; // threadsPageId
@@ -658,10 +607,6 @@ router.post('/webhook', async (req, res) => {
             
             if (replyText && senderId) {
               console.log(`🧵 Threads Reply from ${senderId}: ${replyText}`);
-              // Note: You would map pageId to a User Settings here, 
-              // similar to how it's done for Instagram, and trigger processAutoReply.
-              // We'll process this similarly by looking up connectedPageName
-              // For now, logging is sufficient as we need to update processAutoReply to handle threads API properly
             }
           }
         }

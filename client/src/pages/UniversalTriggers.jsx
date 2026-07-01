@@ -17,7 +17,6 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import { API_BASE_URL } from '../config';
 
-// Custom Nodes Matching the Screenshot
 const BaseNode = ({ id, icon: Icon, title, subtitle, color, bgColor, borderColor, data, selected }) => {
   const { setNodes, setEdges } = useReactFlow();
 
@@ -126,11 +125,9 @@ const initialNodes = [
   { id: '2', type: 'messageNode', position: { x: 300, y: 160 }, data: { stepNumber: 2 } },
   { id: '3', type: 'waitNode', position: { x: 300, y: 270 }, data: { stepNumber: 3 } },
   
-  // Branching
   { id: '4a', type: 'questionNode', position: { x: 140, y: 380 }, data: { stepNumber: 4 } },
   { id: '4b', type: 'messageNode', position: { x: 460, y: 380 }, data: { stepNumber: 5, subtitle: "Just checking in! Let me know if you need any help." } },
   
-  // Converging back
   { id: '5', type: 'saveNode', position: { x: 300, y: 500 }, data: { stepNumber: 6 } },
   { id: '6', type: 'notifyNode', position: { x: 300, y: 610 }, data: { stepNumber: 7 } },
   { id: '7', type: 'endNode', position: { x: 300, y: 720 }, data: { stepNumber: 8 } },
@@ -140,11 +137,9 @@ const initialEdges = [
   { id: 'e1-2', source: '1', target: '2', animated: true, style: { stroke: 'var(--text-muted)', strokeWidth: 1.5 } },
   { id: 'e2-3', source: '2', target: '3', animated: true, style: { stroke: 'var(--text-muted)', strokeWidth: 1.5 } },
   
-  // Branch edges
   { id: 'e3-4a', source: '3', target: '4a', label: 'User Reply', labelStyle: { fill: '#10b981', fontWeight: 700, fontSize: 10 }, style: { stroke: '#10b981', strokeWidth: 1.5 }, labelBgStyle: { fill: '#ecfdf5', rx: 4, ry: 4 }, labelBgPadding: [4, 2] },
   { id: 'e3-4b', source: '3', target: '4b', label: 'No Reply', labelStyle: { fill: '#ef4444', fontWeight: 700, fontSize: 10 }, style: { stroke: '#ef4444', strokeWidth: 1.5 }, labelBgStyle: { fill: '#fef2f2', rx: 4, ry: 4 }, labelBgPadding: [4, 2] },
   
-  // Converge edges
   { id: 'e4a-5', source: '4a', target: '5', style: { stroke: 'var(--text-muted)', strokeWidth: 1.5 }, type: 'smoothstep' },
   { id: 'e4b-5', source: '4b', target: '5', style: { stroke: 'var(--text-muted)', strokeWidth: 1.5 }, type: 'smoothstep' },
   
@@ -217,7 +212,6 @@ export default function UniversalTriggers() {
 
       const token = localStorage.getItem('insta_agent_token');
       
-      // 1. Fetch connected platforms from settings
       const settingsRes = await fetch(`${API_BASE_URL}/api/settings`, {
         headers: { 'Authorization': `Bearer ${token}`, 'x-workspace-id': workspaceId }
       });
@@ -247,7 +241,6 @@ export default function UniversalTriggers() {
         }
       }
 
-      // 2. Fetch stats from campaigns (Universal Triggers)
       const campRes = await fetch(`${API_BASE_URL}/api/campaigns`, {
         headers: { 'Authorization': `Bearer ${token}`, 'x-workspace-id': workspaceId }
       });
@@ -269,7 +262,6 @@ export default function UniversalTriggers() {
           conversions: convs
         });
         
-        // top performing
         const sorted = [...campaigns].sort((a,b) => (b.total_triggers || 0) - (a.total_triggers || 0)).slice(0, 4);
         
         setTopTriggers(sorted.map(c => {

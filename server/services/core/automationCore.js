@@ -11,10 +11,8 @@ import { getSharedUserIdsSync, settingsCache, campaignsCache, io, runFlow } from
 export const processAutoReply = async (userId, platform, chatId, text, source = 'dm', commentId = null, passedToken = null, mediaId = null, workspaceId = null) => {
   const queryUserId = userId;
   
-  // Ensure text is a string to prevent crashing on null/undefined
   text = typeof text === 'string' ? text : '';
   
-  // Resolve settings and contact by workspaceId if provided
   let userSettingsQuery = { userId };
   let contactQuery = { userId, chatId };
   if (workspaceId) {
@@ -23,7 +21,6 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     contactQuery = { userId: { $in: sharedUids }, chatId, workspaceId };
   }
   
-  // Load settings and contact in parallel (Use cache if available)
   let cachedSettings = null;
   if (workspaceId) {
     cachedSettings = settingsCache.get(`${userId.toString()}_${workspaceId.toString()}`);
@@ -46,17 +43,12 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     return { skipped: true, reason: 'muted' };
   }
 
-  // --- DESKTOP FALLBACK: Follower Re-check ---
-  // If the user has a pending campaign (was gated by Follow Check),
-  // we check if they have followed now. This allows desktop users
-  // (who can't see the "I Followed" button) to just follow and send ANY message to continue.
   if (contact && contact.pendingCampaignId && !contact.pendingCampaignId.startsWith('OPENING:')) {
     console.log(`📡 [DESKTOP FALLBACK] User ${chatId} has pending campaign ${contact.pendingCampaignId}. Checking follow status...`);
     
     const pendingId = contact.pendingCampaignId;
     const match = await Campaign.findById(pendingId);
     if (match && match.status === 'Active') {
-      // Honor system for Facebook: We can't verify follow status via API, so we trust them if they clicked the button.
       let isFollowing = platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings);
       
       const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
@@ -109,7 +101,6 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     }
   }
 
-  // --- DESKTOP FALLBACK: Opening Message Re-check ---
   if (contact && contact.pendingCampaignId && contact.pendingCampaignId.startsWith('OPENING:')) {
     const pendingId = contact.pendingCampaignId.replace('OPENING:', '');
     const match = await Campaign.findById(pendingId);
@@ -148,7 +139,6 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     if (incomingText === 'yes' || incomingText.includes("i've followed") || incomingText.includes("ive followed")) {
       const match = await Campaign.findById(contact.pendingCampaignId);
       if (match && match.status === 'Active') {
-        // Honor system for Facebook
         let isFollowing = platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings);
 
         if (isFollowing) {
@@ -167,7 +157,6 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     }
   }
 
-  // 1. Fetch Active Flows and Keyword Campaigns in parallel
   const sharedUids = getSharedUserIdsSync(userId, workspaceId);
   let cachedCampaignsMerged = [];
   let allCached = true;
@@ -209,7 +198,6 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     return { flow: matchedFlow.name };
   }
 
-  // 2. Keyword Campaign Checking
   let activeCampaigns = activeCampaignsRaw.sort((a, b) => {
     const aSpecificPost = a.postId && a.postId !== 'any' && a.postId !== '' && String(a.postId) !== 'undefined' && String(a.postId) !== 'null';
     const bSpecificPost = b.postId && b.postId !== 'any' && b.postId !== '' && String(b.postId) !== 'undefined' && String(b.postId) !== 'null';
@@ -337,7 +325,6 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
 
     if (!commentSent && source === 'comment') {
       console.error(`⚠️ PUBLIC COMMENT FAILED for ${chatId}. Reason:`, commentResult?.error);
-      // We don't abort the DM if the public comment fails, but we should log it
     }
 
     if (sent) {
@@ -365,7 +352,6 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     }
   }
 
-  // 3. AI Studio Fallback (Only if enabled)
   const isAiEnabledForPlatform = platform === 'facebook'
     ? (userSettings?.facebookAutomationEnabled ?? true)
     : (userSettings?.instagramAutomationEnabled ?? true);

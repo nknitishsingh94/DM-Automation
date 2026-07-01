@@ -8,7 +8,6 @@ import Settings from '../models/Settings.js';
  * @returns {Promise<string>} - The AI generated response text
  */
 export const generateAIResponse = async (userId, userMessage, workspaceId = null) => {
-  // Force reload env for robustness
   const dotenvModule = await import('dotenv');
   dotenvModule.default.config();
 
@@ -36,9 +35,7 @@ export const generateAIResponse = async (userId, userMessage, workspaceId = null
     const aiKnowledgeBase = userSettings?.aiKnowledgeBase || "You are an AI helpful assistant.";
     const aiTemperature = userSettings?.aiTemperature !== undefined ? userSettings.aiTemperature : 0.7;
 
-    // --- Provider Selection & Auto-Fallback ---
 
-    // Helper for OpenAI/Groq (Axios)
     const callOpenAI = async (client, modelName) => {
       const response = await client.chat.completions.create({
         model: modelName,
@@ -52,7 +49,6 @@ export const generateAIResponse = async (userId, userMessage, workspaceId = null
       return response.choices[0]?.message?.content;
     };
 
-    // Helper for Gemini Free API (Raw Axios - No SDK needed)
     const callGemini = async () => {
       const versions = ['v1beta', 'v1'];
       const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-1.5-flash', 'gemini-pro'];
@@ -89,16 +85,13 @@ export const generateAIResponse = async (userId, userMessage, workspaceId = null
         const diagUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${geminiKey}`;
         const diagResp = await axios.get(diagUrl);
       } catch (diagErr) {
-        // Silent diagnostic fail
       }
       
       throw new Error(`GEMINI_DEBUG: ${lastError}`);
     };
 
-    // --- Provider Selection (Prioritizing Working Gemini) ---
     let reply = null;
 
-    // 1. Try Gemini (Diagnostic-approved working models)
     if (geminiKey) {
       console.log(`🚀 Trying Gemini for user ${userId}...`);
       try {
@@ -112,7 +105,6 @@ export const generateAIResponse = async (userId, userMessage, workspaceId = null
       }
     }
 
-    // 2. Try Groq (High-speed Llama backup)
     if (groqKey) {
       const groqModels = ['llama-3.3-70b-versatile', 'llama-3.1-70b-versatile', 'llama-3.1-8b-instant'];
       const cleanGroqKey = groqKey.trim();
@@ -139,7 +131,6 @@ export const generateAIResponse = async (userId, userMessage, workspaceId = null
   } catch (err) {
     console.error("❌ AI API Error:", err.message);
     
-    // Fetch fallback message again in catch block
     const finalSettings = await Settings.findOne(settingsQuery);
     return finalSettings?.aiFallbackMessage || "I'm currently busy, please try again in a bit! 😊";
   }

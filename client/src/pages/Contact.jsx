@@ -19,7 +19,6 @@ export default function Contact() {
     setSubmitting(true);
     
     try {
-      // We save this as a lead/form submission in our DB
       const res = await fetch(`${API_BASE_URL}/api/support/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

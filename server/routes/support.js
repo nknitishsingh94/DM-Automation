@@ -39,7 +39,6 @@ Keep replies short, friendly, and helpful. Use emojis occasionally. Reply in the
 
         let reply = null;
 
-        // Try Gemini first
         if (geminiKey) {
             try {
                 const axiosModule = await import('axios');
@@ -74,7 +73,6 @@ Keep replies short, friendly, and helpful. Use emojis occasionally. Reply in the
             }
         }
 
-        // Fallback to Groq
         if (!reply && groqKey) {
             try {
                 const groq = new OpenAI({ apiKey: groqKey.trim(), baseURL: "https://api.groq.com/openai/v1" });
@@ -106,7 +104,6 @@ Keep replies short, friendly, and helpful. Use emojis occasionally. Reply in the
     }
 });
 
-// Submit a contact form / support inquiry
 router.post('/contact', async (req, res) => {
     try {
         const { name, email, subject, message } = req.body;
@@ -115,7 +112,6 @@ router.post('/contact', async (req, res) => {
             return res.status(400).json({ error: 'Name, email and message are required.' });
         }
 
-        // Save as a lead/submission
         const submission = new FormSubmission({
             formId: 'system_support_form',
             data: { name, email, subject, message },

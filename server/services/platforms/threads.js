@@ -18,7 +18,6 @@ export const publishThreadsContent = async (userId, { type, mediaUrl, caption = 
     let threadsPageId = settings.threadsPageId;
     let threadsAccessToken = settings.threadsAccessToken;
 
-    // Fallback if somehow it was stored as JSON in connectedPageName (legacy)
     if (!threadsAccessToken && settings.connectedPageName) {
       try {
         const threadsData = JSON.parse(settings.connectedPageName);
@@ -67,7 +66,6 @@ export const publishThreadsContent = async (userId, { type, mediaUrl, caption = 
       console.log(`Threads Container Created: ${activeContainerId}`);
     }
 
-    // Check status before publishing if it's not a direct text post
     if (mediaType !== 'TEXT') {
       try {
         const statusRes = await axios.get(`https://graph.threads.net/v1.0/${activeContainerId}`, {

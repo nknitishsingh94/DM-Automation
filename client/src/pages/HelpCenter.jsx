@@ -29,7 +29,6 @@ export default function HelpCenter() {
     setIsLoading(true);
 
     try {
-      // Native fetch use kar rahe hain axios ki jagah
       const response = await fetch(`${API_BASE_URL}/api/support/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

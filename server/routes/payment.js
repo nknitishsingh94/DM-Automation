@@ -6,7 +6,6 @@ import verifyToken from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Initialize Razorpay (Optional to prevent crash if environmental variables are missing)
 const razorpay = process.env.RAZORPAY_KEY_ID ? new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -16,7 +15,6 @@ if (!razorpay) {
   console.warn("⚠️ [Payment] Razorpay keys are missing. Payment features will be disabled.");
 }
 
-// 1. Create Order
 router.post('/create-order', verifyToken, async (req, res) => {
   if (!razorpay) {
     return res.status(503).json({ error: "Payment service is currently unavailable. Please configure Razorpay keys." });
@@ -36,7 +34,6 @@ router.post('/create-order', verifyToken, async (req, res) => {
   }
 });
 
-// 2. Verify Payment
 router.post('/verify-payment', verifyToken, async (req, res) => {
   if (!razorpay) {
     return res.status(503).json({ error: "Payment service is currently unavailable. Please configure Razorpay keys." });
@@ -51,7 +48,6 @@ router.post('/verify-payment', verifyToken, async (req, res) => {
       .digest("hex");
 
     if (razorpay_signature === expectedSign) {
-      // Payment Successful - Update User Plan
       await User.findByIdAndUpdate(req.user.userId, { plan: 'pro' });
       
       return res.json({ 

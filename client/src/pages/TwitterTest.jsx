@@ -18,7 +18,6 @@ const TwitterTest = () => {
       addLog('Error: No authentication token found.');
       return;
     }
-    // Redirect to backend OAuth route
     const redirectUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/oauth/twitter?token=${token}`;
     addLog(`Redirecting to: ${redirectUrl}`);
     window.location.assign(redirectUrl);

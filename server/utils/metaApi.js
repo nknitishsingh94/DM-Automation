@@ -157,7 +157,6 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
       } catch (postError) {
         console.error(`❌ SEND FAIL (${platform}):`, JSON.stringify(postError.response?.data || postError.message, null, 2));
         
-        // FALLBACK: If a template message fails (e.g., invalid URL format, title too long), send as plain text
         if (payload.message?.attachment?.type === 'template' && postError.response?.data?.error?.code !== 190) {
           console.log(`⚠️ Template rejected by Meta. Falling back to plain text...`);
           let fallbackText = safeText;

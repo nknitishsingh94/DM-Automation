@@ -11,17 +11,13 @@ import { OAuth2Client } from 'google-auth-library';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// --- GLOBAL STABILITY GUARD ---
-// Prevents // Main server file from crashing on unhandled errors
 process.on('unhandledRejection', (reason, promise) => {
   console.error('🔥 CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason);
-  // Optional: Send alert to monitoring service
 });
 
 process.on('uncaughtException', (err) => {
   console.error('🔥 CRITICAL: Uncaught Exception thrown:', err.message);
   console.error(err.stack);
-  // Keep the process alive if possible, or restart gracefully
 });
 import axios from 'axios';
 import { createServer } from 'http';
@@ -67,14 +63,11 @@ import { supabase, supabaseAdmin, convertObjectIDToUUID } from './utils/supabase
 import Workspace from './models/Workspace.js';
 import { processYouTubeComments } from './utils/youtube-automation.js';
 
-// --- GLOBAL CACHE (Nitro Speed) ---
 const settingsCache = new Map();
 const campaignsCache = new Map();
 
-// Media proxy base URL used across routes and workers
 const SERVER_PUBLIC_URL = process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
 
-// Periodic Cache Refresh (Every 30s)
 async function refreshGlobalCache() {
   try {
     const [allSettings, allCampaigns] = await Promise.all([
@@ -106,12 +99,10 @@ async function refreshGlobalCache() {
 }
 refreshGlobalCache();
 
-// Helper to get all user IDs sharing the same connected page details within a workspace
 function getSharedUserIdsSync(userId, workspaceId = null) {
   if (!userId) return [];
   const uidStr = userId.toString();
   
-  // Find settings in cache
   let settings = null;
   if (workspaceId) {
     settings = settingsCache.get(`${uidStr}_${workspaceId}`);
@@ -150,12 +141,10 @@ function getSharedUserIdsSync(userId, workspaceId = null) {
   return Array.from(uids);
 }
 
-// --- MULTER SETUP (Media Uploads - Using Memory Storage for Serverless compatibility) ---
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit (reduced from 50MB)
   fileFilter: (req, file, cb) => {
-    // SECURITY: Only allow safe file types
     const ALLOWED_MIME = [
       'image/jpeg', 'image/png', 'image/gif', 'image/webp',
       'video/mp4', 'video/quicktime', 'video/webm',
@@ -177,14 +166,12 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: (origin, callback) => {
-      // Allow all origins to resolve connectivity, but in a way that allows credentials
       callback(null, true);
     },
     methods: ["GET", "POST"]
   }
 });
 
-// ── SECURITY: Helmet (HTTP Headers) ──────────────────────────────────────────
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -202,7 +189,6 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
-// ── SECURITY: CORS (Whitelist Only) ──────────────────────────────────────────
 const ALLOWED_ORIGINS = [
   'http://localhost:5173',
   'http://localhost:3000',
@@ -219,13 +205,10 @@ app.use(cors({
 }));
 app.options('*', cors());
 
-// Explicitly handle OPTIONS preflight for all routes
 app.options('*', (req, res) => {
   res.sendStatus(204);
 });
 
-// ── SECURITY: Rate Limiters ───────────────────────────────────────────────────
-// Auth routes (login/signup) — very strict to prevent brute-force
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,   // 15 minutes
   max: 20,                     // max 20 attempts per 15 min
@@ -235,7 +218,6 @@ const authLimiter = rateLimit({
   skip: (req) => req.path.includes('/api/webhook'), // webhooks bypass
 });
 
-// General API — prevent abuse
 const apiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,    // 1 minute
   max: 120,                    // 120 requests per minute per IP
@@ -245,7 +227,6 @@ const apiLimiter = rateLimit({
   skip: (req) => req.path.includes('/api/webhook'),
 });
 
-// Webhook — Meta sends many events; don't rate limit
 const webhookLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,
   max: 500,
@@ -261,7 +242,6 @@ app.use('/api/webhook', webhookLimiter);
 app.use(compression());
 app.use(morgan('combined'));
 
-// ── Request Logging ───────────────────────────────────────────────────────────
 app.use((req, res, next) => {
   if (process.env.NODE_ENV !== 'production') {
     console.log(`📡 [${new Date().toISOString()}] ${req.method} ${req.url} - Origin: ${req.headers.origin || 'No Origin'}`);
@@ -271,12 +251,9 @@ app.use((req, res, next) => {
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// ── SECURITY: Body size limits (prevent payload bombs) ────────────────────────
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
-// ── SECURITY: XSS Input Sanitization ──────────────────────────────────────────
-// Sanitize string fields in req.body to prevent stored XSS attacks
 app.use((req, res, next) => {
   if (req.body && typeof req.body === 'object') {
     const sanitize = (obj) => {
@@ -311,7 +288,6 @@ app.use('/api/analytics', analyticsRoutes);
 app.get('/api/health', (req, res) => res.json({ status: 'ok', domain: req.hostname, timestamp: new Date() }));
 app.get('/api/ping', (req, res) => res.send('pong'));
 
-// (Messaging helpers moved to utils/metaApi.js for cleaner architecture)
 
 const checkFollowerStatus = async (platform, chatId, userId, preloadedSettings = null) => {
   if (platform !== 'instagram') return false; // Force false for Facebook so they get the Follow prompt
@@ -323,23 +299,18 @@ const checkFollowerStatus = async (platform, chatId, userId, preloadedSettings =
       return false; // MUST fail if no token to prevent unwanted leaks
     }
 
-    // Official Instagram Messaging API way to check if a user follows the business.
-    // Requires instagram_manage_messages and instagram_basic permissions.
     const res = await axios.get(`https://graph.facebook.com/v19.0/${chatId}?fields=is_user_follow_business&access_token=${userSettings.instagramAccessToken}`, {
       timeout: 5000 // Fast timeout so it doesn't block frontend load or webhook replies
     });
 
-    // is_user_follow_business is a boolean returned by Meta
     return !!(res.data && res.data.is_user_follow_business === true);
   } catch (err) {
     console.warn("⚠️ Follow check API failed:", err.response?.data || err.message);
-    // FALLBACK: Return false on API error so we strictly enforce the gated follower setting
     return false;
   }
 };
 
 
-// --- AI Studio Studio / Test Playground routes ---
 app.get('/api/chats', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId);
@@ -380,13 +351,11 @@ app.delete('/api/chats', verifyToken, async (req, res) => {
   }
 });
 
-// Dashboard Stats Endpoint
 app.get('/api/stats', verifyToken, async (req, res) => {
   try {
     const userId = req.user.userId;
     const sharedUserIds = getSharedUserIdsSync(userId, req.workspaceId);
 
-    // Fetch real metrics dynamically from the database for this specific user
     const [sentMessages, receivedMessages, campaigns, contactCount] = await Promise.all([
       Message.countDocuments({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId, type: 'sent' }),
       Message.countDocuments({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId, type: 'received' }),
@@ -396,7 +365,6 @@ app.get('/api/stats', verifyToken, async (req, res) => {
 
     const totalDMs = sentMessages + receivedMessages;
 
-    // Fetch current user plan
     const user = await User.findById(userId);
     const plan = user?.plan || 'free';
 
@@ -420,13 +388,10 @@ app.get('/api/stats', verifyToken, async (req, res) => {
   }
 });
 
-// Sync Campaign from Post (Scheduled or Live)
 app.post('/api/campaigns/sync-from-post', verifyToken, async (req, res) => {
   try {
     const { postId, triggerKeyword, autoResponse, requireFollow } = req.body;
     
-    // Find if a campaign already exists for this post
-    // Note: verifyToken sets req.user.userId
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     let campaign = await Campaign.findOne({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId, postId });
 
@@ -457,7 +422,6 @@ app.post('/api/campaigns/sync-from-post', verifyToken, async (req, res) => {
   }
 });
 
-// Campaigns API
 app.get('/api/campaigns', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
@@ -476,7 +440,6 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
   try {
     const { linkUrl } = req.body;
 
-    // Basic URL validation if link is provided
     if (linkUrl) {
       try {
         new URL(linkUrl);
@@ -538,7 +501,6 @@ app.delete('/api/campaigns/:id', verifyToken, async (req, res) => {
   }
 });
 
-// Campaign Logs Endpoint
 app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId);
@@ -553,7 +515,6 @@ app.get('/api/campaigns/:id/logs', verifyToken, async (req, res) => {
   }
 });
 
-// Helper to deserialize all advanced automation settings from mediaUrl JSON metadata
 function parseScheduledPost(post) {
   if (!post) return post;
   const p = post.toObject ? post.toObject() : { ...post };
@@ -598,7 +559,6 @@ function parseScheduledPost(post) {
     }
   }
 
-  // Attach internal tracking attributes for live URL resolutions
   p._instagramMediaId = instagramMediaId;
   p._cachedLiveMediaUrl = cachedLiveMediaUrl;
   p._localImage = localImage;
@@ -607,7 +567,6 @@ function parseScheduledPost(post) {
   return p;
 }
 
-// Pinterest Boards API
 app.get('/api/pinterest/boards', verifyToken, async (req, res) => {
   try {
     const query = { userId: req.user.userId };
@@ -631,13 +590,11 @@ app.get('/api/pinterest/boards', verifyToken, async (req, res) => {
   }
 });
 
-// Scheduling API
 app.get('/api/scheduling', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const posts = await ScheduledPost.find({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId }).sort({ scheduledFor: 1 });
     
-    // Fetch user settings once to use across posts
     const userSettings = await Settings.findOne({ 
       userId: { $in: sharedUserIds },
       workspaceId: req.workspaceId,
@@ -645,7 +602,6 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
     }) || await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
     const accessToken = userSettings?.instagramAccessToken;
 
-    // Handle serialized metadata and fetch live image for Posted status
     const processedPosts = await Promise.all(posts.map(async (post) => {
       const p = parseScheduledPost(post);
       
@@ -654,20 +610,17 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
       const localImage = p._localImage;
       const parsedMeta = p._parsedMeta;
 
-      // Clean up temp properties
       delete p._instagramMediaId;
       delete p._cachedLiveMediaUrl;
       delete p._localImage;
       delete p._parsedMeta;
 
-      // --- EXPECTED FLOW IMPLEMENTATION ---
       if (p.status === 'Posted') {
         if (cachedLiveMediaUrl) {
           p.mediaUrl = cachedLiveMediaUrl;
         } else if (instagramMediaId && accessToken) {
           p.mediaUrl = localImage; // Fallback to local image immediately to avoid blocking load
           
-          // Fire-and-forget background check to cache the live URL for future loads
           const isFb = p.platform === 'facebook';
           const fetchToken = isFb ? (userSettings?.facebookPageAccessToken || userSettings?.facebookAccessToken || accessToken) : accessToken;
           
@@ -691,8 +644,6 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
           p.mediaUrl = localImage; // Fallback
         }
       } else {
-        // Status is "scheduling" / "Scheduled" / "Retrying" / "Failed"
-        // Always return the parsed Supabase public URL (not the raw JSON string)
         p.mediaUrl = localImage && localImage.startsWith('http') ? localImage : (parsedMeta?.mediaUrl || localImage || '');
       }
 
@@ -705,7 +656,6 @@ app.get('/api/scheduling', verifyToken, async (req, res) => {
   }
 });
 
-// --- NEW: Signed URL Endpoint for Large File Uploads (Bypasses Vercel 4.5MB limit) ---
 app.post('/api/storage/sign', verifyToken, async (req, res) => {
   try {
     const { fileName, contentType } = req.body;
@@ -737,9 +687,6 @@ app.get('/api/storage/view', async (req, res) => {
     const filePath = req.query.path;
     if (!filePath) return res.status(400).json({ error: 'path is required' });
 
-    // Redirect to Supabase public URL so Meta's crawlers can use HTTP Range
-    // requests for video downloads (the old buffered proxy returned HTTP 400
-    // to Meta because it didn't support Range headers).
     const { data } = supabaseAdmin.storage.from('media').getPublicUrl(filePath);
     if (data && data.publicUrl) {
       return res.redirect(302, data.publicUrl);
@@ -780,17 +727,14 @@ app.get('/api/storage/proxy-external', async (req, res) => {
 });
 
 app.post('/api/scheduling', verifyToken, (req, res, next) => {
-  // If request is JSON, skip multer and move to handler
   if (req.is('json')) {
     return next();
   }
-  // Otherwise, use multer to process files
   upload.array('files', 10)(req, res, next);
 }, async (req, res) => {
   try {
     let mediaFiles = [];
     
-    // Handle files if uploaded via multipart
     if (req.files && req.files.length > 0) {
       console.log(`🚀 Memory Upload: Uploading ${req.files.length} files in parallel to Supabase Storage...`);
       const { uploadToSupabase } = await import('./utils/supabase.js');
@@ -807,12 +751,9 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
       mediaFiles = await Promise.all(uploadPromises);
     }
 
-    // Determine final media URL and carousel items
-    // If JSON was sent, files will be empty and we use body.mediaUrl / body.carouselItems
     let mediaUrl = mediaFiles.length > 0 ? mediaFiles[0] : req.body.mediaUrl;
     let carouselItems = mediaFiles.length > 0 ? mediaFiles : (req.body.carouselItems || []);
 
-    // Unwrap JSON-stringified media metadata sent by the frontend (e.g. blob URL payloads)
     if (typeof mediaUrl === 'string' && mediaUrl.startsWith('{')) {
       try {
         const nested = JSON.parse(mediaUrl);
@@ -821,12 +762,10 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
       } catch (e) {}
     }
 
-    // Ensure carouselItems is always an array (Multer might send it as a string if it was FormData)
     if (typeof carouselItems === 'string') {
       try { carouselItems = JSON.parse(carouselItems); } catch (e) { carouselItems = [carouselItems]; }
     }
     
-    // Serialize metadata for Supabase/DB compatibility
     const metadata = {
       type: req.body.type || 'image',
       carouselItems: carouselItems,
@@ -869,7 +808,6 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
     
     const finalMediaUrl = JSON.stringify(metadata);
 
-    // Normalize date to ISO string for consistent comparison in background worker
     let scheduledDate = req.body.scheduledFor;
     try {
       if (!scheduledDate || (typeof scheduledDate === 'string' && scheduledDate.trim() === '')) {
@@ -891,7 +829,6 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
       status: req.body.status || 'Scheduled'
     };
 
-    // Clean up fields that might not exist in schema
     delete postData.type;
     delete postData.carouselItems;
     delete postData.buttons;
@@ -925,19 +862,16 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
     try {
       await newPost.save();
 
-      // OPTIMIZATION: Trigger the scheduling worker immediately if scheduled for now/past
       const isDue = !newPost.scheduledFor || new Date(newPost.scheduledFor) <= new Date();
       if (isDue) {
         console.log(`🚀 [Scheduling] Post ${newPost.id || newPost._id} is due immediately. Triggering worker...`);
         
-        // 1. Local in-process execution (async, non-blocking)
         setImmediate(() => {
           runSchedulingWorker().catch(err => {
             console.error("❌ Error in background in-process worker:", err.message);
           });
         });
 
-        // 2. External self-ping to prevent Vercel container freezing (fire and forget)
         const SERVER_PUBLIC_URL = process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
         axios.get(`${SERVER_PUBLIC_URL}/api/cron/publish`).catch(err => {
           console.warn(`⚠️ Background API ping warning:`, err.message);
@@ -960,7 +894,6 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
 
 
 
-// Captions API
 app.get('/api/captions', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
@@ -968,7 +901,6 @@ app.get('/api/captions', verifyToken, async (req, res) => {
     res.json(captions || []);
   } catch (err) {
     console.error('❌ CAPTIONS FETCH ERROR:', err.message, err.code, err.details, err.hint);
-    // Return empty array instead of 500 so UI doesn't crash
     res.json([]);
   }
 });
@@ -984,7 +916,6 @@ app.post('/api/captions', verifyToken, async (req, res) => {
 
     if (!supabase) return res.status(500).json({ error: 'Database not connected' });
 
-    // Enforce duplicate check across all shared user IDs
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const sharedUuids = sharedUserIds.map(uid => convertObjectIDToUUID(uid));
     const cleanContent = (content || '').trim();
@@ -1045,7 +976,6 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId);
 
-    // Use direct Supabase query to avoid userId UUID mapping issues
     const { supabase: _sbPut } = await import('./utils/supabase.js');
     const { data: putRows, error: putFetchErr } = await _sbPut
       .from('scheduled_posts')
@@ -1062,7 +992,6 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
       updateData.autoResponse = updateData.response;
     }
     
-    // 1. Handle Schema-Safe Metadata (Serialize all advanced options into mediaUrl JSON)
     let currentMetadata = {};
     try {
       if (postToUpdate.mediaUrl && postToUpdate.mediaUrl.startsWith('{')) {
@@ -1119,7 +1048,6 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     if (updateData.pinterestAltText !== undefined) currentMetadata.pinterestAltText = updateData.pinterestAltText;
     updateData.mediaUrl = JSON.stringify(currentMetadata);
 
-    // Clean up fields that might not exist in the Supabase schema
     delete updateData.buttons;
     delete updateData.type;
     delete updateData.carouselItems;
@@ -1162,7 +1090,6 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
     
     if (!updatedPost) return res.status(404).json({ error: 'Post not found after update' });
 
-    // 2. Sync to Active Campaign if already posted (Defensive)
     try {
       let igMediaId = null;
       let fbPostId = null;
@@ -1180,7 +1107,6 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
       if (fbPostId) postIds.push(fbPostId);
 
       if (postIds.length > 0) {
-        // Parse current metadata to get automationStatus and advanced options
         let automationStatus = 'Active';
         let reqFollow = false;
         let unfollowedResp = '';
@@ -1244,20 +1170,17 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
       console.error('⚠️ Campaign Sync Error (Non-critical):', campaignErr.message);
     }
     
-    // OPTIMIZATION: Trigger the scheduling worker immediately if scheduled for now/past
     const isDue = (updatedPost.status === 'Scheduled') &&
                   (!updatedPost.scheduledFor || new Date(updatedPost.scheduledFor) <= new Date());
     if (isDue) {
       console.log(`🚀 [Scheduling] Post ${updatedPost.id || updatedPost._id} is updated and due immediately. Triggering worker...`);
       
-      // 1. Local in-process execution (async, non-blocking)
       setImmediate(() => {
         runSchedulingWorker().catch(err => {
           console.error("❌ Error in background in-process worker:", err.message);
         });
       });
 
-      // 2. External self-ping to prevent Vercel container freezing (fire and forget)
       const SERVER_PUBLIC_URL = process.env.API_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 5001}`);
       axios.get(`${SERVER_PUBLIC_URL}/api/cron/publish`).catch(err => {
         console.warn(`⚠️ Background API ping warning:`, err.message);
@@ -1281,10 +1204,8 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
     const postId = req.params.id;
     console.log(`🗑️ DELETE scheduled post requested. ID: ${postId}, User: ${req.user.userId}`);
 
-    // Import supabase directly to avoid userId UUID mapping issues in ScheduledPost.findOne
     const { supabase: _sb } = await import('./utils/supabase.js');
 
-    // Fetch the post by its Supabase UUID directly
     const { data: postRows, error: fetchErr } = await _sb
       .from('scheduled_posts')
       .select('*')
@@ -1296,7 +1217,6 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
     const postToDelete = postRows && postRows.length > 0 ? postRows[0] : null;
 
     if (postToDelete) {
-      // Parse associated media IDs for campaign cleanup
       let igMediaId = null;
       if (postToDelete.mediaUrl && postToDelete.mediaUrl.startsWith('{')) {
         try {
@@ -1320,7 +1240,6 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
         await refreshGlobalCache();
       }
 
-      // Delete directly from Supabase by UUID
       const { error: deleteErr } = await _sb.from('scheduled_posts').delete().eq('id', postId);
       if (deleteErr) throw new Error(deleteErr.message);
 
@@ -1337,14 +1256,12 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
 });
 
 
-// Messages API (Inbox)
 app.get('/api/messages', verifyToken, async (req, res) => {
   const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
   const messages = await Message.find({ userId: { $in: sharedUserIds }, workspaceId: req.workspaceId }).sort({ timestamp: 1 });
   res.json(messages);
 });
 
-// Optimized route for Audience Manager history
 app.get('/api/messages/contact/:chatId', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
@@ -1364,7 +1281,6 @@ app.post('/api/messages', verifyToken, async (req, res) => {
     const { sender, text, type, chatId, platform } = req.body;
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
 
-    // Find if there is an existing contact under any of the shared user IDs to avoid creating duplicate contacts
     const existingContact = await Contact.findOne({ userId: { $in: sharedUserIds }, chatId: chatId || 'default', workspaceId: req.workspaceId });
     const targetUserId = existingContact ? existingContact.userId : req.user.userId;
 
@@ -1381,7 +1297,6 @@ app.post('/api/messages', verifyToken, async (req, res) => {
 
     await newMessage.save();
 
-    // Auto-Upsert Contact Metadata under targetUserId
     try {
       await Contact.findOneAndUpdate(
         { userId: targetUserId, chatId: chatId || 'default', workspaceId: req.workspaceId },
@@ -1402,7 +1317,6 @@ app.post('/api/messages', verifyToken, async (req, res) => {
       io.to(uid).emit('new_message', newMessage);
     });
 
-    // AI Auto-Reply Logic
     if (sender === 'user') {
       processAutoReply(targetUserId, platform || 'instagram', chatId, text, 'dm', null, null, null, req.workspaceId).catch(e => console.error(e));
     }
@@ -1413,7 +1327,6 @@ app.post('/api/messages', verifyToken, async (req, res) => {
   }
 });
 
-// AI Generation Endpoint
 app.post('/api/ai/generate', verifyToken, async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -1426,7 +1339,6 @@ app.post('/api/ai/generate', verifyToken, async (req, res) => {
   }
 });
 
-// YouTube Frontend Resumable Upload URL Generator
 app.post('/api/youtube/get-upload-url', verifyToken, async (req, res) => {
   try {
     const { fileSize, contentType, title, description } = req.body;
@@ -1510,14 +1422,12 @@ app.delete('/api/messages/:id', verifyToken, async (req, res) => {
   }
 });
 
-// --- Workspaces API ---
 app.get('/api/workspaces', verifyToken, async (req, res) => {
   try {
     const { convertObjectIDToUUID } = await import('./utils/supabase.js');
     const userId = convertObjectIDToUUID(req.user.userId);
     const workspaces = await Workspace.find({ userId });
     
-    // Fetch settings for each workspace to get connected account names
     let enrichedWorkspaces = [];
     try {
       enrichedWorkspaces = await Promise.all(workspaces.map(async (ws) => {
@@ -1534,7 +1444,6 @@ app.get('/api/workspaces', verifyToken, async (req, res) => {
             wsJson.isDiscordConnected = settings.isDiscordConnected || !!settings.discordToken;
           }
         } catch (settingsErr) {
-          // If query fails (e.g. column doesn't exist), just log and proceed without settings details
           console.warn(`⚠️ Settings lookup failed for workspace ${ws.id}:`, settingsErr.message);
         }
         return wsJson;
@@ -1561,11 +1470,9 @@ app.post('/api/workspaces', verifyToken, async (req, res) => {
     let finalName = name.trim();
     let counter = 1;
     
-    // Find all workspaces for this user to check for duplicates
     const existingWorkspaces = await Workspace.find({ userId });
     const existingNames = existingWorkspaces.map(w => w.name.toLowerCase());
     
-    // If the name already exists, append a counter suffix (e.g. "facebook 2")
     let tempName = finalName;
     while (existingNames.includes(tempName.toLowerCase())) {
       counter++;
@@ -1577,7 +1484,6 @@ app.post('/api/workspaces', verifyToken, async (req, res) => {
       userId,
       name: finalName
     });
-    // Initialize empty Settings for this new workspace
     const newSettings = new Settings({
       userId,
       workspaceId: newWorkspace.id,
@@ -1588,7 +1494,6 @@ app.post('/api/workspaces', verifyToken, async (req, res) => {
     });
     await newSettings.save();
     
-    // Refresh global cache so it is immediately registered
     await refreshGlobalCache();
     
     res.json(newWorkspace);
@@ -1607,7 +1512,6 @@ app.delete('/api/workspaces/:id', verifyToken, async (req, res) => {
     const userId = convertObjectIDToUUID(req.user.userId);
     const workspaceId = convertObjectIDToUUID(req.params.id);
 
-    // Find the workspace
     const workspace = await Workspace.findOne({ id: workspaceId, userId });
     if (!workspace) {
       return res.status(404).json({ error: 'Workspace not found' });
@@ -1616,10 +1520,8 @@ app.delete('/api/workspaces/:id', verifyToken, async (req, res) => {
       return res.status(400).json({ error: 'Default Workspace cannot be deleted.' });
     }
 
-    // Delete the workspace (ON DELETE CASCADE in Postgres will delete settings/campaigns/etc.)
     await Workspace.findOneAndDelete({ id: workspaceId, userId });
     
-    // Refresh global cache so it is immediately updated
     await refreshGlobalCache();
     
     res.json({ success: true, message: 'Workspace deleted successfully' });
@@ -1628,7 +1530,6 @@ app.delete('/api/workspaces/:id', verifyToken, async (req, res) => {
   }
 });
 
-// Settings API
 app.get('/api/settings', verifyToken, async (req, res) => {
   try {
     console.log(`🔍 SETTINGS LOOKUP: Fetching for userId: ${req.user.userId}, workspaceId: ${req.workspaceId}`);
@@ -1722,7 +1623,6 @@ app.get('/api/facebook/media', verifyToken, async (req, res) => {
       }
     });
 
-    // Map Facebook post fields to match the Instagram media format for the frontend
     const mappedData = (response.data.data || []).map(post => {
       let media_type = 'IMAGE'; // Default
       let media_url = post.full_picture;
@@ -1731,7 +1631,6 @@ app.get('/api/facebook/media', verifyToken, async (req, res) => {
       if (post.attachments && post.attachments.data && post.attachments.data.length > 0) {
         const attachment = post.attachments.data[0];
         
-        // Extract media URL from attachment if available
         if (attachment.media) {
           if (attachment.media.source) {
             media_url = attachment.media.source; // Video source
@@ -1741,14 +1640,11 @@ app.get('/api/facebook/media', verifyToken, async (req, res) => {
           }
         }
 
-        // Check for Video or Reel
         if (attachment.media_type === 'video' || attachment.type === 'video_inline' || attachment.type === 'video_autoplay' || attachment.type === 'reel') {
           media_type = 'VIDEO';
         } 
-        // Check for Carousel / Album
         else if (attachment.subattachments && attachment.subattachments.data && attachment.subattachments.data.length > 1) {
           media_type = 'CAROUSEL_ALBUM';
-          // Use first subattachment's image as thumbnail if available
           const firstSub = attachment.subattachments.data[0];
           if (firstSub.media && firstSub.media.image && firstSub.media.image.src) {
             media_url = firstSub.media.image.src;
@@ -1782,7 +1678,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
   try {
     const platform = req.body._platform; // frontend sends which platform is being saved
     
-    // Explicitly allow only valid settings columns in PostgreSQL to prevent 500 Column Not Found errors
     const allowedKeys = [
       'id', 'userId', 'workspaceId', 'instagramAccessToken', 'instagramPageId', 'businessAccountId', 'connectedInstagramName', 'isAccountConnected', 'instagramAutomationEnabled', 'facebookAccessToken', 'facebookPageId', 'connectedFacebookName', 'isFacebookConnected', 'facebookAutomationEnabled', 'whatsappToken', 'whatsappPhoneNumberId', 'connectedWhatsAppName', 'isWhatsAppConnected', 'whatsappAutomationEnabled', 'telegramToken', 'isTelegramConnected', 'telegramAutomationEnabled', 'twitterApiKey', 'isTwitterConnected', 'twitterAutomationEnabled', 'twitterAccessToken', 'twitterRefreshToken', 'connectedTwitterName', 'connectedTwitterId', 'youtubeApiKey', 'isYouTubeConnected', 'isYoutubeConnected', 'youtubeAutomationEnabled', 'youtubeAccessToken', 'youtubeRefreshToken', 'youtubeChannelId', 'youtubeChannelName', 'linkedinAccessToken', 'isLinkedInConnected', 'linkedinAutomationEnabled', 'connectedLinkedInName', 'isGoogleBusinessConnected', 'connectedGoogleBusinessName', 'googleBusinessAccessToken', 'googleBusinessRefreshToken', 'isThreadsConnected', 'threadsAccessToken', 'threadsPageId', 'connectedThreadsName', 'isPinterestConnected', 'connectedPinterestName', 'pinterestAccessToken', 'pinterestRefreshToken', 'connectedPinterestId', 'pinterestAutomationEnabled', 'lastTestedAt', 'aiFallbackMessage', 'aiName', 'aiTone', 'aiKnowledgeBase', 'aiTemperature', 'connectedPageName', 'whatsappBusinessAccountId'
     ];
@@ -1794,7 +1689,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
       }
     }
 
-    // ── Validate tokens against Meta Graph API ──
     if (platform === 'instagram') {
       if (data.instagramAccessToken) {
         try {
@@ -1814,7 +1708,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
           });
         }
       } else {
-        // Explicitly clear integration from database when disconnecting
         data.isAccountConnected = false;
         data.instagramAccessToken = null;
         data.instagramPageId = null;
@@ -1869,7 +1762,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
       }
     }
 
-    // Safety: remove any unknown columns before saving
     delete data.connectionError;
     delete data._platform;
 
@@ -1904,7 +1796,6 @@ app.post('/api/settings', verifyToken, async (req, res) => {
 });
 
 
-// WhatsApp Meta Embedded Signup API Connection
 app.post('/api/settings/whatsapp/connect-embedded', verifyToken, async (req, res) => {
   try {
     const { accessToken, wabaId: inputWabaId, phoneNumberId: inputPhoneNumberId } = req.body;
@@ -1912,7 +1803,6 @@ app.post('/api/settings/whatsapp/connect-embedded', verifyToken, async (req, res
       return res.status(400).json({ error: 'Missing access token' });
     }
 
-    // 1. Fetch User's Business Accounts first
     let businessRes;
     try {
       businessRes = await axios.get(`https://graph.facebook.com/v20.0/me/businesses?access_token=${accessToken}`);
@@ -1927,7 +1817,6 @@ app.post('/api/settings/whatsapp/connect-embedded', verifyToken, async (req, res
 
     const businessId = businessRes.data.data[0].id;
 
-    // 2. Fetch WABAs owned by this business
     let wabaRes;
     try {
       wabaRes = await axios.get(`https://graph.facebook.com/v20.0/${businessId}/owned_whatsapp_business_accounts?access_token=${accessToken}`);
@@ -1954,7 +1843,6 @@ app.post('/api/settings/whatsapp/connect-embedded', verifyToken, async (req, res
       connectedName = wabaRes.data.data[0].name || 'WhatsApp Business';
     }
 
-    // 3. Fetch the Phone Numbers for this WABA
     let phoneRes;
     try {
       phoneRes = await axios.get(`https://graph.facebook.com/v20.0/${wabaId}/phone_numbers?access_token=${accessToken}`);
@@ -1984,7 +1872,6 @@ app.post('/api/settings/whatsapp/connect-embedded', verifyToken, async (req, res
       connectedName = selectedPhone.display_phone_number;
     }
 
-    // 3. Save to database
     const updateData = {
       isWhatsAppConnected: true,
       whatsappPhoneNumberId: phoneNumberId,
@@ -2012,7 +1899,6 @@ app.post('/api/settings/whatsapp/connect-embedded', verifyToken, async (req, res
   }
 });
 
-// WhatsApp Send Test Message API
 app.post('/api/settings/whatsapp/send-test', verifyToken, async (req, res) => {
   try {
     const { targetPhoneNumber } = req.body;
@@ -2028,7 +1914,6 @@ app.post('/api/settings/whatsapp/send-test', verifyToken, async (req, res) => {
       return res.status(400).json({ error: 'WhatsApp is not connected' });
     }
 
-    // Send the hello_world template
     const payload = {
       messaging_product: "whatsapp",
       to: targetPhoneNumber,
@@ -2089,7 +1974,6 @@ app.get('/api/settings/whatsapp/qr', verifyToken, async (req, res) => {
   }
 });
 
-// --- FLOWS API ---
 app.get('/api/flows', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
@@ -2163,7 +2047,6 @@ app.delete('/api/flows/:id', verifyToken, async (req, res) => {
   }
 });
 
-// Broadcast API: Send Bulk Messages
 app.post('/api/broadcasts', verifyToken, async (req, res) => {
   const { contactIds, text, platform } = req.body;
   if (!contactIds || !text || !Array.isArray(contactIds)) {
@@ -2209,7 +2092,6 @@ app.post('/api/broadcasts', verifyToken, async (req, res) => {
         results.failed++;
       }
 
-      // 0.5s delay to prevent burst
       await new Promise(r => setTimeout(r, 500));
     }
 
@@ -2219,13 +2101,11 @@ app.post('/api/broadcasts', verifyToken, async (req, res) => {
   }
 });
 
-// --- DIAGNOSTIC ENDPOINT: Check Scheduled Posts Status ---
 app.get('/api/debug/scheduled', verifyToken, async (req, res) => {
   try {
     const { supabase: sb } = await import('./utils/supabase.js');
     const now = new Date().toISOString();
 
-    // Fetch ALL posts for this user (any status)
     const { data: allPosts, error: allErr } = await sb
       .from('scheduled_posts')
       .select('id, platform, status, scheduledFor, lastError, mediaUrl, caption')
@@ -2233,7 +2113,6 @@ app.get('/api/debug/scheduled', verifyToken, async (req, res) => {
       .order('scheduledFor', { ascending: false })
       .limit(10);
 
-    // Fetch DUE posts (should be picked up by worker)
     const { data: duePosts, error: dueErr } = await sb
       .from('scheduled_posts')
       .select('id, platform, status, scheduledFor, lastError')
@@ -2260,7 +2139,6 @@ app.get('/api/debug/scheduled', verifyToken, async (req, res) => {
   }
 });
 
-// --- DEBUG ENDPOINT: Check saved tokens & test Meta API ---
 app.get('/api/debug/settings', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.userId });
@@ -2275,7 +2153,6 @@ app.get('/api/debug/settings', verifyToken, async (req, res) => {
       isAccountConnected: settings.isAccountConnected,
     };
 
-    // Live test with Meta API
     if (settings.instagramAccessToken && settings.instagramPageId) {
       try {
         const testUrl = `https://graph.facebook.com/v19.0/${settings.instagramPageId}?fields=name,id&access_token=${settings.instagramAccessToken}`;
@@ -2294,10 +2171,8 @@ app.get('/api/debug/settings', verifyToken, async (req, res) => {
   }
 });
 
-// --- ONE-TIME FIX: Fetch and cache GMB Account/Location IDs for current user ---
 app.post('/api/fix-gmb-cache', async (req, res) => {
   try {
-    // Inline auth check
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) return res.status(401).json({ error: 'No token provided.' });
@@ -2322,7 +2197,6 @@ app.post('/api/fix-gmb-cache', async (req, res) => {
       return res.status(400).json({ error: 'Google Business not connected.' });
     }
 
-    // Refresh token
     let accessToken = settings.googleBusinessAccessToken;
     if (settings.googleBusinessRefreshToken) {
       const axios = (await import('axios')).default;
@@ -2359,7 +2233,6 @@ app.post('/api/fix-gmb-cache', async (req, res) => {
     const locationId = location.name;
     const locationTitle = location.title;
 
-    // Save to connectedPageName JSON
     let pageData = {};
     try { pageData = JSON.parse(settings.connectedPageName || '{}'); } catch(e) {}
     pageData.googleBusinessAccountId = accountId;
@@ -2382,10 +2255,8 @@ app.post('/api/fix-gmb-cache', async (req, res) => {
 });
 
 
-// Start the server
 
 
-// --- REINFORCED BACKGROUND WORKER (Scheduling) ---
 async function runSchedulingWorker() {
   try {
     const now = new Date();
@@ -2401,10 +2272,8 @@ async function runSchedulingWorker() {
     console.log(`🔥 [Worker] Processing ${duePosts.length} posts...`);
     const { publishInstagramContent } = await import('./utils/metaApi.js');
 
-    // Pre-load Supabase client and safeUpdate before touching DB state
     const { supabase: _sb } = await import('./utils/supabase.js');
     const _updatePost = async (id, fields) => {
-      // Convert camelCase fields to snake_case for direct Supabase query
       const cleanFields = { ...fields };
       delete cleanFields.retryCount;
       const { data, error } = await _sb.from('scheduled_posts').update({ ...cleanFields, updatedAt: new Date().toISOString() }).eq('id', id);
@@ -2412,7 +2281,6 @@ async function runSchedulingWorker() {
       return data;
     };
 
-    // ── Safety net: reset any "Processing" posts that have been orphaned ──
     {
       const STUCK_THRESHOLD_MINUTES = 10;
       const stuckBoundary = new Date(Date.now() - STUCK_THRESHOLD_MINUTES * 60 * 1000).toISOString();
@@ -2439,19 +2307,16 @@ async function runSchedulingWorker() {
       }
     };
 
-    // Process up to 20 posts per run to handle many users scheduling at the same time
     const postsToProcess = duePosts.slice(0, 20);
     if (duePosts.length > 20) {
       console.log(`⚠️ Limit hit: Processing 20 out of ${duePosts.length} due posts to prevent timeout. The rest will be processed on the next ping.`);
     }
 
-    // Process due posts in parallel
     const processPromises = postsToProcess.map(async (post) => {
       const postId = post.id || post._id;
       try {
         console.log(`🔄 EXECUTION: Processing Post ${postId} for User ${post.userId}`);
 
-        // Deserialize metadata
         let finalMedia = post.mediaUrl;
         let finalType = post.type || 'image';
         let finalCarousel = [];
@@ -2472,7 +2337,6 @@ async function runSchedulingWorker() {
             post.pinterestIsAIGeneratedPerson = meta.pinterestIsAIGeneratedPerson || false;
             post.pinterestAllowComments = meta.pinterestAllowComments !== false;
             post.pinterestShowSimilarProducts = meta.pinterestShowSimilarProducts !== false;
-            // Enforce retry delay — skip if nextRetryAt has not been reached yet
             if (meta.nextRetryAt && new Date() < new Date(meta.nextRetryAt)) {
               console.log(`⏳ [Worker] Post ${postId} retry not due until ${meta.nextRetryAt}. Skipping.`);
               return;
@@ -2482,7 +2346,6 @@ async function runSchedulingWorker() {
           }
         }
 
-        // Unwrap any nested JSON-encoded media metadata (defensive against double-encoding from older records)
         if (finalMedia && typeof finalMedia === 'string' && finalMedia.startsWith('{')) {
           try {
             const nested = JSON.parse(finalMedia);
@@ -2490,7 +2353,6 @@ async function runSchedulingWorker() {
           } catch (e) {}
         }
 
-        // If the media URL is a local path, convert it to a public URL
         if (finalMedia && finalMedia.startsWith('/uploads/')) {
           finalMedia = `${SERVER_PUBLIC_URL}${finalMedia}`;
         }
@@ -2505,16 +2367,12 @@ async function runSchedulingWorker() {
           finalCarousel = finalCarousel.map(item => (item && item.startsWith('/uploads/')) ? `${SERVER_PUBLIC_URL}${item}` : item);
         }
 
-        // Only Instagram and YouTube (without pre-uploaded video ID) strictly require media.
-        // Twitter, LinkedIn, Pinterest, GMB, etc. can post text-only.
         const requiresMedia = !post.platform || post.platform === 'instagram' || (post.platform === 'youtube' && !hasYouTubeVideoId);
         if (requiresMedia && !finalMedia) {
            console.log(`⏭️ Post ${postId} has no media URL yet (likely still uploading). Skipping.`);
            return;
         }
         
-        // Blob URL means the frontend hasn't finished uploading the file yet.
-        // Reset to 'Processing' (2-min worker cooldown) instead of hard-failing.
         if (finalMedia && finalMedia.startsWith('blob:')) {
           console.warn(`⚠️ Blob URL detected for post ${postId}. Upload still in progress — resetting to Processing.`);
           await safeUpdate(postId, { status: 'Processing', lastError: 'Media upload still in progress. Will retry once upload completes.' });
@@ -2530,11 +2388,8 @@ async function runSchedulingWorker() {
         const unwriteProxyToSupabasePublic = (url) => {
           if (!url || typeof url !== 'string') return url;
           
-          // If it's already a Supabase public URL, keep it
           if (url.includes('.supabase.co/storage/v1/object/public/media')) return url;
           
-          // If it's the proxy URL, extract the path and convert to direct Supabase public URL
-          // This ensures Meta/Facebook crawlers hit the CDN directly and avoid 302 redirect issues!
           const match = url.match(/\/api\/storage\/view\?path=(.+)/);
           if (match) {
              const path = match[1].split('&')[0]; // Remove any extra query params
@@ -2543,15 +2398,12 @@ async function runSchedulingWorker() {
           return url;
         };
 
-        // Ensure we pass the DIRECT Supabase CDN url to Meta APIs, not the Vercel proxy!
         finalMedia = unwriteProxyToSupabasePublic(finalMedia);
 
         if (finalCarousel && finalCarousel.length > 0) {
           finalCarousel = finalCarousel.map(item => unwriteProxyToSupabasePublic(item));
         }
 
-        // Atomic claim: directly update status to 'Processing'
-        // Cooldown set to 2 minutes to ensure large videos/images don't get picked up twice while uploading
         const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
 
         const { data: claimData, error: claimErr } = await _sb
@@ -2577,7 +2429,6 @@ async function runSchedulingWorker() {
           } catch (e) {}
         }
 
-        // --- STEP 2: Publish (Using state-machine logic) ---
         let publishResult = null;
         if (post.platform === 'facebook') {
           const { publishFacebookContent } = await import('./utils/metaApi.js');
@@ -2601,7 +2452,6 @@ async function runSchedulingWorker() {
           if (setErr || !userSettings || userSettings.length === 0) {
             throw new Error('Settings not found for workspace. Please connect YouTube first.');
           }
-          // Parse connectedPageName to extract tokens if needed
           let youtubeSettings = userSettings[0];
           if (youtubeSettings.connectedPageName) {
             try {
@@ -2619,7 +2469,6 @@ async function runSchedulingWorker() {
           publishResult = await publishGoogleBusinessContent(post.userId, post, post.workspaceId);
         } else if (post.platform === 'twitter') {
           const { publishTwitterContent } = await import('./utils/twitterApi.js');
-          // Check if Twitter publishing is paused due to credits depletion
           let twSettingsQuery = _sb.from('settings').select('*').limit(1);
           if (post.workspaceId) {
             twSettingsQuery = twSettingsQuery.eq('workspaceId', post.workspaceId);
@@ -2630,7 +2479,6 @@ async function runSchedulingWorker() {
           if (!twSetErr && twSettings && twSettings.length > 0 && twSettings[0].twitterPaused) {
             throw new Error(`TWITTER_PAUSED: ${twSettings[0].twitterPauseReason || 'Twitter publishing is paused. Please add credits to resume.'}`);
           }
-          // Pass resolved URLs (finalMedia + finalCarousel) so proxy URLs are unwrapped
           publishResult = await publishTwitterContent(post.userId, {
             ...post,
             mediaUrl: finalMedia,
@@ -2639,7 +2487,6 @@ async function runSchedulingWorker() {
           }, post.workspaceId);
         } else if (post.platform === 'pinterest') {
           const { publishPinterestContent } = await import('./utils/pinterestApi.js');
-          // Check if Pinterest publishing is paused (e.g., trial access limitations)
           let pinSettingsQuery = _sb.from('settings').select('*').limit(1);
           if (post.workspaceId) {
             pinSettingsQuery = pinSettingsQuery.eq('workspaceId', post.workspaceId);
@@ -2658,7 +2505,6 @@ async function runSchedulingWorker() {
           const { publishWhatsAppContent } = await import('./services/platforms/whatsapp.js');
           publishResult = await publishWhatsAppContent(post.userId, post, post.workspaceId);
         } else {
-          // Default to instagram
           const { publishInstagramContent } = await import('./utils/metaApi.js');
           publishResult = await publishInstagramContent(post.userId, {
             type: finalType,
@@ -2670,7 +2516,6 @@ async function runSchedulingWorker() {
         }
 
         if (publishResult && publishResult.status === 'IG_PROCESSING') {
-          // Meta is still thinking. Save the containerId and try again in the next cron run
           console.log(`⏳ Meta is still processing Post ${postId}. Container: ${publishResult.containerId}`);
 
           let updatedMeta = {};
@@ -2680,9 +2525,7 @@ async function runSchedulingWorker() {
             }
           } catch (e) {}
 
-          // Add polling timeout logic
           if (!updatedMeta.pollingStartedAt) {
-            // If it's already an old post stuck in processing, backdate the start time to trigger failure immediately
             const scheduledAt = new Date(post.scheduledFor || Date.now());
             const minsSince = (Date.now() - scheduledAt.getTime()) / 60000;
             if (minsSince > 10 && updatedMeta.igContainerId) {
@@ -2706,17 +2549,13 @@ async function runSchedulingWorker() {
 
           await safeUpdate(postId, { status: 'Scheduled', mediaUrl: JSON.stringify(updatedMeta) });
 
-          // ── Safety refresh: always bump updatedAt at the end so the 2-min cooldown
-          //     gate is freshly reset even if the DB write above had a soft failure.
           await safeUpdate(postId, {});
           return;
         }
 
-        // --- STEP 3: Success Logic ---
         const publishedId = publishResult.id;
         const liveUrl = publishResult.url;
 
-        // Deserialize automation options
         let requireFollow = false, unfollowedResponse = '', publicReply = '', automationStatus = 'Active';
         let openingMessage = false, openingMessageText = '', openingMessageButton = '', buttons = [];
 
@@ -2792,7 +2631,6 @@ async function runSchedulingWorker() {
 
         await safeUpdate(postId, { status: 'Posted', mediaUrl: updatedMediaUrl });
         
-        // Log success for Analytics
         try {
           const log = new PostLog({
             post_id: postId,
@@ -2858,7 +2696,6 @@ async function runSchedulingWorker() {
           await safeUpdate(postId, { status: 'Failed', lastError: errorMsg });
           await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Failed', lastError: errorMsg });
           
-          // If Twitter credits are depleted, pause all future Twitter posts for this user/workspace
           if (post.platform === 'twitter' && (lowerError.includes('credits') || lowerError.includes('creditsdepleted'))) {
             try {
               const pauseReason = 'Twitter account credits depleted. Please add credits to resume publishing.';
@@ -2879,14 +2716,12 @@ async function runSchedulingWorker() {
             await new PostLog({ post_id: postId, status: 'failed', platform: post.platform || 'instagram', response: { error: errorMsg }, user_id: post.userId, workspace_id: post.workspaceId }).save();
           } catch(e) {}
         } else if (currentRetryCount <= MAX_RETRIES && minutesSinceScheduled < MAX_RETRY_WINDOW) {
-          // Add exponentially longer delays for rate limits (15 min, 1h, 4h, 12h, 24h)
           let delayMinutes = 5 * currentRetryCount;
           if (lowerError.includes('quota') || lowerError.includes('429') || lowerError.includes('limit')) {
              const backoffs = [15, 60, 240, 720, 1440];
              delayMinutes = backoffs[Math.min(currentRetryCount - 1, 4)];
           }
           
-          // Store retry time in metadata — DO NOT overwrite scheduledFor so user's original time is preserved
           updatedMetaObj.retryCount = currentRetryCount;
           updatedMetaObj.nextRetryAt = new Date(Date.now() + delayMinutes * 60 * 1000).toISOString();
           console.log(`⚠️ Post ${postId} failed. Next retry in ${delayMinutes} mins at ${updatedMetaObj.nextRetryAt}. scheduledFor unchanged.`);
@@ -2918,12 +2753,7 @@ async function runSchedulingWorker() {
 
 console.log('⏰ Scheduling worker ready (Triggered via /api/cron/publish).');
 
-// Vercel Cron/Webhook Route to trigger scheduler
-// This is the PRIMARY trigger on Vercel (serverless = no persistent setInterval)
 app.get('/api/cron/publish', async (req, res) => {
-  // Authorization check removed to allow external ping services like cron-job.org
-  // to trigger the scheduler without needing special headers.
-  // The worker only processes posts that are already due in the database.
   
   console.log('⏰ [CRON] Vercel Cron Job triggered scheduling check...');
   const startTime = Date.now();
@@ -2933,7 +2763,6 @@ app.get('/api/cron/publish', async (req, res) => {
   res.json({ success: true, message: 'Scheduling check completed', elapsed, workerResult });
 });
 
-// ── Public Testimonials & Reviews API (Supabase Postgres Database) ──────────
 
 const DEFAULT_REVIEWS = [
   {
@@ -2995,7 +2824,6 @@ const DEFAULT_REVIEWS = [
 ];
 
 app.get('/api/user-feedback', async (req, res) => {
-  // Disable all caching so new reviews always appear immediately
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.set('Pragma', 'no-cache');
   res.set('Expires', '0');
@@ -3011,13 +2839,11 @@ app.get('/api/user-feedback', async (req, res) => {
       throw error;
     }
     
-    // Merge database reviews with the default marketing reviews
     let allReviews = [];
     if (reviews && reviews.length > 0) {
       allReviews = [...reviews];
     }
     
-    // Add default reviews at the end
     allReviews = [...allReviews, ...DEFAULT_REVIEWS];
     
     res.json(allReviews);
@@ -3065,7 +2891,6 @@ const decoded = jwt.verify(token, process.env.JWT_SECRET);
     }
 
     if (uuidUserId) {
-      // Enforce 1 review per person by ID
       const { data: existingReview, error: checkError } = await supabase
         .from('reviews')
         .select('id')
@@ -3081,7 +2906,6 @@ const decoded = jwt.verify(token, process.env.JWT_SECRET);
       }
     }
 
-    // Check 2: By Name (case-insensitive) - for both guests and logged-in users
     const { data: existingByName, error: checkNameError } = await supabase
       .from('reviews')
       .select('id')
@@ -3096,7 +2920,6 @@ const decoded = jwt.verify(token, process.env.JWT_SECRET);
       return res.status(400).json({ error: 'A review with this name has already been submitted.' });
     }
 
-    // Insert new review with user ID as primary key to prevent duplicate entries at DB level
     const { data: inserted, error: insertError } = await supabase
       .from('reviews')
       .insert({
@@ -3174,8 +2997,6 @@ app.get('/api/diag-storage', async (req, res) => {
   }
 });
 
-// ── SECURITY: Global Error Handler ────────────────────────────────────────────
-// --- TWITTER TESTING ENDPOINT ---
 app.post('/api/test/twitter/post', verifyToken, async (req, res) => {
   try {
     const { text } = req.body;
@@ -3192,7 +3013,6 @@ app.post('/api/test/twitter/post', verifyToken, async (req, res) => {
 
     const settings = userSettings[0];
     
-    // Extract virtual fields from connectedPageName
     let virtualFields = {};
     if (settings.connectedPageName) {
       try {
@@ -3215,7 +3035,6 @@ app.post('/api/test/twitter/post', verifyToken, async (req, res) => {
       return res.status(500).json({ error: 'Twitter OAuth credentials missing on server' });
     }
 
-    // Refresh token if needed
     const client = new TwitterApi({
       clientId: clientId,
       clientSecret: clientSecret
@@ -3223,7 +3042,6 @@ app.post('/api/test/twitter/post', verifyToken, async (req, res) => {
 
     const { client: refreshedClient, accessToken, refreshToken: newRefreshToken } = await client.refreshOAuth2Token(twitterRefreshToken);
 
-    // Save new tokens back to virtual fields
     virtualFields.twitterAccessToken = accessToken;
     virtualFields.twitterRefreshToken = newRefreshToken || twitterRefreshToken;
     
@@ -3231,7 +3049,6 @@ app.post('/api/test/twitter/post', verifyToken, async (req, res) => {
       connectedPageName: JSON.stringify(virtualFields)
     }).eq('userId', req.user.userId);
 
-    // Post tweet
     const tweetRes = await refreshedClient.v2.tweet(text);
 
     res.json({ success: true, tweet: tweetRes.data });
@@ -3241,8 +3058,6 @@ app.post('/api/test/twitter/post', verifyToken, async (req, res) => {
   }
 });
 
-// Must be LAST middleware. Prevents stack trace leakage in production.
-// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   console.error(`❌ [Error] ${req.method} ${req.url}:`, err.stack || err.message || err);
   res.status(err.status || 500).json({
@@ -3257,30 +3072,25 @@ httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🔒 Security: Rate limiting, Helmet CSP, CORS whitelist, NoSQL sanitization, XSS protection active`);
 
-  // Start persistent local cron runner if not running in serverless (Vercel) environment
   if (!process.env.VERCEL) {
     console.log('⏰ [Scheduler] Running in persistent environment. Starting local 60s checker...');
-    // Run immediately on startup
     setImmediate(() => {
       runSchedulingWorker().catch(err => {
         console.error("❌ Error in initial startup local scheduler:", err.message);
       });
     });
-    // Then run every 15 seconds
     setInterval(() => {
       runSchedulingWorker().catch(err => {
         console.error("❌ Error in persistent local scheduler:", err.message);
       });
     }, 15 * 1000);
 
-    // Run YouTube Comment Automation every 30 minutes
     setInterval(() => {
       processYouTubeComments().catch(err => {
         console.error("❌ Error in persistent local YouTube scheduler:", err.message);
       });
     }, 30 * 60 * 1000);
 
-    // Run LinkedIn Scraper & Publisher every 1 hour
     setInterval(() => {
       runLinkedInScraperWorker().catch(err => {
         console.error("❌ Error in persistent local LinkedIn Scraper scheduler:", err.message);
@@ -3290,7 +3100,6 @@ httpServer.listen(PORT, () => {
 });
 export default app;
 
-// Trigger backend deployment on Vercel
 
 
 export { getSharedUserIdsSync, settingsCache, campaignsCache, io, runFlow };

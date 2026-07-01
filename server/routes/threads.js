@@ -5,7 +5,6 @@ import Settings from '../models/Settings.js';
 
 const router = express.Router();
 
-// Fetch connected Threads profiles
 router.get('/profiles', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.userId });
@@ -23,7 +22,6 @@ router.get('/profiles', verifyToken, async (req, res) => {
         }]);
       }
     } catch(e) {
-      // Not JSON or doesn't have threads
     }
     
     res.json([]);
@@ -32,7 +30,6 @@ router.get('/profiles', verifyToken, async (req, res) => {
   }
 });
 
-// Publish or Schedule a Thread
 router.post('/publish', verifyToken, async (req, res) => {
   try {
     const { text, mediaUrl, mediaType } = req.body; // mediaType: 'TEXT', 'IMAGE', 'VIDEO'
@@ -52,7 +49,6 @@ router.post('/publish', verifyToken, async (req, res) => {
 
     const { threadsPageId, threadsAccessToken } = threadsData;
 
-    // Step 1: Create media container
     let createContainerUrl = `https://graph.threads.net/v1.0/${threadsPageId}/threads`;
     let containerPayload = {
       media_type: mediaType || 'TEXT',
@@ -74,7 +70,6 @@ router.post('/publish', verifyToken, async (req, res) => {
     const containerId = containerRes.data.id;
     console.log("Container ID:", containerId);
 
-    // Step 2: Publish the container
     let publishUrl = `https://graph.threads.net/v1.0/${threadsPageId}/threads_publish`;
     const publishRes = await axios.post(publishUrl, {
       creation_id: containerId,
@@ -90,7 +85,5 @@ router.post('/publish', verifyToken, async (req, res) => {
   }
 });
 
-// Note: For scheduling, you would store this in ScheduledPost and process it using a cron job.
-// For now, this supports immediate publishing.
 
 export default router;

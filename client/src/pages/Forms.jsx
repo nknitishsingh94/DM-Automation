@@ -24,7 +24,6 @@ export default function Forms() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [wizardStep, setWizardStep] = useState(1);
   
-  // New Form State
   const [newForm, setNewForm] = useState({
     name: '',
     type: 'Lead Capture',

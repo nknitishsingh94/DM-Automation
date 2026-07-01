@@ -125,7 +125,6 @@ const WriteReview = () => {
           localStorage.setItem('smart10x_reviewed', 'true');
           setAlreadyReviewed(true);
           
-          // Reset form
           setNewReview({
             name: '',
             handle: '',

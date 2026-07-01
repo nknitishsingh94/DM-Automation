@@ -6,7 +6,6 @@ import ScheduledPost from '../models/ScheduledPost.js';
 import OpenAI from 'openai';
 import { OAuth2Client } from 'google-auth-library';
 
-// Initialize OpenAI client lazily to prevent crash on boot if API key is missing
 const getOpenAIClient = () => {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
@@ -17,14 +16,12 @@ const getOpenAIClient = () => {
 
 const router = express.Router();
 
-// 1. Initiate OAuth Login
 router.get('/auth', verifyToken, async (req, res) => {
   const { YOUTUBE_CLIENT_ID } = process.env;
   if (!YOUTUBE_CLIENT_ID) {
     return res.status(500).json({ error: 'YouTube Client ID not configured on server.' });
   }
 
-  // Use a state parameter to pass back the userId
   const state = req.user.userId;
   let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? 'https://dm-automation-w9a4.vercel.app' : 'http://localhost:5001');
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
@@ -36,7 +33,6 @@ router.get('/auth', verifyToken, async (req, res) => {
   res.redirect(authUrl);
 });
 
-// 2. OAuth Callback
 router.get('/callback', async (req, res) => {
   const { code, state, error } = req.query;
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -61,7 +57,6 @@ router.get('/callback', async (req, res) => {
 
     const { access_token, refresh_token } = tokenRes.data;
 
-    // Fetch Channel Info to get Channel ID and Name
     const channelRes = await axios.get('https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true', {
       headers: { Authorization: `Bearer ${access_token}` }
     });
@@ -74,7 +69,6 @@ router.get('/callback', async (req, res) => {
     const channelId = channel.id;
     const channelName = channel.snippet?.customUrl || channel.snippet.title || 'YouTube Channel';
 
-    // Save to Settings
     await Settings.findOneAndUpdate(
       { userId },
       { 
@@ -94,7 +88,6 @@ router.get('/callback', async (req, res) => {
   }
 });
 
-// 3. Get Channel Stats
 router.get('/stats', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.userId });
@@ -109,7 +102,6 @@ router.get('/stats', verifyToken, async (req, res) => {
     });
 
     if (!statsRes.data.items || statsRes.data.items.length === 0) {
-      // Token might be expired, need refresh logic here in production
       return res.status(400).json({ error: 'Could not fetch channel stats' });
     }
 
@@ -127,7 +119,6 @@ router.get('/stats', verifyToken, async (req, res) => {
 });
 
 
-// 4. Get Latest Videos
 router.get('/videos', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.userId });
@@ -145,7 +136,6 @@ router.get('/videos', verifyToken, async (req, res) => {
       return res.json([]);
     }
 
-    // Map to beautiful format for frontend
     const videos = videosRes.data.items.map(item => ({
       id: item.id.videoId,
       title: item.snippet.title,
@@ -164,7 +154,6 @@ router.get('/videos', verifyToken, async (req, res) => {
   }
 });
 
-// 5. Generate AI Thumbnail
 router.post('/generate-thumbnail', verifyToken, async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -178,7 +167,6 @@ router.post('/generate-thumbnail', verifyToken, async (req, res) => {
     });
 
     const imageUrl = aiResponse.data[0].url;
-    // Fetch the image to backend and convert to base64 to avoid CORS errors on frontend
     const imgRes = await axios.get(imageUrl, { responseType: 'arraybuffer' });
     const base64 = Buffer.from(imgRes.data, 'binary').toString('base64');
     const dataUri = `data:${imgRes.headers['content-type']};base64,${base64}`;
@@ -190,7 +178,6 @@ router.post('/generate-thumbnail', verifyToken, async (req, res) => {
   }
 });
 
-// 6. Generate AI Metadata (Title/Description) 
 router.post('/generate-metadata', verifyToken, async (req, res) => {
   try {
     const { prompt, options } = req.body;
@@ -228,7 +215,6 @@ router.post('/generate-metadata', verifyToken, async (req, res) => {
   }
 });
 
-// 7. Get Access Token for Direct Uploads
 router.get('/access-token', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.userId });
@@ -236,8 +222,6 @@ router.get('/access-token', verifyToken, async (req, res) => {
       return res.status(400).json({ error: 'YouTube not connected' });
     }
     
-    // In a production app, we would verify the token hasn't expired 
-    // and use the refreshToken to get a new one here if needed.
     res.json({ accessToken: settings.youtubeAccessToken });
   } catch (err) {
     console.error('Access Token Error:', err);
@@ -245,7 +229,6 @@ router.get('/access-token', verifyToken, async (req, res) => {
   }
 });
 
-// 8. Get Resumable Upload URL for Frontend Direct Upload
 router.post('/get-upload-url', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOne({ userId: req.user.userId });

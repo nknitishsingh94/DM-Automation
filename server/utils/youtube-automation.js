@@ -16,7 +16,6 @@ export const processYouTubeComments = async () => {
   try {
     console.log('[YouTube Cron] Starting check for YouTube comments...');
     
-    // 1. Get all active YouTube comment campaigns
     const activeCampaigns = await Campaign.find({
       platform: 'youtube',
       status: 'Active'
@@ -27,7 +26,6 @@ export const processYouTubeComments = async () => {
       return;
     }
 
-    // Group campaigns by user/workspace
     const userCampaigns = {};
     for (const campaign of activeCampaigns) {
       if (!userCampaigns[campaign.userId]) {
@@ -36,7 +34,6 @@ export const processYouTubeComments = async () => {
       userCampaigns[campaign.userId].push(campaign);
     }
 
-    // 2. Process each user's campaigns
     for (const userId of Object.keys(userCampaigns)) {
       try {
         const settings = await Settings.findOne({ userId });
@@ -50,7 +47,6 @@ export const processYouTubeComments = async () => {
           continue;
         }
 
-        // Refresh Token if we have one (to ensure access_token is valid)
         let accessToken = pageData.youtubeAccessToken;
         if (pageData.youtubeRefreshToken) {
           try {
@@ -61,12 +57,10 @@ export const processYouTubeComments = async () => {
               grant_type: 'refresh_token'
             });
             accessToken = refreshRes.data.access_token;
-            // Optionally update it in DB
             pageData.youtubeAccessToken = accessToken;
             await Settings.findOneAndUpdate({ userId }, { connectedPageName: JSON.stringify(pageData) });
           } catch (tokenErr) {
             console.error(`[YouTube Cron] Token refresh failed for user ${userId}:`, tokenErr.message);
-            // If token fails, we can't fetch comments
             continue;
           }
         }
@@ -74,8 +68,6 @@ export const processYouTubeComments = async () => {
         const lastCheck = pageData.lastYouTubeCommentCheck ? new Date(pageData.lastYouTubeCommentCheck) : new Date(Date.now() - 24 * 60 * 60 * 1000); // Default to last 24h
         const nowCheck = new Date();
 
-        // 3. Fetch recent comments
-        // Note: For large channels, checking allThreadsRelatedToChannelId might be heavy, but it's the standard way without webhooks.
         const commentsRes = await axios.get('https://www.googleapis.com/youtube/v3/commentThreads', {
           params: {
             part: 'snippet,replies',
@@ -93,16 +85,13 @@ export const processYouTubeComments = async () => {
           const commentId = thread.snippet.topLevelComment.id;
           const publishedAt = new Date(topComment.publishedAt);
           
-          // Skip if comment is older than our last check
           if (publishedAt <= lastCheck) continue;
           
-          // Skip our own comments
           if (topComment.authorChannelId?.value === pageData.youtubeChannelId) continue;
 
           const text = topComment.textOriginal;
           const authorName = topComment.authorDisplayName;
 
-          // Find matching campaign
           let matchedCampaign = null;
           for (const camp of userCampaigns[userId]) {
             if (camp.trigger === '*') {
@@ -121,7 +110,6 @@ export const processYouTubeComments = async () => {
             
             let replyText = matchedCampaign.response;
 
-            // Generate AI Response if needed
             if (matchedCampaign.isAI) {
               const aiPrompt = `
                 You are managing a YouTube channel named "${pageData.youtubeChannelName || 'Channel'}".
@@ -144,12 +132,10 @@ export const processYouTubeComments = async () => {
               }
             }
 
-            // Append link if there's a button
             if (matchedCampaign.buttons && matchedCampaign.buttons.length > 0) {
               replyText += `\n\n${matchedCampaign.buttons[0].text}: ${matchedCampaign.buttons[0].url}`;
             }
 
-            // 4. Post Reply
             try {
               await axios.post('https://www.googleapis.com/youtube/v3/comments?part=snippet', {
                 snippet: {
@@ -165,7 +151,6 @@ export const processYouTubeComments = async () => {
 
               console.log(`[YouTube Cron] Successfully replied to ${authorName}`);
 
-              // 5. Log it for the Dashboard
               await Message.create({
                 userId,
                 workspaceId: settings.workspaceId,
@@ -184,7 +169,6 @@ export const processYouTubeComments = async () => {
           }
         }
 
-        // Update last check time
         pageData.lastYouTubeCommentCheck = nowCheck.toISOString();
         await Settings.findOneAndUpdate({ userId }, { connectedPageName: JSON.stringify(pageData) });
 

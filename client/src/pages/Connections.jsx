@@ -56,7 +56,6 @@ export default function Connections() {
   const [redirectingInsta, setRedirectingInsta] = useState(false);
   
 
-  // Interactive UI Dropdowns & Modals
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [showTelegramModal, setShowTelegramModal] = useState(false);
   const [telegramTokenInput, setTelegramTokenInput] = useState('');
@@ -100,12 +99,10 @@ export default function Connections() {
         }
 
         const data = await res.json();
-        // Parse Threads info from the connectedPageName JSON blob
         let threadsInfo = {};
         if (data.connectedPageName) {
           try { threadsInfo = JSON.parse(data.connectedPageName); } catch (e) {}
         }
-        // Derive connection flags from real data
         const mergedData = { ...data, ...threadsInfo };
         const derivedData = {
           ...mergedData,
@@ -138,7 +135,6 @@ export default function Connections() {
 
     loadSettings();
 
-    // --- HANDLE OAUTH FEEDBACK ---
     const params = new URLSearchParams(window.location.search);
     if (params.get('oauth_success')) {
       loadSettings();
@@ -178,7 +174,6 @@ export default function Connections() {
     }
     setLoading(true);
 
-    // Setup message listener to capture exact WABA and phone number IDs
     const handleSignupMessage = (event) => {
       if (event.origin !== "https://www.facebook.com" && event.origin !== "https://web.facebook.com") return;
       try {
@@ -190,13 +185,11 @@ export default function Connections() {
           }
         }
       } catch (err) {
-        // Ignore non-JSON postMessages
       }
     };
     window.addEventListener('message', handleSignupMessage);
 
     window.FB.login((response) => {
-      // Remove event listener after FB.login finishes
       setTimeout(() => {
         window.removeEventListener('message', handleSignupMessage);
       }, 5000);
@@ -204,7 +197,6 @@ export default function Connections() {
       if (response.authResponse) {
         const accessToken = response.authResponse.accessToken;
         
-        // Wait briefly to allow the message handler to capture the event
         setTimeout(() => {
           const signupData = window.lastWhatsAppSignupData || {};
           window.lastWhatsAppSignupData = null; // Clean up
@@ -1711,7 +1703,6 @@ export default function Connections() {
   );
 }
 
-// Stubs for Custom Icons not in standard lucide
 function MusicIcon({ size = 18, color = 'currentColor' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -26,7 +26,6 @@ const templatesData = [
   { id: "grow_sms_list", title: "Grow an SMS list", desc: "Did we just become text friends? Get Instagram followers on your SMS list", type: "Flow Builder" },
   { id: "trigger_dms_live", title: "Trigger DMs during IG Live", desc: "Use Lives to spark DMs, drop links, and collect leads while eyeballs are actually on you", type: "Flow Builder" },
   { id: "answer_faqs_stories", title: "Answer FAQs from story replies", desc: "Reply to your followers’ questions ASAP", type: "Flow Builder" },
-  // Newly added from screenshots
   { id: "auto_thank_positive_comments", title: "Auto Thank Positive Comments", desc: "Show appreciation by automatically thanking users who leave positive comments.", type: "Quick Automation" },
   { id: "auto_like_positive_messages", title: "Auto Like Positive Messages", desc: "Automatically like every positive message to show appreciation and boost engagement.", type: "Quick Automation" },
   { id: "reply_story_mentions", title: "Reply to Story Mentions", desc: "Automatically respond when someone mentions you in their story.", type: "Quick Automation" },

@@ -1,4 +1,3 @@
-// server/routes/forms.js
 import express from 'express';
 import Form from '../models/Form.js';
 import FormSubmission from '../models/FormSubmission.js';
@@ -6,7 +5,6 @@ import verifyToken from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get all forms for the current user
 router.get('/', verifyToken, async (req, res) => {
   try {
     const forms = await Form.find({ userId: req.user.userId }).sort({ createdAt: -1 });
@@ -16,7 +14,6 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-// Get a single form
 router.get('/:id', verifyToken, async (req, res) => {
   try {
     const form = await Form.findOne({ _id: req.params.id, userId: req.user.userId });
@@ -27,7 +24,6 @@ router.get('/:id', verifyToken, async (req, res) => {
   }
 });
 
-// Create a new form
 router.post('/', verifyToken, async (req, res) => {
   try {
     const { name, type, steps, settings } = req.body;
@@ -45,13 +41,11 @@ router.post('/', verifyToken, async (req, res) => {
   }
 });
 
-// Delete a form
 router.delete('/:id', verifyToken, async (req, res) => {
   try {
     const result = await Form.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
     if (!result) return res.status(404).json({ error: 'Form not found' });
     
-    // Also delete submissions
     await FormSubmission.deleteMany({ formId: req.params.id });
     
     res.json({ message: 'Form and related submissions deleted' });
@@ -60,7 +54,6 @@ router.delete('/:id', verifyToken, async (req, res) => {
   }
 });
 
-// Get submissions for a specific form
 router.get('/:id/submissions', verifyToken, async (req, res) => {
   try {
     const submissions = await FormSubmission.find({ formId: req.params.id })
@@ -72,7 +65,6 @@ router.get('/:id/submissions', verifyToken, async (req, res) => {
   }
 });
 
-// Toggle form active status
 router.patch('/:id/toggle', verifyToken, async (req, res) => {
   try {
     const form = await Form.findOne({ _id: req.params.id, userId: req.user.userId });

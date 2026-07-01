@@ -24,12 +24,10 @@ const getGoogleClient = (redirectUri) => {
   );
 };
 
-// Step 1: Redirect to Facebook OAuth
 router.get('/facebook', verifyToken, (req, res) => {
   const appId = process.env.META_APP_ID;
   let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
 
-  // Clean trailing slash to prevent double-slash issues
   if (baseUrl.endsWith('/')) {
     baseUrl = baseUrl.slice(0, -1);
   }
@@ -49,7 +47,6 @@ router.get('/facebook', verifyToken, (req, res) => {
   res.redirect(authUrl);
 });
 
-// Step 2: Handle OAuth Callback
 router.get('/facebook/callback', async (req, res) => {
   const { code, state, error } = req.query;
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -92,7 +89,6 @@ router.get('/facebook/callback', async (req, res) => {
     if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
     const redirectUri = `${baseUrl}/api/oauth/facebook/callback`;
 
-    // 1. Exchange the auth 'code' for a short-lived access token
     console.log(`📡 OAuth Exchange: Starting for User ${userId}`);
     console.log(`🔑 App ID: ${appId}, Secret: ${appSecret ? appSecret.substring(0, 4) + '****' : 'MISSING'}`);
     console.log(`🔗 Redirect URI: ${redirectUri}`);
@@ -109,12 +105,10 @@ router.get('/facebook/callback', async (req, res) => {
 
     const shortLivedToken = tokenRes.data.access_token;
 
-    // 2. Exchange short-lived token for a Long-Lived Access Token (60 days)
     const longLivedUrl = `https://graph.facebook.com/v19.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${appId}&client_secret=${appSecret}&fb_exchange_token=${shortLivedToken}`;
     const longLivedRes = await axios.get(longLivedUrl);
     const longToken = longLivedRes.data.access_token;
 
-    // 3. Get User's Pages — MUST include access_token field for page-level token
     const pagesUrl = `https://graph.facebook.com/v19.0/me/accounts?fields=id,name,access_token,instagram_business_account&access_token=${longToken}`;
     const pagesRes = await axios.get(pagesUrl);
 
@@ -132,7 +126,6 @@ router.get('/facebook/callback', async (req, res) => {
 
       if (pageWithInsta) {
         pageId = pageWithInsta.id;
-        // ✅ CRITICAL: Use PAGE-LEVEL token — required for Instagram Messaging API
         pageAccessToken = pageWithInsta.access_token || longToken;
         businessAccountId = pageWithInsta.instagram_business_account.id;
         facebookPageName = pageWithInsta.name;
@@ -140,7 +133,6 @@ router.get('/facebook/callback', async (req, res) => {
 
         console.log(`📄 Found FB Page: ${pageId}, Page Token prefix: ${pageAccessToken.substring(0, 10)}...`);
 
-        // Try to fetch the IG Username for better UX
         try {
           const igUrl = `https://graph.facebook.com/v19.0/${businessAccountId}?fields=username,name&access_token=${pageAccessToken}`;
           const igRes = await axios.get(igUrl);
@@ -160,7 +152,6 @@ router.get('/facebook/callback', async (req, res) => {
       }
     }
 
-    // 4. WhatsApp Business Account discovery (only if connecting WhatsApp)
     let whatsappPhoneId = '';
     let whatsappName = '';
     let whatsappBusinessAccountId = '';
@@ -174,7 +165,6 @@ router.get('/facebook/callback', async (req, res) => {
         if (wabaList.length > 0) {
           const waba = wabaList[0];
           whatsappBusinessAccountId = waba.id;
-          // Fetch phone numbers under this WABA
           try {
             const phoneUrl = `https://graph.facebook.com/v19.0/${waba.id}/phone_numbers?fields=id,display_phone_number,verified_name&access_token=${longToken}`;
             const phoneRes = await axios.get(phoneUrl);
@@ -197,7 +187,6 @@ router.get('/facebook/callback', async (req, res) => {
       }
     }
 
-    // 4.5. AUTOMATICALLY SUBSCRIBE APP TO PAGE WEBHOOKS (CRITICAL FOR RECEIVING MESSAGES)
     if (pageId && pageAccessToken) {
       try {
         console.log(`🔌 Attempting to subscribe App to Page Webhooks for page ${pageId}...`);
@@ -208,11 +197,9 @@ router.get('/facebook/callback', async (req, res) => {
         }
       } catch (subErr) {
         console.error(`❌ Webhook Subscription Failed:`, subErr.response?.data || subErr.message);
-        // We don't throw here, we still want to save tokens, but warn in logs
       }
     }
 
-    // 5. Save to Database — save only the relevant platform fields
     const updateData = { lastTestedAt: new Date() };
     if (workspaceId) {
       updateData.workspaceId = workspaceId;
@@ -231,31 +218,24 @@ router.get('/facebook/callback', async (req, res) => {
         updateData.whatsappPhoneNumberId = whatsappPhoneId;
         updateData.whatsappBusinessAccountId = whatsappBusinessAccountId;
         updateData.isWhatsAppConnected = true;
-        // Store name in connectedPageName JSON alongside potential Threads data —
-        // but use a dedicated field so Threads and WhatsApp coexist.
-        // We store WhatsApp name in connectedInstagramId repurposed field or just rely on phone ID.
         updateData.connectedInstagramId = whatsappName; // reuse unused column for WhatsApp display name
         console.log(`✅ WhatsApp: Saved Phone ID ${whatsappPhoneId} (${whatsappName}) for user ${userId}.`);
       } else {
         console.warn('⚠️ WhatsApp connected but no phone number ID found. Marking disconnected.');
         updateData.isWhatsAppConnected = false;
       }
-      // ⚠️ Do NOT touch connectedPageName (Threads) or Instagram/Facebook fields
     } else if (isInstagram) {
-      // ✅ Only update Instagram fields — do NOT touch Facebook, WhatsApp, or Threads
       updateData.instagramAccessToken = pageAccessToken;
       updateData.instagramPageId = pageId;
       updateData.businessAccountId = businessAccountId;
       updateData.isAccountConnected = !!businessAccountId;
       updateData.connectedInstagramName = instagramAccountName;
     } else if (isFacebook) {
-      // ✅ Only update Facebook fields — do NOT touch Instagram, WhatsApp, or Threads
       updateData.facebookAccessToken = pageAccessToken;
       updateData.facebookPageId = pageId;
       updateData.isFacebookConnected = !!pageId;
       updateData.connectedFacebookName = facebookPageName;
     } else {
-      // Default/general flow — fill Instagram + Facebook fields
       updateData.instagramAccessToken = pageAccessToken;
       updateData.facebookAccessToken = pageAccessToken;
       updateData.instagramPageId = pageId;
@@ -267,20 +247,17 @@ router.get('/facebook/callback', async (req, res) => {
       updateData.isAccountConnected = !!businessAccountId;
     }
 
-    // Safety: never send unknown columns to Supabase
     delete updateData.whatsappError;
     delete updateData.whatsappDiscoveryError;
     delete updateData.connectionError;
 
     /*
-    // Strict Single-Owner Mapping: Clean up other connections rows that might be linked to this page/account
     if (pageId || businessAccountId) {
       const cleanupQuery = [];
       if (pageId) cleanupQuery.push({ instagramPageId: pageId }, { facebookPageId: pageId });
       if (businessAccountId) cleanupQuery.push({ businessAccountId: businessAccountId });
       
       if (cleanupQuery.length > 0) {
-        // Migration: Find other users previously linked to this page/account to move their data
         try {
           const otherSettings = await Settings.find({
             userId: { $ne: userId },
@@ -399,7 +376,6 @@ router.get('/facebook/callback', async (req, res) => {
   }
 });
 
-// Zorcha Exact Flow: Get available Facebook Pages & their linked Instagram accounts
 router.get('/facebook/pages', verifyToken, async (req, res) => {
   try {
     const connections = await Settings.findOne({ userId: req.user.userId, workspaceId: req.workspaceId });
@@ -418,7 +394,6 @@ router.get('/facebook/pages', verifyToken, async (req, res) => {
     try {
       pagesRes = await axios.get(pagesUrl);
     } catch (axErr) {
-      // If code 100, it's probably a Page Token (Pages don't have 'accounts')
       if (axErr.response?.data?.error?.code === 100) {
         console.log("ℹ️ Token is likely a Page Token, fetching /me instead...");
         try {
@@ -445,7 +420,6 @@ router.get('/facebook/pages', verifyToken, async (req, res) => {
     for (const p of rawPages) {
       let linkedInstagram = null;
 
-      // Try to find Instagram account ID
       const igId = p.instagram_business_account?.id || p.instagram_business_account;
 
       if (igId) {
@@ -473,7 +447,6 @@ router.get('/facebook/pages', verifyToken, async (req, res) => {
   }
 });
 
-// Zorcha Exact Flow: Select & connect a specific Facebook page & Instagram
 router.post('/facebook/select-page', verifyToken, async (req, res) => {
   try {
     const { pageId, pageAccessToken, businessAccountId, instagramUsername } = req.body;
@@ -485,7 +458,6 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
       connectedInstagramName: instagramUsername || 'Connected Instagram',
       workspaceId: req.workspaceId,
       
-      // Explicitly isolate from Facebook:
       facebookAccessToken: null,
       facebookPageId: null,
       isFacebookConnected: false,
@@ -497,14 +469,12 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
     }
 
     /*
-    // Strict Single-Owner Mapping: Clean up other connections rows that might be linked to this page/account
     if (pageId || businessAccountId) {
       const cleanupQuery = [];
       if (pageId) cleanupQuery.push({ instagramPageId: pageId }, { facebookPageId: pageId });
       if (businessAccountId) cleanupQuery.push({ businessAccountId: businessAccountId });
       
       if (cleanupQuery.length > 0) {
-        // Migration: Find other users previously linked to this page/account to move their data
         try {
           const otherSettings = await Settings.find({
             userId: { $ne: req.user.userId },
@@ -560,7 +530,6 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
       { upsert: true, new: true }
     );
 
-    // 🚀 CRITICAL FIX: Subscribe the selected page to webhooks!
     if (pageId && pageAccessToken) {
       try {
         console.log(`🔌 Attempting to subscribe App to Page Webhooks for selected page ${pageId}...`);
@@ -580,11 +549,7 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
   }
 });
 
-// ==========================================
-// PINTEREST OAUTH FLOW
-// ==========================================
 
-// Step 1: Redirect to Pinterest OAuth
 router.get('/pinterest', verifyToken, (req, res) => {
   const clientId = process.env.PINTEREST_CLIENT_ID;
   let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
@@ -602,7 +567,6 @@ router.get('/pinterest', verifyToken, (req, res) => {
   res.redirect(authUrl);
 });
 
-// Step 2: Handle Pinterest OAuth Callback
 router.get('/pinterest/callback', async (req, res) => {
   const { code, state, error } = req.query;
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -625,7 +589,6 @@ router.get('/pinterest/callback', async (req, res) => {
     if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
     const redirectUri = `${baseUrl}/api/oauth/pinterest/callback`;
 
-    // 1. Exchange code for token
     const tokenUrl = 'https://api.pinterest.com/v5/oauth/token';
     const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
     
@@ -643,7 +606,6 @@ router.get('/pinterest/callback', async (req, res) => {
     const accessToken = tokenRes.data.access_token;
     const refreshToken = tokenRes.data.refresh_token;
 
-    // 2. Get User Profile info
     const profileRes = await axios.get('https://api.pinterest.com/v5/user_account', {
       headers: {
         Authorization: `Bearer ${accessToken}`
@@ -653,7 +615,6 @@ router.get('/pinterest/callback', async (req, res) => {
     const pinterestId = profileRes.data.account_type; // Using account_type or custom if needed
     const pinterestUsername = profileRes.data.username || 'Pinterest Account';
 
-    // Save to Database
     const updateData = {
       isPinterestConnected: true,
       pinterestAccessToken: accessToken,
@@ -681,11 +642,7 @@ router.get('/pinterest/callback', async (req, res) => {
   }
 });
 
-// ==========================================
-// THREADS OAUTH FLOW
-// ==========================================
 
-// Step 1: Redirect to Threads OAuth
 router.get('/threads', verifyToken, (req, res) => {
   const appId = process.env.THREADS_APP_ID || process.env.META_APP_ID;
   let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
@@ -705,7 +662,6 @@ router.get('/threads', verifyToken, (req, res) => {
   res.redirect(authUrl);
 });
 
-// Step 2: Handle Threads OAuth Callback
 router.get('/threads/callback', async (req, res) => {
   const { code, state, error } = req.query;
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -728,7 +684,6 @@ router.get('/threads/callback', async (req, res) => {
     if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
     const redirectUri = `${baseUrl}/api/oauth/threads/callback`;
 
-    // 1. Exchange code for short-lived token
     const tokenRes = await axios.post('https://graph.threads.net/oauth/access_token', new URLSearchParams({
       client_id: appId,
       client_secret: appSecret,
@@ -741,7 +696,6 @@ router.get('/threads/callback', async (req, res) => {
 
     const shortLivedToken = tokenRes.data.access_token;
 
-    // 2. Exchange short-lived token for long-lived token
     const longTokenRes = await axios.get('https://graph.threads.net/access_token', {
       params: {
         grant_type: 'th_exchange_token',
@@ -752,7 +706,6 @@ router.get('/threads/callback', async (req, res) => {
 
     const longLivedToken = longTokenRes.data.access_token;
     
-    // 3. Get User Profile info to get threadsPageId and Username
     const profileRes = await axios.get('https://graph.threads.net/v1.0/me', {
       params: {
         fields: 'id,username,name',
@@ -763,7 +716,6 @@ router.get('/threads/callback', async (req, res) => {
     const threadsPageId = profileRes.data.id;
     const threadsUsername = profileRes.data.username || profileRes.data.name;
 
-    // Save to Database
     const updateData = {
       isThreadsConnected: true,
       threadsAccessToken: longLivedToken,
@@ -789,10 +741,7 @@ router.get('/threads/callback', async (req, res) => {
     res.redirect(`${frontendUrl}/connections?error=threads_oauth_failed&reason=${encodeURIComponent(errorMsg)}`);
   }
 });
-// YOUTUBE OAUTH FLOW
-// ==========================================
 
-// Step 1: Redirect to Google OAuth
 router.get('/youtube', verifyToken, (req, res) => {
   let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
@@ -817,7 +766,6 @@ router.get('/youtube', verifyToken, (req, res) => {
   res.redirect(authUrl);
 });
 
-// Step 2: Handle Google OAuth Callback
 router.get('/youtube/callback', async (req, res) => {
   const { code, state, error } = req.query;
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -854,7 +802,6 @@ router.get('/youtube/callback', async (req, res) => {
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
 
-    // Fetch YouTube Channel Name
     let channelName = 'YouTube Channel';
     try {
       const channelRes = await axios.get('https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true', {
@@ -867,8 +814,6 @@ router.get('/youtube/callback', async (req, res) => {
       console.warn("Could not fetch YouTube channel name:", ytErr.message);
     }
 
-    // Save tokens in the database metadata field since strict schema might drop new fields
-    // Actually, we can just save it. Supabase schema accepts it if it exists, or we use metadata.
     const connectionsQuery = { userId: userId };
     if (workspaceId) {
       connectionsQuery.workspaceId = workspaceId;
@@ -903,11 +848,7 @@ router.get('/youtube/callback', async (req, res) => {
     }
   }
 });
-// ==========================================
-// LINKEDIN OAUTH FLOW
-// ==========================================
 
-// Step 1: Redirect to LinkedIn OAuth
 router.get('/linkedin', verifyToken, (req, res) => {
   const clientId = process.env.LINKEDIN_CLIENT_ID;
   let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
@@ -924,14 +865,12 @@ router.get('/linkedin', verifyToken, (req, res) => {
     return res.status(500).json({ error: "Missing LINKEDIN_CLIENT_ID in environment variables" });
   }
 
-  // Temporarily force personal scopes only to avoid "Bummer" unauthorized scope errors
   const scope = 'openid%20profile%20email%20w_member_social';
 
   const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
   res.redirect(authUrl);
 });
 
-// Step 2: Handle LinkedIn OAuth Callback
 router.get('/linkedin/callback', async (req, res) => {
   const { code, state, error } = req.query;
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -968,7 +907,6 @@ router.get('/linkedin/callback', async (req, res) => {
     if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
     const redirectUri = `${baseUrl}/api/oauth/linkedin/callback`;
 
-    // 1. Exchange code for access token
     const tokenRes = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', null, {
       params: {
         grant_type: 'authorization_code',
@@ -982,7 +920,6 @@ router.get('/linkedin/callback', async (req, res) => {
 
     const accessToken = tokenRes.data.access_token;
     
-    // 2. Fetch User Profile
     let profileName = 'LinkedIn Member';
     let personUrn = '';
     try {
@@ -1003,7 +940,6 @@ router.get('/linkedin/callback', async (req, res) => {
       console.warn("Could not fetch LinkedIn profile name:", profileErr.response?.data || profileErr.message);
     }
 
-    // Fetch Organization Pages (targets) user administers (only if it is a Business connection)
     let pages = [];
     if (personUrn) {
       pages.push({
@@ -1072,7 +1008,6 @@ router.get('/linkedin/callback', async (req, res) => {
       }
     }
 
-    // 3. Save to DB
     const connectionsQuery = { userId: userId };
     if (workspaceId) {
       connectionsQuery.workspaceId = workspaceId;
@@ -1084,7 +1019,6 @@ router.get('/linkedin/callback', async (req, res) => {
     updateData.linkedinAccessToken = accessToken;
     updateData.linkedinPages = pages;
     
-    // Reset selected page to avoid issues when switching accounts
     updateData.linkedinPageId = null;
     updateData.linkedinOrganizationId = null;
 
@@ -1111,11 +1045,7 @@ router.get('/linkedin/callback', async (req, res) => {
     }
   }
 });
-// ==========================================
-// GOOGLE BUSINESS OAUTH FLOW
-// ==========================================
 
-// Step 1: Redirect to Google OAuth for Business Profile
 router.get('/google-business', verifyToken, (req, res) => {
   let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
@@ -1141,7 +1071,6 @@ router.get('/google-business', verifyToken, (req, res) => {
   res.redirect(authUrl);
 });
 
-// Step 2: Handle Google Business OAuth Callback
 router.get('/google-business/callback', async (req, res) => {
   const { code, state, error } = req.query;
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -1178,7 +1107,6 @@ router.get('/google-business/callback', async (req, res) => {
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
 
-    // Fetch Google Business Account Name
     
     let googleUserName = '';
     let businessName = 'Google Business Account';
@@ -1229,7 +1157,6 @@ router.get('/google-business/callback', async (req, res) => {
       connectionsQuery.workspaceId = workspaceId;
     }
 
-    // Preserve existing custom business name if GMB API failed
     if (!gmbFetched) {
       try {
         const existingSettings = await Settings.findOne(connectionsQuery);
@@ -1248,7 +1175,6 @@ router.get('/google-business/callback', async (req, res) => {
     updateData.connectedGoogleBusinessName = businessName;
     updateData.googleBusinessAccessToken = tokens.access_token;
     updateData.googleBusinessRefreshToken = tokens.refresh_token || null;
-    // ✅ Save Account & Location IDs at connect time to avoid 429 quota errors later
     if (gmbAccountId) updateData.googleBusinessAccountId = gmbAccountId;
     if (gmbLocationId) updateData.googleBusinessLocationId = gmbLocationId;
 
@@ -1279,11 +1205,7 @@ router.get('/google-business/callback', async (req, res) => {
     }
   }
 });
-// ==========================================
-// TWITTER / X OAUTH FLOW (OAuth 2.0 PKCE)
-// ==========================================
 
-// Step 1: Redirect to Twitter OAuth 2.0
 router.get('/twitter', verifyToken, async (req, res) => {
   const clientId = process.env.TWITTER_CLIENT_ID;
   const clientSecret = process.env.TWITTER_CLIENT_SECRET;
@@ -1303,7 +1225,6 @@ router.get('/twitter', verifyToken, async (req, res) => {
       scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'] 
     });
 
-    // Store PKCE details temporarily
     const pkceSession = {
       codeVerifier,
       state,
@@ -1317,7 +1238,6 @@ router.get('/twitter', verifyToken, async (req, res) => {
       connectionsQuery.workspaceId = req.workspaceId;
     }
     
-    // Store JSON stringified session in twitterRefreshToken temporarily
     await Settings.findOneAndUpdate(
       connectionsQuery,
       { twitterRefreshToken: JSON.stringify(pkceSession) },
@@ -1331,7 +1251,6 @@ router.get('/twitter', verifyToken, async (req, res) => {
   }
 });
 
-// Step 2: Handle Twitter OAuth 2.0 Callback
 router.get('/twitter/callback', async (req, res) => {
   const { code, state, error: twitterError } = req.query;
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -1341,9 +1260,6 @@ router.get('/twitter/callback', async (req, res) => {
   }
 
   try {
-    // Find the session that matches this state
-    // We search all settings because we don't have userId in the query anymore
-    // (Callback URL must exactly match Twitter Developer Portal, so we can't add custom query params)
     
     const settings = await Settings.find({});
     let targetSettings = null;

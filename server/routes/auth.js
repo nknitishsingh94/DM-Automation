@@ -21,7 +21,6 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const router = express.Router();
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
 const signToken = (userId) =>
   jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
@@ -49,12 +48,10 @@ const autoGenerateApiKey = async (userId) => {
   }
 };
 
-// ─── Signup ──────────────────────────────────────────────────────────────────
 router.post('/signup', async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Input validation
     if (!username || !email || !password) {
       return res.status(400).json({ message: 'Username, email and password are required.' });
     }
@@ -68,7 +65,6 @@ router.post('/signup', async (req, res) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       if (!existingUser.password) {
-        // OAuth user — allow setting a password
         existingUser.password = password;
         if (username) existingUser.username = username.slice(0, 50);
         await existingUser.save();
@@ -81,7 +77,6 @@ router.post('/signup', async (req, res) => {
     const newUser = new User({ username: username.slice(0, 50), email, password });
     await newUser.save();
     
-    // Auto-generate API Key for new user
     const newApiKey = await autoGenerateApiKey(newUser._id || newUser.id);
 
     const welcomeMessage = new Message({
@@ -94,13 +89,11 @@ router.post('/signup', async (req, res) => {
     const token = signToken(newUser._id);
     res.status(201).json({ token, user: { id: newUser._id, username: newUser.username, email: newUser.email, profilePhoto: newUser.profilePhoto }, apiKey: newApiKey });
   } catch (err) {
-    // SECURITY: Never expose internal error messages in production
     console.error('Signup error:', err.message);
     res.status(500).json({ message: 'Signup failed. Please try again.' });
   }
 });
 
-// ─── Login ───────────────────────────────────────────────────────────────────
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -137,7 +130,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// ─── Google OAuth Login ───────────────────────────────────────────────────────
 router.post('/google', async (req, res) => {
   try {
     const { token, mode } = req.body;
@@ -186,7 +178,6 @@ router.post('/google', async (req, res) => {
   }
 });
 
-// ─── Custom Google Login ──────────────────────────────────────────────────────
 router.post('/google_custom', async (req, res) => {
   try {
     const { email, name, sub, picture } = req.body;
@@ -242,7 +233,6 @@ router.post('/google_custom', async (req, res) => {
   }
 });
 
-// ─── Facebook OAuth Login ─────────────────────────────────────────────────────
 router.post('/facebook', async (req, res) => {
   try {
     const { accessToken, userId, mode } = req.body;
@@ -255,7 +245,6 @@ router.post('/facebook', async (req, res) => {
       return res.status(400).json({ message: 'Invalid Facebook token.' });
     }
     
-    // SECURITY: If frontend provided userId, verify it matches
     if (userId && fbData.id !== userId) {
       return res.status(400).json({ message: 'Invalid Facebook token mismatch.' });
     }
@@ -274,7 +263,6 @@ router.post('/facebook', async (req, res) => {
         await user.save();
         user._newApiKey = await autoGenerateApiKey(user._id || user.id);
       } catch (saveErr) {
-        // Handle race condition for duplicate email
         if (saveErr.message?.includes('unique constraint') || saveErr.code === '23505') {
           user = await User.findOne({ email });
         } else {
@@ -306,8 +294,6 @@ router.post('/facebook', async (req, res) => {
   }
 });
 
-// ─── Update Profile (Protected) ───────────────────────────────────────────────
-// SECURITY: Now requires verifyToken — previously anyone could update any user's profile
 router.put('/profile', verifyToken, async (req, res) => {
   try {
     const userId = req.user.userId; // from JWT — not from req.body (prevents spoofing)
@@ -318,7 +304,6 @@ router.put('/profile', verifyToken, async (req, res) => {
 
     if (username) user.username = username.slice(0, 50); // length cap
     if (profilePhoto !== undefined) {
-      // SECURITY: Only allow http/https URLs or data URIs for profile photos
       if (typeof profilePhoto === 'string' && (profilePhoto.startsWith('http') || profilePhoto.startsWith('data:image/'))) {
         user.profilePhoto = profilePhoto;
       }
@@ -332,7 +317,6 @@ router.put('/profile', verifyToken, async (req, res) => {
   }
 });
 
-// ─── Get Profile (Protected) ───────────────────────────────────────────────────
 router.get('/profile', verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
@@ -343,7 +327,6 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
-// ─── Permanent Account Deletion (Protected) ────────────────────────────────────
 router.delete('/account', verifyToken, async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -353,7 +336,6 @@ router.delete('/account', verifyToken, async (req, res) => {
 
     console.log(`🗑️ Starting permanent deletion for User: ${userId} (${user.email})`);
 
-    // Define all related models to clean up (including captions and scheduled posts)
     const models = [
       { name: 'Settings', model: Settings },
       { name: 'Campaigns', model: Campaign },
@@ -367,23 +349,18 @@ router.delete('/account', verifyToken, async (req, res) => {
       { name: 'ScheduledPosts', model: ScheduledPost }
     ];
 
-    // Delete related data first (resiliently trying both userId and user_id fields for schema compatibility)
     for (const item of models) {
       try {
-        // 1. Try camelCase 'userId'
         await item.model.deleteMany({ userId });
 
-        // 2. Try snake_case 'user_id'
         await item.model.deleteMany({ user_id: userId });
 
         console.log(`✅ Deleted ${item.name} records for user ${userId}`);
       } catch (err) {
         console.warn(`⚠️ Could not delete ${item.name} records:`, err.message);
-        // Continue even if one fails
       }
     }
 
-    // Finally, delete the user record
     try {
       await User.findByIdAndDelete(userId);
       console.log(`✅ Deleted User record: ${userId}`);
@@ -400,15 +377,12 @@ router.delete('/account', verifyToken, async (req, res) => {
   }
 });
 
-// ─── Account Deletion ────────────────────────────────────────────────────────
 router.delete('/delete', verifyToken, async (req, res) => {
   try {
     const userId = req.user.userId;
     
-    // Delete user from Database
     await User.findByIdAndDelete(userId);
 
-    // Delete associated data
     await Promise.all([
       Settings.deleteMany({ userId }),
       Message.deleteMany({ userId }),

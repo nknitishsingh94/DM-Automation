@@ -29,7 +29,6 @@ const MessageOnlyHub = () => {
   const [selectedPlatform, setSelectedPlatform] = useState('all');
   const [activeChat, setActiveChat] = useState(null);
   
-  // AI States
   const [isAiEnabled, setIsAiEnabled] = useState(false);
   const [showAiSettings, setShowAiSettings] = useState(false);
   const [draftMessage, setDraftMessage] = useState('');
@@ -70,7 +69,6 @@ const MessageOnlyHub = () => {
     };
     fetchData();
 
-    // SUPABASE REALTIME MESSAGE SUBSCRIPTION
     let supabaseChannel = null;
     try {
       supabaseChannel = supabase
@@ -217,11 +215,9 @@ const MessageOnlyHub = () => {
     }
   ];
 
-  // End of platforms array
   const handleGenerateAiResponse = () => {
     if (!activeChat || !isAiEnabled) return;
     setIsGenerating(true);
-    // Simulate AI generation delay
     setTimeout(() => {
       const responses = [
         `Hi ${activeChat.userName.split(' ')[0]}! Thanks for reaching out to ${aiContext.businessName}. Based on what you said: "${activeChat.lastMessage}", we can definitely help with that. ${aiContext.businessDescription} Let me know if you need more details!`,
@@ -270,7 +266,6 @@ const MessageOnlyHub = () => {
     }
   };
 
-  // Derive real chats from messages and contacts
   const realChatsObj = messages.reduce((acc, m) => {
     if (!m.chatId) return acc;
     if (!acc[m.chatId]) {
@@ -303,7 +298,6 @@ const MessageOnlyHub = () => {
 
   const connectedPlatforms = platforms.filter(p => p.isConnected);
 
-  // Filter chats by both connected platforms and the selected dropdown option
   const visibleChats = allRealChats.filter(chat => {
     const isPlatformConnected = connectedPlatforms.some(p => p.id === chat.platformId);
     if (!isPlatformConnected && chat.id !== 'ai_bot_support') return false;

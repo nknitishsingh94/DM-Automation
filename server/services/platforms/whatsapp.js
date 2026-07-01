@@ -75,7 +75,6 @@ export const publishWhatsAppContent = async (userId, postData, workspaceId) => {
       return { status: 'Failed', error: 'No recipient phone numbers provided' };
     }
 
-    // Parse comma separated numbers
     const numbers = numbersStr.split(',').map(n => n.trim().replace(/\D/g, '')).filter(n => n.length > 5);
     
     if (numbers.length === 0) {
@@ -86,7 +85,6 @@ export const publishWhatsAppContent = async (userId, postData, workspaceId) => {
     let failCount = 0;
     let lastError = null;
 
-    // Send to each number
     const url = `https://graph.facebook.com/v19.0/${phoneNumberId}/messages`;
     
     for (const recipientPhone of numbers) {
@@ -98,7 +96,6 @@ export const publishWhatsAppContent = async (userId, postData, workspaceId) => {
           text: { body: postData.caption || "Hello!" }
         };
 
-        // If there's media (image/video), we can send it as media instead of text
         let finalMediaUrl = postData.mediaUrl;
         if (finalMediaUrl && finalMediaUrl.startsWith('{')) {
             try {
@@ -107,7 +104,6 @@ export const publishWhatsAppContent = async (userId, postData, workspaceId) => {
             } catch (e) {}
         }
         
-        // If finalMediaUrl is public, send as media. (WhatsApp Cloud API requires public URLs or IDs)
         if (finalMediaUrl && finalMediaUrl.startsWith('http')) {
            const isVideo = finalMediaUrl.match(/\.(mp4|mov|webm)$/i);
            if (isVideo) {

@@ -14,7 +14,6 @@ const verifyApiKey = async (req, res, next) => {
   }
 
   try {
-    // Find the API key in the database
     const keyRecord = await ApiKey.findOne({ key: apiKey, active: true });
     if (!keyRecord) {
       return res.status(401).json({ error: 'Unauthorized. Invalid or inactive API Key.' });
@@ -23,10 +22,8 @@ const verifyApiKey = async (req, res, next) => {
     const uuidUserId = keyRecord.userId; // Already UUID from Supabase database
     const objectIdUserId = convertUUIDToObjectID(uuidUserId);
     
-    // Set req.user to match JWT payload structure so downstream controllers work seamlessly
     req.user = { userId: objectIdUserId };
     
-    // Resolve workspace context
     let workspaceId = req.headers['x-workspace-id'] || req.query.workspaceId;
     let activeWorkspace = null;
     

@@ -3,8 +3,6 @@ import { TwitterApi } from 'twitter-api-v2';
 
 export async function publishTwitterContent(userId, post, workspaceId) {
   try {
-    // ── Settings Lookup: prefer workspaceId row, fall back to userId row ──
-    // This matches the pattern used by other platform utilities (linkedinApi, etc.)
     let settingsQuery = supabase.from('settings').select('*').limit(1);
     if (workspaceId) {
       settingsQuery = settingsQuery.eq('workspaceId', workspaceId);
@@ -15,7 +13,6 @@ export async function publishTwitterContent(userId, post, workspaceId) {
     const { data: userSettings, error: setErr } = await settingsQuery;
 
     if (setErr || !userSettings || userSettings.length === 0) {
-      // If workspaceId lookup failed, try userId as fallback
       if (workspaceId) {
         const { data: fallbackSettings, error: fallbackErr } = await supabase
           .from('settings')
@@ -65,14 +62,12 @@ async function _doPublish(settings, post) {
 
   let finalClient = new TwitterApi(twitterAccessToken);
 
-  // Attempt to refresh the OAuth 2.0 token before posting
   try {
     const refreshClient = new TwitterApi({ clientId, clientSecret });
     const { client: refreshedClient, accessToken, refreshToken } = await refreshClient.refreshOAuth2Token(twitterRefreshToken);
     
     finalClient = refreshedClient;
 
-    // Save the new tokens to the database
     await supabase.from('settings')
       .update({ 
         twitterAccessToken: accessToken, 
@@ -83,7 +78,6 @@ async function _doPublish(settings, post) {
     console.log(`🔄 [Twitter] Successfully refreshed OAuth 2.0 token for user ${settings.userId}`);
   } catch (refreshErr) {
     console.warn(`⚠️ [Twitter] Token refresh failed (maybe still valid). Proceeding with existing token. Error: ${refreshErr.message}`);
-    // We proceed with the existing token; if it's expired, the API call will fail and throw an error.
   }
 
   const isThread = post.threadPosts && Array.isArray(post.threadPosts) && post.threadPosts.length > 0;

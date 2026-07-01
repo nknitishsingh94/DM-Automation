@@ -89,7 +89,6 @@ export default function YoutubeDashboard() {
         const data = await res.json();
         
         if (res.ok && !data.notConnected && !data.error) {
-          // Helper to format large numbers
           const formatNum = (num) => {
             if (!num) return '0';
             if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -144,8 +143,6 @@ export default function YoutubeDashboard() {
 
     const scheduledDate = new Date(`${scheduleData.date}T${scheduleData.time}`).toISOString();
     
-    // If we only have mediaUrl and no rawVideoFile, it might be a mock or already uploaded. 
-    // But for this new direct upload architecture, rawVideoFile is mandatory unless we are mocking.
     if (!rawVideoFile) {
       return notify('Please select a local video file to upload directly to YouTube.', 'error');
     }
@@ -155,7 +152,6 @@ export default function YoutubeDashboard() {
 
     try {
       const token = localStorage.getItem('insta_agent_token');
-      // 1. Get YouTube Access Token
       const tokenRes = await fetch(`${API_BASE_URL}/api/youtube/access-token`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -168,7 +164,6 @@ export default function YoutubeDashboard() {
 
       const ytToken = tokenData.accessToken;
 
-      // 2. Initiate Resumable Upload Session
       const initRes = await fetch('https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status', {
         method: 'POST',
         headers: {
@@ -202,7 +197,6 @@ export default function YoutubeDashboard() {
         return notify('No upload URL returned from YouTube.', 'error');
       }
 
-      // 3. Upload actual file using XMLHttpRequest to track progress
       const xhr = new XMLHttpRequest();
       xhr.open('PUT', uploadUrl, true);
       xhr.setRequestHeader('Content-Type', rawVideoFile.type || 'video/mp4');
@@ -219,7 +213,6 @@ export default function YoutubeDashboard() {
           const ytResponse = JSON.parse(xhr.responseText);
           const videoId = ytResponse.id;
 
-          // 4. Upload custom thumbnail if exists
           if (rawThumbFile || (scheduleData.thumbnail && !scheduleData.thumbnail.startsWith('blob:'))) {
              try {
                 let thumbBlob = rawThumbFile;

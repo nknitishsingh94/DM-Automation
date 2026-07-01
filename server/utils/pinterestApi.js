@@ -8,7 +8,6 @@ import Settings from '../models/Settings.js';
 async function getOrCreateBoard(accessToken, boardName) {
   const targetName = boardName?.trim() || "My Posts";
 
-  // 1. Fetch existing boards
   let boards = [];
   try {
     const res = await axios.get('https://api.pinterest.com/v5/boards', {
@@ -20,7 +19,6 @@ async function getOrCreateBoard(accessToken, boardName) {
     throw new Error(err.response?.data?.message || "Failed to fetch Pinterest boards");
   }
 
-  // 2. Look for an exact match (case-insensitive)
   const existingBoard = boards.find(
     (b) => b.name.toLowerCase() === targetName.toLowerCase()
   );
@@ -29,7 +27,6 @@ async function getOrCreateBoard(accessToken, boardName) {
     return existingBoard.id;
   }
 
-  // 3. Create board if it doesn't exist
   try {
     const createRes = await axios.post(
       'https://api.pinterest.com/v5/boards',
@@ -59,7 +56,6 @@ export async function publishPinterestContent(userId, post, workspaceId) {
   try {
     console.log(`📌 [Pinterest] Publishing for User: ${userId}. Board: ${post.pinterestBoard || 'Default'}`);
     
-    // 1. Get User's Pinterest Tokens
     const query = { userId };
     if (workspaceId) query.workspaceId = workspaceId;
     const settings = await Settings.findOne(query);
@@ -70,7 +66,6 @@ export async function publishPinterestContent(userId, post, workspaceId) {
 
     const accessToken = settings.pinterestAccessToken;
 
-    // 2. Validate Media (Pinterest currently only supports image_url in this quick flow)
     let mediaUrl = post.mediaUrl;
     if (mediaUrl && typeof mediaUrl === 'string' && mediaUrl.startsWith('{')) {
       try {
@@ -90,10 +85,8 @@ export async function publishPinterestContent(userId, post, workspaceId) {
       throw new Error('A media URL (image) is required for Pinterest pins.');
     }
 
-    // 3. Resolve Board
     const boardId = await getOrCreateBoard(accessToken, post.pinterestBoard);
 
-    // 4. Construct Pin Payload
     const payload = {
       board_id: boardId,
       media_source: {
@@ -103,12 +96,10 @@ export async function publishPinterestContent(userId, post, workspaceId) {
     };
 
     if (post.caption) {
-      // Pinterest description max length is 500 characters
       payload.description = post.caption.substring(0, 500);
     }
     
     if (post.pinterestTitle) {
-      // Pinterest title max length is 100 chars
       payload.title = post.pinterestTitle.substring(0, 100);
     }
 
@@ -117,11 +108,9 @@ export async function publishPinterestContent(userId, post, workspaceId) {
     }
 
     if (post.pinterestAltText) {
-      // Alt text max length is 500 chars
       payload.alt_text = post.pinterestAltText.substring(0, 500);
     }
 
-    // 5. Publish to Pinterest
     const pinRes = await axios.post('https://api.pinterest.com/v5/pins', payload, {
       headers: {
         Authorization: `Bearer ${accessToken}`,

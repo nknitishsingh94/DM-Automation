@@ -26,7 +26,6 @@ export default function ScheduleFeature() {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
     window.addEventListener('resize', handleResize);
 
-    // Animation sequence: show form for 4s, then success for 4s, then repeat
     const timer = setInterval(() => {
       setShowSuccess(prev => !prev);
     }, 4000);

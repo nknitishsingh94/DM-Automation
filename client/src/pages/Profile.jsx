@@ -40,7 +40,6 @@ export default function Profile() {
       });
       const data = await res.json();
       if (res.ok) {
-        // Update both local storage and context
         login(data, localStorage.getItem('insta_agent_token'));
         setMessage({ type: 'success', text: 'Profile updated successfully!' });
       } else {

@@ -43,7 +43,6 @@ Do not include the header or footer in your response; just provide the rewritten
 
     let rewrittenBody = response.choices[0].message.content.trim();
 
-    // Assemble final text
     const parts = [];
     if (defaultHeader) parts.push(defaultHeader);
     parts.push(rewrittenBody);
@@ -52,7 +51,6 @@ Do not include the header or footer in your response; just provide the rewritten
     return parts.join('\n\n');
   } catch (error) {
     console.error('❌ [AI Rewriter] Error rewriting text:', error.message);
-    // If AI fails, fallback to original text with header/footer
     const parts = [];
     if (defaultHeader) parts.push(defaultHeader);
     parts.push(originalText);

@@ -470,7 +470,6 @@ export default function Login() {
       }
     };
 
-    // Load script if not present
     if (!document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) {
       const script = document.createElement('script');
       script.src = "https://accounts.google.com/gsi/client";
@@ -502,12 +501,10 @@ export default function Login() {
   };
 
   useEffect(() => {
-    // Process Facebook OAuth Redirect Token
     if (window.location.hash.includes('access_token')) {
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const accessToken = hashParams.get('access_token');
       if (accessToken) {
-        // Clear the hash from the URL
         window.history.replaceState(null, null, window.location.pathname);
         processFacebookLogin({ accessToken });
       }
@@ -515,7 +512,6 @@ export default function Login() {
   }, []);
 
   const handleFacebookLogin = () => {
-    // DIRECT OAUTH REDIRECT - Bypasses popup blockers and cookie restrictions
     const clientId = '1512161870699295';
     const redirectUri = encodeURIComponent(window.location.origin + '/login');
     const authUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=public_profile,email&response_type=token`;

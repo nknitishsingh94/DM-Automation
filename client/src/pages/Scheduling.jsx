@@ -13,7 +13,6 @@ import { supabase } from '../supabase';
 import LoadingSpinner from '../components/LoadingSpinner';
 import EmojiPicker from 'emoji-picker-react';
 
-// --- UTILITIES ---
 const convertLocalToUTC = (localDateTimeStr, targetTimezone) => {
   if (!localDateTimeStr) return '';
   
@@ -238,7 +237,6 @@ export default function Scheduling() {
   const { notify } = useNotification();
   const navigate = useNavigate();
 
-  // High-level States
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -263,7 +261,6 @@ export default function Scheduling() {
   const [isPostNow, setIsPostNow] = useState(false);
 
 
-  // Filters State
   const [postStatusFilter, setPostStatusFilter] = useState('All posts');
   const [showPostStatusDropdown, setShowPostStatusDropdown] = useState(false);
   const [platformFilter, setPlatformFilter] = useState('All platforms');
@@ -275,7 +272,6 @@ export default function Scheduling() {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
 
 
-  // Settings & Timezone
   const [selectedTimezone, setSelectedTimezone] = useState('browser');
   const [displayTimezone] = useState('browser');
 
@@ -302,7 +298,6 @@ export default function Scheduling() {
     notify(`Time synchronized to ${tzValue === 'browser' ? 'local browser timezone' : tzValue}!`, 'info');
   };
 
-  // Caption State
   const [savedCaptions, setSavedCaptions] = useState([]);
   const [showCaptionsModal, setShowCaptionsModal] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
@@ -403,7 +398,6 @@ export default function Scheduling() {
     }));
   };
 
-  // New Post State
   const [postType, setPostType] = useState('image');
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
@@ -726,7 +720,6 @@ export default function Scheduling() {
     setSelectedFiles(totalFiles);
     setPreviews(newPreviews);
     
-    // Clear the input value so the same file can be selected again if removed
     if (e.target) {
       e.target.value = null;
     }
@@ -940,7 +933,6 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
           whatsappNumbers: payloadBase.whatsappNumbers || ''
         };
 
-        // Create placeholders for all platforms
         for (let i = 0; i < activePlatforms.length; i++) {
           const platObj = activePlatforms[i];
           const tempId = tempPosts[i]._id;
@@ -965,7 +957,6 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
           setPosts(prev => prev.map(p => p._id === tempId ? { ...p, _id: dbId, id: dbId, isUploading: true } : p));
         }
 
-        // Upload media once
         let mediaUrls = [];
         const isMetaPlatform = activePlatforms.some(p => ['instagram', 'facebook', 'threads', 'twitter'].includes(p.id));
         const isYoutubeOnly = activePlatforms.some(p => p.id === 'youtube') && !isMetaPlatform;
@@ -1020,7 +1011,6 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
           }
         }
 
-          // Upload thread media if any
           const finalThreadPosts = [...currentThreadPosts];
           if (currentThreadPosts && currentThreadPosts.length > 0) {
             const threadUploadPromises = currentThreadPosts.map(async (tPost, index) => {
@@ -1057,13 +1047,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
 
         const finalMediaUrl = mediaUrls.length > 0 ? mediaUrls[0] : payloadBase.mediaUrl;
         
-        // Finalize all posts
         let finalPosts = [];
         for (const { dbId, plat, tempId } of createdDbIds) {
           let customMediaUrl = finalMediaUrl;
           let customVideoId = null;
 
-          // Direct YouTube Upload to bypass backend timeouts
           if (plat === 'youtube' && (currentType === 'video' || currentType === 'reel') && currentFiles.length > 0) {
             try {
                const ytFile = currentFiles[0];
@@ -1134,7 +1122,6 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
         setPreviews([]);
         notify("Posts scheduled successfully!", "success");
         
-        // Trigger background worker immediately so it posts without delay
         fetch(`${API_BASE_URL}/api/cron/publish`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }).catch(() => {});
@@ -1142,7 +1129,6 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
       } catch (err) {
         console.error("Background Upload Error:", err);
         
-        // Mark all associated posts as Failed
         const targetIds = createdDbIds.length > 0 ? createdDbIds.map(c => c.dbId) : tempPosts.map(t => t._id);
         
         setPosts(prev => prev.map(p => targetIds.includes(p._id || p.id) ? { ...p, status: 'Failed', lastError: err.message || "Network error during background upload", isUploading: false } : p));
@@ -1333,7 +1319,6 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
   if (loading) return <LoadingSpinner />;
 
   const visiblePosts = posts.filter(post => {
-    // Apply Platform Filter
     if (platformFilter !== 'All platforms') {
       const pLabel = platformFilter.toLowerCase();
       if (pLabel === 'instagram' && post.platform !== 'instagram' && post.platform) return false;
@@ -1346,7 +1331,6 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
       if (pLabel === 'google business' && post.platform !== 'google-business') return false;
     }
 
-    // Apply Post Status Filter
     if (postStatusFilter !== 'All posts') {
       const statusLower = post.status ? post.status.toLowerCase() : 'scheduled';
       const filterLower = postStatusFilter.toLowerCase();
@@ -2336,7 +2320,6 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                               const newPlatforms = isNowSelected
                                 ? [...current, plat.id]
                                 : current.filter(p => p !== plat.id);
-                              // Auto-fetch Pinterest boards when Pinterest is selected
                               if (plat.id === 'pinterest' && isNowSelected && pinterestBoards.length === 0) {
                                 fetchPinterestBoards();
                               }

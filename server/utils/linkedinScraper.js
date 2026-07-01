@@ -9,7 +9,6 @@ const parser = new Parser();
  * @returns {Promise<Array>} - Array of post objects { id, text, mediaUrl, postUrl }
  */
 export async function scrapeLatestLinkedInPosts(feedUrl) {
-  // If no specific feed URL is provided, fallback to env var
   const rssUrl = feedUrl || process.env.LINKEDIN_RSS_FEED_URL || '';
 
   if (!rssUrl) {

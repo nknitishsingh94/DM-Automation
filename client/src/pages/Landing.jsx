@@ -20,7 +20,6 @@ import LoadingSpinner from '../components/LoadingSpinner';
 export default function Landing() {
   const [featuresOpen, setFeaturesOpen] = useState(false);
 
-  // Reviews fetched from API
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
 
@@ -527,12 +526,10 @@ export default function Landing() {
                   })
                    .then(async (res) => {
                      if (res.ok) {
-                       // const saved = await res.json(); // not needed
                        setSubmitting(false);
                        setSuccess(true);
                        toast.success('Thank you! Your review was successfully saved.');
                        await fetchReviews();
-                       // Reset form inputs
                        setNewReview({
                          name: '',
                          handle: '',
@@ -548,7 +545,6 @@ export default function Landing() {
                    })
                   .catch((err) => {
                     console.error("Error submitting review to backend:", err);
-                    // Resilient fallback: Add to local state so the demo always succeeds
                     setReviews((prev) => [
                       {
                         id: Date.now(),
@@ -789,7 +785,6 @@ export default function Landing() {
   );
 }
 
-// Trigger vercel deployment
 
 
 

@@ -173,7 +173,6 @@ export default function WhatsAppDashboard() {
     paused: campaigns.filter(c => c.status !== 'Active').length,
   };
 
-  // ───── RENDER ─────
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #f0f9ff 100%)', fontFamily: "'Inter', sans-serif" }}>
 

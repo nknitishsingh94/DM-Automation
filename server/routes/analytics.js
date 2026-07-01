@@ -39,20 +39,15 @@ router.get('/', verifyToken, async (req, res) => {
       query.workspaceId = workspaceId;
     }
 
-    // Fetch total scheduled posts count
     const scheduledPosts = await ScheduledPost.find(query);
     const totalScheduled = scheduledPosts.length;
     const publishedCount = scheduledPosts.filter(p => p.status === 'published').length;
 
-    // Fetch post logs
     const logs = await PostLog.find(query);
     const totalLogs = logs.length;
     const successCount = logs.filter(log => log.status === 'success').length;
     const failedCount = logs.filter(log => log.status === 'failed').length;
 
-    // Get recent logs (sorted by created_at desc)
-    // Note: since we use a custom Supabase wrapper, we will manually sort if sorting isn't built into find()
-    // Assuming logs array is returned
     const recentLogs = logs.sort((a, b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt)).slice(0, 10);
 
     res.json({

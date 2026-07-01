@@ -28,7 +28,6 @@ export async function runSchedulingWorker() {
       return data;
     };
 
-    // ── Safety net: reset any "Processing" posts that have been orphaned ──
     {
       const STUCK_THRESHOLD_MINUTES = 10;
       const stuckBoundary = new Date(Date.now() - STUCK_THRESHOLD_MINUTES * 60 * 1000).toISOString();
@@ -57,14 +56,9 @@ export async function runSchedulingWorker() {
 
     if (duePosts.length === 0) return { skipped: true, reason: 'No posts due' };
 
-    // Helper: Convert proxy URLs to direct Supabase public CDN URLs
-    // Meta Graph API does NOT follow HTTP 302 redirects, so we must resolve
-    // /api/storage/view?path=... → https://<supabase>/storage/v1/object/public/media/...
     const resolveMediaUrl = (url) => {
       if (!url || typeof url !== 'string') return url;
-      // Already a direct Supabase public URL — keep as-is
       if (url.includes('.supabase.co/storage/v1/object/public/')) return url;
-      // Proxy URL: /api/storage/view?path=<filename>
       const proxyMatch = url.match(/\/api\/storage\/view\?path=([^&]+)/);
       if (proxyMatch) {
         const path = decodeURIComponent(proxyMatch[1]);
@@ -82,7 +76,6 @@ export async function runSchedulingWorker() {
       console.log(`\n===========================================`);
       console.log(`⚙️ [Worker] Processing Post ID: ${post._id}`);
       
-      // Parse JSON mediaUrl if it exists
       if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
         try {
           const parsedMeta = JSON.parse(post.mediaUrl);
@@ -98,8 +91,6 @@ export async function runSchedulingWorker() {
         }
       }
 
-      // ✅ CRITICAL FIX: Resolve proxy URLs → direct Supabase CDN URLs
-      // Meta Graph API cannot follow 302 redirects — must get the actual file URL
       post.mediaUrl = resolveMediaUrl(post.mediaUrl);
       if (Array.isArray(post.carouselItems)) {
         post.carouselItems = post.carouselItems.map(resolveMediaUrl);
@@ -115,8 +106,6 @@ export async function runSchedulingWorker() {
           continue;
         }
 
-        // If a post is Processing but has no containerId, it means the client is still uploading the media.
-        // We give the client 5 minutes to finish uploading and change status to 'Scheduled'.
         if (post.status === 'Processing' && !post.containerId) {
           const postAgeMinutes = (Date.now() - new Date(post.createdAt || post.updatedAt).getTime()) / (1000 * 60);
           if (postAgeMinutes < 5) {
@@ -181,8 +170,6 @@ export async function runSchedulingWorker() {
           continue;
         }
 
-        // --- NEW ARCHITECTURE: Check Media Readiness First ---
-        // If containerId exists but not published, we check readiness
         if (post.containerId && post.status === 'Processing') {
           console.log(`⏳ [Worker] Checking readiness for container ${post.containerId}...`);
           try {
@@ -247,7 +234,6 @@ export async function runSchedulingWorker() {
           continue;
         }
 
-        // --- Standard Publishing Flow (New Posts) ---
         console.log(`🎬 [Worker] Starting initial publish sequence for ${post._id} on ${post.platform}...`);
         await safeUpdate(post.id, { status: 'Processing' });
         await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Processing' });

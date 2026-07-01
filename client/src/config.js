@@ -1,4 +1,3 @@
-// Deployment Timestamp: 2026-04-10T19:32:00Z
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
   ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:5001'

@@ -7,7 +7,6 @@ export default function PlatformAutoOps() {
   const { platform } = useParams();
   const [activeTab, setActiveTab] = useState('flows');
 
-  // Platform configs
   const platformConfig = {
     whatsapp: {
       name: 'WhatsApp',
@@ -42,7 +41,6 @@ export default function PlatformAutoOps() {
   const PlatformIcon = currentPlatform.icon;
 
   useEffect(() => {
-    // Reset to flows tab if current tab is not supported by new platform
     if (!currentPlatform.features.includes(activeTab)) {
       setActiveTab('flows');
     }

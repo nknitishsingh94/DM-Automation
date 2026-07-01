@@ -33,7 +33,6 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
 
   let accessToken = settings.googleBusinessAccessToken;
   
-  // Refresh token if needed
   if (settings.googleBusinessRefreshToken) {
     try {
       console.log('🔄 [GMB] Refreshing Google Business access token...');
@@ -45,7 +44,6 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
       });
       if (refreshRes.data && refreshRes.data.access_token) {
         accessToken = refreshRes.data.access_token;
-        // Save new access token
         settings.googleBusinessAccessToken = accessToken;
         await settings.save();
         console.log('✅ [GMB] Token refreshed successfully!');
@@ -60,11 +58,9 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
   let locationTitle = settings.connectedGoogleBusinessName;
 
   if (!accountName || !locationName) {
-    // 1. Get Accounts - try v4 first (different quota), then v1
     console.log('📡 [GMB] Fetching Google Business Accounts (Cache miss)...');
     let accountsRes;
     try {
-      // Try old v4 API first - different quota bucket, more lenient
       accountsRes = await axios.get('https://mybusiness.googleapis.com/v4/accounts', {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
@@ -77,7 +73,6 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
       } catch (err) {
         if (err.response?.data?.error?.code === 429) {
           console.error('❌ [GMB] Rate limit hit. Post will retry later.');
-          // Return a special status to defer without marking as failed
           throw new Error('RATE_LIMITED: Google Business API quota exceeded. Will retry automatically.');
         }
         console.error('❌ [GMB] Fetch accounts failed:', err.response?.data || err.message);
@@ -94,7 +89,6 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
     accountName = account.name;
     console.log(`✅ [GMB] Using Account: ${account.accountName || account.name}`);
 
-    // 2. Get Locations
     console.log(`📡 [GMB] Fetching locations for account: ${accountName}...`);
     let locationsRes;
     try {
@@ -116,11 +110,9 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
     locationTitle = location.title;
     console.log(`✅ [GMB] Using Location: ${location.title} (${location.name})`);
 
-    // Save back to settings cache via direct Supabase update
     try {
       const { supabase: _sb } = await import('./supabase.js');
       
-      // Read current connectedPageName and merge GMB IDs into it
       const currentConnectedPageName = settings.connectedPageName || '{}';
       let pageData = {};
       try { pageData = JSON.parse(currentConnectedPageName); } catch(e) {}
@@ -133,7 +125,6 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
         connectedPageName: JSON.stringify(pageData)
       });
 
-      // Match by workspaceId if available, otherwise by userId
       if (workspaceId) {
         await updateQuery.eq('workspaceId', workspaceId);
       } else {
@@ -148,14 +139,12 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
     console.log(`✅ [GMB] Using cached details - Account: ${accountName}, Location: ${locationName}`);
   }
 
-  // 3. Create Local Post
   const accountId = accountName.split('/')[1];
   const locationId = locationName.split('/')[1];
   const publishUrl = `https://mybusiness.googleapis.com/v4/accounts/${accountId}/locations/${locationId}/localPosts`;
 
   console.log(`📡 [GMB] Creating Local Post on URL: ${publishUrl}...`);
 
-  // Parse GMB metadata settings from mediaUrl JSON string
   let summary = post.caption || '';
   let ctaEnabled = false;
   let actionType = 'LEARN_MORE';
@@ -195,7 +184,6 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
     }
   }
 
-  // Prepend product details if topicType is PRODUCT (since GMB localPosts API doesn't support PRODUCT post type natively)
   if (topicType === 'PRODUCT') {
     let productDetails = '';
     if (gmbProductName) productDetails += `📦 Product: ${gmbProductName}\n`;
@@ -223,7 +211,6 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
     postBody.media = mediaList;
   }
 
-  // EVENT or OFFER require event details
   if (topicType === 'EVENT' || topicType === 'OFFER') {
     const startParsed = parseGmbDateTime(gmbEventStartDate);
     const endParsed = parseGmbDateTime(gmbEventEndDate);
@@ -240,7 +227,6 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
     }
   }
 
-  // OFFER requires offer details
   if (topicType === 'OFFER') {
     postBody.offer = {};
     if (gmbOfferCouponCode) {
@@ -252,14 +238,12 @@ export async function publishGoogleBusinessContent(userId, post, workspaceId) {
     if (gmbOfferTerms) {
       postBody.offer.termsAndConditions = gmbOfferTerms;
     }
-    // If offer is empty object, clean it up
     if (Object.keys(postBody.offer).length === 0) {
       delete postBody.offer;
     }
   }
 
   if (ctaEnabled) {
-    // If actionType is CALL, url is not sent
     if (actionType === 'CALL') {
       postBody.callToAction = {
         actionType: 'CALL'

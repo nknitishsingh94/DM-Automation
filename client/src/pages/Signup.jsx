@@ -78,7 +78,6 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Removed Gmail-only restriction to allow universal signup
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
@@ -96,7 +95,6 @@ export default function Signup() {
           navigate('/connections');
         }
       } else {
-        // Look for message or error key from backend
         setError(data.message || data.error || 'Signup failed. Please try again.');
       }
     } catch (err) {
@@ -182,7 +180,6 @@ export default function Signup() {
   };
 
   useEffect(() => {
-    // Process Facebook OAuth Redirect Token
     if (window.location.hash.includes('access_token')) {
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const accessToken = hashParams.get('access_token');

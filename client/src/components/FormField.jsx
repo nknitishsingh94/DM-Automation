@@ -1,4 +1,3 @@
-// client/src/components/FormField.jsx
 import React from 'react';
 /**
  * Reusable form field component supporting input and textarea.

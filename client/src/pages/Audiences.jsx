@@ -12,7 +12,6 @@ export default function Audiences() {
   const [selectedContact, setSelectedContact] = useState(null);
   const [selectedTagFilter, setSelectedTagFilter] = useState('All');
   
-  // Tag Modal / Management State
   const [tagInput, setTagInput] = useState('');
   const [noteInput, setNoteInput] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
@@ -26,7 +25,6 @@ export default function Audiences() {
       const contactsData = await res.json();
       if (Array.isArray(contactsData)) {
         setContacts(contactsData);
-        // If a contact was selected, update its local state too
         if (selectedContact) {
           const updated = contactsData.find(c => c._id === selectedContact._id);
           if (updated) setSelectedContact(updated);

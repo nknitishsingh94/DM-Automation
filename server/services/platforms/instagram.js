@@ -26,30 +26,23 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
       return true;
     }
 
-    // ✅ Use 'me/messages' endpoint for all platforms
     let url = `https://graph.facebook.com/v19.0/me/messages?access_token=${accessToken}`;
 
-    // Ensure bare 'www.' links in text get 'https://' prefix for Desktop compatibility
     let safeText = text || '';
     safeText = safeText.replace(/(^|\s)(www\.[^\s]+)/g, '$1https://$2');
 
-    // Dynamic Recipient Builder for Private Replies on Instagram Comments
     const recipient = (platform === 'instagram' && commentId) ? { comment_id: commentId } : { id: recipientId };
     let payload = null;
 
-    // Meta API STRICT RULE: Private replies (using comment_id) CANNOT contain buttons or templates.
-    // If we try to send a button, it will throw an API error and drop the message.
     const isPrivateReply = !!commentId;
     let effectiveButtons = isPrivateReply ? [] : (buttons || []);
     let effectiveButtonText = isPrivateReply ? null : buttonText;
 
     if (isPrivateReply && (buttonText || (buttons && buttons.length > 0))) {
-      // Append a fallback instruction since we had to strip the button
       safeText = safeText + `\n\n👉 (Reply "Yes" to receive it!)`;
     }
 
     if (platform === 'facebook' && commentId) {
-      // Facebook private replies MUST be sent to /{comment_id}/private_replies
       url = `https://graph.facebook.com/v19.0/${commentId}/private_replies?access_token=${accessToken}`;
       payload = { message: safeText };
     } else if (effectiveButtons.length > 0) {
@@ -188,8 +181,6 @@ export const sendWhatsAppMessage = async (recipientPhone, text, userId = null) =
 export const sendPrivateReply = async (platform, commentId, text, userId = null) => {
   try {
     if (platform === 'instagram') {
-      // Instagram private replies MUST be sent via the standard messages endpoint
-      // using comment_id in the recipient field!
       console.log(`💬 Instagram Private Reply: Routing through sendMessageToInstagram for comment ${commentId}...`);
       return await sendMessageToInstagram(platform, '', text, '', userId, '', null, [], '', commentId);
     }
@@ -220,7 +211,6 @@ export const sendPrivateReply = async (platform, commentId, text, userId = null)
  */
 export const checkMediaReadiness = async (mediaId, accessToken) => {
   try {
-    // Try to get status_code first (supported by all media types)
     const statusRes = await axios.get(`https://graph.facebook.com/v19.0/${mediaId}`, {
       params: {
         fields: 'status_code',
@@ -231,7 +221,6 @@ export const checkMediaReadiness = async (mediaId, accessToken) => {
     
     const statusCode = statusRes.data.status_code;
     
-    // If status_code is not returned at all (e.g. image container), it is ready immediately
     if (statusCode === undefined || statusCode === null) {
       console.log(`ℹ️ [Meta API] Container ${mediaId} has no status_code (likely an image). Marking ready immediately.`);
       return true;
@@ -240,7 +229,6 @@ export const checkMediaReadiness = async (mediaId, accessToken) => {
     if (statusCode === 'FINISHED' || statusCode === 'PUBLISHED') {
       return true;
     } else if (statusCode === 'ERROR') {
-      // If it failed, try to get video_status for more details
       try {
         const videoStatusRes = await axios.get(`https://graph.facebook.com/v19.0/${mediaId}`, {
           params: {
@@ -261,13 +249,9 @@ export const checkMediaReadiness = async (mediaId, accessToken) => {
   } catch (err) {
     if (err.message?.includes('Meta Processing')) throw err;
     if (err.response) {
-      // Meta often returns 100 (Unsupported Get Request) or Authorization Error 
-      // if the container ID hasn't propagated to all their servers yet.
-      // Do not fail the whole process! Just return false so we retry.
       console.warn(`⚠️ Meta API eventual consistency delay in checkMediaReadiness:`, err.response.data?.error?.message || err.message);
       return false; 
     }
-    // If it's a timeout or network error, also return false to keep polling
     console.warn(`⚠️ Network/Timeout error in checkMediaReadiness:`, err.message);
     return false;
   }
@@ -317,8 +301,6 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
         });
         const childrenIds = await Promise.all(childPromises);
         
-        // Note: For carousels on Vercel, we might need a more complex state, 
-        // but for now let's hope children process fast or use the same logic
         const carouselParams = { access_token: accessToken, media_type: 'CAROUSEL', children: childrenIds.join(','), caption };
         const carouselRes = await axios.post(`https://graph.facebook.com/v19.0/${igId}/media`, null, { params: carouselParams, timeout: 60000 });
         finalCreationId = carouselRes.data.id;
@@ -337,11 +319,6 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
       }
     }
 
-    // BYPASS `checkMediaReadiness` entirely!
-    // Meta's GET /{container_id} global node often throws "Authorization Error" 
-    // immediately after creation due to distributed database delays.
-    // However, POST /{ig_user_id}/media_publish is an edge query and works instantly.
-    // We will just try to publish immediately. If it's an image, it usually succeeds instantly!
     console.log(`📦 Attempting immediate publish for container: ${finalCreationId}`);
     
     const publishUrl = `https://graph.facebook.com/v19.0/${igId}/media_publish?creation_id=${finalCreationId}&access_token=${accessToken}`;
@@ -361,7 +338,6 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
         }
         if (pubErr.response && pubErr.response.data && pubErr.response.data.error) {
           const errorMsg = pubErr.response.data.error.message?.toLowerCase() || '';
-          // 9007 = media not ready
           if (pubErr.response.data.error.code === 9007 || errorMsg.includes('not ready') || errorMsg.includes('processing')) {
             retryCount++;
             if (retryCount >= MAX_RETRIES) {
@@ -379,7 +355,6 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
     console.log(`🚀 [Meta API] Successfully published container: ${finalCreationId}`);
     console.log(`✅ [Meta API] Published Successfully! Media ID: ${publishRes.data.id}`);
     
-    // Fetch Official URL
     let liveUrl = mediaUrl;
     let metaMediaUrl = null;
     try {
@@ -392,7 +367,6 @@ export const publishInstagramContent = async (userId, { type, mediaUrl, caption 
         if (mediaInfoRes.data.media_url) metaMediaUrl = mediaInfoRes.data.media_url;
       }
     } catch (e) {
-      // Silently continue. The post is already published.
     }
 
     return { id: publishRes.data.id, url: liveUrl, media_url: metaMediaUrl, status: 'PUBLISHED' };
@@ -504,7 +478,6 @@ export const publishFacebookContent = async (userId, { type, mediaUrl, caption =
 
     console.log(`✅ [Meta API] FB Feed Published Successfully! Post ID: ${publishedId}`);
     
-    // Fetch Official URL
     let liveUrl = `https://www.facebook.com/${publishedId}`;
     let metaMediaUrl = null;
     try {
@@ -542,7 +515,6 @@ export const sendPublicComment = async (platform, commentId, text, userId = null
     if (!accessToken || !commentId || !text) return { success: false, error: 'Missing parameters' };
 
     let safeCommentId = commentId;
-    // Facebook often sends comment_id as "postId_commentId". The Graph API sometimes rejects this compound ID for threaded replies.
     if (platform === 'facebook' && typeof safeCommentId === 'string' && safeCommentId.includes('_')) {
       safeCommentId = safeCommentId.split('_')[1];
     }

@@ -54,7 +54,6 @@ export default function AutomationEditor() {
   const isUniversal = params.get('isUniversal') === 'true';
   const { id } = useParams();
 
-  // State
   const [selectedPlatform, setSelectedPlatform] = useState(isUniversal ? 'all' : (channel || 'instagram'));
   const isDmOnlyTemplate = template && !['comments', 'auto_dm_links', 'sell_reel_comments', 'grow_followers_comments_flow', 'grow_followers_comments_quick', 'send_offers_live', 'auto_thank_positive', 'auto_thank_positive_comments', 'trigger_dms_live', 'auto_reply_comment_dm'].includes(template);
   const [anyStory, setAnyStory] = useState(isUniversal ? true : isDmOnlyTemplate ? true : false);
@@ -241,7 +240,6 @@ export default function AutomationEditor() {
         setKeywords(['COLLAB', 'PARTNER']);
         setMessage("Hi! Thanks for reaching out about a collaboration. Please share your brand details and budget 🤝");
       } else {
-        // For any other unrecognized template, default to DM trigger with any post
         setTriggerOnDms(true);
         setTriggerOnComments(false);
         setTriggerOnStories(false);
@@ -278,7 +276,6 @@ export default function AutomationEditor() {
             if (data.triggerOnComments !== undefined) setTriggerOnComments(data.triggerOnComments);
             if (data.triggerOnStories !== undefined) setTriggerOnStories(data.triggerOnStories);
 
-            // Backwards compatibility for older campaigns without trigger flags, or campaigns corrupted with all false
             if (
               (data.triggerOnDms === undefined && data.triggerOnComments === undefined && data.triggerOnStories === undefined) ||
               (data.triggerOnDms === false && data.triggerOnComments === false && data.triggerOnStories === false)
@@ -353,7 +350,6 @@ export default function AutomationEditor() {
         const data = await res.json();
         setConnectedSettings(data);
 
-        // Adjust selected platform based on actual connection status if creating a new campaign
         if (!id || id === 'new') {
           const isInstagramConnected = data.isAccountConnected || (data.instagramAccessToken && data.businessAccountId);
           const isFacebookConnected = data.isFacebookConnected || (data.facebookAccessToken && data.facebookPageId);
@@ -437,7 +433,6 @@ export default function AutomationEditor() {
       return;
     }
 
-    // Post/story selection is only required for comment or story-triggered automations
     if ((triggerOnComments || triggerOnStories) && !anyStory && !selectedContentId) {
       notify(`Please select a specific ${triggerOnStories ? 'story' : 'post'} to continue`, 'error');
       return;

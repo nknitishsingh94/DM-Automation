@@ -55,7 +55,6 @@ export default function ApiKeys() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to generate API Key');
 
-      // Set the newly created raw key to show the user once
       setNewlyCreatedKey(data.key);
       setNewKeyName('');
       setShowGenerateForm(false);
@@ -81,7 +80,6 @@ export default function ApiKeys() {
       if (!res.ok) throw new Error('Failed to revoke API key');
       notify('API Key revoked successfully', 'success');
       
-      // Clear newlyCreatedKey if it was revoked
       setNewlyCreatedKey(null);
       fetchKeys();
     } catch (err) {

@@ -40,7 +40,6 @@ export default function DmAutomationEditor() {
   const isUniversal = params.get('isUniversal') === 'true';
   const { id } = useParams();
 
-  // State
   const [selectedPlatform, setSelectedPlatform] = useState(isUniversal ? 'all' : channel);
   const [anyKeyword, setAnyKeyword] = useState(false);
   const [keywords, setKeywords] = useState([]);
@@ -155,7 +154,6 @@ export default function DmAutomationEditor() {
         const data = await res.json();
         setConnectedSettings(data);
 
-        // Adjust selected platform based on actual connection status if creating a new campaign
         if (!id || id === 'new') {
           const isInstagramConnected = data.isAccountConnected || (data.instagramAccessToken && data.businessAccountId);
           const isFacebookConnected = data.isFacebookConnected || (data.facebookAccessToken && data.facebookPageId);

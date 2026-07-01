@@ -12,7 +12,6 @@ import CookieBanner from './components/CookieBanner';
 import UniversalTriggers from './pages/UniversalTriggers';
 import TwitterTest from './pages/TwitterTest';
 
-// Helper to handle lazy loading retries (Fixes 'Failed to fetch dynamically imported module')
 const lazyRetry = (componentImport) => {
   return lazy(async () => {
     const pageHasAlreadyBeenForceRefreshed = JSON.parse(
@@ -37,7 +36,6 @@ import Inbox from './pages/Inbox';
 import Connections from './pages/Connections';
 import Campaigns from './pages/Campaigns';
 
-// Lazy load heavy components with retry logic
 const SettingsPage = lazyRetry(() => import('./pages/Settings'));
 const Profile = lazyRetry(() => import('./pages/Profile'));
 
@@ -66,7 +64,6 @@ const AutomationEditor = lazyRetry(() => import('./pages/AutomationEditor'));
 const DmAutomationEditor = lazyRetry(() => import('./pages/DmAutomationEditor'));
 const Setup = lazyRetry(() => import('./pages/Setup'));
 const WriteReview = lazyRetry(() => import('./pages/WriteReview'));
-// Removed PlatformHub as it was deleted
 const MessageOnlyHub = lazyRetry(() => import('./pages/MessageOnlyHub'));
 const PlatformDashboard = lazyRetry(() => import('./pages/PlatformDashboard'));
 const WhatsAppDashboard = lazyRetry(() => import('./pages/WhatsAppDashboard'));
@@ -113,13 +110,10 @@ function ProtectedRoute({ children }) {
 
   if (!user && !token) return <Navigate to="/login" />;
 
-  // More robust connection check
   const isConnected = localStorage.getItem('insta_agent_connected') === 'true';
   const isBypassPage = ['/upgrade', '/settings', '/campaigns', '/dashboard'].includes(location.pathname);
 
   if (!isConnected && !isBypassPage) {
-    // We'll allow them to see the dashboard for now to help debug
-    // return <Navigate to="/onboarding" />;
   }
 
   return children;
@@ -140,7 +134,6 @@ function Sidebar({ isMobileOpen, onClose }) {
   const [showTemplatesModal, setShowTemplatesModal] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
-  // Fetch workspaces
   const fetchWorkspaces = async () => {
     try {
       const token = localStorage.getItem('insta_agent_token');
@@ -175,7 +168,6 @@ function Sidebar({ isMobileOpen, onClose }) {
     const params = new URLSearchParams(location.search);
     if (params.get('openTemplates') === 'true') {
       setShowTemplatesModal(true);
-      // Optional: Clean up URL after opening
       window.history.replaceState({}, document.title, location.pathname);
     }
   }, [location.pathname, location.search]);

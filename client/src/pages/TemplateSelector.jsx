@@ -18,7 +18,6 @@ export default function TemplateSelector() {
   const categories = ['All', 'Lead Generation', 'Sales & Offers', 'Audience Growth', 'AI & Support', 'Advanced'];
 
   const templates = [
-    // LEAD GENERATION
     { id: 'gen_leads_stories', category: 'Lead Generation', title: 'Generate Leads with Stories', desc: 'Ask qualifying questions and collect emails/phones from story replies', icon: 'Story' },
     { id: 'grow_email_list', category: 'Lead Generation', title: 'Grow Email List', desc: 'Ask for email to send a resource and save to CRM', icon: 'Email' },
     { id: 'grow_sms_list', category: 'Lead Generation', title: 'Grow an SMS List', desc: 'Collect phone numbers for text updates', icon: 'Phone' },
@@ -27,7 +26,6 @@ export default function TemplateSelector() {
     { id: 'trigger_dms_live', category: 'Lead Generation', title: 'Trigger DMs During IG Live', desc: 'Collect leads directly from live video comments', icon: 'Video' },
     { id: 'auto_reply_comment_dm', category: 'Lead Generation', title: 'Auto-Reply to Comment in DM', desc: 'Send product catalog & buttons in DM after comment', icon: 'MessageCircle' },
 
-    // SALES & OFFERS
     { id: 'sell_reel_comments', category: 'Sales & Offers', title: 'Sell from Reel Comments', desc: 'Match keywords on Reels to send checkout links', icon: 'ShoppingBag' },
     { id: 'send_affiliate_links', category: 'Sales & Offers', title: 'Send Affiliate Links', desc: 'Show product cards and send affiliate links on request', icon: 'Link' },
     { id: 'sell_from_ads', category: 'Sales & Offers', title: 'Sell from Ads', desc: 'Qualify leads coming from ad clicks and send offers', icon: 'Megaphone' },
@@ -36,7 +34,6 @@ export default function TemplateSelector() {
     { id: 'dm_course', category: 'Sales & Offers', title: 'DM Your Course', desc: 'Send course details and pricing when users DM COURSE', icon: 'BookOpen' },
     { id: 'launch_new_product', category: 'Sales & Offers', title: 'Launch a New Product', desc: 'Send announcements and purchase links for a launch', icon: 'Rocket' },
 
-    // AUDIENCE GROWTH
     { id: 'grow_followers_comments_flow', category: 'Audience Growth', title: 'Grow Followers from Comments', desc: 'Verify follow status before giving a reward', icon: 'Users' },
     { id: 'follow_first_freebie', category: 'Audience Growth', title: 'Follow First Then Freebie', desc: 'Require a follow before sending a free resource', icon: 'Gift' },
     { id: 'run_giveaway', category: 'Audience Growth', title: 'Run a Giveaway', desc: 'Verify follows and comments for giveaway entries', icon: 'Trophy' },
@@ -46,7 +43,6 @@ export default function TemplateSelector() {
     { id: 'dm_new_follower', category: 'Audience Growth', title: 'DM to New Follower', desc: 'Welcome new followers with a brand intro and resource', icon: 'UserPlus' },
     { id: 'go_to_whatsapp', category: 'Audience Growth', title: 'Instagram to WhatsApp', desc: 'Send WhatsApp button and track clicks', icon: 'MessageCircle' },
 
-    // AI & SUPPORT
     { id: 'all_dms', category: 'AI & Support', title: 'Respond to All DMs', desc: 'AI intent detection, FAQ matching, and agent handoff', icon: 'Bot' },
     { id: 'recognize_questions_ai', category: 'AI & Support', title: 'Recognize Questions with AI', desc: 'Search knowledge base and generate answers', icon: 'HelpCircle' },
     { id: 'answer_faqs_stories', category: 'AI & Support', title: 'Answer FAQs from Stories', desc: 'AI detects questions from story replies and answers', icon: 'MessageSquare' },
@@ -56,7 +52,6 @@ export default function TemplateSelector() {
     { id: 'auto_like_positive_dms', category: 'AI & Support', title: 'Auto-Like Positive Messages', desc: 'Sentiment analysis to like positive DMs', icon: 'ThumbsUp' },
     { id: 'reply_story_mentions', category: 'AI & Support', title: 'Reply to Story Mentions', desc: 'Send thank you DMs and offers for mentions', icon: 'AtSign' },
 
-    // ADVANCED
     { id: 'comments', category: 'Advanced', title: 'Auto-DM Links from Comments', desc: 'Classic trigger to send links and track clicks from comments', icon: 'Link' },
     { id: 'auto_send_links_dm', category: 'Advanced', title: 'Auto-Send Links in DM', desc: 'Keyword trigger to send website links in DM', icon: 'Send' },
     { id: 'custom_flow', category: 'Advanced', title: 'Create a Custom Flow', desc: 'Start from scratch with triggers, conditions, and actions', icon: 'PlusCircle' }

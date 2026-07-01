@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 
-// Global fetch interceptor to inject active workspace ID header
 const originalFetch = window.fetch;
 window.fetch = async (url, options = {}) => {
   const activeWorkspaceId = localStorage.getItem('active_workspace_id');

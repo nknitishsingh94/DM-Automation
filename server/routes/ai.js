@@ -4,7 +4,6 @@ import verifyToken from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Initialize OpenAI client
 const getOpenAIClient = () => {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {

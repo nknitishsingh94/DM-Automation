@@ -14,7 +14,6 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
 
   const accessToken = settings.linkedinAccessToken;
 
-  // 1. Determine Target URN
   let cleanMediaUrl = post.mediaUrl || '';
   let selectedTargetUrn = null;
   if (post.mediaUrl && post.mediaUrl.startsWith('{')) {
@@ -29,7 +28,6 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
 
   let targetUrn = null; // FORCE personal profile by ignoring selectedTargetUrn for now
   
-  // Temporarily overriding company page selection as requested by user
   console.log('📡 [LinkedIn] Forcing personal profile posting as requested, fetching profile info...');
   let profileRes;
   try {
@@ -52,7 +50,6 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
 
   const hasMedia = !!cleanMediaUrl;
 
-  // Detect if the media is a video or image
   let isVideo = false;
   if (hasMedia) {
     const lowercaseUrl = cleanMediaUrl.toLowerCase();
@@ -115,7 +112,6 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
     }
   }
 
-  // 3. Build Post Body
   const postBody = {
     author: targetUrn,
     lifecycleState: 'PUBLISHED',
@@ -142,7 +138,6 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
       }
     ];
   } else if (hasMedia) {
-    // Fallback to link/article sharing
     shareContent.shareMediaCategory = 'ARTICLE';
     shareContent.media = [
       {
@@ -157,7 +152,6 @@ export async function publishLinkedInContent(userId, post, workspaceId) {
     shareContent.shareMediaCategory = 'NONE';
   }
 
-  // 4. Post to ugcPosts
   console.log('📡 [LinkedIn] Posting UGC Share to LinkedIn...');
   try {
     const postRes = await axios.post('https://api.linkedin.com/v2/ugcPosts', postBody, {

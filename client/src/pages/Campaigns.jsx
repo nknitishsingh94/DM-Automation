@@ -39,7 +39,6 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
     isUniversal: false
   });
   
-  // Edit State
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [editForm, setEditForm] = useState({ name: '', trigger: '', response: '', linkUrl: '', buttonText: '', isUniversal: false, triggerSource: 'dm' });
 
@@ -86,7 +85,6 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
       
       const data = await res.json();
       if (res.ok && data.response) {
-        // Clean up quotes from the AI response if it added them
         let cleanText = data.response.replace(/^["']|["']$/g, '').trim();
         
         if (isEdit) {

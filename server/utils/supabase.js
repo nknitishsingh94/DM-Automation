@@ -17,7 +17,6 @@ try {
   console.warn('⚠️ Could not initialize Supabase Client:', e.message);
 }
 
-// Separate admin client for storage uploads (bypasses RLS)
 let supabaseAdmin = null;
 try {
   if (supabaseUrl && supabaseUrl.startsWith('http')) {
@@ -86,7 +85,6 @@ function parseFilter(q, queryObj, tableName) {
     'autoResponse': 'autoResponse',
     'requireFollow': 'requireFollow',
     'publicReply': 'publicReply',
-    // scheduled_posts specific field mappings
     'createdAt': 'created_at',
   };
 
@@ -107,17 +105,13 @@ function parseFilter(q, queryObj, tableName) {
       parsedKey = 'workspace_id';
     }
     
-    // UUID Safety Check: Prevents Postgres from crashing on invalid UUID syntax
     const uuidColumns = ['id', 'userId', 'user_id', 'workspaceId', 'workspace_id'];
     
-    // Map ObjectID queries to UUID queries for UUID columns
     if (uuidColumns.includes(parsedKey) && val && typeof val === 'string' && val.length === 24 && /^[0-9a-f]{24}$/i.test(val)) {
       val = convertObjectIDToUUID(val);
     }
 
     if (uuidColumns.includes(parsedKey) && val && typeof val === 'string' && !isUUID(val)) {
-        // If it's a 24-char Mongo ID, we already converted it above. 
-        // If it's still not a UUID, only then we fallback.
         if (val.length !== 36) {
            console.warn(`🛑 Skipping filter for invalid UUID on column ${parsedKey}: ${val}`);
            q = q.eq(parsedKey, '00000000-0000-0000-0000-000000000000');
@@ -131,7 +125,6 @@ function parseFilter(q, queryObj, tableName) {
         let subVal = subValRaw instanceof Date ? subValRaw.toISOString() : subValRaw;
         let subParsedKey = subKey === '_id' || subKey === 'id' ? 'id' : subKey;
         
-        // Map ObjectID queries to UUID queries for UUID columns in $or
         if (uuidColumns.includes(subParsedKey) && typeof subVal === 'string' && subVal.length === 24 && /^[0-9a-f]{24}$/i.test(subVal)) {
           subVal = convertObjectIDToUUID(subVal);
         }
@@ -149,7 +142,6 @@ function parseFilter(q, queryObj, tableName) {
           subVal = subVal.toISOString();
         }
         
-        // Map ObjectID queries to UUID queries for UUID columns in operator filters
         if (uuidColumns.includes(parsedKey)) {
           if (Array.isArray(subVal)) {
             subVal = subVal.map(item => {
@@ -192,13 +184,11 @@ function convertIncoming(doc, tableName) {
   if (doc.id) {
     newDoc._id = doc.id;
   }
-  // Universal mapping for incoming data
   if (newDoc.userId) newDoc.userId = convertUUIDToObjectID(newDoc.userId);
   if (doc.automation_status) newDoc.automationStatus = doc.automation_status;
 
   ['requireFollow', 'openingMessage', 'triggerOnDms', 'triggerOnComments', 'triggerOnStories', 'isAnyPost', 'isUniversal'].forEach(field => {
     if (newDoc[field] !== undefined) {
-      // Also convert null to false (null means "not set" = false for boolean flags)
       if (newDoc[field] === null) {
         newDoc[field] = false;
       } else if (typeof newDoc[field] === 'string') {
@@ -210,7 +200,6 @@ function convertIncoming(doc, tableName) {
   });
 
   if (tableName === 'settings') {
-    // Unpack virtual settings fields from connectedPageName JSON string if present
     if (doc.connectedPageName) {
       try {
         const extra = JSON.parse(doc.connectedPageName);
@@ -222,7 +211,6 @@ function convertIncoming(doc, tableName) {
           }
         }
       } catch (e) {
-        // Ignore parsing errors for legacy non-JSON connectedPageName values
       }
     }
   }
@@ -237,7 +225,6 @@ function convertIncoming(doc, tableName) {
         newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_CAMP_NAME__'.length);
       }
     }
-    // Parse isAI from response tag
     if (newDoc.response && newDoc.response.includes('__IS_AI__:')) {
       const startIdx = newDoc.response.indexOf('__IS_AI__:');
       const endIdx = newDoc.response.indexOf('__END_IS_AI__');
@@ -249,7 +236,6 @@ function convertIncoming(doc, tableName) {
     } else {
       newDoc.isAI = false;
     }
-    // Parse triggerType
     if (newDoc.response && newDoc.response.includes('__TRIG_TYPE__:')) {
       const startIdx = newDoc.response.indexOf('__TRIG_TYPE__:');
       const endIdx = newDoc.response.indexOf('__END_TRIG_TYPE__');
@@ -268,7 +254,6 @@ function convertIncoming(doc, tableName) {
       newDoc.workspaceId = newDoc.workspace_id;
       delete newDoc.workspace_id;
     }
-    // Map snake_case DB columns to camelCase JS fields
     /*
     if (newDoc.scheduled_for !== undefined) {
       newDoc.scheduledFor = newDoc.scheduled_for;
@@ -308,7 +293,6 @@ function convertOutgoing(doc, tableName) {
     delete newDoc.workspace_id;
   }
   
-  // Per-table mapping based on verified schema
   if (newDoc.userId) {
     newDoc.userId = convertObjectIDToUUID(newDoc.userId);
   }
@@ -318,7 +302,6 @@ function convertOutgoing(doc, tableName) {
   }
 
   if (tableName === 'settings') {
-    // Pack virtual settings fields into connectedPageName JSON string
     const VIRTUAL_SETTINGS_FIELDS = [
       'instagramAutomationEnabled',
       'facebookAutomationEnabled',
@@ -345,7 +328,6 @@ function convertOutgoing(doc, tableName) {
       }
     }
     
-    // Merge virtual fields from doc into extra
     for (const key of VIRTUAL_SETTINGS_FIELDS) {
       if (newDoc[key] !== undefined) {
         extra[key] = newDoc[key];
@@ -355,7 +337,6 @@ function convertOutgoing(doc, tableName) {
     
     newDoc.connectedPageName = JSON.stringify(extra);
 
-    // Also delete any other fields not in allowed DB schema to prevent 500 Column Not Found errors
     const allowedDbColumns = [
       'id', 'userId', 'workspaceId', 'instagramAccessToken', 'instagramPageId', 'businessAccountId', 
       'facebookAccessToken', 'facebookPageId', 'isAccountConnected', 'whatsappToken', 
@@ -375,7 +356,6 @@ function convertOutgoing(doc, tableName) {
   }
 
   if (tableName === 'campaigns') {
-    // Pack isAI into response field to avoid schema cache issues
     if (newDoc.isAI !== undefined && newDoc.isAI !== null) {
       newDoc.response = `__IS_AI__:${newDoc.isAI}__END_IS_AI__${newDoc.response || ''}`;
     }
@@ -398,7 +378,6 @@ function convertOutgoing(doc, tableName) {
       newDoc.workspace_id = newDoc.workspaceId;
       delete newDoc.workspaceId;
     }
-    // Map camelCase JS fields to snake_case DB columns
     /*
     if (newDoc.scheduledFor !== undefined) {
       newDoc.scheduled_for = newDoc.scheduledFor;
@@ -519,11 +498,9 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
         return this;
       },
       populate: function (field) {
-        // Stub for MongoDB compatibility, could implement basic join logic if needed
         console.log(`ℹ️ Populate called for field: ${field} (Supabase stub)`);
         return this;
       },
-      // Make it awaitable
       then: async function (resolve, reject) {
         try {
           const { data, error } = await q;
@@ -576,7 +553,6 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
 
     let finalUpdate = { ...updateData };
     
-    // Handle MongoDB operators
     if (updateData.$set) {
       finalUpdate = { ...finalUpdate, ...updateData.$set };
       delete finalUpdate.$set;
@@ -777,11 +753,9 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
   ModelInstance.updateMany = async function (query, updateData, options = {}) {
     if (!supabase) return { acknowledged: true, modifiedCount: 0 };
     
-    // Check if we are using complex Mongo operators
     const hasOperators = Object.keys(updateData).some(k => k.startsWith('$'));
     
     if (!hasOperators) {
-      // FAST PATH: Bulk update directly!
       let q = supabase.from(tableName).update(convertOutgoing(updateData, tableName));
       q = parseFilter(q, query, tableName);
       const { data, error } = await q.select('id');
@@ -789,7 +763,6 @@ export function createSupabaseModel(tableName, comparePasswordFunc, hashPassword
       return { acknowledged: true, modifiedCount: data ? data.length : 0 };
     }
 
-    // SLOW PATH: Mongo operators ($set, $inc, etc)
     let q = supabase.from(tableName).select('*');
     q = parseFilter(q, query, tableName);
     const { data, error } = await q;

@@ -53,7 +53,6 @@ export default function Inbox() {
   }, []);
 
   const scrollToBottom = () => {
-    // Scroll only the specific chat messages container
     const chatContainer = document.querySelector('.chat-messages');
     if (chatContainer) {
       chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -100,7 +99,6 @@ export default function Inbox() {
     fetchMessages();
     fetchContacts();
 
-    // ── SUPABASE REALTIME MESSAGE SUBSCRIPTION ──
     let supabaseChannel = null;
 
     try {
@@ -114,7 +112,6 @@ export default function Inbox() {
             const rawMessage = payload.new;
             console.log("📨 Real-time message received via Supabase Realtime:", rawMessage);
             
-            // Format incoming message keys to match frontend expectations
             const formattedMessage = {
               ...rawMessage,
               _id: rawMessage.id,
@@ -160,7 +157,6 @@ export default function Inbox() {
     e.preventDefault();
     if (!newMessage.trim()) return;
 
-    // Sending as 'admin' or 'user' (for testing auto-replies)
     const msgData = {
       sender: senderRole === "admin" ? "admin" : "user",
       text: newMessage,
@@ -182,10 +178,8 @@ export default function Inbox() {
       timestamp: new Date().toISOString()
     };
 
-    // 1. Optimistically clear input instantly
     setNewMessage("");
     
-    // 2. Optimistically add to UI instantly
     setMessages(prev => [...prev, tempMessage]);
     setTimeout(scrollToBottom, 50);
 
@@ -210,7 +204,6 @@ export default function Inbox() {
         const errorData = await res.json();
         console.error("Server Error:", errorData);
         alert("Backend failed to save: " + (errorData.message || res.statusText));
-        // Revert message on failure
         setMessages(prev => prev.filter(m => m._id !== tempId));
         return;
       }
@@ -218,14 +211,11 @@ export default function Inbox() {
       const data = await res.json();
       console.log("Message saved successfully:", data);
 
-      // Update UI: Avoid duplicate if socket already added the message
       setMessages(prev => {
         const hasSocketVersion = prev.find(m => m._id === data._id);
         if (hasSocketVersion) {
-          // Keep the socket version, remove the temporary one
           return prev.filter(m => m._id !== tempId);
         } else {
-          // Replace temp version with DB version
           return prev.map(m => m._id === tempId ? data : m);
         }
       });

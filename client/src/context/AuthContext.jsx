@@ -16,7 +16,6 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Check if token still exists to maintain login
     const token = localStorage.getItem('insta_agent_token');
     if (!token && user) {
       setUser(null);
