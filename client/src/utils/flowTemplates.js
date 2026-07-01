@@ -1,8 +1,6 @@
 export const getTemplateData = (templateId) => {
   switch (templateId) {
-    // ----------------------------------------------------
     // LEAD GENERATION
-    // ----------------------------------------------------
     case 'gen_leads_stories':
       return {
         name: 'Generate Leads with Stories',
@@ -144,9 +142,7 @@ export const getTemplateData = (templateId) => {
         ]
       };
 
-    // ----------------------------------------------------
     // SALES & OFFERS
-    // ----------------------------------------------------
     case 'sell_reel_comments':
       return {
         name: 'Sell from Reel Comments',
@@ -231,9 +227,8 @@ export const getTemplateData = (templateId) => {
         ]
       };
 
-    // ----------------------------------------------------
+   
     // AUDIENCE GROWTH
-    // ----------------------------------------------------
     case 'grow_followers_comments_flow':
       return {
         name: 'Grow Followers from Comments',
@@ -336,9 +331,7 @@ export const getTemplateData = (templateId) => {
         ]
       };
 
-    // ----------------------------------------------------
     // AI & SUPPORT
-    // ----------------------------------------------------
     case 'all_dms':
       return {
         name: 'Respond to All DMs',
@@ -428,9 +421,7 @@ export const getTemplateData = (templateId) => {
         ]
       };
 
-    // ----------------------------------------------------
     // ADVANCED
-    // ----------------------------------------------------
     case 'comments':
       return {
         name: 'Auto-DM Links from Comments',
