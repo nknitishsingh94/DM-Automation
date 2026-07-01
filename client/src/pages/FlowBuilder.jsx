@@ -29,66 +29,110 @@ const MessageNode = ({ data }) => (
       </div>
     )}
     <div style={{ 
-      padding: '0', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-subtle)', width: '240px',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflow: 'hidden', position: 'relative'
+      padding: '0', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-subtle)', width: '280px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflow: 'visible', position: 'relative'
     }}>
-      <Handle type="target" position={Position.Left} style={{ background: 'var(--text-muted)', width: '8px', height: '8px' }} />
-      <div style={{ background: 'var(--sidebar-bg)', padding: '12px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <div style={{ background: '#ef4444', borderRadius: '50%', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Handle type="target" position={Position.Left} style={{ background: 'var(--text-muted)', width: '8px', height: '8px', marginLeft: '-4px' }} />
+      <div style={{ background: 'var(--sidebar-bg)', padding: '12px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '8px', borderTopLeftRadius: '12px', borderTopRightRadius: '12px' }}>
+        <div style={{ background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', borderRadius: '50%', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Instagram size={14} color="white" />
         </div>
-        <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', whiteSpace: 'pre-wrap' }}>{data.title || 'Instagram\nSend Message'}</span>
+        <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)', whiteSpace: 'pre-wrap' }}>{data.title || 'Instagram\nSend Message'}</span>
       </div>
-      <div style={{ padding: '12px', fontSize: '12px', color: 'var(--text-main)', minHeight: '40px', whiteSpace: 'pre-wrap', lineHeight: '1.4' }}>
+      <div style={{ padding: '16px', fontSize: '13px', color: 'var(--text-main)', minHeight: '40px', whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>
         {data.text || <span style={{ opacity: 0.5, fontStyle: 'italic' }}>Click to edit text...</span>}
       </div>
+      
       {data.buttons && data.buttons.length > 0 && (
-        <div style={{ padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div style={{ padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {data.buttons.map(btn => (
-            <div key={btn.id} style={{ position: 'relative', border: '1px solid var(--border-subtle)', padding: '8px', borderRadius: '6px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#3b82f6', background: 'var(--bg-card)' }}>
+            <div key={btn.id} style={{ position: 'relative', border: '1px solid var(--border-subtle)', padding: '10px', borderRadius: '8px', textAlign: 'center', fontSize: '13px', fontWeight: '600', color: 'var(--text-main)', background: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
               {btn.text}
-              <Handle type="source" position={Position.Right} id={btn.id} style={{ background: 'var(--text-muted)', width: '8px', height: '8px', right: '-12px' }} />
+              {btn.type === 'url' && <LinkIcon size={14} color="#94a3b8" />}
+              <Handle type="source" position={Position.Right} id={btn.id} style={{ background: 'var(--text-muted)', width: '8px', height: '8px', right: '-4px' }} />
             </div>
           ))}
         </div>
       )}
-      {(!data.buttons || data.buttons.length === 0) && (
-        <Handle type="source" position={Position.Right} style={{ background: 'var(--text-muted)', width: '8px', height: '8px' }} />
+
+      {data.waitAction && (
+        <div style={{ margin: '0 12px 12px', padding: '10px', border: '1px solid #bfdbfe', borderRadius: '8px', background: '#eff6ff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ color: '#3b82f6' }}>⏱️</div>
+          <span style={{ fontSize: '12px', color: '#1e3a8a', fontWeight: '600' }}>{data.waitAction}</span>
+        </div>
+      )}
+
+      {data.customHandles && data.customHandles.length > 0 ? (
+        <div style={{ padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-end', position: 'relative' }}>
+          {data.customHandles.map((handle, idx) => (
+            <div key={handle.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative', opacity: handle.disabled ? 0.4 : 1 }}>
+              <span style={{ fontSize: '11px', fontWeight: '600', color: handle.color || 'var(--text-muted)' }}>{handle.text}</span>
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: handle.color || '#cbd5e1', border: '2px solid white', boxShadow: '0 0 0 1px var(--border-subtle)', position: 'relative', zIndex: 2 }}>
+                <Handle type="source" position={Position.Right} id={handle.id} style={{ background: 'transparent', border: 'none', width: '100%', height: '100%', right: '-6px', top: '50%', transform: 'translateY(-50%)' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        (!data.buttons || data.buttons.length === 0) && (
+          <div style={{ padding: '0 12px 12px', display: 'flex', justifyContent: 'flex-end', position: 'relative' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)' }}>Next Step</span>
+              <Handle type="source" position={Position.Right} id="next" style={{ background: 'var(--text-muted)', width: '8px', height: '8px', right: '-4px' }} />
+            </div>
+          </div>
+        )
       )}
     </div>
-    {data.noteBottom && (
-      <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: '12px', background: 'var(--bg-dark)', padding: '8px 12px', borderRadius: '8px', fontSize: '10px', color: 'var(--text-muted)', width: '220px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', whiteSpace: 'pre-wrap' }}>
-        {data.noteBottom}
-      </div>
-    )}
   </div>
 );
 
 const TriggerNode = ({ data }) => (
   <div style={{ position: 'relative' }}>
     <div style={{ 
-      padding: '0', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-subtle)', width: '240px',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflow: 'hidden'
+      padding: '0', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-subtle)', width: '280px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflow: 'visible'
     }}>
-      <div style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--sidebar-bg)', borderTopLeftRadius: '12px', borderTopRightRadius: '12px', borderBottom: '1px solid var(--border-subtle)' }}>
         <Zap size={14} color="#64748b" />
         <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)' }}>{data.title || 'When...'}</span>
       </div>
-      <div style={{ padding: '12px', borderTop: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <div style={{ background: '#ef4444', borderRadius: '50%', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Instagram size={12} color="white" />
+      
+      <div style={{ padding: '12px' }}>
+        {data.triggers && data.triggers.length > 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {data.triggers.map((trigger, idx) => (
+              <div key={idx} style={{ padding: '10px', background: 'var(--sidebar-bg)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                  <div style={{ background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', borderRadius: '50%', padding: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Instagram size={10} color="white" />
+                  </div>
+                  <span style={{ fontSize: '12px', color: 'var(--text-main)', fontWeight: '700' }}>{trigger.title}</span>
+                </div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', paddingLeft: '22px' }}>{trigger.subtext}</div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ padding: '10px', background: 'var(--sidebar-bg)', borderRadius: '8px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', borderRadius: '50%', padding: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Instagram size={10} color="white" />
+            </div>
+            <span style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '600', whiteSpace: 'pre-wrap' }}>
+              {data.text || `User comments on your Post or Reel`}
+            </span>
+          </div>
+        )}
+
+        <div style={{ marginTop: '12px', textAlign: 'center' }}>
+          <button style={{ background: 'transparent', border: 'none', color: '#3b82f6', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>
+            + New Trigger
+          </button>
         </div>
-        <span style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '600', whiteSpace: 'pre-wrap' }}>
-          {data.text || `User comments on your Post or Reel`}
-        </span>
       </div>
-      <Handle type="source" position={Position.Right} style={{ background: 'var(--text-muted)', width: '8px', height: '8px' }} />
+      
+      <Handle type="source" position={Position.Right} style={{ background: 'var(--text-muted)', width: '8px', height: '8px', right: '-4px' }} />
     </div>
-    {data.noteBottom && (
-      <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: '12px', background: 'var(--bg-dark)', padding: '8px 12px', borderRadius: '8px', fontSize: '10px', color: 'var(--text-muted)', width: '220px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', whiteSpace: 'pre-wrap' }}>
-        {data.noteBottom}
-      </div>
-    )}
   </div>
 );
 

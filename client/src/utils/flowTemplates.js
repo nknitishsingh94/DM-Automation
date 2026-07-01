@@ -24,15 +24,62 @@ export const getTemplateData = (templateId) => {
       return {
         name: 'Grow Email List',
         nodes: [
-          { id: '1', type: 'trigger', position: { x: 50, y: 150 }, data: { title: "When...", text: "User messages keyword: RESOURCE" } },
-          { id: '2', type: 'message', position: { x: 350, y: 150 }, data: { title: "Ask Email", text: "Awesome! What's your best email address?" } },
-          { id: '3', type: 'condition', position: { x: 650, y: 150 }, data: { condition: 'Wait for valid email' } },
-          { id: '4', type: 'message', position: { x: 950, y: 150 }, data: { title: "Send Resource", text: "Got it! We've saved it to your profile and sent the details to your inbox.", noteTop: "CRM Lead tag added." } }
+          { 
+            id: '1', 
+            type: 'trigger', 
+            position: { x: 50, y: 200 }, 
+            data: { 
+              title: "When...", 
+              triggers: [
+                { title: 'User sends a message', subtext: 'Message contains ebook' },
+                { title: 'User comments on your Post or Reel', subtext: 'Post or Reel Comments #6' }
+              ] 
+            } 
+          },
+          { 
+            id: '2', 
+            type: 'message', 
+            position: { x: 450, y: 150 }, 
+            data: { 
+              title: "Instagram\nSend Message", 
+              text: "Hi! Thanks for reaching out 👋\n\nWe are excited you are interested in our content and the ebook, and we would LOVE to send you more!\n\nTo get a free ebook, please leave us your email below 👇", 
+              waitAction: "Waiting for Email from contact...",
+              customHandles: [
+                {id: 'action', text: 'Action on reply', color: '#f59e0b'}, 
+                {id: 'no_response', text: 'If contact has not responded', color: '#ef4444'}, 
+                {id: 'next', text: 'Next step', color: '#3b82f6'}
+              ] 
+            } 
+          },
+          { 
+            id: '3', 
+            type: 'message', 
+            position: { x: 950, y: 50 }, 
+            data: { 
+              title: "Instagram\nSend Message #2", 
+              text: "Awesome!\n\nYou are all set.\n\nClick the link to grab your ebook 👇🚀", 
+              buttons: [{id: 'b1', text: 'Grab the book! 📦', type: 'url'}] 
+            } 
+          },
+          { 
+            id: '4', 
+            type: 'message', 
+            position: { x: 950, y: 400 }, 
+            data: { 
+              title: "Instagram\nSend Message #3", 
+              text: "Hi! Are you still here? 💙\n\nIf you are still interested in getting a free ebook, please leave us your email below 👇",
+              waitAction: "Waiting for Email from contact...",
+              customHandles: [
+                {id: 'action', text: 'Action on reply', color: '#f59e0b', disabled: true}, 
+                {id: 'no_response', text: 'If contact has not responded', color: '#ef4444', disabled: true}
+              ] 
+            } 
+          }
         ],
         edges: [
-          { id: 'e1-2', source: '1', target: '2' },
-          { id: 'e2-3', source: '2', target: '3' },
-          { id: 'e3-4', source: '3', sourceHandle: 'true', target: '4' }
+          { id: 'e1-2', source: '1', target: '2', type: 'default', animated: false, style: { stroke: '#475569', strokeWidth: 2 } },
+          { id: 'e2-3', source: '2', sourceHandle: 'next', target: '3', type: 'smoothstep', animated: false, style: { stroke: '#3b82f6', strokeWidth: 2 } },
+          { id: 'e2-4', source: '2', sourceHandle: 'no_response', target: '4', type: 'smoothstep', animated: false, style: { stroke: '#ef4444', strokeWidth: 2 } }
         ]
       };
     case 'grow_sms_list':
