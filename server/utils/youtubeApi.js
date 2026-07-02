@@ -122,14 +122,19 @@ export async function publishYouTubeVideo(userId, postData, settings) {
       try {
         const serverRoot = process.cwd();
         let thumbStream;
+        let mimeType = "image/jpeg";
 
         if (thumbnail.startsWith('http://') || thumbnail.startsWith('https://')) {
           const response = await axios({ method: 'get', url: thumbnail, responseType: 'stream' });
           thumbStream = response.data;
+          if (response.headers['content-type']) {
+            mimeType = response.headers['content-type'];
+          }
         } else if (thumbnail.startsWith('/uploads/')) {
           const absoluteThumbPath = path.join(serverRoot, thumbnail);
           if (fs.existsSync(absoluteThumbPath)) {
             thumbStream = fs.createReadStream(absoluteThumbPath);
+            if (absoluteThumbPath.toLowerCase().endsWith('.png')) mimeType = 'image/png';
           }
         }
 
@@ -137,7 +142,7 @@ export async function publishYouTubeVideo(userId, postData, settings) {
           await youtube.thumbnails.set({
             videoId: videoId,
             media: {
-              mimeType: "application/octet-stream", body: thumbStream,
+              mimeType: mimeType, body: thumbStream,
             },
           });
           console.log(`✅ [YouTube API] Thumbnail uploaded successfully for video ID: ${videoId}`);
