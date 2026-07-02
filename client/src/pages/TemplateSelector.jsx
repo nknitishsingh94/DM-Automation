@@ -250,11 +250,15 @@ export default function TemplateSelector() {
                   </p>
                 </div>
 
-                <div style={{ 
-                  marginTop: 'auto', display: 'flex', alignItems: 'center', gap: '8px', 
-                  color: 'var(--accent-color)', fontWeight: '700', fontSize: '0.9rem', paddingTop: '16px', borderTop: '1px dashed #e2e8f0'
-                }}>
-                  Use Template <Zap size={14} />
+                <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: '1px dashed #e2e8f0', display: 'flex', justifyContent: 'center' }}>
+                  <button style={{
+                    display: 'flex', alignItems: 'center', gap: '8px', 
+                    background: 'var(--accent-color)', color: '#fff', border: 'none', borderRadius: '8px',
+                    padding: '10px 20px', fontSize: '13px', fontWeight: '700', cursor: 'pointer',
+                    width: '100%', justifyContent: 'center', transition: 'opacity 0.2s'
+                  }} onMouseOver={e => e.currentTarget.style.opacity = '0.9'} onMouseOut={e => e.currentTarget.style.opacity = '1'}>
+                    Use Template <Zap size={14} />
+                  </button>
                 </div>
               </div>
             ))}

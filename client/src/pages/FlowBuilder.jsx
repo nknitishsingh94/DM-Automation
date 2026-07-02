@@ -45,10 +45,10 @@ const MessageNode = ({ data }) => (
       {data.buttons && data.buttons.length > 0 && (
         <div style={{ padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {data.buttons.map(btn => (
-            <div key={btn.id} style={{ position: 'relative', border: '1px solid var(--border-subtle)', padding: '10px', borderRadius: '8px', textAlign: 'center', fontSize: '13px', fontWeight: '600', color: 'var(--text-main)', background: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+            <div key={btn.id} style={{ position: 'relative', border: '1px solid #bfdbfe', padding: '10px', borderRadius: '8px', textAlign: 'center', fontSize: '13px', fontWeight: '700', color: '#1d4ed8', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
               {btn.text}
-              {btn.type === 'url' && <LinkIcon size={14} color="#94a3b8" />}
-              <Handle type="source" position={Position.Right} id={btn.id} style={{ background: 'var(--text-muted)', width: '8px', height: '8px', right: '-4px' }} />
+              {btn.type === 'url' && <LinkIcon size={14} color="#3b82f6" />}
+              <Handle type="source" position={Position.Right} id={btn.id} style={{ background: '#3b82f6', width: '10px', height: '10px', right: '-5px', border: '2px solid white' }} />
             </div>
           ))}
         </div>
@@ -77,7 +77,7 @@ const MessageNode = ({ data }) => (
           <div style={{ padding: '0 12px 12px', display: 'flex', justifyContent: 'flex-end', position: 'relative' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)' }}>Next Step</span>
-              <Handle type="source" position={Position.Right} id="next" style={{ background: 'var(--text-muted)', width: '8px', height: '8px', right: '-4px' }} />
+              <Handle type="source" position={Position.Right} style={{ background: 'var(--text-muted)', width: '8px', height: '8px', right: '-4px' }} />
             </div>
           </div>
         )
@@ -579,6 +579,11 @@ export default function FlowBuilder() {
             onConnect={onConnect}
             nodeTypes={nodeTypes}
             onSelectionChange={onSelectionChange}
+            defaultEdgeOptions={{
+              type: 'smoothstep',
+              style: { stroke: '#94a3b8', strokeWidth: 2 },
+              animated: false
+            }}
             fitView
           >
             <Background color="#cbd5e1" variant="dots" />
