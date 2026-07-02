@@ -2857,7 +2857,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                   </div>
 
                   {/* Automation Toggle Overlay on Bottom-Right */}
-                  {(post.autoResponse || post.triggerKeyword) && (
+                  {post.platform !== 'threads' && post.platform !== 'linkedin' && (post.autoResponse || post.triggerKeyword) && (
                     <div style={{ position: 'absolute', bottom: '10px', right: '10px' }}>
                       <div
                         onClick={(e) => {
@@ -2919,43 +2919,45 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
 
                 {/* Action Buttons */}
                 <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', borderTop: '1px solid var(--border-subtle)', paddingTop: '12px' }}>
-                  <button
-                    onClick={() => {
-                      let loadedButtons = [];
-                      try {
-                        if (typeof mediaData.buttons === 'string') {
-                          loadedButtons = JSON.parse(mediaData.buttons);
-                        } else if (Array.isArray(mediaData.buttons)) {
-                          loadedButtons = mediaData.buttons;
-                        } else if (post.buttons) {
-                          loadedButtons = typeof post.buttons === 'string' ? JSON.parse(post.buttons) : post.buttons;
+                  {post.platform !== 'threads' && post.platform !== 'linkedin' && (
+                    <button
+                      onClick={() => {
+                        let loadedButtons = [];
+                        try {
+                          if (typeof mediaData.buttons === 'string') {
+                            loadedButtons = JSON.parse(mediaData.buttons);
+                          } else if (Array.isArray(mediaData.buttons)) {
+                            loadedButtons = mediaData.buttons;
+                          } else if (post.buttons) {
+                            loadedButtons = typeof post.buttons === 'string' ? JSON.parse(post.buttons) : post.buttons;
+                          }
+                        } catch (e) {
+                          console.error("Error parsing buttons:", e);
                         }
-                      } catch (e) {
-                        console.error("Error parsing buttons:", e);
-                      }
 
-                      if (loadedButtons.length === 1 && loadedButtons[0].text === 'click the button' && loadedButtons[0].url === '') {
-                        loadedButtons = [];
-                      }
+                        if (loadedButtons.length === 1 && loadedButtons[0].text === 'click the button' && loadedButtons[0].url === '') {
+                          loadedButtons = [];
+                        }
 
-                      setCreatedPost({
-                        ...post,
-                        ...mediaData,
-                        buttons: loadedButtons,
-                        anyKeyword: post.triggerKeyword === '*',
-                        automationStatus: post.automationStatus || 'Active'
-                      });
-                      setShowAdvanced(true);
-                    }}
-                    style={{
-                      flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                      padding: '10px 14px', borderRadius: '12px', border: '1px solid #eff6ff',
-                      background: '#eff6ff', color: '#3b82f6', fontWeight: '800', cursor: 'pointer',
-                      transition: 'all 0.2s', fontSize: '0.8rem'
-                    }}
-                  >
-                    <Zap size={14} /> <span>Automation</span>
-                  </button>
+                        setCreatedPost({
+                          ...post,
+                          ...mediaData,
+                          buttons: loadedButtons,
+                          anyKeyword: post.triggerKeyword === '*',
+                          automationStatus: post.automationStatus || 'Active'
+                        });
+                        setShowAdvanced(true);
+                      }}
+                      style={{
+                        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                        padding: '10px 14px', borderRadius: '12px', border: '1px solid #eff6ff',
+                        background: '#eff6ff', color: '#3b82f6', fontWeight: '800', cursor: 'pointer',
+                        transition: 'all 0.2s', fontSize: '0.8rem'
+                      }}
+                    >
+                      <Zap size={14} /> <span>Automation</span>
+                    </button>
+                  )}
 
                   <button
                     type="button"
