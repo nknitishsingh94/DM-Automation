@@ -241,6 +241,7 @@ export default function FlowBuilder() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [flowName, setFlowName] = useState('New Automation Flow');
   const [selectedNode, setSelectedNode] = useState(null);
+  const [rfInstance, setRfInstance] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleGenerateAI = async (type) => {
@@ -340,11 +341,25 @@ export default function FlowBuilder() {
   };
 
   const addNode = (type) => {
+    let position = { x: 100, y: 100 };
+    if (rfInstance) {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      if (rfInstance.screenToFlowPosition) {
+        position = rfInstance.screenToFlowPosition({ x: centerX, y: centerY });
+      } else {
+        const { x, y, zoom } = rfInstance.getViewport();
+        position = { x: (centerX - x) / zoom, y: (centerY - y) / zoom };
+      }
+    } else {
+      position = { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 };
+    }
+
     const newNode = {
       id: Math.random().toString(36).substr(2, 9),
       type,
-      position: { x: Math.random() * 400, y: Math.random() * 400 },
-      data: { text: 'New Message...', keyword: '' },
+      position,
+      data: { text: type === 'message' ? 'New Message...' : type === 'condition' ? 'Condition Check' : 'User comments', keyword: '' },
     };
     setNodes((nds) => nds.concat(newNode));
   };
@@ -449,6 +464,14 @@ export default function FlowBuilder() {
                       </button>
                     </div>
                     <StableInput 
+                      value={selectedNode.data.text || ''}
+                      onChange={(val) => updateNodeData('text', val)}
+                      placeholder="e.g. User comments START"
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Target Keyword (for matching)</label>
+                    <StableInput 
                       value={selectedNode.data.keyword || ''}
                       onChange={(val) => updateNodeData('keyword', val)}
                       placeholder="e.g. START"
@@ -547,6 +570,17 @@ export default function FlowBuilder() {
                 </>
               )}
 
+              {selectedNode.type === 'condition' && (
+                <div className="input-group">
+                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Condition Check</label>
+                  <StableInput 
+                    value={selectedNode.data.condition || ''}
+                    onChange={(val) => updateNodeData('condition', val)}
+                    placeholder="e.g. Is Follower"
+                  />
+                </div>
+              )}
+
               {selectedNode.type === 'ai' && (
                 <div style={{ padding: '16px', background: 'var(--bg-dark)', borderRadius: '12px', border: '1px solid #e9d5ff' }}>
                   <div style={{ display: 'flex', gap: '8px', color: '#7e22ce', marginBottom: '12px' }}>
@@ -578,6 +612,7 @@ export default function FlowBuilder() {
             <ReactFlow
             nodes={nodes}
             edges={edges}
+            onInit={setRfInstance}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
