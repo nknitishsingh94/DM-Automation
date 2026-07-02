@@ -128,6 +128,11 @@ const TriggerNode = ({ data }) => (
           </div>
         )}
 
+        <div style={{ marginTop: '12px', textAlign: 'center' }}>
+          <button style={{ background: 'transparent', border: 'none', color: '#3b82f6', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>
+            + New Trigger
+          </button>
+        </div>
       </div>
       
       <Handle type="source" position={Position.Right} style={{ background: 'var(--text-muted)', width: '8px', height: '8px', right: '-4px' }} />
