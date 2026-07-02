@@ -367,10 +367,12 @@ export const getTemplateData = (templateId) => {
         name: 'Hide Negative Comments',
         nodes: [
           { id: '1', type: 'trigger', position: { x: 50, y: 150 }, data: { title: "When...", text: "User posts any comment" } },
-          { id: '2', type: 'ai', position: { x: 350, y: 150 }, data: { } }
+          { id: '2', type: 'condition', position: { x: 350, y: 150 }, data: { condition: 'Contains negative words (fake, scam, etc.)' } },
+          { id: '3', type: 'message', position: { x: 650, y: 50 }, data: { title: "System Action", text: "Hide Comment" } }
         ],
         edges: [
-          { id: 'e1-2', source: '1', target: '2' }
+          { id: 'e1-2', source: '1', target: '2' },
+          { id: 'e2-3', source: '2', target: '3', sourceHandle: 'true' }
         ]
       };
     case 'auto_thank_positive':
