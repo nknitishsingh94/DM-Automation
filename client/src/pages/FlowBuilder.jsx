@@ -349,9 +349,13 @@ export default function FlowBuilder() {
     setNodes((nds) => nds.concat(newNode));
   };
 
-  const onSelectionChange = ({ nodes: selectedNodes }) => {
-    setSelectedNode(selectedNodes[0] || null);
-  };
+  const onNodeClick = useCallback((event, node) => {
+    setSelectedNode(node);
+  }, []);
+
+  const onPaneClick = useCallback(() => {
+    setSelectedNode(null);
+  }, []);
 
   const updateNodeData = (field, value) => {
     if (!selectedNode) return;
@@ -578,7 +582,8 @@ export default function FlowBuilder() {
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             nodeTypes={nodeTypes}
-            onSelectionChange={onSelectionChange}
+            onNodeClick={onNodeClick}
+            onPaneClick={onPaneClick}
             defaultEdgeOptions={{
               type: 'smoothstep',
               style: { stroke: '#94a3b8', strokeWidth: 2 },
