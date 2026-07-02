@@ -867,7 +867,7 @@ router.get('/linkedin', verifyToken, (req, res) => {
 
   let scope = 'openid%20profile%20email%20w_member_social';
   if (isBusiness) {
-    scope += '%20w_organization_social%20r_organization_social%20rw_organization_admin';
+    scope += '%20w_organization_social%20r_organization_social';
   }
 
   const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=${scope}`;
