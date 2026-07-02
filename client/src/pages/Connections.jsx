@@ -76,7 +76,7 @@ export default function Connections() {
     { name: 'Facebook', icon: Facebook, color: '#1877f2', enabled: true },
     { name: 'YouTube', icon: Youtube, color: '#ff0000', enabled: true },
     { name: 'LinkedIn', icon: Linkedin, color: '#0077b5', enabled: true },
-    { name: 'Twitter/X', icon: Twitter, color: '#0f1419', enabled: true },
+    { name: 'Twitter/X', icon: Twitter, color: 'var(--text-main)', enabled: true },
     { name: 'Threads', icon: Activity, color: 'var(--text-main)', enabled: true },
     { name: 'Pinterest', icon: PinterestIcon, color: '#E60023', enabled: true },
     { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: true },
@@ -921,7 +921,7 @@ export default function Connections() {
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Twitter size={22} color="#0f1419" />
+                    <Twitter size={22} color="var(--text-main)" />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-main)' }}>Twitter / X</h4>
@@ -949,7 +949,7 @@ export default function Connections() {
                   Profile
                 </button>
               
-                            <button onClick={() => setSelectedSettingsPlatform({ id: 'twitter', name: 'Twitter/X', username: settings.connectedTwitterName, isAutomationEnabled: true, color: '#0f1419' })}
+                            <button onClick={() => setSelectedSettingsPlatform({ id: 'twitter', name: 'Twitter/X', username: settings.connectedTwitterName, isAutomationEnabled: true, color: 'var(--text-main)' })}
                 style={{ flex: 1, padding: '10px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                 onMouseOver={(e) => { e.currentTarget.style.background='var(--bg-dark)'; }}
                 onMouseOut={(e) => { e.currentTarget.style.background='var(--bg-card)'; }}
@@ -1052,7 +1052,7 @@ export default function Connections() {
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <ThreadsIcon size={22} color="#000000" />
+                    <ThreadsIcon size={22} color="var(--text-main)" />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-main)' }}>Threads</h4>
