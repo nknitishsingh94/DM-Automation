@@ -926,17 +926,15 @@ router.get('/linkedin/callback', async (req, res) => {
     let profileName = 'LinkedIn Member';
     let personUrn = '';
     try {
-      const profileRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
+      const profileRes = await axios.get('https://api.linkedin.com/v2/me', {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       if (profileRes.data) {
-        if (profileRes.data.sub) {
-          personUrn = `urn:li:person:${profileRes.data.sub}`;
+        if (profileRes.data.id) {
+          personUrn = `urn:li:person:${profileRes.data.id}`;
         }
-        if (profileRes.data.name) {
-          profileName = profileRes.data.name;
-        } else if (profileRes.data.given_name) {
-          profileName = `${profileRes.data.given_name} ${profileRes.data.family_name || ''}`.trim();
+        if (profileRes.data.localizedFirstName) {
+          profileName = `${profileRes.data.localizedFirstName} ${profileRes.data.localizedLastName || ''}`.trim();
         }
       }
     } catch (profileErr) {
