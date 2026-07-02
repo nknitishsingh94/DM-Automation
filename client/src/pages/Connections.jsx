@@ -766,8 +766,8 @@ export default function Connections() {
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'instagram', name: 'Instagram', username: settings.connectedInstagramName, isAutomationEnabled: settings.instagramAutomationEnabled, color: '#ec4899' })}
                 style={{ flex: 1, padding: '10px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
+                onMouseOver={(e) => { e.currentTarget.style.background='var(--bg-dark)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='var(--bg-card)'; }}
               ><Sliders size={14} /> Settings</button>
               </div>
             </div>
@@ -809,8 +809,8 @@ export default function Connections() {
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'facebook', name: 'Facebook', username: settings.connectedFacebookName, isAutomationEnabled: settings.facebookAutomationEnabled, color: '#1877f2' })}
                 style={{ flex: 1, padding: '10px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
+                onMouseOver={(e) => { e.currentTarget.style.background='var(--bg-dark)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='var(--bg-card)'; }}
               ><Sliders size={14} /> Settings</button>
               </div>
             </div>
@@ -862,8 +862,8 @@ export default function Connections() {
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'youtube', name: 'YouTube', username: settings.connectedYouTubeName || settings.youtubeChannelName, isAutomationEnabled: true, color: '#ff0000' })}
                 style={{ flex: 1, padding: '10px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
+                onMouseOver={(e) => { e.currentTarget.style.background='var(--bg-dark)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='var(--bg-card)'; }}
               ><Sliders size={14} /> Settings</button>
               </div>
             </div>
@@ -908,8 +908,8 @@ export default function Connections() {
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'linkedin', name: 'LinkedIn', username: settings.connectedLinkedInName, isAutomationEnabled: true, color: '#0077b5' })}
                 style={{ flex: 1, padding: '10px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
+                onMouseOver={(e) => { e.currentTarget.style.background='var(--bg-dark)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='var(--bg-card)'; }}
               ><Sliders size={14} /> Settings</button>
               </div>
             </div>
@@ -951,8 +951,8 @@ export default function Connections() {
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'twitter', name: 'Twitter/X', username: settings.connectedTwitterName, isAutomationEnabled: true, color: '#0f1419' })}
                 style={{ flex: 1, padding: '10px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
+                onMouseOver={(e) => { e.currentTarget.style.background='var(--bg-dark)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='var(--bg-card)'; }}
               ><Sliders size={14} /> Settings</button>
               </div>
             </div>
@@ -994,8 +994,8 @@ export default function Connections() {
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'google-business', name: 'Google Business', username: settings.connectedGoogleBusinessName, isAutomationEnabled: true, color: '#3b82f6' })}
                 style={{ flex: 1, padding: '10px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
+                onMouseOver={(e) => { e.currentTarget.style.background='var(--bg-dark)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='var(--bg-card)'; }}
               ><Sliders size={14} /> Settings</button>
               </div>
             </div>
@@ -1039,8 +1039,8 @@ export default function Connections() {
               
                           <button onClick={() => setSelectedSettingsPlatform({ id: 'pinterest', name: 'Pinterest', username: settings.connectedPinterestName, isAutomationEnabled: true, color: '#E60023' })}
                 style={{ flex: 1, padding: '10px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
+                onMouseOver={(e) => { e.currentTarget.style.background='var(--bg-dark)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='var(--bg-card)'; }}
               ><Sliders size={14} /> Settings</button>
               </div>
             </div>
@@ -1082,8 +1082,8 @@ export default function Connections() {
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'threads', name: 'Threads', username: settings.connectedThreadsName, isAutomationEnabled: true, color: 'var(--text-main)' })}
                 style={{ flex: 1, padding: '10px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
+                onMouseOver={(e) => { e.currentTarget.style.background='var(--bg-dark)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background='var(--bg-card)'; }}
               ><Sliders size={14} /> Settings</button>
               </div>
             </div>
@@ -1123,8 +1123,8 @@ export default function Connections() {
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%', flexWrap: 'wrap' }}>
                     <button onClick={() => setSelectedSettingsPlatform({ id: 'whatsapp', name: 'WhatsApp', username: settings.whatsappDisplayName, isAutomationEnabled: true, color: '#22c55e' })}
                       style={{ flex: '1 1 100%', padding: '10px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                      onMouseOver={(e) => { e.currentTarget.style.background='#f9fafb'; }}
-                      onMouseOut={(e) => { e.currentTarget.style.background='#fff'; }}
+                      onMouseOver={(e) => { e.currentTarget.style.background='var(--bg-dark)'; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background='var(--bg-card)'; }}
                     >
                       <Sliders size={14} /> Settings
                     </button>
