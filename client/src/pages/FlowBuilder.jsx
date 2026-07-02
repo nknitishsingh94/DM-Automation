@@ -45,9 +45,9 @@ const MessageNode = ({ data }) => (
       {data.buttons && data.buttons.length > 0 && (
         <div style={{ padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {data.buttons.map(btn => (
-            <div key={btn.id} style={{ position: 'relative', border: '1px solid #bfdbfe', padding: '10px', borderRadius: '8px', textAlign: 'center', fontSize: '13px', fontWeight: '700', color: '#1d4ed8', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
-              {btn.text}
-              {btn.type === 'url' && <LinkIcon size={14} color="#3b82f6" />}
+            <div key={btn.id} style={{ position: 'relative', border: '1px solid #3b82f6', padding: '10px', borderRadius: '8px', textAlign: 'center', fontSize: '13px', fontWeight: '700', color: '#3b82f6', background: 'var(--sidebar-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', width: '100%', boxSizing: 'border-box' }}>
+              <span style={{ whiteSpace: 'normal', wordBreak: 'break-word', flex: 1 }}>{btn.text}</span>
+              {btn.type === 'url' && <LinkIcon size={14} color="#3b82f6" style={{ flexShrink: 0 }} />}
               <Handle type="source" position={Position.Right} id={btn.id} style={{ background: '#3b82f6', width: '10px', height: '10px', right: '-5px', border: '2px solid white' }} />
             </div>
           ))}
