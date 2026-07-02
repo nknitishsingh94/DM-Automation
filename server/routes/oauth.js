@@ -865,7 +865,7 @@ router.get('/linkedin', verifyToken, (req, res) => {
     return res.status(500).json({ error: "Missing LINKEDIN_CLIENT_ID in environment variables" });
   }
 
-  let scope = 'openid%20profile%20email%20w_member_social';
+  let scope = 'r_profile_basicinfo%20w_member_social';
   if (isBusiness) {
     scope += '%20w_organization_social%20r_organization_social';
   }
