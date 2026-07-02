@@ -865,7 +865,7 @@ router.get('/linkedin', verifyToken, (req, res) => {
     return res.status(500).json({ error: "Missing LINKEDIN_CLIENT_ID in environment variables" });
   }
 
-  let scope = 'r_profile_basicinfo%20w_member_social';
+  let scope = 'openid%20profile%20w_member_social';
   if (isBusiness) {
     scope += '%20w_organization_social%20r_organization_social';
   }
@@ -926,28 +926,41 @@ router.get('/linkedin/callback', async (req, res) => {
     let profileName = 'LinkedIn Member';
     let personUrn = '';
     try {
-      const profileRes = await axios.get('https://api.linkedin.com/v2/me', {
+      // First try OIDC userinfo endpoint (needs 'profile' scope)
+      const userinfoRes = await axios.get('https://api.linkedin.com/v2/userinfo', {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
-      if (profileRes.data) {
-        if (profileRes.data.id) {
-          personUrn = `urn:li:person:${profileRes.data.id}`;
-        }
-        
-        if (profileRes.data.localizedFirstName) {
-          profileName = `${profileRes.data.localizedFirstName} ${profileRes.data.localizedLastName || ''}`.trim();
-        } else if (profileRes.data.firstName && profileRes.data.firstName.localized) {
-          const first = Object.values(profileRes.data.firstName.localized)[0] || '';
-          const last = (profileRes.data.lastName && profileRes.data.lastName.localized) ? Object.values(profileRes.data.lastName.localized)[0] || '' : '';
-          if (first) profileName = `${first} ${last}`.trim();
-        } else if (profileRes.data.name) {
-          profileName = profileRes.data.name;
-        } else if (profileRes.data.given_name) {
-          profileName = `${profileRes.data.given_name} ${profileRes.data.family_name || ''}`.trim();
-        }
+      if (userinfoRes.data) {
+        if (userinfoRes.data.sub) personUrn = `urn:li:person:${userinfoRes.data.sub}`;
+        if (userinfoRes.data.name) profileName = userinfoRes.data.name;
+        else if (userinfoRes.data.given_name) profileName = `${userinfoRes.data.given_name} ${userinfoRes.data.family_name || ''}`.trim();
       }
-    } catch (profileErr) {
-      console.warn("Could not fetch LinkedIn profile name:", profileErr.response?.data || profileErr.message);
+    } catch (e) {
+      console.warn("Could not fetch LinkedIn profile from /v2/userinfo:", e.message);
+    }
+
+    if (profileName === 'LinkedIn Member') {
+      try {
+        // Fallback to legacy /v2/me endpoint
+        const profileRes = await axios.get('https://api.linkedin.com/v2/me', {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        if (profileRes.data) {
+          if (profileRes.data.id && !personUrn) {
+            personUrn = `urn:li:person:${profileRes.data.id}`;
+          }
+          
+          if (profileRes.data.localizedFirstName) {
+            profileName = `${profileRes.data.localizedFirstName} ${profileRes.data.localizedLastName || ''}`.trim();
+          } else if (profileRes.data.firstName && profileRes.data.firstName.localized) {
+            const first = Object.values(profileRes.data.firstName.localized)[0] || '';
+            const last = (profileRes.data.lastName && profileRes.data.lastName.localized) ? Object.values(profileRes.data.lastName.localized)[0] || '' : '';
+            if (first) profileName = `${first} ${last}`.trim();
+          }
+        }
+      } catch (profileErr) {
+        console.warn("Could not fetch LinkedIn profile from /v2/me:", profileErr.response?.data || profileErr.message);
+      }
     }
 
     let pages = [];
