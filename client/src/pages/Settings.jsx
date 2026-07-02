@@ -112,7 +112,7 @@ export default function Settings() {
                 background: 'none',
                 border: 'none',
                 borderBottom: activeTab === tab.id ? `2px solid ${tab.color || '#10b981'}` : '2px solid transparent',
-                color: activeTab === tab.id ? (tab.color || '#111827') : '#6b7280',
+                color: activeTab === tab.id ? (tab.color || 'var(--text-main)') : 'var(--text-muted)',
                 padding: '10px 4px',
                 fontSize: '0.95rem',
                 fontWeight: activeTab === tab.id ? '600' : '500',
