@@ -1667,18 +1667,15 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                   </div>
                 )}
 
-                {/* Threads Specific Block */}
-                {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['threads', 'twitter'].includes(p)) && (
+                {/* X (Twitter) Threads Specific Block */}
+                {(newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['twitter'].includes(p)) && (
                   <div style={{ marginTop: '24px', background: 'var(--sidebar-bg)', borderRadius: '12px', border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
                     <div style={{ padding: '16px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div style={{ background: '#000', color: '#fff', borderRadius: '4px', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>@</div>
                         <span style={{ fontWeight: '700', fontSize: '0.95rem', color: 'var(--text-main)' }}>
                           {(() => {
-                            const platforms = newPost.platforms || (newPost.platform ? [newPost.platform] : []);
-                            if (platforms.includes('threads') && platforms.includes('twitter')) return 'Threads / X (Twitter)';
-                            if (platforms.includes('twitter')) return 'X (Twitter) Threads';
-                            return 'Threads';
+                            return 'X (Twitter) Threads';
                           })()}
                         </span>
                       </div>
