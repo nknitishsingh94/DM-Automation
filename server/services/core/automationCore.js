@@ -307,9 +307,22 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     let finalResponse = match.response;
     if (match.isAI) {
       try {
-        const generated = await generateAIResponse(userId, text, workspaceId);
+        const { default: Message } = await import('../../models/Message.js');
+        const recentMessages = await Message.find({ chatId, userId }).sort({ timestamp: -1 }).limit(10);
+        const historyStr = recentMessages.reverse().map(m => `${m.sender === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n');
+        
+        let aiPrompt = text;
+        if (match.name === 'Universal Trigger - AI Flow' || match.response.includes('automated workflow')) {
+           aiPrompt = `System Instructions: ${match.response}\n\nRecent Conversation History:\n${historyStr}\n\nCurrent User Message: "${text}"`;
+        } else {
+           aiPrompt = `System Instructions: Use the following prompt as context: ${match.response}\n\nRecent Conversation:\n${historyStr}\n\nUser: ${text}`;
+        }
+        
+        const generated = await generateAIResponse(userId, aiPrompt, workspaceId);
         if (generated) finalResponse = generated;
-      } catch (aiErr) {}
+      } catch (aiErr) {
+        console.error("AI Flow Gen Error:", aiErr);
+      }
     }
     const dmPromise = sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons, '', commentId);
 

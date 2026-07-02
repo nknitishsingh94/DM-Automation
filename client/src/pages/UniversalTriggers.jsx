@@ -298,6 +298,25 @@ export default function UniversalTriggers() {
     }
     const workspaceId = localStorage.getItem('active_workspace_id');
     
+    // Compile visual nodes into an AI System Prompt
+    const sortedNodes = [...nodes].sort((a, b) => a.position.y - b.position.y);
+    const promptSteps = sortedNodes.map((n, idx) => {
+       const action = n.type.replace('Node', '');
+       const detail = n.data?.subtitle || n.title || '';
+       return `${idx + 1}. [${action.toUpperCase()}] - ${detail}`;
+    }).join('\n');
+
+    const aiSystemPrompt = `You are a Smart AI Assistant executing an automated workflow.
+Follow these workflow steps sequentially when conversing with the user:
+${promptSteps}
+
+Instructions:
+1. Figure out which step you are currently on based on the user's message and history.
+2. If the step is "MESSAGE", deliver the message naturally.
+3. If the step is "QUESTION", ask the exact question and wait for their reply before proceeding.
+4. Keep your tone highly professional, helpful, and human-like.
+5. If the flow ends, warmly conclude the conversation.`;
+    
     setIsSaving(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/campaigns`, {
@@ -308,9 +327,10 @@ export default function UniversalTriggers() {
           ...(workspaceId ? { 'x-workspace-id': workspaceId } : {})
         },
         body: JSON.stringify({
-          name: 'Universal Trigger - ' + triggerType,
+          name: 'Universal Trigger - AI Flow',
           trigger: keywords.join(', '),
-          response: 'Visual Workflow Configured',
+          response: aiSystemPrompt,
+          isAI: true,
           isAnyPost: true,
           platform: 'all',
           triggerOnDms: true,
