@@ -2296,12 +2296,12 @@ tr:hover {
 }
 
 .dropdown-item:hover {
-  background: #f8fafc;
-  color: #1e293b;
+  background: var(--bg-dark);
+  color: var(--text-main);
 }
 
 .profile-hover:hover {
-  background: #f8fafc;
+  background: var(--bg-dark);
 }
 
 .upgrade-btn-zoom {
