@@ -418,17 +418,7 @@ export const getTemplateData = (templateId) => {
           { id: 'e1-2', source: '1', target: '2' }
         ]
       };
-    case 'auto_send_links_dm':
-      return {
-        name: 'Auto-Send Links in DM',
-        nodes: [
-          { id: '1', type: 'trigger', position: { x: 50, y: 150 }, data: { title: "When...", text: "User messages keyword" } },
-          { id: '2', type: 'message', position: { x: 350, y: 150 }, data: { title: "Send Link", text: "Here is the link to my website!", buttons: [{id: 'b1', text: 'Visit Website', type: 'url'}] } }
-        ],
-        edges: [
-          { id: 'e1-2', source: '1', target: '2' }
-        ]
-      };
+
     case 'custom_flow':
       return {
         name: 'Custom Flow',
