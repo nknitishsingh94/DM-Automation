@@ -123,11 +123,6 @@ const TriggerNode = ({ data }) => (
           </div>
         )}
 
-        <div style={{ marginTop: '12px', textAlign: 'center' }}>
-          <button style={{ background: 'transparent', border: 'none', color: '#3b82f6', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>
-            + New Trigger
-          </button>
-        </div>
       </div>
       
       <Handle type="source" position={Position.Right} style={{ background: 'var(--text-muted)', width: '8px', height: '8px', right: '-4px' }} />
@@ -476,6 +471,36 @@ export default function FlowBuilder() {
                       onChange={(val) => updateNodeData('keyword', val)}
                       placeholder="e.g. START"
                     />
+                  </div>
+                  <div className="input-group">
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Additional Triggers</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px' }}>
+                      {(selectedNode.data.triggers || []).map((t, idx) => (
+                        <div key={idx} style={{ border: '1px solid var(--border-subtle)', padding: '12px', borderRadius: '8px', background: 'var(--sidebar-bg)' }}>
+                          <input type="text" value={t.title || ''} onChange={(e) => {
+                             const newTriggers = [...(selectedNode.data.triggers || [])];
+                             newTriggers[idx] = { ...newTriggers[idx], title: e.target.value };
+                             updateNodeData('triggers', newTriggers);
+                          }} style={{ width: '100%', marginBottom: '8px', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '12px', background: 'var(--bg-card)', color: 'var(--text-main)' }} placeholder="Title (e.g. User sends a message)" />
+                          <input type="text" value={t.subtext || ''} onChange={(e) => {
+                             const newTriggers = [...(selectedNode.data.triggers || [])];
+                             newTriggers[idx] = { ...newTriggers[idx], subtext: e.target.value };
+                             updateNodeData('triggers', newTriggers);
+                          }} style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '12px', background: 'var(--bg-card)', color: 'var(--text-main)' }} placeholder="Subtext (e.g. Message contains ebook)" />
+                          <button onClick={() => {
+                             const newTriggers = [...(selectedNode.data.triggers || [])];
+                             newTriggers.splice(idx, 1);
+                             updateNodeData('triggers', newTriggers);
+                          }} style={{ background: 'none', border: 'none', color: '#ef4444', marginTop: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: '600' }}><Trash2 size={12} style={{marginRight: '4px', verticalAlign: 'middle'}}/>Remove</button>
+                        </div>
+                      ))}
+                    </div>
+                    <button onClick={() => {
+                       const newTriggers = [...(selectedNode.data.triggers || []), { title: 'New Trigger', subtext: 'Trigger details' }];
+                       updateNodeData('triggers', newTriggers);
+                    }} style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px dashed #cbd5e1', background: 'var(--sidebar-bg)', color: 'var(--text-muted)', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                      <Plus size={14} /> Add Trigger
+                    </button>
                   </div>
                   <div className="input-group">
                     <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Public Comment Reply (optional)</label>
