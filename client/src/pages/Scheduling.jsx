@@ -1259,6 +1259,33 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
     }
   };
 
+  const handleNewPostAIGenerate = async (field, prompt) => {
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const originalValue = newPost[field] || '';
+      setNewPost(prev => ({ ...prev, [field]: "⏳ AI is thinking..." }));
+
+      const res = await fetch(`${API_BASE_URL}/api/ai/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ prompt })
+      });
+      const data = await res.json();
+      if (data.response) {
+        setNewPost(prev => ({ ...prev, [field]: data.response }));
+        notify("AI content generated!", "success");
+      } else {
+        setNewPost(prev => ({ ...prev, [field]: originalValue }));
+        notify("AI failed to generate", "error");
+      }
+    } catch (err) {
+      notify("Network error", "error");
+    }
+  };
+
   const allPlatforms = (() => {
     const platforms = [
       { id: 'instagram', label: 'Instagram', icon: <Instagram size={14} />, color: '#e1306c', handle: '', connected: false },
@@ -1507,7 +1534,19 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
                           }}
                           title="Add Emoji"
-                        > 😀
+                        > 😊
+                        </button>
+                        <button
+                          onClick={() => handleNewPostAIGenerate('caption', 'Write an engaging and highly converting caption for my social media post. Make it viral, use emojis, and space it out nicely.')}
+                          style={{
+                            background: 'none', border: 'none', color: '#8b5cf6', fontWeight: '800', fontSize: '0.8rem',
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 8px', borderRadius: '6px'
+                          }}
+                          onMouseOver={(e) => e.currentTarget.style.background='rgba(139, 92, 246, 0.1)'}
+                          onMouseOut={(e) => e.currentTarget.style.background='none'}
+                          title="Auto-generate Caption with AI"
+                        >
+                          <Sparkles size={14} /> AI Auto-generate
                         </button>
                         <button
                           onClick={() => applyFormatting('mention')}
