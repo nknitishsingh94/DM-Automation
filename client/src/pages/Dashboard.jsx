@@ -289,7 +289,7 @@ export default function Dashboard() {
                 <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.profileDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Star size={14} color="white" />
                 </div>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.profileDone ? 'var(--bg-card)' : 'var(--text-muted)' }}>Account Verification</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.profileDone ? 'white' : 'var(--text-muted)' }}>Account Verification</span>
               </div>
               {setupStatus.profileDone && <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span>}
             </div>
@@ -301,7 +301,7 @@ export default function Dashboard() {
                   <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.metaDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Users size={14} color="white" />
                   </div>
-                  <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.metaDone ? 'var(--bg-card)' : 'var(--text-muted)' }}>
+                  <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.metaDone ? 'white' : 'var(--text-muted)' }}>
                     {setupStatus.metaDone ? 'Platforms Connected' : 'Connect Platforms'}
                   </span>
                 </div>
@@ -375,7 +375,7 @@ export default function Dashboard() {
                 <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: setupStatus.flowDone ? '#10b981' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Zap size={14} color="white" />
                 </div>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.flowDone ? 'var(--bg-card)' : 'var(--text-muted)' }}>Create First Automation</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.flowDone ? 'white' : 'var(--text-muted)' }}>Create First Automation</span>
               </div>
               {setupStatus.flowDone ? <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span> : <Link to="/hub" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>BUILD</Link>}
             </div>
@@ -413,9 +413,9 @@ export default function Dashboard() {
               <div className="interactive-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(79, 70, 229, 0.08)', padding: '16px 20px', borderRadius: '14px', border: '1px solid rgba(79, 70, 229, 0.1)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4f46e5' }}></div>
-                  <div style={{ fontSize: '13px', color: '#4338ca', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Sent</div>
+                  <div style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Sent</div>
                 </div>
-                <div style={{ fontSize: '20px', fontWeight: '800', color: '#312e81' }}>{displayStats.sentMessages}</div>
+                <div style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main)' }}>{displayStats.sentMessages}</div>
               </div>
             </Link>
             
@@ -424,9 +424,9 @@ export default function Dashboard() {
               <div className="interactive-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(14, 165, 233, 0.08)', padding: '16px 20px', borderRadius: '14px', border: '1px solid rgba(14, 165, 233, 0.1)', marginLeft: '24px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#0ea5e9' }}></div>
-                  <div style={{ fontSize: '13px', color: '#0369a1', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Opened</div>
+                  <div style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Opened</div>
                 </div>
-                <div style={{ fontSize: '20px', fontWeight: '800', color: '#0c4a6e' }}>{displayStats.opened}</div>
+                <div style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main)' }}>{displayStats.opened}</div>
               </div>
             </Link>
 
@@ -435,9 +435,9 @@ export default function Dashboard() {
               <div className="interactive-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(16, 185, 129, 0.08)', padding: '16px 20px', borderRadius: '14px', border: '1px solid rgba(16, 185, 129, 0.1)', marginLeft: '48px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
-                  <div style={{ fontSize: '13px', color: '#047857', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Clicked</div>
+                  <div style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Clicked</div>
                 </div>
-                <div style={{ fontSize: '20px', fontWeight: '800', color: '#064e3b' }}>{displayStats.clicked}</div>
+                <div style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main)' }}>{displayStats.clicked}</div>
               </div>
             </Link>
           </div>
