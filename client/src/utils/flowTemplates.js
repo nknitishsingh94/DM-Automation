@@ -361,17 +361,7 @@ export const getTemplateData = (templateId) => {
           { id: 'e1-2', source: '1', target: '2' }
         ]
       };
-    case 'automate_conv_ai':
-      return {
-        name: 'Automate Conversations',
-        nodes: [
-          { id: '1', type: 'trigger', position: { x: 50, y: 150 }, data: { title: "When...", text: "User initiates chat" } },
-          { id: '2', type: 'ai', position: { x: 350, y: 150 }, data: { } }
-        ],
-        edges: [
-          { id: 'e1-2', source: '1', target: '2' }
-        ]
-      };
+
     case 'hide_negative_comments':
       return {
         name: 'Hide Negative Comments',

@@ -8,7 +8,6 @@ const templatesData = [
   { id: "respond_all_dms", title: "Respond to all your DMs", desc: "Auto-send customized replies when people DM you", type: "Quick Automation" },
   { id: "grow_followers_comments_quick", title: "Grow followers from comments", desc: "Incentivize a follow to grow your account", type: "Quick Automation", upgrade: true },
   { id: "send_affiliate_links", title: "Send affiliate product links", desc: "Include product card with photos and links of your affiliate collabs", type: "Quick Automation" },
-  { id: "automate_conv_ai", title: "Automate conversations with AI", desc: "Let AI collect info, pitch your offer, and even recommend what to buy — without breaking a sweat", type: "Flow Builder" },
   { id: "auto_reply_dm", title: "Auto-reply to comment in DM", desc: "Send a product lineup in Instagram DMs", type: "Flow Builder" },
   { id: "auto_send_links_dm", title: "Auto-send links in DM", desc: "Automate DMs to send followers to your website. Sick of saying “link in bio” like a broken record? Just slide your website link right into their DMs", type: "Flow Builder" },
   { id: "follow_first_freebie", title: "Follow first, then freebie", desc: "Wanna freebie? Gotta follow first. Reward the fans, not the lurkers.", type: "Flow Builder", upgrade: true },
