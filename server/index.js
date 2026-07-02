@@ -2003,10 +2003,10 @@ app.get('/api/flows/:id', verifyToken, async (req, res) => {
 app.post('/api/flows', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
-    const proUser = await User.findOne({ _id: { $in: sharedUserIds }, plan: 'pro' });
-    if (!proUser) {
-      return res.status(403).json({ error: 'Pro plan required to create advanced flows.' });
-    }
+    // const proUser = await User.findOne({ _id: { $in: sharedUserIds }, plan: 'pro' });
+    // if (!proUser) {
+    //   return res.status(403).json({ error: 'Pro plan required to create advanced flows.' });
+    // }
     const newFlow = new Flow({ ...req.body, userId: req.user.userId, workspaceId: req.workspaceId });
     await newFlow.save();
     res.json(newFlow);
@@ -2018,10 +2018,10 @@ app.post('/api/flows', verifyToken, async (req, res) => {
 app.put('/api/flows/:id', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
-    const proUser = await User.findOne({ _id: { $in: sharedUserIds }, plan: 'pro' });
-    if (!proUser) {
-      return res.status(403).json({ error: 'Pro plan required to update advanced flows.' });
-    }
+    // const proUser = await User.findOne({ _id: { $in: sharedUserIds }, plan: 'pro' });
+    // if (!proUser) {
+    //   return res.status(403).json({ error: 'Pro plan required to update advanced flows.' });
+    // }
     const flow = await Flow.findOneAndUpdate(
       { _id: req.params.id, userId: { $in: sharedUserIds }, workspaceId: req.workspaceId },
       { ...req.body, updatedAt: new Date(), workspaceId: req.workspaceId },
@@ -2036,10 +2036,10 @@ app.put('/api/flows/:id', verifyToken, async (req, res) => {
 app.delete('/api/flows/:id', verifyToken, async (req, res) => {
   try {
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
-    const proUser = await User.findOne({ _id: { $in: sharedUserIds }, plan: 'pro' });
-    if (!proUser) {
-      return res.status(403).json({ error: 'Pro plan required to delete advanced flows.' });
-    }
+    // const proUser = await User.findOne({ _id: { $in: sharedUserIds }, plan: 'pro' });
+    // if (!proUser) {
+    //   return res.status(403).json({ error: 'Pro plan required to delete advanced flows.' });
+    // }
     await Flow.findOneAndDelete({ _id: req.params.id, userId: { $in: sharedUserIds }, workspaceId: req.workspaceId });
     res.json({ message: 'Flow deleted' });
   } catch (err) {
