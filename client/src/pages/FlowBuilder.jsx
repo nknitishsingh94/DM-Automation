@@ -129,7 +129,11 @@ const TriggerNode = ({ data }) => (
         )}
 
         <div style={{ marginTop: '12px', textAlign: 'center' }}>
-          <button style={{ background: 'transparent', border: 'none', color: '#3b82f6', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>
+          <button 
+            style={{ width: '100%', padding: '8px', background: 'transparent', border: '1px dashed transparent', borderRadius: '6px', color: '#3b82f6', fontSize: '12px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s' }}
+            onMouseOver={(e) => { e.currentTarget.style.border = '1px dashed #3b82f6'; e.currentTarget.style.background = 'rgba(59, 130, 246, 0.05)'; }}
+            onMouseOut={(e) => { e.currentTarget.style.border = '1px dashed transparent'; e.currentTarget.style.background = 'transparent'; }}
+          >
             + New Trigger
           </button>
         </div>
