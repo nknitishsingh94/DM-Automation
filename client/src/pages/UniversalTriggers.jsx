@@ -287,6 +287,10 @@ export default function UniversalTriggers() {
   };
 
   const handleSaveTrigger = async () => {
+    if (keywords.length === 0) {
+      alert("Please add at least one keyword.");
+      return;
+    }
     const token = localStorage.getItem('insta_agent_token');
     if (!token) {
       alert("No authentication token found. Please login again.");
@@ -304,8 +308,8 @@ export default function UniversalTriggers() {
           ...(workspaceId ? { 'x-workspace-id': workspaceId } : {})
         },
         body: JSON.stringify({
-          name: 'Universal Trigger - Any',
-          trigger: '*',
+          name: 'Universal Trigger - ' + triggerType,
+          trigger: keywords.join(', '),
           response: 'Visual Workflow Configured',
           isAnyPost: true,
           platform: 'all',
@@ -478,6 +482,38 @@ export default function UniversalTriggers() {
           </div>
           
           <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
+
+
+            {/* Keywords */}
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Keywords</label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+                {keywords.map((kw, i) => (
+                  <span key={i} style={{ padding: '4px 8px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '6px', fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    {kw} 
+                    <span 
+                      onClick={() => setKeywords(keywords.filter((_, index) => index !== i))} 
+                      style={{ cursor: 'pointer', color: 'var(--text-muted)' }}>
+                      ×
+                    </span>
+                  </span>
+                ))}
+              </div>
+              <input 
+                type="text" 
+                placeholder="Add keyword..." 
+                value={keywordInput}
+                onChange={(e) => setKeywordInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && keywordInput.trim() !== '') {
+                    setKeywords([...keywords, keywordInput.trim()]);
+                    setKeywordInput('');
+                  }
+                }}
+                style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none' }} 
+              />
+              <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '6px' }}>Press Enter to add more keywords</div>
+            </div>
 
 
 
