@@ -221,7 +221,11 @@ export const sendPublicComment = async (platform, commentId, text, userId = null
     if (!accessToken && userId) {
       const userSettings = await Settings.findOne({ userId });
       if (userSettings) {
-        accessToken = platform === 'facebook' ? userSettings.facebookAccessToken : userSettings.instagramAccessToken;
+        if (platform === 'threads') {
+          accessToken = userSettings.threadsAccessToken;
+        } else {
+          accessToken = platform === 'facebook' ? userSettings.facebookAccessToken : userSettings.instagramAccessToken;
+        }
       }
     }
     if (!accessToken) {
@@ -229,6 +233,12 @@ export const sendPublicComment = async (platform, commentId, text, userId = null
     }
 
     if (!accessToken) return false;
+
+    if (platform === 'threads') {
+      const { publishThreadsContent } = await import('../services/platforms/threads.js');
+      await publishThreadsContent(userId, { type: 'text', caption: text, replyToId: commentId });
+      return { success: true };
+    }
 
     const edge = platform === 'facebook' ? 'comments' : 'replies';
     const url = `https://graph.facebook.com/v19.0/${commentId}/${edge}`;

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Settings from '../../models/Settings.js';
 
-export const publishThreadsContent = async (userId, { type, mediaUrl, caption = '', containerId = null }, workspaceId = null) => {
+export const publishThreadsContent = async (userId, { type, mediaUrl, caption = '', containerId = null, replyToId = null }, workspaceId = null) => {
   try {
     let settings = null;
     if (workspaceId) {
@@ -56,7 +56,9 @@ export const publishThreadsContent = async (userId, { type, mediaUrl, caption = 
 
     if (!activeContainerId) {
       console.log(`Starting Threads Container Creation for user ${userId}`);
-      let createContainerUrl = `https://graph.threads.net/v1.0/${threadsPageId}/threads`;
+      let createContainerUrl = replyToId 
+        ? `https://graph.threads.net/v1.0/${replyToId}/replies` 
+        : `https://graph.threads.net/v1.0/${threadsPageId}/threads`;
       
       const containerRes = await axios.post(createContainerUrl, null, {
         params: containerPayload

@@ -51,7 +51,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     if (match && match.status === 'Active') {
       let isFollowing = platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings);
       
-      const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+      const activeToken = passedToken || (platform === 'facebook' ? (userSettings?.facebookAccessToken || userSettings?.instagramAccessToken) : (userSettings?.instagramAccessToken || userSettings?.facebookAccessToken)) || process.env.META_PAGE_ACCESS_TOKEN;
       
       if (isFollowing) {
         console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} has now followed! Triggering pending campaign.`);
@@ -113,7 +113,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
         console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied correctly to Opening Message. Triggering final response.`);
         await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 } });
 
-        const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+        const activeToken = passedToken || (platform === 'facebook' ? (userSettings?.facebookAccessToken || userSettings?.instagramAccessToken) : (userSettings?.instagramAccessToken || userSettings?.facebookAccessToken)) || process.env.META_PAGE_ACCESS_TOKEN;
         
         let finalResponse = match.response;
         if (match.isAI) {
@@ -146,7 +146,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
           let updatedTags = Array.isArray(contact.tags) ? [...contact.tags] : [];
           if (platform === 'facebook' && !updatedTags.includes('FacebookFollower')) updatedTags.push('FacebookFollower');
           await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 }, tags: updatedTags });
-          const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+          const activeToken = passedToken || (platform === 'facebook' ? (userSettings?.facebookAccessToken || userSettings?.instagramAccessToken) : (userSettings?.instagramAccessToken || userSettings?.facebookAccessToken)) || process.env.META_PAGE_ACCESS_TOKEN;
           
           let finalResponse = match.response;
           await sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
@@ -191,7 +191,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     console.log(`🌊 FLOW MATCH: Triggering Flow "${matchedFlow.name}" for Sender: ${chatId}`);
     await runFlow(userId, matchedFlow._id, chatId, platform, text, commentId, workspaceId);
     if (source === 'comment' && commentId) {
-      const activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+      const activeToken = passedToken || (platform === 'facebook' ? (userSettings?.facebookAccessToken || userSettings?.instagramAccessToken) : (userSettings?.instagramAccessToken || userSettings?.facebookAccessToken)) || process.env.META_PAGE_ACCESS_TOKEN;
       const replyText = matchedFlow.publicReplyText || `Check your DMs! 🚀 I've sent you the info.`;
       await sendPublicComment(platform, commentId, replyText, userId, activeToken);
     }
@@ -246,7 +246,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
   });
 
   if (match) {
-    let activeToken = passedToken || userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
+    let activeToken = passedToken || (platform === 'facebook' ? (userSettings?.facebookAccessToken || userSettings?.instagramAccessToken) : (userSettings?.instagramAccessToken || userSettings?.facebookAccessToken)) || process.env.META_PAGE_ACCESS_TOKEN;
 
     if (match.requireFollow) {
       console.log(`🚀 UNIVERSAL GATING: Checking follower status for ${chatId}...`);

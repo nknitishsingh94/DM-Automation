@@ -117,6 +117,7 @@ export async function publishYouTubeVideo(userId, postData, settings) {
       console.log(`✅ [YouTube API] Video uploaded successfully. ID: ${videoId}`);
     }
 
+    let thumbWarning = '';
     // If thumbnail provided, upload it too
     if (thumbnail) {
       try {
@@ -125,8 +126,9 @@ export async function publishYouTubeVideo(userId, postData, settings) {
         let mimeType = "image/jpeg";
 
         if (thumbnail.startsWith('http://') || thumbnail.startsWith('https://')) {
-          const response = await axios({ method: 'get', url: thumbnail, responseType: 'stream' });
-          thumbStream = response.data;
+          const response = await axios({ method: 'get', url: thumbnail, responseType: 'arraybuffer' });
+          const { Readable } = await import('stream');
+          thumbStream = Readable.from(Buffer.from(response.data));
           if (response.headers['content-type']) {
             mimeType = response.headers['content-type'];
           }
@@ -148,17 +150,20 @@ export async function publishYouTubeVideo(userId, postData, settings) {
           console.log(`✅ [YouTube API] Thumbnail uploaded successfully for video ID: ${videoId}`);
         }
       } catch (thumbErr) {
+        thumbWarning = `Thumbnail failed: ${thumbErr.message}`;
         console.warn(`⚠️ [YouTube API] Failed to set thumbnail:`, thumbErr.message);
       }
     }
 
-    return {
+    const result = {
       status: 'PUBLISHED',
       url: `https://www.youtube.com/watch?v=${videoId}`
     };
+    if (thumbWarning) result.warning = thumbWarning;
+    return result;
 
   } catch (error) {
-    console.error('🔥 [YouTube API] publishYouTubeVideo failed:', error.response?.data || error.message);
+    console.error('❌ [YouTube API] publishYouTubeVideo failed:', error.response?.data || error.message);
     throw new Error(error.message);
   }
 }

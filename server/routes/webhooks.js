@@ -607,6 +607,23 @@ router.post('/webhook', async (req, res) => {
             
             if (replyText && senderId) {
               console.log(`🧵 Threads Reply from ${senderId}: ${replyText}`);
+
+              const processThreadsReply = async () => {
+                try {
+                  const allMatchingSettings = await Settings.find({ threadsPageId: pageId });
+                  if (allMatchingSettings && allMatchingSettings.length > 0) {
+                    const userSettings = allMatchingSettings[0];
+                    const targetUserId = userSettings.userId;
+                    const targetWorkspaceId = userSettings.workspaceId;
+                    
+                    await processAutoReply(targetUserId.toString(), 'threads', senderId, replyText, 'comment', replyId, userSettings.threadsAccessToken, null, targetWorkspaceId);
+                  }
+                } catch (e) {
+                  console.error("🔥 Threads AutoReply Error:", e);
+                }
+              };
+              
+              processThreadsReply();
             }
           }
         }

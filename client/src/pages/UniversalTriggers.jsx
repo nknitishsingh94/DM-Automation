@@ -12,7 +12,7 @@ import {
   useReactFlow
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { ArrowLeft, TestTube, Send, Plus, MousePointer2, LayoutGrid, Link, Settings, Type, BrainCircuit, MessageSquare, Heart, Check, List, X, Zap, Clock, HelpCircle, UserPlus, Bell, Flag, ChevronDown, Users, Globe, Search } from 'lucide-react';
+import { ArrowLeft, TestTube, Send, Plus, MousePointer2, LayoutGrid, Link, Settings, Type, BrainCircuit, MessageSquare, Heart, Check, List, X, Zap, Clock, HelpCircle, UserPlus, Bell, Flag, ChevronDown, Users, Globe, Search, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
 import { API_BASE_URL } from '../config';
@@ -287,10 +287,6 @@ export default function UniversalTriggers() {
   };
 
   const handleSaveTrigger = async () => {
-    if (keywords.length === 0) {
-      alert("Please add at least one keyword.");
-      return;
-    }
     const token = localStorage.getItem('insta_agent_token');
     if (!token) {
       alert("No authentication token found. Please login again.");
@@ -308,14 +304,14 @@ export default function UniversalTriggers() {
           ...(workspaceId ? { 'x-workspace-id': workspaceId } : {})
         },
         body: JSON.stringify({
-          name: 'Universal Trigger - ' + triggerType,
-          trigger: keywords.join(', '),
+          name: 'Universal Trigger - Any',
+          trigger: '*',
           response: 'Visual Workflow Configured',
           isAnyPost: true,
           platform: 'all',
           triggerOnDms: true,
           triggerOnComments: true,
-          status: 'active',
+          status: 'Active',
           isUniversal: true,
           triggerType: triggerType
         })
@@ -333,6 +329,32 @@ export default function UniversalTriggers() {
       alert("Error saving trigger: " + err.message);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDeleteTrigger = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this trigger?")) return;
+    
+    const token = localStorage.getItem('insta_agent_token');
+    const workspaceId = localStorage.getItem('active_workspace_id');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/campaigns/${id}`, {
+        method: 'DELETE',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          ...(workspaceId ? { 'x-workspace-id': workspaceId } : {})
+        }
+      });
+      if (res.ok) {
+        alert("Trigger deleted successfully");
+        fetchRealData();
+      } else {
+        const errData = await res.json();
+        alert(`Failed to delete trigger: ${errData.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting trigger: " + err.message);
     }
   };
 
@@ -458,46 +480,9 @@ export default function UniversalTriggers() {
           <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
 
 
-            {/* Keywords */}
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Keywords</label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
-                {keywords.map((kw, i) => (
-                  <span key={i} style={{ padding: '4px 8px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '6px', fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    {kw} 
-                    <span 
-                      onClick={() => setKeywords(keywords.filter((_, index) => index !== i))} 
-                      style={{ cursor: 'pointer', color: 'var(--text-muted)' }}>
-                      ×
-                    </span>
-                  </span>
-                ))}
-              </div>
-              <input 
-                type="text" 
-                placeholder="Add keyword..." 
-                value={keywordInput}
-                onChange={(e) => setKeywordInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && keywordInput.trim() !== '') {
-                    setKeywords([...keywords, keywordInput.trim()]);
-                    setKeywordInput('');
-                  }
-                }}
-                style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none' }} 
-              />
-              <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '6px' }}>Press Enter to add more keywords</div>
-            </div>
 
-            {/* Match Type */}
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Match Type</label>
-              <select style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-main)' }}>
-                <option>Any Keyword</option>
-                <option>Exact Match</option>
-                <option>Contains</option>
-              </select>
-            </div>
+
+
 
             {/* Platforms */}
             <div style={{ marginBottom: '24px' }}>
@@ -514,23 +499,7 @@ export default function UniversalTriggers() {
               </div>
             </div>
 
-            {/* Type & Platforms */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              <div>
-                <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', marginBottom: '6px', textTransform: 'uppercase' }}>Trigger Type</label>
-                <select 
-                  value={triggerType}
-                  onChange={(e) => setTriggerType(e.target.value)}
-                  style={{ width: '100%', padding: '10px', fontSize: '12px', fontWeight: '600', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none', background: 'var(--sidebar-bg)', color: 'var(--text-main)', cursor: 'pointer' }}
-                >
-                  <option value="Keyword">Keyword Match</option>
-                  <option value="AI Intent">AI Intent (Smart)</option>
-                  <option value="Post Comment">Post Comment</option>
-                  <option value="Story Mention">Story Mention</option>
-                  <option value="Direct Message">Direct Message</option>
-                </select>
-              </div>
-            </div>
+
 
             {/* Trigger Condition */}
             <div>
@@ -615,6 +584,15 @@ export default function UniversalTriggers() {
                               <Type size={12} /> {trigType}
                             </span>
                           </div>
+                          <button 
+                            onClick={() => handleDeleteTrigger(trig._id || trig.id)}
+                            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#ef4444', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px' }}
+                            title="Delete Trigger"
+                            onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
+                            onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                          >
+                            <Trash2 size={16} />
+                          </button>
                         </div>
                         <div style={{ background: 'var(--bg-card)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontSize: '13px', color: 'var(--text-main)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                           <span style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Auto-Response Preview</span>
