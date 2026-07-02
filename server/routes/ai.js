@@ -20,8 +20,6 @@ router.post('/generate', verifyToken, async (req, res) => {
             return res.status(400).json({ error: "Prompt is required" });
         }
 
-        const openai = getOpenAIClient();
-
         let systemMessage = "You are an expert marketing AI assistant. Your goal is to write high-converting, friendly, and engaging direct messages and button texts for automation flows.";
         let userMessage = prompt;
 
@@ -33,21 +31,43 @@ router.post('/generate', verifyToken, async (req, res) => {
              userMessage = `Generate 3-5 short, single-word or two-word keywords for an automation trigger based on this prompt: "${prompt}". Return them as a comma-separated list without quotes.`;
         }
 
-        const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: [
-                { role: "system", content: systemMessage },
-                { role: "user", content: userMessage }
-            ],
-            temperature: 0.7,
-            max_tokens: 150
-        });
+        const groqKey = process.env.GROQ_API_KEY;
+        let generatedText = '';
 
-        const generatedText = response.choices[0].message.content.trim();
+        try {
+            const openai = getOpenAIClient();
+            const response = await openai.chat.completions.create({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    { role: "system", content: systemMessage },
+                    { role: "user", content: userMessage }
+                ],
+                temperature: 0.7,
+                max_tokens: 150
+            });
+            generatedText = response.choices[0].message.content.trim();
+        } catch (openAiErr) {
+            console.warn("OpenAI Generation Error:", openAiErr.message, "Falling back to Groq...");
+            if (groqKey) {
+                const groq = new OpenAI({ apiKey: groqKey.trim(), baseURL: "https://api.groq.com/openai/v1" });
+                const groqResponse = await groq.chat.completions.create({
+                    model: 'llama-3.3-70b-versatile',
+                    messages: [
+                        { role: "system", content: systemMessage },
+                        { role: "user", content: userMessage }
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 150
+                });
+                generatedText = groqResponse.choices[0].message.content.trim();
+            } else {
+                throw openAiErr;
+            }
+        }
         
-        res.json({ success: true, generatedText });
+        res.json({ success: true, response: generatedText });
     } catch (error) {
-        console.error("AI Generation Error:", error.message);
+        console.error("AI Generation Final Error:", error.message);
         res.status(500).json({ error: error.message || "Failed to generate AI content" });
     }
 });
