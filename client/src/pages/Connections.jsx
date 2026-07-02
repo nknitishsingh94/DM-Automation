@@ -431,7 +431,7 @@ export default function Connections() {
     }
     const wsParam = `&workspaceId=${localStorage.getItem('active_workspace_id') || ''}`;
     if (platformName.toLowerCase() === 'linkedin') {
-      window.location.href = `${API_BASE_URL}/api/oauth/linkedin?type=business&token=${localStorage.getItem('insta_agent_token')}${wsParam}`;
+      window.location.href = `${API_BASE_URL}/api/oauth/linkedin?token=${localStorage.getItem('insta_agent_token')}${wsParam}`;
       return;
     }
     if (platformName.toLowerCase() === 'google business' || platformName.toLowerCase() === 'google-business') {
