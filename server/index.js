@@ -2629,7 +2629,11 @@ async function runSchedulingWorker() {
 
         const updatedMediaUrl = JSON.stringify(updatedMetaObj);
 
-        await safeUpdate(postId, { status: 'Posted', mediaUrl: updatedMediaUrl });
+        const successUpdatePayload = { status: 'Posted', mediaUrl: updatedMediaUrl };
+        if (publishResult && publishResult.warning) {
+          successUpdatePayload.lastError = publishResult.warning;
+        }
+        await safeUpdate(postId, successUpdatePayload);
         
         try {
           const log = new PostLog({
