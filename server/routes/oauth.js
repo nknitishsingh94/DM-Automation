@@ -933,8 +933,17 @@ router.get('/linkedin/callback', async (req, res) => {
         if (profileRes.data.id) {
           personUrn = `urn:li:person:${profileRes.data.id}`;
         }
+        
         if (profileRes.data.localizedFirstName) {
           profileName = `${profileRes.data.localizedFirstName} ${profileRes.data.localizedLastName || ''}`.trim();
+        } else if (profileRes.data.firstName && profileRes.data.firstName.localized) {
+          const first = Object.values(profileRes.data.firstName.localized)[0] || '';
+          const last = (profileRes.data.lastName && profileRes.data.lastName.localized) ? Object.values(profileRes.data.lastName.localized)[0] || '' : '';
+          if (first) profileName = `${first} ${last}`.trim();
+        } else if (profileRes.data.name) {
+          profileName = profileRes.data.name;
+        } else if (profileRes.data.given_name) {
+          profileName = `${profileRes.data.given_name} ${profileRes.data.family_name || ''}`.trim();
         }
       }
     } catch (profileErr) {
