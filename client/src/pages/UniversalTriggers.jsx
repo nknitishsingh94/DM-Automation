@@ -388,7 +388,7 @@ Instructions:
       {/* Top Header */}
       <div style={{ padding: '16px 24px', background: 'var(--bg-card)', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button onClick={() => navigate('/hub')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><ArrowLeft size={20} /></button>
+          <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><ArrowLeft size={20} /></button>
           <div>
             <h1 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>Universal Trigger Engine</h1>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>Create once, run everywhere</p>
