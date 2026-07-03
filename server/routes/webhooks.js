@@ -367,7 +367,7 @@ router.post('/webhook', async (req, res) => {
 
       for (const change of changes) {
         console.log(`📝 Change Field: ${change.field}`);
-        if (change.field === 'feed' || change.field === 'comments') {
+        if (change.field === 'feed' || change.field === 'comments' || change.field === 'live_comments') {
           const val = change.value;
           console.log('💎 [DEEP DATA] Interaction Detected! Field:', change.field);
           console.log('📦 Value:', JSON.stringify(val, null, 2));
