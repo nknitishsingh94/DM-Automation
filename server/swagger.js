@@ -1,9 +1,15 @@
 import swaggerUi from 'swagger-ui-express';
-import { swaggerDocument } from './swaggerConfig.js';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const setupSwagger = (app) => {
   try {
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+    const swaggerFile = JSON.parse(fs.readFileSync(path.join(__dirname, 'swagger_output.json'), 'utf8'));
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile, {
       customCss: '.swagger-ui .topbar { display: none }',
       customSiteTitle: 'Insta AI Agent API Documentation'
     }));
