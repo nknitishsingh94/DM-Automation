@@ -21,7 +21,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/health": {
@@ -31,7 +34,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/ping": {
@@ -41,7 +47,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/chats": {
@@ -54,7 +63,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Messaging"
+        ]
       },
       "post": {
         "description": "",
@@ -65,7 +77,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Messaging"
+        ]
       },
       "delete": {
         "description": "",
@@ -76,7 +91,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Messaging"
+        ]
       }
     },
     "/api/chat": {
@@ -103,7 +121,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Messaging"
+        ]
       }
     },
     "/api/stats": {
@@ -116,7 +137,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/campaigns/sync-from-post": {
@@ -152,7 +176,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/campaigns": {
@@ -165,7 +192,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       },
       "post": {
         "description": "",
@@ -196,7 +226,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/campaigns/{id}": {
@@ -219,7 +252,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       },
       "delete": {
         "description": "",
@@ -243,7 +279,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/campaigns/{id}/logs": {
@@ -266,7 +305,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/pinterest/boards": {
@@ -282,7 +324,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/scheduling": {
@@ -295,7 +340,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Scheduling"
+        ]
       },
       "post": {
         "description": "",
@@ -434,7 +482,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Scheduling"
+        ]
       }
     },
     "/api/storage/sign": {
@@ -467,7 +518,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/storage/view": {
@@ -492,7 +546,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/storage/proxy-external": {
@@ -514,7 +571,10 @@
           "400": {
             "description": "Bad Request"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/captions": {
@@ -524,7 +584,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       },
       "post": {
         "description": "",
@@ -552,7 +615,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/captions/{id}": {
@@ -575,7 +641,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/scheduling/{id}": {
@@ -615,7 +684,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Scheduling"
+        ]
       },
       "delete": {
         "description": "",
@@ -639,7 +711,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Scheduling"
+        ]
       }
     },
     "/api/messages": {
@@ -649,7 +724,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       },
       "post": {
         "description": "",
@@ -686,7 +764,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/messages/contact/{chatId}": {
@@ -709,7 +790,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/ai/generate": {
@@ -742,7 +826,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/youtube/get-upload-url": {
@@ -790,7 +877,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Youtube"
+        ]
       }
     },
     "/api/messages/all": {
@@ -803,7 +893,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/messages/{id}": {
@@ -826,7 +919,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/workspaces": {
@@ -836,7 +932,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       },
       "post": {
         "description": "",
@@ -864,7 +963,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/workspaces/{id}": {
@@ -893,7 +995,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/settings": {
@@ -906,7 +1011,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       },
       "post": {
         "description": "",
@@ -934,7 +1042,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/instagram/media": {
@@ -977,7 +1088,10 @@
           "400": {
             "description": "Bad Request"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/facebook/media": {
@@ -990,7 +1104,10 @@
           "400": {
             "description": "Bad Request"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/settings/whatsapp/connect-embedded": {
@@ -1026,7 +1143,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/settings/whatsapp/send-test": {
@@ -1056,7 +1176,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/settings/whatsapp/connect-qr": {
@@ -1069,7 +1192,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/settings/whatsapp/qr": {
@@ -1082,7 +1208,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/flows": {
@@ -1095,7 +1224,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       },
       "post": {
         "description": "",
@@ -1106,7 +1238,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/flows/{id}": {
@@ -1132,7 +1267,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       },
       "put": {
         "description": "",
@@ -1153,7 +1291,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       },
       "delete": {
         "description": "",
@@ -1174,7 +1315,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/broadcasts": {
@@ -1210,7 +1354,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/debug/scheduled": {
@@ -1223,7 +1370,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/debug/settings": {
@@ -1236,7 +1386,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/fix-gmb-cache": {
@@ -1285,7 +1438,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/cron/publish": {
@@ -1295,7 +1451,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/user-feedback": {
@@ -1305,7 +1464,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       },
       "post": {
         "description": "",
@@ -1360,7 +1522,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/user-feedback/check": {
@@ -1373,7 +1538,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/diag-storage": {
@@ -1386,7 +1554,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/test/twitter/post": {
@@ -1422,7 +1593,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Posts"
+        ]
       }
     },
     "/api/webhook": {
@@ -1435,7 +1609,10 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "tags": [
+          "Webhooks"
+        ]
       },
       "post": {
         "description": "",
@@ -1463,7 +1640,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Webhooks"
+        ]
       }
     },
     "/api/webhook/twitter": {
@@ -1488,7 +1668,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Webhooks"
+        ]
       },
       "post": {
         "description": "",
@@ -1513,7 +1696,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Webhooks"
+        ]
       }
     },
     "/api/auth/signup": {
@@ -1552,7 +1738,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/login": {
@@ -1588,7 +1777,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/google": {
@@ -1624,7 +1816,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/google_custom": {
@@ -1663,7 +1858,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/facebook": {
@@ -1699,7 +1897,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/profile": {
@@ -1732,7 +1933,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       },
       "get": {
         "description": "",
@@ -1746,7 +1950,10 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/account": {
@@ -1762,7 +1969,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/auth/delete": {
@@ -1775,7 +1985,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/payment/create-order": {
@@ -1791,7 +2004,10 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "tags": [
+          "Payment"
+        ]
       }
     },
     "/api/payment/verify-payment": {
@@ -1830,7 +2046,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Payment"
+        ]
       }
     },
     "/api/forms/": {
@@ -1843,7 +2062,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Forms"
+        ]
       },
       "post": {
         "description": "",
@@ -1877,7 +2099,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Forms"
+        ]
       }
     },
     "/api/forms/{id}": {
@@ -1903,7 +2128,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Forms"
+        ]
       },
       "delete": {
         "description": "",
@@ -1927,7 +2155,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Forms"
+        ]
       }
     },
     "/api/forms/{id}/submissions": {
@@ -1950,7 +2181,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Forms"
+        ]
       }
     },
     "/api/forms/{id}/toggle": {
@@ -1976,7 +2210,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Forms"
+        ]
       }
     },
     "/api/oauth/facebook": {
@@ -2002,7 +2239,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/facebook/callback": {
@@ -2041,7 +2281,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/facebook/pages": {
@@ -2060,7 +2303,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/facebook/select-page": {
@@ -2096,7 +2342,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/pinterest": {
@@ -2106,7 +2355,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/pinterest/callback": {
@@ -2139,7 +2391,10 @@
           "default": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/threads": {
@@ -2149,7 +2404,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/threads/callback": {
@@ -2182,7 +2440,10 @@
           "default": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/youtube": {
@@ -2201,7 +2462,10 @@
           "default": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/youtube/callback": {
@@ -2234,7 +2498,10 @@
           "default": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/linkedin": {
@@ -2260,7 +2527,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/linkedin/callback": {
@@ -2299,7 +2569,10 @@
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/google-business": {
@@ -2318,7 +2591,10 @@
           "default": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/google-business/callback": {
@@ -2351,7 +2627,10 @@
           "default": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/twitter": {
@@ -2370,7 +2649,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/oauth/twitter/callback": {
@@ -2403,7 +2685,10 @@
           "default": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/support/chat": {
@@ -2448,7 +2733,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Messaging"
+        ]
       }
     },
     "/api/support/contact": {
@@ -2487,7 +2775,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/youtube/auth": {
@@ -2497,7 +2788,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/api/youtube/callback": {
@@ -2530,7 +2824,10 @@
           "default": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Youtube"
+        ]
       }
     },
     "/api/youtube/stats": {
@@ -2546,7 +2843,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Youtube"
+        ]
       }
     },
     "/api/youtube/videos": {
@@ -2559,7 +2859,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Youtube"
+        ]
       }
     },
     "/api/youtube/generate-thumbnail": {
@@ -2589,7 +2892,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Youtube"
+        ]
       }
     },
     "/api/youtube/generate-metadata": {
@@ -2622,7 +2928,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Youtube"
+        ]
       }
     },
     "/api/youtube/access-token": {
@@ -2638,7 +2947,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Youtube"
+        ]
       }
     },
     "/api/threads/profiles": {
@@ -2651,7 +2963,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Messaging"
+        ]
       }
     },
     "/api/threads/publish": {
@@ -2687,7 +3002,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Messaging"
+        ]
       }
     },
     "/api/api-keys/": {
@@ -2700,7 +3018,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       },
       "post": {
         "description": "",
@@ -2728,7 +3049,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/api-keys/{id}": {
@@ -2754,7 +3078,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "General"
+        ]
       }
     },
     "/api/posts/": {
@@ -2805,7 +3132,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Posts"
+        ]
       }
     },
     "/api/analytics/": {
@@ -2841,7 +3171,10 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "tags": [
+          "Analytics"
+        ]
       }
     }
   },
@@ -2857,6 +3190,48 @@
   "security": [
     {
       "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "General",
+      "description": "General APIs"
+    },
+    {
+      "name": "Messaging",
+      "description": "Chats & Direct Messages"
+    },
+    {
+      "name": "Scheduling",
+      "description": "Post Scheduling & Publishing"
+    },
+    {
+      "name": "Youtube",
+      "description": "YouTube Video & Analytics APIs"
+    },
+    {
+      "name": "Posts",
+      "description": "Manage Posts and Media"
+    },
+    {
+      "name": "Webhooks",
+      "description": "Meta & Platform Webhooks"
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication and User Management"
+    },
+    {
+      "name": "Payment",
+      "description": "Stripe/Razorpay Integrations"
+    },
+    {
+      "name": "Forms",
+      "description": "Custom Forms & Lead Gen"
+    },
+    {
+      "name": "Analytics",
+      "description": "Dashboard and Metrics"
     }
   ]
 }
