@@ -18,10 +18,17 @@ export const setupSwagger = (app) => {
       next();
     });
 
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile, {
+    const swaggerOptions = {
       customCss: '.swagger-ui .topbar { display: none }',
-      customSiteTitle: 'Insta AI Agent API Documentation'
-    }));
+      customSiteTitle: 'Insta AI Agent API Documentation',
+      customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.8/swagger-ui.min.css',
+      customJs: [
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.8/swagger-ui-bundle.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.8/swagger-ui-standalone-preset.min.js'
+      ]
+    };
+
+    app.use('/api-docs', swaggerUi.serveFiles(swaggerFile, swaggerOptions), swaggerUi.setup(swaggerFile, swaggerOptions));
     console.log('📄 Swagger API Docs available at /api-docs');
   } catch (error) {
     console.error('Failed to setup Swagger:', error.message);
