@@ -18,7 +18,7 @@ export const setupSwagger = (app) => {
       next();
     });
 
-    app.use('/api-docs/', swaggerUi.serve, swaggerUi.setup(swaggerFile, {
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile, {
       customCss: '.swagger-ui .topbar { display: none }',
       customSiteTitle: 'Insta AI Agent API Documentation'
     }));
