@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Heart, Facebook, Instagram, Youtube, Linkedin, Globe } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 export default function Footer() {
   const location = useLocation();
@@ -58,6 +59,7 @@ export default function Footer() {
           <ul>
             <li><Link to="/blog">Blog</Link></li>
             <li><Link to="/help">Help & Support</Link></li>
+            <li><a href={`${API_BASE_URL}/api-docs`} target="_blank" rel="noopener noreferrer" style={{display:'flex', alignItems:'center'}}>Developer API Docs <span style={{fontSize:'9px', background:'#ec4899', color:'white', padding:'2px 6px', borderRadius:'4px', marginLeft:'6px', fontWeight:'bold'}}>NEW</span></a></li>
           </ul>
         </div>
       </div>
