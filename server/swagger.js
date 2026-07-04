@@ -9,7 +9,16 @@ const __dirname = path.dirname(__filename);
 export const setupSwagger = (app) => {
   try {
     const swaggerFile = JSON.parse(fs.readFileSync(path.join(__dirname, 'swagger_output.json'), 'utf8'));
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile, {
+    
+    // Fix for trailing slash issue which causes static files to fail loading
+    app.use('/api-docs', (req, res, next) => {
+      if (req.originalUrl === '/api-docs') {
+        return res.redirect('/api-docs/');
+      }
+      next();
+    });
+
+    app.use('/api-docs/', swaggerUi.serve, swaggerUi.setup(swaggerFile, {
       customCss: '.swagger-ui .topbar { display: none }',
       customSiteTitle: 'Insta AI Agent API Documentation'
     }));
