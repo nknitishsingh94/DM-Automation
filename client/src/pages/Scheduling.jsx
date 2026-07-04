@@ -414,6 +414,39 @@ export default function Scheduling() {
     }
   };
 
+  const [isGeneratingThumb, setIsGeneratingThumb] = useState(false);
+
+  const generateAIThumbnail = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const promptText = newPost.youtubeTitle || newPost.caption;
+    if (!promptText) {
+      alert("Please enter a YouTube Title or Caption first so the AI knows what to generate!");
+      return;
+    }
+    
+    setIsGeneratingThumb(true);
+    try {
+      const enhancedPrompt = `High quality YouTube thumbnail, cinematic, highly engaging, vibrant colors, no text, related to: ${promptText}`;
+      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=1280&height=720&nologo=true`;
+      
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Failed to generate thumbnail");
+      
+      const blob = await response.blob();
+      const file = new File([blob], `thumbnail-${Date.now()}.jpg`, { type: 'image/jpeg' });
+      
+      setYoutubeThumbnailFile(file);
+      setYoutubeThumbnailPreview(URL.createObjectURL(file));
+      notify("AI Thumbnail generated successfully!", "success");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to generate AI thumbnail. Please try again.");
+    } finally {
+      setIsGeneratingThumb(false);
+    }
+  };
+
   const [newPost, setNewPost] = useState({
     platform: 'instagram',
     caption: '',
@@ -1798,7 +1831,17 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
 
                     {/* YouTube Thumbnail Upload */}
                     <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>custom thumbnail (optional)</label>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <label style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', margin: 0 }}>custom thumbnail (optional)</label>
+                        <button 
+                          type="button"
+                          onClick={generateAIThumbnail}
+                          disabled={isGeneratingThumb}
+                          style={{ padding: '6px 12px', background: 'linear-gradient(135deg, #a855f7, #ec4899)', border: 'none', borderRadius: '6px', color: 'white', fontWeight: '700', fontSize: '11px', cursor: isGeneratingThumb ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '4px', opacity: isGeneratingThumb ? 0.7 : 1, zIndex: 10 }}
+                        >
+                          <Sparkles size={12} /> {isGeneratingThumb ? 'Generating...' : 'AI Generate 🪄'}
+                        </button>
+                      </div>
                       <div
                         onClick={() => thumbnailInputRef.current.click()}
                         onDragOver={(e) => e.preventDefault()}
