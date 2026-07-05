@@ -1764,89 +1764,6 @@
         }
       }
     },
-    "/api/auth/google": {
-      "post": {
-        "description": "This endpoint allows you to create data for the Auth Google resource. Authentication may be required depending on the route.",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "token": {
-                    "example": "any"
-                  },
-                  "mode": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Create Auth Google"
-      }
-    },
-    "/api/auth/google_custom": {
-      "post": {
-        "description": "This endpoint allows you to create data for the Auth Google_custom resource. Authentication may be required depending on the route.",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "example": "any"
-                  },
-                  "name": {
-                    "example": "any"
-                  },
-                  "sub": {
-                    "example": "any"
-                  },
-                  "picture": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Create Auth Google_custom"
-      }
-    },
     "/api/auth/facebook": {
       "post": {
         "description": "This endpoint allows you to create data for the Auth Facebook resource. Authentication may be required depending on the route.",
@@ -3084,7 +3001,11 @@
     },
     "/api/api-keys/{id}": {
       "delete": {
-        "description": "This endpoint allows you to delete data for the Api-keys resource. Authentication may be required depending on the route.",
+        "tags": [
+          "API Keys"
+        ],
+        "summary": "Revoke API Key",
+        "description": "Permanently revokes an API key, immediately disabling its ability to authenticate requests.",
         "parameters": [
           {
             "name": "id",
@@ -3097,19 +3018,12 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "API Key successfully revoked."
           },
           "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
+            "description": "API Key not found."
           }
-        },
-        "tags": [
-          "General"
-        ],
-        "summary": "Delete Api-keys"
+        }
       }
     },
     "/api/posts/": {
@@ -4493,6 +4407,50 @@
         ],
         "summary": "Create  Generate"
       }
+    },
+    "/api/api-keys": {
+      "get": {
+        "tags": [
+          "API Keys"
+        ],
+        "summary": "List API Keys",
+        "description": "Retrieves a list of all active API keys for the authenticated user/workspace. Keys are returned partially masked for security.",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "API Keys"
+        ],
+        "summary": "Create API Key",
+        "description": "Creates a new API Key for server-to-server integration (e.g. ZERNIO_API_KEY). Format: sk_live_ + 48 hex characters. The full key is only returned once.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Production Node.js Server"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "API Key created successfully"
+          },
+          "400": {
+            "description": "Maximum limit of active API keys reached"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -4513,6 +4471,10 @@
     {
       "name": "Auth",
       "description": "Authentication and User Management"
+    },
+    {
+      "name": "API Keys",
+      "description": "Manage Developer API Keys"
     },
     {
       "name": "General",
