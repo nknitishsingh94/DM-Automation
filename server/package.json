@@ -11,6 +11,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "seed": "node seed.js",
+    "swagger": "node swagger-generate.js && node fix-swagger.js",
     "build": "echo 'No build step required'"
   },
   "dependencies": {

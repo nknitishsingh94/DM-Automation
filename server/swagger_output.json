@@ -22,12 +22,77 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         },
         "tags": [
           "General"
         ],
         "summary": "Retrieve  "
+      },
+      "post": {
+        "description": "This endpoint allows you to create data for the   resource. Authentication may be required depending on the route.",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "type": {
+                    "example": "any"
+                  },
+                  "steps": {
+                    "example": "any"
+                  },
+                  "settings": {
+                    "example": "any"
+                  },
+                  "caption": {
+                    "example": "any"
+                  },
+                  "mediaUrl": {
+                    "example": "any"
+                  },
+                  "carouselItems": {
+                    "example": "any"
+                  },
+                  "scheduledFor": {
+                    "example": "any"
+                  },
+                  "platforms": {
+                    "example": "any"
+                  },
+                  "triggerKeyword": {
+                    "example": "any"
+                  },
+                  "autoResponse": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create  "
       }
     },
     "/api/chats": {
@@ -1623,21 +1688,11 @@
     },
     "/api/auth/signup": {
       "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register New User",
         "description": "Creates a new user account in the system and provisions an initial workspace. Requires email and password. Returns user object and authentication token.",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
         "requestBody": {
           "content": {
             "application/json": {
@@ -1645,42 +1700,44 @@
                 "type": "object",
                 "properties": {
                   "username": {
-                    "example": "any"
+                    "type": "string",
+                    "example": "john_doe"
                   },
                   "email": {
-                    "example": "any"
+                    "type": "string",
+                    "example": "john@example.com"
                   },
                   "password": {
-                    "example": "any"
+                    "type": "string",
+                    "example": "securepassword123"
                   }
-                }
+                },
+                "required": [
+                  "username",
+                  "email",
+                  "password"
+                ]
               }
             }
           }
         },
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Register New User"
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
       }
     },
     "/api/auth/login": {
       "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "User Login",
         "description": "Authenticates an existing user and returns a JWT access token. Use this token in the Authorization header (Bearer format) for all subsequent API requests.",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
         "requestBody": {
           "content": {
             "application/json": {
@@ -1688,20 +1745,33 @@
                 "type": "object",
                 "properties": {
                   "email": {
-                    "example": "any"
+                    "type": "string",
+                    "example": "john@example.com"
                   },
                   "password": {
-                    "example": "any"
+                    "type": "string",
+                    "example": "securepassword123"
                   }
-                }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
               }
             }
           }
         },
-        "tags": [
-          "Auth"
-        ],
-        "summary": "User Login"
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
       }
     },
     "/api/auth/google": {
@@ -3147,6 +3217,1294 @@
         ],
         "summary": "Retrieve Analytics "
       }
+    },
+    "/google": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Google resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "example": "any"
+                  },
+                  "mode": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create  Google"
+      }
+    },
+    "/google_custom": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Google_custom resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  },
+                  "name": {
+                    "example": "any"
+                  },
+                  "sub": {
+                    "example": "any"
+                  },
+                  "picture": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create  Google_custom"
+      }
+    },
+    "/facebook": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Facebook resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "accessToken": {
+                    "example": "any"
+                  },
+                  "userId": {
+                    "example": "any"
+                  },
+                  "mode": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Facebook"
+        ],
+        "summary": "Create  Facebook"
+      },
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Facebook resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "onboarding",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "connectType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "Facebook"
+        ],
+        "summary": "Retrieve  Facebook"
+      }
+    },
+    "/profile": {
+      "put": {
+        "description": "This endpoint allows you to update data for the  Profile resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "example": "any"
+                  },
+                  "profilePhoto": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Update  Profile"
+      },
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Profile resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Retrieve  Profile"
+      }
+    },
+    "/account": {
+      "delete": {
+        "description": "This endpoint allows you to delete data for the  Account resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Delete  Account"
+      }
+    },
+    "/delete": {
+      "delete": {
+        "description": "This endpoint allows you to delete data for the  Delete resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Delete  Delete"
+      }
+    },
+    "/create-order": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Create-order resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create  Create-order"
+      }
+    },
+    "/verify-payment": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Verify-payment resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "razorpay_order_id": {
+                    "example": "any"
+                  },
+                  "razorpay_payment_id": {
+                    "example": "any"
+                  },
+                  "razorpay_signature": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create  Verify-payment"
+      }
+    },
+    "/{id}": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the System resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Retrieve System"
+      },
+      "delete": {
+        "description": "This endpoint allows you to delete data for the System resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Delete System"
+      }
+    },
+    "/{id}/submissions": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Submissions resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Retrieve  Submissions"
+      }
+    },
+    "/{id}/toggle": {
+      "patch": {
+        "description": "This endpoint allows you to update data for the  Toggle resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Update  Toggle"
+      }
+    },
+    "/facebook/callback": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Facebook Callback resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "0": {
+            "description": ""
+          },
+          "1": {
+            "description": ""
+          },
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Facebook"
+        ],
+        "summary": "Retrieve  Facebook Callback"
+      }
+    },
+    "/facebook/pages": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Facebook Pages resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "Facebook"
+        ],
+        "summary": "Retrieve  Facebook Pages"
+      }
+    },
+    "/facebook/select-page": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Facebook Select-page resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pageId": {
+                    "example": "any"
+                  },
+                  "pageAccessToken": {
+                    "example": "any"
+                  },
+                  "businessAccountId": {
+                    "example": "any"
+                  },
+                  "instagramUsername": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Facebook"
+        ],
+        "summary": "Create  Facebook Select-page"
+      }
+    },
+    "/pinterest": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Pinterest resource. Authentication may be required depending on the route.",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "Pinterest"
+        ],
+        "summary": "Retrieve  Pinterest"
+      }
+    },
+    "/pinterest/callback": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Pinterest Callback resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Pinterest"
+        ],
+        "summary": "Retrieve  Pinterest Callback"
+      }
+    },
+    "/threads": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Threads resource. Authentication may be required depending on the route.",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "Messaging"
+        ],
+        "summary": "Retrieve  Threads"
+      }
+    },
+    "/threads/callback": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Threads Callback resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Messaging"
+        ],
+        "summary": "Retrieve  Threads Callback"
+      }
+    },
+    "/youtube": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Youtube resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "onboarding",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "YouTube"
+        ],
+        "summary": "Retrieve  Youtube"
+      }
+    },
+    "/youtube/callback": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Youtube Callback resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "YouTube"
+        ],
+        "summary": "Retrieve  Youtube Callback"
+      }
+    },
+    "/linkedin": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Linkedin resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "onboarding",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "LinkedIn"
+        ],
+        "summary": "Retrieve  Linkedin"
+      }
+    },
+    "/linkedin/callback": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Linkedin Callback resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "0": {
+            "description": ""
+          },
+          "1": {
+            "description": ""
+          },
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "LinkedIn"
+        ],
+        "summary": "Retrieve  Linkedin Callback"
+      }
+    },
+    "/google-business": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Google-business resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "onboarding",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Retrieve  Google-business"
+      }
+    },
+    "/google-business/callback": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Google-business Callback resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Retrieve  Google-business Callback"
+      }
+    },
+    "/twitter": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Twitter resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "onboarding",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "Twitter"
+        ],
+        "summary": "Retrieve  Twitter"
+      }
+    },
+    "/twitter/callback": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Twitter Callback resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Twitter"
+        ],
+        "summary": "Retrieve  Twitter Callback"
+      }
+    },
+    "/chat": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Chat resource. Authentication may be required depending on the route.",
+        "responses": {
+          "0": {
+            "description": ""
+          },
+          "1": {
+            "description": ""
+          },
+          "4": {
+            "description": ""
+          },
+          "5": {
+            "description": ""
+          },
+          "7": {
+            "description": ""
+          },
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "example": "any"
+                  },
+                  "history": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Facebook",
+          "Instagram",
+          "WhatsApp",
+          "Twitter"
+        ],
+        "summary": "Create  Chat"
+      }
+    },
+    "/contact": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Contact resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "email": {
+                    "example": "any"
+                  },
+                  "subject": {
+                    "example": "any"
+                  },
+                  "message": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create  Contact"
+      }
+    },
+    "/callback": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Callback resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Retrieve  Callback"
+      }
+    },
+    "/stats": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Stats resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Retrieve  Stats"
+      }
+    },
+    "/videos": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Videos resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Retrieve  Videos"
+      }
+    },
+    "/generate-thumbnail": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Generate-thumbnail resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create  Generate-thumbnail"
+      }
+    },
+    "/generate-metadata": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Generate-metadata resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "example": "any"
+                  },
+                  "options": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create  Generate-metadata"
+      }
+    },
+    "/access-token": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Access-token resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Retrieve  Access-token"
+      }
+    },
+    "/get-upload-url": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Get-upload-url resource. Authentication may be required depending on the route.",
+        "parameters": [
+          {
+            "name": "origin",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fileSize": {
+                    "example": "any"
+                  },
+                  "contentType": {
+                    "example": "any"
+                  },
+                  "title": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create  Get-upload-url"
+      }
+    },
+    "/profiles": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the  Profiles resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Retrieve  Profiles"
+      }
+    },
+    "/publish": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Publish resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "example": "any"
+                  },
+                  "mediaUrl": {
+                    "example": "any"
+                  },
+                  "mediaType": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create  Publish"
+      }
+    },
+    "/generate": {
+      "post": {
+        "description": "This endpoint allows you to create data for the  Generate resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "example": "any"
+                  },
+                  "type": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create  Generate"
+      }
     }
   },
   "components": {
@@ -3219,6 +4577,10 @@
     {
       "name": "Analytics",
       "description": "Dashboard and Metrics"
+    },
+    {
+      "name": "LinkedIn",
+      "description": "LinkedIn Posting APIs"
     }
   ]
 }
