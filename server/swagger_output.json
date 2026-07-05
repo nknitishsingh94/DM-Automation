@@ -4523,36 +4523,56 @@
   ],
   "tags": [
     {
+      "name": "Auth",
+      "description": "Authentication and User Management"
+    },
+    {
       "name": "General",
       "description": "Core System APIs"
-    },
-    {
-      "name": "Messaging",
-      "description": "Unified Inbox & Direct Messages"
-    },
-    {
-      "name": "Automations",
-      "description": "Comment & DM Automation Campaigns"
-    },
-    {
-      "name": "Pinterest",
-      "description": "Pinterest Board & Pin APIs"
     },
     {
       "name": "Scheduling",
       "description": "Post Scheduling & Publishing"
     },
     {
-      "name": "YouTube",
-      "description": "YouTube Video & Analytics APIs"
+      "name": "Automations",
+      "description": "Comment & DM Automation Campaigns"
+    },
+    {
+      "name": "Messaging",
+      "description": "Unified Inbox & Direct Messages"
+    },
+    {
+      "name": "Analytics",
+      "description": "Dashboard and Metrics"
+    },
+    {
+      "name": "Payment",
+      "description": "Stripe/Razorpay Integrations"
+    },
+    {
+      "name": "Facebook",
+      "description": "Facebook Pages and Media APIs"
     },
     {
       "name": "Instagram",
       "description": "Instagram Graph APIs"
     },
     {
-      "name": "Facebook",
-      "description": "Facebook Pages and Media APIs"
+      "name": "Twitter",
+      "description": "Twitter Post & DM APIs"
+    },
+    {
+      "name": "LinkedIn",
+      "description": "LinkedIn Posting APIs"
+    },
+    {
+      "name": "YouTube",
+      "description": "YouTube Video & Analytics APIs"
+    },
+    {
+      "name": "Pinterest",
+      "description": "Pinterest Board & Pin APIs"
     },
     {
       "name": "WhatsApp",
@@ -4561,26 +4581,6 @@
     {
       "name": "Webhooks",
       "description": "Meta & Platform Webhooks"
-    },
-    {
-      "name": "Twitter",
-      "description": "Twitter Post & DM APIs"
-    },
-    {
-      "name": "Auth",
-      "description": "Authentication and User Management"
-    },
-    {
-      "name": "Payment",
-      "description": "Stripe/Razorpay Integrations"
-    },
-    {
-      "name": "Analytics",
-      "description": "Dashboard and Metrics"
-    },
-    {
-      "name": "LinkedIn",
-      "description": "LinkedIn Posting APIs"
     }
   ]
 }

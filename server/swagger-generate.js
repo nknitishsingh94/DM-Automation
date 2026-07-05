@@ -171,10 +171,41 @@ swaggerAutogen({ openapi: '3.0.0' })(outputFile, routes, doc).then(() => {
       }
     }
     
-    swaggerData.tags = Array.from(tagsSet).map(name => ({
-      name,
-      description: tagDescriptions[name] || `${name} APIs`
-    }));
+    const orderedTags = [
+      'Auth',
+      'General',
+      'Scheduling',
+      'Automations',
+      'Messaging',
+      'Analytics',
+      'Payment',
+      'Facebook',
+      'Instagram',
+      'Twitter',
+      'LinkedIn',
+      'YouTube',
+      'Pinterest',
+      'WhatsApp',
+      'Webhooks'
+    ];
+
+    // Create the final tags array using the predefined order
+    swaggerData.tags = orderedTags
+      .filter(tag => tagsSet.has(tag))
+      .map(name => ({
+        name,
+        description: tagDescriptions[name] || `${name} APIs`
+      }));
+
+    // Append any unknown tags that were discovered but not in the ordered list
+    Array.from(tagsSet).forEach(name => {
+      if (!orderedTags.includes(name)) {
+        swaggerData.tags.push({
+          name,
+          description: tagDescriptions[name] || `${name} APIs`
+        });
+      }
+    });
 
     // Manually inject Auth APIs due to ES Module parser limitations
     swaggerData.paths['/api/auth/signup'] = {
