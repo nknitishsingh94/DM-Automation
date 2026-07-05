@@ -41,8 +41,16 @@ swaggerAutogen({ openapi: '3.0.0' })(outputFile, routes, doc).then(() => {
     };
     
     const tagsSet = new Set();
-
+    
+    // Filter out internal, test, and debug routes so they don't show up in public docs
+    const excludedKeywords = ['/test', '/debug', '/diag', '/fix', '/health', '/ping', '/cron'];
+    
     for (const path in swaggerData.paths) {
+      if (excludedKeywords.some(keyword => path.includes(keyword))) {
+        delete swaggerData.paths[path];
+        continue;
+      }
+
       let tagName = 'General';
       if (path.includes('/auth') || path.includes('/oauth')) tagName = 'Auth';
       else if (path.includes('/youtube')) tagName = 'Youtube';
