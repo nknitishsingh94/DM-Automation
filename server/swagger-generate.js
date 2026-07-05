@@ -3,7 +3,31 @@ import swaggerAutogen from 'swagger-autogen';
 const doc = {
   info: {
     title: 'smart10X API',
-    description: 'Comprehensive API documentation for the smart10X Backend.',
+    description: `
+# smart10X API Overview
+
+Welcome to the comprehensive API documentation for the smart10X Backend.
+
+**smart10X** supports 8 major social media platforms from a unified API. Connect accounts, schedule posts, manage cross-posting, and access analytics across all supported networks.
+
+### Supported Platforms
+
+| Platform | Capabilities |
+| :--- | :--- |
+| **Facebook** | Pages, Media, Posts, Reels, Automations |
+| **Instagram** | Graph API, Feed, Stories, Reels, Carousels |
+| **Twitter/X** | Text, Images, Videos, DMs |
+| **LinkedIn** | Company Pages, Personal Profiles, Posting |
+| **YouTube** | Videos, Shorts, Analytics |
+| **Pinterest** | Boards, Pins (Image/Video) |
+| **Threads** | Text, Images, Videos |
+| **Google Business** | Updates, Photos, Locations |
+
+### Getting Started
+1. **Authentication**: All API requests require a Bearer token. Use the Auth endpoints to login/signup.
+2. **Connect**: Link your platform accounts (OAuth).
+3. **Publish & Automate**: Schedule your content or set up unified inbox messaging!
+    `,
   },
   servers: [
     {
