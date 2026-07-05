@@ -16,7 +16,7 @@
   "paths": {
     "/": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the   resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -24,12 +24,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve  "
       }
     },
     "/api/health": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Health resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -37,12 +38,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Health"
       }
     },
     "/api/ping": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Ping resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -50,12 +52,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Ping"
       }
     },
     "/api/chats": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Chats resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -66,10 +69,11 @@
         },
         "tags": [
           "Messaging"
-        ]
+        ],
+        "summary": "Retrieve Chats"
       },
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Chats resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -80,10 +84,11 @@
         },
         "tags": [
           "Messaging"
-        ]
+        ],
+        "summary": "Create Chats"
       },
       "delete": {
-        "description": "",
+        "description": "This endpoint allows you to delete data for the Chats resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -94,12 +99,13 @@
         },
         "tags": [
           "Messaging"
-        ]
+        ],
+        "summary": "Delete Chats"
       }
     },
     "/api/chat": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Chat resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -124,12 +130,13 @@
         },
         "tags": [
           "Messaging"
-        ]
+        ],
+        "summary": "Create Chat"
       }
     },
     "/api/stats": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Stats resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -140,12 +147,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Stats"
       }
     },
     "/api/campaigns/sync-from-post": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Campaigns Sync-from-post resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -179,12 +187,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Campaigns Sync-from-post"
       }
     },
     "/api/campaigns": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Campaigns resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -195,10 +204,11 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Campaigns"
       },
       "post": {
-        "description": "",
+        "description": "Creates a Comment-to-DM automation campaign. Defines trigger keywords and the automatic direct message response for followers.",
         "responses": {
           "200": {
             "description": "OK"
@@ -229,12 +239,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Automation Campaign"
       }
     },
     "/api/campaigns/{id}": {
       "put": {
-        "description": "",
+        "description": "This endpoint allows you to update data for the Campaigns resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -255,10 +266,11 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Update Campaigns"
       },
       "delete": {
-        "description": "",
+        "description": "This endpoint allows you to delete data for the Campaigns resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -282,12 +294,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Delete Campaigns"
       }
     },
     "/api/campaigns/{id}/logs": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Campaigns Logs resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -308,12 +321,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Campaigns Logs"
       }
     },
     "/api/pinterest/boards": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Pinterest Boards resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -327,12 +341,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Pinterest Boards"
       }
     },
     "/api/scheduling": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Scheduling resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -343,10 +358,11 @@
         },
         "tags": [
           "Scheduling"
-        ]
+        ],
+        "summary": "Retrieve Scheduling"
       },
       "post": {
-        "description": "",
+        "description": "Schedules a new social media post (image, video, or carousel) to connected platforms. Supports setting automation rules (like requireFollow, publicReply) natively via this endpoint.",
         "responses": {
           "200": {
             "description": "OK"
@@ -485,12 +501,13 @@
         },
         "tags": [
           "Scheduling"
-        ]
+        ],
+        "summary": "Schedule a Post"
       }
     },
     "/api/storage/sign": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Storage Sign resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -521,12 +538,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Storage Sign"
       }
     },
     "/api/storage/view": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Storage View resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "path",
@@ -549,12 +567,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Storage View"
       }
     },
     "/api/storage/proxy-external": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Storage Proxy-external resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "url",
@@ -574,12 +593,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Storage Proxy-external"
       }
     },
     "/api/captions": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Captions resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -587,10 +607,11 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Captions"
       },
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Captions resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -618,12 +639,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Captions"
       }
     },
     "/api/captions/{id}": {
       "delete": {
-        "description": "",
+        "description": "This endpoint allows you to delete data for the Captions resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -644,12 +666,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Delete Captions"
       }
     },
     "/api/scheduling/{id}": {
       "put": {
-        "description": "",
+        "description": "This endpoint allows you to update data for the Scheduling resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -687,10 +710,11 @@
         },
         "tags": [
           "Scheduling"
-        ]
+        ],
+        "summary": "Update Scheduling"
       },
       "delete": {
-        "description": "",
+        "description": "This endpoint allows you to delete data for the Scheduling resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -714,12 +738,13 @@
         },
         "tags": [
           "Scheduling"
-        ]
+        ],
+        "summary": "Delete Scheduling"
       }
     },
     "/api/messages": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Messages resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -727,10 +752,11 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Messages"
       },
       "post": {
-        "description": "",
+        "description": "Sends a direct message to a user on a specified platform via the unified inbox system.",
         "responses": {
           "200": {
             "description": "OK"
@@ -767,12 +793,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Send Direct Message"
       }
     },
     "/api/messages/contact/{chatId}": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Messages Contact resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "chatId",
@@ -793,12 +820,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Messages Contact"
       }
     },
     "/api/ai/generate": {
       "post": {
-        "description": "",
+        "description": "Generates intelligent content or images using AI. Provide a prompt and type (e.g., thumbnail, caption) to receive an AI-generated asset.",
         "responses": {
           "200": {
             "description": "OK"
@@ -829,12 +857,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "AI Generation Tool"
       }
     },
     "/api/youtube/get-upload-url": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Youtube Get-upload-url resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "origin",
@@ -880,12 +909,13 @@
         },
         "tags": [
           "Youtube"
-        ]
+        ],
+        "summary": "Create Youtube Get-upload-url"
       }
     },
     "/api/messages/all": {
       "delete": {
-        "description": "",
+        "description": "This endpoint allows you to delete data for the Messages All resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -896,12 +926,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Delete Messages All"
       }
     },
     "/api/messages/{id}": {
       "delete": {
-        "description": "",
+        "description": "This endpoint allows you to delete data for the Messages resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -922,12 +953,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Delete Messages"
       }
     },
     "/api/workspaces": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Workspaces resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -935,10 +967,11 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Workspaces"
       },
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Workspaces resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -966,12 +999,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Workspaces"
       }
     },
     "/api/workspaces/{id}": {
       "delete": {
-        "description": "",
+        "description": "This endpoint allows you to delete data for the Workspaces resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -998,12 +1032,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Delete Workspaces"
       }
     },
     "/api/settings": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Settings resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1014,10 +1049,11 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Settings"
       },
       "post": {
-        "description": "",
+        "description": "Updates workspace integrations and social media platform connections (e.g., Facebook, Instagram, Twitter tokens).",
         "responses": {
           "200": {
             "description": "OK"
@@ -1045,12 +1081,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Update Integrations Settings"
       }
     },
     "/api/instagram/media": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Instagram Media resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "userId",
@@ -1091,12 +1128,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Instagram Media"
       }
     },
     "/api/facebook/media": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Facebook Media resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1107,12 +1145,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Facebook Media"
       }
     },
     "/api/settings/whatsapp/connect-embedded": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Settings Whatsapp Connect-embedded resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1146,12 +1185,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Settings Whatsapp Connect-embedded"
       }
     },
     "/api/settings/whatsapp/send-test": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Settings Whatsapp Send-test resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1179,12 +1219,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Settings Whatsapp Send-test"
       }
     },
     "/api/settings/whatsapp/connect-qr": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Settings Whatsapp Connect-qr resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1195,12 +1236,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Settings Whatsapp Connect-qr"
       }
     },
     "/api/settings/whatsapp/qr": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Settings Whatsapp Qr resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1211,12 +1253,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Settings Whatsapp Qr"
       }
     },
     "/api/flows": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Flows resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1227,10 +1270,11 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Flows"
       },
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Flows resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1241,12 +1285,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Flows"
       }
     },
     "/api/flows/{id}": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Flows resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -1270,10 +1315,11 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Flows"
       },
       "put": {
-        "description": "",
+        "description": "This endpoint allows you to update data for the Flows resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -1294,10 +1340,11 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Update Flows"
       },
       "delete": {
-        "description": "",
+        "description": "This endpoint allows you to delete data for the Flows resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -1318,12 +1365,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Delete Flows"
       }
     },
     "/api/broadcasts": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Broadcasts resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1357,12 +1405,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Broadcasts"
       }
     },
     "/api/debug/scheduled": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Debug Scheduled resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1373,12 +1422,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Debug Scheduled"
       }
     },
     "/api/debug/settings": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Debug Settings resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1389,12 +1439,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Debug Settings"
       }
     },
     "/api/fix-gmb-cache": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Fix-gmb-cache resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "authorization",
@@ -1441,12 +1492,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Fix-gmb-cache"
       }
     },
     "/api/cron/publish": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Cron Publish resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1454,12 +1506,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Cron Publish"
       }
     },
     "/api/user-feedback": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the User-feedback resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1467,10 +1520,11 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve User-feedback"
       },
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the User-feedback resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "authorization",
@@ -1525,12 +1579,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create User-feedback"
       }
     },
     "/api/user-feedback/check": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the User-feedback Check resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1541,12 +1596,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve User-feedback Check"
       }
     },
     "/api/diag-storage": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Diag-storage resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1557,12 +1613,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Diag-storage"
       }
     },
     "/api/test/twitter/post": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Test Twitter Post resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1596,12 +1653,13 @@
         },
         "tags": [
           "Posts"
-        ]
+        ],
+        "summary": "Create Test Twitter Post"
       }
     },
     "/api/webhook": {
       "get": {
-        "description": "",
+        "description": "Endpoint for receiving real-time event webhooks from social media platforms (Meta, Twitter). Automatically processes incoming comments, DMs, and live streams to trigger automations.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1612,10 +1670,11 @@
         },
         "tags": [
           "Webhooks"
-        ]
+        ],
+        "summary": "Platform Webhook Handler"
       },
       "post": {
-        "description": "",
+        "description": "Endpoint for receiving real-time event webhooks from social media platforms (Meta, Twitter). Automatically processes incoming comments, DMs, and live streams to trigger automations.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1643,12 +1702,13 @@
         },
         "tags": [
           "Webhooks"
-        ]
+        ],
+        "summary": "Platform Webhook Handler"
       }
     },
     "/api/webhook/twitter": {
       "get": {
-        "description": "",
+        "description": "Endpoint for receiving real-time event webhooks from social media platforms (Meta, Twitter). Automatically processes incoming comments, DMs, and live streams to trigger automations.",
         "parameters": [
           {
             "name": "crc_token",
@@ -1671,10 +1731,11 @@
         },
         "tags": [
           "Webhooks"
-        ]
+        ],
+        "summary": "Platform Webhook Handler"
       },
       "post": {
-        "description": "",
+        "description": "Endpoint for receiving real-time event webhooks from social media platforms (Meta, Twitter). Automatically processes incoming comments, DMs, and live streams to trigger automations.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1699,12 +1760,13 @@
         },
         "tags": [
           "Webhooks"
-        ]
+        ],
+        "summary": "Platform Webhook Handler"
       }
     },
     "/api/auth/signup": {
       "post": {
-        "description": "",
+        "description": "Creates a new user account in the system and provisions an initial workspace. Requires email and password. Returns user object and authentication token.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1741,12 +1803,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Register New User"
       }
     },
     "/api/auth/login": {
       "post": {
-        "description": "",
+        "description": "Authenticates an existing user and returns a JWT access token. Use this token in the Authorization header (Bearer format) for all subsequent API requests.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1780,12 +1843,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "User Login"
       }
     },
     "/api/auth/google": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Auth Google resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1819,12 +1883,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Create Auth Google"
       }
     },
     "/api/auth/google_custom": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Auth Google_custom resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1861,12 +1926,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Create Auth Google_custom"
       }
     },
     "/api/auth/facebook": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Auth Facebook resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1900,12 +1966,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Create Auth Facebook"
       }
     },
     "/api/auth/profile": {
       "put": {
-        "description": "",
+        "description": "This endpoint allows you to update data for the Auth Profile resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1936,10 +2003,11 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Update Auth Profile"
       },
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Auth Profile resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1953,12 +2021,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Auth Profile"
       }
     },
     "/api/auth/account": {
       "delete": {
-        "description": "",
+        "description": "This endpoint allows you to delete data for the Auth Account resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1972,12 +2041,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Delete Auth Account"
       }
     },
     "/api/auth/delete": {
       "delete": {
-        "description": "",
+        "description": "This endpoint allows you to delete data for the Auth Delete resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1988,12 +2058,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Delete Auth Delete"
       }
     },
     "/api/payment/create-order": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Payment Create-order resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2007,12 +2078,13 @@
         },
         "tags": [
           "Payment"
-        ]
+        ],
+        "summary": "Create Payment Create-order"
       }
     },
     "/api/payment/verify-payment": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Payment Verify-payment resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2049,12 +2121,13 @@
         },
         "tags": [
           "Payment"
-        ]
+        ],
+        "summary": "Create Payment Verify-payment"
       }
     },
     "/api/forms/": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Forms  resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2065,10 +2138,11 @@
         },
         "tags": [
           "Forms"
-        ]
+        ],
+        "summary": "Retrieve Forms "
       },
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Forms  resource. Authentication may be required depending on the route.",
         "responses": {
           "201": {
             "description": "Created"
@@ -2102,12 +2176,13 @@
         },
         "tags": [
           "Forms"
-        ]
+        ],
+        "summary": "Create Forms "
       }
     },
     "/api/forms/{id}": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Forms resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -2131,10 +2206,11 @@
         },
         "tags": [
           "Forms"
-        ]
+        ],
+        "summary": "Retrieve Forms"
       },
       "delete": {
-        "description": "",
+        "description": "This endpoint allows you to delete data for the Forms resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -2158,12 +2234,13 @@
         },
         "tags": [
           "Forms"
-        ]
+        ],
+        "summary": "Delete Forms"
       }
     },
     "/api/forms/{id}/submissions": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Forms Submissions resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -2184,12 +2261,13 @@
         },
         "tags": [
           "Forms"
-        ]
+        ],
+        "summary": "Retrieve Forms Submissions"
       }
     },
     "/api/forms/{id}/toggle": {
       "patch": {
-        "description": "",
+        "description": "This endpoint allows you to update data for the Forms Toggle resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -2213,12 +2291,13 @@
         },
         "tags": [
           "Forms"
-        ]
+        ],
+        "summary": "Update Forms Toggle"
       }
     },
     "/api/oauth/facebook": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Facebook resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "onboarding",
@@ -2242,12 +2321,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Facebook"
       }
     },
     "/api/oauth/facebook/callback": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Facebook Callback resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "code",
@@ -2284,12 +2364,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Facebook Callback"
       }
     },
     "/api/oauth/facebook/pages": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Facebook Pages resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2306,12 +2387,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Facebook Pages"
       }
     },
     "/api/oauth/facebook/select-page": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Oauth Facebook Select-page resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2345,12 +2427,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Create Oauth Facebook Select-page"
       }
     },
     "/api/oauth/pinterest": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Pinterest resource. Authentication may be required depending on the route.",
         "responses": {
           "500": {
             "description": "Internal Server Error"
@@ -2358,12 +2441,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Pinterest"
       }
     },
     "/api/oauth/pinterest/callback": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Pinterest Callback resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "code",
@@ -2394,12 +2478,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Pinterest Callback"
       }
     },
     "/api/oauth/threads": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Threads resource. Authentication may be required depending on the route.",
         "responses": {
           "500": {
             "description": "Internal Server Error"
@@ -2407,12 +2492,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Threads"
       }
     },
     "/api/oauth/threads/callback": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Threads Callback resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "code",
@@ -2443,12 +2529,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Threads Callback"
       }
     },
     "/api/oauth/youtube": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Youtube resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "onboarding",
@@ -2465,12 +2552,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Youtube"
       }
     },
     "/api/oauth/youtube/callback": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Youtube Callback resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "code",
@@ -2501,12 +2589,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Youtube Callback"
       }
     },
     "/api/oauth/linkedin": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Linkedin resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "type",
@@ -2530,12 +2619,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Linkedin"
       }
     },
     "/api/oauth/linkedin/callback": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Linkedin Callback resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "code",
@@ -2572,12 +2662,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Linkedin Callback"
       }
     },
     "/api/oauth/google-business": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Google-business resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "onboarding",
@@ -2594,12 +2685,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Google-business"
       }
     },
     "/api/oauth/google-business/callback": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Google-business Callback resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "code",
@@ -2630,12 +2722,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Google-business Callback"
       }
     },
     "/api/oauth/twitter": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Twitter resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "onboarding",
@@ -2652,12 +2745,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Twitter"
       }
     },
     "/api/oauth/twitter/callback": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Oauth Twitter Callback resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "code",
@@ -2688,12 +2782,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Oauth Twitter Callback"
       }
     },
     "/api/support/chat": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Support Chat resource. Authentication may be required depending on the route.",
         "responses": {
           "0": {
             "description": ""
@@ -2736,12 +2831,13 @@
         },
         "tags": [
           "Messaging"
-        ]
+        ],
+        "summary": "Create Support Chat"
       }
     },
     "/api/support/contact": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Support Contact resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2778,12 +2874,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Support Contact"
       }
     },
     "/api/youtube/auth": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Youtube Auth resource. Authentication may be required depending on the route.",
         "responses": {
           "500": {
             "description": "Internal Server Error"
@@ -2791,12 +2888,13 @@
         },
         "tags": [
           "Auth"
-        ]
+        ],
+        "summary": "Retrieve Youtube Auth"
       }
     },
     "/api/youtube/callback": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Youtube Callback resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "code",
@@ -2827,12 +2925,13 @@
         },
         "tags": [
           "Youtube"
-        ]
+        ],
+        "summary": "Retrieve Youtube Callback"
       }
     },
     "/api/youtube/stats": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Youtube Stats resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2846,12 +2945,13 @@
         },
         "tags": [
           "Youtube"
-        ]
+        ],
+        "summary": "Retrieve Youtube Stats"
       }
     },
     "/api/youtube/videos": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Youtube Videos resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2862,12 +2962,13 @@
         },
         "tags": [
           "Youtube"
-        ]
+        ],
+        "summary": "Retrieve Youtube Videos"
       }
     },
     "/api/youtube/generate-thumbnail": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Youtube Generate-thumbnail resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2895,12 +2996,13 @@
         },
         "tags": [
           "Youtube"
-        ]
+        ],
+        "summary": "Create Youtube Generate-thumbnail"
       }
     },
     "/api/youtube/generate-metadata": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Youtube Generate-metadata resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2931,12 +3033,13 @@
         },
         "tags": [
           "Youtube"
-        ]
+        ],
+        "summary": "Create Youtube Generate-metadata"
       }
     },
     "/api/youtube/access-token": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Youtube Access-token resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2950,12 +3053,13 @@
         },
         "tags": [
           "Youtube"
-        ]
+        ],
+        "summary": "Retrieve Youtube Access-token"
       }
     },
     "/api/threads/profiles": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Threads Profiles resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -2966,12 +3070,13 @@
         },
         "tags": [
           "Messaging"
-        ]
+        ],
+        "summary": "Retrieve Threads Profiles"
       }
     },
     "/api/threads/publish": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Threads Publish resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -3005,12 +3110,13 @@
         },
         "tags": [
           "Messaging"
-        ]
+        ],
+        "summary": "Create Threads Publish"
       }
     },
     "/api/api-keys/": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Api-keys  resource. Authentication may be required depending on the route.",
         "responses": {
           "200": {
             "description": "OK"
@@ -3021,10 +3127,11 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Retrieve Api-keys "
       },
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Api-keys  resource. Authentication may be required depending on the route.",
         "responses": {
           "201": {
             "description": "Created"
@@ -3052,12 +3159,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Create Api-keys "
       }
     },
     "/api/api-keys/{id}": {
       "delete": {
-        "description": "",
+        "description": "This endpoint allows you to delete data for the Api-keys resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "id",
@@ -3081,12 +3189,13 @@
         },
         "tags": [
           "General"
-        ]
+        ],
+        "summary": "Delete Api-keys"
       }
     },
     "/api/posts/": {
       "post": {
-        "description": "",
+        "description": "This endpoint allows you to create data for the Posts  resource. Authentication may be required depending on the route.",
         "responses": {
           "201": {
             "description": "Created"
@@ -3135,12 +3244,13 @@
         },
         "tags": [
           "Posts"
-        ]
+        ],
+        "summary": "Create Posts "
       }
     },
     "/api/analytics/": {
       "get": {
-        "description": "",
+        "description": "This endpoint allows you to retrieve data for the Analytics  resource. Authentication may be required depending on the route.",
         "parameters": [
           {
             "name": "x-workspace-id",
@@ -3174,7 +3284,8 @@
         },
         "tags": [
           "Analytics"
-        ]
+        ],
+        "summary": "Retrieve Analytics "
       }
     }
   },
