@@ -2,8 +2,8 @@ import swaggerAutogen from 'swagger-autogen';
 
 const doc = {
   info: {
-    title: 'Insta AI Agent API',
-    description: 'Comprehensive API documentation for the Insta AI Agent Backend.',
+    title: 'smart10X API',
+    description: 'Comprehensive API documentation for the smart10X Backend.',
   },
   servers: [
     {
