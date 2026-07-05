@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import Workspace from '../models/Workspace.js';
+import ApiKey from '../models/ApiKey.js';
 import { convertObjectIDToUUID } from '../utils/supabase.js';
 
 if (!process.env.JWT_SECRET) {
@@ -18,16 +19,28 @@ const verifyToken = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    if (!decoded.userId) {
-       return res.status(401).json({ message: 'Invalid token payload' });
-    }
+    let decodedUserId = null;
 
-    req.user = decoded;
+    if (token.startsWith('sk_live_')) {
+      // Validate API Key
+      const keyRecord = await ApiKey.findOne({ key: token, active: true });
+      if (!keyRecord) {
+        return res.status(401).json({ message: 'Invalid or revoked API Key' });
+      }
+      decodedUserId = keyRecord.user_id;
+      req.user = { userId: decodedUserId };
+    } else {
+      // Validate JWT Token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      if (!decoded.userId) {
+         return res.status(401).json({ message: 'Invalid token payload' });
+      }
+      decodedUserId = decoded.userId;
+      req.user = decoded;
+    }
     
     let workspaceId = req.headers['x-workspace-id'] || req.query.workspaceId;
-    const uuidUserId = convertObjectIDToUUID(decoded.userId);
+    const uuidUserId = convertObjectIDToUUID(decodedUserId);
     
     let activeWorkspace = null;
     
@@ -58,7 +71,7 @@ const verifyToken = async (req, res, next) => {
     next();
   } catch (err) {
     if (process.env.NODE_ENV !== 'production') {
-      console.error("JWT Verification Failed:", err.message);
+      console.error("Authentication Failed:", err.message);
     }
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
