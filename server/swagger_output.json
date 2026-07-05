@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "smart10X API",
-    "description": "Comprehensive API documentation for the smart10X Backend.",
+    "description": "\n# smart10X API Overview\n\nWelcome to the comprehensive API documentation for the smart10X Backend.\n\n**smart10X** supports 8 major social media platforms from a unified API. Connect accounts, schedule posts, manage cross-posting, and access analytics across all supported networks.\n\n### Supported Platforms\n\n| Platform | Capabilities |\n| :--- | :--- |\n| **Facebook** | Pages, Media, Posts, Reels, Automations |\n| **Instagram** | Graph API, Feed, Stories, Reels, Carousels |\n| **Twitter/X** | Text, Images, Videos, DMs |\n| **LinkedIn** | Company Pages, Personal Profiles, Posting |\n| **YouTube** | Videos, Shorts, Analytics |\n| **Pinterest** | Boards, Pins (Image/Video) |\n| **Threads** | Text, Images, Videos |\n| **Google Business** | Updates, Photos, Locations |\n\n### Getting Started\n1. **Authentication**: All API requests require a Bearer token. Use the Auth endpoints to login/signup.\n2. **Connect**: Link your platform accounts (OAuth).\n3. **Publish & Automate**: Schedule your content or set up unified inbox messaging!\n    ",
     "version": "1.0.0"
   },
   "servers": [
