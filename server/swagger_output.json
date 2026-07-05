@@ -3121,6 +3121,126 @@
         "summary": "Retrieve Analytics "
       }
     },
+    "/api/google-business/locations": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the Google-business Locations resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Retrieve Google-business Locations"
+      }
+    },
+    "/api/google-business/select-location": {
+      "post": {
+        "description": "This endpoint allows you to create data for the Google-business Select-location resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "accountId": {
+                    "example": "any"
+                  },
+                  "locationId": {
+                    "example": "any"
+                  },
+                  "title": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create Google-business Select-location"
+      }
+    },
+    "/api/google-business/reviews": {
+      "get": {
+        "description": "This endpoint allows you to retrieve data for the Google-business Reviews resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Retrieve Google-business Reviews"
+      }
+    },
+    "/api/google-business/reviews/reply": {
+      "post": {
+        "description": "This endpoint allows you to create data for the Google-business Reviews Reply resource. Authentication may be required depending on the route.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reviewId": {
+                    "example": "any"
+                  },
+                  "replyText": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "General"
+        ],
+        "summary": "Create Google-business Reviews Reply"
+      }
+    },
     "/google": {
       "post": {
         "description": "This endpoint allows you to create data for the  Google resource. Authentication may be required depending on the route.",
