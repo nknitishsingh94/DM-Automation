@@ -23,10 +23,24 @@ Welcome to the comprehensive API documentation for the smart10X Backend.
 | **Threads** | Text, Images, Videos |
 | **Google Business** | Updates, Photos, Locations |
 
-### Getting Started
-1. **Authentication**: All API requests require a Bearer token. Use the Auth endpoints to login/signup.
-2. **Connect**: Link your platform accounts (OAuth).
-3. **Publish & Automate**: Schedule your content or set up unified inbox messaging!
+### Authentication
+All API requests require an API key. The SDKs read from the \`SMART10X_API_KEY\` environment variable by default.
+
+#### Getting Your API Key
+1. Log in to your smart10X account at your dashboard.
+2. Go to **Settings → API Keys**
+3. Click **Create API Key**
+4. Copy the key immediately - you won't be able to see it again!
+
+#### Set Up the Client
+\`\`\`javascript
+import Smart10X from '@smart10x/node';
+const client = new Smart10X(); // uses SMART10X_API_KEY env var
+\`\`\`
+
+> **Key format**: `sk_live_` prefix + 48 hex characters. Keys are stored securely and they're only shown once at creation.
+> 
+> **Security tips**: Use environment variables, create separate keys per app, and rotate periodically. You can also manage keys via the API.
     `,
   },
   servers: [
