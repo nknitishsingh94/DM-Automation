@@ -67,7 +67,6 @@ swaggerAutogen({ openapi: '3.0.0' })(outputFile, routes, doc).then(() => {
       'Twitter': 'Twitter Post & DM APIs',
       'Pinterest': 'Pinterest Board & Pin APIs',
       'LinkedIn': 'LinkedIn Posting APIs',
-      'WhatsApp': 'WhatsApp Business APIs',
       'Webhooks': 'Meta & Platform Webhooks',
       'Scheduling': 'Post Scheduling & Publishing',
       'Automations': 'Comment & DM Automation Campaigns',
@@ -96,7 +95,6 @@ swaggerAutogen({ openapi: '3.0.0' })(outputFile, routes, doc).then(() => {
       else if (path.includes('/twitter')) tagName = 'Twitter';
       else if (path.includes('/pinterest')) tagName = 'Pinterest';
       else if (path.includes('/linkedin')) tagName = 'LinkedIn';
-      else if (path.includes('/whatsapp')) tagName = 'WhatsApp';
       else if (path.includes('/webhook')) tagName = 'Webhooks';
       else if (path.includes('/scheduling')) tagName = 'Scheduling';
       else if (path.includes('/campaign')) tagName = 'Automations';
@@ -117,7 +115,7 @@ swaggerAutogen({ openapi: '3.0.0' })(outputFile, routes, doc).then(() => {
         } else if (path.includes('/campaign')) {
             endpoint.tags = ['Facebook', 'Instagram']; // Comment automations are for Meta
         } else if (path.includes('/messages') || path.includes('/chat') || path.includes('/broadcasts')) {
-            endpoint.tags = ['Facebook', 'Instagram', 'WhatsApp', 'Twitter']; // Unified Inbox
+            endpoint.tags = ['Facebook', 'Instagram', 'Twitter']; // Unified Inbox
         } else {
             endpoint.tags = [tagName];
         }
@@ -185,7 +183,6 @@ swaggerAutogen({ openapi: '3.0.0' })(outputFile, routes, doc).then(() => {
       'LinkedIn',
       'YouTube',
       'Pinterest',
-      'WhatsApp',
       'Webhooks'
     ];
 
