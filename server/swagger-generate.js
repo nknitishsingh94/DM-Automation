@@ -78,8 +78,8 @@ swaggerAutogen({ openapi: '3.0.0' })(outputFile, routes, doc).then(() => {
     
     const tagsSet = new Set();
     
-    // Filter out internal, test, and debug routes so they don't show up in public docs
-    const excludedKeywords = ['/test', '/debug', '/diag', '/fix', '/health', '/ping', '/cron'];
+    // Filter out internal, test, debug routes, and /auth/google so they don't show up in public docs
+    const excludedKeywords = ['/test', '/debug', '/diag', '/fix', '/health', '/ping', '/cron', '/auth/google'];
     
     for (const path in swaggerData.paths) {
       if (excludedKeywords.some(keyword => path.includes(keyword))) {
@@ -255,6 +255,54 @@ swaggerAutogen({ openapi: '3.0.0' })(outputFile, routes, doc).then(() => {
           '200': { description: 'Login successful' },
           '400': { description: 'Bad Request' },
           '404': { description: 'User not found' }
+        }
+      }
+    };
+
+    // API Keys documentation override
+    swaggerData.paths['/api/api-keys'] = {
+      get: {
+        tags: ['API Keys'],
+        summary: 'List API Keys',
+        description: 'Retrieves a list of all active API keys for the authenticated user/workspace. Keys are returned partially masked for security.',
+        responses: {
+          '200': { description: 'Successful operation' }
+        }
+      },
+      post: {
+        tags: ['API Keys'],
+        summary: 'Create API Key',
+        description: 'Creates a new API Key for server-to-server integration (e.g. ZERNIO_API_KEY). Format: sk_live_ + 48 hex characters. The full key is only returned once.',
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string', example: 'Production Node.js Server' }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          '201': { description: 'API Key created successfully' },
+          '400': { description: 'Maximum limit of active API keys reached' }
+        }
+      }
+    };
+
+    swaggerData.paths['/api/api-keys/{id}'] = {
+      delete: {
+        tags: ['API Keys'],
+        summary: 'Revoke API Key',
+        description: 'Permanently revokes an API key, immediately disabling its ability to authenticate requests.',
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        responses: {
+          '200': { description: 'API Key successfully revoked.' },
+          '404': { description: 'API Key not found.' }
         }
       }
     };
