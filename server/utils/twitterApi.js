@@ -30,11 +30,43 @@ export async function publishTwitterContent(userId, post, workspaceId) {
     return await _doPublish(userSettings[0], post);
   } catch (err) {
     console.error("Twitter Publish Error:", err);
-    if (err.code === 402 || (err.data && err.data.type === 'https://api.twitter.com/2/problems/credits')) {
+    
+    // Parse the Twitter V2 API Error response
+    const errCode = err.code || err.status;
+    const errDetail = err.data?.detail?.toLowerCase() || '';
+    const errTitle = err.data?.title?.toLowerCase() || '';
+    
+    // 1. Credits Depleted
+    if (errCode === 402 || (err.data && err.data.type === 'https://api.twitter.com/2/problems/credits')) {
       const detail = err.data?.detail || 'Your Twitter account does not have enough credits to publish. Please add credits to your Twitter account and try again.';
       throw new Error(`Twitter Credits Depleted: ${detail}`);
     }
-    throw err;
+    
+    // 2. Duplicate Tweet
+    if (errCode === 403 && (errDetail.includes('duplicate') || errTitle.includes('duplicate') || errTitle.includes('forbidden'))) {
+      if (errDetail.includes('duplicate')) {
+         throw new Error("X (Twitter) does not allow duplicate tweets. Modify the text, even slightly.");
+      }
+    }
+
+    // 3. Rate Limit Hit
+    if (errCode === 429) {
+      throw new Error("Rate limit hit. Please wait 10 minutes. Reduce posting frequency.");
+    }
+
+    // 4. Missing Scope / Unauthorized
+    if (errCode === 401 || errCode === 403) {
+       if (errDetail.includes('scope') || errTitle.includes('unauthorized') || errTitle.includes('forbidden')) {
+         throw new Error("Missing tweet.write scope or token expired. Reconnect the account with all required permissions.");
+       }
+    }
+    
+    // 5. Tweet too long
+    if (errCode === 400 && (errDetail.includes('too long') || errTitle.includes('too long'))) {
+      throw new Error("Tweet text is too long. Twitter's limit is 280 characters. Note: URLs count as 23 characters.");
+    }
+
+    throw new Error(err.data?.detail || err.message || "Failed to publish to Twitter");
   }
 }
 
