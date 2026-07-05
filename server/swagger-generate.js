@@ -41,6 +41,27 @@ const client = new Smart10X(); // uses SMART10X_API_KEY env var
 > **Key format**: \`sk_live_\` prefix + 48 hex characters. Keys are stored securely and they're only shown once at creation.
 > 
 > **Security tips**: Use environment variables, create separate keys per app, and rotate periodically. You can also manage keys via the API.
+
+### Twitter/X Limits & Errors
+
+#### What You Can't Do
+These features are not available through Twitter's API:
+- Create Spaces
+- Post to Communities
+- Pin tweets to profile
+- Add Twitter Cards (must be configured on the destination URL via meta tags)
+- Post as a personal DM broadcast
+
+#### Common Errors
+Here are the most frequent errors encountered on smart10X and how to fix them:
+
+| Error | What it means | How to fix |
+| :--- | :--- | :--- |
+| **"Tweet text is too long"** | Exceeds 280 character limit | Shorten text. Remember: URLs = 23 chars, emojis = 2 chars. |
+| **"X (Twitter) does not allow duplicate tweets"** | Same or similar content was already posted | Modify the text, even slightly. |
+| **"Rate limit hit. Please wait 10 minutes"** | smart10X's velocity limit was triggered | Reduce posting frequency. Space posts at least 4 minutes apart. |
+| **"Missing tweet.write scope"** or **"forbidden"** | OAuth token lacks required permissions | Reconnect the account with all required scopes. |
+| **"Token expired"** | OAuth access was revoked or expired | Reconnect the account. |
     `,
   },
   servers: [
