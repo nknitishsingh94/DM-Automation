@@ -160,7 +160,7 @@
           }
         },
         "tags": [
-          "General"
+          "Automations"
         ],
         "summary": "Create Campaigns Sync-from-post"
       }
@@ -177,7 +177,7 @@
           }
         },
         "tags": [
-          "General"
+          "Automations"
         ],
         "summary": "Retrieve Campaigns"
       },
@@ -212,7 +212,7 @@
           }
         },
         "tags": [
-          "General"
+          "Automations"
         ],
         "summary": "Create Automation Campaign"
       }
@@ -239,7 +239,7 @@
           }
         },
         "tags": [
-          "General"
+          "Automations"
         ],
         "summary": "Update Campaigns"
       },
@@ -267,7 +267,7 @@
           }
         },
         "tags": [
-          "General"
+          "Automations"
         ],
         "summary": "Delete Campaigns"
       }
@@ -294,7 +294,7 @@
           }
         },
         "tags": [
-          "General"
+          "Automations"
         ],
         "summary": "Retrieve Campaigns Logs"
       }
@@ -314,7 +314,7 @@
           }
         },
         "tags": [
-          "General"
+          "Pinterest"
         ],
         "summary": "Retrieve Pinterest Boards"
       }
@@ -725,7 +725,7 @@
           }
         },
         "tags": [
-          "General"
+          "Messaging"
         ],
         "summary": "Retrieve Messages"
       },
@@ -766,7 +766,7 @@
           }
         },
         "tags": [
-          "General"
+          "Messaging"
         ],
         "summary": "Send Direct Message"
       }
@@ -793,7 +793,7 @@
           }
         },
         "tags": [
-          "General"
+          "Messaging"
         ],
         "summary": "Retrieve Messages Contact"
       }
@@ -882,7 +882,7 @@
           }
         },
         "tags": [
-          "Youtube"
+          "YouTube"
         ],
         "summary": "Create Youtube Get-upload-url"
       }
@@ -899,7 +899,7 @@
           }
         },
         "tags": [
-          "General"
+          "Messaging"
         ],
         "summary": "Delete Messages All"
       }
@@ -926,7 +926,7 @@
           }
         },
         "tags": [
-          "General"
+          "Messaging"
         ],
         "summary": "Delete Messages"
       }
@@ -1101,7 +1101,7 @@
           }
         },
         "tags": [
-          "General"
+          "Instagram"
         ],
         "summary": "Retrieve Instagram Media"
       }
@@ -1118,7 +1118,7 @@
           }
         },
         "tags": [
-          "General"
+          "Facebook"
         ],
         "summary": "Retrieve Facebook Media"
       }
@@ -1158,7 +1158,7 @@
           }
         },
         "tags": [
-          "General"
+          "WhatsApp"
         ],
         "summary": "Create Settings Whatsapp Connect-embedded"
       }
@@ -1192,7 +1192,7 @@
           }
         },
         "tags": [
-          "General"
+          "WhatsApp"
         ],
         "summary": "Create Settings Whatsapp Send-test"
       }
@@ -1209,7 +1209,7 @@
           }
         },
         "tags": [
-          "General"
+          "WhatsApp"
         ],
         "summary": "Create Settings Whatsapp Connect-qr"
       }
@@ -1226,7 +1226,7 @@
           }
         },
         "tags": [
-          "General"
+          "WhatsApp"
         ],
         "summary": "Retrieve Settings Whatsapp Qr"
       }
@@ -1546,7 +1546,7 @@
           }
         },
         "tags": [
-          "Webhooks"
+          "Twitter"
         ],
         "summary": "Platform Webhook Handler"
       },
@@ -1575,7 +1575,7 @@
           }
         },
         "tags": [
-          "Webhooks"
+          "Twitter"
         ],
         "summary": "Platform Webhook Handler"
       }
@@ -1953,7 +1953,7 @@
           }
         },
         "tags": [
-          "Forms"
+          "General"
         ],
         "summary": "Retrieve Forms "
       },
@@ -1991,7 +1991,7 @@
           }
         },
         "tags": [
-          "Forms"
+          "General"
         ],
         "summary": "Create Forms "
       }
@@ -2021,7 +2021,7 @@
           }
         },
         "tags": [
-          "Forms"
+          "General"
         ],
         "summary": "Retrieve Forms"
       },
@@ -2049,7 +2049,7 @@
           }
         },
         "tags": [
-          "Forms"
+          "General"
         ],
         "summary": "Delete Forms"
       }
@@ -2076,7 +2076,7 @@
           }
         },
         "tags": [
-          "Forms"
+          "General"
         ],
         "summary": "Retrieve Forms Submissions"
       }
@@ -2106,7 +2106,7 @@
           }
         },
         "tags": [
-          "Forms"
+          "General"
         ],
         "summary": "Update Forms Toggle"
       }
@@ -2740,7 +2740,7 @@
           }
         },
         "tags": [
-          "Youtube"
+          "YouTube"
         ],
         "summary": "Retrieve Youtube Callback"
       }
@@ -2760,7 +2760,7 @@
           }
         },
         "tags": [
-          "Youtube"
+          "YouTube"
         ],
         "summary": "Retrieve Youtube Stats"
       }
@@ -2777,7 +2777,7 @@
           }
         },
         "tags": [
-          "Youtube"
+          "YouTube"
         ],
         "summary": "Retrieve Youtube Videos"
       }
@@ -2811,7 +2811,7 @@
           }
         },
         "tags": [
-          "Youtube"
+          "YouTube"
         ],
         "summary": "Create Youtube Generate-thumbnail"
       }
@@ -2848,7 +2848,7 @@
           }
         },
         "tags": [
-          "Youtube"
+          "YouTube"
         ],
         "summary": "Create Youtube Generate-metadata"
       }
@@ -2868,7 +2868,7 @@
           }
         },
         "tags": [
-          "Youtube"
+          "YouTube"
         ],
         "summary": "Retrieve Youtube Access-token"
       }
@@ -3059,7 +3059,7 @@
           }
         },
         "tags": [
-          "Posts"
+          "General"
         ],
         "summary": "Create Posts "
       }
@@ -3122,23 +3122,47 @@
   "tags": [
     {
       "name": "General",
-      "description": "General APIs"
+      "description": "Core System APIs"
     },
     {
       "name": "Messaging",
-      "description": "Chats & Direct Messages"
+      "description": "Unified Inbox & Direct Messages"
+    },
+    {
+      "name": "Automations",
+      "description": "Comment & DM Automation Campaigns"
+    },
+    {
+      "name": "Pinterest",
+      "description": "Pinterest Board & Pin APIs"
     },
     {
       "name": "Scheduling",
       "description": "Post Scheduling & Publishing"
     },
     {
-      "name": "Youtube",
+      "name": "YouTube",
       "description": "YouTube Video & Analytics APIs"
+    },
+    {
+      "name": "Instagram",
+      "description": "Instagram Graph APIs"
+    },
+    {
+      "name": "Facebook",
+      "description": "Facebook Pages and Media APIs"
+    },
+    {
+      "name": "WhatsApp",
+      "description": "WhatsApp Business APIs"
     },
     {
       "name": "Webhooks",
       "description": "Meta & Platform Webhooks"
+    },
+    {
+      "name": "Twitter",
+      "description": "Twitter Post & DM APIs"
     },
     {
       "name": "Auth",
@@ -3147,14 +3171,6 @@
     {
       "name": "Payment",
       "description": "Stripe/Razorpay Integrations"
-    },
-    {
-      "name": "Forms",
-      "description": "Custom Forms & Lead Gen"
-    },
-    {
-      "name": "Posts",
-      "description": "Manage Posts and Media"
     },
     {
       "name": "Analytics",

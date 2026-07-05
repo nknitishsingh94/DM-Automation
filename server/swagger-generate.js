@@ -37,15 +37,20 @@ swaggerAutogen({ openapi: '3.0.0' })(outputFile, routes, doc).then(() => {
     
     const tagDescriptions = {
       'Auth': 'Authentication and User Management',
-      'Youtube': 'YouTube Video & Analytics APIs',
+      'YouTube': 'YouTube Video & Analytics APIs',
+      'Facebook': 'Facebook Pages and Media APIs',
+      'Instagram': 'Instagram Graph APIs',
+      'Twitter': 'Twitter Post & DM APIs',
+      'Pinterest': 'Pinterest Board & Pin APIs',
+      'LinkedIn': 'LinkedIn Posting APIs',
+      'WhatsApp': 'WhatsApp Business APIs',
       'Webhooks': 'Meta & Platform Webhooks',
-      'Connections': 'Social Media Platform Connections',
       'Scheduling': 'Post Scheduling & Publishing',
-      'Analytics': 'Dashboard and Metrics',
-      'Posts': 'Manage Posts and Media',
-      'Forms': 'Custom Forms & Lead Gen',
+      'Automations': 'Comment & DM Automation Campaigns',
+      'Messaging': 'Unified Inbox & Direct Messages',
       'Payment': 'Stripe/Razorpay Integrations',
-      'Messaging': 'Chats & Direct Messages'
+      'Analytics': 'Dashboard and Metrics',
+      'General': 'Core System APIs'
     };
     
     const tagsSet = new Set();
@@ -61,15 +66,21 @@ swaggerAutogen({ openapi: '3.0.0' })(outputFile, routes, doc).then(() => {
 
       let tagName = 'General';
       if (path.includes('/auth') || path.includes('/oauth')) tagName = 'Auth';
-      else if (path.includes('/youtube')) tagName = 'Youtube';
+      else if (path.includes('/youtube')) tagName = 'YouTube';
+      else if (path.includes('/facebook')) tagName = 'Facebook';
+      else if (path.includes('/instagram')) tagName = 'Instagram';
+      else if (path.includes('/twitter')) tagName = 'Twitter';
+      else if (path.includes('/pinterest')) tagName = 'Pinterest';
+      else if (path.includes('/linkedin')) tagName = 'LinkedIn';
+      else if (path.includes('/whatsapp')) tagName = 'WhatsApp';
       else if (path.includes('/webhook')) tagName = 'Webhooks';
-      else if (path.includes('/connections')) tagName = 'Connections';
       else if (path.includes('/scheduling')) tagName = 'Scheduling';
+      else if (path.includes('/campaign')) tagName = 'Automations';
       else if (path.includes('/analytics')) tagName = 'Analytics';
-      else if (path.includes('/post')) tagName = 'Posts';
-      else if (path.includes('/forms')) tagName = 'Forms';
+      else if (path.includes('/post')) tagName = 'General';
+      else if (path.includes('/forms')) tagName = 'General';
       else if (path.includes('/payment') || path.includes('/checkout') || path.includes('/subscription')) tagName = 'Payment';
-      else if (path.includes('/chat') || path.includes('/threads')) tagName = 'Messaging';
+      else if (path.includes('/chat') || path.includes('/threads') || path.includes('/message')) tagName = 'Messaging';
       
       tagsSet.add(tagName);
       
