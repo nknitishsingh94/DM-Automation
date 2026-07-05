@@ -86,7 +86,17 @@ swaggerAutogen({ openapi: '3.0.0' })(outputFile, routes, doc).then(() => {
       
       for (const method in swaggerData.paths[path]) {
         const endpoint = swaggerData.paths[path][method];
-        endpoint.tags = [tagName];
+        
+        // Assign tags to endpoints. If it's a unified endpoint, assign it to multiple platforms so it appears under each!
+        if (path.includes('/scheduling') && method === 'post') {
+            endpoint.tags = ['Facebook', 'Instagram', 'Twitter', 'Pinterest', 'LinkedIn', 'YouTube'];
+        } else if (path.includes('/campaign')) {
+            endpoint.tags = ['Facebook', 'Instagram']; // Comment automations are for Meta
+        } else if (path.includes('/messages') || path.includes('/chat') || path.includes('/broadcasts')) {
+            endpoint.tags = ['Facebook', 'Instagram', 'WhatsApp', 'Twitter']; // Unified Inbox
+        } else {
+            endpoint.tags = [tagName];
+        }
         
         // Auto-generate a readable summary based on path
         let pathParts = path.replace('/api/', '').split('/').filter(p => !p.includes('{'));
