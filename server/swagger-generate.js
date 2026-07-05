@@ -38,7 +38,7 @@ import Smart10X from '@smart10x/node';
 const client = new Smart10X(); // uses SMART10X_API_KEY env var
 \`\`\`
 
-> **Key format**: `sk_live_` prefix + 48 hex characters. Keys are stored securely and they're only shown once at creation.
+> **Key format**: \`sk_live_\` prefix + 48 hex characters. Keys are stored securely and they're only shown once at creation.
 > 
 > **Security tips**: Use environment variables, create separate keys per app, and rotate periodically. You can also manage keys via the API.
     `,
