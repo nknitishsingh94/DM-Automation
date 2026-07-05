@@ -5,8 +5,16 @@ const doc = {
     title: 'Insta AI Agent API',
     description: 'Comprehensive API documentation for the Insta AI Agent Backend.',
   },
-  host: 'localhost:5000',
-  schemes: ['http', 'https'],
+  servers: [
+    {
+      url: 'https://dm-automation-w9a4.vercel.app',
+      description: 'Production Server'
+    },
+    {
+      url: 'http://localhost:5001',
+      description: 'Local Development Server'
+    }
+  ],
   components: {
     securitySchemes: {
       bearerAuth: {

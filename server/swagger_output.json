@@ -7,10 +7,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5000/"
+      "url": "https://dm-automation-w9a4.vercel.app",
+      "description": "Production Server"
     },
     {
-      "url": "https://localhost:5000/"
+      "url": "http://localhost:5001",
+      "description": "Local Development Server"
     }
   ],
   "paths": {
