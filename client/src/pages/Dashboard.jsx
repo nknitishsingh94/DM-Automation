@@ -377,7 +377,7 @@ export default function Dashboard() {
                 </div>
                 <span style={{ fontSize: '14px', fontWeight: '600', color: setupStatus.flowDone ? 'white' : 'var(--text-muted)' }}>Create First Automation</span>
               </div>
-              {setupStatus.flowDone ? <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span> : <Link to="/hub" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>BUILD</Link>}
+              {setupStatus.flowDone ? <span style={{ fontSize: '12px', color: '#10b981', fontWeight: '700' }}>DONE</span> : <Link to="/campaigns?openTemplates=true" style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '700', textDecoration: 'none' }}>BUILD</Link>}
             </div>
           </div>
         </div>
