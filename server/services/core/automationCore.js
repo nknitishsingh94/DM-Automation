@@ -49,18 +49,20 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     const pendingId = contact.pendingCampaignId;
     const match = await Campaign.findById(pendingId);
     if (match && match.status === 'Active') {
-      let isFollowing = contact?.isFollower ? true : (platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings));
+      let isFollowing = (contact && Array.isArray(contact.tags) && contact.tags.includes('Follower')) ? true : (platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings));
       
       const activeToken = passedToken || (platform === 'facebook' ? (userSettings?.facebookAccessToken || userSettings?.instagramAccessToken) : (userSettings?.instagramAccessToken || userSettings?.facebookAccessToken)) || process.env.META_PAGE_ACCESS_TOKEN;
       
       if (isFollowing) {
-        if (contact && !contact.isFollower) {
-          await Contact.findOneAndUpdate(contactQuery, { isFollower: true });
+        if (contact && !(Array.isArray(contact.tags) && contact.tags.includes('Follower'))) {
+          let updatedTags = Array.isArray(contact.tags) ? [...contact.tags] : [];
+          if (!updatedTags.includes('Follower')) updatedTags.push('Follower');
+          await Contact.findOneAndUpdate(contactQuery, { tags: updatedTags });
         }
         console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} has now followed! Triggering pending campaign.`);
         let updatedTags = Array.isArray(contact.tags) ? [...contact.tags] : [];
-        if (platform === 'facebook' && !updatedTags.includes('FacebookFollower')) updatedTags.push('FacebookFollower');
-        await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 }, tags: updatedTags, isFollower: true });
+        if (!updatedTags.includes('Follower')) updatedTags.push('Follower');
+        await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 }, tags: updatedTags });
         
         if (match.openingMessage && match.openingMessageText) {
           console.log(`📩 Sending OPENING MESSAGE after follow for ${match.name}`);
@@ -142,16 +144,18 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     if (incomingText === 'yes' || incomingText.includes("i've followed") || incomingText.includes("ive followed")) {
       const match = await Campaign.findById(contact.pendingCampaignId);
       if (match && match.status === 'Active') {
-        let isFollowing = contact?.isFollower ? true : (platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings));
+        let isFollowing = (contact && Array.isArray(contact.tags) && contact.tags.includes('Follower')) ? true : (platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings));
 
         if (isFollowing) {
-          if (contact && !contact.isFollower) {
-            await Contact.findOneAndUpdate(contactQuery, { isFollower: true });
+          if (contact && !(Array.isArray(contact.tags) && contact.tags.includes('Follower'))) {
+            let updatedTags = Array.isArray(contact.tags) ? [...contact.tags] : [];
+            if (!updatedTags.includes('Follower')) updatedTags.push('Follower');
+            await Contact.findOneAndUpdate(contactQuery, { tags: updatedTags });
           }
           console.log(`🔓 [DESKTOP SUCCESS] User ${chatId} replied correctly to Follow Gate.`);
           let updatedTags = Array.isArray(contact.tags) ? [...contact.tags] : [];
-          if (platform === 'facebook' && !updatedTags.includes('FacebookFollower')) updatedTags.push('FacebookFollower');
-          await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 }, tags: updatedTags, isFollower: true });
+          if (!updatedTags.includes('Follower')) updatedTags.push('Follower');
+          await Contact.findOneAndUpdate(contactQuery, { $unset: { pendingCampaignId: 1 }, tags: updatedTags });
           const activeToken = passedToken || (platform === 'facebook' ? (userSettings?.facebookAccessToken || userSettings?.instagramAccessToken) : (userSettings?.instagramAccessToken || userSettings?.facebookAccessToken)) || process.env.META_PAGE_ACCESS_TOKEN;
           
           let finalResponse = match.response;
@@ -257,14 +261,16 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     if (match.requireFollow) {
       console.log(`🚀 UNIVERSAL GATING: Checking follower status for ${chatId}...`);
       let isFollowing = false;
-      if (contact?.isFollower) {
+      if (contact && Array.isArray(contact.tags) && contact.tags.includes('Follower')) {
         isFollowing = true;
       } else if (platform === 'facebook') {
         isFollowing = Array.isArray(contact?.tags) && contact.tags.includes('FacebookFollower');
       } else {
         isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
         if (isFollowing) {
-           await Contact.findOneAndUpdate(contactQuery, { isFollower: true }, { upsert: true });
+           let currentTags = contact ? (Array.isArray(contact.tags) ? [...contact.tags] : []) : [];
+           if (!currentTags.includes('Follower')) currentTags.push('Follower');
+           await Contact.findOneAndUpdate(contactQuery, { tags: currentTags }, { upsert: true });
         }
       }
 
