@@ -1244,16 +1244,17 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
     }
   };
 
-  const deletePost = async (id) => {
+  const deletePost = async (id, deleteOnSocial = false) => {
     try {
       const token = localStorage.getItem('insta_agent_token');
-      const res = await fetch(`${API_BASE_URL}/api/scheduling/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/scheduling/${id}?deleteOnSocial=${deleteOnSocial}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
         setPosts(prev => prev.filter(p => p._id !== id));
         notify("Post deleted successfully!", "success");
+        setDeleteConfirmId(null);
       } else {
         const errData = await res.json().catch(() => ({}));
         notify(errData.error || "Failed to delete post", "error");
@@ -3607,23 +3608,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500', margin: '0 0 28px 0', lineHeight: '1.5' }}>
               This will permanently cancel and remove this scheduled post. This action cannot be undone.
             </p>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button
-                onClick={() => setDeleteConfirmId(null)}
+                onClick={() => deletePost(deleteConfirmId, true)}
                 style={{
-                  flex: 1, padding: '14px', background: 'var(--bg-dark)', color: 'var(--text-muted)',
-                  border: 'none', borderRadius: '14px', fontWeight: '800',
-                  cursor: 'pointer', fontSize: '0.9rem', transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.background = 'var(--border-subtle)'}
-                onMouseOut={(e) => e.currentTarget.style.background = 'var(--bg-dark)'}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => deletePost(deleteConfirmId)}
-                style={{
-                  flex: 1, padding: '14px',
+                  width: '100%', padding: '14px',
                   background: 'linear-gradient(135deg, #ef4444, #dc2626)',
                   color: 'white', border: 'none', borderRadius: '14px',
                   fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem',
@@ -3633,7 +3622,35 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                 onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(239,68,68,0.4)'; }}
                 onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(239,68,68,0.3)'; }}
               >
-                Yes, Delete
+                Delete from Dashboard & Social Media
+              </button>
+              
+              <button
+                onClick={() => deletePost(deleteConfirmId, false)}
+                style={{
+                  width: '100%', padding: '14px',
+                  background: 'transparent',
+                  color: '#ef4444', border: '2px solid #ef4444', borderRadius: '14px',
+                  fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => { e.currentTarget.style.background = '#fef2f2'; }}
+                onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; }}
+              >
+                Delete from Dashboard Only
+              </button>
+
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                style={{
+                  width: '100%', padding: '14px', background: 'var(--bg-dark)', color: 'var(--text-muted)',
+                  border: 'none', borderRadius: '14px', fontWeight: '800',
+                  cursor: 'pointer', fontSize: '0.9rem', transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = 'var(--border-subtle)'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'var(--bg-dark)'}
+              >
+                Cancel
               </button>
             </div>
           </div>

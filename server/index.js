@@ -1230,6 +1230,27 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
       if (postToDelete.postId) postIds.push(postToDelete.postId);
       if (igMediaId) postIds.push(igMediaId);
 
+      const deleteOnSocial = req.query.deleteOnSocial === 'true';
+      if (deleteOnSocial && postIds.length > 0) {
+        console.log(`🗑️ Attempting to delete from Social Media...`);
+        try {
+          const userSettings = await Settings.findOne({ userId: req.user.userId });
+          const fbToken = userSettings?.facebookAccessToken;
+          const igToken = userSettings?.instagramAccessToken;
+          
+          if (postToDelete.postId && fbToken) {
+            await axios.delete(`https://graph.facebook.com/v19.0/${postToDelete.postId}?access_token=${fbToken}`)
+              .catch(e => console.warn(`⚠️ Failed to delete FB post ${postToDelete.postId}:`, e.response?.data || e.message));
+          }
+          if (igMediaId && igToken) {
+            await axios.delete(`https://graph.facebook.com/v19.0/${igMediaId}?access_token=${igToken}`)
+              .catch(e => console.warn(`⚠️ Failed to delete IG post ${igMediaId}:`, e.response?.data || e.message));
+          }
+        } catch (socialErr) {
+          console.error(`❌ Error during social media deletion:`, socialErr.message);
+        }
+      }
+
       if (postIds.length > 0) {
         console.log(`🗑️ Deleting associated campaigns for post IDs:`, postIds);
         const sharedUserIds = getSharedUserIdsSync(req.user.userId);
