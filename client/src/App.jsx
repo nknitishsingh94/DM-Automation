@@ -11,8 +11,9 @@ import Signup from './pages/Signup';
 import CookieBanner from './components/CookieBanner';
 import UniversalTriggers from './pages/UniversalTriggers';
 
-
-const lazyRetry = (componentImport) => {
+import CommentToDM from './pages/features/CommentToDM';
+import GrowFollowers from './pages/features/GrowFollowers';
+import NeverMissComment from './pages/features/NeverMissComment';const lazyRetry = (componentImport) => {
   return lazy(async () => {
     const pageHasAlreadyBeenForceRefreshed = JSON.parse(
       window.sessionStorage.getItem('page-has-been-force-refreshed') || 'false'
@@ -721,6 +722,9 @@ function MainLayout() {
             <Routes>
               <Route path="/" element={user ? <Navigate to="/connections" /> : <Landing />} />
               <Route path="/public-home" element={<Landing />} />
+              <Route path="/feature/comment-to-dm" element={<CommentToDM />} />
+              <Route path="/feature/grow-followers" element={<GrowFollowers />} />
+              <Route path="/feature/never-miss-comment" element={<NeverMissComment />} />
               {/* PlatformHub route removed */}
               <Route path="/hub/message-only" element={<ProtectedRoute><MessageOnlyHub /></ProtectedRoute>} />
               <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />

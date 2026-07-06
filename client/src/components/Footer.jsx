@@ -46,9 +46,9 @@ export default function Footer() {
         <div className="footer-col">
           <h3>Features</h3>
           <ul>
-            <li><Link to="/hub">Comment-to-DM</Link></li>
-            <li><Link to="/hub">Grow your Followers</Link></li>
-            <li><Link to="/hub">Never Miss a Comment</Link></li>
+            <li><Link to="/feature/comment-to-dm">Comment-to-DM</Link></li>
+            <li><Link to="/feature/grow-followers">Grow your Followers</Link></li>
+            <li><Link to="/feature/never-miss-comment">Never Miss a Comment</Link></li>
           </ul>
         </div>
 
