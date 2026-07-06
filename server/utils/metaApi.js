@@ -56,20 +56,36 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     // If Meta rejects the template for a private reply, the try/catch block below will fall back to plain text.
 
     if (effectiveButtons.length > 0) {
-      if (isPrivateReply) {
-        payload = {
-          recipient,
-          messaging_type: "RESPONSE",
-          message: {
-            text: safeText || "Options:",
-            quick_replies: effectiveButtons.slice(0, 13).map(btn => ({
-              content_type: "text",
-              title: (btn.text || "").substring(0, 20),
-              payload: btn.payload || btn.text
-            }))
+      payload = {
+        recipient,
+        messaging_type: "RESPONSE",
+        message: {
+          attachment: {
+            type: "template",
+            payload: {
+              template_type: "button",
+              text: safeText || "Options:",
+              buttons: effectiveButtons.map(btn => {
+                let safeUrl = btn.url || '';
+                if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
+                  safeUrl = 'https://' + safeUrl;
+                }
+                return btn.url ? {
+                  type: "web_url",
+                  url: safeUrl,
+                  title: (btn.text || "").substring(0, 20)
+                } : {
+                  type: "postback",
+                  title: (btn.text || "").substring(0, 20),
+                  payload: btn.payload || btn.text
+                };
+              })
+            }
           }
-        };
-      } else {
+        }
+      };
+    } else if (effectiveButtonText) {
+      if (buttonPayload) {
         payload = {
           recipient,
           messaging_type: "RESPONSE",
@@ -79,61 +95,15 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
               payload: {
                 template_type: "button",
                 text: safeText || "Options:",
-                buttons: effectiveButtons.map(btn => {
-                  let safeUrl = btn.url || '';
-                  if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
-                    safeUrl = 'https://' + safeUrl;
-                  }
-                  return btn.url ? {
-                    type: "web_url",
-                    url: safeUrl,
-                    title: (btn.text || "").substring(0, 20)
-                  } : {
-                    type: "postback",
-                    title: (btn.text || "").substring(0, 20),
-                    payload: btn.payload || btn.text
-                  };
-                })
+                buttons: [{
+                  type: "postback",
+                  title: (effectiveButtonText || "").substring(0, 20),
+                  payload: buttonPayload
+                }]
               }
             }
           }
         };
-      }
-    } else if (effectiveButtonText) {
-      if (buttonPayload) {
-        if (isPrivateReply) {
-          payload = {
-            recipient,
-            messaging_type: "RESPONSE",
-            message: {
-              text: safeText || "Options:",
-              quick_replies: [{
-                content_type: "text",
-                title: (effectiveButtonText || "").substring(0, 20),
-                payload: buttonPayload
-              }]
-            }
-          };
-        } else {
-          payload = {
-            recipient,
-            messaging_type: "RESPONSE",
-            message: {
-              attachment: {
-                type: "template",
-                payload: {
-                  template_type: "button",
-                  text: safeText || "Options:",
-                  buttons: [{
-                    type: "postback",
-                    title: (effectiveButtonText || "").substring(0, 20),
-                    payload: buttonPayload
-                  }]
-                }
-              }
-            }
-          };
-        }
       } else if (mediaUrl && (mediaUrl.trim().startsWith('http') || mediaUrl.includes('.'))) {
         let safeUrl = mediaUrl.trim();
         if (!safeUrl.startsWith('http')) safeUrl = 'https://' + safeUrl;
@@ -193,6 +163,10 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
           
           if (effectiveButtons && effectiveButtons.length > 0) {
             fallbackText += `\n\n👉 Links:\n` + effectiveButtons.map(b => `- ${b.text}: ${b.url}`).join('\n');
+          }
+
+          if (isPrivateReply && (effectiveButtonText || (effectiveButtons && effectiveButtons.length > 0) || mediaUrl)) {
+             fallbackText += `\n\n👉 (Reply "Yes" to receive it!)`;
           }
           
           const fallbackPayload = {
