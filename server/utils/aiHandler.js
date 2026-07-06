@@ -51,7 +51,7 @@ export const generateAIResponse = async (userId, userMessage, workspaceId = null
 
     const callGemini = async () => {
       const versions = ['v1beta', 'v1'];
-      const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-1.5-flash', 'gemini-pro'];
+      const models = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro-latest', 'gemini-pro'];
       const axios = (await import('axios')).default;
       let lastError;
 
