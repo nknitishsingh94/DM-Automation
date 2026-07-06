@@ -378,10 +378,10 @@ const styles = `
     height: 40px !important;
   }
 
-  @media (max-width: 640px) {
-    .login-card { flex-direction: column; }
-    .login-right { width: 100%; border-left: none; border-top: 2px solid rgba(139,92,246,0.1); padding: 32px 28px; }
-    .login-left { padding: 36px 28px; }
+  @media (max-width: 768px) {
+    .login-card { flex-direction: column; min-height: auto; }
+    .login-right { width: 100%; border-left: none; border-top: 2px solid rgba(139,92,246,0.1); padding: 32px 24px; }
+    .login-left { width: 100%; padding: 36px 24px; }
   }
 `;
 
