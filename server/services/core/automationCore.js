@@ -376,9 +376,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     }
   }
 
-  const isAiEnabledForPlatform = platform === 'facebook'
-    ? (userSettings?.facebookAutomationEnabled ?? false)
-    : (userSettings?.instagramAutomationEnabled ?? false);
+  const isAiEnabledForPlatform = false; // Disabled temporarily due to user request (AI ka replay abhi bhi aa rha hai)
 
   if (isAiEnabledForPlatform) {
     console.log(`😴 NO KEYWORD MATCH: Falling back to AI Studio...`);

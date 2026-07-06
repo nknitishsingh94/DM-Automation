@@ -246,7 +246,7 @@ export default function UniversalTriggers() {
         headers: { 'Authorization': `Bearer ${token}`, 'x-workspace-id': workspaceId }
       });
       const allCampaigns = campRes.ok ? await campRes.json() : [];
-      const campaigns = allCampaigns.filter(c => c.isUniversal === true);
+      const campaigns = allCampaigns.filter(c => c.isUniversal === true || c.name === 'Universal Trigger - AI Flow');
         
       if (campaigns && campaigns.length > 0) {
         let total = 0;
