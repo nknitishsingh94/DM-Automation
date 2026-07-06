@@ -1202,10 +1202,11 @@ app.put('/api/scheduling/:id', verifyToken, async (req, res) => {
 
 app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
   try {
-    const postId = req.params.id;
+    let postId = req.params.id;
     console.log(`🗑️ DELETE scheduled post requested. ID: ${postId}, User: ${req.user.userId}`);
 
-    const { supabase: _sb } = await import('./utils/supabase.js');
+    const { supabase: _sb, convertObjectIDToUUID } = await import('./utils/supabase.js');
+    postId = convertObjectIDToUUID(postId);
 
     const { data: postRows, error: fetchErr } = await _sb
       .from('scheduled_posts')
