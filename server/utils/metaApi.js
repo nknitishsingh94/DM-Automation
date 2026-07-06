@@ -153,7 +153,7 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
         if (payload.message?.attachment?.type === 'template' && postError.response?.data?.error?.code !== 190) {
           console.log(`⚠️ Template rejected by Meta. Falling back to plain text...`);
           let fallbackText = safeText;
-          if (mediaUrl) fallbackText += `\n\n👉 ${mediaUrl.trim()}`;
+          if (mediaUrl && !safeText.includes(mediaUrl.trim())) fallbackText += `\n\n👉 ${mediaUrl.trim()}`;
           
           if (effectiveButtons && effectiveButtons.length > 0) {
             fallbackText += `\n\n👉 Links:\n` + effectiveButtons.map(b => `- ${b.text}: ${b.url}`).join('\n');

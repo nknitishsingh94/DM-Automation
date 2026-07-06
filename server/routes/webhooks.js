@@ -236,7 +236,7 @@ router.post('/webhook', async (req, res) => {
                    console.log(`🤖 Postback has AI response enabled. Generating dynamic response...`);
                    try {
                      const { generateAIResponse } = await import('../utils/aiHandler.js');
-                     const generated = await generateAIResponse(match.userId, `User just clicked the button to get the link for campaign "${match.trigger}". Give a very warm, short, friendly one-sentence reply handing them the link.`);
+                     const generated = await generateAIResponse(match.userId, `User just clicked the button to get the link for campaign "${match.trigger}". Give a very warm, short, friendly one-sentence reply. IMPORTANT: DO NOT include any links or URLs in your text. The actual link is attached as a button below your message.`);
                      if (generated) {
                        if (finalResponse === "[AI Agent will generate a custom neural reply here]" || !finalResponse.trim()) {
                          finalResponse = generated;
