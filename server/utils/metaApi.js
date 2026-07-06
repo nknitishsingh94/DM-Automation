@@ -90,12 +90,20 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
           recipient,
           messaging_type: "RESPONSE",
           message: {
-            text: safeText || "Options:",
-            quick_replies: [{
-              content_type: "text",
-              title: (effectiveButtonText || "").substring(0, 20),
-              payload: buttonPayload
-            }]
+            attachment: {
+              type: "template",
+              payload: {
+                template_type: "generic",
+                elements: [{
+                  title: (safeText || "Options:").substring(0, 80),
+                  buttons: [{
+                    type: "postback",
+                    title: (effectiveButtonText || "").substring(0, 20),
+                    payload: buttonPayload
+                  }]
+                }]
+              }
+            }
           }
         };
       } else if (mediaUrl && (mediaUrl.trim().startsWith('http') || mediaUrl.includes('.'))) {
@@ -108,12 +116,14 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
             attachment: {
               type: "template",
               payload: {
-                template_type: "button",
-                text: safeText || "Click the link below:",
-                buttons: [{
-                  type: "web_url",
-                  url: safeUrl,
-                  title: (effectiveButtonText || "").substring(0, 20)
+                template_type: "generic",
+                elements: [{
+                  title: (safeText || "Click the link below:").substring(0, 80),
+                  buttons: [{
+                    type: "web_url",
+                    url: safeUrl,
+                    title: (effectiveButtonText || "").substring(0, 20)
+                  }]
                 }]
               }
             }
