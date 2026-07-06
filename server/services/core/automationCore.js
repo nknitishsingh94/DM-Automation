@@ -49,7 +49,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     const pendingId = contact.pendingCampaignId;
     const match = await Campaign.findById(pendingId);
     if (match && match.status === 'Active') {
-      let isFollowing = (contact && Array.isArray(contact.tags) && contact.tags.includes('Follower')) ? true : (platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings));
+      let isFollowing = platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings);
       
       const activeToken = passedToken || (platform === 'facebook' ? (userSettings?.facebookAccessToken || userSettings?.instagramAccessToken) : (userSettings?.instagramAccessToken || userSettings?.facebookAccessToken)) || process.env.META_PAGE_ACCESS_TOKEN;
       
@@ -144,7 +144,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     if (incomingText === 'yes' || incomingText.includes("i've followed") || incomingText.includes("ive followed")) {
       const match = await Campaign.findById(contact.pendingCampaignId);
       if (match && match.status === 'Active') {
-        let isFollowing = (contact && Array.isArray(contact.tags) && contact.tags.includes('Follower')) ? true : (platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings));
+        let isFollowing = platform === 'facebook' ? true : await checkFollowerStatus(platform, chatId, userId, userSettings);
 
         if (isFollowing) {
           if (contact && !(Array.isArray(contact.tags) && contact.tags.includes('Follower'))) {
@@ -261,15 +261,18 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     if (match.requireFollow) {
       console.log(`🚀 UNIVERSAL GATING: Checking follower status for ${chatId}...`);
       let isFollowing = false;
-      if (contact && Array.isArray(contact.tags) && contact.tags.includes('Follower')) {
-        isFollowing = true;
-      } else if (platform === 'facebook') {
+      if (platform === 'facebook') {
         isFollowing = Array.isArray(contact?.tags) && contact.tags.includes('FacebookFollower');
       } else {
         isFollowing = await checkFollowerStatus(platform, chatId, userId, userSettings);
-        if (isFollowing) {
-           let currentTags = contact ? (Array.isArray(contact.tags) ? [...contact.tags] : []) : [];
-           if (!currentTags.includes('Follower')) currentTags.push('Follower');
+        let currentTags = contact ? (Array.isArray(contact.tags) ? [...contact.tags] : []) : [];
+        const hasTag = currentTags.includes('Follower');
+        
+        if (isFollowing && !hasTag) {
+           currentTags.push('Follower');
+           await Contact.findOneAndUpdate(contactQuery, { tags: currentTags }, { upsert: true });
+        } else if (!isFollowing && hasTag) {
+           currentTags = currentTags.filter(t => t !== 'Follower');
            await Contact.findOneAndUpdate(contactQuery, { tags: currentTags }, { upsert: true });
         }
       }
