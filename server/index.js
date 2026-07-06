@@ -57,7 +57,6 @@ import aiRoutes from './routes/ai.js';
 import apiKeyRoutes from './routes/apiKeys.js';
 import postsRoutes from './routes/posts.js';
 import analyticsRoutes from './routes/analytics.js';
-import googleBusinessRoutes from './routes/googleBusiness.js';
 import { setupSwagger } from './swagger.js';
 import { generateAIResponse } from './utils/aiHandler.js';
 import { supabase, supabaseAdmin, convertObjectIDToUUID } from './utils/supabase.js';
@@ -286,7 +285,6 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/api-keys', apiKeyRoutes);
 app.use('/api/posts', postsRoutes);
 app.use('/api/analytics', analyticsRoutes);
-app.use('/api/google-business', googleBusinessRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', domain: req.hostname, timestamp: new Date() }));
 app.get('/api/ping', (req, res) => res.send('pong'));
