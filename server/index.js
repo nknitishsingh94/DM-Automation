@@ -1257,34 +1257,43 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
       if (deleteOnSocial) {
         console.log(`🗑️ Attempting to delete from Social Media...`);
         try {
-          const userSettings = await Settings.findOne({ userId: req.user.userId });
+          const searchUserId = convertObjectIDToUUID(postToDelete.userId || req.user.userId);
+          const searchWorkspaceId = postToDelete.workspaceId ? convertObjectIDToUUID(postToDelete.workspaceId) : undefined;
+          
+          let userSettings = null;
+          if (searchWorkspaceId) {
+             userSettings = await Settings.findOne({ userId: searchUserId, workspaceId: searchWorkspaceId });
+          }
+          if (!userSettings) {
+             userSettings = await Settings.findOne({ userId: searchUserId });
+          }
           
           if (fbId && userSettings?.facebookAccessToken) {
             await axios.delete(`https://graph.facebook.com/v19.0/${fbId}?access_token=${userSettings.facebookAccessToken}`)
-              .catch(e => console.warn(`⚠️ Failed to delete FB post:`, e.message));
+              .catch(e => require('fs').appendFileSync('delete_log.txt', `FB fail: ${e.response?.data ? JSON.stringify(e.response.data) : e.message}\n`));
           }
           if (igMediaId && userSettings?.instagramAccessToken) {
             await axios.delete(`https://graph.facebook.com/v19.0/${igMediaId}?access_token=${userSettings.instagramAccessToken}`)
-              .catch(e => console.warn(`⚠️ Failed to delete IG post:`, e.message));
+              .catch(e => require('fs').appendFileSync('delete_log.txt', `IG fail: ${e.response?.data ? JSON.stringify(e.response.data) : e.message}\n`));
           }
           if (threadsId && userSettings?.threadsAccessToken) {
             await axios.delete(`https://graph.threads.net/v1.0/${threadsId}?access_token=${userSettings.threadsAccessToken}`)
-              .catch(e => console.warn(`⚠️ Failed to delete Threads post:`, e.message));
+              .catch(e => require('fs').appendFileSync('delete_log.txt', `Threads fail: ${e.message}\n`));
           }
           if (gmbId && userSettings?.googleBusinessAccessToken) {
             await axios.delete(`https://mybusiness.googleapis.com/v4/${gmbId}`, {
               headers: { Authorization: `Bearer ${userSettings.googleBusinessAccessToken}` }
-            }).catch(e => console.warn(`⚠️ Failed to delete GMB post:`, e.message));
+            }).catch(e => require('fs').appendFileSync('delete_log.txt', `GMB fail: ${e.message}\n`));
           }
           if (linkedinId && userSettings?.linkedinAccessToken) {
             await axios.delete(`https://api.linkedin.com/v2/ugcPosts/${encodeURIComponent(linkedinId)}`, {
               headers: { Authorization: `Bearer ${userSettings.linkedinAccessToken}` }
-            }).catch(e => console.warn(`⚠️ Failed to delete LinkedIn post:`, e.message));
+            }).catch(e => require('fs').appendFileSync('delete_log.txt', `LinkedIn fail: ${e.message}\n`));
           }
           if (pinterestId && userSettings?.pinterestAccessToken) {
             await axios.delete(`https://api.pinterest.com/v5/pins/${pinterestId}`, {
               headers: { Authorization: `Bearer ${userSettings.pinterestAccessToken}` }
-            }).catch(e => console.warn(`⚠️ Failed to delete Pinterest post:`, e.message));
+            }).catch(e => require('fs').appendFileSync('delete_log.txt', `Pinterest fail: ${e.message}\n`));
           }
           if (twitterId && userSettings?.twitterAccessToken && userSettings?.twitterAccessSecret) {
             try {
@@ -1297,10 +1306,11 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
               });
               await client.v2.deleteTweet(twitterId);
             } catch (err) {
-              console.warn(`⚠️ Failed to delete Twitter post:`, err.message);
+              require('fs').appendFileSync('delete_log.txt', `Twitter fail: ${err.message}\n`);
             }
           }
         } catch (socialErr) {
+          require('fs').appendFileSync('delete_log.txt', `Social Err: ${socialErr.message}\n`);
           console.error(`❌ Error during social media deletion:`, socialErr.message);
         }
       }
