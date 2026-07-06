@@ -3597,10 +3597,10 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
           >
             <div style={{
               width: '64px', height: '64px', borderRadius: '50%',
-              background: '#fef2f2', display: 'flex', alignItems: 'center',
+              background: '#eff6ff', display: 'flex', alignItems: 'center',
               justifyContent: 'center', margin: '0 auto 20px auto'
             }}>
-              <Trash2 size={28} color="#ef4444" />
+              <Trash2 size={28} color="#3b82f6" />
             </div>
             <h3 style={{ fontSize: '1.3rem', fontWeight: '900', color: '#1e1b4b', margin: '0 0 10px 0' }}>
               Delete Scheduled Post?
@@ -3613,14 +3613,14 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                 onClick={() => deletePost(deleteConfirmId, true)}
                 style={{
                   width: '100%', padding: '14px',
-                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
                   color: 'white', border: 'none', borderRadius: '14px',
                   fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem',
-                  boxShadow: '0 8px 20px rgba(239, 68, 68, 0.3)',
+                  boxShadow: '0 8px 20px rgba(59, 130, 246, 0.3)',
                   transition: 'all 0.2s'
                 }}
-                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(239,68,68,0.4)'; }}
-                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(239,68,68,0.3)'; }}
+                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(59, 130, 246, 0.4)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(59, 130, 246, 0.3)'; }}
               >
                 Delete from Dashboard & Social Media
               </button>
@@ -3630,11 +3630,11 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                 style={{
                   width: '100%', padding: '14px',
                   background: 'transparent',
-                  color: '#ef4444', border: '2px solid #ef4444', borderRadius: '14px',
+                  color: '#3b82f6', border: '2px solid #3b82f6', borderRadius: '14px',
                   fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem',
                   transition: 'all 0.2s'
                 }}
-                onMouseOver={(e) => { e.currentTarget.style.background = '#fef2f2'; }}
+                onMouseOver={(e) => { e.currentTarget.style.background = '#eff6ff'; }}
                 onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; }}
               >
                 Delete from Dashboard Only
