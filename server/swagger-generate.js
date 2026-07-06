@@ -28,7 +28,7 @@ All API requests require an API key. The SDKs read from the \`SMART10X_API_KEY\`
 
 #### Getting Your API Key
 1. Log in to your smart10X account at your dashboard.
-2. Go to **Settings → API Keys**
+2. Go to **Sidebar → API Keys**
 3. Click **Create API Key**
 4. Copy the key immediately - you won't be able to see it again!
 
