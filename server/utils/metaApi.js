@@ -49,44 +49,27 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     const recipient = commentId ? { comment_id: commentId } : { id: recipientId };
     let payload = null;
     const isPrivateReply = !!commentId;
-    let effectiveButtons = isPrivateReply ? [] : (buttons || []);
-    let effectiveButtonText = isPrivateReply ? null : (buttonText || (mediaUrl ? "Click Here" : ""));
+    let effectiveButtons = buttons || [];
+    let effectiveButtonText = buttonText || (mediaUrl ? "Click Here" : "");
 
-    if (isPrivateReply && (buttonText || (buttons && buttons.length > 0) || mediaUrl)) {
-      safeText = safeText + `\n\n👉 (Reply "Yes" to receive it!)`;
-    }
+    // Do not aggressively strip buttons for private replies anymore.
+    // If Meta rejects the template for a private reply, the try/catch block below will fall back to plain text.
 
     if (effectiveButtons.length > 0) {
-      payload = {
-        recipient,
-        messaging_type: "RESPONSE",
-        message: {
-          attachment: {
-            type: "template",
-            payload: {
-              template_type: "button",
-              text: safeText || "Options:",
-              buttons: effectiveButtons.map(btn => {
-                let safeUrl = btn.url || '';
-                if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
-                  safeUrl = 'https://' + safeUrl;
-                }
-                return btn.url ? {
-                  type: "web_url",
-                  url: safeUrl,
-                  title: (btn.text || "").substring(0, 20)
-                } : {
-                  type: "postback",
-                  title: (btn.text || "").substring(0, 20),
-                  payload: btn.payload || btn.text
-                };
-              })
-            }
+      if (isPrivateReply) {
+        payload = {
+          recipient,
+          messaging_type: "RESPONSE",
+          message: {
+            text: safeText || "Options:",
+            quick_replies: effectiveButtons.slice(0, 13).map(btn => ({
+              content_type: "text",
+              title: (btn.text || "").substring(0, 20),
+              payload: btn.payload || btn.text
+            }))
           }
-        }
-      };
-    } else if (effectiveButtonText) {
-      if (buttonPayload) {
+        };
+      } else {
         payload = {
           recipient,
           messaging_type: "RESPONSE",
@@ -96,15 +79,61 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
               payload: {
                 template_type: "button",
                 text: safeText || "Options:",
-                buttons: [{
-                  type: "postback",
-                  title: (effectiveButtonText || "").substring(0, 20),
-                  payload: buttonPayload
-                }]
+                buttons: effectiveButtons.map(btn => {
+                  let safeUrl = btn.url || '';
+                  if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
+                    safeUrl = 'https://' + safeUrl;
+                  }
+                  return btn.url ? {
+                    type: "web_url",
+                    url: safeUrl,
+                    title: (btn.text || "").substring(0, 20)
+                  } : {
+                    type: "postback",
+                    title: (btn.text || "").substring(0, 20),
+                    payload: btn.payload || btn.text
+                  };
+                })
               }
             }
           }
         };
+      }
+    } else if (effectiveButtonText) {
+      if (buttonPayload) {
+        if (isPrivateReply) {
+          payload = {
+            recipient,
+            messaging_type: "RESPONSE",
+            message: {
+              text: safeText || "Options:",
+              quick_replies: [{
+                content_type: "text",
+                title: (effectiveButtonText || "").substring(0, 20),
+                payload: buttonPayload
+              }]
+            }
+          };
+        } else {
+          payload = {
+            recipient,
+            messaging_type: "RESPONSE",
+            message: {
+              attachment: {
+                type: "template",
+                payload: {
+                  template_type: "button",
+                  text: safeText || "Options:",
+                  buttons: [{
+                    type: "postback",
+                    title: (effectiveButtonText || "").substring(0, 20),
+                    payload: buttonPayload
+                  }]
+                }
+              }
+            }
+          };
+        }
       } else if (mediaUrl && (mediaUrl.trim().startsWith('http') || mediaUrl.includes('.'))) {
         let safeUrl = mediaUrl.trim();
         if (!safeUrl.startsWith('http')) safeUrl = 'https://' + safeUrl;
