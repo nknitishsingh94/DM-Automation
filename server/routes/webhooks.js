@@ -281,7 +281,7 @@ router.post('/webhook', async (req, res) => {
                 if (isFollowing) {
                   console.log(`✅ VERIFIED! Sending "Send me the link" button for ${match.name}`);
 
-                  await Contact.findOneAndUpdate({ chatId: senderId, userId: match.userId }, { $unset: { pendingCampaignId: 1 } });
+                  await Contact.findOneAndUpdate({ chatId: senderId, userId: match.userId }, { $unset: { pendingCampaignId: 1 }, isFollower: true });
 
                   const followSuccessText = match.openingMessageText || "Verified! Awesome. Click below to receive your link instantly. 🚀";
                   const sendLinkButtonText = match.openingMessageButton || "Send me the link! 🔗";

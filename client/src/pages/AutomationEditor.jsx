@@ -97,8 +97,8 @@ export default function AutomationEditor() {
         setPreviewMode('comment');
         setKeywords(['LINK', 'INFO', 'YES']);
         setPublicReply('Just sent you a DM with the link! 🚀');
-        setMessage("Hey there! Here is the link you requested 👇");
-        setButtons([{ text: 'View Product', url: 'https://' }]);
+        setMessage("Hey there! 👋 Thanks so much for your comment! I've put together all the details for you right here. Let me know if you need anything else! 👇");
+        setButtons([{ text: 'View Details ✨', url: 'https://' }]);
       } else if (template === 'gen_leads_stories') {
         setName('Story Lead Gen');
         setTriggerOnStories(true);
@@ -106,8 +106,8 @@ export default function AutomationEditor() {
         setTriggerOnComments(false);
         setPreviewMode('dm');
         setKeywords(['OFFER', 'LEAD']);
-        setMessage("Thanks for replying to my story! Here is your exclusive offer:");
-        setButtons([{ text: 'Claim Offer', url: 'https://' }]);
+        setMessage("Hey! Thanks for watching and replying to my story! 🚀 As promised, here is your exclusive access link. Enjoy! 👇");
+        setButtons([{ text: 'Claim Offer 🎁', url: 'https://' }]);
       } else if (template === 'respond_all_dms') {
         setName('Auto Reply to DMs');
         setTriggerOnDms(true);
@@ -115,8 +115,8 @@ export default function AutomationEditor() {
         setTriggerOnStories(false);
         setAnyKeyword(true);
         setPreviewMode('dm');
-        setMessage("Hey! I got your message. I'll get back to you as soon as I can! In the meantime, check out my recent links.");
-        setButtons([{ text: 'My Website', url: 'https://' }]);
+        setMessage("Hey! 👋 Thanks for reaching out! I've received your message and will get back to you as soon as I can. In the meantime, you can check out my latest updates here: 👇");
+        setButtons([{ text: 'Check it out! 🌟', url: 'https://' }]);
       } else if (template === 'grow_followers_comments_quick') {
         setName('Grow Followers via Comments');
         setTriggerOnComments(true);
@@ -124,34 +124,38 @@ export default function AutomationEditor() {
         setRequireFollow(true);
         setKeywords(['FOLLOW', 'GIFT']);
         setPublicReply('Check your DMs for the gift! 🎁');
-        setMessage("Here is your gift for following us! Enjoy.");
+        setMessage("Hey there! Thank you so much for the follow! ❤️ As promised, here is your exclusive gift. Enjoy! 👇");
+        setButtons([{ text: 'Get My Gift 🎁', url: 'https://' }]);
       } else if (template === 'send_affiliate_links') {
         setName('Affiliate Link Bot');
         setTriggerOnComments(true);
         setTriggerOnDms(true);
         setPreviewMode('comment');
         setKeywords(['SHOP', 'OUTFIT', 'BUY']);
-        setMessage("Hey! Here are the links to the items you asked about 🛍️");
-        setButtons([{ text: 'Shop Here', url: 'https://' }]);
+        setMessage("Hey! I saw you asking about this. Here are the exact links to the items so you can check them out! Happy shopping 🛍️👇");
+        setButtons([{ text: 'Shop Here 🛍️', url: 'https://' }]);
       } else if (template === 'auto_thank_positive_comments') {
         setName('Auto Thank Positive Comments');
         setTriggerOnComments(true);
         setPreviewMode('comment');
         setKeywords(['LOVE', 'AMAZING', 'GREAT', 'BEAUTIFUL']);
         setPublicReply('Thank you so much! ❤️');
-        setMessage("Hey! I just saw your comment and wanted to say thank you for the support. It means a lot!");
+        setMessage("Hey! I just saw your amazing comment and wanted to personally say a huge THANK YOU for the support! It truly means the world to me. ❤️");
+        setButtons([{ text: 'Visit My Page ✨', url: 'https://' }]);
       } else if (template === 'auto_like_positive_messages') {
         setName('Auto Like Positive Messages');
         setTriggerOnDms(true);
         setPreviewMode('dm');
         setAnyKeyword(true);
-        setMessage("Thanks for reaching out! ❤️");
+        setMessage("Hey there! Thanks for reaching out and for your positivity! Have an amazing day! 🌟");
+        setButtons([{ text: 'Visit Website 🚀', url: 'https://' }]);
       } else if (template === 'reply_story_mentions') {
         setName('Reply to Story Mentions');
         setTriggerOnStories(true);
         setPreviewMode('dm');
         setAnyKeyword(true);
-        setMessage("Thanks for mentioning me in your story! You're awesome. 🔥");
+        setMessage("Hey! Thanks so much for mentioning me in your story! You're awesome. 🔥 Here's a little something for you: 👇");
+        setButtons([{ text: 'Unlock Reward 🎁', url: 'https://' }]);
       } else if (template === 'auto_send_links_dm') {
         setName('Auto-Send Links in DM');
         setTriggerOnDms(true);

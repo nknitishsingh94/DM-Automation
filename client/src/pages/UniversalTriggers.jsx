@@ -184,6 +184,7 @@ export default function UniversalTriggers() {
   const [isPublishing, setIsPublishing] = useState(false);
   const [existingTriggers, setExistingTriggers] = useState([]);
   const [showListModal, setShowListModal] = useState(false);
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
 
   const handleTest = () => {
     setIsTesting(true);
@@ -485,6 +486,8 @@ Instructions:
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
+              onNodeClick={(_, node) => setSelectedNodeId(node.id)}
+              onPaneClick={() => setSelectedNodeId(null)}
               nodeTypes={nodeTypes}
               fitView
               attributionPosition="bottom-left"
@@ -497,14 +500,45 @@ Instructions:
 
         {/* Right Configuration Sidebar */}
         <div style={{ width: '300px', background: 'var(--bg-card)', borderLeft: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ padding: '20px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: 0 }}>Trigger Configuration</h2>
-          </div>
-          
-          <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
+          {selectedNodeId ? (
+            <>
+              <div style={{ padding: '20px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h2 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: 0 }}>Node Settings</h2>
+                <button onClick={() => setSelectedNodeId(null)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                  <X size={18} />
+                </button>
+              </div>
+              <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
+                <div style={{ marginBottom: '24px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Reply / Action Content</label>
+                  <textarea
+                    value={nodes.find(n => n.id === selectedNodeId)?.data?.subtitle || ''}
+                    onChange={(e) => {
+                      setNodes(nds => nds.map(n => {
+                        if (n.id === selectedNodeId) {
+                          return { ...n, data: { ...n.data, subtitle: e.target.value } };
+                        }
+                        return n;
+                      }));
+                    }}
+                    rows={6}
+                    placeholder="Enter the instruction or message text here..."
+                    style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none', resize: 'vertical' }}
+                  />
+                  <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '6px' }}>This text is used to execute the specific step.</div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{ padding: '20px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h2 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: 0 }}>Trigger Configuration</h2>
+              </div>
+              
+              <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
 
 
-            {/* Keywords */}
+                {/* Keywords */}
             <div style={{ marginBottom: '24px' }}>
               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Keywords</label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
@@ -568,6 +602,8 @@ Instructions:
             </div>
             
           </div>
+          </>
+          )}
           
           <div style={{ padding: '20px', borderTop: '1px solid var(--border-subtle)', background: 'var(--sidebar-bg)' }}>
             <button 
