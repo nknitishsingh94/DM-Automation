@@ -202,13 +202,13 @@ router.post('/webhook', async (req, res) => {
         }
 
         if (messaging.postback) {
-          const postbackKey = `postback_${senderId}_${messaging.timestamp}`;
-          if (isDuplicateEvent(postbackKey)) {
+          const payload = messaging.postback.payload;
+          const postbackKey = `postback_${senderId}_${payload}_${messaging.timestamp || Date.now()}`;
+          if (messaging.timestamp && isDuplicateEvent(postbackKey)) {
             console.log(`⏭️ Skipping duplicate postback event: ${postbackKey}`);
             continue;
           }
 
-          const payload = messaging.postback.payload;
           console.log(`🔘 POSTBACK DETECTED from ${senderId}: ${payload}`);
 
           const platform = body.object === 'instagram' ? 'instagram' : 'facebook';
