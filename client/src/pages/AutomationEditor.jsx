@@ -336,7 +336,7 @@ export default function AutomationEditor() {
   const selectedMedia = realMedia.find(m => m.id === selectedContentId);
 
   React.useEffect(() => {
-    if (!anyStory && selectedPlatform === 'instagram') {
+    if (!anyStory) {
       fetchRealMedia();
     }
     if (triggerOnStories && selectedPlatform === 'facebook') {
