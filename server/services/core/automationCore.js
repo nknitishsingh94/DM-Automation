@@ -366,8 +366,8 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
   }
 
   const isAiEnabledForPlatform = platform === 'facebook'
-    ? (userSettings?.facebookAutomationEnabled ?? true)
-    : (userSettings?.instagramAutomationEnabled ?? true);
+    ? (userSettings?.facebookAutomationEnabled ?? false)
+    : (userSettings?.instagramAutomationEnabled ?? false);
 
   if (isAiEnabledForPlatform) {
     console.log(`😴 NO KEYWORD MATCH: Falling back to AI Studio...`);
