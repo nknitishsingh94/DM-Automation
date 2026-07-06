@@ -90,12 +90,18 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
           recipient,
           messaging_type: "RESPONSE",
           message: {
-            text: safeText || "Options:",
-            quick_replies: [{
-              content_type: "text",
-              title: (effectiveButtonText || "").substring(0, 20),
-              payload: buttonPayload
-            }]
+            attachment: {
+              type: "template",
+              payload: {
+                template_type: "button",
+                text: safeText || "Options:",
+                buttons: [{
+                  type: "postback",
+                  title: (effectiveButtonText || "").substring(0, 20),
+                  payload: buttonPayload
+                }]
+              }
+            }
           }
         };
       } else if (mediaUrl && (mediaUrl.trim().startsWith('http') || mediaUrl.includes('.'))) {
