@@ -651,7 +651,7 @@ export default function Login() {
 
             <p className="login-social-note">
               By continuing, you agree to our{' '}
-              <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a>
+              <Link to="/terms">Terms</Link> &amp; <Link to="/privacy">Privacy Policy</Link>
             </p>
           </div>
 
