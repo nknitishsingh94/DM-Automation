@@ -224,8 +224,13 @@ router.post('/webhook', async (req, res) => {
                 await Contact.findOneAndUpdate({ chatId: senderId, userId: match.userId }, { $unset: { pendingCampaignId: 1 } });
                 
                 const userSettings = await Settings.findOne({ userId: match.userId });
-                const activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken || process.env.META_PAGE_ACCESS_TOKEN;
-
+                let activeToken;
+                if (platform === 'facebook') {
+                  activeToken = userSettings?.facebookAccessToken || userSettings?.instagramAccessToken;
+                } else {
+                  activeToken = userSettings?.instagramAccessToken || userSettings?.facebookAccessToken;
+                }
+                activeToken = activeToken || process.env.META_PAGE_ACCESS_TOKEN;
                 let finalResponse = match.response;
                 if (match.isAI) {
                    console.log(`🤖 Postback has AI response enabled. Generating dynamic response...`);
