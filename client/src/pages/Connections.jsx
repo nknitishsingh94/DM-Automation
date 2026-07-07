@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ShieldCheck, Instagram, Facebook, MessageSquare, Key, MapPin, Save, Info, 
   CheckCircle, XCircle, Rocket, Trash2, AlertTriangle, Send, Twitter, 
-  Youtube, Linkedin, ChevronDown, ChevronRight, Plus, X, Globe, Sliders, Activity, Sparkles, RefreshCw
+  Youtube, Linkedin, ChevronDown, ChevronRight, Plus, X, Globe, Sliders, Activity, Sparkles, RefreshCw, ExternalLink
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
@@ -757,11 +757,11 @@ export default function Connections() {
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); window.open(`https://instagram.com/${settings.connectedInstagramName || ''}`, '_blank'); }}
-                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                   onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
                   onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
-                  Profile
+                  <ExternalLink size={14} /> Profile
                 </button>
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'instagram', name: 'Instagram', username: settings.connectedInstagramName, isAutomationEnabled: settings.instagramAutomationEnabled, color: '#ec4899' })}
@@ -800,11 +800,11 @@ export default function Connections() {
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); window.open(`https://facebook.com/${settings.facebookPageId || settings.connectedFacebookName || ''}`, '_blank'); }}
-                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                   onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
                   onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
-                  Profile
+                  <ExternalLink size={14} /> Profile
                 </button>
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'facebook', name: 'Facebook', username: settings.connectedFacebookName, isAutomationEnabled: settings.facebookAutomationEnabled, color: '#1877f2' })}
@@ -853,11 +853,11 @@ export default function Connections() {
                     const cleanName = name.startsWith('@') ? name.substring(1) : name;
                     window.open(`https://youtube.com/@${cleanName}`, '_blank');
                   }}
-                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                   onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
                   onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
-                  Profile
+                  <ExternalLink size={14} /> Profile
                 </button>
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'youtube', name: 'YouTube', username: settings.connectedYouTubeName || settings.youtubeChannelName, isAutomationEnabled: true, color: '#ff0000' })}
@@ -899,11 +899,11 @@ export default function Connections() {
                     e.stopPropagation(); 
                     window.open(`https://www.linkedin.com`, '_blank'); 
                   }}
-                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                   onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
                   onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
-                  Profile
+                  <ExternalLink size={14} /> Profile
                 </button>
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'linkedin', name: 'LinkedIn', username: settings.connectedLinkedInName, isAutomationEnabled: true, color: '#0077b5' })}
@@ -942,11 +942,11 @@ export default function Connections() {
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); window.open(`https://x.com/${settings.connectedTwitterName || ''}`, '_blank'); }}
-                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                   onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
                   onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
-                  Profile
+                  <ExternalLink size={14} /> Profile
                 </button>
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'twitter', name: 'Twitter/X', username: settings.connectedTwitterName, isAutomationEnabled: true, color: 'var(--text-main)' })}
@@ -985,11 +985,11 @@ export default function Connections() {
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); window.open('https://business.google.com', '_blank'); }}
-                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                   onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
                   onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
-                  Profile
+                  <ExternalLink size={14} /> Profile
                 </button>
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'google-business', name: 'Google Business', username: settings.connectedGoogleBusinessName, isAutomationEnabled: true, color: '#3b82f6' })}
@@ -1030,11 +1030,11 @@ export default function Connections() {
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); window.open(`https://pinterest.com/${settings.connectedPinterestName || ''}`, '_blank'); }}
-                  style={{ flex: 1, padding: '10px', background: 'var(--sidebar-bg)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  style={{ flex: 1, padding: '10px', background: 'var(--sidebar-bg)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                   onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
                   onMouseOut={(e) => e.currentTarget.style.background='var(--sidebar-bg)'}
                 >
-                  Profile
+                  <ExternalLink size={14} /> Profile
                 </button>
               
                           <button onClick={() => setSelectedSettingsPlatform({ id: 'pinterest', name: 'Pinterest', username: settings.connectedPinterestName, isAutomationEnabled: true, color: '#E60023' })}
@@ -1073,11 +1073,11 @@ export default function Connections() {
               <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); window.open(`https://threads.net/@${settings.connectedThreadsName || settings.connectedInstagramName || ''}`, '_blank'); }}
-                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s' }}
+                  style={{ flex: 1, padding: '10px', background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600', transition: 'background 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                   onMouseOver={(e) => e.currentTarget.style.background='var(--border-subtle)'}
                   onMouseOut={(e) => e.currentTarget.style.background='var(--bg-dark)'}
                 >
-                  Profile
+                  <ExternalLink size={14} /> Profile
                 </button>
               
                             <button onClick={() => setSelectedSettingsPlatform({ id: 'threads', name: 'Threads', username: settings.connectedThreadsName, isAutomationEnabled: true, color: 'var(--text-main)' })}
@@ -1729,3 +1729,5 @@ function PinterestIcon({ size = 18, color = 'currentColor' }) {
     </svg>
   );
 }
+
+
