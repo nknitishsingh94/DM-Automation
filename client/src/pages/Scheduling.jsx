@@ -3039,13 +3039,13 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     </button>
                   )}
 
-                  {post.status === 'Published' && post.permalink && (
+                  {(post.status === 'Published' || post.status === 'Posted') && (post.permalink || mediaData?.permalink) && (
                     <button
                       type="button"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        window.open(post.permalink, '_blank');
+                        let link = post.permalink || mediaData?.permalink; if (!link) { if (post.platform === 'instagram') link = 'https://instagram.com/'; else if (post.platform === 'facebook') link = 'https://facebook.com/'; else if (post.platform === 'linkedin') link = 'https://linkedin.com/'; else if (post.platform === 'twitter') link = 'https://twitter.com/'; else if (post.platform === 'pinterest') link = 'https://pinterest.com/'; else link = '#'; } if(link !== '#') window.open(link, '_blank');
                       }}
                       style={{
                         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
@@ -3673,3 +3673,4 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
     </div>
   );
 }
+
