@@ -1696,9 +1696,15 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         return true;
                       })()}
                       accept={(() => {
-                        const isMeta = (newPost.platforms || (newPost.platform ? [newPost.platform] : [])).some(p => ['instagram', 'facebook', 'threads', 'twitter'].includes(p));
+                        const selectedPlatforms = newPost.platforms || (newPost.platform ? [newPost.platform] : []);
+                        const isMeta = selectedPlatforms.some(p => ['instagram', 'facebook', 'threads', 'twitter'].includes(p));
+                        const isYouTubeSelected = selectedPlatforms.includes('youtube');
+                        
+                        if (isYouTubeSelected || postType === 'video') {
+                          return 'video/*';
+                        }
+
                         if (isMeta) {
-                          if (postType === 'video') return 'video/*';
                           return 'image/*';
                         }
                         return 'video/*,image/*';
