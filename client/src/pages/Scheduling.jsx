@@ -2833,7 +2833,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               }
             } catch (e) { }
 
-            const rawMediaSource = mediaData.thumbnail || mediaData.localMediaUrl || (mediaData.carouselItems && mediaData.carouselItems.length > 0 ? mediaData.carouselItems[0] : null) || mediaData.mediaUrl;
+            const rawMediaSource = mediaData.thumbnail || mediaData.localMediaUrl || (mediaData.carouselItems && mediaData.carouselItems.length > 0 ? mediaData.carouselItems[0] : null) || mediaData.mediaUrl || (post.mediaUrl && !post.mediaUrl.startsWith('{') ? post.mediaUrl : null);
 
             const rewriteSupabasePublicToProxy = (url) => {
               if (!url || typeof url !== 'string') return url;
@@ -2845,7 +2845,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
             let resolvedMedia = rewriteSupabasePublicToProxy(rawMediaSource);
             const resolvedCarouselItems = (mediaData.carouselItems || []).map(rewriteSupabasePublicToProxy);
 
-            const finalMediaUrl = resolvedMedia && resolvedMedia.startsWith('http')
+            const finalMediaUrl = (resolvedMedia && (resolvedMedia.startsWith('http') || resolvedMedia.startsWith('blob:')))
               ? resolvedMedia
               : (resolvedMedia ? `${API_BASE_URL}${resolvedMedia}` : null);
 

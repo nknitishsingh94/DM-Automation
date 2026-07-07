@@ -102,7 +102,11 @@ export const publishThreadsContent = async (userId, { type, mediaUrl, caption = 
         }
       });
       console.log(`Threads Published Successfully! Post ID: ${publishRes.data.id}`);
-      return publishRes.data;
+      return {
+        status: 'PUBLISHED',
+        id: publishRes.data.id,
+        url: `https://www.threads.net/t/${publishRes.data.id}`
+      };
     } catch (err) {
       const errorMsg = err.response?.data?.error?.message || err.message;
       if (errorMsg.includes('does not exist') || errorMsg.includes('not ready')) {
