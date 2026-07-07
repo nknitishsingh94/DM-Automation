@@ -1501,7 +1501,13 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         </div>
 
                         <div
-                          onClick={() => setPostType('carousel')}
+                          onClick={() => {
+                            if ((newPost.platforms || (newPost.platform ? [newPost.platform] : [])).includes('youtube')) {
+                              notify("YouTube only supports Video posts. YouTube has been deselected.", "error");
+                              setNewPost(prev => ({ ...prev, platforms: (prev.platforms || (prev.platform ? [prev.platform] : [])).filter(p => p !== 'youtube') }));
+                            }
+                            setPostType('carousel');
+                          }}
                           style={{
                             padding: '16px 12px', borderRadius: '12px',
                             background: postType === 'carousel' ? '#eef2ff' : 'var(--sidebar-bg)',
@@ -2433,6 +2439,10 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                             setNewPost(prev => {
                               const current = prev.platforms || (prev.platform ? [prev.platform] : []);
                               const isNowSelected = !current.includes(plat.id);
+                              if (isNowSelected && plat.id === 'youtube' && postType !== 'video') {
+                                notify("YouTube only supports Video posts. Image is not allowed.", "error");
+                                return prev;
+                              }
                               const newPlatforms = isNowSelected
                                 ? [...current, plat.id]
                                 : current.filter(p => p !== plat.id);
