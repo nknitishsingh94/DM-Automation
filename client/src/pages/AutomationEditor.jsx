@@ -36,7 +36,8 @@ import {
   Phone,
   Video,
   Check,
-  AlertTriangle
+  AlertTriangle,
+  PlusSquare
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
@@ -64,6 +65,7 @@ export default function AutomationEditor() {
   const [openingMessage, setOpeningMessage] = useState(false);
   const [openingMessageText, setOpeningMessageText] = useState("Hey there! Thanks for your interest. 👇");
   const [openingMessageButton, setOpeningMessageButton] = useState("Send me the link!");
+  const [carouselItems, setCarouselItems] = useState([]);
   const [requireFollow, setRequireFollow] = useState(true);
   const [unfollowedMessage, setUnfollowedMessage] = useState("Hey! To get the link, please follow our page first! 😊");
   const [submitting, setSubmitting] = useState(false);
@@ -274,6 +276,18 @@ export default function AutomationEditor() {
             setOpeningMessageButton(data.openingMessageButton || "Send me the link!");
             setRequireFollow(data.requireFollow || false);
             setUnfollowedMessage(data.unfollowedResponse || "Hey! To get the link, please follow our page first! 😊");
+
+            if (data.mediaUrl) {
+              try {
+                const parsedMedia = JSON.parse(data.mediaUrl);
+                if (parsedMedia.items) {
+                  setCarouselItems(parsedMedia.items);
+                }
+              } catch (e) {
+                // ignore
+              }
+            };
+            setUnfollowedMessage(data.unfollowedResponse || "Hey! To get the link, please follow our page first! 😊");
             setSelectedPlatform(data.platform || 'all');
             setPublicReply(data.publicReplyText || '');
             if (data.triggerOnDms !== undefined) setTriggerOnDms(data.triggerOnDms);
@@ -473,6 +487,7 @@ export default function AutomationEditor() {
           triggerOnStories,
           isUniversal: isUniversal,
           isAI: isAI,
+          mediaUrl: template === 'send_affiliate_links' && carouselItems.length > 0 ? JSON.stringify({ type: 'carousel', items: carouselItems }) : '',
           status: 'Active'
         })
       });
@@ -505,8 +520,22 @@ export default function AutomationEditor() {
       <div className="editor-layout">
         {/* Left Side: Preview (Fixed) */}
         <div className="editor-preview">
-          <div style={{ color: 'var(--text-muted)', fontWeight: '700', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
-            <Smartphone size={18} /> Preview Automation
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div style={{ color: 'var(--text-muted)', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
+              <Smartphone size={18} /> Preview Automation
+            </div>
+            <button 
+              onClick={() => {
+                if (!isEditMode && template) {
+                  navigate(-1);
+                } else {
+                  navigate(`/campaigns?platform=${selectedPlatform}`);
+                }
+              }} 
+              style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+               <ArrowLeft size={22} />
+            </button>
           </div>
           
           {/* Phone Frame - Scaled down for better fit */}
@@ -882,8 +911,41 @@ export default function AutomationEditor() {
                     </>
                   )}
 
-                  {/* AI Response Card (Generic Template) */}
-                  {isAI ? (
+                  {/* Affiliate Products Carousel Preview */}
+                  {template === 'send_affiliate_links' && carouselItems.length > 0 ? (
+                    <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px', maxWidth: '100%' }}>
+                      {carouselItems.map((item, idx) => (
+                        <div key={idx} style={{ 
+                          minWidth: '200px', 
+                          background: '#262626', 
+                          borderRadius: '12px', 
+                          overflow: 'hidden',
+                          flexShrink: 0
+                        }}>
+                          {item.imageUrl ? (
+                            <div style={{ width: '100%', height: '120px', backgroundImage: `url(${item.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+                          ) : (
+                            <div style={{ width: '100%', height: '120px', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>No Image</div>
+                          )}
+                          <div style={{ padding: '12px' }}>
+                            <div style={{ color: 'white', fontWeight: '800', fontSize: '0.85rem', marginBottom: '4px' }}>{item.title || 'Product Title'}</div>
+                            <div style={{ color: '#a3a3a3', fontSize: '0.75rem', marginBottom: '12px' }}>{item.subtitle || 'Product Description'}</div>
+                            <div style={{ 
+                              background: '#333', 
+                              color: 'white', 
+                              padding: '8px', 
+                              borderRadius: '8px', 
+                              fontSize: '0.75rem', 
+                              fontWeight: '800',
+                              textAlign: 'center'
+                            }}>
+                              {item.buttonText || 'Buy Now'}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : isAI ? (
                     <div style={{ alignSelf: 'flex-start', maxWidth: '85%' }}>
                       <div style={{ 
                         background: 'linear-gradient(135deg, #1e1b4b, #2e1065)', 
@@ -989,20 +1051,6 @@ export default function AutomationEditor() {
             
             {/* Navigation & Automation Name */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '32px', position: 'relative', zIndex: 1 }}>
-              <button 
-                onClick={() => {
-                  if (!isEditMode && template) {
-                    navigate(-1);
-                  } else {
-                    navigate(`/campaigns?platform=${selectedPlatform}`);
-                  }
-                }} 
-                onMouseEnter={(e) => { e.target.style.background = 'var(--bg-dark)'; e.target.style.transform = 'translateX(-4px)'; }}
-                onMouseLeave={(e) => { e.target.style.background = 'var(--bg-card)'; e.target.style.transform = 'translateX(0)'; }}
-                style={{ background: 'var(--bg-card)', border: '1.5px solid #e2e8f0', borderRadius: '16px', padding: '12px', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}
-              >
-                 <ArrowLeft size={22} />
-              </button>
               <input 
                 type="text" 
                 value={name}
@@ -1617,6 +1665,43 @@ export default function AutomationEditor() {
                       }}
                     />
                     <CheckCircle2 size={16} color='var(--accent-color)' style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                  </div>
+                </div>
+              )}
+
+              {/* Affiliate Product Carousel Builder (Only for send_affiliate_links) */}
+              {template === 'send_affiliate_links' && (
+                <div style={{ marginTop: '24px', padding: '16px', background: '#faf5ff', borderRadius: '16px', border: '1px solid #e9d5ff' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <div style={{ fontWeight: '900', color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Affiliate Products (Carousel)</div>
+                    <button
+                      onClick={() => setCarouselItems([...carouselItems, { imageUrl: '', title: '', subtitle: '', url: '', buttonText: 'Buy Now' }])}
+                      style={{ background: '#f5f3ff', color: 'var(--accent-color)', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem' }}
+                    >
+                      <PlusSquare size={16} /> Add Product
+                    </button>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {carouselItems.map((item, idx) => (
+                      <div key={idx} style={{ background: 'var(--bg-card)', padding: '16px', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                          <span style={{ fontWeight: '800', fontSize: '0.85rem' }}>Card {idx + 1}</span>
+                          <Trash2 size={16} onClick={() => setCarouselItems(carouselItems.filter((_, i) => i !== idx))} style={{ cursor: 'pointer', color: '#ef4444' }} />
+                        </div>
+                        <input placeholder="Image URL (e.g. https://example.com/image.jpg)" value={item.imageUrl} onChange={e => { const newItems = [...carouselItems]; newItems[idx].imageUrl = e.target.value; setCarouselItems(newItems); }} style={{ width: '100%', padding: '8px', marginBottom: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
+                        <input placeholder="Product Title (e.g. Wireless Headphones)" value={item.title} onChange={e => { const newItems = [...carouselItems]; newItems[idx].title = e.target.value; setCarouselItems(newItems); }} style={{ width: '100%', padding: '8px', marginBottom: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
+                        <input placeholder="Price & Description (e.g. $49.99 - Great sound!)" value={item.subtitle} onChange={e => { const newItems = [...carouselItems]; newItems[idx].subtitle = e.target.value; setCarouselItems(newItems); }} style={{ width: '100%', padding: '8px', marginBottom: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <input placeholder="Button Text" value={item.buttonText} onChange={e => { const newItems = [...carouselItems]; newItems[idx].buttonText = e.target.value; setCarouselItems(newItems); }} style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
+                          <input placeholder="Affiliate URL (e.g. https://amazon.com/...)" value={item.url} onChange={e => { const newItems = [...carouselItems]; newItems[idx].url = e.target.value; setCarouselItems(newItems); }} style={{ flex: 2, padding: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
+                        </div>
+                      </div>
+                    ))}
+                    {carouselItems.length === 0 && (
+                      <div style={{ padding: '24px', textAlign: 'center', color: '#94a3b8', fontSize: '0.85rem', background: 'var(--bg-card)', borderRadius: '12px', border: '1.5px dashed #cbd5e1' }}>
+                        No products added yet.<br />Click "Add Product" to build your carousel.
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
