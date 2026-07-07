@@ -1496,158 +1496,162 @@ export default function AutomationEditor() {
               onClick={() => setPreviewMode('dm')}
               style={{ marginBottom: '24px', cursor: 'pointer' }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>4</div>
-                <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Send a DM</h3>
-              </div>
-              
-              <div style={{ 
-                padding: '18px 22px', 
-                borderRadius: '12px', 
-                background: 'var(--bg-card)', 
-                border: '1px solid #7c3aed',
-                boxShadow: '0 2px 10px rgba(124, 58, 237, 0.05)',
-                marginBottom: '12px'
-              }}>
-                {/* AI Toggle Section */}
-                <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center', 
-                  marginBottom: '18px', 
-                  paddingBottom: '14px', 
-                  borderBottom: '1px solid var(--border-subtle)' 
-                }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800', color: 'var(--accent-color)', fontSize: '0.85rem' }}>
-                      <Sparkles size={14} style={{ color: 'var(--accent-color)' }} />
-                      <span>AI Neural Studio Reply</span>
-                    </div>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Let our AI Agent reply dynamically to DMs</span>
-                  </div>
-                  <div 
-                    onClick={() => {
-                      const nextIsAi = !isAI;
-                      setIsAI(nextIsAi);
-                      if (nextIsAi && !message) {
-                        setMessage("[AI Agent will generate a custom neural reply here]");
-                      } else if (!nextIsAi && message === "[AI Agent will generate a custom neural reply here]") {
-                        setMessage("");
-                      }
-                    }}
-                    style={{ 
-                      width: '40px', height: '22px', borderRadius: '11px', background: isAI ? 'linear-gradient(135deg, #7c3aed, #0ea5e9)' : 'var(--border-subtle)', 
-                      position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
-                    }}
-                  >
-                    <div style={{ 
-                      width: '16px', height: '16px', borderRadius: '50%', background: 'var(--bg-card)', 
-                      position: 'absolute', top: '3px', left: isAI ? '21px' : '3px', transition: 'all 0.3s' 
-                    }}></div>
-                  </div>
-                </div>
-
-                {!isAI ? (
-                  <>
-                    <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#4338ca', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                       <Send size={12} /> DM Response Text
-                    </div>
-                    <textarea 
-                      placeholder="Enter your final message here... (e.g. Here is your link!)"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      style={{ 
-                        width: '100%', height: '80px', padding: '12px', borderRadius: '10px', border: '1px solid var(--border-subtle)', 
-                        outline: 'none', fontSize: '0.85rem', resize: 'none', marginBottom: '4px', lineHeight: '1.4',
-                        background: '#fcfaff'
-                      }}
-                    ></textarea>
-                    <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textAlign: 'right', marginBottom: '12px' }}>{message.length}/1000 characters</div>
-                  </>
-                ) : (
-                  <div style={{ 
-                    padding: '14px', 
-                    borderRadius: '10px', 
-                    background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.04), rgba(14, 165, 233, 0.04))', 
-                    border: '1px dashed #7c3aed', 
-                    marginBottom: '16px' 
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                      <Brain size={16} color='var(--accent-color)' />
-                      <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--accent-color)' }}>AI Neural Responder Active</span>
-                    </div>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>
-                      The AI Agent will use your AI Neural Studio profile/knowledge base to reply dynamically. 
-                      If AI is offline, it will fall back to:
-                    </p>
-                    <textarea 
-                      placeholder="Enter fallback message..."
-                      value={message === "[AI Agent will generate a custom neural reply here]" ? "" : message}
-                      onChange={(e) => setMessage(e.target.value || "[AI Agent will generate a custom neural reply here]")}
-                      style={{ 
-                        width: '100%', height: '60px', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-subtle)', 
-                        outline: 'none', fontSize: '0.8rem', resize: 'none', marginTop: '8px', lineHeight: '1.4', background: 'var(--bg-card)'
-                      }}
-                    ></textarea>
-                  </div>
-                )}
-
-                {/* Link Section Inside Box */}
-                <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '14px' }}>
-                  <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#4338ca', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <LinkIcon size={12} /> Link & Call to Action
+              {template !== 'send_affiliate_links' && (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                    <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#1e1b4b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '800' }}>4</div>
+                    <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#1e1b4b', margin: 0 }}>Send a DM</h3>
                   </div>
                   
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {buttons.map((btn, idx) => (
-                      <div key={idx} style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'space-between',
-                        padding: '10px 14px',
-                        background: 'var(--sidebar-bg)',
-                        border: '1px solid var(--border-subtle)',
-                        borderRadius: '10px'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <LinkIcon size={14} color='var(--accent-color)' />
-                          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#1e1b4b' }}>{btn.text}</span>
+                  <div style={{ 
+                    padding: '18px 22px', 
+                    borderRadius: '12px', 
+                    background: 'var(--bg-card)', 
+                    border: '1px solid #7c3aed',
+                    boxShadow: '0 2px 10px rgba(124, 58, 237, 0.05)',
+                    marginBottom: '12px'
+                  }}>
+                    {/* AI Toggle Section */}
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center', 
+                      marginBottom: '18px', 
+                      paddingBottom: '14px', 
+                      borderBottom: '1px solid var(--border-subtle)' 
+                    }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800', color: 'var(--accent-color)', fontSize: '0.85rem' }}>
+                          <Sparkles size={14} style={{ color: 'var(--accent-color)' }} />
+                          <span>AI Neural Studio Reply</span>
                         </div>
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                          <Pencil size={14} color="#64748b" style={{ cursor: 'pointer' }} onClick={() => openEditLinkModal(idx)} />
-                          <Trash2 size={14} color="#ef4444" style={{ cursor: 'pointer' }} onClick={() => removeLink(idx)} />
-                        </div>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Let our AI Agent reply dynamically to DMs</span>
                       </div>
-                    ))}
-
-                    {buttons.length < 3 && (
-                      <button 
-                        onClick={openAddLinkModal}
-                        style={{ 
-                          width: '100%',
-                          padding: '10px',
-                          background: 'var(--bg-card)',
-                          border: '1.5px dashed #cbd5e1',
-                          borderRadius: '10px',
-                          color: 'var(--text-muted)',
-                          fontSize: '0.8rem',
-                          fontWeight: '700',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s'
+                      <div 
+                        onClick={() => {
+                          const nextIsAi = !isAI;
+                          setIsAI(nextIsAi);
+                          if (nextIsAi && !message) {
+                            setMessage("[AI Agent will generate a custom neural reply here]");
+                          } else if (!nextIsAi && message === "[AI Agent will generate a custom neural reply here]") {
+                            setMessage("");
+                          }
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--accent-color)'}
-                        onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border-subtle)'}
+                        style={{ 
+                          width: '40px', height: '22px', borderRadius: '11px', background: isAI ? 'linear-gradient(135deg, #7c3aed, #0ea5e9)' : 'var(--border-subtle)', 
+                          position: 'relative', cursor: 'pointer', transition: 'all 0.3s' 
+                        }}
                       >
-                        <Plus size={18} /> Add Link
-                      </button>
+                        <div style={{ 
+                          width: '16px', height: '16px', borderRadius: '50%', background: 'var(--bg-card)', 
+                          position: 'absolute', top: '3px', left: isAI ? '21px' : '3px', transition: 'all 0.3s' 
+                        }}></div>
+                      </div>
+                    </div>
+
+                    {!isAI ? (
+                      <>
+                        <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#4338ca', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                           <Send size={12} /> DM Response Text
+                        </div>
+                        <textarea 
+                          placeholder="Enter your final message here... (e.g. Here is your link!)"
+                          value={message}
+                          onChange={(e) => setMessage(e.target.value)}
+                          style={{ 
+                            width: '100%', height: '80px', padding: '12px', borderRadius: '10px', border: '1px solid var(--border-subtle)', 
+                            outline: 'none', fontSize: '0.85rem', resize: 'none', marginBottom: '4px', lineHeight: '1.4',
+                            background: '#fcfaff'
+                          }}
+                        ></textarea>
+                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textAlign: 'right', marginBottom: '12px' }}>{message.length}/1000 characters</div>
+                      </>
+                    ) : (
+                      <div style={{ 
+                        padding: '14px', 
+                        borderRadius: '10px', 
+                        background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.04), rgba(14, 165, 233, 0.04))', 
+                        border: '1px dashed #7c3aed', 
+                        marginBottom: '16px' 
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                          <Brain size={16} color='var(--accent-color)' />
+                          <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--accent-color)' }}>AI Neural Responder Active</span>
+                        </div>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>
+                          The AI Agent will use your AI Neural Studio profile/knowledge base to reply dynamically. 
+                          If AI is offline, it will fall back to:
+                        </p>
+                        <textarea 
+                          placeholder="Enter fallback message..."
+                          value={message === "[AI Agent will generate a custom neural reply here]" ? "" : message}
+                          onChange={(e) => setMessage(e.target.value || "[AI Agent will generate a custom neural reply here]")}
+                          style={{ 
+                            width: '100%', height: '60px', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-subtle)', 
+                            outline: 'none', fontSize: '0.8rem', resize: 'none', marginTop: '8px', lineHeight: '1.4', background: 'var(--bg-card)'
+                          }}
+                        ></textarea>
+                      </div>
                     )}
+
+                    {/* Link Section Inside Box */}
+                    <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '14px' }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#4338ca', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <LinkIcon size={12} /> Link & Call to Action
+                      </div>
+                      
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {buttons.map((btn, idx) => (
+                          <div key={idx} style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'space-between',
+                            padding: '10px 14px',
+                            background: 'var(--sidebar-bg)',
+                            border: '1px solid var(--border-subtle)',
+                            borderRadius: '10px'
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <LinkIcon size={14} color='var(--accent-color)' />
+                              <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#1e1b4b' }}>{btn.text}</span>
+                            </div>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                              <Pencil size={14} color="#64748b" style={{ cursor: 'pointer' }} onClick={() => openEditLinkModal(idx)} />
+                              <Trash2 size={14} color="#ef4444" style={{ cursor: 'pointer' }} onClick={() => removeLink(idx)} />
+                            </div>
+                          </div>
+                        ))}
+
+                        {buttons.length < 3 && (
+                          <button 
+                            onClick={openAddLinkModal}
+                            style={{ 
+                              width: '100%',
+                              padding: '10px',
+                              background: 'var(--bg-card)',
+                              border: '1.5px dashed #cbd5e1',
+                              borderRadius: '10px',
+                              color: 'var(--text-muted)',
+                              fontSize: '0.8rem',
+                              fontWeight: '700',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '6px',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--accent-color)'}
+                            onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border-subtle)'}
+                          >
+                            <Plus size={18} /> Add Link
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </>
+              )}
             </div>
 
             {/* Advanced Automations (Matching Photo) */}

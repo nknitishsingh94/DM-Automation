@@ -252,7 +252,7 @@ router.post('/webhook', async (req, res) => {
                    finalResponse = "Here is your link! 👇";
                 }
 
-                await sendMessageToInstagram(platform, senderId, finalResponse, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
+                await sendMessageToInstagram(platform, senderId, finalResponse, match.mediaUrl || match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
                 await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
               }
             } catch (err) {
@@ -342,7 +342,7 @@ router.post('/webhook', async (req, res) => {
                    finalResponse = "Here is your link! 👇";
                 }
 
-                await sendMessageToInstagram(platform, senderId, finalResponse, match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
+                await sendMessageToInstagram(platform, senderId, finalResponse, match.mediaUrl || match.videoUrl || match.linkUrl, match.userId, match.buttonText, activeToken, match.buttons);
                 await Campaign.findByIdAndUpdate(campaignId, { $inc: { dmsSent: 1 } });
               }
             } catch (err) {
