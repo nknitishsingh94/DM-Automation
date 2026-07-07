@@ -901,7 +901,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
         caption: payloadBase.caption,
         platform: platObj.id,
         type: currentType,
-        scheduledFor: isPostNow ? '' : convertLocalToUTC(payloadBase.scheduledFor, selectedTimezone),
+        scheduledFor: (isPostNow || immediate) ? '' : convertLocalToUTC(payloadBase.scheduledFor, selectedTimezone),
         mediaUrl: platObj.id === 'linkedin' ? JSON.stringify({
           type: currentType,
           mediaUrl: previewUrl || '',
@@ -2607,7 +2607,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                 transition: 'all 0.2s ease'
               }}
             >
-              {submitting ? 'Scheduling...' : 'Schedule Post'} <Send size={18} />
+              {submitting ? 'Scheduling...' : 'Schedule Post'}
             </button>
           </div>
         </div>
