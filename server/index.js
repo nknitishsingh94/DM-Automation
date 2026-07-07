@@ -2729,7 +2729,7 @@ async function runSchedulingWorker() {
 
         const updatedMediaUrl = JSON.stringify(updatedMetaObj);
 
-        const successUpdatePayload = { status: 'Posted', mediaUrl: updatedMediaUrl };
+        const successUpdatePayload = { status: 'Posted', mediaUrl: updatedMediaUrl, publishedUrl: publishResult?.url };
         if (publishResult && publishResult.warning) {
           successUpdatePayload.lastError = publishResult.warning;
         }
@@ -3207,3 +3207,4 @@ export default app;
 
 
 export { getSharedUserIdsSync, settingsCache, campaignsCache, io, runFlow };
+
