@@ -40,9 +40,14 @@ export const publishThreadsContent = async (userId, { type, mediaUrl, caption = 
       mediaType = 'VIDEO';
     }
 
+    let finalCaption = caption || '';
+    if (finalCaption.length > 500) {
+      finalCaption = finalCaption.substring(0, 497) + '...';
+    }
+
     let containerPayload = {
       media_type: mediaType,
-      text: caption,
+      text: finalCaption,
       access_token: threadsAccessToken
     };
 

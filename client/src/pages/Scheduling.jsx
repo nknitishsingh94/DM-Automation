@@ -3,7 +3,7 @@ import axios from 'axios';
 import {
   Plus, Calendar, Clock, Video, Image as ImageIcon, Send, X, Check, ChevronLeft, ChevronRight,
   ChevronDown, Trash2, Globe, AlertCircle, Info, Sparkles, Zap, Heart, MessageCircle, Home,
-  Instagram, Facebook, Film, Save, Layers, UploadCloud, Loader2, Link as LinkIcon, Pencil, MapPin
+  Instagram, Facebook, Film, Save, Layers, UploadCloud, Loader2, Link as LinkIcon, Pencil, MapPin, ExternalLink
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import { useNotification } from '../App';
@@ -3038,6 +3038,27 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       <Zap size={14} /> <span>Automation</span>
                     </button>
                   )}
+
+                  {post.status === 'Published' && post.permalink && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.open(post.permalink, '_blank');
+                      }}
+                      style={{
+                        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                        padding: '10px 14px', borderRadius: '12px', border: '1px solid #dcfce7',
+                        background: '#dcfce7', color: '#16a34a', fontWeight: '800', cursor: 'pointer',
+                        transition: 'all 0.2s', fontSize: '0.8rem'
+                      }}
+                      title="Open Posted Link"
+                    >
+                      <ExternalLink size={14} /> <span>Open Post</span>
+                    </button>
+                  )}
+
 
                   <button
                     type="button"
