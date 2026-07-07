@@ -23,7 +23,8 @@ import {
   Video,
   Check,
   Camera,
-  Mic
+  Mic,
+  PlusSquare
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../App';
@@ -58,6 +59,7 @@ export default function DmAutomationEditor() {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [editingLinkIndex, setEditingLinkIndex] = useState(null);
   const [tempLinkTitle, setTempLinkTitle] = useState('');
+  const [carouselItems, setCarouselItems] = useState([]);
   const [tempLinkUrl, setTempLinkUrl] = useState('https://');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [isAI, setIsAI] = useState(false);
@@ -108,6 +110,16 @@ export default function DmAutomationEditor() {
             setButtons(data.buttons || []);
             if (data.buttons && data.buttons.length === 0 && data.buttonText && data.linkUrl) {
                 setButtons([{ text: data.buttonText, url: data.linkUrl }]);
+            }
+            if (data.mediaUrl && data.mediaUrl.startsWith('{"type":"carousel"')) {
+              try {
+                const parsedMedia = JSON.parse(data.mediaUrl);
+                if (parsedMedia.items) {
+                  setCarouselItems(parsedMedia.items);
+                }
+              } catch (e) {
+                console.error("Failed to parse carousel items", e);
+              }
             }
             setOpeningMessage(data.openingMessage || false);
             setOpeningMessageText(data.openingMessageText || "Hey there! Thanks for your interest. 👇");
@@ -264,6 +276,7 @@ export default function DmAutomationEditor() {
           isUniversal: isUniversal,
           publicReplyText: publicReplyText,
           isAI: isAI,
+          mediaUrl: template === 'send_affiliate_links' && carouselItems.length > 0 ? JSON.stringify({ type: 'carousel', items: carouselItems }) : '',
           status: 'Active'
         })
       });
@@ -935,26 +948,59 @@ export default function DmAutomationEditor() {
                     </div>
                  )}
                  
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
-                    <div style={{ fontWeight: '900', color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Interactive Elements</div>
-                    <button 
-                      onClick={openAddLinkModal} 
-                      onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 10px -3px rgba(124, 58, 237, 0.15)'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
-                      style={{ background: '#f5f3ff', color: 'var(--accent-color)', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s', fontSize: '0.85rem' }}
-                    >
-                      <LinkIcon size={16} /> Add Call to Action
-                    </button>
-                 </div>
-
-                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
-                    {buttons.map((btn, idx) => (
-                      <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--bg-card)', borderRadius: '12px', border: '1.5px solid #e2e8f0', boxShadow: '0 2px 4px -1px rgba(0,0,0,0.02)' }}>
-                        <span style={{ fontWeight: '800', color: '#1e1b4b', fontSize: '0.9rem' }}>{btn.text}</span>
-                        <Trash2 size={16} onClick={() => setButtons(buttons.filter((_, i) => i !== idx))} style={{ cursor: 'pointer', color: '#ef4444', transition: '0.3s' }} />
-                      </div>
-                    ))}
-                 </div>
+                 {template === 'send_affiliate_links' ? (
+                   <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '16px', marginTop: '16px' }}>
+                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                       <div style={{ fontWeight: '900', color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Affiliate Products (Carousel)</div>
+                       <button
+                         onClick={() => setCarouselItems([...carouselItems, { imageUrl: '', title: '', subtitle: '', url: '', buttonText: 'Buy Now' }])}
+                         style={{ background: '#f5f3ff', color: 'var(--accent-color)', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem' }}
+                       >
+                         <PlusSquare size={14} /> Add Product Card
+                       </button>
+                     </div>
+                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                       {carouselItems.map((item, idx) => (
+                         <div key={idx} style={{ background: 'var(--bg-card)', padding: '16px', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
+                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                             <span style={{ fontWeight: '800', fontSize: '0.85rem' }}>Card {idx + 1}</span>
+                             <Trash2 size={16} onClick={() => setCarouselItems(carouselItems.filter((_, i) => i !== idx))} style={{ cursor: 'pointer', color: '#ef4444' }} />
+                           </div>
+                           <input placeholder="Image URL (🖼️)" value={item.imageUrl} onChange={e => { const newItems = [...carouselItems]; newItems[idx].imageUrl = e.target.value; setCarouselItems(newItems); }} style={{ width: '100%', padding: '8px', marginBottom: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
+                           <input placeholder="Product Title (🏷️)" value={item.title} onChange={e => { const newItems = [...carouselItems]; newItems[idx].title = e.target.value; setCarouselItems(newItems); }} style={{ width: '100%', padding: '8px', marginBottom: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
+                           <input placeholder="Price & Description (💰📝)" value={item.subtitle} onChange={e => { const newItems = [...carouselItems]; newItems[idx].subtitle = e.target.value; setCarouselItems(newItems); }} style={{ width: '100%', padding: '8px', marginBottom: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
+                           <div style={{ display: 'flex', gap: '8px' }}>
+                             <input placeholder="Button Text" value={item.buttonText} onChange={e => { const newItems = [...carouselItems]; newItems[idx].buttonText = e.target.value; setCarouselItems(newItems); }} style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
+                             <input placeholder="Affiliate URL (🔗)" value={item.url} onChange={e => { const newItems = [...carouselItems]; newItems[idx].url = e.target.value; setCarouselItems(newItems); }} style={{ flex: 2, padding: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
+                           </div>
+                         </div>
+                       ))}
+                     </div>
+                   </div>
+                 ) : (
+                   <>
+                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
+                        <div style={{ fontWeight: '900', color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Interactive Elements</div>
+                        <button 
+                          onClick={openAddLinkModal} 
+                          onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 10px -3px rgba(124, 58, 237, 0.15)'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
+                          style={{ background: '#f5f3ff', color: 'var(--accent-color)', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s', fontSize: '0.85rem' }}
+                        >
+                          <LinkIcon size={16} /> Add Call to Action
+                        </button>
+                     </div>
+    
+                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
+                        {buttons.map((btn, idx) => (
+                          <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--bg-card)', borderRadius: '12px', border: '1.5px solid #e2e8f0', boxShadow: '0 2px 4px -1px rgba(0,0,0,0.02)' }}>
+                            <span style={{ fontWeight: '800', color: '#1e1b4b', fontSize: '0.9rem' }}>{btn.text}</span>
+                            <Trash2 size={16} onClick={() => setButtons(buttons.filter((_, i) => i !== idx))} style={{ cursor: 'pointer', color: '#ef4444', transition: '0.3s' }} />
+                          </div>
+                        ))}
+                     </div>
+                   </>
+                 )}
               </div>
            </div>
 

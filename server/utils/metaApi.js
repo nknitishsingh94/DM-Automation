@@ -55,7 +55,58 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
     // Do not aggressively strip buttons for private replies anymore.
     // If Meta rejects the template for a private reply, the try/catch block below will fall back to plain text.
 
-    if (effectiveButtons.length > 0) {
+    let isCarousel = false;
+    let carouselItems = [];
+    if (mediaUrl && mediaUrl.trim().startsWith('{"type":"carousel"')) {
+      try {
+        const parsed = JSON.parse(mediaUrl.trim());
+        if (parsed.items && Array.isArray(parsed.items)) {
+          isCarousel = true;
+          carouselItems = parsed.items;
+        }
+      } catch (e) {
+        console.error("Failed to parse carousel mediaUrl:", e);
+      }
+    }
+
+    if (isCarousel && carouselItems.length > 0) {
+      payload = {
+        recipient,
+        messaging_type: "RESPONSE",
+        message: {
+          attachment: {
+            type: "template",
+            payload: {
+              template_type: "generic",
+              elements: carouselItems.map(item => {
+                let safeUrl = item.url || '';
+                if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
+                  safeUrl = 'https://' + safeUrl;
+                }
+                return {
+                  title: (item.title || "Product").substring(0, 80),
+                  image_url: item.imageUrl || undefined,
+                  subtitle: (item.subtitle || "").substring(0, 80),
+                  default_action: safeUrl ? {
+                    type: "web_url",
+                    url: safeUrl
+                  } : undefined,
+                  buttons: safeUrl ? [{
+                    type: "web_url",
+                    url: safeUrl,
+                    title: (item.buttonText || "Buy Now").substring(0, 20)
+                  }] : undefined
+                };
+              })
+            }
+          }
+        }
+      };
+      
+      // If there's intro text, we should ideally send it as a separate message first,
+      // but Meta API allows sending text OR attachment in one API call.
+      // We will rely on the caller to send the text separately if needed, or we just send the carousel.
+    } else if (effectiveButtons.length > 0) {
       payload = {
         recipient,
         messaging_type: "RESPONSE",
@@ -156,6 +207,18 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
 
     if (payload) {
       try {
+        if (isCarousel && safeText) {
+          const textPayload = {
+            recipient,
+            message: { text: safeText }
+          };
+          if (!isPrivateReply) textPayload.messaging_type = "RESPONSE";
+          try {
+             await axios.post(url, textPayload);
+          } catch(e) {
+             console.error("Failed to send intro text for carousel:", e.message);
+          }
+        }
         await axios.post(url, payload);
       } catch (postError) {
         console.error(`❌ SEND FAIL (${platform}):`, JSON.stringify(postError.response?.data || postError.message, null, 2));
