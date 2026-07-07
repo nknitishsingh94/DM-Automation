@@ -244,6 +244,14 @@ function convertIncoming(doc, tableName) {
         newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_TRIG_TYPE__'.length);
       }
     }
+    if (newDoc.response && newDoc.response.includes('__TRIG_SRC__:')) {
+      const startIdx = newDoc.response.indexOf('__TRIG_SRC__:');
+      const endIdx = newDoc.response.indexOf('__END_TRIG_SRC__');
+      if (startIdx !== -1 && endIdx !== -1) {
+        newDoc.triggerSource = newDoc.response.slice(startIdx + '__TRIG_SRC__:'.length, endIdx);
+        newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_TRIG_SRC__'.length);
+      }
+    }
   }
   if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.user_id) {
@@ -365,9 +373,13 @@ function convertOutgoing(doc, tableName) {
     if (newDoc.triggerType && newDoc.response) {
       newDoc.response = `__TRIG_TYPE__:${newDoc.triggerType}__END_TRIG_TYPE__${newDoc.response}`;
     }
+    if (newDoc.triggerSource && newDoc.response) {
+      newDoc.response = `__TRIG_SRC__:${newDoc.triggerSource}__END_TRIG_SRC__${newDoc.response}`;
+    }
     delete newDoc.name;
     delete newDoc.isAI;
     delete newDoc.triggerType;
+    delete newDoc.triggerSource;
   }
   if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.userId) {

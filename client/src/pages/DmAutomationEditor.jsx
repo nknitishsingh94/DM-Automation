@@ -126,8 +126,13 @@ export default function DmAutomationEditor() {
         }
       };
       fetchCampaign();
+    } else if (id === 'new' && template === 'reply_story_mentions') {
+      setName("Story Mention Auto-Reply");
+      setAnyKeyword(true);
+      setMessage("Hey! Thank you so much for mentioning us in your story! Here is a special 10% discount code: THANKYOU10 🎁");
+      setRequireFollow(false);
     }
-  }, [id, notify]);
+  }, [id, notify, template]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -248,6 +253,8 @@ export default function DmAutomationEditor() {
           platform: selectedPlatform,
           requireFollow: requireFollow,
           unfollowedResponse: unfollowedMessage,
+          triggerSource: template === 'reply_story_mentions' ? 'story_mention' : undefined,
+          publicReplyText: publicReplyText,
           openingMessage: openingMessage,
           openingMessageText: openingMessageText,
           openingMessageButton: openingMessageButton,
