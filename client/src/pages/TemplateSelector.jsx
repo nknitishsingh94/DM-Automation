@@ -28,7 +28,7 @@ export default function TemplateSelector() {
 
     { id: 'sell_reel_comments', category: 'Sales & Offers', title: 'Sell from Reel Comments', desc: 'Match keywords on Reels to send checkout links', icon: 'ShoppingBag' },
     { id: 'send_affiliate_links', category: 'Sales & Offers', title: 'Send Affiliate Links', desc: 'Show product cards and send affiliate links on request', icon: 'Link' },
-    { id: 'sell_from_ads', category: 'Sales & Offers', title: 'Sell from Ads', desc: 'Qualify leads coming from ad clicks and send offers', icon: 'Megaphone' },
+
     { id: 'send_offers_live', category: 'Sales & Offers', title: 'Send Offers During Live', desc: 'Detect purchase intent on live comments and send checkout', icon: 'Tag' },
     { id: 'give_coupons_stories', category: 'Sales & Offers', title: 'Give Coupons in Stories', desc: 'Generate and send coupons for story interactions', icon: 'Ticket' },
     { id: 'dm_course', category: 'Sales & Offers', title: 'DM Your Course', desc: 'Send course details and pricing when users DM COURSE', icon: 'BookOpen' },

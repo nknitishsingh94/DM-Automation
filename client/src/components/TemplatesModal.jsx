@@ -27,7 +27,7 @@ const templatesData = [
   { id: "auto_thank_positive_comments", title: "Auto Thank Positive Comments", desc: "Show appreciation by automatically thanking users who leave positive comments.", type: "Quick Automation" },
   { id: "auto_like_positive_messages", title: "Auto Like Positive Messages", desc: "Automatically like every positive message to show appreciation and boost engagement.", type: "Quick Automation" },
   { id: "reply_story_mentions", title: "Reply to Story Mentions", desc: "Automatically respond when someone mentions you in their story.", type: "Quick Automation" },
-  { id: "sell_from_ads", title: "Sell from Ads", desc: "Convert ad viewers into customers by automatically sending DMs with offers and links.", type: "Flow Builder" },
+
   { id: "get_event_signups", title: "Get Event Signups", desc: "Automatically send event details and registration links to interested users via DMs.", type: "Flow Builder" },
   { id: "hide_negative_comments", title: "Hide Negative Comments", desc: "Automatically hide or filter out negative comments to maintain a positive community.", type: "Flow Builder", ai: true, upgrade: true },
   { id: "grow_ig_from_website", title: "Grow Instagram from Website", desc: "Convert website visitors into Instagram followers by sending follow links via DMs.", type: "Flow Builder" },
