@@ -3610,34 +3610,19 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button
-                onClick={() => deletePost(deleteConfirmId, true)}
-                style={{
-                  width: '100%', padding: '14px',
-                  background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                  color: 'white', border: 'none', borderRadius: '14px',
-                  fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem',
-                  boxShadow: '0 8px 20px rgba(59, 130, 246, 0.3)',
-                  transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(59, 130, 246, 0.4)'; }}
-                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(59, 130, 246, 0.3)'; }}
-              >
-                Delete from Dashboard & Social Media
-              </button>
-              
-              <button
                 onClick={() => deletePost(deleteConfirmId, false)}
                 style={{
                   width: '100%', padding: '14px',
-                  background: 'transparent',
-                  color: '#3b82f6', border: '2px solid #3b82f6', borderRadius: '14px',
+                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  color: 'white', border: 'none', borderRadius: '14px',
                   fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem',
+                  boxShadow: '0 8px 20px rgba(239, 68, 68, 0.3)',
                   transition: 'all 0.2s'
                 }}
-                onMouseOver={(e) => { e.currentTarget.style.background = '#eff6ff'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(239, 68, 68, 0.4)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(239, 68, 68, 0.3)'; }}
               >
-                Delete from Dashboard Only
+                Delete Post
               </button>
 
               <button
