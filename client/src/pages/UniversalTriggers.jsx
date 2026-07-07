@@ -416,10 +416,7 @@ Instructions:
         
         {/* Main Canvas Area */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
-          <div style={{ position: 'absolute', top: 16, left: 16, zIndex: 50, display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)' }}>Workflow Builder</span>
-            <span style={{ background: 'var(--border-subtle)', color: 'var(--text-muted)', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: '700' }}>Draft</span>
-          </div>
+
 
 
           
