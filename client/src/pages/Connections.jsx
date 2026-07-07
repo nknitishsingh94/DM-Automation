@@ -579,11 +579,11 @@ export default function Connections() {
   if (loading) return <LoadingSpinner minHeight="60vh" />;
 
   return (
-    <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', padding: '0 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', padding: '0 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
       
 
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         
         {/* Top-right button portal */}
         {document.getElementById('topbar-actions-portal') && createPortal(
@@ -622,8 +622,8 @@ export default function Connections() {
         justifyContent: 'flex-end', 
         alignItems: 'center', 
         flexWrap: 'wrap', 
-        gap: '16px',
-        padding: '8px 0',
+        gap: '8px',
+        padding: '4px 0',
         borderBottom: '1px solid #f3f4f6',
         position: 'relative'
       }}>
