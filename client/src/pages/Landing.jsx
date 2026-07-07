@@ -329,17 +329,7 @@ export default function Landing() {
             </div>
           </div>
 
-          <div className="feature-row">
-            <div className="phone-mockup-wrapper">
-              <img referrerPolicy="no-referrer" src="/features/ad-mockup.png" alt="Auto-Reply to Sponsored Ad Comments" />
-            </div>
-            <div className="feature-text-content">
-              <h3>Maximize Ad ROI</h3>
-              <p>
-                Don't let expensive ad clicks go to waste. Instantly capture intent by automatically DMing users who comment on your sponsored Facebook and Instagram Ads.
-              </p>
-            </div>
-          </div>
+
         </div>
 
 
