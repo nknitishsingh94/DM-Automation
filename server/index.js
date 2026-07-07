@@ -1242,6 +1242,7 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
       }
 
       // If they were directly saved to postId
+      if (postToDelete.platform === 'instagram' && fbId) { igMediaId = fbId; fbId = null; }
       if (postToDelete.platform === 'threads' && fbId) { threadsId = fbId; fbId = null; }
       if (postToDelete.platform === 'google-business' && fbId) { gmbId = fbId; fbId = null; }
       if (postToDelete.platform === 'linkedin' && fbId) { linkedinId = fbId; fbId = null; }
