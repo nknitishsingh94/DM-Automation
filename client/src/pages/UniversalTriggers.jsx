@@ -403,18 +403,11 @@ Instructions:
             <List size={16} /> My Triggers
           </button>
           <button 
-            onClick={handleTest}
-            disabled={isTesting}
-            style={{ padding: '8px 16px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: '#4f46e5', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: isTesting ? 'wait' : 'pointer', opacity: isTesting ? 0.7 : 1 }}
-          >
-            <TestTube size={16} /> {isTesting ? 'Testing...' : 'Test Workflow'}
-          </button>
-          <button 
             onClick={handlePublish}
             disabled={isPublishing}
             style={{ padding: '8px 24px', background: '#4f46e5', border: 'none', borderRadius: '8px', color: 'white', fontWeight: '600', fontSize: '13px', cursor: isPublishing ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px', opacity: isPublishing ? 0.7 : 1 }}
           >
-            <Send size={16} /> {isPublishing ? 'Publishing...' : 'Publish'}
+            <Zap size={16} /> {isPublishing ? 'Going Live...' : 'Go Live'}
           </button>
         </div>
       </div>
