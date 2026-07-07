@@ -778,6 +778,42 @@ export default function AutomationEditor() {
                         </div>
                       )}
 
+                      {/* Affiliate Products Carousel Preview (WhatsApp) */}
+                      {template === 'send_affiliate_links' && carouselItems.length > 0 && (
+                        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px', maxWidth: '100%' }}>
+                          {carouselItems.map((item, idx) => (
+                            <div key={idx} style={{ 
+                              minWidth: '200px', 
+                              background: 'var(--bg-card)', 
+                              borderRadius: '12px', 
+                              overflow: 'hidden',
+                              flexShrink: 0,
+                              boxShadow: '0 1px 1px rgba(0,0,0,0.1)'
+                            }}>
+                              {item.imageUrl ? (
+                                <div style={{ width: '100%', height: '120px', backgroundImage: `url(${item.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+                              ) : (
+                                <div style={{ width: '100%', height: '120px', background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>No Image</div>
+                              )}
+                              <div style={{ padding: '12px' }}>
+                                <div style={{ color: '#111b21', fontWeight: '800', fontSize: '0.85rem', marginBottom: '12px' }}>{item.title || 'Product Title'}</div>
+                                <div style={{ 
+                                  background: '#f0f2f5', 
+                                  color: '#00a884', 
+                                  padding: '8px', 
+                                  borderRadius: '8px', 
+                                  fontSize: '0.75rem', 
+                                  fontWeight: '800',
+                                  textAlign: 'center'
+                                }}>
+                                  {item.buttonText || 'Buy Now'}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
                       {/* AI Response Card */}
                       {isAI ? (
                         <div style={{ alignSelf: 'flex-start', maxWidth: '80%', background: 'var(--bg-card)', padding: '6px 8px 6px 12px', borderRadius: '0 8px 8px 8px', fontSize: '0.85rem', color: '#111b21', boxShadow: '0 1px 1px rgba(0,0,0,0.1)', position: 'relative' }}>
@@ -928,8 +964,7 @@ export default function AutomationEditor() {
                             <div style={{ width: '100%', height: '120px', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>No Image</div>
                           )}
                           <div style={{ padding: '12px' }}>
-                            <div style={{ color: 'white', fontWeight: '800', fontSize: '0.85rem', marginBottom: '4px' }}>{item.title || 'Product Title'}</div>
-                            <div style={{ color: '#a3a3a3', fontSize: '0.75rem', marginBottom: '12px' }}>{item.subtitle || 'Product Description'}</div>
+                            <div style={{ color: 'white', fontWeight: '800', fontSize: '0.85rem', marginBottom: '12px' }}>{item.title || 'Product Title'}</div>
                             <div style={{ 
                               background: '#333', 
                               color: 'white', 
@@ -1688,9 +1723,38 @@ export default function AutomationEditor() {
                           <span style={{ fontWeight: '800', fontSize: '0.85rem' }}>Card {idx + 1}</span>
                           <Trash2 size={16} onClick={() => setCarouselItems(carouselItems.filter((_, i) => i !== idx))} style={{ cursor: 'pointer', color: '#ef4444' }} />
                         </div>
-                        <input placeholder="Image URL (e.g. https://example.com/image.jpg)" value={item.imageUrl} onChange={e => { const newItems = [...carouselItems]; newItems[idx].imageUrl = e.target.value; setCarouselItems(newItems); }} style={{ width: '100%', padding: '8px', marginBottom: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
-                        <input placeholder="Product Title (e.g. Wireless Headphones)" value={item.title} onChange={e => { const newItems = [...carouselItems]; newItems[idx].title = e.target.value; setCarouselItems(newItems); }} style={{ width: '100%', padding: '8px', marginBottom: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
-                        <input placeholder="Price & Description (e.g. $49.99 - Great sound!)" value={item.subtitle} onChange={e => { const newItems = [...carouselItems]; newItems[idx].subtitle = e.target.value; setCarouselItems(newItems); }} style={{ width: '100%', padding: '8px', marginBottom: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
+                        <label style={{ 
+                          display: 'block', 
+                          width: '100%', 
+                          height: '160px', 
+                          border: '2px dashed #cbd5e1', 
+                          borderRadius: '8px', 
+                          marginBottom: '12px', 
+                          cursor: 'pointer',
+                          background: item.imageUrl ? `url(${item.imageUrl}) center/cover` : '#f8fafc',
+                          position: 'relative',
+                          overflow: 'hidden'
+                        }}>
+                          {!item.imageUrl && (
+                            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', color: '#64748b' }}>
+                              <ImageIcon size={32} style={{ margin: '0 auto 8px', opacity: 0.5, display: 'block' }} />
+                              <div style={{ fontSize: '0.85rem', fontWeight: '600' }}>Click to select image</div>
+                            </div>
+                          )}
+                          <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (ev) => {
+                                const newItems = [...carouselItems];
+                                newItems[idx].imageUrl = ev.target.result;
+                                setCarouselItems(newItems);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }} />
+                        </label>
+                        <input placeholder="Product Title (e.g. Wireless Headphones)" value={item.title} onChange={e => { const newItems = [...carouselItems]; newItems[idx].title = e.target.value; setCarouselItems(newItems); }} style={{ width: '100%', padding: '10px', marginBottom: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none', fontSize: '0.85rem' }} />
                         <div style={{ display: 'flex', gap: '8px' }}>
                           <input placeholder="Button Text" value={item.buttonText} onChange={e => { const newItems = [...carouselItems]; newItems[idx].buttonText = e.target.value; setCarouselItems(newItems); }} style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
                           <input placeholder="Affiliate URL (e.g. https://amazon.com/...)" value={item.url} onChange={e => { const newItems = [...carouselItems]; newItems[idx].url = e.target.value; setCarouselItems(newItems); }} style={{ flex: 2, padding: '8px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }} />
