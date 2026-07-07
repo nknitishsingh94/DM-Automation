@@ -823,7 +823,9 @@ router.get('/youtube/callback', async (req, res) => {
     updateData.isYouTubeConnected = true;
     updateData.connectedYouTubeName = channelName;
     updateData.youtubeAccessToken = tokens.access_token;
-    updateData.youtubeRefreshToken = tokens.refresh_token || null;
+    if (tokens.refresh_token) {
+      updateData.youtubeRefreshToken = tokens.refresh_token;
+    }
 
     await Settings.findOneAndUpdate(
       connectionsQuery,
@@ -1197,7 +1199,9 @@ router.get('/google-business/callback', async (req, res) => {
     updateData.isGoogleBusinessConnected = true;
     updateData.connectedGoogleBusinessName = businessName;
     updateData.googleBusinessAccessToken = tokens.access_token;
-    updateData.googleBusinessRefreshToken = tokens.refresh_token || null;
+    if (tokens.refresh_token) {
+      updateData.googleBusinessRefreshToken = tokens.refresh_token;
+    }
     if (gmbAccountId) updateData.googleBusinessAccountId = gmbAccountId;
     if (gmbLocationId) updateData.googleBusinessLocationId = gmbLocationId;
 
