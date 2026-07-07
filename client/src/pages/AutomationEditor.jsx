@@ -446,7 +446,7 @@ export default function AutomationEditor() {
       notify('Please add at least one keyword or select "Any keyword"', 'error');
       return;
     }
-    if (!message.trim()) {
+    if (template !== 'send_affiliate_links' && !message.trim()) {
       notify('Please enter a response message', 'error');
       return;
     }
@@ -458,6 +458,58 @@ export default function AutomationEditor() {
 
     setSubmitting(true);
     const token = localStorage.getItem('insta_agent_token');
+
+    // Upload carousel files if they exist
+    let finalCarouselItems = [...carouselItems];
+    if (template === 'send_affiliate_links' && finalCarouselItems.length > 0) {
+      try {
+        for (let i = 0; i < finalCarouselItems.length; i++) {
+          if (finalCarouselItems[i].file) {
+            const file = finalCarouselItems[i].file;
+            // get signed URL
+            const signRes = await fetch(`${API_BASE_URL}/api/storage/sign`, {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({ 
+                fileName: `affiliate-carousel/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`,
+                contentType: file.type
+              })
+            });
+            
+            if (!signRes.ok) {
+                const errText = await signRes.text();
+                throw new Error("Failed to sign url: " + errText);
+            }
+            const signData = await signRes.json();
+            
+            // Upload to Supabase Storage
+            const uploadRes = await fetch(signData.uploadUrl, {
+              method: 'PUT',
+              body: file,
+              headers: {
+                  'Content-Type': file.type,
+                  'Authorization': `Bearer ${signData.token}` 
+              }
+            });
+            
+            if (!uploadRes.ok) {
+                throw new Error("Failed to upload image to Supabase");
+            }
+            
+            finalCarouselItems[i].imageUrl = signData.publicUrl;
+            delete finalCarouselItems[i].file;
+          }
+        }
+      } catch (e) {
+        console.error("Upload error:", e);
+        notify("Failed to upload product images: " + e.message, "error");
+        setSubmitting(false);
+        return;
+      }
+    }
     
     try {
       const url = isEditMode ? `${API_BASE_URL}/api/campaigns/${id}` : `${API_BASE_URL}/api/campaigns`;
@@ -471,7 +523,7 @@ export default function AutomationEditor() {
         body: JSON.stringify({
           name: name,
           trigger: anyKeyword ? '*' : keywords.join(', '),
-          response: message,
+          response: template === 'send_affiliate_links' ? '' : message,
           buttons: buttons,
           postId: selectedContentId || '',
           isAnyPost: anyStory,
@@ -487,7 +539,7 @@ export default function AutomationEditor() {
           triggerOnStories,
           isUniversal: isUniversal,
           isAI: isAI,
-          mediaUrl: template === 'send_affiliate_links' && carouselItems.length > 0 ? JSON.stringify({ type: 'carousel', items: carouselItems }) : '',
+          mediaUrl: template === 'send_affiliate_links' && finalCarouselItems.length > 0 ? JSON.stringify({ type: 'carousel', items: finalCarouselItems }) : '',
           status: 'Active'
         })
       });
@@ -1752,6 +1804,7 @@ export default function AutomationEditor() {
                               reader.onload = (ev) => {
                                 const newItems = [...carouselItems];
                                 newItems[idx].imageUrl = ev.target.result;
+                                newItems[idx].file = file;
                                 setCarouselItems(newItems);
                               };
                               reader.readAsDataURL(file);
