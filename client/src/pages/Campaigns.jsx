@@ -403,7 +403,7 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
       width: '100%',
       maxWidth: '100%', 
       margin: '0',
-      padding: '40px 40px 60px 40px',
+      padding: '0 40px 60px 40px',
       boxSizing: 'border-box'
     }}>
       {/* Page Header */}
@@ -411,11 +411,16 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
-        marginBottom: '32px',
-        paddingBottom: '20px',
+        padding: '24px 0 16px 0',
+        marginBottom: '24px',
         borderBottom: '1px solid var(--border-subtle)',
         flexWrap: 'wrap',
-        gap: '16px'
+        gap: '16px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(8px)'
       }}>
         <div>
           <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-main)', margin: 0, letterSpacing: '-0.02em' }}>Active Automations</h2>
