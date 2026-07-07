@@ -3040,36 +3040,6 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                     </button>
                   )}
 
-                  {(post.status === 'Published' || post.status === 'Posted') && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        let link = post.permalink || post.publishedUrl || mediaData?.permalink || mediaData?.publishedUrl;
-                        if (!link) { 
-                          if (post.platform === 'instagram') link = 'https://instagram.com/'; 
-                          else if (post.platform === 'facebook') link = 'https://facebook.com/'; 
-                          else if (post.platform === 'linkedin') link = 'https://linkedin.com/'; 
-                          else if (post.platform === 'twitter') link = 'https://twitter.com/'; 
-                          else if (post.platform === 'pinterest') link = 'https://pinterest.com/'; 
-                          else link = '#'; 
-                        } 
-                        if(link !== '#') window.open(link, '_blank');
-                      }}
-                      style={{
-                        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                        padding: '10px 14px', borderRadius: '12px', border: '1px solid #dcfce7',
-                        background: '#dcfce7', color: '#16a34a', fontWeight: '800', cursor: 'pointer',
-                        transition: 'all 0.2s', fontSize: '0.8rem'
-                      }}
-                      title="Open Posted Link"
-                    >
-                      <ExternalLink size={14} /> <span>Open Post</span>
-                    </button>
-                  )}
-
-
                   <button
                     type="button"
                     onClick={(e) => {
