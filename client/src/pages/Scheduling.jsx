@@ -3613,14 +3613,14 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                 onClick={() => deletePost(deleteConfirmId, false)}
                 style={{
                   width: '100%', padding: '14px',
-                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
                   color: 'white', border: 'none', borderRadius: '14px',
                   fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem',
-                  boxShadow: '0 8px 20px rgba(239, 68, 68, 0.3)',
+                  boxShadow: '0 8px 20px rgba(59, 130, 246, 0.3)',
                   transition: 'all 0.2s'
                 }}
-                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(239, 68, 68, 0.4)'; }}
-                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(239, 68, 68, 0.3)'; }}
+                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(59, 130, 246, 0.4)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(59, 130, 246, 0.3)'; }}
               >
                 Delete Post
               </button>
