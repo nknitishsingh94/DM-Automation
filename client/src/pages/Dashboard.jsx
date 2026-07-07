@@ -70,15 +70,25 @@ export default function Dashboard() {
         const isFacebookConnected = !!(settingsData?.isFacebookConnected || (settingsData?.facebookAccessToken && settingsData?.facebookPageId));
         const isYoutubeConnected = !!(settingsData?.isYoutubeConnected || settingsData?.isYouTubeConnected || settingsData?.youtubeAccessToken);
         const isWhatsappConnected = !!(settingsData?.isWhatsAppConnected || settingsData?.whatsappToken);
+        const isLinkedInConnected = !!(settingsData?.isLinkedInConnected || settingsData?.linkedinAccessToken);
+        const isTwitterConnected = !!(settingsData?.isTwitterConnected || settingsData?.twitterAccessToken);
+        const isPinterestConnected = !!(settingsData?.isPinterestConnected || settingsData?.pinterestAccessToken);
+        const isGoogleBusinessConnected = !!(settingsData?.isGoogleBusinessConnected || settingsData?.googleBusinessAccessToken);
+        const isThreadsConnected = !!(settingsData?.isThreadsConnected || settingsData?.threadsAccessToken);
         
         setSetupStatus({
           profileDone: true, 
-          metaDone: isInstagramConnected || isFacebookConnected || isYoutubeConnected || isWhatsappConnected, // Launch readiness setup complete if at least one is connected
+          metaDone: isInstagramConnected || isFacebookConnected || isYoutubeConnected || isWhatsappConnected || isLinkedInConnected || isTwitterConnected || isPinterestConnected || isGoogleBusinessConnected || isThreadsConnected,
           flowDone: Array.isArray(flowsData) && flowsData.length > 0,
           instagramConnected: isInstagramConnected,
           facebookConnected: isFacebookConnected,
           youtubeConnected: isYoutubeConnected,
-          whatsappConnected: isWhatsappConnected
+          whatsappConnected: isWhatsappConnected,
+          linkedinConnected: isLinkedInConnected,
+          twitterConnected: isTwitterConnected,
+          pinterestConnected: isPinterestConnected,
+          googleBusinessConnected: isGoogleBusinessConnected,
+          threadsConnected: isThreadsConnected
         });
 
       } catch (err) {
@@ -320,7 +330,10 @@ export default function Dashboard() {
                 display: 'flex', 
                 flexDirection: 'column', 
                 gap: '8px',
-                marginTop: '4px'
+                marginTop: '4px',
+                maxHeight: '130px',
+                overflowY: 'auto',
+                paddingRight: '8px'
               }}>
                 {!setupStatus.metaDone && (
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
@@ -362,6 +375,51 @@ export default function Dashboard() {
                     <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
                       🟩 WhatsApp Business
+                    </span>
+                    <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
+                  </div>
+                )}
+                {setupStatus.linkedinConnected && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                    <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
+                      👔 LinkedIn Profile
+                    </span>
+                    <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
+                  </div>
+                )}
+                {setupStatus.twitterConnected && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                    <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
+                      🐦 Twitter / X
+                    </span>
+                    <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
+                  </div>
+                )}
+                {setupStatus.pinterestConnected && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                    <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
+                      📌 Pinterest Profile
+                    </span>
+                    <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
+                  </div>
+                )}
+                {setupStatus.googleBusinessConnected && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                    <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
+                      🏪 Google Business
+                    </span>
+                    <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
+                  </div>
+                )}
+                {setupStatus.threadsConnected && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                    <span style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
+                      🧵 Threads Profile
                     </span>
                     <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '700' }}>CONNECTED</span>
                   </div>
