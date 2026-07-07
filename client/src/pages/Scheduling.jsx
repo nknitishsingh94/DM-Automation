@@ -773,7 +773,7 @@ export default function Scheduling() {
     setPreviews(newPreviews);
   };
 
-  const handleAddSubmit = async (e) => {
+  const handleAddSubmit = async (e, immediate = false) => {
     e.preventDefault();
     const token = localStorage.getItem('insta_agent_token');
     if (!token) {
@@ -781,7 +781,7 @@ export default function Scheduling() {
       return;
     }
 
-    if (!newPost.scheduledFor) {
+    if (!newPost.scheduledFor && !immediate && !isPostNow) {
       notify("Please select a date and time", "error");
       return;
     }
@@ -2497,15 +2497,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)', margin: 0 }}>date & time</label>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                        <input 
-                          type="checkbox" 
-                          checked={isPostNow} 
-                          onChange={(e) => setIsPostNow(e.target.checked)} 
-                          style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: '#4f46e5' }}
-                        />
-                        Post Immediately
-                      </label>
+                      
                     </div>
                   <div style={{ position: 'relative' }}>
                     <input
@@ -2602,7 +2594,21 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
               Cancel
             </button>
             <button
-              onClick={handleAddSubmit}
+              onClick={(e) => handleAddSubmit(e, true)}
+              disabled={submitting}
+              style={{
+                background: submitting ? 'var(--text-muted)' : '#10b981',
+                color: 'white', border: 'none', padding: '14px 24px',
+                borderRadius: '12px', fontSize: '1.05rem', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer',
+                display: 'flex', alignItems: 'center', gap: '8px',
+                boxShadow: submitting ? 'none' : '0 4px 15px rgba(16, 185, 129, 0.3)',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              Post Immediately <Send size={18} />
+            </button>
+            <button
+              onClick={(e) => handleAddSubmit(e, false)}
               disabled={submitting}
               style={{
                 background: submitting ? 'var(--text-muted)' : '#3b82f6',
