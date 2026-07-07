@@ -131,7 +131,7 @@ export default function AutomationEditor() {
       } else if (template === 'send_affiliate_links') {
         setName('Affiliate Link Bot');
         setTriggerOnComments(true);
-        setTriggerOnDms(true);
+        setTriggerOnDms(false);
         setPreviewMode('comment');
         setKeywords(['SHOP', 'OUTFIT', 'BUY']);
         setMessage("Hey! I saw you asking about this. Here are the exact links to the items so you can check them out! Happy shopping 🛍️👇");
