@@ -1614,6 +1614,41 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         </button>
                       </div>
                     </div>
+                    {showAiPrompt && (
+                      <div style={{
+                        marginTop: '12px', padding: '16px', background: 'var(--bg-card)', 
+                        border: '1.5px solid #d8b4fe', borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(139, 92, 246, 0.1)',
+                        display: 'flex', gap: '8px', alignItems: 'center'
+                      }}>
+                        <input
+                          type="text"
+                          value={aiPromptText}
+                          onChange={(e) => setAiPromptText(e.target.value)}
+                          placeholder="What should the caption be about?"
+                          style={{
+                            flex: 1, padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-subtle)',
+                            background: 'var(--bg-dark)', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none'
+                          }}
+                        />
+                        <button
+                          onClick={() => {
+                             if (!aiPromptText.trim()) return;
+                             handleNewPostAIGenerate('caption', aiPromptText);
+                             setShowAiPrompt(false);
+                             setAiPromptText('');
+                          }}
+                          disabled={newPost.caption === "⏳ AI is thinking..."}
+                          style={{
+                            padding: '10px 16px', background: '#8b5cf6', color: 'white', borderRadius: '8px',
+                            border: 'none', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px'
+                          }}
+                        >
+                          {newPost.caption === "⏳ AI is thinking..." ? <div style={{width: '14px', height: '14px', borderRadius: '50%', border: '2px solid white', borderTopColor: 'transparent', animation: 'spin 1s linear infinite'}} /> : <Sparkles size={14} />}
+                          Send
+                        </button>
+                      </div>
+                    )}
                     {showEmojiPicker && (
                       <div style={{
                         marginTop: '12px',
