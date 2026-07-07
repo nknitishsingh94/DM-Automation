@@ -1271,11 +1271,11 @@ app.delete('/api/scheduling/:id', verifyToken, async (req, res) => {
           }
           
           if (fbId && userSettings?.facebookAccessToken) {
-            await axios.delete(`https://graph.facebook.com/v19.0/${fbId}?access_token=${userSettings.facebookAccessToken}`)
+            await axios.delete(`https://graph.facebook.com/v21.0/${fbId}?access_token=${userSettings.facebookAccessToken}`)
               .catch(e => console.error(`FB fail: ${e.response?.data ? JSON.stringify(e.response.data) : e.message}\n`));
           }
           if (igMediaId && userSettings?.instagramAccessToken) {
-            await axios.delete(`https://graph.facebook.com/v19.0/${igMediaId}?access_token=${userSettings.instagramAccessToken}`)
+            await axios.delete(`https://graph.facebook.com/v21.0/${igMediaId}?access_token=${userSettings.instagramAccessToken}`)
               .catch(e => console.error(`IG fail: ${e.response?.data ? JSON.stringify(e.response.data) : e.message}\n`));
           }
           if (threadsId && userSettings?.threadsAccessToken) {
