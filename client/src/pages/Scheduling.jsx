@@ -259,6 +259,7 @@ export default function Scheduling() {
   const [createdPost, setCreatedPost] = useState(null);
   const [isPlatformDropdownOpen, setIsPlatformDropdownOpen] = useState(false);
   const [isPostNow, setIsPostNow] = useState(false);
+  const [aiPromptModal, setAiPromptModal] = useState({ open: false, field: null, prompt: '', loading: false });
 
 
   const [postStatusFilter, setPostStatusFilter] = useState('All posts');
@@ -1571,7 +1572,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                         > 😊
                         </button>
                         <button
-                          onClick={() => handleNewPostAIGenerate('caption', 'Write an engaging and highly converting caption for my social media post. Make it viral, use emojis, and space it out nicely.')}
+                          onClick={() => setAiPromptModal({ open: true, field: 'caption', prompt: '', loading: false })}
                           style={{
                             background: 'none', border: 'none', color: '#8b5cf6', fontWeight: '800', fontSize: '0.8rem',
                             cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 8px', borderRadius: '6px'
@@ -3595,6 +3596,131 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                 Save Button
               </button>
               <button onClick={() => setShowLinkModal(false)} style={{ flex: 1, padding: '16px', background: 'var(--bg-dark)', color: 'var(--text-muted)', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer' }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- AI Prompt Modal --- */}
+      {aiPromptModal.open && (
+        <div
+          onClick={() => !aiPromptModal.loading && setAiPromptModal({ open: false, field: null, prompt: '', loading: false })}
+          style={{
+            position: 'fixed', inset: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(14px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 9999, padding: '20px'
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: 'var(--bg-card)',
+              borderRadius: '28px',
+              padding: '36px 32px',
+              maxWidth: '480px',
+              width: '100%',
+              boxShadow: '0 30px 60px rgba(0,0,0,0.22)',
+              animation: 'modalSlideUp 0.25s ease-out'
+            }}
+          >
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '42px', height: '42px', borderRadius: '14px',
+                  background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 6px 16px rgba(139,92,246,0.35)'
+                }}>
+                  <Sparkles size={20} color="white" />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: '900', color: 'var(--text-main)' }}>AI Caption Generator</h3>
+                  <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: '500' }}>Tell AI what to write about</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setAiPromptModal({ open: false, field: null, prompt: '', loading: false })}
+                style={{ background: 'var(--bg-dark)', border: 'none', borderRadius: '10px', padding: '8px', cursor: 'pointer', color: 'var(--text-muted)' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Prompt input */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '10px' }}>
+                Your Prompt / Topic
+              </label>
+              <textarea
+                autoFocus
+                rows={4}
+                value={aiPromptModal.prompt}
+                onChange={(e) => setAiPromptModal(prev => ({ ...prev, prompt: e.target.value }))}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && aiPromptModal.prompt.trim() && !aiPromptModal.loading) {
+                    e.preventDefault();
+                    (async () => {
+                      setAiPromptModal(prev => ({ ...prev, loading: true }));
+                      await handleNewPostAIGenerate(aiPromptModal.field, aiPromptModal.prompt.trim());
+                      setAiPromptModal({ open: false, field: null, prompt: '', loading: false });
+                    })();
+                  }
+                }}
+                placeholder="e.g. Write a viral caption for my new product launch with emojis..."
+                style={{
+                  width: '100%', padding: '16px', borderRadius: '16px',
+                  border: '1.5px solid var(--border-subtle)',
+                  background: 'var(--bg-dark)', color: 'var(--text-main)',
+                  fontSize: '0.95rem', fontWeight: '500', resize: 'vertical',
+                  outline: 'none', boxSizing: 'border-box', lineHeight: '1.5',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#8b5cf6'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--border-subtle)'}
+              />
+              <p style={{ margin: '8px 0 0 0', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                💡 Tip: Be specific for better results. Press <kbd style={{ background: 'var(--bg-dark)', padding: '1px 5px', borderRadius: '4px', fontSize: '0.72rem' }}>Ctrl+Enter</kbd> to generate.
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                disabled={!aiPromptModal.prompt.trim() || aiPromptModal.loading}
+                onClick={async () => {
+                  setAiPromptModal(prev => ({ ...prev, loading: true }));
+                  await handleNewPostAIGenerate(aiPromptModal.field, aiPromptModal.prompt.trim());
+                  setAiPromptModal({ open: false, field: null, prompt: '', loading: false });
+                }}
+                style={{
+                  flex: 2, padding: '15px', borderRadius: '16px',
+                  background: (!aiPromptModal.prompt.trim() || aiPromptModal.loading)
+                    ? 'rgba(139,92,246,0.4)'
+                    : 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
+                  color: 'white', border: 'none', fontWeight: '900',
+                  fontSize: '0.95rem', cursor: (!aiPromptModal.prompt.trim() || aiPromptModal.loading) ? 'not-allowed' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  boxShadow: (!aiPromptModal.prompt.trim() || aiPromptModal.loading) ? 'none' : '0 8px 20px rgba(139,92,246,0.35)',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {aiPromptModal.loading
+                  ? <><span style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid rgba(255,255,255,0.4)', borderTopColor: 'white', animation: 'spin 0.8s linear infinite', display: 'inline-block' }} /> Generating...</>
+                  : <><Sparkles size={16} /> Generate Caption</>
+                }
+              </button>
+              <button
+                onClick={() => setAiPromptModal({ open: false, field: null, prompt: '', loading: false })}
+                style={{
+                  flex: 1, padding: '15px', background: 'var(--bg-dark)', color: 'var(--text-muted)',
+                  border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem'
+                }}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
