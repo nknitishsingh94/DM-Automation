@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, Moon, Sun } from 'lucide-react';
+import { AlertTriangle, Moon, Sun, BookOpen } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { API_BASE_URL } from '../config';
@@ -69,6 +69,30 @@ export default function Settings() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingBottom: '12px' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>Settings</h2>
           
+          <button 
+            onClick={() => window.open(`${API_BASE_URL}/api-docs`, '_blank')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              padding: '8px 12px',
+              borderRadius: '12px',
+              border: 'none',
+              background: 'rgba(59, 130, 246, 0.1)',
+              color: '#3b82f6',
+              cursor: 'pointer',
+              fontSize: '0.8rem',
+              fontWeight: '700',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.2)'}
+            onMouseOut={(e) => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.1)'}
+          >
+            <BookOpen size={16} />
+            API Docs
+          </button>
+
           <button 
             onClick={toggleTheme}
             style={{
