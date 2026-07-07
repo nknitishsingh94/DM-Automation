@@ -274,7 +274,6 @@ export default function DmAutomationEditor() {
           triggerOnComments: true,
           triggerOnStories: true,
           isUniversal: isUniversal,
-          publicReplyText: publicReplyText,
           isAI: isAI,
           mediaUrl: template === 'send_affiliate_links' && carouselItems.length > 0 ? JSON.stringify({ type: 'carousel', items: carouselItems }) : '',
           status: 'Active'

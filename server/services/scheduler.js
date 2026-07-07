@@ -271,7 +271,8 @@ export async function runSchedulingWorker() {
           const finalLiveUrl = result.url || post.mediaUrl;
           await safeUpdate(post.id, { 
             status: 'Posted', 
-            publishedAt: new Date().toISOString() 
+            publishedAt: new Date().toISOString(),
+            mediaUrl: JSON.stringify({ ...JSON.parse(post.mediaUrl && post.mediaUrl.startsWith('{') ? post.mediaUrl : '{}'), liveUrl: finalLiveUrl, localMediaUrl: post.mediaUrl })
           });
           await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted' });
           console.log(`✅ [Worker] Post ${post._id} published successfully! URL: ${finalLiveUrl}`);

@@ -2083,68 +2083,9 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
                                 People can shop products similar to what's shown in this Pin using visual search.<br/>
                                 Shopping recommendations aren't available for Idea ads and Pins with tagged products or paid partnership label.
-                      </div>
-
-                      {showAiPrompt && (
-                        <div style={{ marginTop: '10px', padding: '12px', background: 'var(--bg-dark)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-                          <textarea
-                            rows={2}
-                            value={aiPromptText}
-                            onChange={(e) => setAiPromptText(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && aiPromptText.trim()) {
-                                e.preventDefault();
-                                handleNewPostAIGenerate('caption', aiPromptText.trim());
-                                setShowAiPrompt(false);
-                                setAiPromptText('');
-                              }
-                            }}
-                            placeholder="Enter your prompt for AI caption..."
-                            style={{
-                              width: '100%', padding: '10px', borderRadius: '8px',
-                              border: '1px solid var(--border-subtle)', background: 'var(--bg-card)',
-                              color: 'var(--text-main)', fontSize: '0.85rem', resize: 'vertical',
-                              outline: 'none', lineHeight: '1.4'
-                            }}
-                          />
-                          <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                            <button
-                              onClick={async () => {
-                                if (aiPromptText.trim()) {
-                                  await handleNewPostAIGenerate('caption', aiPromptText.trim());
-                                  setShowAiPrompt(false);
-                                  setAiPromptText('');
-                                }
-                              }}
-                              style={{
-                                flex: 1, padding: '8px 12px', borderRadius: '8px',
-                                background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
-                                color: 'white', border: 'none', fontWeight: '800', fontSize: '0.8rem',
-                                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px'
-                              }}
-                            >
-                              <Sparkles size={12} /> Generate
-                            </button>
-                            <button
-                              onClick={() => { setShowAiPrompt(false); setAiPromptText(''); }}
-                              style={{
-                                flex: 1, padding: '8px 12px', borderRadius: '8px',
-                                background: 'var(--bg-card)', color: 'var(--text-muted)',
-                                border: '1px solid var(--border-subtle)', fontWeight: '800', fontSize: '0.8rem',
-                                cursor: 'pointer'
-                              }}
-                            >
-                              Cancel
-                            </button>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
                           <div style={{ marginTop: '8px' }}>
                             <div style={{ border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '12px 16px', background: 'var(--sidebar-bg)' }}>
                               <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '4px' }}>Alt Text</label>
@@ -3059,6 +3000,20 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
 
                 {/* Action Buttons */}
                 <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', borderTop: '1px solid var(--border-subtle)', paddingTop: '12px' }}>
+                  {mediaData.liveUrl && (
+                    <button
+                      onClick={() => window.open(mediaData.liveUrl, '_blank')}
+                      style={{
+                        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                        padding: '8px 12px', borderRadius: '10px', border: '1px solid #e2e8f0',
+                        background: 'var(--bg-card)', color: 'var(--text-main)', fontWeight: '700', cursor: 'pointer',
+                        transition: 'all 0.2s', fontSize: '0.75rem'
+                      }}
+                      title="Open posted link in new tab"
+                    >
+                      <ExternalLink size={14} /> <span>Open Post</span>
+                    </button>
+                  )}
                   {post.platform !== 'threads' && post.platform !== 'linkedin' && (
                     <button
                       onClick={() => {
@@ -3090,9 +3045,9 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       }}
                       style={{
                         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                        padding: '10px 14px', borderRadius: '12px', border: '1px solid #eff6ff',
+                        padding: '8px 12px', borderRadius: '10px', border: '1px solid #eff6ff',
                         background: '#eff6ff', color: '#3b82f6', fontWeight: '800', cursor: 'pointer',
-                        transition: 'all 0.2s', fontSize: '0.8rem'
+                        transition: 'all 0.2s', fontSize: '0.75rem'
                       }}
                     >
                       <Zap size={14} /> <span>Automation</span>
