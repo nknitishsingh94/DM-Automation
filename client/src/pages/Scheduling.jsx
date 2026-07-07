@@ -2083,17 +2083,12 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
                                 People can shop products similar to what's shown in this Pin using visual search.<br/>
                                 Shopping recommendations aren't available for Idea ads and Pins with tagged products or paid partnership label.
-                       </div>
-                     </div>
-                              }}
-                            >
-                              Cancel
-                            </button>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       )}
                     </div>
-                          </div>
 
                           <div style={{ marginTop: '8px' }}>
                             <div style={{ border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '12px 16px', background: 'var(--sidebar-bg)' }}>
