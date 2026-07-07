@@ -654,22 +654,7 @@ export default function DmAutomationEditor() {
 
             {/* Section -1: Navigation & Name */}
            <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '10px', position: 'relative', zIndex: 1 }}>
-              {isMobile && (
-                <button 
-                  onClick={() => {
-                    if (!isEditMode && template) {
-                      navigate(`/campaigns?openTemplates=true`);
-                    } else {
-                      navigate(`/campaigns?platform=${selectedPlatform}`);
-                    }
-                  }} 
-                  onMouseEnter={(e) => { e.target.style.background = 'var(--bg-dark)'; e.target.style.transform = 'translateX(-4px)'; }}
-                  onMouseLeave={(e) => { e.target.style.background = 'var(--bg-card)'; e.target.style.transform = 'translateX(0)'; }}
-                  style={{ background: 'var(--bg-card)', border: '1.5px solid #e2e8f0', borderRadius: '16px', padding: '12px', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}
-                >
-                   <ArrowLeft size={22} />
-                </button>
-              )}
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                  <div style={{ position: 'relative' }}>
                     <input 
