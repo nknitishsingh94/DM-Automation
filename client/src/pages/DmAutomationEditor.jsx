@@ -315,8 +315,24 @@ export default function DmAutomationEditor() {
       <div className="editor-layout">
         {/* Left Side: Preview */}
         <div className="editor-preview" style={{ background: 'var(--sidebar-bg)' }}>
-          <div style={{ color: 'var(--text-muted)', fontWeight: '700', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
-            <Smartphone size={18} /> Preview Automation
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+            <button 
+              onClick={() => {
+                if (!isEditMode && template) {
+                  navigate(`/campaigns?openTemplates=true`);
+                } else {
+                  navigate(`/campaigns?platform=${selectedPlatform}`);
+                }
+              }} 
+              onMouseEnter={(e) => { e.target.style.background = '#e2e8f0'; e.target.style.transform = 'translateX(-2px)'; }}
+              onMouseLeave={(e) => { e.target.style.background = 'var(--bg-card)'; e.target.style.transform = 'translateX(0)'; }}
+              style={{ background: 'var(--bg-card)', border: '1.5px solid #e2e8f0', borderRadius: '12px', padding: '8px 12px', cursor: 'pointer', color: '#1e1b4b', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800', transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', fontSize: '0.85rem' }}
+            >
+               <ArrowLeft size={16} /> Back
+            </button>
+            <div style={{ color: 'var(--text-muted)', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <Smartphone size={16} /> Preview
+            </div>
           </div>
           
           {/* iPhone Mockup */}
@@ -636,22 +652,24 @@ export default function DmAutomationEditor() {
              zIndex: 0
            }}></div>
 
-           {/* Section -1: Navigation & Name */}
+            {/* Section -1: Navigation & Name */}
            <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '10px', position: 'relative', zIndex: 1 }}>
-              <button 
-                onClick={() => {
-                  if (!isEditMode && template) {
-                    navigate(`/campaigns?openTemplates=true`);
-                  } else {
-                    navigate(`/campaigns?platform=${selectedPlatform}`);
-                  }
-                }} 
-                onMouseEnter={(e) => { e.target.style.background = 'var(--bg-dark)'; e.target.style.transform = 'translateX(-4px)'; }}
-                onMouseLeave={(e) => { e.target.style.background = 'var(--bg-card)'; e.target.style.transform = 'translateX(0)'; }}
-                style={{ background: 'var(--bg-card)', border: '1.5px solid #e2e8f0', borderRadius: '16px', padding: '12px', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}
-              >
-                 <ArrowLeft size={22} />
-              </button>
+              {isMobile && (
+                <button 
+                  onClick={() => {
+                    if (!isEditMode && template) {
+                      navigate(`/campaigns?openTemplates=true`);
+                    } else {
+                      navigate(`/campaigns?platform=${selectedPlatform}`);
+                    }
+                  }} 
+                  onMouseEnter={(e) => { e.target.style.background = 'var(--bg-dark)'; e.target.style.transform = 'translateX(-4px)'; }}
+                  onMouseLeave={(e) => { e.target.style.background = 'var(--bg-card)'; e.target.style.transform = 'translateX(0)'; }}
+                  style={{ background: 'var(--bg-card)', border: '1.5px solid #e2e8f0', borderRadius: '16px', padding: '12px', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}
+                >
+                   <ArrowLeft size={22} />
+                </button>
+              )}
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                  <div style={{ position: 'relative' }}>
                     <input 
