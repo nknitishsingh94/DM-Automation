@@ -80,7 +80,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
           }
         }
         
-        await sendMessageToInstagram(platform, chatId, match.response, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
+        await sendMessageToInstagram(platform, chatId, match.response, match.mediaUrl || match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
         await Campaign.findByIdAndUpdate(pendingId, { $inc: { dmsSent: 1 } });
         return { pending_triggered: true };
       } else {
@@ -132,7 +132,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
            }
         }
 
-        await sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
+        await sendMessageToInstagram(platform, chatId, finalResponse, match.mediaUrl || match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
         await Campaign.findByIdAndUpdate(pendingId, { $inc: { dmsSent: 1 } });
         return { opening_triggered: true };
       } else {
@@ -159,7 +159,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
           const activeToken = passedToken || (platform === 'facebook' ? (userSettings?.facebookAccessToken || userSettings?.instagramAccessToken) : (userSettings?.instagramAccessToken || userSettings?.facebookAccessToken)) || process.env.META_PAGE_ACCESS_TOKEN;
           
           let finalResponse = match.response;
-          await sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
+          await sendMessageToInstagram(platform, chatId, finalResponse, match.mediaUrl || match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons);
           await Campaign.findByIdAndUpdate(match._id, { $inc: { dmsSent: 1 } });
           return { follow_triggered: true };
         }
@@ -344,7 +344,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
         console.error("AI Flow Gen Error:", aiErr);
       }
     }
-    const dmPromise = sendMessageToInstagram(platform, chatId, finalResponse, match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons, '', commentId);
+    const dmPromise = sendMessageToInstagram(platform, chatId, finalResponse, match.mediaUrl || match.videoUrl || match.linkUrl, userId, match.buttonText, activeToken, match.buttons, '', commentId);
 
     let commentPromise = Promise.resolve(true);
     if (source === 'comment' && commentId) {
