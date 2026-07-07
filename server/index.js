@@ -449,12 +449,21 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
       }
     }
 
-    const newCampaign = new Campaign({
+    const campaignData = {
       ...req.body,
       status: req.body.status || 'Active',
       userId: req.user.userId,
       workspaceId: req.workspaceId
-    });
+    };
+
+    // Remove UI-only fields to prevent Supabase schema errors
+    delete campaignData.isUniversal;
+    delete campaignData.triggerOnDms;
+    delete campaignData.triggerOnComments;
+    delete campaignData.platform;
+    delete campaignData.isAnyPost;
+
+    const newCampaign = new Campaign(campaignData);
     await newCampaign.save();
     refreshGlobalCache(); // Instant Sync
     res.json(newCampaign);
@@ -467,6 +476,14 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
 app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
   try {
     const updateData = { ...req.body };
+    
+    // Remove UI-only fields to prevent Supabase schema errors
+    delete updateData.isUniversal;
+    delete updateData.triggerOnDms;
+    delete updateData.triggerOnComments;
+    delete updateData.platform;
+    delete updateData.isAnyPost;
+
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
     const campaign = await Campaign.findOneAndUpdate(
       { _id: req.params.id, userId: { $in: sharedUserIds }, workspaceId: req.workspaceId },
