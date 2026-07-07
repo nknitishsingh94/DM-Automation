@@ -859,6 +859,15 @@ app.post('/api/scheduling', verifyToken, (req, res, next) => {
     delete postData.youtubeVideoId;
     delete postData.whatsappNumbers;
 
+    if (postData.platforms && Array.isArray(postData.platforms) && postData.platforms.length > 0) {
+      if (!postData.platform) {
+        postData.platform = postData.platforms[0];
+      }
+      delete postData.platforms;
+    } else if (postData.platforms) {
+      delete postData.platforms;
+    }
+
     const newPost = new ScheduledPost(postData);
     try {
       await newPost.save();
