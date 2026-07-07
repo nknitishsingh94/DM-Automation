@@ -300,7 +300,15 @@ function convertIncoming(doc, tableName) {
           newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_T_UNI__'.length);
         }
       }
-  }
+      if (newDoc.response && newDoc.response.includes('__MEDIA__:')) {
+        const startIdx = newDoc.response.indexOf('__MEDIA__:');
+        const endIdx = newDoc.response.indexOf('__END_MEDIA__');
+        if (startIdx !== -1 && endIdx !== -1) {
+          newDoc.mediaUrl = newDoc.response.slice(startIdx + '__MEDIA__:'.length, endIdx);
+          newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_MEDIA__'.length);
+        }
+      }
+    }
   if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.user_id) {
       newDoc.userId = newDoc.user_id;
@@ -442,6 +450,9 @@ function convertOutgoing(doc, tableName) {
     if (newDoc.isUniversal !== undefined && newDoc.isUniversal !== null) {
       newDoc.response = `__T_UNI__:${newDoc.isUniversal}__END_T_UNI__${newDoc.response || ''}`;
     }
+    if (newDoc.mediaUrl) {
+      newDoc.response = `__MEDIA__:${newDoc.mediaUrl}__END_MEDIA__${newDoc.response || ''}`;
+    }
     delete newDoc.name;
     delete newDoc.isAI;
     delete newDoc.triggerType;
@@ -452,6 +463,7 @@ function convertOutgoing(doc, tableName) {
     delete newDoc.triggerOnStories;
     delete newDoc.isAnyPost;
     delete newDoc.isUniversal;
+    delete newDoc.mediaUrl;
   }
   if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.userId) {
