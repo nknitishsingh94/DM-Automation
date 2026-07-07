@@ -252,14 +252,54 @@ function convertIncoming(doc, tableName) {
         newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_TRIG_SRC__'.length);
       }
     }
-    if (newDoc.response && newDoc.response.includes('__PLATFORM__:')) {
-      const startIdx = newDoc.response.indexOf('__PLATFORM__:');
-      const endIdx = newDoc.response.indexOf('__END_PLATFORM__');
-      if (startIdx !== -1 && endIdx !== -1) {
-        newDoc.platform = newDoc.response.slice(startIdx + '__PLATFORM__:'.length, endIdx);
-        newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_PLATFORM__'.length);
+        if (newDoc.response && newDoc.response.includes('__PLATFORM__:')) {
+        const startIdx = newDoc.response.indexOf('__PLATFORM__:');
+        const endIdx = newDoc.response.indexOf('__END_PLATFORM__');
+        if (startIdx !== -1 && endIdx !== -1) {
+          newDoc.platform = newDoc.response.slice(startIdx + '__PLATFORM__:'.length, endIdx);
+          newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_PLATFORM__'.length);
+        }
       }
-    }
+      if (newDoc.response && newDoc.response.includes('__T_COM__:')) {
+        const startIdx = newDoc.response.indexOf('__T_COM__:');
+        const endIdx = newDoc.response.indexOf('__END_T_COM__');
+        if (startIdx !== -1 && endIdx !== -1) {
+          newDoc.triggerOnComments = newDoc.response.slice(startIdx + '__T_COM__:'.length, endIdx) === 'true';
+          newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_T_COM__'.length);
+        }
+      }
+      if (newDoc.response && newDoc.response.includes('__T_DM__:')) {
+        const startIdx = newDoc.response.indexOf('__T_DM__:');
+        const endIdx = newDoc.response.indexOf('__END_T_DM__');
+        if (startIdx !== -1 && endIdx !== -1) {
+          newDoc.triggerOnDms = newDoc.response.slice(startIdx + '__T_DM__:'.length, endIdx) === 'true';
+          newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_T_DM__'.length);
+        }
+      }
+      if (newDoc.response && newDoc.response.includes('__T_STO__:')) {
+        const startIdx = newDoc.response.indexOf('__T_STO__:');
+        const endIdx = newDoc.response.indexOf('__END_T_STO__');
+        if (startIdx !== -1 && endIdx !== -1) {
+          newDoc.triggerOnStories = newDoc.response.slice(startIdx + '__T_STO__:'.length, endIdx) === 'true';
+          newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_T_STO__'.length);
+        }
+      }
+      if (newDoc.response && newDoc.response.includes('__T_ANY__:')) {
+        const startIdx = newDoc.response.indexOf('__T_ANY__:');
+        const endIdx = newDoc.response.indexOf('__END_T_ANY__');
+        if (startIdx !== -1 && endIdx !== -1) {
+          newDoc.isAnyPost = newDoc.response.slice(startIdx + '__T_ANY__:'.length, endIdx) === 'true';
+          newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_T_ANY__'.length);
+        }
+      }
+      if (newDoc.response && newDoc.response.includes('__T_UNI__:')) {
+        const startIdx = newDoc.response.indexOf('__T_UNI__:');
+        const endIdx = newDoc.response.indexOf('__END_T_UNI__');
+        if (startIdx !== -1 && endIdx !== -1) {
+          newDoc.isUniversal = newDoc.response.slice(startIdx + '__T_UNI__:'.length, endIdx) === 'true';
+          newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_T_UNI__'.length);
+        }
+      }
   }
   if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.user_id) {
@@ -387,11 +427,31 @@ function convertOutgoing(doc, tableName) {
     if (newDoc.platform && newDoc.response) {
       newDoc.response = `__PLATFORM__:${newDoc.platform}__END_PLATFORM__${newDoc.response}`;
     }
+    if (newDoc.triggerOnComments !== undefined && newDoc.triggerOnComments !== null) {
+      newDoc.response = `__T_COM__:${newDoc.triggerOnComments}__END_T_COM__${newDoc.response || ''}`;
+    }
+    if (newDoc.triggerOnDms !== undefined && newDoc.triggerOnDms !== null) {
+      newDoc.response = `__T_DM__:${newDoc.triggerOnDms}__END_T_DM__${newDoc.response || ''}`;
+    }
+    if (newDoc.triggerOnStories !== undefined && newDoc.triggerOnStories !== null) {
+      newDoc.response = `__T_STO__:${newDoc.triggerOnStories}__END_T_STO__${newDoc.response || ''}`;
+    }
+    if (newDoc.isAnyPost !== undefined && newDoc.isAnyPost !== null) {
+      newDoc.response = `__T_ANY__:${newDoc.isAnyPost}__END_T_ANY__${newDoc.response || ''}`;
+    }
+    if (newDoc.isUniversal !== undefined && newDoc.isUniversal !== null) {
+      newDoc.response = `__T_UNI__:${newDoc.isUniversal}__END_T_UNI__${newDoc.response || ''}`;
+    }
     delete newDoc.name;
     delete newDoc.isAI;
     delete newDoc.triggerType;
     delete newDoc.triggerSource;
     delete newDoc.platform;
+    delete newDoc.triggerOnComments;
+    delete newDoc.triggerOnDms;
+    delete newDoc.triggerOnStories;
+    delete newDoc.isAnyPost;
+    delete newDoc.isUniversal;
   }
   if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.userId) {
