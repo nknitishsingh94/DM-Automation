@@ -2729,7 +2729,7 @@ async function runSchedulingWorker() {
 
         const updatedMediaUrl = JSON.stringify(updatedMetaObj);
 
-        const successUpdatePayload = { status: 'Posted', mediaUrl: updatedMediaUrl, publishedUrl: publishResult?.url };
+        const successUpdatePayload = { status: 'Posted', mediaUrl: updatedMediaUrl };
         if (publishResult && publishResult.warning) {
           successUpdatePayload.lastError = publishResult.warning;
         }

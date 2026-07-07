@@ -202,11 +202,10 @@ export async function runSchedulingWorker() {
                   const finalLiveUrl = publishRes.url || post.mediaUrl;
                   await safeUpdate(post.id, { 
                     status: 'Posted', 
-                    publishedUrl: finalLiveUrl, 
                     publishedAt: new Date().toISOString(),
                     containerId: null // clear it
                   });
-                  await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted', publishedUrl: finalLiveUrl });
+                  await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted' });
                   console.log(`✅ [Worker] Post ${post._id} published successfully! URL: ${finalLiveUrl}`);
                 }
               } catch (pubErr) {
@@ -272,10 +271,9 @@ export async function runSchedulingWorker() {
           const finalLiveUrl = result.url || post.mediaUrl;
           await safeUpdate(post.id, { 
             status: 'Posted', 
-            publishedUrl: finalLiveUrl, 
             publishedAt: new Date().toISOString() 
           });
-          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted', publishedUrl: finalLiveUrl });
+          await ScheduledPost.findByIdAndUpdate(post._id, { status: 'Posted' });
           console.log(`✅ [Worker] Post ${post._id} published successfully! URL: ${finalLiveUrl}`);
         } 
         else if (result && result.status === 'IG_PROCESSING' && result.containerId) {
