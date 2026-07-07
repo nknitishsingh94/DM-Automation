@@ -252,6 +252,14 @@ function convertIncoming(doc, tableName) {
         newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_TRIG_SRC__'.length);
       }
     }
+    if (newDoc.response && newDoc.response.includes('__PLATFORM__:')) {
+      const startIdx = newDoc.response.indexOf('__PLATFORM__:');
+      const endIdx = newDoc.response.indexOf('__END_PLATFORM__');
+      if (startIdx !== -1 && endIdx !== -1) {
+        newDoc.platform = newDoc.response.slice(startIdx + '__PLATFORM__:'.length, endIdx);
+        newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_PLATFORM__'.length);
+      }
+    }
   }
   if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.user_id) {
@@ -376,10 +384,14 @@ function convertOutgoing(doc, tableName) {
     if (newDoc.triggerSource && newDoc.response) {
       newDoc.response = `__TRIG_SRC__:${newDoc.triggerSource}__END_TRIG_SRC__${newDoc.response}`;
     }
+    if (newDoc.platform && newDoc.response) {
+      newDoc.response = `__PLATFORM__:${newDoc.platform}__END_PLATFORM__${newDoc.response}`;
+    }
     delete newDoc.name;
     delete newDoc.isAI;
     delete newDoc.triggerType;
     delete newDoc.triggerSource;
+    delete newDoc.platform;
   }
   if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.userId) {

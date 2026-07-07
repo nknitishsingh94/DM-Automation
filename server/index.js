@@ -460,7 +460,6 @@ app.post('/api/campaigns', verifyToken, async (req, res) => {
     delete campaignData.isUniversal;
     delete campaignData.triggerOnDms;
     delete campaignData.triggerOnComments;
-    delete campaignData.platform;
     delete campaignData.isAnyPost;
 
     const newCampaign = new Campaign(campaignData);
@@ -481,7 +480,6 @@ app.put('/api/campaigns/:id', verifyToken, async (req, res) => {
     delete updateData.isUniversal;
     delete updateData.triggerOnDms;
     delete updateData.triggerOnComments;
-    delete updateData.platform;
     delete updateData.isAnyPost;
 
     const sharedUserIds = getSharedUserIdsSync(req.user.userId, req.workspaceId);
