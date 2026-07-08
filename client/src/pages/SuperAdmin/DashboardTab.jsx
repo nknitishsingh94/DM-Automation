@@ -93,9 +93,6 @@ export default function DashboardTab() {
               <div style={{ background: stat.bg, padding: '14px', borderRadius: '18px', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.5)' }}>
                 {stat.icon}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#ecfdf5', color: '#047857', padding: '6px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '700', boxShadow: '0 2px 8px rgba(16, 185, 129, 0.15)' }}>
-                <ArrowUpRight size={14} /> +12%
-              </div>
             </div>
             
             <div>
