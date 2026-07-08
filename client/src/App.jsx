@@ -515,10 +515,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                       <Settings size={16} />
                       <span>Platform Settings</span>
                     </NavLink>
-                    <NavLink to="/super-admin/analytics" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
-                      <Activity size={16} />
-                      <span>Analytics</span>
-                    </NavLink>
+
                   </div>
                 )}
                 {location.pathname.startsWith('/super-admin') && (
