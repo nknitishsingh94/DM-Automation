@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon --ignore pricing.json index.js",
+    "dev": "nodemon --ignore pricing.json --ignore platforms.json index.js",
     "seed": "node seed.js",
     "swagger": "node swagger-generate.js && node fix-swagger.js",
     "build": "echo 'No build step required'"
