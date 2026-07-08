@@ -15,7 +15,11 @@ const router = express.Router();
 // Middleware to check if user is the founder
 const isSuperAdmin = async (req, res, next) => {
   try {
-    const user = await User.findById(req.userId);
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(403).json({ message: 'Forbidden. No user identity found.' });
+    }
+    const user = await User.findById(userId);
     if (!user || user.email !== 'nknitishsingh94@gmail.com') {
       return res.status(403).json({ message: 'Forbidden. Super Admin access required.' });
     }
