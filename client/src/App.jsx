@@ -449,7 +449,14 @@ function Sidebar({ isMobileOpen, onClose }) {
             {user?.email === 'nknitishsingh94@gmail.com' && (
               <div className="nav-group">
                 <div
-                  onClick={() => setShowSuperAdminDropdown(!showSuperAdminDropdown)}
+                  onClick={() => {
+                    if (!location.pathname.startsWith('/super-admin')) {
+                      navigate('/super-admin/dashboard');
+                      setShowSuperAdminDropdown(true);
+                    } else {
+                      setShowSuperAdminDropdown(!showSuperAdminDropdown);
+                    }
+                  }}
                   className={`nav-item ${location.pathname.startsWith('/super-admin') ? 'active' : ''}`}
                   style={{ cursor: 'pointer', justifyContent: 'space-between', background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', border: '1px solid rgba(99, 102, 241, 0.2)' }}
                 >
