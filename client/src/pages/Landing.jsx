@@ -19,6 +19,20 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Landing() {
   const [featuresOpen, setFeaturesOpen] = useState(false);
+  const [pricing, setPricing] = useState({ pro_price: 29, enterprise_price: 99 });
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/admin/pricing`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.pro_price) {
+          setPricing({ pro_price: data.pro_price, enterprise_price: data.enterprise_price || 99 });
+        } else if (data.pro && data.pro.price) {
+          setPricing({ pro_price: data.pro.price, enterprise_price: data.enterprise?.price || 99 });
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
@@ -736,7 +750,7 @@ export default function Landing() {
               <div className="pro-badge">Most Popular</div>
               <div className="card-header">
                 <h3>Pro</h3>
-                <div className="price"><span>$</span>29<span>/mo</span></div>
+                <div className="price"><span>$</span>{pricing.pro_price}<span>/mo</span></div>
                 <p>For growing creators and businesses.</p>
               </div>
               <div className="card-features">
@@ -752,9 +766,9 @@ export default function Landing() {
 
             <div className="pricing-card">
               <div className="card-header">
-                <h3>Agency</h3>
-                <div className="price"><span>$</span>39<span>/mo</span></div>
-                <p>For agencies managing multi-accounts.</p>
+                <h3>Enterprise</h3>
+                <div className="price"><span>$</span>{pricing.enterprise_price}<span>/mo</span></div>
+                <p>For high-volume brands and agencies.</p>
               </div>
               <div className="card-features">
                 <ul>

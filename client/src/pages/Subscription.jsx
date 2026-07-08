@@ -10,6 +10,20 @@ export default function Subscription() {
   const [paymentStep, setPaymentStep] = useState('select');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [pricing, setPricing] = useState({ pro_price: 29, enterprise_price: 99 });
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/admin/pricing`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.pro_price) {
+          setPricing({ pro_price: data.pro_price, enterprise_price: data.enterprise_price || 99 });
+        } else if (data.pro && data.pro.price) {
+          setPricing({ pro_price: data.pro.price, enterprise_price: data.enterprise?.price || 99 });
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const handleCopyUPI = () => {
     navigator.clipboard.writeText('8795919866@ybl');
@@ -124,7 +138,7 @@ export default function Subscription() {
               <div className="pro-badge">Most Popular</div>
               <div className="card-header">
                 <h3>Pro</h3>
-                <div className="price"><span>$</span>29<span>/mo</span></div>
+                <div className="price"><span>$</span>{pricing.pro_price}<span>/mo</span></div>
                 <p>For growing creators and businesses.</p>
               </div>
               <div className="card-features">
@@ -141,11 +155,11 @@ export default function Subscription() {
             </div>
 
             {/* Agency Plan */}
-            <div className="pricing-card">
+            <div className="pricing-card enterprise-card">
               <div className="card-header">
-                <h3>Agency</h3>
-                <div className="price"><span>$</span>39<span>/mo</span></div>
-                <p>For agencies managing multi-accounts.</p>
+                <h3>Enterprise</h3>
+                <div className="price"><span>$</span>{pricing.enterprise_price}<span>/mo</span></div>
+                <p>For high-volume brands and agencies.</p>
               </div>
               <div className="card-features">
                 <ul>
@@ -301,11 +315,11 @@ export default function Subscription() {
                     <input style={inputStyle} placeholder="CVV" type="password" />
                   </div>
                   <input style={inputStyle} placeholder="Card Holder Name" />
-                  <button style={{ 
-                    background: 'linear-gradient(135deg, #a855f7, #d946ef)', 
+                  <button onClick={handlePayment} disabled={loading} style={{ 
+                    background: 'var(--primary)', width: '100%', marginBottom: '12px',
                     color: 'white', padding: '14px', borderRadius: '12px', border: 'none', fontWeight: '700', cursor: 'pointer' 
                   }}>
-                    Pay Now ($29)
+                    Pay Now (${pricing.pro_price})
                   </button>
                   <a href={`https://api.whatsapp.com/send?phone=918795919866&text=${getWhatsappMessage('Card')}`} target="_blank" rel="noopener noreferrer" style={{...whatsappButtonStyle, background: 'var(--bg-card)', color: 'var(--text-main)'}}>
                     <MessageCircle size={18} /> Inform via WhatsApp
