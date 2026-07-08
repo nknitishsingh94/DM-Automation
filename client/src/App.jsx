@@ -475,6 +475,10 @@ function Sidebar({ isMobileOpen, onClose }) {
                       <LayoutDashboard size={16} />
                       <span>Dashboard</span>
                     </NavLink>
+                    <NavLink to="/super-admin/platform-settings" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <Settings size={16} />
+                      <span>Platform Settings</span>
+                    </NavLink>
                     <NavLink to="/super-admin/users" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
                       <Users size={16} />
                       <span>Users</span>
@@ -510,10 +514,6 @@ function Sidebar({ isMobileOpen, onClose }) {
                     <NavLink to="/super-admin/payments" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
                       <CreditCard size={16} />
                       <span>Payments & Pricing</span>
-                    </NavLink>
-                    <NavLink to="/super-admin/platform-settings" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
-                      <Settings size={16} />
-                      <span>Platform Settings</span>
                     </NavLink>
 
                   </div>
