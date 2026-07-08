@@ -132,7 +132,7 @@ router.get('/stats', async (req, res) => {
     const userGrowth = months.map((month, idx) => {
       cumulative += monthlyCounts[idx];
       return { name: month, users: cumulative };
-    }).slice(0, new Date().getMonth() + 1);
+    });
 
     // 2. Compute Weekly Platform Activity (past 7 days)
     const sevenDaysAgo = new Date();
