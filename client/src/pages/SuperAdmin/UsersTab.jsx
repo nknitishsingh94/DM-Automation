@@ -134,7 +134,7 @@ export default function UsersTab() {
                       )}
                     </td>
                     <td style={{ padding: '16px 24px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                      {user.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Unknown'}
+                      {(user.created_at || user.createdAt) ? new Date(user.created_at || user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Unknown'}
                     </td>
                     <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                       {user.email !== 'nknitishsingh94@gmail.com' && (
