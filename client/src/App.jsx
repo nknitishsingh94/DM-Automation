@@ -469,9 +469,17 @@ function Sidebar({ isMobileOpen, onClose }) {
                       <Users size={16} />
                       <span>Users</span>
                     </NavLink>
+                    <NavLink to="/super-admin/subscriptions" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <CreditCard size={16} />
+                      <span>Subscriptions</span>
+                    </NavLink>
                     <NavLink to="/super-admin/workspaces" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
                       <Construction size={16} />
                       <span>Workspaces</span>
+                    </NavLink>
+                    <NavLink to="/super-admin/social-accounts" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <Link2 size={16} />
+                      <span>Social Accounts</span>
                     </NavLink>
                   </div>
                 )}

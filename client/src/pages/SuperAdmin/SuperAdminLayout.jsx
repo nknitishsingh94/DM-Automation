@@ -4,6 +4,9 @@ import { Navigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import DashboardTab from './DashboardTab';
 import UsersTab from './UsersTab';
+import WorkspacesTab from './WorkspacesTab';
+import SubscriptionsTab from './SubscriptionsTab';
+import SocialAccountsTab from './SocialAccountsTab';
 
 export default function SuperAdminLayout() {
   const { user } = useAuth();
@@ -22,6 +25,12 @@ export default function SuperAdminLayout() {
         return <DashboardTab />;
       case 'users':
         return <UsersTab />;
+      case 'workspaces':
+        return <WorkspacesTab />;
+      case 'subscriptions':
+        return <SubscriptionsTab />;
+      case 'social-accounts':
+        return <SocialAccountsTab />;
       default:
         return (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-muted)' }}>
