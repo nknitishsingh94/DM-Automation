@@ -2442,16 +2442,19 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                               notify(`Please connect your ${plat.label} account first.`, "info");
                               return;
                             }
+                            
+                            const current = newPost.platforms || (newPost.platform ? [newPost.platform] : []);
+                            const isNowSelected = !current.includes(plat.id);
+
+                            if (isNowSelected && plat.id === 'youtube' && postType !== 'video') {
+                              setPostType('video');
+                            }
+
                             setNewPost(prev => {
-                              const current = prev.platforms || (prev.platform ? [prev.platform] : []);
-                              const isNowSelected = !current.includes(plat.id);
-                              if (isNowSelected && plat.id === 'youtube' && postType !== 'video') {
-                                notify("YouTube only supports Video posts. Image is not allowed.", "error");
-                                return prev;
-                              }
+                              const curr = prev.platforms || (prev.platform ? [prev.platform] : []);
                               const newPlatforms = isNowSelected
-                                ? [...current, plat.id]
-                                : current.filter(p => p !== plat.id);
+                                ? [...curr, plat.id]
+                                : curr.filter(p => p !== plat.id);
                               if (plat.id === 'pinterest' && isNowSelected && pinterestBoards.length === 0) {
                                 fetchPinterestBoards();
                               }
