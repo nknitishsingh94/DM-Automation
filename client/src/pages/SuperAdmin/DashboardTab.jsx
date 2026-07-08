@@ -5,31 +5,14 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
 
-const mockUserGrowth = [
-  { name: 'Jan', users: 400 },
-  { name: 'Feb', users: 800 },
-  { name: 'Mar', users: 1200 },
-  { name: 'Apr', users: 1800 },
-  { name: 'May', users: 2400 },
-  { name: 'Jun', users: 3100 },
-];
-
-const mockActivity = [
-  { name: 'Mon', automations: 4000, posts: 2400 },
-  { name: 'Tue', automations: 3000, posts: 1398 },
-  { name: 'Wed', automations: 2000, posts: 9800 },
-  { name: 'Thu', automations: 2780, posts: 3908 },
-  { name: 'Fri', automations: 1890, posts: 4800 },
-  { name: 'Sat', automations: 2390, posts: 3800 },
-  { name: 'Sun', automations: 3490, posts: 4300 },
-];
-
 export default function DashboardTab() {
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalWorkspaces: 0,
     totalScheduledPosts: 0,
     totalAutomations: 0,
+    userGrowth: [],
+    activity: []
   });
   const [loading, setLoading] = useState(true);
 
@@ -137,7 +120,7 @@ export default function DashboardTab() {
           </div>
           <div style={{ height: '300px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={mockUserGrowth}>
+              <LineChart data={stats.userGrowth || []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
                 <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
@@ -159,7 +142,7 @@ export default function DashboardTab() {
           </div>
           <div style={{ height: '300px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={mockActivity}>
+              <BarChart data={stats.activity || []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
                 <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />

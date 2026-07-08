@@ -6,8 +6,9 @@ import ScheduledPost from '../models/ScheduledPost.js';
 import Flow from '../models/Flow.js';
 import Settings from '../models/Settings.js';
 import Review from '../models/Review.js';
-
 import GlobalConfig from '../models/GlobalConfig.js';
+import PostLog from '../models/PostLog.js';
+import Message from '../models/Message.js';
 
 const router = express.Router();
 
@@ -80,18 +81,87 @@ router.put('/global-platforms', async (req, res) => {
 // GET /api/admin/stats
 router.get('/stats', async (req, res) => {
   try {
-    const [totalUsers, totalWorkspaces, totalScheduledPosts, totalAutomations] = await Promise.all([
+    const [totalUsers, totalWorkspaces, totalScheduledPosts, totalAutomations, allUsers] = await Promise.all([
       User.countDocuments({}),
       Workspace.countDocuments({}),
       ScheduledPost.countDocuments({}),
-      Flow.countDocuments({})
+      Flow.countDocuments({}),
+      User.find({})
     ]);
+
+    // 1. Compute real-time User Growth (YTD)
+    const currentYear = new Date().getFullYear();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    let baseCount = 0;
+    const monthlyCounts = Array(12).fill(0);
+    
+    allUsers.forEach(u => {
+      const dateStr = u.createdAt || u.created_at;
+      if (!dateStr) return;
+      const date = new Date(dateStr);
+      if (date.getFullYear() < currentYear) {
+        baseCount++;
+      } else if (date.getFullYear() === currentYear) {
+        const monthIndex = date.getMonth();
+        monthlyCounts[monthIndex]++;
+      }
+    });
+    
+    let cumulative = baseCount;
+    const userGrowth = months.map((month, idx) => {
+      cumulative += monthlyCounts[idx];
+      return { name: month, users: cumulative };
+    }).slice(0, new Date().getMonth() + 1);
+
+    // 2. Compute Weekly Platform Activity (past 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const [recentMessages, recentPostLogs] = await Promise.all([
+      Message.find({ timestamp: { $gte: sevenDaysAgo } }),
+      PostLog.find({ created_at: { $gte: sevenDaysAgo } })
+    ]);
+
+    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const last7Days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      last7Days.push({
+        dateStr: d.toISOString().split('T')[0],
+        name: daysOfWeek[d.getDay()],
+        automations: 0,
+        posts: 0
+      });
+    }
+
+    recentMessages.forEach(msg => {
+      const dateStr = msg.timestamp ? new Date(msg.timestamp).toISOString().split('T')[0] : '';
+      const day = last7Days.find(d => d.dateStr === dateStr);
+      if (day) {
+        day.automations++;
+      }
+    });
+
+    recentPostLogs.forEach(log => {
+      const dateStr = log.created_at ? new Date(log.created_at).toISOString().split('T')[0] : '';
+      const day = last7Days.find(d => d.dateStr === dateStr);
+      if (day) {
+        day.posts++;
+      }
+    });
+
+    const activity = last7Days.map(({ name, automations, posts }) => ({ name, automations, posts }));
 
     res.json({
       totalUsers,
       totalWorkspaces,
       totalScheduledPosts,
-      totalAutomations
+      totalAutomations,
+      userGrowth,
+      activity
     });
   } catch (error) {
     console.error('Admin Stats Error:', error);
