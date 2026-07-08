@@ -33,6 +33,25 @@ const isSuperAdmin = async (req, res, next) => {
   }
 };
 
+// GET /api/admin/pricing (Publicly accessible so Landing/Subscription pages can read it without a token)
+router.get('/pricing', async (req, res) => {
+  try {
+    const config = await GlobalConfig.findOne({ key: 'pricing' });
+    if (config && config.value) {
+      return res.json(config.value);
+    }
+    // Default fallback
+    return res.json({
+      starter: { price: 29, aiCredits: 500, automations: '5', label: 'Starter', priceId: '' },
+      pro: { price: 99, aiCredits: 2000, automations: 'Unlimited', label: 'Pro', priceId: '' },
+      enterprise: { price: 299, aiCredits: 'Custom', automations: 'Unlimited', label: 'Enterprise', priceId: '' }
+    });
+  } catch (error) {
+    console.error('Admin Pricing Error:', error);
+    res.status(500).json({ message: 'Failed to fetch pricing.' });
+  }
+});
+
 // Protect all admin routes
 router.use(verifyToken);
 
@@ -478,24 +497,6 @@ router.get('/revenue', async (req, res) => {
   }
 });
 
-// GET /api/admin/pricing (Publicly accessible but via settings? We are leaving this as admin for now, but wait, usually pricing is public)
-router.get('/pricing', async (req, res) => {
-  try {
-    const config = await GlobalConfig.findOne({ key: 'pricing' });
-    if (config && config.value) {
-      return res.json(config.value);
-    }
-    // Default fallback
-    return res.json({
-      starter: { price: 29, aiCredits: 500, automations: '5', label: 'Starter', priceId: '' },
-      pro: { price: 99, aiCredits: 2000, automations: 'Unlimited', label: 'Pro', priceId: '' },
-      enterprise: { price: 299, aiCredits: 'Custom', automations: 'Unlimited', label: 'Enterprise', priceId: '' }
-    });
-  } catch (error) {
-    console.error('Admin Pricing Error:', error);
-    res.status(500).json({ message: 'Failed to fetch pricing.' });
-  }
-});
 
 // PUT /api/admin/pricing
 router.put('/pricing', async (req, res) => {
