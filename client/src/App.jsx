@@ -477,85 +477,89 @@ function Sidebar({ isMobileOpen, onClose }) {
                 )}
               </div>
             )}
-            <NavLink to="/connections" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Link2 size={18} />
-              <span>Connections</span>
-            </NavLink>
-            <NavLink to="/scheduling" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Calendar size={18} />
-              <span>Post</span>
-              <span className="sidebar-badge badge-new">HOT</span>
-            </NavLink>
+            {!location.pathname.startsWith('/super-admin') && (
+              <>
+                <NavLink to="/connections" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <Link2 size={18} />
+                  <span>Connections</span>
+                </NavLink>
+                <NavLink to="/scheduling" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <Calendar size={18} />
+                  <span>Post</span>
+                  <span className="sidebar-badge badge-new">HOT</span>
+                </NavLink>
 
-            <div className="nav-group">
-              <div
-                onClick={() => setShowAutoOpsDropdown(!showAutoOpsDropdown)}
-                className={`nav-item ${location.pathname.startsWith('/hub') ? 'active' : ''}`}
-                style={{ cursor: 'pointer', justifyContent: 'space-between' }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Zap size={18} />
-                  <span>AutoOps</span>
-                </div>
-                <ChevronDown size={14} style={{ transform: showAutoOpsDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-              </div>
-              {showAutoOpsDropdown && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', paddingLeft: '32px', marginTop: '4px' }}>
-                  <div onClick={() => { navigate(location.pathname + '?openTemplates=true'); setShowTemplatesModal(true); }} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
-                    <LayoutTemplate size={16} />
-                    <span>All Template</span>
+                <div className="nav-group">
+                  <div
+                    onClick={() => setShowAutoOpsDropdown(!showAutoOpsDropdown)}
+                    className={`nav-item ${location.pathname.startsWith('/hub') ? 'active' : ''}`}
+                    style={{ cursor: 'pointer', justifyContent: 'space-between' }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <Zap size={18} />
+                      <span>AutoOps</span>
+                    </div>
+                    <ChevronDown size={14} style={{ transform: showAutoOpsDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
                   </div>
-                  <div onClick={() => notify("Communication integration is coming soon!", "info")} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
-                    <MessageSquare size={16} />
-                    <span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>Communication</span>
-                    <span style={{ fontSize: '0.62rem', background: 'var(--bg-card)', color: 'var(--text-muted)', padding: '2px 6px', borderRadius: '4px', marginLeft: 'auto', textTransform: 'uppercase', fontWeight: '700' }}>Soon</span>
-                  </div>
-                  {activeWorkspace?.isTelegramConnected && (
-                    <NavLink to="/autoops/telegram" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <MessageSquare size={16} color="#3b82f6" />
-                      <span style={{ fontWeight: '600' }}>Telegram</span>
-                    </NavLink>
-                  )}
-                  {activeWorkspace?.isDiscordConnected && (
-                    <NavLink to="/autoops/discord" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <MessageSquare size={16} color="#8b5cf6" />
-                      <span style={{ fontWeight: '600' }}>Discord</span>
-                    </NavLink>
+                  {showAutoOpsDropdown && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', paddingLeft: '32px', marginTop: '4px' }}>
+                      <div onClick={() => { navigate(location.pathname + '?openTemplates=true'); setShowTemplatesModal(true); }} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                        <LayoutTemplate size={16} />
+                        <span>All Template</span>
+                      </div>
+                      <div onClick={() => notify("Communication integration is coming soon!", "info")} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                        <MessageSquare size={16} />
+                        <span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>Communication</span>
+                        <span style={{ fontSize: '0.62rem', background: 'var(--bg-card)', color: 'var(--text-muted)', padding: '2px 6px', borderRadius: '4px', marginLeft: 'auto', textTransform: 'uppercase', fontWeight: '700' }}>Soon</span>
+                      </div>
+                      {activeWorkspace?.isTelegramConnected && (
+                        <NavLink to="/autoops/telegram" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <MessageSquare size={16} color="#3b82f6" />
+                          <span style={{ fontWeight: '600' }}>Telegram</span>
+                        </NavLink>
+                      )}
+                      {activeWorkspace?.isDiscordConnected && (
+                        <NavLink to="/autoops/discord" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <MessageSquare size={16} color="#8b5cf6" />
+                          <span style={{ fontWeight: '600' }}>Discord</span>
+                        </NavLink>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
 
-            <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <LayoutDashboard size={18} />
-              <span>OneView</span>
-            </NavLink>
-            <NavLink to="/developer" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Lock size={18} />
-              <span>API keys</span>
-            </NavLink>
-            <NavLink
-              to="/universal-triggers"
-              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-            >
-              <Globe size={18} />
-              <span>Universal Triggers</span>
-            </NavLink>
-            <NavLink to="/ai-studio" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Sparkles size={18} />
-              <span>AI Studio</span>
-              <span className="sidebar-badge badge-new">NEW</span>
-            </NavLink>
+                <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <LayoutDashboard size={18} />
+                  <span>OneView</span>
+                </NavLink>
+                <NavLink to="/developer" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <Lock size={18} />
+                  <span>API keys</span>
+                </NavLink>
+                <NavLink
+                  to="/universal-triggers"
+                  className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+                >
+                  <Globe size={18} />
+                  <span>Universal Triggers</span>
+                </NavLink>
+                <NavLink to="/ai-studio" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <Sparkles size={18} />
+                  <span>AI Studio</span>
+                  <span className="sidebar-badge badge-new">NEW</span>
+                </NavLink>
 
-            <NavLink to="/audiences" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Users size={18} />
-              <span>Contacts</span>
-            </NavLink>
+                <NavLink to="/audiences" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <Users size={18} />
+                  <span>Contacts</span>
+                </NavLink>
 
-            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Settings size={18} />
-              <span>Settings</span>
-            </NavLink>
+                <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <Settings size={18} />
+                  <span>Settings</span>
+                </NavLink>
+              </>
+            )}
           </nav>
         </div>
 
