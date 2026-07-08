@@ -133,8 +133,8 @@ function Sidebar({ isMobileOpen, onClose }) {
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
   const [showAutoOpsDropdown, setShowAutoOpsDropdown] = useState(false);
+  const [showSuperAdminDropdown, setShowSuperAdminDropdown] = useState(location.pathname.startsWith('/super-admin'));
   const [showTemplatesModal, setShowTemplatesModal] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   const fetchWorkspaces = async () => {
     try {
@@ -446,34 +446,36 @@ function Sidebar({ isMobileOpen, onClose }) {
 
         <div className="sidebar-middle-scroll">
           <nav className="nav-links">
-            {location.pathname.startsWith('/super-admin') ? (
-              <>
-                <NavLink to="/super-admin/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                  <LayoutDashboard size={18} />
-                  <span>Dashboard</span>
-                </NavLink>
-                <NavLink to="/super-admin/users" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                  <Users size={18} />
-                  <span>Users</span>
-                </NavLink>
-                <NavLink to="/super-admin/workspaces" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                  <Construction size={18} />
-                  <span>Workspaces</span>
-                </NavLink>
-                <div style={{ marginTop: 'auto', paddingTop: '24px' }}>
-                  <button onClick={() => navigate('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 20px', borderRadius: '16px', background: 'rgba(239, 68, 68, 0.05)', color: '#ef4444', fontWeight: '600', border: '1px solid transparent', cursor: 'pointer', transition: 'all 0.3s', textAlign: 'left', fontSize: '0.95rem', width: '100%' }} onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }} onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.05)'; }}>
-                    <ArrowLeft size={18} />
-                    Exit to OneView
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
             {user?.email === 'nknitishsingh94@gmail.com' && (
-              <NavLink to="/super-admin" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
-                <Shield size={18} />
-                <span style={{ fontWeight: '700' }}>Super Admin</span>
-              </NavLink>
+              <div className="nav-group">
+                <div
+                  onClick={() => setShowSuperAdminDropdown(!showSuperAdminDropdown)}
+                  className={`nav-item ${location.pathname.startsWith('/super-admin') ? 'active' : ''}`}
+                  style={{ cursor: 'pointer', justifyContent: 'space-between', background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', border: '1px solid rgba(99, 102, 241, 0.2)' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Shield size={18} />
+                    <span style={{ fontWeight: '700' }}>Super Admin</span>
+                  </div>
+                  <ChevronDown size={14} style={{ transform: showSuperAdminDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                </div>
+                {showSuperAdminDropdown && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', paddingLeft: '32px', marginTop: '4px' }}>
+                    <NavLink to="/super-admin/dashboard" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <LayoutDashboard size={16} />
+                      <span>Dashboard</span>
+                    </NavLink>
+                    <NavLink to="/super-admin/users" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <Users size={16} />
+                      <span>Users</span>
+                    </NavLink>
+                    <NavLink to="/super-admin/workspaces" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <Construction size={16} />
+                      <span>Workspaces</span>
+                    </NavLink>
+                  </div>
+                )}
+              </div>
             )}
             <NavLink to="/connections" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Link2 size={18} />
@@ -554,8 +556,6 @@ function Sidebar({ isMobileOpen, onClose }) {
               <Settings size={18} />
               <span>Settings</span>
             </NavLink>
-            </>
-            )}
           </nav>
         </div>
 
