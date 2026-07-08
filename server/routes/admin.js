@@ -12,7 +12,7 @@ const router = express.Router();
 const isSuperAdmin = async (req, res, next) => {
   try {
     const user = await User.findById(req.userId);
-    if (!user || user.email !== 'nknitishsingh91@gmail.com') {
+    if (!user || user.email !== 'nknitishsingh94@gmail.com') {
       return res.status(403).json({ message: 'Forbidden. Super Admin access required.' });
     }
     req.adminUser = user;

@@ -494,7 +494,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                 </div>
               )}
             </div>
-            {user?.email === 'nknitishsingh91@gmail.com' && (
+            {user?.email === 'nknitishsingh94@gmail.com' && (
               <NavLink to="/super-admin" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
                 <Shield size={18} />
                 <span style={{ fontWeight: '700' }}>Super Admin</span>

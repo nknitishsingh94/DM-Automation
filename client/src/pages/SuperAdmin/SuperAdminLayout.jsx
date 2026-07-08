@@ -11,7 +11,7 @@ export default function SuperAdminLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Extra security: Kick out anyone who isn't the founder even if they guess the URL
-  if (user?.email !== 'nknitishsingh91@gmail.com') {
+  if (user?.email !== 'nknitishsingh94@gmail.com') {
     return <Navigate to="/dashboard" replace />;
   }
 

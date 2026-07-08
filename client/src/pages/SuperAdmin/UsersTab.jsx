@@ -113,7 +113,7 @@ export default function UsersTab() {
                       </div>
                     </td>
                     <td style={{ padding: '16px 24px' }}>
-                      {user.email === 'nknitishsingh91@gmail.com' ? (
+                      {user.email === 'nknitishsingh94@gmail.com' ? (
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#fef08a', color: '#854d0e', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '700' }}>
                           <Shield size={12} /> Founder
                         </span>
@@ -127,7 +127,7 @@ export default function UsersTab() {
                       {new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                     </td>
                     <td style={{ padding: '16px 24px', textAlign: 'right' }}>
-                      {user.email !== 'nknitishsingh91@gmail.com' && (
+                      {user.email !== 'nknitishsingh94@gmail.com' && (
                         <button 
                           onClick={() => handleDeleteUser(user.id, user.email)}
                           style={{
