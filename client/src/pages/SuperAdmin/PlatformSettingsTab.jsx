@@ -52,8 +52,25 @@ export default function PlatformSettingsTab() {
     }
   };
 
-  const togglePlatform = (key) => {
-    setPlatforms(prev => ({ ...prev, [key]: !prev[key] }));
+  const togglePlatform = async (key) => {
+    const newPlatforms = { ...platforms, [key]: !platforms[key] };
+    setPlatforms(newPlatforms);
+    
+    // Auto-save the toggle change immediately
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPlatforms)
+      });
+      if (res.ok) {
+        if (setGlobalPlatforms) setGlobalPlatforms(newPlatforms);
+        toast.success(`${newPlatforms[key] ? 'Enabled' : 'Disabled'} globally`);
+      }
+    } catch (err) {
+      console.error('Failed to auto-save platform toggle', err);
+    }
   };
 
   const handleCopy = (text, label) => {
