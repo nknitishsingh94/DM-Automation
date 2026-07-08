@@ -11,7 +11,7 @@ export default function SocialAccountsTab() {
 
   const fetchAccounts = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('insta_agent_token');
       const res = await axios.get(`${API_BASE_URL}/api/admin/social-accounts`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -34,7 +34,7 @@ export default function SocialAccountsTab() {
     }
     
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('insta_agent_token');
       await axios.delete(`${API_BASE_URL}/api/admin/social-accounts/${id}/${platform}`, {
         headers: { Authorization: `Bearer ${token}` }
       });

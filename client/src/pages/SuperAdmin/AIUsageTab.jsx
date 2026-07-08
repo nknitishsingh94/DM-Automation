@@ -11,7 +11,7 @@ export default function AIUsageTab() {
   useEffect(() => {
     const fetchUsage = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('insta_agent_token');
         const res = await axios.get(`${API_BASE_URL}/api/admin/ai-usage`, {
           headers: { Authorization: `Bearer ${token}` }
         });

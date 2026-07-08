@@ -12,7 +12,7 @@ export default function SubscriptionsTab() {
 
   const fetchSubscriptions = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('insta_agent_token');
       const res = await axios.get(`${API_BASE_URL}/api/admin/subscriptions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -36,7 +36,7 @@ export default function SubscriptionsTab() {
     
     setUpdating(userId);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('insta_agent_token');
       await axios.put(`${API_BASE_URL}/api/admin/subscriptions/${userId}`, { plan: newPlan }, {
         headers: { Authorization: `Bearer ${token}` }
       });

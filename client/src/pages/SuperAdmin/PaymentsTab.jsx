@@ -12,7 +12,7 @@ export default function PaymentsTab() {
 
   const fetchData = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('insta_agent_token');
       
       const [revRes, priceRes] = await Promise.all([
         axios.get(`${API_BASE_URL}/api/admin/revenue`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -39,7 +39,7 @@ export default function PaymentsTab() {
   const handleSavePricing = async () => {
     setSaving(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('insta_agent_token');
       await axios.put(`${API_BASE_URL}/api/admin/pricing`, pricing, {
         headers: { Authorization: `Bearer ${token}` }
       });

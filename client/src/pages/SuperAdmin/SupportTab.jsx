@@ -11,7 +11,7 @@ export default function SupportTab() {
 
   const fetchReviews = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('insta_agent_token');
       const res = await axios.get(`${API_BASE_URL}/api/admin/reviews`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -34,7 +34,7 @@ export default function SupportTab() {
     }
     
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('insta_agent_token');
       await axios.delete(`${API_BASE_URL}/api/admin/reviews/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });

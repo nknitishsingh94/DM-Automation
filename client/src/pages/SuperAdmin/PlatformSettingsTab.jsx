@@ -13,7 +13,7 @@ export default function PlatformSettingsTab() {
   useEffect(() => {
     const fetchPlatforms = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('insta_agent_token');
         const res = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -31,7 +31,7 @@ export default function PlatformSettingsTab() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },

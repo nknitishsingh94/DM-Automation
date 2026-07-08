@@ -36,7 +36,7 @@ export default function DashboardTab() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('insta_agent_token');
         const res = await axios.get(`${API_BASE_URL}/api/admin/stats`, {
           headers: { Authorization: `Bearer ${token}` }
         });
