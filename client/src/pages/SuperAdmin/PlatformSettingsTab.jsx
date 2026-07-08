@@ -1,17 +1,56 @@
-import React, { useState } from 'react';
-import { Settings, Mail, Key, Shield, HardDrive, CheckCircle2, Copy } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Settings, Mail, Key, Shield, HardDrive, CheckCircle2, Copy, Instagram, Facebook, Youtube, Linkedin, Twitter, MessageCircle, Share2, Globe } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
 
 export default function PlatformSettingsTab() {
   const [saving, setSaving] = useState(false);
+  const [platforms, setPlatforms] = useState({
+    instagram: true, facebook: true, youtube: true, linkedin: true,
+    twitter: true, googleBusiness: true, pinterest: true, threads: true
+  });
 
-  const handleSave = () => {
+  useEffect(() => {
+    const fetchPlatforms = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setPlatforms(prev => ({ ...prev, ...data }));
+        }
+      } catch (err) {
+        console.error('Error fetching platforms:', err);
+      }
+    };
+    fetchPlatforms();
+  }, []);
+
+  const handleSave = async () => {
     setSaving(true);
-    setTimeout(() => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(platforms)
+      });
+      if (res.ok) {
+        toast.success('Global platform settings updated');
+      } else {
+        toast.error('Failed to update platforms');
+      }
+    } catch (err) {
+      toast.error('Network error');
+    } finally {
       setSaving(false);
-      toast.success('Global platform settings updated');
-    }, 1000);
+    }
+  };
+
+  const togglePlatform = (key) => {
+    setPlatforms(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   const handleCopy = (text, label) => {
@@ -132,6 +171,58 @@ export default function PlatformSettingsTab() {
           </div>
         </div>
 
+      </div>
+
+      {/* Platform Toggles */}
+      <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border-subtle)', boxShadow: '0 4px 25px rgba(0,0,0,0.02)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid var(--border-subtle)' }}>
+          <div style={{ padding: '8px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '10px', color: '#10b981' }}>
+            <Globe size={20} />
+          </div>
+          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-main)' }}>Platform Management (Global)</h3>
+        </div>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}>Toggle platforms on or off. If a platform is disabled, it will be hidden from all users' accounts across the system.</p>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
+          {[
+            { id: 'instagram', name: 'Instagram', icon: <Instagram size={20} color="#E4405F" /> },
+            { id: 'facebook', name: 'Facebook', icon: <Facebook size={20} color="#1877F2" /> },
+            { id: 'youtube', name: 'YouTube', icon: <Youtube size={20} color="#FF0000" /> },
+            { id: 'linkedin', name: 'LinkedIn', icon: <Linkedin size={20} color="#0A66C2" /> },
+            { id: 'twitter', name: 'Twitter / X', icon: <Twitter size={20} color="#1DA1F2" /> },
+            { id: 'googleBusiness', name: 'Google Business', icon: <Globe size={20} color="#4285F4" /> },
+            { id: 'pinterest', name: 'Pinterest', icon: <Share2 size={20} color="#E60023" /> },
+            { id: 'threads', name: 'Threads', icon: <MessageCircle size={20} color="#000000" /> }
+          ].map(platform => (
+            <div key={platform.id} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '16px', borderRadius: '16px', border: '1px solid var(--border-subtle)',
+              background: 'var(--bg-main)', transition: 'all 0.2s'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ background: 'white', padding: '8px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', display: 'flex' }}>
+                  {platform.icon}
+                </div>
+                <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{platform.name}</span>
+              </div>
+              
+              <div 
+                onClick={() => togglePlatform(platform.id)}
+                style={{
+                  width: '44px', height: '24px', borderRadius: '24px',
+                  background: platforms[platform.id] ? '#10b981' : 'var(--border)',
+                  position: 'relative', cursor: 'pointer', transition: 'background 0.3s ease'
+                }}
+              >
+                <div style={{
+                  position: 'absolute', top: '2px', left: platforms[platform.id] ? '22px' : '2px',
+                  width: '20px', height: '20px', borderRadius: '50%', background: 'white',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)', transition: 'left 0.3s ease'
+                }} />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

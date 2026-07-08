@@ -71,18 +71,38 @@ export default function Connections() {
 
   const { notify } = useNotification();
 
+  const [globalPlatforms, setGlobalPlatforms] = useState({});
+
+  useEffect(() => {
+    const fetchGlobalPlatforms = async () => {
+      try {
+        const token = localStorage.getItem('insta_agent_token') || localStorage.getItem('token');
+        const res = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setGlobalPlatforms(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch global platforms', err);
+      }
+    };
+    fetchGlobalPlatforms();
+  }, []);
+
   const platformsList = [
-    { name: 'Instagram', icon: Instagram, color: '#ec4899', enabled: true },
-    { name: 'Facebook', icon: Facebook, color: '#1877f2', enabled: true },
-    { name: 'YouTube', icon: Youtube, color: '#ff0000', enabled: true },
-    { name: 'LinkedIn', icon: Linkedin, color: '#0077b5', enabled: true },
-    { name: 'Twitter/X', icon: Twitter, color: 'var(--text-main)', enabled: true },
-    { name: 'Threads', icon: Activity, color: 'var(--text-main)', enabled: true },
-    { name: 'Pinterest', icon: PinterestIcon, color: '#E60023', enabled: true },
-    { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: true },
+    { name: 'Instagram', icon: Instagram, color: '#ec4899', enabled: globalPlatforms.instagram !== false },
+    { name: 'Facebook', icon: Facebook, color: '#1877f2', enabled: globalPlatforms.facebook !== false },
+    { name: 'YouTube', icon: Youtube, color: '#ff0000', enabled: globalPlatforms.youtube !== false },
+    { name: 'LinkedIn', icon: Linkedin, color: '#0077b5', enabled: globalPlatforms.linkedin !== false },
+    { name: 'Twitter/X', icon: Twitter, color: 'var(--text-main)', enabled: globalPlatforms.twitter !== false },
+    { name: 'Threads', icon: Activity, color: 'var(--text-main)', enabled: globalPlatforms.threads !== false },
+    { name: 'Pinterest', icon: PinterestIcon, color: '#E60023', enabled: globalPlatforms.pinterest !== false },
+    { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: globalPlatforms.googleBusiness !== false },
     { name: 'Telegram', icon: Send, color: '#0088cc', enabled: false },
     { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: false }
-  ];
+  ].filter(p => p.enabled);
 
   useEffect(() => {
     const token = localStorage.getItem('insta_agent_token');

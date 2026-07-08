@@ -243,6 +243,25 @@ export default function Scheduling() {
   const [submitting, setSubmitting] = useState(false);
   const [settings, setSettings] = useState(null);
   const [pinterestBoards, setPinterestBoards] = useState([]);
+  const [globalPlatforms, setGlobalPlatforms] = useState({});
+
+  useEffect(() => {
+    const fetchGlobalPlatforms = async () => {
+      try {
+        const token = localStorage.getItem('insta_agent_token') || localStorage.getItem('token');
+        const res = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setGlobalPlatforms(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch global platforms', err);
+      }
+    };
+    fetchGlobalPlatforms();
+  }, []);
 
   const getSafeImageUrl = (url) => {
     if (!url || typeof url !== 'string') return url;
@@ -1324,16 +1343,16 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
 
   const allPlatforms = (() => {
     const platforms = [
-      { id: 'instagram', label: 'Instagram', icon: <Instagram size={14} />, color: '#e1306c', handle: '', connected: false },
-      { id: 'facebook', label: 'Facebook', icon: <Facebook size={14} />, color: '#1877f2', handle: '', connected: false },
-      { id: 'threads', label: 'Threads', icon: <ThreadsIcon size={14} />, color: 'var(--text-main)', handle: '', connected: false },
-      { id: 'youtube', label: 'YouTube', icon: <Film size={14} />, color: '#ff0000', handle: '', connected: false },
-      { id: 'linkedin', label: 'LinkedIn', icon: <Globe size={14} />, color: '#0a66c2', handle: '', connected: false },
-      { id: 'twitter', label: 'Twitter/X', icon: <X size={14} />, color: 'var(--text-main)', handle: '', connected: false },
-      { id: 'pinterest', label: 'Pinterest', icon: <PinterestIcon size={14} color="#E60023" />, color: '#E60023', handle: '', connected: false },
-      { id: 'google-business', label: 'Google Business', icon: <MapPin size={14} />, color: '#4285f4', handle: '', connected: false },
-      { id: 'whatsapp', label: 'WhatsApp', icon: <MessageCircle size={14} />, color: '#25d366', handle: '', connected: false }
-    ];
+      { id: 'instagram', label: 'Instagram', icon: <Instagram size={14} />, color: '#e1306c', handle: '', connected: false, enabled: globalPlatforms.instagram !== false },
+      { id: 'facebook', label: 'Facebook', icon: <Facebook size={14} />, color: '#1877f2', handle: '', connected: false, enabled: globalPlatforms.facebook !== false },
+      { id: 'threads', label: 'Threads', icon: <ThreadsIcon size={14} />, color: 'var(--text-main)', handle: '', connected: false, enabled: globalPlatforms.threads !== false },
+      { id: 'youtube', label: 'YouTube', icon: <Film size={14} />, color: '#ff0000', handle: '', connected: false, enabled: globalPlatforms.youtube !== false },
+      { id: 'linkedin', label: 'LinkedIn', icon: <Globe size={14} />, color: '#0a66c2', handle: '', connected: false, enabled: globalPlatforms.linkedin !== false },
+      { id: 'twitter', label: 'Twitter/X', icon: <X size={14} />, color: 'var(--text-main)', handle: '', connected: false, enabled: globalPlatforms.twitter !== false },
+      { id: 'pinterest', label: 'Pinterest', icon: <PinterestIcon size={14} color="#E60023" />, color: '#E60023', handle: '', connected: false, enabled: globalPlatforms.pinterest !== false },
+      { id: 'google-business', label: 'Google Business', icon: <MapPin size={14} />, color: '#4285f4', handle: '', connected: false, enabled: globalPlatforms.googleBusiness !== false },
+      { id: 'whatsapp', label: 'WhatsApp', icon: <MessageCircle size={14} />, color: '#25d366', handle: '', connected: false, enabled: false }
+    ].filter(p => p.enabled);
 
     if (!settings) return platforms;
 

@@ -29,7 +29,49 @@ const isSuperAdmin = async (req, res, next) => {
 
 // Protect all admin routes
 router.use(verifyToken);
+
+// GET /api/admin/global-platforms (Available to all verified users)
+router.get('/global-platforms', async (req, res) => {
+  try {
+    const config = await GlobalConfig.findOne({ key: 'platforms' });
+    if (config && config.value) {
+      return res.json(config.value);
+    }
+    // Default fallback
+    return res.json({
+      instagram: true, facebook: true, youtube: true, linkedin: true,
+      twitter: true, googleBusiness: true, pinterest: true, threads: true
+    });
+  } catch (error) {
+    console.error('Error fetching global platforms:', error);
+    res.status(500).json({ message: 'Error fetching platform config' });
+  }
+});
+
 router.use(isSuperAdmin);
+
+// PUT /api/admin/global-platforms (Only Super Admin)
+router.put('/global-platforms', async (req, res) => {
+  try {
+    let config = await GlobalConfig.findOne({ key: 'platforms' });
+    let newConfig;
+    if (config) {
+      newConfig = { ...config.value, ...req.body };
+      await GlobalConfig.findByIdAndUpdate(config._id || config.id, { value: newConfig });
+    } else {
+      newConfig = {
+        instagram: true, facebook: true, youtube: true, linkedin: true,
+        twitter: true, googleBusiness: true, pinterest: true, threads: true,
+        ...req.body
+      };
+      await GlobalConfig.create({ key: 'platforms', value: newConfig });
+    }
+    res.json(newConfig);
+  } catch (error) {
+    console.error('Error saving platforms config', error);
+    res.status(500).json({ message: 'Failed to update platforms config' });
+  }
+});
 
 // GET /api/admin/stats
 router.get('/stats', async (req, res) => {
@@ -311,14 +353,6 @@ router.get('/ai-usage', async (req, res) => {
   }
 });
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const PRICING_FILE_PATH = path.join(__dirname, '..', 'pricing.json');
-
 // Helper to get pricing
 const getPricingConfig = () => {
   try {
@@ -372,30 +406,45 @@ router.get('/revenue', async (req, res) => {
   }
 });
 
-// GET /api/admin/pricing
+// GET /api/admin/pricing (Publicly accessible but via settings? We are leaving this as admin for now, but wait, usually pricing is public)
 router.get('/pricing', async (req, res) => {
   try {
-    res.json(getPricingConfig());
+    const config = await GlobalConfig.findOne({ key: 'pricing' });
+    if (config && config.value) {
+      return res.json(config.value);
+    }
+    // Default fallback
+    return res.json({
+      starter: { price: 29, aiCredits: 500, automations: '5', label: 'Starter', priceId: '' },
+      pro: { price: 99, aiCredits: 2000, automations: 'Unlimited', label: 'Pro', priceId: '' },
+      enterprise: { price: 299, aiCredits: 'Custom', automations: 'Unlimited', label: 'Enterprise', priceId: '' }
+    });
   } catch (error) {
-    console.error('Admin Pricing Get Error:', error);
-    res.status(500).json({ message: 'Failed to fetch pricing config.' });
+    console.error('Admin Pricing Error:', error);
+    res.status(500).json({ message: 'Failed to fetch pricing.' });
   }
 });
 
 // PUT /api/admin/pricing
 router.put('/pricing', async (req, res) => {
   try {
-    const { pro_price, enterprise_price } = req.body;
-    
-    const config = { 
-      pro_price: Number(pro_price) || 29, 
-      enterprise_price: Number(enterprise_price) || 99 
-    };
-    savePricingConfig(config);
-    
-    res.json({ message: 'Pricing updated successfully!' });
+    let config = await GlobalConfig.findOne({ key: 'pricing' });
+    let newPricing;
+    if (config) {
+      newPricing = { ...config.value, ...req.body };
+      await GlobalConfig.findByIdAndUpdate(config._id || config.id, { value: newPricing });
+    } else {
+      newPricing = {
+        starter: { price: 29, aiCredits: 500, automations: '5', label: 'Starter', priceId: '' },
+        pro: { price: 99, aiCredits: 2000, automations: 'Unlimited', label: 'Pro', priceId: '' },
+        enterprise: { price: 299, aiCredits: 'Custom', automations: 'Unlimited', label: 'Enterprise', priceId: '' },
+        ...req.body
+      };
+      await GlobalConfig.create({ key: 'pricing', value: newPricing });
+    }
+    res.json({ message: 'Pricing updated successfully', pricing: newPricing });
   } catch (error) {
-    console.error('Admin Pricing Update Error:', error);
+    console.error('Admin Update Pricing Error:', error);
     res.status(500).json({ message: 'Failed to update pricing.' });
   }
 });
