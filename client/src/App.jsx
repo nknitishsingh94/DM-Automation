@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
-import { Bot, Home, LayoutDashboard, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2, LayoutTemplate, Terminal, Lock, MessageCircle, Moon, Sun } from 'lucide-react';
+import { Bot, Home, LayoutDashboard, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2, LayoutTemplate, Terminal, Lock, MessageCircle, Moon, Sun, Shield } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { useTheme } from './context/ThemeContext';
@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import CookieBanner from './components/CookieBanner';
 import UniversalTriggers from './pages/UniversalTriggers';
+import SuperAdminLayout from './pages/SuperAdmin/SuperAdminLayout';
 
 import CommentToDM from './pages/features/CommentToDM';
 import GrowFollowers from './pages/features/GrowFollowers';
@@ -493,6 +494,12 @@ function Sidebar({ isMobileOpen, onClose }) {
                 </div>
               )}
             </div>
+            {user?.email === 'nknitishsingh91@gmail.com' && (
+              <NavLink to="/super-admin" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
+                <Shield size={18} />
+                <span style={{ fontWeight: '700' }}>Super Admin</span>
+              </NavLink>
+            )}
             <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <LayoutDashboard size={18} />
               <span>OneView</span>
@@ -735,6 +742,7 @@ function MainLayout() {
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/onboarding" element={<Navigate to="/connections" replace />} />
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
+              <Route path="/super-admin" element={<ProtectedRoute><SuperAdminLayout /></ProtectedRoute>} />
               <Route path="/universal-triggers" element={<ProtectedRoute><UniversalTriggers /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
 
