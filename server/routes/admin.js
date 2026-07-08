@@ -9,6 +9,7 @@ import Review from '../models/Review.js';
 import GlobalConfig from '../models/GlobalConfig.js';
 import PostLog from '../models/PostLog.js';
 import Message from '../models/Message.js';
+import Campaign from '../models/Campaign.js';
 
 const router = express.Router();
 
@@ -85,7 +86,7 @@ router.get('/stats', async (req, res) => {
       User.countDocuments({}),
       Workspace.countDocuments({}),
       ScheduledPost.countDocuments({}),
-      Flow.countDocuments({}),
+      Campaign.countDocuments({}),
       User.find({})
     ]);
 
