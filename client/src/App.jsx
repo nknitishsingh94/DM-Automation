@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
-import { Bot, Home, LayoutDashboard, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2, LayoutTemplate, Terminal, Lock, MessageCircle, Moon, Sun, Shield } from 'lucide-react';
+import { Bot, Home, LayoutDashboard, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2, LayoutTemplate, Terminal, Lock, MessageCircle, Moon, Sun, Shield, Construction, ArrowLeft } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { useTheme } from './context/ThemeContext';
@@ -446,6 +446,29 @@ function Sidebar({ isMobileOpen, onClose }) {
 
         <div className="sidebar-middle-scroll">
           <nav className="nav-links">
+            {location.pathname.startsWith('/super-admin') ? (
+              <>
+                <NavLink to="/super-admin/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <LayoutDashboard size={18} />
+                  <span>Dashboard</span>
+                </NavLink>
+                <NavLink to="/super-admin/users" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <Users size={18} />
+                  <span>Users</span>
+                </NavLink>
+                <NavLink to="/super-admin/workspaces" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <Construction size={18} />
+                  <span>Workspaces</span>
+                </NavLink>
+                <div style={{ marginTop: 'auto', paddingTop: '24px' }}>
+                  <button onClick={() => navigate('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 20px', borderRadius: '16px', background: 'rgba(239, 68, 68, 0.05)', color: '#ef4444', fontWeight: '600', border: '1px solid transparent', cursor: 'pointer', transition: 'all 0.3s', textAlign: 'left', fontSize: '0.95rem', width: '100%' }} onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }} onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.05)'; }}>
+                    <ArrowLeft size={18} />
+                    Exit to OneView
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
             {user?.email === 'nknitishsingh94@gmail.com' && (
               <NavLink to="/super-admin" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
                 <Shield size={18} />
@@ -531,8 +554,8 @@ function Sidebar({ isMobileOpen, onClose }) {
               <Settings size={18} />
               <span>Settings</span>
             </NavLink>
-
-
+            </>
+            )}
           </nav>
         </div>
 
@@ -708,7 +731,7 @@ function MainLayout() {
     location.pathname.startsWith('/automation-editor') ||
     location.pathname.startsWith('/flow-builder');
   const isMessageOnlyHub = location.pathname === '/hub/message-only';
-  const hideSidebar = isPublic || location.pathname === '/super-admin'; // Sidebar should remain visible on editor pages
+  const hideSidebar = isPublic; // Sidebar should remain visible on editor pages
   const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub || !['/dashboard', '/connections'].includes(location.pathname);
 
   return (
@@ -743,7 +766,8 @@ function MainLayout() {
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/onboarding" element={<Navigate to="/connections" replace />} />
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
-              <Route path="/super-admin" element={<ProtectedRoute><SuperAdminLayout /></ProtectedRoute>} />
+              <Route path="/super-admin" element={<Navigate to="/super-admin/dashboard" replace />} />
+              <Route path="/super-admin/:tab" element={<ProtectedRoute><SuperAdminLayout /></ProtectedRoute>} />
               <Route path="/universal-triggers" element={<ProtectedRoute><UniversalTriggers /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
 
