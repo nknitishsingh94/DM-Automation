@@ -5,6 +5,7 @@ import Workspace from '../models/Workspace.js';
 import ScheduledPost from '../models/ScheduledPost.js';
 import Flow from '../models/Flow.js';
 import Settings from '../models/Settings.js';
+import Review from '../models/Review.js';
 
 const router = express.Router();
 
@@ -217,6 +218,72 @@ router.delete('/social-accounts/:id/:platform', async (req, res) => {
   } catch (error) {
     console.error('Admin Disconnect Social Error:', error);
     res.status(500).json({ message: 'Failed to disconnect social account.' });
+  }
+});
+
+// GET /api/admin/automations
+router.get('/automations', async (req, res) => {
+  try {
+    const automations = await Flow.find({});
+    res.json(automations);
+  } catch (error) {
+    console.error('Admin Automations Error:', error);
+    res.status(500).json({ message: 'Failed to fetch automations.' });
+  }
+});
+
+// DELETE /api/admin/automations/:id
+router.delete('/automations/:id', async (req, res) => {
+  try {
+    await Flow.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Automation deleted successfully.' });
+  } catch (error) {
+    console.error('Admin Delete Automation Error:', error);
+    res.status(500).json({ message: 'Failed to delete automation.' });
+  }
+});
+
+// GET /api/admin/scheduled-posts
+router.get('/scheduled-posts', async (req, res) => {
+  try {
+    const posts = await ScheduledPost.find({});
+    res.json(posts);
+  } catch (error) {
+    console.error('Admin Scheduled Posts Error:', error);
+    res.status(500).json({ message: 'Failed to fetch scheduled posts.' });
+  }
+});
+
+// DELETE /api/admin/scheduled-posts/:id
+router.delete('/scheduled-posts/:id', async (req, res) => {
+  try {
+    await ScheduledPost.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Scheduled post deleted successfully.' });
+  } catch (error) {
+    console.error('Admin Delete Scheduled Post Error:', error);
+    res.status(500).json({ message: 'Failed to delete scheduled post.' });
+  }
+});
+
+// GET /api/admin/reviews
+router.get('/reviews', async (req, res) => {
+  try {
+    const reviews = await Review.find({});
+    res.json(reviews);
+  } catch (error) {
+    console.error('Admin Reviews Error:', error);
+    res.status(500).json({ message: 'Failed to fetch reviews.' });
+  }
+});
+
+// DELETE /api/admin/reviews/:id
+router.delete('/reviews/:id', async (req, res) => {
+  try {
+    await Review.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Review deleted successfully.' });
+  } catch (error) {
+    console.error('Admin Delete Review Error:', error);
+    res.status(500).json({ message: 'Failed to delete review.' });
   }
 });
 

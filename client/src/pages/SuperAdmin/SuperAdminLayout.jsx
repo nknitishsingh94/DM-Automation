@@ -7,6 +7,9 @@ import UsersTab from './UsersTab';
 import WorkspacesTab from './WorkspacesTab';
 import SubscriptionsTab from './SubscriptionsTab';
 import SocialAccountsTab from './SocialAccountsTab';
+import AutomationsTab from './AutomationsTab';
+import ScheduledPostsTab from './ScheduledPostsTab';
+import SupportTab from './SupportTab';
 
 export default function SuperAdminLayout() {
   const { user } = useAuth();
@@ -31,6 +34,12 @@ export default function SuperAdminLayout() {
         return <SubscriptionsTab />;
       case 'social-accounts':
         return <SocialAccountsTab />;
+      case 'automations':
+        return <AutomationsTab />;
+      case 'scheduled-posts':
+        return <ScheduledPostsTab />;
+      case 'support':
+        return <SupportTab />;
       default:
         return (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-muted)' }}>

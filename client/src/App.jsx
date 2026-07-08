@@ -481,6 +481,18 @@ function Sidebar({ isMobileOpen, onClose }) {
                       <Link2 size={16} />
                       <span>Social Accounts</span>
                     </NavLink>
+                    <NavLink to="/super-admin/automations" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <Zap size={16} />
+                      <span>Automations</span>
+                    </NavLink>
+                    <NavLink to="/super-admin/scheduled-posts" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <Calendar size={16} />
+                      <span>Scheduled Posts</span>
+                    </NavLink>
+                    <NavLink to="/super-admin/support" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <MessageCircle size={16} />
+                      <span>Support & Reviews</span>
+                    </NavLink>
                   </div>
                 )}
               </div>
