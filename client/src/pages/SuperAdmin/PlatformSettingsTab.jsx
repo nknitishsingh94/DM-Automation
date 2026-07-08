@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Mail, Key, Shield, HardDrive, CheckCircle2, Copy, Instagram, Facebook, Youtube, Linkedin, Twitter, MessageCircle, Share2, Globe } from 'lucide-react';
+import { Settings, Mail, Key, Shield, HardDrive, CheckCircle2, Copy, Instagram, Facebook, Youtube, Linkedin, Twitter, MessageCircle, Share2, Globe, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
 import { useAuth } from '../../context/AuthContext';
@@ -12,6 +12,9 @@ export default function PlatformSettingsTab() {
     instagram: true, facebook: true, youtube: true, linkedin: true,
     twitter: true, googleBusiness: true, pinterest: true, threads: true
   });
+  const [showSmtp, setShowSmtp] = useState(false);
+  const [showOpenai, setShowOpenai] = useState(false);
+  const [showStripe, setShowStripe] = useState(false);
 
   useEffect(() => {
     const fetchPlatforms = async () => {
@@ -93,7 +96,7 @@ export default function PlatformSettingsTab() {
 
   const inputStyle = {
     width: '100%', 
-    padding: '14px 45px 14px 16px', 
+    padding: '14px 80px 14px 16px', 
     borderRadius: '12px', 
     border: '2px solid #cbd5e1', 
     background: '#f8fafc', 
@@ -107,6 +110,22 @@ export default function PlatformSettingsTab() {
   const copyBtnStyle = {
     position: 'absolute',
     right: '12px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'transparent',
+    border: 'none',
+    color: '#64748b',
+    cursor: 'pointer',
+    padding: '4px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '6px'
+  };
+
+  const eyeBtnStyle = {
+    position: 'absolute',
+    right: '44px',
     top: '50%',
     transform: 'translateY(-50%)',
     background: 'transparent',
@@ -168,7 +187,10 @@ export default function PlatformSettingsTab() {
             <div>
               <label style={{ display: 'block', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>SMTP API Key / Password</label>
               <div style={{ position: 'relative' }}>
-                <input type="password" defaultValue="************************" style={inputStyle} id="smtp-pass" />
+                <input type={showSmtp ? "text" : "password"} defaultValue="************************" style={inputStyle} id="smtp-pass" />
+                <button style={eyeBtnStyle} onClick={() => setShowSmtp(!showSmtp)} title={showSmtp ? "Hide" : "Show"}>
+                  {showSmtp ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
                 <button style={copyBtnStyle} onClick={() => handleCopy(document.getElementById('smtp-pass').value, 'SMTP Password')} title="Copy">
                   <Copy size={16} />
                 </button>
@@ -189,7 +211,10 @@ export default function PlatformSettingsTab() {
             <div>
               <label style={{ display: 'block', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>OpenAI Global API Key</label>
               <div style={{ position: 'relative' }}>
-                <input type="password" defaultValue="sk-***************************" style={inputStyle} id="openai-key" />
+                <input type={showOpenai ? "text" : "password"} defaultValue="sk-***************************" style={inputStyle} id="openai-key" />
+                <button style={eyeBtnStyle} onClick={() => setShowOpenai(!showOpenai)} title={showOpenai ? "Hide" : "Show"}>
+                  {showOpenai ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
                 <button style={copyBtnStyle} onClick={() => handleCopy(document.getElementById('openai-key').value, 'OpenAI Key')} title="Copy">
                   <Copy size={16} />
                 </button>
@@ -198,7 +223,10 @@ export default function PlatformSettingsTab() {
             <div>
               <label style={{ display: 'block', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>Stripe Secret Key</label>
               <div style={{ position: 'relative' }}>
-                <input type="password" defaultValue="rk_live_***************************" style={inputStyle} id="stripe-key" />
+                <input type={showStripe ? "text" : "password"} defaultValue="rk_live_***************************" style={inputStyle} id="stripe-key" />
+                <button style={eyeBtnStyle} onClick={() => setShowStripe(!showStripe)} title={showStripe ? "Hide" : "Show"}>
+                  {showStripe ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
                 <button style={copyBtnStyle} onClick={() => handleCopy(document.getElementById('stripe-key').value, 'Stripe Key')} title="Copy">
                   <Copy size={16} />
                 </button>
