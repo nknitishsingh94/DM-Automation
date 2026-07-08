@@ -7,7 +7,10 @@ import Flow from '../models/Flow.js';
 import Settings from '../models/Settings.js';
 import Review from '../models/Review.js';
 
+import GlobalConfig from '../models/GlobalConfig.js';
+
 const router = express.Router();
+
 
 // Middleware to check if user is the founder
 const isSuperAdmin = async (req, res, next) => {
@@ -284,6 +287,98 @@ router.delete('/reviews/:id', async (req, res) => {
   } catch (error) {
     console.error('Admin Delete Review Error:', error);
     res.status(500).json({ message: 'Failed to delete review.' });
+  }
+});
+
+// GET /api/admin/ai-usage
+router.get('/ai-usage', async (req, res) => {
+  try {
+    // Mock data since we don't have a Token model yet
+    const usage = {
+      totalTokensUsed: 1250000,
+      monthlyLimit: 5000000,
+      activeModels: ['gpt-4-turbo', 'claude-3-opus', 'dall-e-3'],
+      topUsers: [
+        { email: 'user1@example.com', tokens: 450000 },
+        { email: 'user2@example.com', tokens: 320000 },
+        { email: 'user3@example.com', tokens: 180000 }
+      ]
+    };
+    res.json(usage);
+  } catch (error) {
+    console.error('Admin AI Usage Error:', error);
+    res.status(500).json({ message: 'Failed to fetch AI usage.' });
+  }
+});
+
+// GET /api/admin/revenue
+router.get('/revenue', async (req, res) => {
+  try {
+    // Calculate mock revenue based on user plans
+    const users = await User.find({});
+    let mrr = 0;
+    
+    // Fetch pricing config if exists
+    let config = null;
+    try { config = await GlobalConfig.findOne({ key: 'pricing' }); } catch(e) {}
+    
+    const proPrice = config?.pro_price || 29;
+    const entPrice = config?.enterprise_price || 99;
+
+    users.forEach(u => {
+      if (u.plan === 'pro') mrr += proPrice;
+      if (u.plan === 'enterprise') mrr += entPrice;
+    });
+
+    res.json({
+      mrr: mrr,
+      totalRevenue: mrr * 12 + 4500, // Mock historical data
+      activeSubscribers: users.filter(u => u.plan !== 'free').length,
+      recentTransactions: [
+        { id: 'tx_1', user: 'user1@example.com', amount: proPrice, date: new Date().toISOString(), status: 'paid' },
+        { id: 'tx_2', user: 'user2@example.com', amount: entPrice, date: new Date(Date.now() - 86400000).toISOString(), status: 'paid' }
+      ]
+    });
+  } catch (error) {
+    console.error('Admin Revenue Error:', error);
+    res.status(500).json({ message: 'Failed to fetch revenue data.' });
+  }
+});
+
+// GET /api/admin/pricing
+router.get('/pricing', async (req, res) => {
+  try {
+    let config = null;
+    try { config = await GlobalConfig.findOne({ key: 'pricing' }); } catch(e) {}
+    
+    res.json({
+      pro_price: config?.pro_price || 29,
+      enterprise_price: config?.enterprise_price || 99
+    });
+  } catch (error) {
+    console.error('Admin Pricing Get Error:', error);
+    res.status(500).json({ message: 'Failed to fetch pricing config.' });
+  }
+});
+
+// PUT /api/admin/pricing
+router.put('/pricing', async (req, res) => {
+  try {
+    const { pro_price, enterprise_price } = req.body;
+    
+    let config = null;
+    try { config = await GlobalConfig.findOne({ key: 'pricing' }); } catch(e) {}
+    
+    if (config) {
+      await GlobalConfig.findByIdAndUpdate(config.id || config._id, { pro_price, enterprise_price });
+    } else {
+      await GlobalConfig.create({ key: 'pricing', pro_price, enterprise_price });
+    }
+    
+    res.json({ message: 'Pricing updated successfully!' });
+  } catch (error) {
+    console.error('Admin Pricing Update Error:', error);
+    res.status(500).json({ message: 'Failed to update pricing.' });
   }
 });
 

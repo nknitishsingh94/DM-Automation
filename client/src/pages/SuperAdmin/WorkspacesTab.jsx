@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, Construction, Trash2, PowerOff, Building } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../../config';
 
 export default function WorkspacesTab() {
   const [workspaces, setWorkspaces] = useState([]);
@@ -11,7 +12,7 @@ export default function WorkspacesTab() {
   const fetchWorkspaces = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('/api/admin/workspaces', {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/workspaces`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setWorkspaces(res.data);
@@ -34,7 +35,7 @@ export default function WorkspacesTab() {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`/api/admin/workspaces/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/admin/workspaces/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success('Workspace deleted successfully');

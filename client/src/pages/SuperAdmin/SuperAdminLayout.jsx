@@ -10,6 +10,10 @@ import SocialAccountsTab from './SocialAccountsTab';
 import AutomationsTab from './AutomationsTab';
 import ScheduledPostsTab from './ScheduledPostsTab';
 import SupportTab from './SupportTab';
+import AIUsageTab from './AIUsageTab';
+import PaymentsTab from './PaymentsTab';
+import PlatformSettingsTab from './PlatformSettingsTab';
+import AnalyticsTab from './AnalyticsTab';
 
 export default function SuperAdminLayout() {
   const { user } = useAuth();
@@ -40,6 +44,14 @@ export default function SuperAdminLayout() {
         return <ScheduledPostsTab />;
       case 'support':
         return <SupportTab />;
+      case 'ai-usage':
+        return <AIUsageTab />;
+      case 'payments':
+        return <PaymentsTab />;
+      case 'platform-settings':
+        return <PlatformSettingsTab />;
+      case 'analytics':
+        return <AnalyticsTab />;
       default:
         return (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-muted)' }}>

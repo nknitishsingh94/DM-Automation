@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Users, Layout, Send, Zap, Server, Activity, ArrowUpRight } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { API_BASE_URL } from '../../config';
 
 export default function DashboardTab() {
   const [stats, setStats] = useState({
@@ -16,7 +17,7 @@ export default function DashboardTab() {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('/api/admin/stats', {
+        const res = await axios.get(`${API_BASE_URL}/api/admin/stats`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setStats(res.data);

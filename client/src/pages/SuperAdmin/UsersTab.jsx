@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Search, Trash2, MoreVertical, Shield, UserX } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { API_BASE_URL } from '../../config';
 
 export default function UsersTab() {
   const [users, setUsers] = useState([]);
@@ -11,7 +12,7 @@ export default function UsersTab() {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('/api/admin/users', {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsers(res.data);
@@ -34,7 +35,7 @@ export default function UsersTab() {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`/api/admin/users/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/admin/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success('User deleted successfully');

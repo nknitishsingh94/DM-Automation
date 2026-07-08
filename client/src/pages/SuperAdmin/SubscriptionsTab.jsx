@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, CreditCard, CheckCircle2, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../../config';
 
 export default function SubscriptionsTab() {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -12,7 +13,7 @@ export default function SubscriptionsTab() {
   const fetchSubscriptions = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('/api/admin/subscriptions', {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/subscriptions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSubscriptions(res.data);
@@ -36,7 +37,7 @@ export default function SubscriptionsTab() {
     setUpdating(userId);
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`/api/admin/subscriptions/${userId}`, { plan: newPlan }, {
+      await axios.put(`${API_BASE_URL}/api/admin/subscriptions/${userId}`, { plan: newPlan }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success(`Plan updated to ${newPlan.toUpperCase()}`);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, Calendar, Trash2, Globe, Clock, MessageCircle, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../../config';
 
 export default function ScheduledPostsTab() {
   const [posts, setPosts] = useState([]);
@@ -11,7 +12,7 @@ export default function ScheduledPostsTab() {
   const fetchPosts = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('/api/admin/scheduled-posts', {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/scheduled-posts`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setPosts(res.data);
@@ -34,7 +35,7 @@ export default function ScheduledPostsTab() {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`/api/admin/scheduled-posts/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/admin/scheduled-posts/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success('Post deleted successfully');

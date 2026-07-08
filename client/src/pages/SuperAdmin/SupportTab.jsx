@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, Star, Trash2, MessageSquare, UserCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../../config';
 
 export default function SupportTab() {
   const [reviews, setReviews] = useState([]);
@@ -11,7 +12,7 @@ export default function SupportTab() {
   const fetchReviews = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('/api/admin/reviews', {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/reviews`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setReviews(res.data);
@@ -34,7 +35,7 @@ export default function SupportTab() {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`/api/admin/reviews/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/admin/reviews/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success('Review deleted successfully');

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, Zap, Trash2, PlayCircle, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../../config';
 
 export default function AutomationsTab() {
   const [automations, setAutomations] = useState([]);
@@ -11,7 +12,7 @@ export default function AutomationsTab() {
   const fetchAutomations = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('/api/admin/automations', {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/automations`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAutomations(res.data);
@@ -34,7 +35,7 @@ export default function AutomationsTab() {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`/api/admin/automations/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/admin/automations/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success('Automation deleted successfully');

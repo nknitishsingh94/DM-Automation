@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, Link2, Unplug, RefreshCw, Facebook, Instagram, Youtube, Twitter, Linkedin } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../../config';
 
 export default function SocialAccountsTab() {
   const [accounts, setAccounts] = useState([]);
@@ -11,7 +12,7 @@ export default function SocialAccountsTab() {
   const fetchAccounts = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('/api/admin/social-accounts', {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/social-accounts`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAccounts(res.data);
@@ -34,7 +35,7 @@ export default function SocialAccountsTab() {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`/api/admin/social-accounts/${id}/${platform}`, {
+      await axios.delete(`${API_BASE_URL}/api/admin/social-accounts/${id}/${platform}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success(`${platform} account disconnected`);
