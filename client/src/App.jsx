@@ -167,6 +167,9 @@ function Sidebar({ isMobileOpen, onClose }) {
 
   useEffect(() => {
     if (isMobileOpen) onClose();
+    if (!location.pathname.startsWith('/super-admin')) {
+      setShowSuperAdminDropdown(false);
+    }
     const params = new URLSearchParams(location.search);
     if (params.get('openTemplates') === 'true') {
       setShowTemplatesModal(true);
