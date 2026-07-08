@@ -446,6 +446,12 @@ function Sidebar({ isMobileOpen, onClose }) {
 
         <div className="sidebar-middle-scroll">
           <nav className="nav-links">
+            {user?.email === 'nknitishsingh94@gmail.com' && (
+              <NavLink to="/super-admin" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
+                <Shield size={18} />
+                <span style={{ fontWeight: '700' }}>Super Admin</span>
+              </NavLink>
+            )}
             <NavLink to="/connections" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Link2 size={18} />
               <span>Connections</span>
@@ -494,12 +500,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                 </div>
               )}
             </div>
-            {user?.email === 'nknitishsingh94@gmail.com' && (
-              <NavLink to="/super-admin" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
-                <Shield size={18} />
-                <span style={{ fontWeight: '700' }}>Super Admin</span>
-              </NavLink>
-            )}
+
             <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <LayoutDashboard size={18} />
               <span>OneView</span>
