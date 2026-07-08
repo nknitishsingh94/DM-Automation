@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Settings, Mail, Key, Shield, HardDrive, CheckCircle2, Copy, Instagram, Facebook, Youtube, Linkedin, Twitter, MessageCircle, Share2, Globe } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
+import { useAuth } from '../../context/AuthContext';
 
 export default function PlatformSettingsTab() {
+  const { setGlobalPlatforms } = useAuth();
   const [saving, setSaving] = useState(false);
   const [platforms, setPlatforms] = useState({
     instagram: true, facebook: true, youtube: true, linkedin: true,
@@ -39,6 +41,7 @@ export default function PlatformSettingsTab() {
       });
       if (res.ok) {
         toast.success('Global platform settings updated');
+        if (setGlobalPlatforms) setGlobalPlatforms(platforms);
       } else {
         toast.error('Failed to update platforms');
       }
