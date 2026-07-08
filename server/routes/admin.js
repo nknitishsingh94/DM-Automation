@@ -429,16 +429,21 @@ router.delete('/reviews/:id', async (req, res) => {
 // GET /api/admin/ai-usage
 router.get('/ai-usage', async (req, res) => {
   try {
-    // Mock data since we don't have a Token model yet
+    const users = await User.find({});
+    const validUsers = users.filter(u => u.email).slice(0, 5);
+    
+    const topUsers = validUsers.map(u => ({
+      email: u.email,
+      tokens: u.aiTokensUsed || 0
+    }));
+    
+    const totalTokensUsed = topUsers.reduce((sum, u) => sum + u.tokens, 0) || 0;
+
     const usage = {
-      totalTokensUsed: 1250000,
+      totalTokensUsed: totalTokensUsed,
       monthlyLimit: 5000000,
       activeModels: ['gpt-4-turbo', 'claude-3-opus', 'dall-e-3'],
-      topUsers: [
-        { email: 'user1@example.com', tokens: 450000 },
-        { email: 'user2@example.com', tokens: 320000 },
-        { email: 'user3@example.com', tokens: 180000 }
-      ]
+      topUsers: topUsers
     };
     res.json(usage);
   } catch (error) {
