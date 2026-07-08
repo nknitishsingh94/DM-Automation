@@ -2925,7 +2925,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       <span style={{ fontSize: '2.5rem' }}>🖼️</span>
                       <span style={{ fontSize: '0.8rem', fontWeight: 500 }}>No preview available</span>
                     </div>
-                  ) : mediaData.type === 'reel' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm)$/i) && !mediaData.thumbnail) ? (
+                  ) : mediaData.type === 'reel' || mediaData.type === 'video' || (finalMediaUrl && finalMediaUrl.match(/\.(mp4|mov|webm|mkv|avi)$/i) && !mediaData.thumbnail) ? (
                     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
                       <video src={finalMediaUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)' }}>
