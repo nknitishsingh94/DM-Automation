@@ -311,6 +311,9 @@ router.get('/ai-usage', async (req, res) => {
   }
 });
 
+// In-memory fallback for pricing (since global_configs table doesn't exist yet)
+let mockPricingConfig = { pro_price: 29, enterprise_price: 99 };
+
 // GET /api/admin/revenue
 router.get('/revenue', async (req, res) => {
   try {
@@ -318,12 +321,8 @@ router.get('/revenue', async (req, res) => {
     const users = await User.find({});
     let mrr = 0;
     
-    // Fetch pricing config if exists
-    let config = null;
-    try { config = await GlobalConfig.findOne({ key: 'pricing' }); } catch(e) {}
-    
-    const proPrice = config?.pro_price || 29;
-    const entPrice = config?.enterprise_price || 99;
+    const proPrice = mockPricingConfig.pro_price;
+    const entPrice = mockPricingConfig.enterprise_price;
 
     users.forEach(u => {
       if (u.plan === 'pro') mrr += proPrice;
@@ -348,13 +347,7 @@ router.get('/revenue', async (req, res) => {
 // GET /api/admin/pricing
 router.get('/pricing', async (req, res) => {
   try {
-    let config = null;
-    try { config = await GlobalConfig.findOne({ key: 'pricing' }); } catch(e) {}
-    
-    res.json({
-      pro_price: config?.pro_price || 29,
-      enterprise_price: config?.enterprise_price || 99
-    });
+    res.json(mockPricingConfig);
   } catch (error) {
     console.error('Admin Pricing Get Error:', error);
     res.status(500).json({ message: 'Failed to fetch pricing config.' });
@@ -366,14 +359,10 @@ router.put('/pricing', async (req, res) => {
   try {
     const { pro_price, enterprise_price } = req.body;
     
-    let config = null;
-    try { config = await GlobalConfig.findOne({ key: 'pricing' }); } catch(e) {}
-    
-    if (config) {
-      await GlobalConfig.findByIdAndUpdate(config.id || config._id, { pro_price, enterprise_price });
-    } else {
-      await GlobalConfig.create({ key: 'pricing', pro_price, enterprise_price });
-    }
+    mockPricingConfig = { 
+      pro_price: Number(pro_price) || 29, 
+      enterprise_price: Number(enterprise_price) || 99 
+    };
     
     res.json({ message: 'Pricing updated successfully!' });
   } catch (error) {
