@@ -468,12 +468,9 @@ router.get('/revenue', async (req, res) => {
 
     res.json({
       mrr: mrr,
-      totalRevenue: mrr * 12 + 4500, // Mock historical data
+      totalRevenue: mrr, // Without a transaction log, current MRR is the only accurate baseline
       activeSubscribers: users.filter(u => u.plan !== 'free').length,
-      recentTransactions: [
-        { id: 'tx_1', user: 'user1@example.com', amount: proPrice, date: new Date().toISOString(), status: 'paid' },
-        { id: 'tx_2', user: 'user2@example.com', amount: entPrice, date: new Date(Date.now() - 86400000).toISOString(), status: 'paid' }
-      ]
+      recentTransactions: [] // No real transaction history stored currently
     });
   } catch (error) {
     console.error('Admin Revenue Error:', error);
