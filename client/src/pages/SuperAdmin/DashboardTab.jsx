@@ -1,8 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Layout, Send, Zap, Server, Activity, ArrowUpRight } from 'lucide-react';
+import { Users, Layout, Send, Zap, Server, Activity, ArrowUpRight, TrendingUp } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
+
+const mockUserGrowth = [
+  { name: 'Jan', users: 400 },
+  { name: 'Feb', users: 800 },
+  { name: 'Mar', users: 1200 },
+  { name: 'Apr', users: 1800 },
+  { name: 'May', users: 2400 },
+  { name: 'Jun', users: 3100 },
+];
+
+const mockActivity = [
+  { name: 'Mon', automations: 4000, posts: 2400 },
+  { name: 'Tue', automations: 3000, posts: 1398 },
+  { name: 'Wed', automations: 2000, posts: 9800 },
+  { name: 'Thu', automations: 2780, posts: 3908 },
+  { name: 'Fri', automations: 1890, posts: 4800 },
+  { name: 'Sat', automations: 2390, posts: 3800 },
+  { name: 'Sun', automations: 3490, posts: 4300 },
+];
 
 export default function DashboardTab() {
   const [stats, setStats] = useState({
@@ -107,36 +127,50 @@ export default function DashboardTab() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', marginTop: '16px' }}>
-        {/* Placeholder for future charts */}
-        <div style={{ 
-          background: 'var(--bg-card)', padding: '32px', borderRadius: '24px', 
-          border: '1px solid var(--border-subtle)', minHeight: '300px', 
-          display: 'flex', flexDirection: 'column',
-          boxShadow: '0 4px 25px rgba(0,0,0,0.02)'
-        }}>
-          <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 8px 0', letterSpacing: '-0.02em' }}>Activity Timeline</h3>
-          <p style={{ color: 'var(--text-muted)', margin: '0 0 24px 0', fontSize: '0.95rem' }}>Platform usage over the last 30 days.</p>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(99, 102, 241, 0.03)', borderRadius: '16px', color: 'var(--primary)', fontSize: '0.95rem', fontWeight: '600', border: '1px dashed rgba(99, 102, 241, 0.2)' }}>
-            <Activity size={24} style={{ marginRight: '8px', opacity: 0.8 }} />
-            Chart Module Unlocking in Phase 4
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginTop: '16px' }}>
+        
+        {/* User Growth Chart */}
+        <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border-subtle)', boxShadow: '0 4px 25px rgba(0,0,0,0.02)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
+            <Users size={20} color="var(--primary)" />
+            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-main)' }}>User Growth (YTD)</h3>
+          </div>
+          <div style={{ height: '300px', width: '100%' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={mockUserGrowth}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
+                <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip 
+                  contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }} 
+                  itemStyle={{ color: 'var(--primary)', fontWeight: '700' }}
+                />
+                <Line type="monotone" dataKey="users" stroke="var(--primary)" strokeWidth={3} dot={{ r: 4, fill: 'var(--primary)', strokeWidth: 2, stroke: 'var(--bg-card)' }} activeDot={{ r: 6 }} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        <div style={{ 
-          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
-          padding: '32px', borderRadius: '24px', 
-          minHeight: '300px', display: 'flex', flexDirection: 'column', color: 'white',
-          boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.4)'
-        }}>
-          <h3 style={{ fontSize: '1.2rem', fontWeight: '800', margin: '0 0 8px 0', letterSpacing: '-0.02em' }}>System Status</h3>
-          <p style={{ margin: '0 0 24px 0', fontSize: '0.95rem', opacity: 0.9 }}>Real-time server monitoring.</p>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.1)', borderRadius: '16px', fontSize: '1.1rem', fontWeight: '700', flexDirection: 'column', gap: '16px', backdropFilter: 'blur(10px)' }}>
-            <div style={{ width: '64px', height: '64px', background: 'rgba(255,255,255,0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-               <Server size={32} />
-               <div style={{ position: 'absolute', top: 0, right: 0, width: '14px', height: '14px', background: '#34d399', borderRadius: '50%', border: '2px solid #059669' }} />
-            </div>
-            All Systems Operational
+        {/* Platform Activity Chart */}
+        <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border-subtle)', boxShadow: '0 4px 25px rgba(0,0,0,0.02)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
+            <Activity size={20} color="#10b981" />
+            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-main)' }}>Weekly Platform Activity</h3>
+          </div>
+          <div style={{ height: '300px', width: '100%' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={mockActivity}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
+                <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip 
+                  cursor={{ fill: 'var(--sidebar-bg)' }}
+                  contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }} 
+                />
+                <Bar dataKey="automations" fill="var(--primary)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="posts" fill="#10b981" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
