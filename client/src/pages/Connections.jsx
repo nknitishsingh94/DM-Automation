@@ -566,17 +566,17 @@ export default function Connections() {
   };
 
   const hasSocialConnected = 
-    (settings.isAccountConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Instagram')) ||
-    (settings.isFacebookConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Facebook')) ||
-    (settings.isYouTubeConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'YouTube')) ||
-    (settings.isLinkedInConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'LinkedIn')) ||
-    (settings.isGoogleBusinessConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Google Business')) ||
-    (settings.isTwitterConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X')) ||
-    (settings.isThreadsConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Threads')) ||
-    (settings.isPinterestConnected && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Pinterest'));
+    (settings.isAccountConnected && globalPlatforms.instagram !== false && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Instagram')) ||
+    (settings.isFacebookConnected && globalPlatforms.facebook !== false && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Facebook')) ||
+    (settings.isYouTubeConnected && globalPlatforms.youtube !== false && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'YouTube')) ||
+    (settings.isLinkedInConnected && globalPlatforms.linkedin !== false && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'LinkedIn')) ||
+    (settings.isTwitterConnected && globalPlatforms.twitter !== false && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X')) ||
+    (settings.isPinterestConnected && globalPlatforms.pinterest !== false && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Pinterest')) ||
+    (settings.isGoogleBusinessConnected && globalPlatforms.googleBusiness !== false && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Google Business')) ||
+    (settings.isThreadsConnected && globalPlatforms.threads !== false && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'Threads'));
 
   const hasWhatsAppConnected = 
-    settings.isWhatsAppConnected && (platformFilter === 'All platforms' || platformFilter === 'WhatsApp') && (statusFilter === 'All statuses' || statusFilter === 'Connected');
+    (settings.isWhatsAppConnected && globalPlatforms.whatsapp !== false && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (platformFilter === 'All platforms' || platformFilter === 'WhatsApp'));
 
   if (loading) return <LoadingSpinner minHeight="60vh" />;
 
