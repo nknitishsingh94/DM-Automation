@@ -145,7 +145,7 @@ export default function PaymentsTab() {
               disabled={saveStatus === 'saving'}
               style={{
                 width: '100%', padding: '14px', borderRadius: '12px', 
-                background: saveStatus === 'saved' ? '#10b981' : saveStatus === 'failed' ? '#ef4444' : 'var(--primary)', 
+                background: saveStatus === 'saved' ? '#10b981' : saveStatus === 'failed' ? '#ef4444' : '#3b82f6', 
                 color: 'white', border: 'none', fontWeight: '700', fontSize: '0.95rem', 
                 cursor: saveStatus === 'saving' ? 'not-allowed' : 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '8px',

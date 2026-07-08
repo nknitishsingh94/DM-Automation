@@ -281,7 +281,7 @@ export default function PlatformSettingsTab() {
             disabled={savePlatformsStatus === 'saving'}
             style={{
               padding: '12px 28px', borderRadius: '12px', 
-              background: savePlatformsStatus === 'failed' ? '#ef4444' : '#10b981', 
+              background: savePlatformsStatus === 'saved' ? '#10b981' : savePlatformsStatus === 'failed' ? '#ef4444' : '#3b82f6', 
               color: 'white',
               border: 'none', fontWeight: '700', fontSize: '0.95rem', 
               cursor: savePlatformsStatus === 'saving' ? 'not-allowed' : 'pointer',
