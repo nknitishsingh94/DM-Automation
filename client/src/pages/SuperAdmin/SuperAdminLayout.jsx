@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Shield, LayoutDashboard, Users, Construction } from 'lucide-react';
-import { Navigate } from 'react-router-dom';
+import { Shield, LayoutDashboard, Users, Construction, ArrowLeft } from 'lucide-react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import DashboardTab from './DashboardTab';
 import UsersTab from './UsersTab';
 
 export default function SuperAdminLayout() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -110,6 +111,34 @@ export default function SuperAdminLayout() {
                 </button>
               );
             })}
+          </div>
+
+          <div style={{ marginTop: 'auto', paddingTop: '24px' }}>
+            <button
+              onClick={() => navigate('/dashboard')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '12px',
+                padding: '14px 20px', borderRadius: '16px',
+                background: 'rgba(239, 68, 68, 0.05)',
+                color: '#ef4444',
+                fontWeight: '600',
+                border: '1px solid transparent',
+                cursor: 'pointer',
+                transition: 'all 0.3s', 
+                textAlign: 'left', 
+                fontSize: '0.95rem',
+                width: '100%'
+              }}
+              onMouseOver={(e) => { 
+                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+              }}
+              onMouseOut={(e) => { 
+                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.05)';
+              }}
+            >
+              <ArrowLeft size={18} />
+              Exit to OneView
+            </button>
           </div>
         </div>
 
