@@ -132,12 +132,10 @@ export default function ScheduledPostsTab() {
                   <tr key={post.id || post._id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                     <td style={{ padding: '16px 24px', maxWidth: '300px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'var(--sidebar-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          {post.mediaUrl ? (
-                            <img src={post.mediaUrl} alt="Media" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
-                          ) : (
-                            <MessageCircle size={20} color="var(--text-muted)" />
-                          )}
+                        <div style={{ width: '48px', height: '48px', borderRadius: '8px', background: 'rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid rgba(99, 102, 241, 0.2)' }}>
+                          <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--primary)', textTransform: 'uppercase', textAlign: 'center', lineHeight: '1.1' }}>
+                            {post.type ? post.type : (post.mediaUrl ? 'MEDIA' : 'TEXT')}
+                          </span>
                         </div>
                         <div style={{ overflow: 'hidden' }}>
                           <span style={{ fontWeight: '600', color: 'var(--text-main)', fontSize: '0.9rem', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
