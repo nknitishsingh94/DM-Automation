@@ -511,6 +511,18 @@ function Sidebar({ isMobileOpen, onClose }) {
                     </NavLink>
                   </div>
                 )}
+                {location.pathname.startsWith('/super-admin') && (
+                  <div style={{ marginTop: '16px' }}>
+                    <NavLink 
+                      to="/dashboard" 
+                      className="nav-item"
+                      style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)' }}
+                    >
+                      <LogOut size={18} />
+                      <span style={{ fontWeight: '600' }}>Exit Super Admin</span>
+                    </NavLink>
+                  </div>
+                )}
               </div>
             )}
             {!location.pathname.startsWith('/super-admin') && (
