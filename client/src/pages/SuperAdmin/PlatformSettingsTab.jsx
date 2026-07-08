@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Mail, Key, Shield, HardDrive, CheckCircle2 } from 'lucide-react';
+import { Settings, Mail, Key, Shield, HardDrive, CheckCircle2, Copy } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
 
@@ -12,6 +12,40 @@ export default function PlatformSettingsTab() {
       setSaving(false);
       toast.success('Global platform settings updated');
     }, 1000);
+  };
+
+  const handleCopy = (text, label) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copied!`);
+  };
+
+  const inputStyle = {
+    width: '100%', 
+    padding: '14px 45px 14px 16px', 
+    borderRadius: '12px', 
+    border: '2px solid #cbd5e1', 
+    background: '#f8fafc', 
+    color: '#334155',
+    fontWeight: '500',
+    fontSize: '0.95rem',
+    outline: 'none',
+    transition: 'border-color 0.2s'
+  };
+
+  const copyBtnStyle = {
+    position: 'absolute',
+    right: '12px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'transparent',
+    border: 'none',
+    color: '#64748b',
+    cursor: 'pointer',
+    padding: '4px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '6px'
   };
 
   return (
@@ -47,18 +81,33 @@ export default function PlatformSettingsTab() {
             </div>
             <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-main)' }}>SMTP Email Configuration</h3>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>SMTP Host</label>
-              <input type="text" defaultValue="smtp.sendgrid.net" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-main)', color: 'var(--text-main)' }} />
+              <label style={{ display: 'block', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>SMTP Host</label>
+              <div style={{ position: 'relative' }}>
+                <input type="text" defaultValue="smtp.sendgrid.net" style={inputStyle} id="smtp-host" />
+                <button style={copyBtnStyle} onClick={() => handleCopy(document.getElementById('smtp-host').value, 'SMTP Host')} title="Copy">
+                  <Copy size={16} />
+                </button>
+              </div>
             </div>
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>SMTP Port</label>
-              <input type="text" defaultValue="587" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-main)', color: 'var(--text-main)' }} />
+              <label style={{ display: 'block', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>SMTP Port</label>
+              <div style={{ position: 'relative' }}>
+                <input type="text" defaultValue="587" style={inputStyle} id="smtp-port" />
+                <button style={copyBtnStyle} onClick={() => handleCopy(document.getElementById('smtp-port').value, 'SMTP Port')} title="Copy">
+                  <Copy size={16} />
+                </button>
+              </div>
             </div>
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>SMTP API Key / Password</label>
-              <input type="password" defaultValue="************************" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-main)', color: 'var(--text-main)' }} />
+              <label style={{ display: 'block', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>SMTP API Key / Password</label>
+              <div style={{ position: 'relative' }}>
+                <input type="password" defaultValue="************************" style={inputStyle} id="smtp-pass" />
+                <button style={copyBtnStyle} onClick={() => handleCopy(document.getElementById('smtp-pass').value, 'SMTP Password')} title="Copy">
+                  <Copy size={16} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -71,14 +120,24 @@ export default function PlatformSettingsTab() {
             </div>
             <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-main)' }}>Global API Providers</h3>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>OpenAI Global API Key</label>
-              <input type="password" defaultValue="sk-***************************" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-main)', color: 'var(--text-main)' }} />
+              <label style={{ display: 'block', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>OpenAI Global API Key</label>
+              <div style={{ position: 'relative' }}>
+                <input type="password" defaultValue="sk-***************************" style={inputStyle} id="openai-key" />
+                <button style={copyBtnStyle} onClick={() => handleCopy(document.getElementById('openai-key').value, 'OpenAI Key')} title="Copy">
+                  <Copy size={16} />
+                </button>
+              </div>
             </div>
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>Stripe Secret Key</label>
-              <input type="password" defaultValue="rk_live_***************************" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-main)', color: 'var(--text-main)' }} />
+              <label style={{ display: 'block', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>Stripe Secret Key</label>
+              <div style={{ position: 'relative' }}>
+                <input type="password" defaultValue="rk_live_***************************" style={inputStyle} id="stripe-key" />
+                <button style={copyBtnStyle} onClick={() => handleCopy(document.getElementById('stripe-key').value, 'Stripe Key')} title="Copy">
+                  <Copy size={16} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
