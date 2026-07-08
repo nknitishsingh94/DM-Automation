@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 export default function PlatformSettingsTab() {
   const { setGlobalPlatforms } = useAuth();
   const [saving, setSaving] = useState(false);
+  const [savingPlatforms, setSavingPlatforms] = useState(false);
   const [platforms, setPlatforms] = useState({
     instagram: true, facebook: true, youtube: true, linkedin: true,
     twitter: true, googleBusiness: true, pinterest: true, threads: true
@@ -52,24 +53,30 @@ export default function PlatformSettingsTab() {
     }
   };
 
-  const togglePlatform = async (key) => {
-    const newPlatforms = { ...platforms, [key]: !platforms[key] };
-    setPlatforms(newPlatforms);
-    
-    // Auto-save the toggle change immediately
+  const togglePlatform = (key) => {
+    setPlatforms(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const savePlatformSettings = async () => {
+    setSavingPlatforms(true);
     try {
       const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(newPlatforms)
+        body: JSON.stringify(platforms)
       });
       if (res.ok) {
-        if (setGlobalPlatforms) setGlobalPlatforms(newPlatforms);
-        toast.success(`${newPlatforms[key] ? 'Enabled' : 'Disabled'} globally`);
+        if (setGlobalPlatforms) setGlobalPlatforms(platforms);
+        toast.success('Platform statuses updated globally');
+      } else {
+        toast.error('Failed to update platforms');
       }
     } catch (err) {
-      console.error('Failed to auto-save platform toggle', err);
+      console.error('Failed to save platform statuses', err);
+      toast.error('Network error');
+    } finally {
+      setSavingPlatforms(false);
     }
   };
 
@@ -229,19 +236,51 @@ export default function PlatformSettingsTab() {
               <div 
                 onClick={() => togglePlatform(platform.id)}
                 style={{
-                  width: '44px', height: '24px', borderRadius: '24px',
-                  background: platforms[platform.id] ? '#10b981' : 'var(--border)',
-                  position: 'relative', cursor: 'pointer', transition: 'background 0.3s ease'
+                  width: '60px', height: '32px', borderRadius: '32px',
+                  background: platforms[platform.id] ? '#10b981' : '#e5e7eb',
+                  position: 'relative', cursor: 'pointer', transition: 'background 0.3s ease',
+                  border: platforms[platform.id] ? '2px solid #059669' : '2px solid #d1d5db',
+                  display: 'flex', alignItems: 'center'
                 }}
               >
                 <div style={{
-                  position: 'absolute', top: '2px', left: platforms[platform.id] ? '22px' : '2px',
-                  width: '20px', height: '20px', borderRadius: '50%', background: 'white',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)', transition: 'left 0.3s ease'
+                  position: 'absolute', top: '2px', left: platforms[platform.id] ? '30px' : '2px',
+                  width: '24px', height: '24px', borderRadius: '50%', background: 'white',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.2)', transition: 'left 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)'
                 }} />
+                {/* Text ON/OFF indicator inside toggle */}
+                <span style={{ 
+                  position: 'absolute', 
+                  fontSize: '0.65rem', 
+                  fontWeight: '800',
+                  color: platforms[platform.id] ? 'white' : '#6b7280',
+                  left: platforms[platform.id] ? '8px' : 'auto',
+                  right: !platforms[platform.id] ? '6px' : 'auto',
+                  userSelect: 'none'
+                }}>
+                  {platforms[platform.id] ? 'ON' : 'OFF'}
+                </span>
               </div>
             </div>
           ))}
+        </div>
+        
+        {/* Dedicated Save Button for Platforms */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)' }}>
+          <button 
+            onClick={savePlatformSettings}
+            disabled={savingPlatforms}
+            style={{
+              padding: '12px 28px', borderRadius: '12px', background: '#10b981', color: 'white',
+              border: 'none', fontWeight: '700', fontSize: '0.95rem', cursor: savingPlatforms ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', gap: '8px', opacity: savingPlatforms ? 0.7 : 1,
+              boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
+              transition: 'all 0.2s'
+            }}
+          >
+            <CheckCircle2 size={18} />
+            {savingPlatforms ? 'Saving Platforms...' : 'Save Platform Settings'}
+          </button>
         </div>
       </div>
     </div>
