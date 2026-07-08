@@ -59,36 +59,45 @@ export default function UsersTab() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', background: 'var(--bg-card)', padding: '24px', borderRadius: '24px', boxShadow: '0 4px 25px rgba(0,0,0,0.02)', border: '1px solid var(--border-subtle)' }}>
         <div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 8px 0' }}>User Management</h2>
-          <p style={{ color: 'var(--text-muted)', margin: 0 }}>View and manage all registered accounts on the platform.</p>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 8px 0', letterSpacing: '-0.02em' }}>User Management</h2>
+          <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.95rem' }}>View and manage all registered accounts on the platform.</p>
         </div>
         
-        <div style={{ position: 'relative', width: '300px' }}>
-          <Search size={18} color="var(--text-muted)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
+        <div style={{ position: 'relative', width: '320px' }}>
+          <Search size={18} color="var(--primary)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
           <input 
             type="text" 
             placeholder="Search users by email or name..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
-              width: '100%', padding: '12px 16px 12px 42px', borderRadius: '12px',
-              border: '1.5px solid var(--border)', background: 'var(--bg-card)',
+              width: '100%', padding: '14px 16px 14px 44px', borderRadius: '16px',
+              border: '2px solid transparent', background: 'rgba(99, 102, 241, 0.05)',
               color: 'var(--text-main)', fontSize: '0.95rem', outline: 'none',
-              transition: 'all 0.2s'
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              fontWeight: '500'
             }}
-            onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-            onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+            onFocus={(e) => {
+              e.target.style.background = 'var(--bg-card)';
+              e.target.style.borderColor = 'var(--primary)';
+              e.target.style.boxShadow = '0 0 0 4px rgba(99, 102, 241, 0.1)';
+            }}
+            onBlur={(e) => {
+              e.target.style.background = 'rgba(99, 102, 241, 0.05)';
+              e.target.style.borderColor = 'transparent';
+              e.target.style.boxShadow = 'none';
+            }}
           />
         </div>
       </div>
 
-      <div style={{ background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
+      <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)', overflow: 'hidden', boxShadow: '0 4px 25px rgba(0,0,0,0.02)' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr style={{ background: 'var(--sidebar-bg)', borderBottom: '1px solid var(--border-subtle)' }}>
+              <tr style={{ background: 'rgba(99, 102, 241, 0.03)', borderBottom: '1px solid var(--border-subtle)' }}>
                 <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>User</th>
                 <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Role</th>
                 <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Joined Date</th>
