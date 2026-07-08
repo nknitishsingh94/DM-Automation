@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { Shield, LayoutDashboard, Users, Construction } from 'lucide-react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import DashboardTab from './DashboardTab';
 import UsersTab from './UsersTab';
 
 export default function SuperAdminLayout() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Extra security: Kick out anyone who isn't the founder even if they guess the URL
+  if (user?.email !== 'nknitishsingh91@gmail.com') {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
