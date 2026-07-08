@@ -7,7 +7,7 @@ import { API_BASE_URL } from '../config';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Dashboard() {
-  const { logout } = useAuth();
+  const { logout, globalPlatforms } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState({ 
     sentMessages: 0, 
@@ -66,15 +66,15 @@ export default function Dashboard() {
           }
         }
         
-        const isInstagramConnected = !!(settingsData?.isAccountConnected || settingsData?.instagramAccessToken);
-        const isFacebookConnected = !!(settingsData?.isFacebookConnected || (settingsData?.facebookAccessToken && settingsData?.facebookPageId));
-        const isYoutubeConnected = !!(settingsData?.isYoutubeConnected || settingsData?.isYouTubeConnected || settingsData?.youtubeAccessToken);
-        const isWhatsappConnected = !!(settingsData?.isWhatsAppConnected || settingsData?.whatsappToken);
-        const isLinkedInConnected = !!(settingsData?.isLinkedInConnected || settingsData?.linkedinAccessToken);
-        const isTwitterConnected = !!(settingsData?.isTwitterConnected || settingsData?.twitterAccessToken);
-        const isPinterestConnected = !!(settingsData?.isPinterestConnected || settingsData?.pinterestAccessToken);
-        const isGoogleBusinessConnected = !!(settingsData?.isGoogleBusinessConnected || settingsData?.googleBusinessAccessToken);
-        const isThreadsConnected = !!(settingsData?.isThreadsConnected || settingsData?.threadsAccessToken);
+        const isInstagramConnected = !!(settingsData?.isAccountConnected || settingsData?.instagramAccessToken) && globalPlatforms?.instagram !== false;
+        const isFacebookConnected = !!(settingsData?.isFacebookConnected || (settingsData?.facebookAccessToken && settingsData?.facebookPageId)) && globalPlatforms?.facebook !== false;
+        const isYoutubeConnected = !!(settingsData?.isYoutubeConnected || settingsData?.isYouTubeConnected || settingsData?.youtubeAccessToken) && globalPlatforms?.youtube !== false;
+        const isWhatsappConnected = !!(settingsData?.isWhatsAppConnected || settingsData?.whatsappToken) && globalPlatforms?.whatsapp !== false;
+        const isLinkedInConnected = !!(settingsData?.isLinkedInConnected || settingsData?.linkedinAccessToken) && globalPlatforms?.linkedin !== false;
+        const isTwitterConnected = !!(settingsData?.isTwitterConnected || settingsData?.twitterAccessToken) && globalPlatforms?.twitter !== false;
+        const isPinterestConnected = !!(settingsData?.isPinterestConnected || settingsData?.pinterestAccessToken) && globalPlatforms?.pinterest !== false;
+        const isGoogleBusinessConnected = !!(settingsData?.isGoogleBusinessConnected || settingsData?.googleBusinessAccessToken) && globalPlatforms?.googleBusiness !== false;
+        const isThreadsConnected = !!(settingsData?.isThreadsConnected || settingsData?.threadsAccessToken) && globalPlatforms?.threads !== false;
         
         setSetupStatus({
           profileDone: true, 

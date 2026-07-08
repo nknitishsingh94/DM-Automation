@@ -12,7 +12,7 @@ import { API_BASE_URL } from '../config';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Connections() {
-  const { user } = useAuth();
+  const { user, globalPlatforms } = useAuth();
   const navigate = useNavigate();
   const [saveStatus, setSaveStatus] = useState('');
   const [settings, setSettings] = useState({
@@ -71,25 +71,7 @@ export default function Connections() {
 
   const { notify } = useNotification();
 
-  const [globalPlatforms, setGlobalPlatforms] = useState({});
-
-  useEffect(() => {
-    const fetchGlobalPlatforms = async () => {
-      try {
-        const token = localStorage.getItem('insta_agent_token') || localStorage.getItem('token');
-        const res = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setGlobalPlatforms(data);
-        }
-      } catch (err) {
-        console.error('Failed to fetch global platforms', err);
-      }
-    };
-    fetchGlobalPlatforms();
-  }, []);
+  // globalPlatforms is now provided by AuthContext
 
   const platformsList = [
     { name: 'Instagram', icon: Instagram, color: '#ec4899', enabled: globalPlatforms.instagram !== false },
@@ -751,7 +733,7 @@ export default function Connections() {
               <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'stretch' }}>
 
             {/* ---- INSTAGRAM CARD ---- */}
-            {settings.isAccountConnected && (platformFilter === 'All platforms' || platformFilter === 'Instagram') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            {settings.isAccountConnected && globalPlatforms.instagram !== false && (platformFilter === 'All platforms' || platformFilter === 'Instagram') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
             <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -794,7 +776,7 @@ export default function Connections() {
             )}
 
             {/* ---- FACEBOOK CARD ---- */}
-            {settings.isFacebookConnected && (platformFilter === 'All platforms' || platformFilter === 'Facebook') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            {settings.isFacebookConnected && globalPlatforms.facebook !== false && (platformFilter === 'All platforms' || platformFilter === 'Facebook') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
             <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -837,7 +819,7 @@ export default function Connections() {
             )}
 
             {/* ---- YOUTUBE CARD ---- */}
-            {settings.isYouTubeConnected && (platformFilter === 'All platforms' || platformFilter === 'YouTube') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            {settings.isYouTubeConnected && globalPlatforms.youtube !== false && (platformFilter === 'All platforms' || platformFilter === 'YouTube') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
             <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -890,7 +872,7 @@ export default function Connections() {
             )}
 
             {/* ---- LINKEDIN CARD ---- */}
-            {settings.isLinkedInConnected && (platformFilter === 'All platforms' || platformFilter === 'LinkedIn') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            {settings.isLinkedInConnected && globalPlatforms.linkedin !== false && (platformFilter === 'All platforms' || platformFilter === 'LinkedIn') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
             <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -936,7 +918,7 @@ export default function Connections() {
             )}
 
             {/* ---- TWITTER/X CARD ---- */}
-            {settings.isTwitterConnected && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            {settings.isTwitterConnected && globalPlatforms.twitter !== false && (platformFilter === 'All platforms' || platformFilter === 'Twitter/X') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
             <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -979,7 +961,7 @@ export default function Connections() {
             )}
 
             {/* ---- GOOGLE BUSINESS CARD ---- */}
-            {settings.isGoogleBusinessConnected && (platformFilter === 'All platforms' || platformFilter === 'Google Business') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            {settings.isGoogleBusinessConnected && globalPlatforms.googleBusiness !== false && (platformFilter === 'All platforms' || platformFilter === 'Google Business') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
             <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1024,7 +1006,7 @@ export default function Connections() {
 
 
             {/* ---- PINTEREST CARD ---- */}
-            {settings.isPinterestConnected && (platformFilter === 'All platforms' || platformFilter === 'Pinterest') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            {settings.isPinterestConnected && globalPlatforms.pinterest !== false && (platformFilter === 'All platforms' || platformFilter === 'Pinterest') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
             <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1067,7 +1049,7 @@ export default function Connections() {
             )}
 
             {/* ---- THREADS CARD ---- */}
-            {settings.isThreadsConnected && (platformFilter === 'All platforms' || platformFilter === 'Threads') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
+            {settings.isThreadsConnected && globalPlatforms.threads !== false && (platformFilter === 'All platforms' || platformFilter === 'Threads') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
             <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

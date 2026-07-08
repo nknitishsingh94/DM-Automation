@@ -213,6 +213,11 @@ export default function UniversalTriggers() {
 
       const token = localStorage.getItem('insta_agent_token');
       
+      const globalPlatRes = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const globalPlatforms = globalPlatRes.ok ? await globalPlatRes.json() : {};
+
       const settingsRes = await fetch(`${API_BASE_URL}/api/settings`, {
         headers: { 'Authorization': `Bearer ${token}`, 'x-workspace-id': workspaceId }
       });
@@ -222,13 +227,13 @@ export default function UniversalTriggers() {
         const dynamicPlatforms = [
           { id: 'all', label: 'All Connected Platforms', checked: true, color: '#4f46e5' }
         ];
-        if (settingsData.isAccountConnected || settingsData.instagramAccessToken) {
+        if ((settingsData.isAccountConnected || settingsData.instagramAccessToken) && globalPlatforms?.instagram !== false) {
           dynamicPlatforms.push({ id: 'ig', label: `Instagram (@${settingsData.connectedInstagramName || 'Account'})`, checked: true, color: '#ec4899', icon: true });
         }
-        if (settingsData.isFacebookConnected || settingsData.facebookPageId) {
+        if ((settingsData.isFacebookConnected || settingsData.facebookPageId) && globalPlatforms?.facebook !== false) {
           dynamicPlatforms.push({ id: 'fb', label: `Facebook (${settingsData.connectedFacebookName || 'Page'})`, checked: true, color: '#3b82f6', icon: true });
         }
-        if (settingsData.isWhatsAppConnected || settingsData.whatsappPhoneNumberId) {
+        if ((settingsData.isWhatsAppConnected || settingsData.whatsappPhoneNumberId) && globalPlatforms?.whatsapp !== false) {
           dynamicPlatforms.push({ id: 'wa', label: 'WhatsApp', checked: true, color: '#10b981', icon: true });
         }
         

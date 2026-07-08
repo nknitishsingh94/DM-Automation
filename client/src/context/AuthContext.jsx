@@ -13,13 +13,28 @@ export function AuthProvider({ children }) {
       return null;
     }
   });
-  const [loading, setLoading] = useState(false);
+  const [globalPlatforms, setGlobalPlatforms] = useState({
+    instagram: true, facebook: true, youtube: true, linkedin: true,
+    twitter: true, googleBusiness: true, pinterest: true, threads: true,
+    whatsapp: true, telegram: true
+  });
 
   useEffect(() => {
     const token = localStorage.getItem('insta_agent_token');
     if (!token && user) {
       setUser(null);
     }
+    
+    // Fetch global platforms (no token required, but pass if available)
+    fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data) setGlobalPlatforms(data);
+      })
+      .catch(err => console.error("Global platforms load failed:", err));
+
     if (token) {
       fetch(`${API_BASE_URL}/api/settings`, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -68,8 +83,10 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const [loading, setLoading] = useState(false);
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, syncPlan, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, syncPlan, loading, globalPlatforms, setGlobalPlatforms }}>
       {!loading && children}
     </AuthContext.Provider>
   );

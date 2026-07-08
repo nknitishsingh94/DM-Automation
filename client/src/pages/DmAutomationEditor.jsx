@@ -34,7 +34,7 @@ export default function DmAutomationEditor() {
   const navigate = useNavigate();
   const location = useLocation();
   const { notify } = useNotification();
-  const { user } = useAuth();
+  const { user, globalPlatforms } = useAuth();
   const params = new URLSearchParams(location.search);
   const channel = params.get('channel') || 'instagram';
   const template = params.get('template') || 'all_dms';

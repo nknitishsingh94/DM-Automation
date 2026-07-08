@@ -1,4 +1,3 @@
-
 const getSafeImageUrl = (url) => {
   if (!url || typeof url !== 'string') return url;
   if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
@@ -48,7 +47,7 @@ export default function AutomationEditor() {
   const navigate = useNavigate();
   const location = useLocation();
   const { notify } = useNotification();
-  const { user } = useAuth();
+  const { user, globalPlatforms } = useAuth();
   const params = new URLSearchParams(location.search);
   const template = params.get('template');
   const channel = params.get('channel');
@@ -369,8 +368,8 @@ export default function AutomationEditor() {
         setConnectedSettings(data);
 
         if (!id || id === 'new') {
-          const isInstagramConnected = data.isAccountConnected || (data.instagramAccessToken && data.businessAccountId);
-          const isFacebookConnected = data.isFacebookConnected || (data.facebookAccessToken && data.facebookPageId);
+          const isInstagramConnected = (data.isAccountConnected || (data.instagramAccessToken && data.businessAccountId)) && globalPlatforms?.instagram !== false;
+          const isFacebookConnected = (data.isFacebookConnected || (data.facebookAccessToken && data.facebookPageId)) && globalPlatforms?.facebook !== false;
           const currentPlatform = channel || 'instagram';
 
           if (currentPlatform === 'instagram' && !isInstagramConnected && isFacebookConnected) {
@@ -384,7 +383,7 @@ export default function AutomationEditor() {
       }
     };
     fetchSettings();
-  }, [id, channel]);
+  }, [id, channel, globalPlatforms]);
 
   const handleAddKeyword = (e) => {
     if (e.key === 'Enter' && keywordInput.trim()) {
@@ -1207,14 +1206,14 @@ export default function AutomationEditor() {
                       }}
                    >
                       {(!triggerOnComments && !triggerOnStories) && <option value="all">🌐 All Connected Platforms</option>}
-                      {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
+                      {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && globalPlatforms?.instagram !== false && (
                         <option value="instagram">📸 Instagram</option>
                       )}
-                      {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
+                      {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && globalPlatforms?.facebook !== false && (
                         <option value="facebook">💬 Facebook Messenger</option>
                       )}
-                      {connectedSettings && (connectedSettings.isWhatsAppConnected || connectedSettings.whatsappToken) && (
-                        <option value="whatsapp">📱 WhatsApp</option>
+                      {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && globalPlatforms?.whatsapp !== false && (
+                        <option value="whatsapp">🟩 WhatsApp</option>
                       )}
                    </select>
                   )}

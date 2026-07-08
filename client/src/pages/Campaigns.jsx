@@ -9,7 +9,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 export default function Campaigns({ platformFilter: propPlatformFilter }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, logout, globalPlatforms } = useAuth();
   const { notify } = useNotification();
   
   const [campaigns, setCampaigns] = useState([]);
@@ -219,9 +219,9 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
   const getConnectedPlatformsText = () => {
     if (!connectedSettings) return 'All Connected Platforms';
     const platforms = [];
-    if (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) platforms.push('Instagram');
-    if (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) platforms.push('Facebook');
-    if (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) platforms.push('WhatsApp');
+    if ((connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && globalPlatforms?.instagram !== false) platforms.push('Instagram');
+    if ((connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && globalPlatforms?.facebook !== false) platforms.push('Facebook');
+    if ((connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && globalPlatforms?.whatsapp !== false) platforms.push('WhatsApp');
     
     if (platforms.length === 0) return 'All Connected Platforms';
     return `All Connected Platforms (${platforms.join(', ')})`;
@@ -743,9 +743,9 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
             
             {/* Modal Platform Filters */}
             {(() => {
-              const isIgConnected = connectedSettings?.isAccountConnected || (!!connectedSettings?.instagramAccessToken && !!connectedSettings?.businessAccountId);
-              const isFbConnected = connectedSettings?.isFacebookConnected || (!!connectedSettings?.facebookAccessToken && !!connectedSettings?.facebookPageId);
-              const isWaConnected = connectedSettings?.isWhatsAppConnected || (!!connectedSettings?.whatsappToken && !!connectedSettings?.whatsappPhoneNumberId);
+              const isIgConnected = (connectedSettings?.isAccountConnected || (!!connectedSettings?.instagramAccessToken && !!connectedSettings?.businessAccountId)) && globalPlatforms?.instagram !== false;
+              const isFbConnected = (connectedSettings?.isFacebookConnected || (!!connectedSettings?.facebookAccessToken && !!connectedSettings?.facebookPageId)) && globalPlatforms?.facebook !== false;
+              const isWaConnected = (connectedSettings?.isWhatsAppConnected || (!!connectedSettings?.whatsappToken && !!connectedSettings?.whatsappPhoneNumberId)) && globalPlatforms?.whatsapp !== false;
 
               const connectedPlatforms = [];
               if (isIgConnected) connectedPlatforms.push({ id: 'instagram', label: 'Instagram' });
@@ -865,13 +865,13 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                       style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', background: 'var(--sidebar-bg)', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '0.95rem', color: '#1e1b4b', appearance: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
                       onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
                     >
-                      {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
+                      {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && globalPlatforms?.instagram !== false && (
                         <option value="instagram">📸 Instagram</option>
                       )}
-                      {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
+                      {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && globalPlatforms?.facebook !== false && (
                         <option value="facebook">💬 Facebook Messenger</option>
                       )}
-                      {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && (
+                      {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && globalPlatforms?.whatsapp !== false && (
                         <option value="whatsapp">🟩 WhatsApp</option>
                       )}
                     </select>
@@ -960,13 +960,13 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
                       onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.background = 'var(--bg-card)'; e.target.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-subtle)'; e.target.style.background = 'var(--sidebar-bg)'; e.target.style.boxShadow = 'none'; }}
                     >
                       <option value="all">🌐 {getConnectedPlatformsText()}</option>
-                      {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && (
+                      {connectedSettings && (connectedSettings.isAccountConnected || (connectedSettings.instagramAccessToken && connectedSettings.businessAccountId)) && globalPlatforms?.instagram !== false && (
                         <option value="instagram">📸 Instagram</option>
                       )}
-                      {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && (
+                      {connectedSettings && (connectedSettings.isFacebookConnected || (connectedSettings.facebookAccessToken && connectedSettings.facebookPageId)) && globalPlatforms?.facebook !== false && (
                         <option value="facebook">💬 Facebook Messenger</option>
                       )}
-                      {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && (
+                      {connectedSettings && (connectedSettings.isWhatsAppConnected || (connectedSettings.whatsappToken && connectedSettings.whatsappPhoneNumberId)) && globalPlatforms?.whatsapp !== false && (
                         <option value="whatsapp">🟩 WhatsApp</option>
                       )}
                     </select>

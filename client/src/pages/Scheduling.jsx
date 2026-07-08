@@ -233,7 +233,7 @@ function PinterestIcon({ size = 18, color = 'currentColor' }) {
 }
 
 export default function Scheduling() {
-  const { user } = useAuth();
+  const { user, globalPlatforms } = useAuth();
   const { notify } = useNotification();
   const navigate = useNavigate();
 
@@ -243,25 +243,7 @@ export default function Scheduling() {
   const [submitting, setSubmitting] = useState(false);
   const [settings, setSettings] = useState(null);
   const [pinterestBoards, setPinterestBoards] = useState([]);
-  const [globalPlatforms, setGlobalPlatforms] = useState({});
-
-  useEffect(() => {
-    const fetchGlobalPlatforms = async () => {
-      try {
-        const token = localStorage.getItem('insta_agent_token') || localStorage.getItem('token');
-        const res = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setGlobalPlatforms(data);
-        }
-      } catch (err) {
-        console.error('Failed to fetch global platforms', err);
-      }
-    };
-    fetchGlobalPlatforms();
-  }, []);
+  // globalPlatforms is now provided by AuthContext
 
   const getSafeImageUrl = (url) => {
     if (!url || typeof url !== 'string') return url;

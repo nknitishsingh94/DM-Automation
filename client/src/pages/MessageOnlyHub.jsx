@@ -19,7 +19,7 @@ import { supabase } from '../supabase';
 
 const MessageOnlyHub = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, globalPlatforms } = useAuth();
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [contacts, setContacts] = useState([]);
@@ -211,9 +211,12 @@ const MessageOnlyHub = () => {
       color: '#0088cc',
       gradient: 'linear-gradient(135deg, #0088cc, #005580)',
       isConnected: settings && settings.isTelegramConnected,
-      accountName: settings?.connectedTelegramName || 'Telegram Bot'
+      accountName: settings?.connectedTelegramName || 'Telegram User'
     }
-  ];
+  ].filter(p => {
+    if (p.id === 'google-business') return globalPlatforms?.googleBusiness !== false;
+    return globalPlatforms?.[p.id] !== false;
+  });
 
   const handleGenerateAiResponse = () => {
     if (!activeChat || !isAiEnabled) return;
