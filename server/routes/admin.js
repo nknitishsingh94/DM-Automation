@@ -311,8 +311,35 @@ router.get('/ai-usage', async (req, res) => {
   }
 });
 
-// In-memory fallback for pricing (since global_configs table doesn't exist yet)
-let mockPricingConfig = { pro_price: 29, enterprise_price: 99 };
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PRICING_FILE_PATH = path.join(__dirname, '..', 'pricing.json');
+
+// Helper to get pricing
+const getPricingConfig = () => {
+  try {
+    if (fs.existsSync(PRICING_FILE_PATH)) {
+      const data = fs.readFileSync(PRICING_FILE_PATH, 'utf8');
+      return JSON.parse(data);
+    }
+  } catch (e) {
+    console.error('Error reading pricing config', e);
+  }
+  return { pro_price: 29, enterprise_price: 99 };
+};
+
+// Helper to save pricing
+const savePricingConfig = (config) => {
+  try {
+    fs.writeFileSync(PRICING_FILE_PATH, JSON.stringify(config, null, 2));
+  } catch (e) {
+    console.error('Error saving pricing config', e);
+  }
+};
 
 // GET /api/admin/revenue
 router.get('/revenue', async (req, res) => {
@@ -321,8 +348,9 @@ router.get('/revenue', async (req, res) => {
     const users = await User.find({});
     let mrr = 0;
     
-    const proPrice = mockPricingConfig.pro_price;
-    const entPrice = mockPricingConfig.enterprise_price;
+    const config = getPricingConfig();
+    const proPrice = config.pro_price;
+    const entPrice = config.enterprise_price;
 
     users.forEach(u => {
       if (u.plan === 'pro') mrr += proPrice;
@@ -347,7 +375,7 @@ router.get('/revenue', async (req, res) => {
 // GET /api/admin/pricing
 router.get('/pricing', async (req, res) => {
   try {
-    res.json(mockPricingConfig);
+    res.json(getPricingConfig());
   } catch (error) {
     console.error('Admin Pricing Get Error:', error);
     res.status(500).json({ message: 'Failed to fetch pricing config.' });
@@ -359,10 +387,11 @@ router.put('/pricing', async (req, res) => {
   try {
     const { pro_price, enterprise_price } = req.body;
     
-    mockPricingConfig = { 
+    const config = { 
       pro_price: Number(pro_price) || 29, 
       enterprise_price: Number(enterprise_price) || 99 
     };
+    savePricingConfig(config);
     
     res.json({ message: 'Pricing updated successfully!' });
   } catch (error) {
