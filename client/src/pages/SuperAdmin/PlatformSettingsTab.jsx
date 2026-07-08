@@ -84,21 +84,11 @@ export default function PlatformSettingsTab() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
               <label style={{ display: 'block', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>SMTP Host</label>
-              <div style={{ position: 'relative' }}>
-                <input type="text" defaultValue="smtp.sendgrid.net" style={inputStyle} id="smtp-host" />
-                <button style={copyBtnStyle} onClick={() => handleCopy(document.getElementById('smtp-host').value, 'SMTP Host')} title="Copy">
-                  <Copy size={16} />
-                </button>
-              </div>
+              <input type="text" defaultValue="smtp.sendgrid.net" style={inputStyle} id="smtp-host" />
             </div>
             <div>
               <label style={{ display: 'block', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>SMTP Port</label>
-              <div style={{ position: 'relative' }}>
-                <input type="text" defaultValue="587" style={inputStyle} id="smtp-port" />
-                <button style={copyBtnStyle} onClick={() => handleCopy(document.getElementById('smtp-port').value, 'SMTP Port')} title="Copy">
-                  <Copy size={16} />
-                </button>
-              </div>
+              <input type="text" defaultValue="587" style={inputStyle} id="smtp-port" />
             </div>
             <div>
               <label style={{ display: 'block', fontWeight: '700', color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.85rem' }}>SMTP API Key / Password</label>
