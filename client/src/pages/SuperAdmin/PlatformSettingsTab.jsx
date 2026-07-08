@@ -26,9 +26,10 @@ export default function PlatformSettingsTab() {
           onClick={handleSave}
           disabled={saving}
           style={{
-            padding: '12px 24px', borderRadius: '12px', background: 'var(--primary)', color: 'white',
+            padding: '12px 24px', borderRadius: '12px', background: '#3b82f6', color: 'white',
             border: 'none', fontWeight: '700', fontSize: '0.95rem', cursor: saving ? 'not-allowed' : 'pointer',
-            display: 'flex', alignItems: 'center', gap: '8px', opacity: saving ? 0.7 : 1
+            display: 'flex', alignItems: 'center', gap: '8px', opacity: saving ? 0.7 : 1,
+            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
           }}
         >
           <CheckCircle2 size={18} />
