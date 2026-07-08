@@ -6,8 +6,8 @@ import { useAuth } from '../../context/AuthContext';
 
 export default function PlatformSettingsTab() {
   const { setGlobalPlatforms } = useAuth();
-  const [saving, setSaving] = useState(false);
-  const [savingPlatforms, setSavingPlatforms] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('idle');
+  const [savePlatformsStatus, setSavePlatformsStatus] = useState('idle');
   const [platforms, setPlatforms] = useState({
     instagram: true, facebook: true, youtube: true, linkedin: true,
     twitter: true, googleBusiness: true, pinterest: true, threads: true
@@ -32,7 +32,7 @@ export default function PlatformSettingsTab() {
   }, []);
 
   const handleSave = async () => {
-    setSaving(true);
+    setSaveStatus('saving');
     try {
       const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
@@ -43,13 +43,16 @@ export default function PlatformSettingsTab() {
       if (res.ok) {
         toast.success('Global platform settings updated');
         if (setGlobalPlatforms) setGlobalPlatforms(platforms);
+        setSaveStatus('saved');
       } else {
         toast.error('Failed to update platforms');
+        setSaveStatus('failed');
       }
     } catch (err) {
       toast.error('Network error');
+      setSaveStatus('failed');
     } finally {
-      setSaving(false);
+      setTimeout(() => setSaveStatus('idle'), 2500);
     }
   };
 
@@ -58,7 +61,7 @@ export default function PlatformSettingsTab() {
   };
 
   const savePlatformSettings = async () => {
-    setSavingPlatforms(true);
+    setSavePlatformsStatus('saving');
     try {
       const token = localStorage.getItem('insta_agent_token');
       const res = await fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
@@ -69,14 +72,17 @@ export default function PlatformSettingsTab() {
       if (res.ok) {
         if (setGlobalPlatforms) setGlobalPlatforms(platforms);
         toast.success('Platform statuses updated globally');
+        setSavePlatformsStatus('saved');
       } else {
         toast.error('Failed to update platforms');
+        setSavePlatformsStatus('failed');
       }
     } catch (err) {
       console.error('Failed to save platform statuses', err);
       toast.error('Network error');
+      setSavePlatformsStatus('failed');
     } finally {
-      setSavingPlatforms(false);
+      setTimeout(() => setSavePlatformsStatus('idle'), 2500);
     }
   };
 
@@ -124,16 +130,19 @@ export default function PlatformSettingsTab() {
         </div>
         <button 
           onClick={handleSave}
-          disabled={saving}
+          disabled={saveStatus === 'saving'}
           style={{
-            padding: '12px 24px', borderRadius: '12px', background: '#3b82f6', color: 'white',
-            border: 'none', fontWeight: '700', fontSize: '0.95rem', cursor: saving ? 'not-allowed' : 'pointer',
-            display: 'flex', alignItems: 'center', gap: '8px', opacity: saving ? 0.7 : 1,
+            padding: '12px 24px', borderRadius: '12px', 
+            background: saveStatus === 'saved' ? '#10b981' : saveStatus === 'failed' ? '#ef4444' : '#3b82f6', 
+            color: 'white', border: 'none', fontWeight: '700', fontSize: '0.95rem', 
+            cursor: saveStatus === 'saving' ? 'not-allowed' : 'pointer',
+            display: 'flex', alignItems: 'center', gap: '8px', 
+            opacity: saveStatus === 'saving' ? 0.7 : 1, transition: 'background 0.3s',
             boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
           }}
         >
           <CheckCircle2 size={18} />
-          {saving ? 'Saving...' : 'Save All Settings'}
+          {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved!' : saveStatus === 'failed' ? 'Failed!' : 'Save All Settings'}
         </button>
       </div>
 
@@ -269,17 +278,21 @@ export default function PlatformSettingsTab() {
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)' }}>
           <button 
             onClick={savePlatformSettings}
-            disabled={savingPlatforms}
+            disabled={savePlatformsStatus === 'saving'}
             style={{
-              padding: '12px 28px', borderRadius: '12px', background: '#10b981', color: 'white',
-              border: 'none', fontWeight: '700', fontSize: '0.95rem', cursor: savingPlatforms ? 'not-allowed' : 'pointer',
-              display: 'flex', alignItems: 'center', gap: '8px', opacity: savingPlatforms ? 0.7 : 1,
+              padding: '12px 28px', borderRadius: '12px', 
+              background: savePlatformsStatus === 'failed' ? '#ef4444' : '#10b981', 
+              color: 'white',
+              border: 'none', fontWeight: '700', fontSize: '0.95rem', 
+              cursor: savePlatformsStatus === 'saving' ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', gap: '8px', 
+              opacity: savePlatformsStatus === 'saving' ? 0.7 : 1,
               boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
-              transition: 'all 0.2s'
+              transition: 'all 0.3s'
             }}
           >
             <CheckCircle2 size={18} />
-            {savingPlatforms ? 'Saving Platforms...' : 'Save Platform Settings'}
+            {savePlatformsStatus === 'saving' ? 'Saving Platforms...' : savePlatformsStatus === 'saved' ? 'Saved Successfully!' : savePlatformsStatus === 'failed' ? 'Save Failed!' : 'Save Platform Settings'}
           </button>
         </div>
       </div>

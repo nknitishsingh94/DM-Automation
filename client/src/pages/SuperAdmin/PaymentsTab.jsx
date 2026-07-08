@@ -8,7 +8,7 @@ export default function PaymentsTab() {
   const [revenue, setRevenue] = useState(null);
   const [pricing, setPricing] = useState({ pro_price: 29, enterprise_price: 99 });
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('idle');
 
   const fetchData = async () => {
     try {
@@ -37,19 +37,21 @@ export default function PaymentsTab() {
   }, []);
 
   const handleSavePricing = async () => {
-    setSaving(true);
+    setSaveStatus('saving');
     try {
       const token = localStorage.getItem('insta_agent_token');
       await axios.put(`${API_BASE_URL}/api/admin/pricing`, pricing, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      setSaveStatus('saved');
       toast.success('Pricing updated successfully!');
       fetchData(); // Refresh revenue based on new pricing
     } catch (err) {
       console.error(err);
+      setSaveStatus('failed');
       toast.error('Failed to update pricing');
     } finally {
-      setSaving(false);
+      setTimeout(() => setSaveStatus('idle'), 2500);
     }
   };
 
@@ -140,16 +142,18 @@ export default function PaymentsTab() {
             </div>
             <button 
               onClick={handleSavePricing}
-              disabled={saving}
+              disabled={saveStatus === 'saving'}
               style={{
-                width: '100%', padding: '14px', borderRadius: '12px', background: 'var(--primary)', color: 'white',
-                border: 'none', fontWeight: '700', fontSize: '0.95rem', cursor: saving ? 'not-allowed' : 'pointer',
+                width: '100%', padding: '14px', borderRadius: '12px', 
+                background: saveStatus === 'saved' ? '#10b981' : saveStatus === 'failed' ? '#ef4444' : 'var(--primary)', 
+                color: 'white', border: 'none', fontWeight: '700', fontSize: '0.95rem', 
+                cursor: saveStatus === 'saving' ? 'not-allowed' : 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '8px',
-                opacity: saving ? 0.7 : 1
+                opacity: saveStatus === 'saving' ? 0.7 : 1, transition: 'background 0.3s'
               }}
             >
               <CheckCircle2 size={18} />
-              {saving ? 'Saving...' : 'Update Platform Pricing'}
+              {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved!' : saveStatus === 'failed' ? 'Failed!' : 'Update Platform Pricing'}
             </button>
           </div>
         </div>
