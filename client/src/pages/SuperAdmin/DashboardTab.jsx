@@ -79,7 +79,7 @@ export default function DashboardTab() {
             
             <div>
               <div style={{ fontSize: '2.5rem', fontWeight: '800', color: stat.color, lineHeight: '1.2' }}>
-                {stat.value.toLocaleString()}
+                {(stat.value || 0).toLocaleString()}
               </div>
               <div style={{ color: 'var(--text-muted)', fontSize: '0.95rem', fontWeight: '600' }}>
                 {stat.title}
