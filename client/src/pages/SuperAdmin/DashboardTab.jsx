@@ -51,7 +51,7 @@ export default function DashboardTab() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       
       <div>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 8px 0' }}>Platform Overview</h2>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 4px 0' }}>Platform Overview</h2>
         <p style={{ color: 'var(--text-muted)', margin: 0 }}>Real-time statistics across the entire DM Automation platform.</p>
       </div>
 
