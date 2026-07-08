@@ -483,6 +483,10 @@ function Sidebar({ isMobileOpen, onClose }) {
                       <Users size={16} />
                       <span>Users</span>
                     </NavLink>
+                    <NavLink to="/super-admin/payments" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <CreditCard size={16} />
+                      <span>Payments & Pricing</span>
+                    </NavLink>
                     <NavLink to="/super-admin/subscriptions" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
                       <CreditCard size={16} />
                       <span>Subscriptions</span>
@@ -503,17 +507,13 @@ function Sidebar({ isMobileOpen, onClose }) {
                       <Calendar size={16} />
                       <span>Scheduled Posts</span>
                     </NavLink>
-                    <NavLink to="/super-admin/support" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
-                      <MessageCircle size={16} />
-                      <span>Support & Reviews</span>
-                    </NavLink>
                     <NavLink to="/super-admin/ai-usage" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
                       <Cpu size={16} />
                       <span>AI Token Usage</span>
                     </NavLink>
-                    <NavLink to="/super-admin/payments" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
-                      <CreditCard size={16} />
-                      <span>Payments & Pricing</span>
+                    <NavLink to="/super-admin/support" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <MessageCircle size={16} />
+                      <span>Support & Reviews</span>
                     </NavLink>
 
                   </div>
