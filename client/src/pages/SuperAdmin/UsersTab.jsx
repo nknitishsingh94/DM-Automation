@@ -45,7 +45,7 @@ export default function UsersTab() {
     }
   };
 
-  const filteredUsers = users.filter(u => 
+  const filteredUsers = (Array.isArray(users) ? users : []).filter(u => 
     (u.email || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
     (u.username || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
