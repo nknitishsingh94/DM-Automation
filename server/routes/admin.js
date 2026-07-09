@@ -228,7 +228,10 @@ router.get('/users/:id/history', async (req, res) => {
 
     // Find connected accounts (settings) for these workspaces
     const allSettings = await Settings.find({});
-    const userSettings = allSettings.filter(s => workspaceIds.includes(s.workspace_id));
+    const userSettings = allSettings.filter(s => 
+      workspaceIds.includes(s.workspaceId || s.workspace_id) || 
+      (s.userId || s.user_id) === id
+    );
 
     // Find automations (flows)
     const allFlows = await Flow.find({});

@@ -12,6 +12,7 @@ export default function UsersTab() {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedUserData, setSelectedUserData] = useState(null);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [selectedPlatformFilter, setSelectedPlatformFilter] = useState(null);
 
   const fetchUsers = async () => {
     try {
@@ -60,6 +61,8 @@ export default function UsersTab() {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSelectedUserData(res.data);
+      setSelectedPlatformFilter(null);
+      setLoadingHistory(false);
     } catch (err) {
       console.error(err);
       toast.error('Failed to load user history');
@@ -178,9 +181,21 @@ export default function UsersTab() {
                       f.platform?.toLowerCase() === acc.platform
                     );
 
+                    const isSelected = selectedPlatformFilter === acc.platform;
                     return (
-                      <div key={acc.id} style={{ padding: '16px', background: 'var(--bg-base)', borderRadius: '16px', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <div style={{ fontWeight: '700', color: 'var(--text-main)', textTransform: 'capitalize', fontSize: '1rem' }}>{acc.label}</div>
+                      <div 
+                        key={acc.id} 
+                        onClick={() => setSelectedPlatformFilter(isSelected ? null : acc.platform)}
+                        style={{ 
+                          padding: '16px', background: isSelected ? 'rgba(99,102,241,0.05)' : 'var(--bg-base)', 
+                          borderRadius: '16px', border: `1px solid ${isSelected ? 'var(--primary)' : 'var(--border-subtle)'}`, 
+                          display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', transition: 'all 0.2s',
+                          boxShadow: isSelected ? '0 4px 12px rgba(99,102,241,0.1)' : 'none'
+                        }}
+                        onMouseOver={(e) => { if (!isSelected) e.currentTarget.style.borderColor = 'var(--primary)'; }}
+                        onMouseOut={(e) => { if (!isSelected) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
+                      >
+                        <div style={{ fontWeight: '700', color: isSelected ? 'var(--primary)' : 'var(--text-main)', textTransform: 'capitalize', fontSize: '1rem' }}>{acc.label}</div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                           <span>Scheduled/Logs:</span>
                           <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{platformPosts.length}</span>
@@ -205,7 +220,9 @@ export default function UsersTab() {
                 <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>Automations ({(selectedUserData.automations || []).length})</h3>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {(selectedUserData.automations || []).map(flow => (
+                {(selectedUserData.automations || [])
+                  .filter(f => !selectedPlatformFilter || f.triggerType?.toLowerCase().includes(selectedPlatformFilter) || f.platform?.toLowerCase() === selectedPlatformFilter)
+                  .map(flow => (
                   <div key={flow.id || flow._id || Math.random()} style={{ padding: '12px', background: 'var(--bg-base)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
                     <div style={{ fontWeight: '600', color: 'var(--text-main)', marginBottom: '4px' }}>{flow.name || 'Unnamed Flow'}</div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', gap: '8px' }}>
@@ -214,7 +231,7 @@ export default function UsersTab() {
                     </div>
                   </div>
                 ))}
-                {!(selectedUserData.automations?.length > 0) && <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No automations found.</div>}
+                {(selectedUserData.automations || []).filter(f => !selectedPlatformFilter || f.triggerType?.toLowerCase().includes(selectedPlatformFilter) || f.platform?.toLowerCase() === selectedPlatformFilter).length === 0 && <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No automations found{selectedPlatformFilter ? ` for ${selectedPlatformFilter}` : ''}.</div>}
               </div>
             </div>
 
@@ -238,6 +255,7 @@ export default function UsersTab() {
                 </thead>
                 <tbody>
                   {[...(selectedUserData.scheduledPosts || []), ...(selectedUserData.postLogs || [])]
+                    .filter(p => !selectedPlatformFilter || p.platform?.toLowerCase() === selectedPlatformFilter || (Array.isArray(p.platforms) && p.platforms.some(x => x.toLowerCase() === selectedPlatformFilter)))
                     .sort((a, b) => new Date(b.createdAt || b.created_at || b.scheduledFor || 0) - new Date(a.createdAt || a.created_at || a.scheduledFor || 0))
                     .map(item => {
                       const isLog = item.status === 'success' || item.status === 'failed';
@@ -260,9 +278,9 @@ export default function UsersTab() {
                         </tr>
                       );
                     })}
-                    {((selectedUserData.scheduledPosts || []).length + (selectedUserData.postLogs || []).length) === 0 && (
+                    {[...(selectedUserData.scheduledPosts || []), ...(selectedUserData.postLogs || [])].filter(p => !selectedPlatformFilter || p.platform?.toLowerCase() === selectedPlatformFilter || (Array.isArray(p.platforms) && p.platforms.some(x => x.toLowerCase() === selectedPlatformFilter))).length === 0 && (
                       <tr>
-                        <td colSpan="4" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>No posting activity found.</td>
+                        <td colSpan="4" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>No posting activity found{selectedPlatformFilter ? ` for ${selectedPlatformFilter}` : ''}.</td>
                       </tr>
                     )}
                 </tbody>
