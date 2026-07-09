@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Trash2, MoreVertical, Shield, UserX, History, ArrowLeft, Activity, Zap, Building, FileText, CheckCircle, Clock, CheckCircle2 } from 'lucide-react';
+import { Search, Trash2, MoreVertical, Shield, UserX, History, ArrowLeft, Activity, Zap, Building, FileText, CheckCircle, Clock, CheckCircle2, Globe } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
@@ -137,6 +137,62 @@ export default function UsersTab() {
                   </div>
                 ))}
                 {!(selectedUserData.workspaces?.length > 0) && <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No workspaces found.</div>}
+              </div>
+            </div>
+
+            {/* Connected Accounts Card */}
+            <div style={{ background: 'var(--bg-card)', borderRadius: '24px', padding: '24px', border: '1px solid var(--border-subtle)', gridColumn: '1 / -1' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                <div style={{ background: 'rgba(236,72,153,0.1)', color: '#ec4899', padding: '10px', borderRadius: '12px' }}>
+                  <Globe size={20} />
+                </div>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>Connected Social Accounts</h3>
+              </div>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+                {(() => {
+                  const accounts = [];
+                  (selectedUserData.settings || []).forEach(s => {
+                    if (s.isInstagramConnected) accounts.push({ id: `ig_${s._id}`, platform: 'instagram', label: s.connectedInstagramName || 'Instagram' });
+                    if (s.isFacebookConnected) accounts.push({ id: `fb_${s._id}`, platform: 'facebook', label: s.connectedFacebookName || 'Facebook' });
+                    if (s.isLinkedInConnected) accounts.push({ id: `li_${s._id}`, platform: 'linkedin', label: 'LinkedIn' });
+                    if (s.isTwitterConnected) accounts.push({ id: `tw_${s._id}`, platform: 'twitter', label: 'Twitter' });
+                    if (s.isYouTubeConnected) accounts.push({ id: `yt_${s._id}`, platform: 'youtube', label: 'YouTube' });
+                    if (s.isPinterestConnected) accounts.push({ id: `pi_${s._id}`, platform: 'pinterest', label: 'Pinterest' });
+                    if (s.isTikTokConnected) accounts.push({ id: `tk_${s._id}`, platform: 'tiktok', label: 'TikTok' });
+                  });
+                  
+                  if (accounts.length === 0) {
+                    return <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No social accounts connected.</div>;
+                  }
+
+                  return accounts.map(acc => {
+                    // Calculate counts
+                    const allPosts = [...(selectedUserData.scheduledPosts || []), ...(selectedUserData.postLogs || [])];
+                    const platformPosts = allPosts.filter(p => 
+                      p.platform?.toLowerCase() === acc.platform || 
+                      (Array.isArray(p.platforms) && p.platforms.some(x => x.toLowerCase() === acc.platform))
+                    );
+                    const platformFlows = (selectedUserData.automations || []).filter(f => 
+                      f.triggerType?.toLowerCase().includes(acc.platform) || 
+                      f.platform?.toLowerCase() === acc.platform
+                    );
+
+                    return (
+                      <div key={acc.id} style={{ padding: '16px', background: 'var(--bg-base)', borderRadius: '16px', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ fontWeight: '700', color: 'var(--text-main)', textTransform: 'capitalize', fontSize: '1rem' }}>{acc.label}</div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                          <span>Scheduled/Logs:</span>
+                          <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{platformPosts.length}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                          <span>Automations:</span>
+                          <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{platformFlows.length}</span>
+                        </div>
+                      </div>
+                    );
+                  });
+                })()}
               </div>
             </div>
 
