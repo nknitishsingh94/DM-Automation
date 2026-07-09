@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Trash2, MoreVertical, Shield, UserX, History, ArrowLeft, Activity, Zap, Building, FileText, CheckCircle, Clock, CheckCircle2, Globe, Instagram, Facebook, Twitter, Linkedin, Youtube, Hash, MousePointerClick } from 'lucide-react';
+import { Search, Trash2, MoreVertical, Shield, UserX, History, ArrowLeft, Activity, Zap, Building, FileText, CheckCircle, Clock, CheckCircle2, Globe, Instagram, Facebook, Twitter, Linkedin, Youtube, Hash, MousePointerClick, Store, AtSign } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
@@ -171,11 +171,13 @@ export default function UsersTab() {
                   (selectedUserData.settings || []).forEach(s => {
                     if (s.isInstagramConnected || s.instagramAccessToken) accounts.push({ id: `ig_${s._id}`, platform: 'instagram', label: s.connectedInstagramName || 'Instagram', icon: Instagram, color: '#e1306c' });
                     if (s.isFacebookConnected || s.facebookAccessToken) accounts.push({ id: `fb_${s._id}`, platform: 'facebook', label: s.connectedFacebookName || 'Facebook', icon: Facebook, color: '#1877f2' });
-                    if (s.isLinkedInConnected || s.linkedinAccessToken) accounts.push({ id: `li_${s._id}`, platform: 'linkedin', label: 'LinkedIn', icon: Linkedin, color: '#0077b5' });
-                    if (s.isTwitterConnected || s.twitterAccessToken) accounts.push({ id: `tw_${s._id}`, platform: 'twitter', label: 'Twitter', icon: Twitter, color: '#1da1f2' });
-                    if (s.isYouTubeConnected || s.youtubeAccessToken) accounts.push({ id: `yt_${s._id}`, platform: 'youtube', label: 'YouTube', icon: Youtube, color: '#ff0000' });
-                    if (s.isPinterestConnected || s.pinterestAccessToken) accounts.push({ id: `pi_${s._id}`, platform: 'pinterest', label: 'Pinterest', icon: Hash, color: '#e60023' });
+                    if (s.isLinkedInConnected || s.linkedinAccessToken) accounts.push({ id: `li_${s._id}`, platform: 'linkedin', label: s.connectedLinkedInName || s.connectedLinkedinName || 'LinkedIn', icon: Linkedin, color: '#0077b5' });
+                    if (s.isTwitterConnected || s.twitterAccessToken) accounts.push({ id: `tw_${s._id}`, platform: 'twitter', label: s.connectedTwitterName || 'Twitter', icon: Twitter, color: '#1da1f2' });
+                    if (s.isYouTubeConnected || s.isYoutubeConnected || s.youtubeAccessToken) accounts.push({ id: `yt_${s._id}`, platform: 'youtube', label: s.youtubeChannelName || s.connectedYoutubeName || 'YouTube', icon: Youtube, color: '#ff0000' });
+                    if (s.isPinterestConnected || s.pinterestAccessToken) accounts.push({ id: `pi_${s._id}`, platform: 'pinterest', label: s.connectedPinterestName || 'Pinterest', icon: Hash, color: '#e60023' });
                     if (s.isTikTokConnected || s.tiktokAccessToken) accounts.push({ id: `tk_${s._id}`, platform: 'tiktok', label: 'TikTok', icon: Hash, color: '#000000' });
+                    if (s.isGoogleBusinessConnected || s.googleBusinessAccessToken) accounts.push({ id: `gb_${s._id}`, platform: 'google_business', label: s.connectedGoogleBusinessName || 'Google Business', icon: Store, color: '#4285F4' });
+                    if (s.isThreadsConnected || s.threadsAccessToken) accounts.push({ id: `th_${s._id}`, platform: 'threads', label: s.connectedThreadsName || 'Threads', icon: AtSign, color: '#000000' });
                   });
                   
                   if (accounts.length === 0) {
