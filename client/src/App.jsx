@@ -495,10 +495,6 @@ function Sidebar({ isMobileOpen, onClose }) {
                       <Construction size={16} />
                       <span>Workspaces</span>
                     </NavLink>
-                    <NavLink to="/super-admin/social-accounts" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
-                      <Link2 size={16} />
-                      <span>Social Accounts</span>
-                    </NavLink>
 
                     <NavLink to="/super-admin/ai-usage" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
                       <Cpu size={16} />
