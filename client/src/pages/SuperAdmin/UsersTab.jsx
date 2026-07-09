@@ -123,22 +123,19 @@ export default function UsersTab() {
   );
 
   if (selectedUserId) {
+    const currentUser = (Array.isArray(users) ? users : []).find(u => u._id === selectedUserId || u.id === selectedUserId);
+
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         <div style={{ position: 'sticky', top: 0, zIndex: 50, background: 'var(--bg-base)', padding: '24px 24px 12px 24px', margin: '-24px -24px 24px -24px', borderRadius: '0 0 16px 16px', borderBottom: '1px solid var(--border-subtle)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', minHeight: '52px' }}>
-            {/* Left Side: User Info or Loader */}
-            {loadingHistory ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div className="animate-spin" style={{ width: '20px', height: '20px', border: '2px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%' }}></div>
-                <span style={{ color: 'var(--text-muted)' }}>Loading user history...</span>
-              </div>
-            ) : selectedUserData ? (
+            {/* Left Side: User Info */}
+            {currentUser ? (
               <div>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 4px 0' }}>{selectedUserData.user.username || 'Anonymous'}</h2>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 4px 0' }}>{currentUser.username || 'Anonymous'}</h2>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>{selectedUserData.user.email}</span>
-                  <span style={{ background: 'var(--primary)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>{selectedUserData.user.plan}</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>{currentUser.email}</span>
+                  <span style={{ background: 'var(--primary)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>{currentUser.plan || 'free'}</span>
                 </div>
               </div>
             ) : <div />}
@@ -161,7 +158,12 @@ export default function UsersTab() {
           </div>
         </div>
 
-        {selectedUserData && !loadingHistory && (
+        {loadingHistory ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', gap: '16px' }}>
+            <div className="animate-spin" style={{ width: '48px', height: '48px', border: '4px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%' }}></div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: '500' }}>Loading history...</div>
+          </div>
+        ) : selectedUserData && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
             {/* Workspaces Card */}
             <div style={{ background: 'var(--bg-card)', borderRadius: '24px', padding: '24px', border: '1px solid var(--border-subtle)' }}>
