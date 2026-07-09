@@ -36,6 +36,29 @@ export default function PaymentsTab() {
     fetchData();
   }, []);
 
+  const handleExportCSV = () => {
+    const txs = revenue?.recentTransactions || [];
+    if (txs.length === 0) {
+      toast.error('No transactions to export yet');
+      return;
+    }
+    const headers = ['User', 'Date', 'Amount', 'Status'];
+    const csvContent = [
+      headers.join(','),
+      ...txs.map(tx => `"${tx.user}","${new Date(tx.date).toLocaleDateString()}","${tx.amount}","${tx.status}"`)
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `transactions_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('CSV exported successfully');
+  };
+
   const handleSavePricing = async () => {
     setSaveStatus('saving');
     try {
@@ -162,7 +185,10 @@ export default function PaymentsTab() {
         <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)', overflow: 'hidden', boxShadow: '0 4px 25px rgba(0,0,0,0.02)' }}>
           <div style={{ padding: '24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h3 style={{ fontSize: '1.1rem', fontWeight: '700', margin: 0, color: 'var(--text-main)' }}>Recent Transactions</h3>
-            <button style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}>
+            <button 
+              onClick={handleExportCSV}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem' }}
+            >
               <Download size={16} /> Export CSV
             </button>
           </div>

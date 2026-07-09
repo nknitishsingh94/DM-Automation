@@ -27,6 +27,25 @@ export default function WorkspacesTab() {
   useEffect(() => {
     fetchWorkspaces();
   }, []);
+  const handleDisableWorkspace = async (id, name, isActive) => {
+    const action = isActive === false ? 'enable' : 'disable';
+    if (!window.confirm(`Are you sure you want to ${action} workspace "${name}"?`)) {
+      return;
+    }
+    
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      await axios.put(`${API_BASE_URL}/api/admin/workspaces/${id}/disable`, { isActive: isActive === false ? true : false }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(`Workspace ${action}d successfully`);
+      setWorkspaces(workspaces.map(w => w.id === id ? { ...w, is_active: isActive === false ? true : false } : w));
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || `Failed to ${action} workspace`);
+    }
+  };
+
 
   const handleDeleteWorkspace = async (id, name) => {
     if (!window.confirm(`Are you sure you want to permanently delete workspace "${name}"? This action cannot be undone and will delete all associated automations and data.`)) {
@@ -99,8 +118,12 @@ export default function WorkspacesTab() {
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
               <tr style={{ background: 'rgba(99, 102, 241, 0.03)', borderBottom: '1px solid var(--border-subtle)' }}>
-                <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Workspace Details</th>
-                <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Owner ID</th>
+                <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Workspace Name</th>
+                <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Owner</th>
+                <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Plan</th>
+                <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'center' }}>Members</th>
+                <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'center' }}>Connected Accounts</th>
+                <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
                 <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Created Date</th>
                 <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'right' }}>Actions</th>
               </tr>
@@ -108,7 +131,7 @@ export default function WorkspacesTab() {
             <tbody>
               {filteredWorkspaces.length === 0 ? (
                 <tr>
-                  <td colSpan="4" style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                  <td colSpan="8" style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--text-muted)' }}>
                     <Building size={48} style={{ margin: '0 auto 16px auto', opacity: 0.5 }} />
                     <p>No workspaces found matching "{searchTerm}"</p>
                   </td>
@@ -128,7 +151,25 @@ export default function WorkspacesTab() {
                       </div>
                     </td>
                     <td style={{ padding: '16px 24px' }}>
-                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontFamily: 'monospace' }}>{ws.owner_id}</span>
+                      <span style={{ color: 'var(--text-main)', fontSize: '0.9rem', fontWeight: '500' }}>{ws.owner_id}</span>
+                    </td>
+                    <td style={{ padding: '16px 24px' }}>
+                      <span style={{ background: ws.plan === 'Enterprise' ? 'rgba(139, 92, 246, 0.1)' : ws.plan === 'Pro' ? 'rgba(59, 130, 246, 0.1)' : 'var(--bg-main)', color: ws.plan === 'Enterprise' ? '#8b5cf6' : ws.plan === 'Pro' ? '#3b82f6' : 'var(--text-muted)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '600' }}>
+                        {ws.plan || 'Free'}
+                      </span>
+                    </td>
+                    <td style={{ padding: '16px 24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                      {ws.members || 1}
+                    </td>
+                    <td style={{ padding: '16px 24px', textAlign: 'center' }}>
+                      <span style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '4px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '700' }}>
+                        {ws.connected_accounts || 0}
+                      </span>
+                    </td>
+                    <td style={{ padding: '16px 24px' }}>
+                      <span style={{ background: ws.is_active === false ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)', color: ws.is_active === false ? '#ef4444' : '#10b981', padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        {ws.is_active === false ? 'Disabled' : 'Active'}
+                      </span>
                     </td>
                     <td style={{ padding: '16px 24px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                       {(ws.created_at || ws.createdAt) ? new Date(ws.created_at || ws.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Unknown'}
@@ -136,17 +177,17 @@ export default function WorkspacesTab() {
                     <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
                         <button 
-                          onClick={() => toast('Disabling workspaces is coming in Phase 3', { icon: '🚧' })}
+                          onClick={() => handleDisableWorkspace(ws.id, ws.name, ws.is_active)}
                           style={{
-                            background: 'transparent', border: '1px solid var(--border-subtle)', color: 'var(--text-muted)',
+                            background: 'transparent', border: '1px solid var(--border-subtle)', color: ws.is_active === false ? '#10b981' : 'var(--text-muted)',
                             cursor: 'pointer', padding: '6px 12px', borderRadius: '8px',
                             display: 'inline-flex', alignItems: 'center', gap: '6px',
                             fontSize: '0.8rem', fontWeight: '600', transition: 'all 0.2s'
                           }}
                           onMouseOver={(e) => { e.currentTarget.style.background = 'var(--bg-main)'; e.currentTarget.style.color = 'var(--text-main)'; }}
-                          onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+                          onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = ws.is_active === false ? '#10b981' : 'var(--text-muted)'; }}
                         >
-                          <PowerOff size={14} /> Disable
+                          <PowerOff size={14} /> {ws.is_active === false ? 'Enable' : 'Disable'}
                         </button>
                         <button 
                           onClick={() => handleDeleteWorkspace(ws.id, ws.name)}

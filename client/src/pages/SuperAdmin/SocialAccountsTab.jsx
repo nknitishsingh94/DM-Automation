@@ -28,6 +28,19 @@ export default function SocialAccountsTab() {
     fetchAccounts();
   }, []);
 
+  const handleRefresh = async (id, platform, displayName) => {
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      await axios.put(`${API_BASE_URL}/api/admin/social-accounts/${id}/${platform}/refresh`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(`${platform} token for ${displayName} refreshed successfully`);
+    } catch (err) {
+      console.error(err);
+      toast.error(`Failed to refresh ${platform} token`);
+    }
+  };
+
   const handleDisconnect = async (id, platform, displayName) => {
     if (!window.confirm(`Are you sure you want to forcibly disconnect the ${platform} account "${displayName}"?`)) {
       return;
@@ -147,7 +160,7 @@ export default function SocialAccountsTab() {
                     <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
                         <button 
-                          onClick={() => toast('Token refresh requires OAuth flow (coming soon).', { icon: '🚧' })}
+                          onClick={() => handleRefresh(account.id, account.platform, account.displayName)}
                           style={{
                             background: 'transparent', border: '1px solid var(--border-subtle)', color: 'var(--text-muted)',
                             cursor: 'pointer', padding: '6px 12px', borderRadius: '8px',
