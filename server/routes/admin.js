@@ -472,9 +472,21 @@ router.delete('/social-accounts/:id/:platform', async (req, res) => {
       updatePayload.linkedinAccessToken = null;
       updatePayload.connectedLinkedinName = null;
     } else if (platform === 'pinterest') {
-      updatePayload.pinterestAccessToken = null;
-      updatePayload.connectedPinterestName = null;
-    } else {
+        updatePayload.pinterestAccessToken = null;
+        updatePayload.connectedPinterestName = null;
+        updatePayload.isPinterestConnected = false;
+      } else if (platform === 'tiktok') {
+        updatePayload.tiktokAccessToken = null;
+        updatePayload.isTikTokConnected = false;
+      } else if (platform === 'google_business') {
+        updatePayload.googleBusinessAccessToken = null;
+        updatePayload.connectedGoogleBusinessName = null;
+        updatePayload.isGoogleBusinessConnected = false;
+      } else if (platform === 'threads') {
+        updatePayload.threadsAccessToken = null;
+        updatePayload.connectedThreadsName = null;
+        updatePayload.isThreadsConnected = false;
+      } else {
       return res.status(400).json({ message: 'Unknown platform' });
     }
 
@@ -519,6 +531,22 @@ router.put('/social-accounts/:id/:platform/refresh', async (req, res) => {
       case 'linkedin':
         isConnected = settings.isLinkedInConnected;
         hasToken = !!settings.linkedinAccessToken;
+        break;
+      case 'pinterest':
+        isConnected = settings.isPinterestConnected;
+        hasToken = !!settings.pinterestAccessToken;
+        break;
+      case 'tiktok':
+        isConnected = settings.isTikTokConnected;
+        hasToken = !!settings.tiktokAccessToken;
+        break;
+      case 'google_business':
+        isConnected = settings.isGoogleBusinessConnected;
+        hasToken = !!settings.googleBusinessAccessToken;
+        break;
+      case 'threads':
+        isConnected = settings.isThreadsConnected;
+        hasToken = !!settings.threadsAccessToken;
         break;
       default:
         return res.status(400).json({ message: `Platform ${platform} is not supported for token refresh.` });

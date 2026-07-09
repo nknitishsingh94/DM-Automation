@@ -77,6 +77,43 @@ export default function UsersTab() {
     (u.username || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleAccountAction = async (accountId, platform, action) => {
+    if (!accountId) return;
+    const dbId = accountId.split('_')[1]; // ig_uuid -> uuid
+    if (!dbId) return;
+
+    if (action === 'disconnect') {
+      if (!window.confirm(`Are you sure you want to disconnect ${platform}?`)) return;
+    }
+
+    try {
+      if (action === 'refresh') {
+        const loadingToast = toast.loading(`Refreshing ${platform}...`);
+        await axios.put(`${API_BASE_URL}/api/admin/social-accounts/${dbId}/${platform}/refresh`, {}, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+        });
+        toast.dismiss(loadingToast);
+        toast.success(`Successfully refreshed ${platform}`);
+      } else if (action === 'disconnect') {
+        const loadingToast = toast.loading(`Disconnecting ${platform}...`);
+        await axios.delete(`${API_BASE_URL}/api/admin/social-accounts/${dbId}/${platform}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+        });
+        toast.dismiss(loadingToast);
+        toast.success(`Successfully disconnected ${platform}`);
+      }
+      // Refresh history data
+      const res = await axios.get(`${API_BASE_URL}/api/admin/users/${selectedUserId}/history`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+      });
+      setSelectedUserData(res.data);
+    } catch (err) {
+      console.error(err);
+      toast.dismiss();
+      toast.error(err.response?.data?.message || `Failed to ${action} account`);
+    }
+  };
+
   if (loading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '40px' }}>
       <div className="animate-spin" style={{ width: '32px', height: '32px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%' }}></div>
@@ -238,6 +275,26 @@ export default function UsersTab() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: isSelected ? acc.color : 'var(--text-muted)', fontWeight: '600', marginTop: '4px' }}>
                           <MousePointerClick size={12} />
                           {isSelected ? 'Filtering active...' : 'Click to filter history'}
+                        </div>
+                        
+                        {/* Action Buttons */}
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '8px', position: 'relative', zIndex: 2 }}>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleAccountAction(acc.id, acc.platform, 'refresh'); }}
+                            style={{ flex: 1, padding: '8px', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'var(--bg-card)', color: 'var(--text-main)', fontSize: '0.75rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'all 0.2s' }}
+                            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.1)'; e.currentTarget.style.color = 'var(--primary)'; e.currentTarget.style.borderColor = 'var(--primary)'; }}
+                            onMouseOut={(e) => { e.currentTarget.style.background = 'var(--bg-card)'; e.currentTarget.style.color = 'var(--text-main)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
+                          >
+                            <RefreshCw size={12} /> Refresh
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleAccountAction(acc.id, acc.platform, 'disconnect'); }}
+                            style={{ flex: 1, padding: '8px', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'var(--bg-card)', color: '#ef4444', fontSize: '0.75rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'all 0.2s' }}
+                            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; e.currentTarget.style.borderColor = '#ef4444'; }}
+                            onMouseOut={(e) => { e.currentTarget.style.background = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
+                          >
+                            <Trash2 size={12} /> Disconnect
+                          </button>
                         </div>
                       </div>
                     );
