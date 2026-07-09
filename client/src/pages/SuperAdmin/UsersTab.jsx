@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Trash2, MoreVertical, Shield, UserX, History, ArrowLeft, Activity, Zap, Building, FileText, CheckCircle, Clock, CheckCircle2, Globe } from 'lucide-react';
+import { Search, Trash2, MoreVertical, Shield, UserX, History, ArrowLeft, Activity, Zap, Building, FileText, CheckCircle, Clock, CheckCircle2, Globe, Instagram, Facebook, Twitter, Linkedin, Youtube, Hash, MousePointerClick } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
@@ -145,64 +145,97 @@ export default function UsersTab() {
 
             {/* Connected Accounts Card */}
             <div style={{ background: 'var(--bg-card)', borderRadius: '24px', padding: '24px', border: '1px solid var(--border-subtle)', gridColumn: '1 / -1' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                <div style={{ background: 'rgba(236,72,153,0.1)', color: '#ec4899', padding: '10px', borderRadius: '12px' }}>
-                  <Globe size={20} />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ background: 'rgba(236,72,153,0.1)', color: '#ec4899', padding: '10px', borderRadius: '12px' }}>
+                    <Globe size={20} />
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-main)' }}>Connected Social Accounts</h3>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Monitor platforms connected across all workspaces.</p>
+                  </div>
                 </div>
-                <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>Connected Social Accounts</h3>
+                {selectedPlatformFilter && (
+                  <button 
+                    onClick={() => setSelectedPlatformFilter(null)}
+                    style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: 'none', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer' }}
+                  >
+                    Clear Filter
+                  </button>
+                )}
               </div>
               
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
                 {(() => {
                   const accounts = [];
                   (selectedUserData.settings || []).forEach(s => {
-                    if (s.isInstagramConnected) accounts.push({ id: `ig_${s._id}`, platform: 'instagram', label: s.connectedInstagramName || 'Instagram' });
-                    if (s.isFacebookConnected) accounts.push({ id: `fb_${s._id}`, platform: 'facebook', label: s.connectedFacebookName || 'Facebook' });
-                    if (s.isLinkedInConnected) accounts.push({ id: `li_${s._id}`, platform: 'linkedin', label: 'LinkedIn' });
-                    if (s.isTwitterConnected) accounts.push({ id: `tw_${s._id}`, platform: 'twitter', label: 'Twitter' });
-                    if (s.isYouTubeConnected) accounts.push({ id: `yt_${s._id}`, platform: 'youtube', label: 'YouTube' });
-                    if (s.isPinterestConnected) accounts.push({ id: `pi_${s._id}`, platform: 'pinterest', label: 'Pinterest' });
-                    if (s.isTikTokConnected) accounts.push({ id: `tk_${s._id}`, platform: 'tiktok', label: 'TikTok' });
+                    if (s.isInstagramConnected || s.instagramAccessToken) accounts.push({ id: `ig_${s._id}`, platform: 'instagram', label: s.connectedInstagramName || 'Instagram', icon: Instagram, color: '#e1306c' });
+                    if (s.isFacebookConnected || s.facebookAccessToken) accounts.push({ id: `fb_${s._id}`, platform: 'facebook', label: s.connectedFacebookName || 'Facebook', icon: Facebook, color: '#1877f2' });
+                    if (s.isLinkedInConnected || s.linkedinAccessToken) accounts.push({ id: `li_${s._id}`, platform: 'linkedin', label: 'LinkedIn', icon: Linkedin, color: '#0077b5' });
+                    if (s.isTwitterConnected || s.twitterAccessToken) accounts.push({ id: `tw_${s._id}`, platform: 'twitter', label: 'Twitter', icon: Twitter, color: '#1da1f2' });
+                    if (s.isYouTubeConnected || s.youtubeAccessToken) accounts.push({ id: `yt_${s._id}`, platform: 'youtube', label: 'YouTube', icon: Youtube, color: '#ff0000' });
+                    if (s.isPinterestConnected || s.pinterestAccessToken) accounts.push({ id: `pi_${s._id}`, platform: 'pinterest', label: 'Pinterest', icon: Hash, color: '#e60023' });
+                    if (s.isTikTokConnected || s.tiktokAccessToken) accounts.push({ id: `tk_${s._id}`, platform: 'tiktok', label: 'TikTok', icon: Hash, color: '#000000' });
                   });
                   
                   if (accounts.length === 0) {
-                    return <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No social accounts connected.</div>;
+                    return <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', gridColumn: '1 / -1', padding: '20px', background: 'var(--bg-base)', borderRadius: '12px', textAlign: 'center' }}>No social accounts are connected yet.</div>;
                   }
 
                   return accounts.map(acc => {
-                    // Calculate counts
                     const allPosts = [...(selectedUserData.scheduledPosts || []), ...(selectedUserData.postLogs || [])];
-                    const platformPosts = allPosts.filter(p => 
-                      p.platform?.toLowerCase() === acc.platform || 
-                      (Array.isArray(p.platforms) && p.platforms.some(x => x.toLowerCase() === acc.platform))
-                    );
-                    const platformFlows = (selectedUserData.automations || []).filter(f => 
-                      f.triggerType?.toLowerCase().includes(acc.platform) || 
-                      f.platform?.toLowerCase() === acc.platform
-                    );
+                    const platformPosts = allPosts.filter(p => p.platform?.toLowerCase() === acc.platform || (Array.isArray(p.platforms) && p.platforms.some(x => x.toLowerCase() === acc.platform)));
+                    const platformFlows = (selectedUserData.automations || []).filter(f => f.triggerType?.toLowerCase().includes(acc.platform) || f.platform?.toLowerCase() === acc.platform);
 
                     const isSelected = selectedPlatformFilter === acc.platform;
+                    const IconComponent = acc.icon;
+
                     return (
                       <div 
                         key={acc.id} 
                         onClick={() => setSelectedPlatformFilter(isSelected ? null : acc.platform)}
                         style={{ 
-                          padding: '16px', background: isSelected ? 'rgba(99,102,241,0.05)' : 'var(--bg-base)', 
-                          borderRadius: '16px', border: `1px solid ${isSelected ? 'var(--primary)' : 'var(--border-subtle)'}`, 
-                          display: 'flex', flexDirection: 'column', gap: '8px', cursor: 'pointer', transition: 'all 0.2s',
-                          boxShadow: isSelected ? '0 4px 12px rgba(99,102,241,0.1)' : 'none'
+                          position: 'relative', overflow: 'hidden', padding: '20px', background: 'var(--bg-base)', 
+                          borderRadius: '16px', border: `2px solid ${isSelected ? acc.color : 'transparent'}`, 
+                          display: 'flex', flexDirection: 'column', gap: '16px', cursor: 'pointer', transition: 'all 0.3s ease',
+                          boxShadow: isSelected ? `0 8px 24px ${acc.color}20` : '0 2px 8px rgba(0,0,0,0.04)'
                         }}
-                        onMouseOver={(e) => { if (!isSelected) e.currentTarget.style.borderColor = 'var(--primary)'; }}
-                        onMouseOut={(e) => { if (!isSelected) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
+                        onMouseOver={(e) => { 
+                          e.currentTarget.style.transform = 'translateY(-4px)';
+                          if (!isSelected) e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.08)'; 
+                        }}
+                        onMouseOut={(e) => { 
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          if (!isSelected) e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)'; 
+                        }}
                       >
-                        <div style={{ fontWeight: '700', color: isSelected ? 'var(--primary)' : 'var(--text-main)', textTransform: 'capitalize', fontSize: '1rem' }}>{acc.label}</div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                          <span>Scheduled/Logs:</span>
-                          <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{platformPosts.length}</span>
+                        {/* Background gradient hint */}
+                        <div style={{ position: 'absolute', top: 0, right: 0, width: '80px', height: '80px', background: `radial-gradient(circle at top right, ${acc.color}20 0%, transparent 70%)`, opacity: 0.8, pointerEvents: 'none' }}></div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative', zIndex: 1 }}>
+                          <div style={{ background: `${acc.color}15`, color: acc.color, padding: '10px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <IconComponent size={22} />
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '1.05rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '160px' }}>{acc.label}</div>
+                            <div style={{ fontSize: '0.75rem', color: acc.color, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{acc.platform}</div>
+                          </div>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                          <span>Automations:</span>
-                          <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{platformFlows.length}</span>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', position: 'relative', zIndex: 1 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', background: 'var(--bg-card)', padding: '8px 12px', borderRadius: '8px' }}>
+                            <span style={{ color: 'var(--text-muted)' }}>Posts / Logs</span>
+                            <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>{platformPosts.length}</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', background: 'var(--bg-card)', padding: '8px 12px', borderRadius: '8px' }}>
+                            <span style={{ color: 'var(--text-muted)' }}>Automations</span>
+                            <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>{platformFlows.length}</span>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: isSelected ? acc.color : 'var(--text-muted)', fontWeight: '600', marginTop: '4px' }}>
+                          <MousePointerClick size={12} />
+                          {isSelected ? 'Filtering active...' : 'Click to filter history'}
                         </div>
                       </div>
                     );
