@@ -311,7 +311,7 @@ export default function PlatformSettingsTab() {
       </div>
 
       {/* Bottom Save All Button */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '24px 0 0 0', borderTop: '1px solid var(--border-subtle)' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <button 
           onClick={handleSave}
           disabled={saveStatus === 'saving'}
