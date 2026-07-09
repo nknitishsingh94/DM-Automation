@@ -323,11 +323,33 @@ export default function UsersTab() {
                     {(selectedUserData.automations || [])
                       .filter(f => f.triggerType?.toLowerCase().includes(selectedPlatformFilter) || f.platform?.toLowerCase() === selectedPlatformFilter)
                       .map(flow => (
-                      <div key={flow.id || flow._id || Math.random()} style={{ padding: '12px', background: 'var(--bg-base)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-                        <div style={{ fontWeight: '600', color: 'var(--text-main)', marginBottom: '4px' }}>{flow.name || 'Unnamed Flow'}</div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', gap: '8px' }}>
-                          <span style={{ color: flow.isActive ? '#10b981' : 'var(--text-muted)' }}>{flow.isActive ? 'Active' : 'Draft'}</span>
-                          • <span>Trigger: {flow.triggerType || 'Unknown'}</span>
+                      <div 
+                        key={flow.id || flow._id || Math.random()} 
+                        style={{ 
+                          padding: '16px', background: 'var(--bg-base)', borderRadius: '16px', 
+                          border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', 
+                          justifyContent: 'space-between', transition: 'all 0.3s ease'
+                        }}
+                        onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.04)'; e.currentTarget.style.borderColor = 'var(--primary)'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                          <div style={{ background: flow.isActive ? 'rgba(16,185,129,0.1)' : 'var(--bg-card)', color: flow.isActive ? '#10b981' : 'var(--text-muted)', padding: '12px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-subtle)' }}>
+                            <Zap size={20} />
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: '700', color: 'var(--text-main)', fontSize: '1.05rem', marginBottom: '6px' }}>{flow.name || 'Unnamed Automation'}</div>
+                            <div style={{ display: 'flex', gap: '12px', fontSize: '0.8rem', color: 'var(--text-muted)', alignItems: 'center' }}>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600', color: flow.isActive ? '#10b981' : 'var(--text-muted)' }}>
+                                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: flow.isActive ? '#10b981' : 'var(--text-muted)' }}></span>
+                                {flow.isActive ? 'Active' : 'Draft'}
+                              </span>
+                              •
+                              <span style={{ textTransform: 'capitalize', background: 'var(--bg-card)', padding: '2px 8px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+                                {flow.triggerType ? flow.triggerType.replace(/_/g, ' ') : 'Unknown trigger'}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ))}
