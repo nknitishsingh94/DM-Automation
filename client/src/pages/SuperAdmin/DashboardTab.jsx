@@ -50,8 +50,8 @@ export default function DashboardTab() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       
-      <div style={{ position: 'sticky', top: 0, zIndex: 50, background: 'var(--bg-main)', margin: '-24px -24px 24px -24px', padding: '24px 24px 16px 24px', borderBottom: '1px solid var(--border-subtle)' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 4px 0' }}>Platform Overview</h2>
+      <div style={{ position: 'sticky', top: 0, zIndex: 50, background: 'var(--bg-base)', margin: '-24px -24px 24px -24px', padding: '24px 24px 16px 24px', borderRadius: '0 0 16px 16px', boxShadow: '0 4px 25px rgba(0,0,0,0.05)', borderBottom: '1px solid var(--border-subtle)' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>Platform Overview</h2>
         <p style={{ color: 'var(--text-muted)', margin: 0 }}>Real-time statistics across the entire DM Automation platform.</p>
       </div>
 
