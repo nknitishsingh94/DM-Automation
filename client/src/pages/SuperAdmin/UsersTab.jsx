@@ -77,42 +77,6 @@ export default function UsersTab() {
     (u.username || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAccountAction = async (accountId, platform, action) => {
-    if (!accountId) return;
-    const dbId = accountId.split('_')[1]; // ig_uuid -> uuid
-    if (!dbId) return;
-
-    if (action === 'disconnect') {
-      if (!window.confirm(`Are you sure you want to disconnect ${platform}?`)) return;
-    }
-
-    try {
-      if (action === 'refresh') {
-        const loadingToast = toast.loading(`Refreshing ${platform}...`);
-        await axios.put(`${API_BASE_URL}/api/admin/social-accounts/${dbId}/${platform}/refresh`, {}, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
-        });
-        toast.dismiss(loadingToast);
-        toast.success(`Successfully refreshed ${platform}`);
-      } else if (action === 'disconnect') {
-        const loadingToast = toast.loading(`Disconnecting ${platform}...`);
-        await axios.delete(`${API_BASE_URL}/api/admin/social-accounts/${dbId}/${platform}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
-        });
-        toast.dismiss(loadingToast);
-        toast.success(`Successfully disconnected ${platform}`);
-      }
-      // Refresh history data
-      const res = await axios.get(`${API_BASE_URL}/api/admin/users/${selectedUserId}/history`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
-      });
-      setSelectedUserData(res.data);
-    } catch (err) {
-      console.error(err);
-      toast.dismiss();
-      toast.error(err.response?.data?.message || `Failed to ${action} account`);
-    }
-  };
 
   const handleAccountAction = async (accountId, platform, action) => {
     if (!accountId) return;
