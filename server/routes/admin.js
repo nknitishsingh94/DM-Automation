@@ -211,6 +211,66 @@ router.get('/users', async (req, res) => {
   }
 });
 
+// GET /api/admin/users/:id/history
+router.get('/users/:id/history', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Find all workspaces owned by this user
+    const workspaces = await Workspace.find({});
+    const userWorkspaces = workspaces.filter(w => (w.userId || w.owner_id || w.ownerId) === id);
+    const workspaceIds = userWorkspaces.map(w => w.id || w._id);
+
+    // Find connected accounts (settings) for these workspaces
+    const allSettings = await Settings.find({});
+    const userSettings = allSettings.filter(s => workspaceIds.includes(s.workspace_id));
+
+    // Find automations (flows)
+    const allFlows = await Flow.find({});
+    const userFlows = allFlows.filter(f => 
+      workspaceIds.includes(f.workspaceId || f.workspace_id) || 
+      (f.userId || f.user_id) === id
+    );
+
+    // Find scheduled posts
+    const allScheduled = await ScheduledPost.find({});
+    const userScheduled = allScheduled.filter(sp => 
+      workspaceIds.includes(sp.workspaceId || sp.workspace_id) || 
+      (sp.userId || sp.user_id) === id
+    );
+
+    // Find post logs
+    const allLogs = await PostLog.find({});
+    const userLogs = allLogs.filter(pl => 
+      workspaceIds.includes(pl.workspaceId || pl.workspace_id) || 
+      (pl.userId || pl.user_id) === id
+    );
+
+    res.json({
+      user: {
+        id: user.id || user._id,
+        username: user.username,
+        email: user.email,
+        plan: user.subscription_plan || user.plan || 'free',
+        created_at: user.created_at || user.createdAt || new Date().toISOString()
+      },
+      workspaces: userWorkspaces,
+      settings: userSettings,
+      automations: userFlows,
+      scheduledPosts: userScheduled,
+      postLogs: userLogs
+    });
+  } catch (error) {
+    console.error('Admin User History Error:', error);
+    res.status(500).json({ message: 'Failed to fetch user history.' });
+  }
+});
+
 // GET /api/admin/workspaces
 router.get('/workspaces', async (req, res) => {
   try {

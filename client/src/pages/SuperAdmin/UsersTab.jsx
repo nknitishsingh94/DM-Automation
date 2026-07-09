@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Trash2, MoreVertical, Shield, UserX } from 'lucide-react';
+import { Search, Trash2, MoreVertical, Shield, UserX, History, ArrowLeft, Activity, Zap, Building, FileText, CheckCircle, Clock, CheckCircle2 } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
@@ -8,6 +8,10 @@ export default function UsersTab() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedUserData, setSelectedUserData] = useState(null);
+  const [loadingHistory, setLoadingHistory] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -40,9 +44,28 @@ export default function UsersTab() {
       });
       toast.success('User deleted successfully');
       setUsers(users.filter(u => u.id !== id));
+      if (selectedUserId === id) setSelectedUserId(null);
     } catch (err) {
       console.error(err);
       toast.error(err.response?.data?.message || 'Failed to delete user');
+    }
+  };
+
+  const handleViewHistory = async (id) => {
+    setSelectedUserId(id);
+    setLoadingHistory(true);
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await axios.get(`${API_BASE_URL}/api/admin/users/${id}/history`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSelectedUserData(res.data);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to load user history');
+      setSelectedUserId(null);
+    } finally {
+      setLoadingHistory(false);
     }
   };
 
@@ -56,6 +79,134 @@ export default function UsersTab() {
       <div className="animate-spin" style={{ width: '32px', height: '32px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%' }}></div>
     </div>
   );
+
+  if (selectedUserId) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div style={{ position: 'sticky', top: 0, zIndex: 50, background: 'var(--bg-base)', padding: '24px 24px 12px 24px', margin: '-24px -24px 24px -24px', borderRadius: '0 0 16px 16px', borderBottom: '1px solid var(--border-subtle)' }}>
+          <button 
+            onClick={() => setSelectedUserId(null)}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '600', marginBottom: '16px' }}
+          >
+            <ArrowLeft size={16} /> Back to Users
+          </button>
+          
+          {loadingHistory ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div className="animate-spin" style={{ width: '20px', height: '20px', border: '2px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%' }}></div>
+              <span style={{ color: 'var(--text-muted)' }}>Loading user history...</span>
+            </div>
+          ) : selectedUserData && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 4px 0' }}>{selectedUserData.user.username || 'Anonymous'}</h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>{selectedUserData.user.email}</span>
+                  <span style={{ background: 'var(--primary)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>{selectedUserData.user.plan}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {selectedUserData && !loadingHistory && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+            {/* Workspaces Card */}
+            <div style={{ background: 'var(--bg-card)', borderRadius: '24px', padding: '24px', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                <div style={{ background: 'rgba(99,102,241,0.1)', color: 'var(--primary)', padding: '10px', borderRadius: '12px' }}>
+                  <Building size={20} />
+                </div>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>Workspaces ({selectedUserData.workspaces.length})</h3>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {(selectedUserData.workspaces || []).map(ws => (
+                  <div key={ws.id || ws._id || Math.random()} style={{ padding: '12px', background: 'var(--bg-base)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontWeight: '600', color: 'var(--text-main)', marginBottom: '4px' }}>{ws.name || 'Unnamed Workspace'}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Created: {new Date(ws.created_at || ws.createdAt || Date.now()).toLocaleDateString()}</div>
+                  </div>
+                ))}
+                {!(selectedUserData.workspaces?.length > 0) && <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No workspaces found.</div>}
+              </div>
+            </div>
+
+            {/* Automations Card */}
+            <div style={{ background: 'var(--bg-card)', borderRadius: '24px', padding: '24px', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                <div style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', padding: '10px', borderRadius: '12px' }}>
+                  <Zap size={20} />
+                </div>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>Automations ({(selectedUserData.automations || []).length})</h3>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {(selectedUserData.automations || []).map(flow => (
+                  <div key={flow.id || flow._id || Math.random()} style={{ padding: '12px', background: 'var(--bg-base)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontWeight: '600', color: 'var(--text-main)', marginBottom: '4px' }}>{flow.name || 'Unnamed Flow'}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', gap: '8px' }}>
+                      <span style={{ color: flow.isActive ? '#10b981' : 'var(--text-muted)' }}>{flow.isActive ? 'Active' : 'Draft'}</span>
+                      • <span>Trigger: {flow.triggerType || 'Unknown'}</span>
+                    </div>
+                  </div>
+                ))}
+                {!(selectedUserData.automations?.length > 0) && <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No automations found.</div>}
+              </div>
+            </div>
+
+            {/* Activity / Posts Card */}
+            <div style={{ background: 'var(--bg-card)', borderRadius: '24px', padding: '24px', border: '1px solid var(--border-subtle)', gridColumn: '1 / -1' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                <div style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b', padding: '10px', borderRadius: '12px' }}>
+                  <Activity size={20} />
+                </div>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>Scheduled Posts & Logs ({(selectedUserData.scheduledPosts || []).length + (selectedUserData.postLogs || []).length})</h3>
+              </div>
+              
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ background: 'var(--bg-base)', borderBottom: '1px solid var(--border-subtle)' }}>
+                    <th style={{ padding: '12px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem' }}>Type</th>
+                    <th style={{ padding: '12px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem' }}>Content Snippet</th>
+                    <th style={{ padding: '12px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem' }}>Platform</th>
+                    <th style={{ padding: '12px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem' }}>Date/Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...(selectedUserData.scheduledPosts || []), ...(selectedUserData.postLogs || [])]
+                    .sort((a, b) => new Date(b.createdAt || b.created_at || b.scheduledFor || 0) - new Date(a.createdAt || a.created_at || a.scheduledFor || 0))
+                    .map(item => {
+                      const isLog = item.status === 'success' || item.status === 'failed';
+                      return (
+                        <tr key={item.id || item._id || Math.random()} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                          <td style={{ padding: '12px' }}>
+                            <span style={{ fontSize: '0.8rem', background: isLog ? 'rgba(16,185,129,0.1)' : 'rgba(59,130,246,0.1)', color: isLog ? '#10b981' : '#3b82f6', padding: '4px 8px', borderRadius: '6px', fontWeight: '600' }}>
+                              {isLog ? 'Published Log' : 'Scheduled'}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px', color: 'var(--text-main)', fontSize: '0.9rem', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {item.caption || item.content || 'No content'}
+                          </td>
+                          <td style={{ padding: '12px', color: 'var(--text-main)', fontSize: '0.9rem', textTransform: 'capitalize' }}>
+                            {item.platform || (Array.isArray(item.platforms) ? item.platforms.join(', ') : 'Unknown')}
+                          </td>
+                          <td style={{ padding: '12px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                            {new Date(item.scheduledFor || item.created_at || item.createdAt || Date.now()).toLocaleString()}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {((selectedUserData.scheduledPosts || []).length + (selectedUserData.postLogs || []).length) === 0 && (
+                      <tr>
+                        <td colSpan="4" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>No posting activity found.</td>
+                      </tr>
+                    )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -137,22 +288,37 @@ export default function UsersTab() {
                       {(user.created_at || user.createdAt) ? new Date(user.created_at || user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Unknown'}
                     </td>
                     <td style={{ padding: '16px 24px', textAlign: 'right' }}>
-                      {user.email !== 'nknitishsingh94@gmail.com' && (
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                         <button 
-                          onClick={() => handleDeleteUser(user.id, user.email)}
+                          onClick={() => handleViewHistory(user.id || user._id)}
                           style={{
-                            background: 'transparent', border: 'none', color: '#ef4444',
-                            cursor: 'pointer', padding: '8px', borderRadius: '8px',
-                            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                            transition: 'background 0.2s'
+                            background: 'transparent', border: '1px solid var(--border-subtle)', color: 'var(--primary)',
+                            cursor: 'pointer', padding: '6px 12px', borderRadius: '8px',
+                            display: 'inline-flex', alignItems: 'center', gap: '6px',
+                            fontSize: '0.8rem', fontWeight: '600', transition: 'all 0.2s'
                           }}
-                          onMouseOver={(e) => e.currentTarget.style.background = '#fee2e2'}
-                          onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
-                          title="Delete User"
+                          onMouseOver={(e) => { e.currentTarget.style.background = 'var(--bg-main)'; }}
+                          onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; }}
                         >
-                          <Trash2 size={18} />
+                          <History size={14} /> View History
                         </button>
-                      )}
+                        {user.email !== 'nknitishsingh94@gmail.com' && (
+                          <button 
+                            onClick={() => handleDeleteUser(user.id, user.email)}
+                            style={{
+                              background: 'transparent', border: 'none', color: '#ef4444',
+                              cursor: 'pointer', padding: '8px', borderRadius: '8px',
+                              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                              transition: 'background 0.2s'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.background = '#fee2e2'}
+                            onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                            title="Delete User"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
