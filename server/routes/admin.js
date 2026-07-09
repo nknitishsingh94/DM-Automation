@@ -233,12 +233,32 @@ router.get('/users/:id/history', async (req, res) => {
       (s.userId || s.user_id) === id
     );
 
-    // Find automations (flows)
+    // Find automations (flows and campaigns)
     const allFlows = await Flow.find({});
     const userFlows = allFlows.filter(f => 
       workspaceIds.includes(f.workspaceId || f.workspace_id) || 
       (f.userId || f.user_id) === id
-    );
+    ).map(f => {
+      // In case it's mongoose document, convert to object
+      const flowObj = f.toObject ? f.toObject() : f;
+      return { ...flowObj, type: 'Flow' };
+    });
+
+    const allCampaigns = await Campaign.find({});
+    const userCampaigns = allCampaigns.filter(c => 
+      workspaceIds.includes(c.workspaceId || c.workspace_id) || 
+      (c.userId || c.user_id) === id
+    ).map(c => ({
+      id: c.id || c._id,
+      name: c.name || 'Unnamed Campaign',
+      isActive: c.status === 'Active' || c.status === 'active',
+      triggerType: c.triggerType || (c.triggerOnStories ? 'Story Reply' : (c.triggerOnComments ? 'Comment' : (c.triggerOnDms ? 'DM' : 'Any'))),
+      platform: c.platform || 'instagram',
+      createdAt: c.createdAt,
+      type: 'Campaign'
+    }));
+
+    const allAutomations = [...userFlows, ...userCampaigns];
 
     // Find scheduled posts
     const allScheduled = await ScheduledPost.find({});
@@ -264,7 +284,7 @@ router.get('/users/:id/history', async (req, res) => {
       },
       workspaces: userWorkspaces,
       settings: userSettings,
-      automations: userFlows,
+      automations: allAutomations,
       scheduledPosts: userScheduled,
       postLogs: userLogs
     });
