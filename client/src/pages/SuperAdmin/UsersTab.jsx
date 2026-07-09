@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Trash2, MoreVertical, Shield, UserX, History, ArrowLeft, Activity, Zap, Building, FileText, CheckCircle, Clock, CheckCircle2, Globe, Instagram, Facebook, Twitter, Linkedin, Youtube, Hash, MousePointerClick, Store, AtSign } from 'lucide-react';
+import { Search, Trash2, MoreVertical, Shield, UserX, History, ArrowLeft, Activity, Zap, Building, FileText, CheckCircle, Clock, CheckCircle2, Globe, Instagram, Facebook, Twitter, Linkedin, Youtube, Hash, MousePointerClick, Store, AtSign, RefreshCw, Unplug } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
@@ -8,7 +8,7 @@ export default function UsersTab() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-
+  
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedUserData, setSelectedUserData] = useState(null);
   const [loadingHistory, setLoadingHistory] = useState(false);
@@ -37,7 +37,7 @@ export default function UsersTab() {
     if (!window.confirm(`Are you sure you want to permanently delete user ${email}? This action cannot be undone.`)) {
       return;
     }
-
+    
     try {
       const token = localStorage.getItem('insta_agent_token');
       await axios.delete(`${API_BASE_URL}/api/admin/users/${id}`, {
@@ -72,8 +72,8 @@ export default function UsersTab() {
     }
   };
 
-  const filteredUsers = (Array.isArray(users) ? users : []).filter(u =>
-    (u.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredUsers = (Array.isArray(users) ? users : []).filter(u => 
+    (u.email || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
     (u.username || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -114,6 +114,44 @@ export default function UsersTab() {
     }
   };
 
+  const handleAccountAction = async (accountId, platform, action) => {
+    if (!accountId) return;
+    const dbId = accountId.split('_')[1];
+    if (!dbId) return;
+
+    if (action === 'disconnect') {
+      if (!window.confirm(`Are you sure you want to disconnect ${platform}?`)) return;
+    }
+
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      if (action === 'refresh') {
+        const loadingToast = toast.loading(`Refreshing ${platform}...`);
+        await axios.put(`${API_BASE_URL}/api/admin/social-accounts/${dbId}/${platform}/refresh`, {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.dismiss(loadingToast);
+        toast.success(`Successfully refreshed ${platform}`);
+      } else if (action === 'disconnect') {
+        const loadingToast = toast.loading(`Disconnecting ${platform}...`);
+        await axios.delete(`${API_BASE_URL}/api/admin/social-accounts/${dbId}/${platform}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.dismiss(loadingToast);
+        toast.success(`Successfully disconnected ${platform}`);
+      }
+      fetchUsers();
+      const res = await axios.get(`${API_BASE_URL}/api/admin/users/${selectedUserId}/history`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSelectedUserData(res.data);
+    } catch (err) {
+      console.error(err);
+      toast.dismiss();
+      toast.error(err.response?.data?.message || `Failed to ${action} account`);
+    }
+  };
+
   if (loading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '40px' }}>
       <div className="animate-spin" style={{ width: '32px', height: '32px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%' }}></div>
@@ -142,12 +180,12 @@ export default function UsersTab() {
             ) : <div />}
 
             {/* Right Side: Back Button */}
-            <button
+            <button 
               onClick={() => setSelectedUserId(null)}
               style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-                color: 'var(--text-main)', cursor: 'pointer', fontSize: '0.9rem',
+                display: 'inline-flex', alignItems: 'center', gap: '8px', 
+                background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', 
+                color: 'var(--text-main)', cursor: 'pointer', fontSize: '0.9rem', 
                 fontWeight: '600', padding: '10px 16px', borderRadius: '12px',
                 transition: 'all 0.2s', boxShadow: '0 2px 10px rgba(0,0,0,0.02)'
               }}
@@ -193,7 +231,7 @@ export default function UsersTab() {
                   </div>
                 </div>
                 {selectedPlatformFilter && (
-                  <button
+                  <button 
                     onClick={() => setSelectedPlatformFilter(null)}
                     style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: 'none', padding: '6px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer' }}
                   >
@@ -201,7 +239,7 @@ export default function UsersTab() {
                   </button>
                 )}
               </div>
-
+              
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
                 {(() => {
                   const accounts = [];
@@ -216,7 +254,7 @@ export default function UsersTab() {
                     if (s.isGoogleBusinessConnected || s.googleBusinessAccessToken) accounts.push({ id: `gb_${s._id}`, platform: 'google_business', label: s.connectedGoogleBusinessName || 'Google Business', icon: Store, color: '#4285F4' });
                     if (s.isThreadsConnected || s.threadsAccessToken) accounts.push({ id: `th_${s._id}`, platform: 'threads', label: s.connectedThreadsName || 'Threads', icon: AtSign, color: '#000000' });
                   });
-
+                  
                   if (accounts.length === 0) {
                     return <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', gridColumn: '1 / -1', padding: '20px', background: 'var(--bg-base)', borderRadius: '12px', textAlign: 'center' }}>No social accounts are connected yet.</div>;
                   }
@@ -230,22 +268,22 @@ export default function UsersTab() {
                     const IconComponent = acc.icon;
 
                     return (
-                      <div
-                        key={acc.id}
+                      <div 
+                        key={acc.id} 
                         onClick={() => setSelectedPlatformFilter(isSelected ? null : acc.platform)}
-                        style={{
-                          position: 'relative', overflow: 'hidden', padding: '20px', background: 'var(--bg-base)',
-                          borderRadius: '16px', border: `2px solid ${isSelected ? acc.color : 'transparent'}`,
+                        style={{ 
+                          position: 'relative', overflow: 'hidden', padding: '20px', background: 'var(--bg-base)', 
+                          borderRadius: '16px', border: `2px solid ${isSelected ? acc.color : 'transparent'}`, 
                           display: 'flex', flexDirection: 'column', gap: '16px', cursor: 'pointer', transition: 'all 0.3s ease',
                           boxShadow: isSelected ? `0 8px 24px ${acc.color}20` : '0 2px 8px rgba(0,0,0,0.04)'
                         }}
-                        onMouseOver={(e) => {
+                        onMouseOver={(e) => { 
                           e.currentTarget.style.transform = 'translateY(-4px)';
-                          if (!isSelected) e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.08)';
+                          if (!isSelected) e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.08)'; 
                         }}
-                        onMouseOut={(e) => {
+                        onMouseOut={(e) => { 
                           e.currentTarget.style.transform = 'translateY(0)';
-                          if (!isSelected) e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)';
+                          if (!isSelected) e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)'; 
                         }}
                       >
                         {/* Background gradient hint */}
@@ -276,7 +314,7 @@ export default function UsersTab() {
                           <MousePointerClick size={12} />
                           {isSelected ? 'Filtering active...' : 'Click to filter history'}
                         </div>
-
+                        
                         {/* Action Buttons */}
                         <div style={{ display: 'flex', gap: '8px', marginTop: '8px', position: 'relative', zIndex: 2 }}>
                           <button
@@ -309,21 +347,29 @@ export default function UsersTab() {
                 <div style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', padding: '10px', borderRadius: '12px' }}>
                   <Zap size={20} />
                 </div>
-                <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>Automations ({(selectedUserData.automations || []).length})</h3>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>Automations</h3>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {(selectedUserData.automations || [])
-                  .filter(f => !selectedPlatformFilter || f.triggerType?.toLowerCase().includes(selectedPlatformFilter) || f.platform?.toLowerCase() === selectedPlatformFilter)
-                  .map(flow => (
-                    <div key={flow.id || flow._id || Math.random()} style={{ padding: '12px', background: 'var(--bg-base)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-                      <div style={{ fontWeight: '600', color: 'var(--text-main)', marginBottom: '4px' }}>{flow.name || 'Unnamed Flow'}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', gap: '8px' }}>
-                        <span style={{ color: flow.isActive ? '#10b981' : 'var(--text-muted)' }}>{flow.isActive ? 'Active' : 'Draft'}</span>
-                        • <span>Trigger: {flow.triggerType || 'Unknown'}</span>
+                {!selectedPlatformFilter ? (
+                  <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>
+                    Click on a connected social account above to view its automations.
+                  </div>
+                ) : (
+                  <>
+                    {(selectedUserData.automations || [])
+                      .filter(f => f.triggerType?.toLowerCase().includes(selectedPlatformFilter) || f.platform?.toLowerCase() === selectedPlatformFilter)
+                      .map(flow => (
+                      <div key={flow.id || flow._id || Math.random()} style={{ padding: '12px', background: 'var(--bg-base)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontWeight: '600', color: 'var(--text-main)', marginBottom: '4px' }}>{flow.name || 'Unnamed Flow'}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', gap: '8px' }}>
+                          <span style={{ color: flow.isActive ? '#10b981' : 'var(--text-muted)' }}>{flow.isActive ? 'Active' : 'Draft'}</span>
+                          • <span>Trigger: {flow.triggerType || 'Unknown'}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                {(selectedUserData.automations || []).filter(f => !selectedPlatformFilter || f.triggerType?.toLowerCase().includes(selectedPlatformFilter) || f.platform?.toLowerCase() === selectedPlatformFilter).length === 0 && <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No automations found{selectedPlatformFilter ? ` for ${selectedPlatformFilter}` : ''}.</div>}
+                    ))}
+                    {(selectedUserData.automations || []).filter(f => f.triggerType?.toLowerCase().includes(selectedPlatformFilter) || f.platform?.toLowerCase() === selectedPlatformFilter).length === 0 && <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No automations found for {selectedPlatformFilter}.</div>}
+                  </>
+                )}
               </div>
             </div>
 
@@ -333,50 +379,56 @@ export default function UsersTab() {
                 <div style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b', padding: '10px', borderRadius: '12px' }}>
                   <Activity size={20} />
                 </div>
-                <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>Scheduled Posts & Logs ({(selectedUserData.scheduledPosts || []).length + (selectedUserData.postLogs || []).length})</h3>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>Scheduled Posts & Logs</h3>
               </div>
-
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                <thead>
-                  <tr style={{ background: 'var(--bg-base)', borderBottom: '1px solid var(--border-subtle)' }}>
-                    <th style={{ padding: '12px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem' }}>Type</th>
-                    <th style={{ padding: '12px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem' }}>Content Snippet</th>
-                    <th style={{ padding: '12px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem' }}>Platform</th>
-                    <th style={{ padding: '12px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem' }}>Date/Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...(selectedUserData.scheduledPosts || []), ...(selectedUserData.postLogs || [])]
-                    .filter(p => !selectedPlatformFilter || p.platform?.toLowerCase() === selectedPlatformFilter || (Array.isArray(p.platforms) && p.platforms.some(x => x.toLowerCase() === selectedPlatformFilter)))
-                    .sort((a, b) => new Date(b.createdAt || b.created_at || b.scheduledFor || 0) - new Date(a.createdAt || a.created_at || a.scheduledFor || 0))
-                    .map(item => {
-                      const isLog = item.status === 'success' || item.status === 'failed';
-                      return (
-                        <tr key={item.id || item._id || Math.random()} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                          <td style={{ padding: '12px' }}>
-                            <span style={{ fontSize: '0.8rem', background: isLog ? 'rgba(16,185,129,0.1)' : 'rgba(59,130,246,0.1)', color: isLog ? '#10b981' : '#3b82f6', padding: '4px 8px', borderRadius: '6px', fontWeight: '600' }}>
-                              {isLog ? 'Published Log' : 'Scheduled'}
-                            </span>
-                          </td>
-                          <td style={{ padding: '12px', color: 'var(--text-main)', fontSize: '0.9rem', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {item.caption || item.content || 'No content'}
-                          </td>
-                          <td style={{ padding: '12px', color: 'var(--text-main)', fontSize: '0.9rem', textTransform: 'capitalize' }}>
-                            {item.platform || (Array.isArray(item.platforms) ? item.platforms.join(', ') : 'Unknown')}
-                          </td>
-                          <td style={{ padding: '12px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                            {new Date(item.scheduledFor || item.created_at || item.createdAt || Date.now()).toLocaleString()}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  {[...(selectedUserData.scheduledPosts || []), ...(selectedUserData.postLogs || [])].filter(p => !selectedPlatformFilter || p.platform?.toLowerCase() === selectedPlatformFilter || (Array.isArray(p.platforms) && p.platforms.some(x => x.toLowerCase() === selectedPlatformFilter))).length === 0 && (
-                    <tr>
-                      <td colSpan="4" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>No posting activity found{selectedPlatformFilter ? ` for ${selectedPlatformFilter}` : ''}.</td>
+              
+              {!selectedPlatformFilter ? (
+                  <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>
+                    Click on a connected social account card above to view its activity logs and posts.
+                  </div>
+                ) : (
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{ background: 'var(--bg-base)', borderBottom: '1px solid var(--border-subtle)' }}>
+                      <th style={{ padding: '12px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem' }}>Type</th>
+                      <th style={{ padding: '12px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem' }}>Content Snippet</th>
+                      <th style={{ padding: '12px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem' }}>Platform</th>
+                      <th style={{ padding: '12px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem' }}>Date/Status</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {[...(selectedUserData.scheduledPosts || []), ...(selectedUserData.postLogs || [])]
+                      .filter(p => p.platform?.toLowerCase() === selectedPlatformFilter || (Array.isArray(p.platforms) && p.platforms.some(x => x.toLowerCase() === selectedPlatformFilter)))
+                      .sort((a, b) => new Date(b.createdAt || b.created_at || b.scheduledFor || 0) - new Date(a.createdAt || a.created_at || a.scheduledFor || 0))
+                      .map(item => {
+                        const isLog = item.status === 'success' || item.status === 'failed';
+                        return (
+                          <tr key={item.id || item._id || Math.random()} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                            <td style={{ padding: '12px' }}>
+                              <span style={{ fontSize: '0.8rem', background: isLog ? 'rgba(16,185,129,0.1)' : 'rgba(59,130,246,0.1)', color: isLog ? '#10b981' : '#3b82f6', padding: '4px 8px', borderRadius: '6px', fontWeight: '600' }}>
+                                {isLog ? 'Published Log' : 'Scheduled'}
+                              </span>
+                            </td>
+                            <td style={{ padding: '12px', color: 'var(--text-main)', fontSize: '0.9rem', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {item.caption || item.content || 'No content'}
+                            </td>
+                            <td style={{ padding: '12px', color: 'var(--text-main)', fontSize: '0.9rem', textTransform: 'capitalize' }}>
+                              {item.platform || (Array.isArray(item.platforms) ? item.platforms.join(', ') : 'Unknown')}
+                            </td>
+                            <td style={{ padding: '12px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                              {new Date(item.scheduledFor || item.created_at || item.createdAt || Date.now()).toLocaleString()}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {[...(selectedUserData.scheduledPosts || []), ...(selectedUserData.postLogs || [])].filter(p => p.platform?.toLowerCase() === selectedPlatformFilter || (Array.isArray(p.platforms) && p.platforms.some(x => x.toLowerCase() === selectedPlatformFilter))).length === 0 && (
+                        <tr>
+                          <td colSpan="4" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>No posting activity found for {selectedPlatformFilter}.</td>
+                        </tr>
+                      )}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         )}
@@ -386,18 +438,18 @@ export default function UsersTab() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-
-      <div style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', background: 'var(--bg-base)', padding: '24px 24px 12px 24px', margin: '-24px -24px 24px -24px', borderRadius: '0 0 16px 16px', boxShadow: '0 4px 25px rgba(0,0,0,0.05)', borderBottom: '1px solid var(--border-subtle)' }}>
+      
+      <div style={{ position: 'sticky', top:  0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', background: 'var(--bg-base)', padding: '24px 24px 12px 24px', margin: '-24px -24px 24px -24px', borderRadius: '0 0 16px 16px', boxShadow: '0 4px 25px rgba(0,0,0,0.05)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div>
           <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>User Management</h2>
           <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.95rem' }}>View and manage all registered accounts on the platform.</p>
         </div>
-
+        
         <div style={{ position: 'relative', width: '320px' }}>
           <Search size={18} color="var(--primary)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
-          <input
-            type="text"
-            placeholder="Search users by email or name..."
+          <input 
+            type="text" 
+            placeholder="Search users by email or name..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
@@ -465,7 +517,7 @@ export default function UsersTab() {
                     </td>
                     <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-                        <button
+                        <button 
                           onClick={() => handleViewHistory(user.id || user._id)}
                           style={{
                             background: 'transparent', border: '1px solid var(--border-subtle)', color: 'var(--primary)',
@@ -479,7 +531,7 @@ export default function UsersTab() {
                           <History size={14} /> View History
                         </button>
                         {user.email !== 'nknitishsingh94@gmail.com' && (
-                          <button
+                          <button 
                             onClick={() => handleDeleteUser(user.id, user.email)}
                             style={{
                               background: 'transparent', border: 'none', color: '#ef4444',
@@ -503,7 +555,7 @@ export default function UsersTab() {
           </table>
         </div>
       </div>
-
+      
     </div>
   );
 }
