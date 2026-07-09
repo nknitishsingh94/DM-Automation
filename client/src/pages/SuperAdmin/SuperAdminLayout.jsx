@@ -7,7 +7,6 @@ import UsersTab from './UsersTab';
 import WorkspacesTab from './WorkspacesTab';
 import SubscriptionsTab from './SubscriptionsTab';
 import SocialAccountsTab from './SocialAccountsTab';
-import AutomationsTab from './AutomationsTab';
 import ScheduledPostsTab from './ScheduledPostsTab';
 import SupportTab from './SupportTab';
 import AIUsageTab from './AIUsageTab';
@@ -37,8 +36,6 @@ export default function SuperAdminLayout() {
         return <SubscriptionsTab />;
       case 'social-accounts':
         return <SocialAccountsTab />;
-      case 'automations':
-        return <AutomationsTab />;
       case 'scheduled-posts':
         return <ScheduledPostsTab />;
       case 'support':

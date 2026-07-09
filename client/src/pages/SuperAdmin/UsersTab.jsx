@@ -84,20 +84,14 @@ export default function UsersTab() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         <div style={{ position: 'sticky', top: 0, zIndex: 50, background: 'var(--bg-base)', padding: '24px 24px 12px 24px', margin: '-24px -24px 24px -24px', borderRadius: '0 0 16px 16px', borderBottom: '1px solid var(--border-subtle)' }}>
-          <button 
-            onClick={() => setSelectedUserId(null)}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '600', marginBottom: '16px' }}
-          >
-            <ArrowLeft size={16} /> Back to Users
-          </button>
-          
-          {loadingHistory ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div className="animate-spin" style={{ width: '20px', height: '20px', border: '2px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%' }}></div>
-              <span style={{ color: 'var(--text-muted)' }}>Loading user history...</span>
-            </div>
-          ) : selectedUserData && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', minHeight: '52px' }}>
+            {/* Left Side: User Info or Loader */}
+            {loadingHistory ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div className="animate-spin" style={{ width: '20px', height: '20px', border: '2px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%' }}></div>
+                <span style={{ color: 'var(--text-muted)' }}>Loading user history...</span>
+              </div>
+            ) : selectedUserData ? (
               <div>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 4px 0' }}>{selectedUserData.user.username || 'Anonymous'}</h2>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -105,8 +99,24 @@ export default function UsersTab() {
                   <span style={{ background: 'var(--primary)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>{selectedUserData.user.plan}</span>
                 </div>
               </div>
-            </div>
-          )}
+            ) : <div />}
+
+            {/* Right Side: Back Button */}
+            <button 
+              onClick={() => setSelectedUserId(null)}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px', 
+                background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', 
+                color: 'var(--text-main)', cursor: 'pointer', fontSize: '0.9rem', 
+                fontWeight: '600', padding: '10px 16px', borderRadius: '12px',
+                transition: 'all 0.2s', boxShadow: '0 2px 10px rgba(0,0,0,0.02)'
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.background = 'var(--bg-base)'; e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.color = 'var(--primary)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.background = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.color = 'var(--text-main)'; }}
+            >
+              <ArrowLeft size={16} /> Back to Users
+            </button>
+          </div>
         </div>
 
         {selectedUserData && !loadingHistory && (

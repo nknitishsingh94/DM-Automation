@@ -487,10 +487,6 @@ function Sidebar({ isMobileOpen, onClose }) {
                       <CreditCard size={16} />
                       <span>Payments & Pricing</span>
                     </NavLink>
-                    <NavLink to="/super-admin/automations" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
-                      <Zap size={16} />
-                      <span>Automations</span>
-                    </NavLink>
                     <NavLink to="/super-admin/scheduled-posts" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
                       <Calendar size={16} />
                       <span>Scheduled Posts</span>
