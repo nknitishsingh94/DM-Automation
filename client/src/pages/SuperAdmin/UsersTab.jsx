@@ -315,9 +315,9 @@ export default function UsersTab() {
                 </div>
                 <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>Automations</h3>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
                 {!selectedPlatformFilter ? (
-                  <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>
+                  <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px', gridColumn: '1 / -1' }}>
                     Click on a connected social account above to view its automations.
                   </div>
                 ) : (
@@ -355,7 +355,7 @@ export default function UsersTab() {
                         </div>
                       </div>
                     ))}
-                    {(selectedUserData.automations || []).filter(f => f.triggerType?.toLowerCase().includes(selectedPlatformFilter) || f.platform?.toLowerCase() === selectedPlatformFilter).length === 0 && <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No automations found for {selectedPlatformFilter}.</div>}
+                    {(selectedUserData.automations || []).filter(f => f.triggerType?.toLowerCase().includes(selectedPlatformFilter) || f.platform?.toLowerCase() === selectedPlatformFilter).length === 0 && <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', gridColumn: '1 / -1', padding: '20px', textAlign: 'center' }}>No automations found for {selectedPlatformFilter}.</div>}
                   </>
                 )}
               </div>
