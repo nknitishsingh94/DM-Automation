@@ -38,10 +38,6 @@ export default function GrowFollowers() {
       <main className="feature-page-main">
         <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', marginBottom: '80px' }}>
           
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '600', marginBottom: '40px', textDecoration: 'none' }}>
-            <ArrowLeft size={16} /> Back to Home
-          </Link>
-
           <div style={{
             display: 'flex',
             flexDirection: 'column',
