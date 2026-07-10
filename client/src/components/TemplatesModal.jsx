@@ -35,7 +35,7 @@ const templatesData = [
   { id: "dm_new_follower", title: "DM to New Follower", desc: "Automatically send a welcome message to new followers to build engagement and connection.", type: "Flow Builder" },
   { id: "launch_new_product", title: "Launch a New Product", desc: "Announce and promote new product launches by sending exclusive offers and links to your audience.", type: "Flow Builder" },
   { id: "custom_flow", title: "Create a Custom Flow", desc: "Create a completely custom automations flow from the ground up.", type: "Flow Builder" },
-];
+].map((t, idx) => ({ ...t, comingSoon: idx >= 5 }));
 
 export default function TemplatesModal({ isOpen, onClose }) {
   const navigate = useNavigate();
@@ -113,9 +113,12 @@ export default function TemplatesModal({ isOpen, onClose }) {
               <div key={idx} style={{
                 border: '1px solid var(--border-subtle)', borderRadius: '14px', padding: '20px',
                 display: 'flex', flexDirection: 'column', background: 'var(--bg-card)',
-                transition: 'all 0.2s ease', cursor: 'pointer',
+                transition: 'all 0.2s ease', cursor: template.comingSoon ? 'default' : 'pointer',
+                opacity: template.comingSoon ? 0.7 : 1,
                 boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
-              }} className="template-card-hover">
+              }} className={template.comingSoon ? '' : 'template-card-hover'} onClick={() => {
+                if(!template.comingSoon) handleUseTemplate(template);
+              }}>
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -156,13 +159,23 @@ export default function TemplatesModal({ isOpen, onClose }) {
                     {template.type}
                   </span>
                   <button 
-                    onClick={() => handleUseTemplate(template)}
+                    disabled={template.comingSoon}
+                    onClick={(e) => {
+                      if(template.comingSoon) {
+                        e.stopPropagation();
+                        return;
+                      }
+                      handleUseTemplate(template);
+                    }}
                     style={{
-                    backgroundColor: 'var(--accent-color)', color: '#fff', border: 'none', borderRadius: '8px',
-                    padding: '8px 16px', fontSize: '12px', fontWeight: '700', cursor: 'pointer',
+                    backgroundColor: template.comingSoon ? '#e2e8f0' : 'var(--accent-color)', 
+                    color: template.comingSoon ? '#64748b' : '#fff', 
+                    border: 'none', borderRadius: '8px',
+                    padding: '8px 16px', fontSize: '12px', fontWeight: '700', 
+                    cursor: template.comingSoon ? 'not-allowed' : 'pointer',
                     transition: 'opacity 0.2s'
-                  }} onMouseOver={e => e.currentTarget.style.opacity = '0.9'} onMouseOut={e => e.currentTarget.style.opacity = '1'}>
-                    Use
+                  }} onMouseOver={e => { if(!template.comingSoon) e.currentTarget.style.opacity = '0.9' }} onMouseOut={e => { if(!template.comingSoon) e.currentTarget.style.opacity = '1' }}>
+                    {template.comingSoon ? 'Coming Soon' : 'Use'}
                   </button>
                 </div>
 
