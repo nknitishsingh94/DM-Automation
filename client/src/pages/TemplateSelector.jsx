@@ -55,7 +55,7 @@ export default function TemplateSelector() {
     { id: 'comments', category: 'Advanced', title: 'Auto-DM Links from Comments', desc: 'Classic trigger to send links and track clicks from comments', icon: 'Link' },
     { id: 'auto_send_links_dm', category: 'Advanced', title: 'Auto-Send Links in DM', desc: 'Keyword trigger to send website links in DM', icon: 'Send' },
     { id: 'custom_flow', category: 'Advanced', title: 'Create a Custom Flow', desc: 'Start from scratch with triggers, conditions, and actions', icon: 'PlusCircle' }
-  ];
+  ].map((t, index) => ({ ...t, comingSoon: index >= 5 }));
 
   const getIcon = (iconName) => {
     switch (iconName) {
@@ -191,6 +191,7 @@ export default function TemplateSelector() {
               <div
                 key={template.id}
                 onClick={() => {
+                  if (template.comingSoon) return;
                   if (template.id === 'faqs') {
                     navigate('/ai-studio');
                   } else if (template.id === 'all_dms') {
@@ -204,7 +205,8 @@ export default function TemplateSelector() {
                   padding: '24px',
                   borderRadius: '16px',
                   border: '1px solid var(--border-subtle)',
-                  cursor: 'pointer',
+                  cursor: template.comingSoon ? 'default' : 'pointer',
+                  opacity: template.comingSoon ? 0.7 : 1,
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   position: 'relative',
                   display: 'flex',
@@ -213,11 +215,13 @@ export default function TemplateSelector() {
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
                 }}
                 onMouseEnter={(e) => {
+                  if (template.comingSoon) return;
                   e.currentTarget.style.transform = 'translateY(-4px)';
                   e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1)';
                   e.currentTarget.style.borderColor = 'var(--accent-color)';
                 }}
                 onMouseLeave={(e) => {
+                  if (template.comingSoon) return;
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05)';
                   e.currentTarget.style.borderColor = 'var(--border-subtle)';
@@ -251,13 +255,23 @@ export default function TemplateSelector() {
                 </div>
 
                 <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: '1px dashed #e2e8f0', display: 'flex', justifyContent: 'center' }}>
-                  <button style={{
-                    display: 'flex', alignItems: 'center', gap: '8px', 
-                    background: 'var(--accent-color)', color: '#fff', border: 'none', borderRadius: '8px',
-                    padding: '10px 20px', fontSize: '13px', fontWeight: '700', cursor: 'pointer',
-                    width: '100%', justifyContent: 'center', transition: 'opacity 0.2s'
-                  }} onMouseOver={e => e.currentTarget.style.opacity = '0.9'} onMouseOut={e => e.currentTarget.style.opacity = '1'}>
-                    Use Template <Zap size={14} />
+                  <button 
+                    disabled={template.comingSoon}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '8px', 
+                      background: template.comingSoon ? '#e2e8f0' : 'var(--accent-color)', 
+                      color: template.comingSoon ? '#64748b' : '#fff', 
+                      border: 'none', borderRadius: '8px',
+                      padding: '10px 20px', fontSize: '13px', fontWeight: '700', 
+                      cursor: template.comingSoon ? 'not-allowed' : 'pointer',
+                      width: '100%', justifyContent: 'center', transition: 'opacity 0.2s'
+                    }} 
+                    onMouseOver={e => { if(!template.comingSoon) e.currentTarget.style.opacity = '0.9' }} 
+                    onMouseOut={e => { if(!template.comingSoon) e.currentTarget.style.opacity = '1' }}
+                  >
+                    {template.comingSoon ? 'Coming Soon' : (
+                      <>Use Template <Zap size={14} /></>
+                    )}
                   </button>
                 </div>
               </div>
