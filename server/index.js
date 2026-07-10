@@ -197,18 +197,17 @@ const ALLOWED_ORIGINS = [
   process.env.CLIENT_URL,
   process.env.FRONTEND_URL,
   process.env.API_BASE_URL,
+  'https://dm-automation-roan.vercel.app',
+  'https://dm-automation-w9a4.vercel.app',
 ].filter(Boolean);
 
 app.use(cors({
-  origin: '*',
+  origin: ALLOWED_ORIGINS.length > 0 ? ALLOWED_ORIGINS : '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'X-Workspace-ID', 'x-workspace-id', 'workspace', 'Cache-Control']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'X-Workspace-ID', 'x-workspace-id', 'workspace', 'Cache-Control'],
+  credentials: true
 }));
 app.options('*', cors());
-
-app.options('*', (req, res) => {
-  res.sendStatus(204);
-});
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,   // 15 minutes

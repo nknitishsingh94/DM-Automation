@@ -195,7 +195,7 @@ export default function TemplateSelector() {
                   if (template.id === 'faqs') {
                     navigate('/ai-studio');
                   } else if (template.id === 'all_dms') {
-                    navigate(`/smart100x-editor?channel=${channel}&template=${template.id}`);
+                    navigate(`/dm-automation-editor?channel=${channel}&template=${template.id}`);
                   } else {
                     navigate(`/automation-editor?channel=${channel}&template=${template.id}`);
                   }

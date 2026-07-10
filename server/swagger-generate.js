@@ -34,7 +34,7 @@ All API requests require an API key. The SDKs read from the \`SMART10X_API_KEY\`
 
 #### Set Up the Client
 \`\`\`javascript
-import Smart100X from '@smart100x/node';
+import Smart100X from '@dm-automation/node';
 const client = new Smart100X(); // uses SMART10X_API_KEY env var
 \`\`\`
 
@@ -46,7 +46,7 @@ const client = new Smart100X(); // uses SMART10X_API_KEY env var
   },
   servers: [
     {
-      url: 'https://smart100x-w9a4.vercel.app',
+      url: 'https://dm-automation-w9a4.vercel.app',
       description: 'Production Server'
     },
     {

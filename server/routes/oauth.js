@@ -26,7 +26,7 @@ const getGoogleClient = (redirectUri) => {
 
 router.get('/facebook', verifyToken, (req, res) => {
   const appId = process.env.META_APP_ID;
-  let baseUrl = process.env.API_BASE_URL || 'https://smart100x-w9a4.vercel.app';
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
 
   if (baseUrl.endsWith('/')) {
     baseUrl = baseUrl.slice(0, -1);
@@ -552,7 +552,7 @@ router.post('/facebook/select-page', verifyToken, async (req, res) => {
 
 router.get('/pinterest', verifyToken, (req, res) => {
   const clientId = process.env.PINTEREST_CLIENT_ID;
-  let baseUrl = process.env.API_BASE_URL || 'https://smart100x-w9a4.vercel.app';
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
 
   const redirectUri = `${baseUrl}/api/oauth/pinterest/callback`;
@@ -585,7 +585,7 @@ router.get('/pinterest/callback', async (req, res) => {
   try {
     const clientId = process.env.PINTEREST_CLIENT_ID;
     const clientSecret = process.env.PINTEREST_CLIENT_SECRET;
-    let baseUrl = process.env.API_BASE_URL || 'https://smart100x-w9a4.vercel.app';
+    let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
     if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
     const redirectUri = `${baseUrl}/api/oauth/pinterest/callback`;
 
@@ -645,7 +645,7 @@ router.get('/pinterest/callback', async (req, res) => {
 
 router.get('/threads', verifyToken, (req, res) => {
   const appId = process.env.THREADS_APP_ID || process.env.META_APP_ID;
-  let baseUrl = process.env.API_BASE_URL || 'https://smart100x-w9a4.vercel.app';
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
 
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
 
@@ -680,7 +680,7 @@ router.get('/threads/callback', async (req, res) => {
   try {
     const appId = process.env.THREADS_APP_ID || process.env.META_APP_ID;
     const appSecret = process.env.THREADS_APP_SECRET || process.env.META_APP_SECRET;
-    let baseUrl = process.env.API_BASE_URL || 'https://smart100x-w9a4.vercel.app';
+    let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
     if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
     const redirectUri = `${baseUrl}/api/oauth/threads/callback`;
 
@@ -743,7 +743,7 @@ router.get('/threads/callback', async (req, res) => {
 });
 
 router.get('/youtube', verifyToken, (req, res) => {
-  let baseUrl = process.env.API_BASE_URL || 'https://smart100x-w9a4.vercel.app';
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
   const redirectUri = `${baseUrl}/api/oauth/youtube/callback`;
   
@@ -853,7 +853,7 @@ router.get('/youtube/callback', async (req, res) => {
 
 router.get('/linkedin', verifyToken, (req, res) => {
   const clientId = process.env.LINKEDIN_CLIENT_ID;
-  let baseUrl = process.env.API_BASE_URL || 'https://smart100x-w9a4.vercel.app';
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
   const redirectUri = `${baseUrl}/api/oauth/linkedin/callback`;
   
@@ -1072,7 +1072,7 @@ router.get('/linkedin/callback', async (req, res) => {
 });
 
 router.get('/google-business', verifyToken, (req, res) => {
-  let baseUrl = process.env.API_BASE_URL || 'https://smart100x-w9a4.vercel.app';
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
   const redirectUri = `${baseUrl}/api/oauth/google-business/callback`;
   
@@ -1250,7 +1250,7 @@ router.get('/twitter', verifyToken, async (req, res) => {
     return res.status(500).json({ error: "Missing TWITTER_CLIENT_ID or TWITTER_CLIENT_SECRET in environment variables. Please configure OAuth 2.0 credentials." });
   }
 
-  let baseUrl = process.env.API_BASE_URL || 'https://smart100x-w9a4.vercel.app';
+  let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
   const redirectUri = `${baseUrl}/api/oauth/twitter/callback`;
   
@@ -1321,7 +1321,7 @@ router.get('/twitter/callback', async (req, res) => {
     const clientId = process.env.TWITTER_CLIENT_ID;
     const clientSecret = process.env.TWITTER_CLIENT_SECRET;
     
-    let baseUrl = process.env.API_BASE_URL || 'https://smart100x-w9a4.vercel.app';
+    let baseUrl = process.env.API_BASE_URL || 'https://dm-automation-w9a4.vercel.app';
     if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
     const redirectUri = `${baseUrl}/api/oauth/twitter/callback`;
 

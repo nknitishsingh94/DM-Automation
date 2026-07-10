@@ -6,7 +6,7 @@ export const swaggerDocument = {
     "description": "Comprehensive API documentation for the Smart100X Backend. Integrate social media automation, scheduling, and AI-driven responses into your applications seamlessly.",
     "contact": {
       "name": "API Support",
-      "email": "support@smart100x.com"
+      "email": "support@dm-automation.com"
     }
   },
   "servers": [
@@ -15,7 +15,7 @@ export const swaggerDocument = {
       "description": "Local Development Server"
     },
     {
-      "url": "https://smart100x-w9a4.vercel.app",
+      "url": "https://dm-automation-w9a4.vercel.app",
       "description": "Production Server"
     }
   ],
