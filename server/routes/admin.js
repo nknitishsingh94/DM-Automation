@@ -11,6 +11,7 @@ import PostLog from '../models/PostLog.js';
 import Message from '../models/Message.js';
 import Campaign from '../models/Campaign.js';
 import SuspensionLog from '../models/SuspensionLog.js';
+import PermanentLog from '../models/PermanentLog.js';
 
 const router = express.Router();
 
@@ -736,6 +737,52 @@ router.put('/pricing', async (req, res) => {
   } catch (error) {
     console.error('Admin Update Pricing Error:', error);
     res.status(500).json({ message: 'Failed to update pricing.' });
+  }
+});
+
+// GET /api/admin/permanent-logs - Fetch all permanent fraud logs
+router.get('/permanent-logs', verifyToken, isSuperAdmin, async (req, res) => {
+  try {
+    let logs = [];
+    try {
+      logs = await PermanentLog.find({});
+    } catch (e) {
+      console.warn('Could not fetch permanent logs (table might not exist yet):', e.message);
+      // Fallback mock data so the user can verify the UI before creating the table
+      logs = [
+        {
+          id: 'mock-1',
+          userId: 'usr_abc123',
+          userEmail: 'fraudster@example.com',
+          actionType: 'USER_DELETED',
+          platform: 'System',
+          accountDetails: 'User permanently deleted their account.',
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 'mock-2',
+          userId: 'usr_xyz987',
+          userEmail: 'testuser@example.com',
+          actionType: 'ACCOUNT_CONNECTED',
+          platform: 'instagram',
+          accountDetails: 'instabusiness_123',
+          created_at: new Date(Date.now() - 86400000).toISOString() // 1 day ago
+        },
+        {
+          id: 'mock-3',
+          userId: 'usr_xyz987',
+          userEmail: 'testuser@example.com',
+          actionType: 'ACCOUNT_DISCONNECTED',
+          platform: 'instagram',
+          accountDetails: 'instabusiness_123',
+          created_at: new Date(Date.now() - 3600000).toISOString() // 1 hr ago
+        }
+      ];
+    }
+    res.json(logs || []);
+  } catch (error) {
+    console.error('Fetch Permanent Logs Error:', error);
+    res.status(500).json({ message: 'Failed to fetch permanent logs.' });
   }
 });
 

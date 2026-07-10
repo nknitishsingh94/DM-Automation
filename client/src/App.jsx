@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
-import { Bot, Home, LayoutDashboard, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2, LayoutTemplate, Terminal, Lock, MessageCircle, Moon, Sun, Shield, Construction, ArrowLeft, Cpu, Activity } from 'lucide-react';
+import { Bot, Home, LayoutDashboard, MessageSquare, Settings, Users, Zap, Crown, CreditCard, Sparkles, Menu as MenuIcon, X, ChevronDown, PlusSquare, FileText, Headphones, LogOut, Megaphone, Calendar, Trash2, Globe, Link2, LayoutTemplate, Terminal, Lock, MessageCircle, Moon, Sun, Shield, ShieldAlert, Construction, ArrowLeft, Cpu, Activity } from 'lucide-react';
 import { lazy, Suspense, createContext, useContext, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { useTheme } from './context/ThemeContext';
@@ -482,6 +482,10 @@ function Sidebar({ isMobileOpen, onClose }) {
                     <NavLink to="/super-admin/users" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
                       <Users size={16} />
                       <span>Users</span>
+                    </NavLink>
+                    <NavLink to="/super-admin/audit-logs" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <ShieldAlert size={16} />
+                      <span>Audit Logs</span>
                     </NavLink>
                     <NavLink to="/super-admin/payments" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
                       <CreditCard size={16} />

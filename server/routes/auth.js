@@ -12,6 +12,7 @@ import ChatMessage from '../models/ChatMessage.js';
 import Caption from '../models/Caption.js';
 import ScheduledPost from '../models/ScheduledPost.js';
 import ApiKey from '../models/ApiKey.js';
+import PermanentLog from '../models/PermanentLog.js';
 import verifyToken from '../middleware/auth.js';
 import { OAuth2Client } from 'google-auth-library';
 import crypto from 'crypto';
@@ -336,6 +337,19 @@ router.delete('/account', verifyToken, async (req, res) => {
 
     console.log(`🗑️ Starting permanent deletion for User: ${userId} (${user.email})`);
 
+    // Create a permanent audit log of the account deletion for fraud prevention
+    try {
+      await PermanentLog({
+        userId: userId,
+        userEmail: user.email,
+        actionType: 'USER_DELETED',
+        platform: 'System',
+        accountDetails: 'User permanently deleted their account.'
+      }).save();
+    } catch (logErr) {
+      console.warn('⚠️ Failed to create permanent log for user deletion:', logErr.message);
+    }
+
     const models = [
       { name: 'Settings', model: Settings },
       { name: 'Campaigns', model: Campaign },
@@ -381,6 +395,22 @@ router.delete('/delete', verifyToken, async (req, res) => {
   try {
     const userId = req.user.userId;
     
+    // Create a permanent audit log of the account deletion for fraud prevention
+    try {
+      const user = await User.findById(userId);
+      if (user) {
+        await PermanentLog({
+          userId: userId,
+          userEmail: user.email,
+          actionType: 'USER_DELETED',
+          platform: 'System',
+          accountDetails: 'User permanently deleted their account.'
+        }).save();
+      }
+    } catch (logErr) {
+      console.warn('⚠️ Failed to create permanent log for user deletion:', logErr.message);
+    }
+
     await User.findByIdAndDelete(userId);
 
     await Promise.all([

@@ -11,6 +11,7 @@ import SupportTab from './SupportTab';
 import AIUsageTab from './AIUsageTab';
 import PaymentsTab from './PaymentsTab';
 import PlatformSettingsTab from './PlatformSettingsTab';
+import AuditLogsTab from './AuditLogsTab';
 
 export default function SuperAdminLayout() {
   const { user } = useAuth();
@@ -43,6 +44,8 @@ export default function SuperAdminLayout() {
         return <PaymentsTab />;
       case 'platform-settings':
         return <PlatformSettingsTab />;
+      case 'audit-logs':
+        return <AuditLogsTab />;
       default:
         return (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-muted)' }}>
