@@ -1,4 +1,4 @@
-# Instagram DM Automation AI Agent
+# Smart100X
 
 A scalable, multi-tenant social media automation platform built with the MERN stack (MongoDB, Express, React, Node.js) and Socket.io.
 

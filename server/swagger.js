@@ -20,7 +20,7 @@ export const setupSwagger = (app) => {
 <!doctype html>
 <html>
   <head>
-    <title>Insta AI Agent API Documentation</title>
+    <title>Smart100X API Documentation</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>

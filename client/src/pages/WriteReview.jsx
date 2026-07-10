@@ -3,8 +3,8 @@ const getSafeImageUrl = (url) => {
   if (!url || typeof url !== 'string') return url;
   if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
     const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? 'https://dm-automation-w9a4.vercel.app' 
-      : 'https://dm-automation-w9a4.vercel.app';
+      ? 'https://smart100x-w9a4.vercel.app' 
+      : 'https://smart100x-w9a4.vercel.app';
     return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
   }
   return url;
@@ -19,7 +19,7 @@ const WriteReview = () => {
   const [submitting, setSubmitting] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
    const [alreadyReviewed, setAlreadyReviewed] = useState(
-     localStorage.getItem('smart10x_reviewed') === 'true'
+     localStorage.getItem('smart100x_reviewed') === 'true'
    );
    const navigate = useNavigate();
 
@@ -38,10 +38,10 @@ const WriteReview = () => {
           const data = await response.json();
           if (data.exists) {
             setAlreadyReviewed(true);
-            localStorage.setItem('smart10x_reviewed', 'true');
+            localStorage.setItem('smart100x_reviewed', 'true');
           } else {
             setAlreadyReviewed(false);
-            localStorage.removeItem('smart10x_reviewed');
+            localStorage.removeItem('smart100x_reviewed');
           }
         }
       } catch (err) {
@@ -122,7 +122,7 @@ const WriteReview = () => {
       
         if (response.ok) {
           toast.success('Review submitted successfully! Thank you.');
-          localStorage.setItem('smart10x_reviewed', 'true');
+          localStorage.setItem('smart100x_reviewed', 'true');
           setAlreadyReviewed(true);
           
           setNewReview({

@@ -249,8 +249,8 @@ export default function Scheduling() {
     if (!url || typeof url !== 'string') return url;
     if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
       const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-        ? 'https://dm-automation-w9a4.vercel.app' 
-        : 'https://dm-automation-w9a4.vercel.app';
+        ? 'https://smart100x-w9a4.vercel.app' 
+        : 'https://smart100x-w9a4.vercel.app';
       return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
     }
     return url;
@@ -1726,7 +1726,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                             {selectedFiles[idx]?.type?.startsWith('video') ? (
                               <video src={src} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             ) : (
-                              <img referrerPolicy="no-referrer" src={getSafeImageUrl(src)} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+                              <img referrerPolicy="no-referrer" src={getSafeImageUrl(src)} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/smart100x-logo.png'; e.currentTarget.onerror = null; }} />
                             )}
                             <button
                               onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
@@ -1807,7 +1807,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                                       {post.files && post.files[mIdx]?.type?.startsWith('video') ? (
                                         <video src={prevImg} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                       ) : (
-                                        <img referrerPolicy="no-referrer" src={getSafeImageUrl(prevImg)} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+                                        <img referrerPolicy="no-referrer" src={getSafeImageUrl(prevImg)} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/smart100x-logo.png'; e.currentTarget.onerror = null; }} />
                                       )}
                                       <button
                                         onClick={() => removeThreadMedia(index, mIdx)}

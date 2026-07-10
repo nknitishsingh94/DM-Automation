@@ -1,7 +1,7 @@
 {
   "name": "dm-automate-server",
   "version": "1.0.0",
-  "description": "Backend for Instagram DM Automation Admin Console",
+  "description": "Backend for Smart100X Admin Console",
   "main": "index.js",
   "type": "module",
   "engines": {

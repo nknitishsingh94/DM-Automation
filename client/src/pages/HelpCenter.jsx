@@ -7,7 +7,7 @@ export default function HelpCenter() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hi! I am the smart10X AI assistant. How can I help you today?' }
+    { role: 'assistant', content: 'Hi! I am the Smart100X AI assistant. How can I help you today?' }
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
@@ -41,7 +41,7 @@ export default function HelpCenter() {
       const data = await response.json();
       setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again or email smart10x.support@gmail.com' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again or email smart100x.support@gmail.com' }]);
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +53,7 @@ export default function HelpCenter() {
       <div className="help-hero-bg">
         <header className="help-header">
           <div className="help-logo">
-            <span>smart10X</span>
+            <span>Smart100X</span>
           </div>
           <nav className="help-nav">
             <Link to="/#pricing">Pricing</Link>
@@ -84,7 +84,7 @@ export default function HelpCenter() {
               <ChevronRight size={18} color='var(--accent-color)' />
             </Link>
             <Link to="#" className="help-start-link">
-              <span>smart10X — Official Meta Partner onboarding roadmap</span>
+              <span>Smart100X — Official Meta Partner onboarding roadmap</span>
               <ChevronRight size={18} color='var(--accent-color)' />
             </Link>
           </div>
@@ -127,7 +127,7 @@ export default function HelpCenter() {
           <div className="chat-header-info">
             <div className="ai-avatar">🤖</div>
             <div>
-              <h4>smart10X AI Support</h4>
+              <h4>Smart100X AI Support</h4>
               <p>Always online</p>
             </div>
           </div>

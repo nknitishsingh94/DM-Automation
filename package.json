@@ -1,7 +1,7 @@
 {
   "name": "insta-ai-agent",
   "version": "1.0.0",
-  "description": "Instagram DM Automation Platform",
+  "description": "Smart100X Platform",
   "scripts": {
     "install-all": "npm install && cd client && npm install && cd ../server && npm install",
     "client": "cd client && npm run dev",

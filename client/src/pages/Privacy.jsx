@@ -7,14 +7,14 @@ const sections = [
     id: 'collect', num: '1', icon: <Database size={20} color="#0ea5e9" />, bg: '#f0f9ff',
     title: 'How We Collect Personal Data',
     content: [
-      { head: 'Account Registration', text: 'When you create a smart10X account, we collect your name, email address, and password. If you sign up via Google or Meta OAuth, we receive your profile information from those providers.' },
+      { head: 'Account Registration', text: 'When you create a Smart100X account, we collect your name, email address, and password. If you sign up via Google or Meta OAuth, we receive your profile information from those providers.' },
       { head: 'Meta / Instagram / Facebook Connection', text: 'When you connect your Meta account via OAuth, we receive and securely store your Meta access token, Facebook Page ID, Instagram Business Account ID, page name, and profile picture. This is required to operate automations on your behalf.' },
       { head: 'WhatsApp & Telegram Integration', text: 'When you connect WhatsApp or Telegram accounts, we receive account identifiers and access credentials necessary to send and receive messages through those platforms.' },
       { head: 'Instagram Inbox & DMs', text: 'To power the Inbox feature, we read incoming Direct Messages and comments from your connected Instagram account via the Meta API. Message content is processed to enable automation and AI-generated replies.' },
       { head: 'Forms & Lead Capture', text: 'When your visitors submit our embeddable Forms, we collect the data fields you configure (name, email, phone, custom fields) on behalf of your business. You are the data controller for this information.' },
       { head: 'Audiences & Contacts', text: 'When subscribers interact with your automations or are imported by you, we store contact records including Instagram usernames, phone numbers, email addresses, tags, and conversation history in our Audiences database.' },
       { head: 'Broadcasts', text: 'When you send Broadcast messages to your subscriber list, we log the send activity, delivery status, open rates, and click-through data associated with each broadcast campaign.' },
-      { head: 'Payments & Billing', text: 'When you purchase a subscription plan, billing information (card last 4 digits, billing address, payment history) is processed by our payment processor (Stripe). smart10X does not store your full card details.' },
+      { head: 'Payments & Billing', text: 'When you purchase a subscription plan, billing information (card last 4 digits, billing address, payment history) is processed by our payment processor (Stripe). Smart100X does not store your full card details.' },
       { head: 'Usage & Analytics', text: 'We automatically collect IP address, browser type, device type, pages visited, features used, session duration, and error logs to improve performance and security.' },
       { head: 'Communications', text: 'When you contact our support team via email or the Help Center, we store your messages and contact details to resolve your inquiry.' },
     ]
@@ -29,7 +29,7 @@ const sections = [
       { head: 'Automation & Flow Data', text: 'Campaign configurations, automation triggers, keyword rules, DM flow templates, AI Studio prompts, and Flow Builder node layouts created by you.' },
       { head: 'Contact / Audience Data', text: 'Instagram usernames, phone numbers, email addresses, custom field values, tags, subscription status, and conversation history of your subscribers.' },
       { head: 'Broadcast & Campaign Data', text: 'Message content, scheduled send times, target audience segments, delivery reports, open rates, and link click data.' },
-      { head: 'Form Submission Data', text: 'Responses submitted by your website visitors through smart10X embeddable Forms — fields, values, submission timestamps, and source page URLs.' },
+      { head: 'Form Submission Data', text: 'Responses submitted by your website visitors through Smart100X embeddable Forms — fields, values, submission timestamps, and source page URLs.' },
       { head: 'Financial Data', text: 'Subscription plan, billing cycle, payment history, invoice records, and last 4 digits of payment card (processed by Stripe).' },
       { head: 'Usage & Technical Data', text: 'IP address, browser type, operating system, feature usage frequency, error logs, and session data.' },
       { head: 'Advertising & Analytics Data', text: 'Ad campaign performance data, hashed identifiers for ad measurement, referral tracking IDs, and conversion event data used to measure effectiveness of our own marketing.' },
@@ -55,7 +55,7 @@ const sections = [
     id: 'share', num: '4', icon: <Users size={20} color="#f59e0b" />, bg: '#fffbeb',
     title: 'How We Share Personal Data',
     content: [
-      { head: 'We Do Not Sell Your Data', text: 'smart10X does not sell, rent, or trade your personal data or your subscribers\' data to third parties for their commercial or advertising purposes.' },
+      { head: 'We Do Not Sell Your Data', text: 'Smart100X does not sell, rent, or trade your personal data or your subscribers\' data to third parties for their commercial or advertising purposes.' },
       { head: 'Meta Platforms', text: 'To execute automations, we send data to the Meta API (Facebook/Instagram). This includes message content, automation responses, and account actions performed on your behalf.' },
       { head: 'WhatsApp & Telegram', text: 'When these integrations are enabled, relevant message data is transmitted to/from WhatsApp Business API and Telegram Bot API to deliver your automations.' },
       { head: 'Payment Processor (Stripe)', text: 'Billing information is shared with Stripe to process subscription payments. Stripe is PCI-DSS compliant. We do not receive or store your full card number.' },
@@ -64,17 +64,17 @@ const sections = [
       { head: 'Analytics Providers', text: 'We use analytics tools (e.g., Google Analytics) to understand platform usage. These tools receive anonymized usage data and do not receive your personal account details.' },
       { head: 'Advertising Measurement Partners', text: 'We may share hashed identifiers (not personal data) with advertising platforms to measure the effectiveness of our own marketing campaigns.' },
       { head: 'Legal Authorities', text: 'We may disclose data when required by applicable law, court order, or government authority, or to protect the rights and safety of our users and platform.' },
-      { head: 'Business Transfers', text: 'If smart10X is acquired, merged, or undergoes a corporate restructuring, your data may be transferred to the acquiring entity subject to equivalent privacy protections.' },
+      { head: 'Business Transfers', text: 'If Smart100X is acquired, merged, or undergoes a corporate restructuring, your data may be transferred to the acquiring entity subject to equivalent privacy protections.' },
     ]
   },
   {
     id: 'rights', num: '5', icon: <Shield size={20} color="#3b82f6" />, bg: '#eff6ff',
     title: 'Your Data Protection Rights & Choices',
     content: [
-      { head: 'Access', text: 'You have the right to request a copy of the personal data we hold about you. Contact us at smart10x.support@gmail.com to make a data access request.' },
+      { head: 'Access', text: 'You have the right to request a copy of the personal data we hold about you. Contact us at smart100x.support@gmail.com to make a data access request.' },
       { head: 'Rectification', text: 'You can update your account information directly from your Profile and Settings pages. If you need help correcting specific data, contact us.' },
       { head: 'Erasure (Right to be Forgotten)', text: 'You can permanently delete your account from Settings → Danger Zone. This will delete your account, all campaigns, audiences, contacts, flows, and associated data from our systems.' },
-      { head: 'Data Portability', text: 'You may request an export of your data in a structured, machine-readable format. Contact smart10x.support@gmail.com to submit a portability request.' },
+      { head: 'Data Portability', text: 'You may request an export of your data in a structured, machine-readable format. Contact smart100x.support@gmail.com to submit a portability request.' },
       { head: 'Withdraw Consent / Disconnect Meta', text: 'You can disconnect your Meta/Instagram account at any time from Settings. This will revoke our access to your Meta data. Existing automation campaigns will be paused.' },
       { head: 'Opt Out of Marketing Emails', text: 'You can unsubscribe from marketing emails at any time using the unsubscribe link in any email or by contacting us.' },
       { head: 'Subscriber Rights (Your Contacts)', text: 'If your subscribers wish to exercise their data rights (access, deletion, opt-out), they should contact you directly as you are the data controller for your audience data.' },
@@ -85,9 +85,9 @@ const sections = [
     id: 'meta-deletion', num: '5A', icon: <Trash2 size={20} color="#ef4444" />, bg: '#fef2f2',
     title: 'Facebook/Instagram Data Deletion Instructions',
     content: [
-      { head: 'How to Delete Your Data', text: 'smart10X provides multiple ways to delete your data. You can disconnect your Facebook/Instagram accounts from our platform at any time. To delete your specific Meta-related data, you can (1) Disconnect your Meta account from our Settings page, or (2) Permanently delete your entire smart10X account from the "Danger Zone" in Settings.' },
+      { head: 'How to Delete Your Data', text: 'Smart100X provides multiple ways to delete your data. You can disconnect your Facebook/Instagram accounts from our platform at any time. To delete your specific Meta-related data, you can (1) Disconnect your Meta account from our Settings page, or (2) Permanently delete your entire Smart100X account from the "Danger Zone" in Settings.' },
       { head: 'Automatic Deletion', text: 'Upon account deletion or Meta account disconnection, we immediately revoke and delete your OAuth access tokens and stop receiving any data from the Meta API. All associated Instagram DM history, campaign logs, and contact data are permanently removed from our active databases within 30 days.' },
-      { head: 'Meta Platform Tool', text: 'Alternatively, you can remove the smart10X App via your Facebook/Instagram Profile by going to "Settings & Privacy" > "Apps and Websites" and clicking "Remove" on smart10X. This will trigger our data deletion callback.' },
+      { head: 'Meta Platform Tool', text: 'Alternatively, you can remove the Smart100X App via your Facebook/Instagram Profile by going to "Settings & Privacy" > "Apps and Websites" and clicking "Remove" on Smart100X. This will trigger our data deletion callback.' },
     ]
   },
   {
@@ -106,19 +106,19 @@ const sections = [
     id: 'international', num: '7', icon: <Globe size={20} color="#06b6d4" />, bg: '#ecfeff',
     title: 'International Data Transfers',
     content: [
-      { head: 'Where We Process Data', text: 'smart10X is operated primarily from the United States. Your data may be transferred to and processed in the US and other countries where our cloud infrastructure providers operate.' },
+      { head: 'Where We Process Data', text: 'Smart100X is operated primarily from the United States. Your data may be transferred to and processed in the US and other countries where our cloud infrastructure providers operate.' },
       { head: 'Safeguards for EEA/UK Users', text: 'If you are located in the EEA or UK, we ensure that international transfers of your personal data are protected by appropriate safeguards such as Standard Contractual Clauses (SCCs) approved by the European Commission.' },
       { head: 'Meta API Data Flows', text: 'Data exchanged with Meta (Facebook/Instagram) platforms is subject to Meta\'s own data transfer mechanisms and privacy policies.' },
-      { head: 'Your Consent', text: 'By using smart10X and connecting your social media accounts, you acknowledge that your data will be transferred to and processed in these jurisdictions.' },
+      { head: 'Your Consent', text: 'By using Smart100X and connecting your social media accounts, you acknowledge that your data will be transferred to and processed in these jurisdictions.' },
     ]
   },
   {
     id: 'children', num: '8', icon: <Users size={20} color="#ec4899" />, bg: '#fdf2f8',
     title: "Children's Information",
     content: [
-      { head: 'Minimum Age', text: 'smart10X is not directed to children under the age of 13 (or 16 in the EEA). We do not knowingly collect personal data from children.' },
+      { head: 'Minimum Age', text: 'Smart100X is not directed to children under the age of 13 (or 16 in the EEA). We do not knowingly collect personal data from children.' },
       { head: 'If We Discover Child Data', text: 'If we become aware that a child under 13 has provided us with personal data without parental consent, we will delete such information from our systems promptly.' },
-      { head: 'Parental Concerns', text: 'If you are a parent or guardian and believe your child has provided us with personal data, please contact us at smart10x.support@gmail.com.' },
+      { head: 'Parental Concerns', text: 'If you are a parent or guardian and believe your child has provided us with personal data, please contact us at smart100x.support@gmail.com.' },
     ]
   },
   {
@@ -126,21 +126,21 @@ const sections = [
     title: 'How We Protect Your Data (Security)',
     content: [
       { head: '🔐 AES-256 Encryption at Rest', text: 'All sensitive data stored on our servers — including Meta OAuth access tokens, Instagram credentials, and user account data — is encrypted using industry-standard AES-256 encryption. Even if someone gained unauthorized physical access to our servers, the data would be completely unreadable without the decryption keys.' },
-      { head: '🔒 HTTPS / TLS Encryption in Transit', text: 'Every communication between your browser and smart10X servers is encrypted using HTTPS with TLS (Transport Layer Security). Your data cannot be intercepted, modified, or read while being transmitted over the internet.' },
+      { head: '🔒 HTTPS / TLS Encryption in Transit', text: 'Every communication between your browser and Smart100X servers is encrypted using HTTPS with TLS (Transport Layer Security). Your data cannot be intercepted, modified, or read while being transmitted over the internet.' },
       { head: '🛡️ Brute-Force & Rate Limiting Protection', text: 'Our API enforces strict rate limits on login and signup attempts. After 20 failed login attempts in 15 minutes, the IP address is temporarily blocked. General API usage is capped at 120 requests per minute per user to prevent automated abuse and denial-of-service attacks.' },
       { head: '💉 NoSQL Injection Prevention', text: 'All incoming request data is automatically sanitized using server-side middleware that strips malicious database operators (such as MongoDB "$gt", "$where" operators). This prevents attackers from manipulating database queries to access or destroy other users data.' },
       { head: '🧹 XSS (Cross-Site Scripting) Protection', text: 'Every text input submitted through the platform is sanitized to strip malicious HTML and JavaScript before it is stored or displayed. This prevents cross-site scripting attacks where an attacker injects scripts to steal your session token or personal data.' },
       { head: '🔑 Secure JWT Authentication', text: 'Your login session is protected by a JSON Web Token (JWT) signed with a strong cryptographic secret. Tokens expire after 30 days. The server refuses to start without a properly configured secret — there is no weak default fallback.' },
-      { head: '🚫 CORS Whitelist (Origin Protection)', text: 'Our API only accepts requests from authorized, whitelisted origins (smart10X official domains). Requests originating from unknown or malicious websites are automatically rejected, preventing cross-origin attacks.' },
+      { head: '🚫 CORS Whitelist (Origin Protection)', text: 'Our API only accepts requests from authorized, whitelisted origins (Smart100X official domains). Requests originating from unknown or malicious websites are automatically rejected, preventing cross-origin attacks.' },
       { head: '📤 File Upload Safety', text: 'The file upload system only accepts safe file types (JPEG, PNG, GIF, WebP images; MP4, WebM videos; MP3, OGG audio). Files are limited to 10MB. Executable files, scripts, and all potentially dangerous file types are rejected immediately.' },
       { head: '🕵️ HTTP Parameter Pollution Prevention', text: 'Our server detects and rejects duplicate or conflicting query parameters that attackers use to confuse validation logic and bypass security checks. Every request is parsed and normalized before processing.' },
       { head: '📦 Payload Size Limits (Anti-DDoS)', text: 'All API requests are limited to a maximum body size of 2MB. This protects against payload bomb and denial-of-service attacks that attempt to overwhelm our servers with extremely large requests.' },
-      { head: '🔏 Meta OAuth Token Security', text: 'Instagram and Facebook OAuth tokens are stored encrypted and are never exposed in browser-side code, API responses, or logs. Tokens are immediately and permanently deleted when you disconnect your account or delete your smart10X account.' },
+      { head: '🔏 Meta OAuth Token Security', text: 'Instagram and Facebook OAuth tokens are stored encrypted and are never exposed in browser-side code, API responses, or logs. Tokens are immediately and permanently deleted when you disconnect your account or delete your Smart100X account.' },
       { head: '🧱 HTTP Security Headers', text: 'Our server sends strict security headers on every response: Content-Security-Policy (blocks unauthorized scripts and frames), X-Frame-Options (prevents clickjacking), X-Content-Type-Options (prevents MIME sniffing), and Referrer-Policy (controls referrer information sharing).' },
       { head: '🚨 Safe Error Handling', text: 'In production, server errors return generic messages — never internal code, stack traces, or database details. Login failure messages use identical wording for wrong email or wrong password, preventing attackers from discovering which accounts exist on our platform (user enumeration protection).' },
       { head: '🔍 Strict Access Controls', text: 'Every API endpoint verifies your JWT before processing any request. User IDs are always taken from the verified token — never from request body parameters — preventing account impersonation attacks where one user modifies another users data.' },
       { head: '🔔 Breach Notification Policy', text: 'In the unlikely event of a data breach affecting your personal data, we will notify you and relevant data protection authorities as required by applicable law without undue delay and within the legally required timeframe (72 hours under GDPR).' },
-      { head: '👤 Your Account Security Responsibility', text: 'You are responsible for keeping your smart10X credentials confidential. We recommend a strong, unique password (minimum 12 characters, mixed case, numbers, symbols). Never share your account credentials. If you suspect unauthorized access, change your password immediately and contact us at smart10x.support@gmail.com.' },
+      { head: '👤 Your Account Security Responsibility', text: 'You are responsible for keeping your Smart100X credentials confidential. We recommend a strong, unique password (minimum 12 characters, mixed case, numbers, symbols). Never share your account credentials. If you suspect unauthorized access, change your password immediately and contact us at smart100x.support@gmail.com.' },
     ]
   },
 ];
@@ -165,7 +165,7 @@ export default function Privacy() {
             </div>
             <h1 style={{ fontSize: '48px', fontWeight: '900', color: 'var(--text-main)', marginBottom: '12px', letterSpacing: '-2px' }}>Privacy Policy</h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginBottom: '16px', lineHeight: '1.6' }}>
-              At <strong>smart10X</strong>, we consider the privacy and security of personal data to be extremely important.
+              At <strong>Smart100X</strong>, we consider the privacy and security of personal data to be extremely important.
             </p>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--sidebar-bg)', padding: '8px 20px', borderRadius: '100px', color: 'var(--text-muted)', fontWeight: '700', fontSize: '14px', border: '1px solid var(--border-subtle)' }}>
               <span style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', display: 'inline-block' }} />
@@ -177,7 +177,7 @@ export default function Privacy() {
         {/* Intro */}
         <div style={{ background: 'var(--text-main)', color: 'white', borderRadius: '24px', padding: '32px 40px', marginBottom: '28px', lineHeight: '1.75', fontSize: '0.95rem' }}>
           <p style={{ color: 'rgba(255,255,255,0.8)', margin: 0 }}>
-            We process personal data to provide smart10X services including Instagram DM Automation, AI Studio, Broadcasts, Audiences, Forms, Flow Builder, WhatsApp & Telegram integrations, and Billing. This Privacy Policy explains what data we collect, why, and how we protect it in accordance with applicable data protection laws including <strong style={{ color: '#60a5fa' }}>GDPR, UK GDPR, and LGPD</strong>.
+            We process personal data to provide Smart100X services including Instagram DM Automation, AI Studio, Broadcasts, Audiences, Forms, Flow Builder, WhatsApp & Telegram integrations, and Billing. This Privacy Policy explains what data we collect, why, and how we protect it in accordance with applicable data protection laws including <strong style={{ color: '#60a5fa' }}>GDPR, UK GDPR, and LGPD</strong>.
           </p>
         </div>
 
@@ -271,8 +271,8 @@ export default function Privacy() {
           <h3 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '12px' }}>Questions About Your Privacy?</h3>
           <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '0.95rem' }}>Our dedicated privacy team is happy to help you with any data-related requests.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
-            <a href="mailto:smart10x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
-              <Mail size={18} /> smart10x.support@gmail.com
+            <a href="mailto:smart100x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', boxShadow: '0 8px 20px rgba(37,99,235,0.2)' }}>
+              <Mail size={18} /> smart100x.support@gmail.com
             </a>
             <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'var(--sidebar-bg)', color: 'var(--text-main)', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', border: '1px solid var(--border-subtle)' }}>
               Help Center
@@ -289,7 +289,7 @@ export default function Privacy() {
         </div>
 
         <footer style={{ textAlign: 'center', marginTop: '40px', color: 'var(--text-muted)', fontSize: '14px', fontWeight: '600' }}>
-          © 2026 smart10X AI. All rights reserved. ·{' '}
+          © 2026 Smart100X AI. All rights reserved. ·{' '}
           <Link to="/terms" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Terms of Service</Link>
           {' · '}
           <Link to="/cookies" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Cookie Statement</Link>

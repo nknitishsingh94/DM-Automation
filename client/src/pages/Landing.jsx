@@ -3,8 +3,8 @@ const getSafeImageUrl = (url) => {
   if (!url || typeof url !== 'string') return url;
   if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
     const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? 'https://dm-automation-w9a4.vercel.app' 
-      : 'https://dm-automation-w9a4.vercel.app';
+      ? 'https://smart100x-w9a4.vercel.app' 
+      : 'https://smart100x-w9a4.vercel.app';
     return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
   }
   return url;
@@ -120,7 +120,7 @@ export default function Landing() {
         <div className="header-content">
           <div className="header-left">
             <div className="header-logo">
-              <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="smart10X Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
+              <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="smart10X Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
               <span className="logo-text">smart10X</span>
             </div>
             <div className="header-divider"></div>

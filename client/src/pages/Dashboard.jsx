@@ -29,7 +29,7 @@ export default function Dashboard() {
     facebookConnected: false
   });
   const [hasReviewed, setHasReviewed] = useState(
-    localStorage.getItem('smart10x_reviewed') === 'true'
+    localStorage.getItem('smart100x_reviewed') === 'true'
   );
 
   useEffect(() => {
@@ -59,10 +59,10 @@ export default function Dashboard() {
           const feedbackData = await feedbackRes.json().catch(() => ({}));
           if (feedbackData.exists) {
             setHasReviewed(true);
-            localStorage.setItem('smart10x_reviewed', 'true');
+            localStorage.setItem('smart100x_reviewed', 'true');
           } else {
             setHasReviewed(false);
-            localStorage.removeItem('smart10x_reviewed');
+            localStorage.removeItem('smart100x_reviewed');
           }
         }
         

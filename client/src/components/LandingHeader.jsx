@@ -13,8 +13,8 @@ export default function LandingHeader() {
       <div className="header-content">
         <div className="header-left">
           <Link to="/" className="header-logo" style={{ textDecoration: 'none' }}>
-            <img src="/zenxchat-logo.png" alt="smart10X Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
-            <span className="logo-text">smart10X</span>
+            <img src="/smart100x-logo.png" alt="Smart100X Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
+            <span className="logo-text">Smart100X</span>
           </Link>
           
           <div className="header-divider"></div>

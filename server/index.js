@@ -235,7 +235,7 @@ const webhookLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.get('/', (req, res) => { res.status(200).json({ message: '🚀 Instagram DM Automation AI API is running!', status: 'Healthy' }); });
+app.get('/', (req, res) => { res.status(200).json({ message: '🚀 Smart100X API is running!', status: 'Healthy' }); });
 // #swagger.ignore = true
 app.use('/api/auth', authLimiter);
 app.use('/api', apiLimiter);
@@ -2068,7 +2068,7 @@ app.post('/api/settings/whatsapp/connect-qr', verifyToken, async (req, res) => {
 
 app.get('/api/settings/whatsapp/qr', verifyToken, async (req, res) => {
   try {
-    const uniqueData = `zenxchat_wa_connect_${req.user.userId}_${Date.now()}`;
+    const uniqueData = `smart100x_wa_connect_${req.user.userId}_${Date.now()}`;
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(uniqueData)}`;
     res.json({ qrUrl });
   } catch (err) {

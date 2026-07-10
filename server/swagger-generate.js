@@ -34,8 +34,8 @@ All API requests require an API key. The SDKs read from the \`SMART10X_API_KEY\`
 
 #### Set Up the Client
 \`\`\`javascript
-import Smart10X from '@smart10x/node';
-const client = new Smart10X(); // uses SMART10X_API_KEY env var
+import Smart100X from '@smart100x/node';
+const client = new Smart100X(); // uses SMART10X_API_KEY env var
 \`\`\`
 
 > **Key format**: \`sk_live_\` prefix + 48 hex characters. Keys are stored securely and they're only shown once at creation.
@@ -46,7 +46,7 @@ const client = new Smart10X(); // uses SMART10X_API_KEY env var
   },
   servers: [
     {
-      url: 'https://dm-automation-w9a4.vercel.app',
+      url: 'https://smart100x-w9a4.vercel.app',
       description: 'Production Server'
     },
     {

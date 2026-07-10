@@ -34,7 +34,7 @@ Common setup steps:
 4. Set trigger keywords and response messages
 5. Enable AI replies in AI Studio
 
-If you don't know the answer, suggest emailing smart10x.support@gmail.com or visiting the Help Center.
+If you don't know the answer, suggest emailing smart100x.support@gmail.com or visiting the Help Center.
 Keep replies short, friendly, and helpful. Use emojis occasionally. Reply in the same language the user writes in.`;
 
         let reply = null;
@@ -94,13 +94,13 @@ Keep replies short, friendly, and helpful. Use emojis occasionally. Reply in the
         }
 
         if (!reply) {
-            reply = "I'm having a bit of trouble right now! 😅 Please email us at smart10x.support@gmail.com and we'll get back to you quickly!";
+            reply = "I'm having a bit of trouble right now! 😅 Please email us at smart100x.support@gmail.com and we'll get back to you quickly!";
         }
 
         res.json({ response: reply });
     } catch (error) {
         console.error('Support AI Error:', error.message);
-        res.json({ response: "Sorry, I'm experiencing technical difficulties. Please email smart10x.support@gmail.com for help! 🙏" });
+        res.json({ response: "Sorry, I'm experiencing technical difficulties. Please email smart100x.support@gmail.com for help! 🙏" });
     }
 });
 

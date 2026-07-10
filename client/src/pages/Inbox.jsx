@@ -284,8 +284,8 @@ export default function Inbox() {
     if (!url || typeof url !== 'string') return url;
     if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
       const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-        ? 'https://dm-automation-w9a4.vercel.app' 
-        : 'https://dm-automation-w9a4.vercel.app';
+        ? 'https://smart100x-w9a4.vercel.app' 
+        : 'https://smart100x-w9a4.vercel.app';
       return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
     }
     return url;
@@ -348,7 +348,7 @@ export default function Inbox() {
               overflow: 'hidden'
             }}>
               {user?.profilePhoto ? (
-                <img referrerPolicy="no-referrer" src={getSafeImageUrl(user.profilePhoto)} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+                <img referrerPolicy="no-referrer" src={getSafeImageUrl(user.profilePhoto)} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/smart100x-logo.png'; e.currentTarget.onerror = null; }} />
               ) : (
                 user?.username?.charAt(0).toUpperCase() || 'A'
               )}
@@ -382,7 +382,7 @@ export default function Inbox() {
             overflow: 'hidden'
           }}>
             {user?.profilePhoto ? (
-              <img referrerPolicy="no-referrer" src={getSafeImageUrl(user.profilePhoto)} alt="Header Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+              <img referrerPolicy="no-referrer" src={getSafeImageUrl(user.profilePhoto)} alt="Header Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/smart100x-logo.png'; e.currentTarget.onerror = null; }} />
             ) : (
               user?.username?.charAt(0).toUpperCase() || 'A'
             )}

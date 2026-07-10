@@ -32,7 +32,7 @@ async function getOrCreateBoard(accessToken, boardName) {
       'https://api.pinterest.com/v5/boards',
       {
         name: targetName,
-        description: "Created automatically by Insta AI Agent",
+        description: "Created automatically by Smart100X",
         privacy: "PUBLIC"
       },
       {

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Cookie, X, ChevronDown, Shield, BarChart2, Settings, Zap } from 'lucide-react';
 
-const STORAGE_KEY = 'smart10x_cookie_consent';
+const STORAGE_KEY = 'smart100x_cookie_consent';
 
 const preferences = [
   { id: 'necessary', label: 'Strictly Necessary', icon: <Shield size={15} color="#10b981" />, locked: true, desc: 'Required for the platform to function. Cannot be disabled.' },

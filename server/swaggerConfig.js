@@ -1,12 +1,12 @@
 export const swaggerDocument = {
   "openapi": "3.0.0",
   "info": {
-    "title": "Insta AI Agent API",
+    "title": "Smart100X API",
     "version": "1.0.0",
-    "description": "Comprehensive API documentation for the Insta AI Agent Backend. Integrate social media automation, scheduling, and AI-driven responses into your applications seamlessly.",
+    "description": "Comprehensive API documentation for the Smart100X Backend. Integrate social media automation, scheduling, and AI-driven responses into your applications seamlessly.",
     "contact": {
       "name": "API Support",
-      "email": "support@dm-automation.com"
+      "email": "support@smart100x.com"
     }
   },
   "servers": [
@@ -15,7 +15,7 @@ export const swaggerDocument = {
       "description": "Local Development Server"
     },
     {
-      "url": "https://dm-automation-w9a4.vercel.app",
+      "url": "https://smart100x-w9a4.vercel.app",
       "description": "Production Server"
     }
   ],

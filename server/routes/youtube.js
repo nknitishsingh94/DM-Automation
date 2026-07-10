@@ -23,7 +23,7 @@ router.get('/auth', verifyToken, async (req, res) => {
   }
 
   const state = req.user.userId;
-  let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? 'https://dm-automation-w9a4.vercel.app' : 'http://localhost:5001');
+  let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? 'https://smart100x-w9a4.vercel.app' : 'http://localhost:5001');
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
   const redirectUri = `${baseUrl}/api/youtube/callback`;
   
@@ -43,7 +43,7 @@ router.get('/callback', async (req, res) => {
 
   try {
     const userId = state; // We passed userId in state
-    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? 'https://dm-automation-w9a4.vercel.app' : 'http://localhost:5001');
+    let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? 'https://smart100x-w9a4.vercel.app' : 'http://localhost:5001');
     if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
     const redirectUri = `${baseUrl}/api/youtube/callback`;
 

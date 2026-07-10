@@ -3,8 +3,8 @@ const getSafeImageUrl = (url) => {
   if (!url || typeof url !== 'string') return url;
   if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
     const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? 'https://dm-automation-w9a4.vercel.app' 
-      : 'https://dm-automation-w9a4.vercel.app';
+      ? 'https://smart100x-w9a4.vercel.app' 
+      : 'https://smart100x-w9a4.vercel.app';
     return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
   }
   return url;
@@ -320,7 +320,7 @@ const MessageOnlyHub = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#dfe5e7', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                 {user?.profilePhoto ? (
-                  <img referrerPolicy="no-referrer" src={getSafeImageUrl(user.profilePhoto)} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+                  <img referrerPolicy="no-referrer" src={getSafeImageUrl(user.profilePhoto)} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/smart100x-logo.png'; e.currentTarget.onerror = null; }} />
                 ) : (
                   <User size={24} color="#aebac1" />
                 )}
@@ -421,7 +421,7 @@ const MessageOnlyHub = () => {
                   >
                     {/* User Avatar with Platform Badge */}
                     <div style={{ position: 'relative', flexShrink: 0 }}>
-                      <img referrerPolicy="no-referrer" src={getSafeImageUrl(chat.avatar)} alt={chat.userName} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+                      <img referrerPolicy="no-referrer" src={getSafeImageUrl(chat.avatar)} alt={chat.userName} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/smart100x-logo.png'; e.currentTarget.onerror = null; }} />
                       <div style={{ 
                         position: 'absolute', bottom: -2, right: -2, 
                         width: '20px', height: '20px', borderRadius: '50%', 
@@ -465,7 +465,7 @@ const MessageOnlyHub = () => {
             {/* Chat Header */}
             <div style={{ padding: '10px 16px', background: 'var(--bg-dark)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #d1d7db', height: '60px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                <img referrerPolicy="no-referrer" src={getSafeImageUrl(activeChat.avatar)} alt="Avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+                <img referrerPolicy="no-referrer" src={getSafeImageUrl(activeChat.avatar)} alt="Avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/smart100x-logo.png'; e.currentTarget.onerror = null; }} />
                 <div>
                   <h3 style={{ margin: 0, fontSize: '1rem', color: '#111b21', fontWeight: '500' }}>{activeChat.userName}</h3>
                   <span style={{ fontSize: '0.8rem', color: '#667781' }}>click here for contact info</span>

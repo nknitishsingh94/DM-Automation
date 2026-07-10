@@ -75,7 +75,7 @@ export default function Contact() {
               </div>
               <div>
                 <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '700' }}>EMAIL US</p>
-                <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-main)', fontWeight: '600' }}>smart10x.support@gmail.com</p>
+                <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-main)', fontWeight: '600' }}>smart100x.support@gmail.com</p>
               </div>
             </div>
             
@@ -85,7 +85,7 @@ export default function Contact() {
               </div>
               <div>
                 <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '700' }}>INSTAGRAM DM</p>
-                <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-main)', fontWeight: '600' }}>@smart10Xchat</p>
+                <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-main)', fontWeight: '600' }}>@Smart100Xchat</p>
               </div>
             </div>
           </div>

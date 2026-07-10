@@ -3,8 +3,8 @@ const getSafeImageUrl = (url) => {
   if (!url || typeof url !== 'string') return url;
   if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
     const API_BASE_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? 'https://dm-automation-w9a4.vercel.app' 
-      : 'https://dm-automation-w9a4.vercel.app';
+      ? 'https://smart100x-w9a4.vercel.app' 
+      : 'https://smart100x-w9a4.vercel.app';
     return API_BASE_URL + '/api/storage/proxy-external?url=' + encodeURIComponent(url);
   }
   return url;
@@ -27,8 +27,8 @@ export default function Blog() {
         <div className="header-content" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div className="header-logo">
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
-              <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="smart10X Logo" style={{ width: '32px', height: '32px' }} />
-              <span className="logo-text" style={{ color: 'var(--text-main)' }}>smart10X</span>
+              <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="Smart100X Logo" style={{ width: '32px', height: '32px' }} />
+              <span className="logo-text" style={{ color: 'var(--text-main)' }}>Smart100X</span>
             </Link>
           </div>
           <nav className="header-nav">
@@ -43,10 +43,10 @@ export default function Blog() {
       <section className="blog-hero">
         <div className="blog-hero-content">
           <div className="hero-text-side">
-            <span className="blog-badge animate-fade-in"><BookOpen size={16} /> smart10X Insights</span>
+            <span className="blog-badge animate-fade-in"><BookOpen size={16} /> Smart100X Insights</span>
             <h1 className="animate-slide-up">The Future of <span>Conversational</span> Commerce</h1>
             <p className="animate-slide-up delay-1">
-              Explore the latest trends in AI automation, social media growth strategies, and product updates from the smart10X team.
+              Explore the latest trends in AI automation, social media growth strategies, and product updates from the Smart100X team.
             </p>
           </div>
           <div className="hero-image-side animate-scale-in">
@@ -128,11 +128,11 @@ export default function Blog() {
       <section className="article-cta">
         <div className="cta-content glass-morphism">
           <div className="cta-logo">
-            <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="smart10X" />
-            <span>smart10X</span>
+            <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="Smart100X" />
+            <span>Smart100X</span>
           </div>
           <h2>Ready to automate your social growth?</h2>
-          <p>Start your journey with smart10X today and see the results in real-time.</p>
+          <p>Start your journey with Smart100X today and see the results in real-time.</p>
           <Link to="/signup" className="cta-button pulse-animation">
             Get Started Now
           </Link>

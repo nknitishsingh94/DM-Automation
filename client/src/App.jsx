@@ -292,7 +292,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                   overflow: 'hidden'
                 }}>
                   {user.profilePhoto ? (
-                    <img src={user.profilePhoto} alt="Nk" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/zenxchat-logo.png'; e.currentTarget.onerror = null; }} />
+                    <img src={user.profilePhoto} alt="Nk" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = '/smart100x-logo.png'; e.currentTarget.onerror = null; }} />
                   ) : (
                     user.username.charAt(0).toUpperCase()
                   )}
@@ -779,7 +779,7 @@ function MainLayout() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isPublic = ['/', '/public-home', '/login', '/signup', '/help', '/about', '/resources', '/blog', '/reviews', '/setup'].includes(location.pathname) || location.pathname.startsWith('/blog/');
-  const isEditor = location.pathname.startsWith('/dm-automation-editor') ||
+  const isEditor = location.pathname.startsWith('/smart100x-editor') ||
     location.pathname.startsWith('/automation-editor') ||
     location.pathname.startsWith('/flow-builder');
   const isMessageOnlyHub = location.pathname === '/hub/message-only';
@@ -824,7 +824,7 @@ function MainLayout() {
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
 
               <Route path="/automation-editor/:id?" element={<ProtectedRoute><AutomationEditor /></ProtectedRoute>} />
-              <Route path="/dm-automation-editor/:id?" element={<ProtectedRoute><DmAutomationEditor /></ProtectedRoute>} />
+              <Route path="/smart100x-editor/:id?" element={<ProtectedRoute><DmAutomationEditor /></ProtectedRoute>} />
               <Route path="/write-review" element={<ProtectedRoute><WriteReview /></ProtectedRoute>} />
               <Route path="/audiences" element={<ProtectedRoute><Audiences /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
