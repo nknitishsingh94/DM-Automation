@@ -748,7 +748,10 @@ router.get('/permanent-logs', verifyToken, isSuperAdmin, async (req, res) => {
       logs = await PermanentLog.find({});
     } catch (e) {
       console.warn('Could not fetch permanent logs (table might not exist yet):', e.message);
-      // Fallback mock data so the user can verify the UI before creating the table
+    }
+    
+    // Fallback mock data so the user can verify the UI before creating the table/triggering real events
+    if (!logs || logs.length === 0) {
       logs = [
         {
           id: 'mock-1',
@@ -779,6 +782,7 @@ router.get('/permanent-logs', verifyToken, isSuperAdmin, async (req, res) => {
         }
       ];
     }
+    
     res.json(logs || []);
   } catch (error) {
     console.error('Fetch Permanent Logs Error:', error);
