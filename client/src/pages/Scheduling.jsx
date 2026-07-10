@@ -2999,7 +2999,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                   </div>
 
                   {/* Automation Toggle Overlay on Bottom-Right */}
-                  {post.platform !== 'threads' && post.platform !== 'linkedin' && (post.autoResponse || post.triggerKeyword) && (
+                  {post.platform !== 'threads' && post.platform !== 'linkedin' && post.platform !== 'youtube' && (post.autoResponse || post.triggerKeyword) && (
                     <div style={{ position: 'absolute', bottom: '10px', right: '10px' }}>
                       <div
                         onClick={(e) => {
@@ -3075,7 +3075,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
                       <ExternalLink size={14} /> <span>Open Post</span>
                     </button>
                   )}
-                  {post.platform !== 'threads' && post.platform !== 'linkedin' && (
+                  {post.platform !== 'threads' && post.platform !== 'linkedin' && post.platform !== 'youtube' && (
                     <button
                       onClick={() => {
                         let loadedButtons = [];
