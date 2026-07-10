@@ -2,13 +2,13 @@ import swaggerAutogen from 'swagger-autogen';
 
 const doc = {
   info: {
-    title: 'smart10X API',
+    title: 'Smart100X API',
     description: `
-# smart10X API Overview
+# Smart100X API Overview
 
-Welcome to the comprehensive API documentation for the smart10X Backend.
+Welcome to the comprehensive API documentation for the Smart100X Backend.
 
-**smart10X** supports 8 major social media platforms from a unified API. Connect accounts, schedule posts, manage cross-posting, and access analytics across all supported networks.
+**Smart100X** supports 8 major social media platforms from a unified API. Connect accounts, schedule posts, manage cross-posting, and access analytics across all supported networks.
 
 ### Supported Platforms
 
@@ -27,7 +27,7 @@ Welcome to the comprehensive API documentation for the smart10X Backend.
 All API requests require an API key. The SDKs read from the \`SMART10X_API_KEY\` environment variable by default.
 
 #### Getting Your API Key
-1. Log in to your smart10X account at your dashboard.
+1. Log in to your Smart100X account at your dashboard.
 2. Go to **Sidebar → API Keys**
 3. Click **Create API Key**
 4. Copy the key immediately - you won't be able to see it again!

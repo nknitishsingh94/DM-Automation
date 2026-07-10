@@ -980,7 +980,7 @@ export default function Connections() {
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                          <span style={{ fontSize: '0.9rem', fontWeight: '500', color: 'var(--text-main)' }}>@{settings.connectedGoogleBusinessName || 'smart10X'}</span>
+                          <span style={{ fontSize: '0.9rem', fontWeight: '500', color: 'var(--text-main)' }}>@{settings.connectedGoogleBusinessName || 'Smart100X'}</span>
                           <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{settings.lastTestedAt ? new Date(settings.lastTestedAt).toLocaleDateString() : new Date().toLocaleDateString()}</span>
                         </div>
 

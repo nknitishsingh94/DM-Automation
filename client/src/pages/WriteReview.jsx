@@ -177,7 +177,7 @@ const WriteReview = () => {
             We'd love your feedback!
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', maxWidth: '450px', margin: '0 auto', lineHeight: '1.6' }}>
-            Share your smart10X experience to help other creators and brands discover the power of DM automation.
+            Share your Smart100X experience to help other creators and brands discover the power of DM automation.
           </p>
         </div>
 
@@ -190,7 +190,7 @@ const WriteReview = () => {
               Thank You for Your Review!
             </h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '1rem', maxWidth: '400px', margin: '0 auto', lineHeight: '1.6' }}>
-              We really appreciate you taking the time to share your experience with smart10X. Your review helps us grow!
+              We really appreciate you taking the time to share your experience with Smart100X. Your review helps us grow!
             </p>
           </div>
         ) : (
@@ -331,7 +331,7 @@ const WriteReview = () => {
               required
               value={newReview.text}
               onChange={(e) => setNewReview({...newReview, text: e.target.value})}
-              placeholder="How has smart10X helped you save time or grow your business?"
+              placeholder="How has Smart100X helped you save time or grow your business?"
               rows={5}
               style={{ padding: '16px', borderRadius: '16px', border: '1.5px solid #e2e8f0', outline: 'none', background: 'var(--sidebar-bg)', fontSize: '1rem', resize: 'vertical', transition: 'all 0.2s', lineHeight: '1.5' }}
               onFocus={(e) => { e.target.style.borderColor = 'var(--accent-color)'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.1)'; }}

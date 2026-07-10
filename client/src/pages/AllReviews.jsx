@@ -82,7 +82,7 @@ export default function AllReviews() {
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="Logo" style={{ height: '24px' }} onError={(e) => { e.target.style.display = 'none'; }} />
-            <span style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '1.1rem', letterSpacing: '-0.3px' }}>smart10X</span>
+            <span style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '1.1rem', letterSpacing: '-0.3px' }}>Smart100X</span>
           </div>
         </div>
       </nav>
@@ -142,7 +142,7 @@ export default function AllReviews() {
             margin: '0 auto',
             lineHeight: '1.6'
           }}>
-            See what coaches, business owners, and digital creators have to say about automations built with smart10X.
+            See what coaches, business owners, and digital creators have to say about automations built with Smart100X.
           </p>
         </div>
       </header>

@@ -22,8 +22,8 @@ export default function About() {
         <div className="header-content" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between' }}>
           <div className="header-logo">
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
-              <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="smart10X Logo" style={{ width: '32px', height: '32px' }} />
-              <span className="logo-text" style={{ color: 'var(--text-main)' }}>smart10X</span>
+              <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="Smart100X Logo" style={{ width: '32px', height: '32px' }} />
+              <span className="logo-text" style={{ color: 'var(--text-main)' }}>Smart100X</span>
             </Link>
           </div>
           <nav className="header-nav">
@@ -40,7 +40,7 @@ export default function About() {
           <span className="about-badge">Our Story</span>
           <h1>Redefining <span>Conversational</span> Intelligence</h1>
           <p>
-            smart10X is on a mission to empower creators and businesses with human-like AI automation that builds real connections at scale.
+            Smart100X is on a mission to empower creators and businesses with human-like AI automation that builds real connections at scale.
           </p>
         </div>
       </section>
@@ -100,7 +100,7 @@ export default function About() {
       <section className="about-cta">
         <div className="cta-content">
           <h3>Ready to join the future?</h3>
-          <p>Start your journey with smart10X today and transform your social media presence.</p>
+          <p>Start your journey with Smart100X today and transform your social media presence.</p>
           <Link to="/signup" className="cta-button">
             Get Started Free <ArrowRight size={20} />
           </Link>
