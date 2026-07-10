@@ -1155,22 +1155,31 @@ router.get('/google-business/callback', async (req, res) => {
         headers: { Authorization: `Bearer ${tokens.access_token}` }
       });
       if (accountsRes.data && accountsRes.data.accounts && accountsRes.data.accounts.length > 0) {
-        const account = accountsRes.data.accounts[0];
-        businessName = account.accountName || account.name;
-        gmbAccountId = account.name; // e.g. "accounts/123456789"
-        gmbFetched = true;
-        
-        try {
-          const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations?readMask=name,title`, {
-            headers: { Authorization: `Bearer ${tokens.access_token}` }
-          });
-          if (locationsRes.data && locationsRes.data.locations && locationsRes.data.locations.length > 0) {
-            const location = locationsRes.data.locations[0];
-            businessName = location.title;
-            gmbLocationId = location.name; // e.g. "locations/987654321"
+        // Loop through all accounts to find one that has locations
+        for (const account of accountsRes.data.accounts) {
+          try {
+            const locationsRes = await axios.get(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations?readMask=name,title`, {
+              headers: { Authorization: `Bearer ${tokens.access_token}` }
+            });
+            if (locationsRes.data && locationsRes.data.locations && locationsRes.data.locations.length > 0) {
+              const location = locationsRes.data.locations[0];
+              businessName = location.title;
+              gmbAccountId = account.name; // e.g. "accounts/123456789"
+              gmbLocationId = location.name; // e.g. "locations/987654321"
+              gmbFetched = true;
+              break; // Found a location, stop looking
+            }
+          } catch (locErr) {
+            console.warn(`Could not fetch locations for ${account.name}:`, locErr.message);
           }
-        } catch (locErr) {
-          console.warn('Could not fetch Google Business locations:', locErr.message);
+        }
+        
+        // If we checked all accounts and found NO locations, fallback to the first account's name
+        if (!gmbFetched) {
+          const firstAccount = accountsRes.data.accounts[0];
+          businessName = firstAccount.accountName || firstAccount.name;
+          gmbAccountId = firstAccount.name;
+          gmbFetched = true;
         }
       }
     } catch (gbErr) {
