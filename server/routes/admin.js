@@ -275,8 +275,13 @@ router.get('/users/:id/history', async (req, res) => {
       (pl.userId || pl.user_id) === id
     );
 
-    // Fetch suspension logs for this user
-    const allSuspensionLogs = await SuspensionLog.find({ userId: id });
+    // Fetch suspension logs for this user (with graceful fallback if table doesn't exist)
+    let allSuspensionLogs = [];
+    try {
+      allSuspensionLogs = await SuspensionLog.find({ userId: id });
+    } catch (e) {
+      console.warn('Could not fetch suspension logs (table might not exist yet):', e.message);
+    }
 
     res.json({
       user: {
