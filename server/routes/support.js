@@ -15,9 +15,9 @@ router.post('/chat', async (req, res) => {
         const geminiKey = process.env.GEMINI_API_KEY;
         const groqKey = process.env.GROQ_API_KEY;
 
-        const systemPrompt = `You are the Smart100X AI Support Assistant. You help users with questions about Smart100X — a social media automation platform for Instagram and Facebook.
+        const systemPrompt = `You are the smart100X AI Support Assistant. You help users with questions about smart100X — a social media automation platform for Instagram and Facebook.
 
-Key features of Smart100X:
+Key features of smart100X:
 - Comment-to-DM automation
 - DM automation with keyword triggers
 - AI-powered auto-replies

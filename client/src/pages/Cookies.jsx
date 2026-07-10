@@ -64,7 +64,7 @@ const cookieCategories = [
       { name: '_fbp', purpose: 'Facebook Pixel — used to deliver, measure, and improve the relevance of ads on Facebook.', duration: '3 months' },
       { name: 'fr', purpose: 'Facebook — enables ad delivery and measurement on Facebook and Meta platforms.', duration: '3 months' },
       { name: 'ads_session', purpose: 'Tracks ad conversion events from campaigns to measure effectiveness.', duration: 'Session' },
-      { name: 'retargeting_id', purpose: 'Enables remarketing campaigns to reach users who have previously visited Smart100X.', duration: '30 days' },
+      { name: 'retargeting_id', purpose: 'Enables remarketing campaigns to reach users who have previously visited smart100X.', duration: '30 days' },
     ]
   },
   {
@@ -87,11 +87,11 @@ const cookieCategories = [
 
 const faqs = [
   { q: 'What is a cookie?', a: 'A cookie is a small text file that is placed on your device (computer, smartphone, or tablet) when you visit a website. Cookies help websites remember your preferences, keep you logged in, and understand how you interact with the site.' },
-  { q: 'How do we use cookies?', a: 'Smart100X uses cookies to authenticate users, remember your preferences, analyze how our Services are used, and to deliver a secure and personalized experience. Some cookies are strictly necessary for the platform to function, while others are optional and used for analytics or advertising.' },
-  { q: 'Can I control cookies?', a: 'Yes. You can control and manage cookies in several ways. Your browser allows you to refuse all or some cookies, or to alert you when websites set or access cookies. If you disable or refuse cookies, please note that some parts of the Smart100X platform may become inaccessible or not function properly.' },
+  { q: 'How do we use cookies?', a: 'smart100X uses cookies to authenticate users, remember your preferences, analyze how our Services are used, and to deliver a secure and personalized experience. Some cookies are strictly necessary for the platform to function, while others are optional and used for analytics or advertising.' },
+  { q: 'Can I control cookies?', a: 'Yes. You can control and manage cookies in several ways. Your browser allows you to refuse all or some cookies, or to alert you when websites set or access cookies. If you disable or refuse cookies, please note that some parts of the smart100X platform may become inaccessible or not function properly.' },
   { q: 'How do I manage cookies in my browser?', a: 'You can manage cookies through your browser settings. Links to guidance for common browsers: Chrome (Settings > Privacy and Security > Cookies), Firefox (Options > Privacy & Security), Safari (Preferences > Privacy), Edge (Settings > Cookies and site permissions).' },
-  { q: 'Do you use cookies for advertising?', a: 'We may use targeting cookies to measure the effectiveness of our advertising campaigns and show relevant content. You can opt-out of advertising cookies without affecting your use of the core Smart100X platform features.' },
-  { q: 'Do third parties set cookies through Smart100X?', a: 'Yes. Some of our pages display content from, or are linked to, third-party content providers such as Meta (Facebook/Instagram), Google, and payment processors. These third parties may set their own cookies to track your interaction with their embedded content.' },
+  { q: 'Do you use cookies for advertising?', a: 'We may use targeting cookies to measure the effectiveness of our advertising campaigns and show relevant content. You can opt-out of advertising cookies without affecting your use of the core smart100X platform features.' },
+  { q: 'Do third parties set cookies through smart100X?', a: 'Yes. Some of our pages display content from, or are linked to, third-party content providers such as Meta (Facebook/Instagram), Google, and payment processors. These third parties may set their own cookies to track your interaction with their embedded content.' },
   { q: 'How often is this Cookie Statement updated?', a: 'We may update this Cookie Statement from time to time to reflect changes in technology, regulation, or business practice. When we make changes, we will update the "Effective Date" at the top of the page and notify you if required by applicable law.' },
 ];
 
@@ -118,9 +118,9 @@ export default function Cookies() {
               <Cookie size={44} color="white" />
             </div>
             <h1 style={{ fontSize: '48px', fontWeight: '900', color: 'var(--text-main)', marginBottom: '12px', letterSpacing: '-2px', lineHeight: 1.1 }}>Cookie Statement</h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: '600', marginBottom: '16px' }}>Smart100X, Inc. — Effective Date: April 1, 2026</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: '600', marginBottom: '16px' }}>smart100X, Inc. — Effective Date: April 1, 2026</p>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '620px', margin: '0 auto', lineHeight: '1.7' }}>
-              This Cookie Statement explains how Smart100X uses cookies and similar tracking technologies when you use our platform. It describes what these technologies are, why we use them, and your rights to control our use of them.
+              This Cookie Statement explains how smart100X uses cookies and similar tracking technologies when you use our platform. It describes what these technologies are, why we use them, and your rights to control our use of them.
             </p>
           </div>
         </div>
@@ -221,7 +221,7 @@ export default function Cookies() {
           <div style={{ marginTop: '20px', padding: '16px 20px', background: '#fffbeb', borderRadius: '14px', border: '1px solid #fde68a', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '20px', flexShrink: 0 }}>⚠️</span>
             <p style={{ color: '#92400e', fontSize: '0.88rem', lineHeight: '1.6', margin: 0, fontWeight: '500' }}>
-              <strong>Please note:</strong> Disabling essential cookies will prevent you from logging in to Smart100X and using core platform features. Disabling optional cookies will only affect analytics, personalisation, and advertising features.
+              <strong>Please note:</strong> Disabling essential cookies will prevent you from logging in to smart100X and using core platform features. Disabling optional cookies will only affect analytics, personalisation, and advertising features.
             </p>
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function Cookies() {
             <Shield size={20} color='var(--accent-color)' /> Do Not Track Signals
           </h2>
           <p style={{ color: '#5b21b6', lineHeight: '1.75', fontSize: '0.93rem', margin: 0 }}>
-            Some browsers include a "Do Not Track" (DNT) feature that signals to websites that you visit that you do not want to have your online activity tracked. Because there is not yet a common understanding of how to interpret DNT signals, Smart100X does not currently respond to browser DNT signals. You can use the controls described in this Cookie Statement to manage tracking on our platform.
+            Some browsers include a "Do Not Track" (DNT) feature that signals to websites that you visit that you do not want to have your online activity tracked. Because there is not yet a common understanding of how to interpret DNT signals, smart100X does not currently respond to browser DNT signals. You can use the controls described in this Cookie Statement to manage tracking on our platform.
           </p>
         </div>
 
@@ -261,7 +261,7 @@ export default function Cookies() {
         <div style={{ background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid var(--border-subtle)', padding: '48px', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
           <h3 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '12px' }}>Questions About Our Cookie Use?</h3>
           <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '0.95rem', maxWidth: '500px', margin: '0 auto 28px' }}>
-            If you have any questions about how Smart100X uses cookies or this Cookie Statement, please contact our Privacy team.
+            If you have any questions about how smart100X uses cookies or this Cookie Statement, please contact our Privacy team.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '14px' }}>
             <a href="mailto:smart100x.support@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', padding: '14px 28px', borderRadius: '14px', textDecoration: 'none', fontWeight: '700', fontSize: '0.95rem', boxShadow: '0 8px 20px rgba(217,119,6,0.25)' }}>
@@ -277,7 +277,7 @@ export default function Cookies() {
         </div>
 
         <footer style={{ textAlign: 'center', marginTop: '40px', color: 'var(--text-muted)', fontSize: '14px', fontWeight: '600' }}>
-          © 2026 Smart100X AI. All rights reserved. ·{' '}
+          © 2026 smart100X AI. All rights reserved. ·{' '}
           <Link to="/privacy" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Privacy Policy</Link>
           {' · '}
           <Link to="/terms" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Terms of Service</Link>

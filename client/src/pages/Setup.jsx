@@ -174,7 +174,7 @@ export default function Setup() {
             <path d="M5 12h14"></path>
             <path d="M12 5l7 7-7 7"></path>
           </svg>
-          Smart100X
+          smart100X
         </div>
         
         <h1 className="setup-title">Welcome, let's get you set up</h1>

@@ -85,7 +85,7 @@ export default function Contact() {
               </div>
               <div>
                 <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '700' }}>INSTAGRAM DM</p>
-                <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-main)', fontWeight: '600' }}>@Smart100Xchat</p>
+                <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-main)', fontWeight: '600' }}>@smart100Xchat</p>
               </div>
             </div>
           </div>

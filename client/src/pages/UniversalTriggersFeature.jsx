@@ -76,7 +76,7 @@ export default function UniversalTriggersFeature() {
                 fontWeight: '700',
                 marginBottom: '24px'
               }}>
-                <Globe size={14} /> Smart100X-Intelligence
+                <Globe size={14} /> smart100X-Intelligence
               </div>
 
               <h1 style={{

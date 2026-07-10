@@ -229,7 +229,7 @@ export default function PlatformAutoOps() {
                   </div>
                   <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-main)' }}>welcome_offer_01</h4>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', background: 'var(--sidebar-bg)', padding: '12px', borderRadius: '8px', lineHeight: '1.5' }}>
-                    Hi {'{{1}}'}! 👋 Welcome to Smart100X. Use code {'{{2}}'} to get 20% off your first purchase!
+                    Hi {'{{1}}'}! 👋 Welcome to smart100X. Use code {'{{2}}'} to get 20% off your first purchase!
                   </p>
                   <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
                     <button style={{ flex: 1, padding: '8px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: '#3b82f6', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer' }}>Use in Flow</button>

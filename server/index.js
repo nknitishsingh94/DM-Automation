@@ -234,7 +234,7 @@ const webhookLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.get('/', (req, res) => { res.status(200).json({ message: '🚀 Smart100X API is running!', status: 'Healthy' }); });
+app.get('/', (req, res) => { res.status(200).json({ message: '🚀 smart100X API is running!', status: 'Healthy' }); });
 // #swagger.ignore = true
 app.use('/api/auth', authLimiter);
 app.use('/api', apiLimiter);
@@ -2888,7 +2888,7 @@ const DEFAULT_REVIEWS = [
     handle: "@sarah_fitsocial",
     role: "Fitness Coach (120k Followers)",
     rating: 5,
-    text: "This automation is absolute magic! I used to spend 3 hours a day replying to 'INFO' comments on my reels. Now, Smart100X handles it in milliseconds. My story engagement went up by 42% in the first week!",
+    text: "This automation is absolute magic! I used to spend 3 hours a day replying to 'INFO' comments on my reels. Now, smart100X handles it in milliseconds. My story engagement went up by 42% in the first week!",
     platform: "instagram",
     verified: true,
     createdAt: new Date().toISOString()

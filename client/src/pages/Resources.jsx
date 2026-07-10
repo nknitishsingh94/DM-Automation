@@ -22,8 +22,8 @@ export default function Resources() {
         <div className="header-content" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between' }}>
           <div className="header-logo">
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
-              <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="Smart100X Logo" style={{ width: '32px', height: '32px' }} />
-              <span className="logo-text" style={{ color: 'var(--text-main)' }}>Smart100X</span>
+              <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="smart100X Logo" style={{ width: '32px', height: '32px' }} />
+              <span className="logo-text" style={{ color: 'var(--text-main)' }}>smart100X</span>
             </Link>
           </div>
           <nav className="header-nav">
@@ -40,7 +40,7 @@ export default function Resources() {
           <span className="about-badge">Knowledge Hub</span>
           <h1>Empowering Your <span>Growth</span></h1>
           <p>
-            Everything you need to master Instagram automation and scale your digital presence with Smart100X.
+            Everything you need to master Instagram automation and scale your digital presence with smart100X.
           </p>
         </div>
       </section>
@@ -61,7 +61,7 @@ export default function Resources() {
             </div>
           </Link>
 
-          <a href="https://www.instagram.com/Smart100Xchat/" target="_blank" rel="noopener noreferrer" className="resource-card glass-morphism">
+          <a href="https://www.instagram.com/smart100Xchat/" target="_blank" rel="noopener noreferrer" className="resource-card glass-morphism">
             <div className="resource-icon pink">
               <Users size={28} />
             </div>
@@ -79,7 +79,7 @@ export default function Resources() {
               <Newspaper size={28} />
             </div>
             <div className="resource-info">
-              <h3>Smart100X Blog</h3>
+              <h3>smart100X Blog</h3>
               <p>Stay updated with the latest AI trends, platform updates, and marketing tips.</p>
               <div className="resource-link">
                 Read Blog <ArrowRight size={18} />
@@ -109,8 +109,8 @@ export default function Resources() {
             <MessageCircle size={32} />
           </div>
           <h2>Can't find what you're looking for?</h2>
-          <p>Our support team is always here to help you get the most out of Smart100X.</p>
-          <a href="https://www.instagram.com/Smart100Xchat/" target="_blank" rel="noopener noreferrer" className="cta-contact-btn">
+          <p>Our support team is always here to help you get the most out of smart100X.</p>
+          <a href="https://www.instagram.com/smart100Xchat/" target="_blank" rel="noopener noreferrer" className="cta-contact-btn">
             Contact Support
           </a>
         </div>

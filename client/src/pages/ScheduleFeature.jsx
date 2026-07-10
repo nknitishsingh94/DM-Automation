@@ -230,7 +230,7 @@ export default function ScheduleFeature() {
               </h2>
 
               <p style={{ fontSize: '1rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '40px', maxWidth: isMobile ? '100%' : '500px' }}>
-                Stop jumping between tools. Smart100X allows you to upload your content,
+                Stop jumping between tools. smart100X allows you to upload your content,
                 write your caption, and configure your comment-to-DM triggers in
                 one powerful workflow.
               </p>

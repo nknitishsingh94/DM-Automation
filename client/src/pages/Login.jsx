@@ -552,7 +552,7 @@ export default function Login() {
             {/* Logo */}
             <div className="login-logo-wrap">
               <h1 className="login-title">Welcome Back</h1>
-              <p className="login-subtitle">Sign in to your Smart100X account</p>
+              <p className="login-subtitle">Sign in to your smart100X account</p>
             </div>
 
             {/* Error */}

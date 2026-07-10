@@ -73,7 +73,7 @@ export default function Subscription() {
         key: 'rzp_test_Sb7Jacv3IT4KbJ',
         amount: order.amount,
         currency: order.currency,
-        name: "Smart100X",
+        name: "smart100X",
         description: "Professional AI Automation Pro Plan",
         image: "https://instant-logo.png",
         order_id: order.id,
@@ -253,7 +253,7 @@ export default function Subscription() {
                     onClick={() => setPaymentStep('qr')} 
                   />
                   <div style={{ marginTop: '12px', textAlign: 'center' }}>
-                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Secure encrypted payments powered by Smart100X</p>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Secure encrypted payments powered by smart100X</p>
                   </div>
                 </div>
               )}

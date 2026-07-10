@@ -27,7 +27,7 @@ export default function Referral() {
           </div>
           <h2 style={{ fontSize: '28px', fontWeight: '800', color: 'var(--text-main)' }}>Refer & Earn</h2>
         </div>
-        <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Invite friends to Smart100X and earn amazing rewards for every successful referral.</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Invite friends to smart100X and earn amazing rewards for every successful referral.</p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '32px' }}>
@@ -70,7 +70,7 @@ export default function Referral() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {[
                 { step: '1', title: 'Share your link', desc: 'Send your referral link to friends or post on social media.' },
-                { step: '2', title: 'Friend signs up', desc: 'Your friend creates a Smart100X account using your link.' },
+                { step: '2', title: 'Friend signs up', desc: 'Your friend creates a smart100X account using your link.' },
                 { step: '3', title: 'Earn rewards', desc: 'Get exclusive rewards when they become an active user.' },
               ].map((s, i) => (
                 <div key={i} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>

@@ -1,9 +1,9 @@
 export const swaggerDocument = {
   "openapi": "3.0.0",
   "info": {
-    "title": "Smart100X API",
+    "title": "smart100X API",
     "version": "1.0.0",
-    "description": "Comprehensive API documentation for the Smart100X Backend. Integrate social media automation, scheduling, and AI-driven responses into your applications seamlessly.",
+    "description": "Comprehensive API documentation for the smart100X Backend. Integrate social media automation, scheduling, and AI-driven responses into your applications seamlessly.",
     "contact": {
       "name": "API Support",
       "email": "support@dm-automation.com"

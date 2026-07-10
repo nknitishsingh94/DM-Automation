@@ -27,8 +27,8 @@ export default function Blog() {
         <div className="header-content" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div className="header-logo">
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
-              <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="Smart100X Logo" style={{ width: '32px', height: '32px' }} />
-              <span className="logo-text" style={{ color: 'var(--text-main)' }}>Smart100X</span>
+              <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="smart100X Logo" style={{ width: '32px', height: '32px' }} />
+              <span className="logo-text" style={{ color: 'var(--text-main)' }}>smart100X</span>
             </Link>
           </div>
           <nav className="header-nav">
@@ -43,10 +43,10 @@ export default function Blog() {
       <section className="blog-hero">
         <div className="blog-hero-content">
           <div className="hero-text-side">
-            <span className="blog-badge animate-fade-in"><BookOpen size={16} /> Smart100X Insights</span>
+            <span className="blog-badge animate-fade-in"><BookOpen size={16} /> smart100X Insights</span>
             <h1 className="animate-slide-up">The Future of <span>Conversational</span> Commerce</h1>
             <p className="animate-slide-up delay-1">
-              Explore the latest trends in AI automation, social media growth strategies, and product updates from the Smart100X team.
+              Explore the latest trends in AI automation, social media growth strategies, and product updates from the smart100X team.
             </p>
           </div>
           <div className="hero-image-side animate-scale-in">
@@ -128,11 +128,11 @@ export default function Blog() {
       <section className="article-cta">
         <div className="cta-content glass-morphism">
           <div className="cta-logo">
-            <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="Smart100X" />
-            <span>Smart100X</span>
+            <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="smart100X" />
+            <span>smart100X</span>
           </div>
           <h2>Ready to automate your social growth?</h2>
-          <p>Start your journey with Smart100X today and see the results in real-time.</p>
+          <p>Start your journey with smart100X today and see the results in real-time.</p>
           <Link to="/signup" className="cta-button pulse-animation">
             Get Started Now
           </Link>
