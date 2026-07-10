@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Trash2, MoreVertical, Shield, UserX, History, ArrowLeft, Activity, Zap, Building, FileText, CheckCircle, Clock, CheckCircle2, Globe, Instagram, Facebook, Twitter, Linkedin, Youtube, Hash, MousePointerClick, Store, AtSign, RefreshCw, Unplug } from 'lucide-react';
+import { Search, Trash2, MoreVertical, Shield, UserX, History, ArrowLeft, Activity, Zap, Building, FileText, CheckCircle, Clock, CheckCircle2, Globe, Instagram, Facebook, Twitter, Linkedin, Youtube, Hash, MousePointerClick, Store, AtSign, ShieldBan, Unplug, AlertTriangle } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
@@ -87,15 +87,22 @@ export default function UsersTab() {
       if (!window.confirm(`Are you sure you want to disconnect ${platform}?`)) return;
     }
 
+    let suspendReason = '';
+    if (action === 'suspend') {
+      const reason = window.prompt(`⚠️ SUSPEND ${platform.toUpperCase()} ACCOUNT\n\nThis will permanently suspend this social media account.\n\nEnter reason for suspension:`, 'Illegal activity detected');
+      if (reason === null) return; // User cancelled
+      suspendReason = reason;
+    }
+
     try {
       const token = localStorage.getItem('insta_agent_token');
-      if (action === 'refresh') {
-        const loadingToast = toast.loading(`Refreshing ${platform}...`);
-        await axios.put(`${API_BASE_URL}/api/admin/social-accounts/${dbId}/${platform}/refresh`, {}, {
+      if (action === 'suspend') {
+        const loadingToast = toast.loading(`Suspending ${platform}...`);
+        await axios.put(`${API_BASE_URL}/api/admin/social-accounts/${dbId}/${platform}/suspend`, { reason: suspendReason }, {
           headers: { Authorization: `Bearer ${token}` }
         });
         toast.dismiss(loadingToast);
-        toast.success(`Successfully refreshed ${platform}`);
+        toast.success(`Successfully suspended ${platform}`);
       } else if (action === 'disconnect') {
         const loadingToast = toast.loading(`Disconnecting ${platform}...`);
         await axios.delete(`${API_BASE_URL}/api/admin/social-accounts/${dbId}/${platform}`, {
@@ -210,15 +217,21 @@ export default function UsersTab() {
                 {(() => {
                   const accounts = [];
                   (selectedUserData.settings || []).forEach(s => {
-                    if (s.isInstagramConnected || s.instagramAccessToken || s.businessAccountId) accounts.push({ id: `ig_${s._id}`, platform: 'instagram', label: s.connectedInstagramName || s.connectedFacebookName || 'Instagram', icon: Instagram, color: '#e1306c' });
-                    if (s.isFacebookConnected || s.facebookAccessToken) accounts.push({ id: `fb_${s._id}`, platform: 'facebook', label: s.connectedFacebookName || 'Facebook', icon: Facebook, color: '#1877f2' });
-                    if (s.isLinkedInConnected || s.linkedinAccessToken) accounts.push({ id: `li_${s._id}`, platform: 'linkedin', label: s.connectedLinkedInName || s.connectedLinkedinName || 'LinkedIn', icon: Linkedin, color: '#0077b5' });
-                    if (s.isTwitterConnected || s.twitterAccessToken) accounts.push({ id: `tw_${s._id}`, platform: 'twitter', label: s.connectedTwitterName || 'Twitter', icon: Twitter, color: '#1da1f2' });
-                    if (s.isYouTubeConnected || s.isYoutubeConnected || s.youtubeAccessToken) accounts.push({ id: `yt_${s._id}`, platform: 'youtube', label: s.youtubeChannelName || s.connectedYoutubeName || 'YouTube', icon: Youtube, color: '#ff0000' });
-                    if (s.isPinterestConnected || s.pinterestAccessToken) accounts.push({ id: `pi_${s._id}`, platform: 'pinterest', label: s.connectedPinterestName || 'Pinterest', icon: Hash, color: '#e60023' });
-                    if (s.isTikTokConnected || s.tiktokAccessToken) accounts.push({ id: `tk_${s._id}`, platform: 'tiktok', label: 'TikTok', icon: Hash, color: '#000000' });
-                    if (s.isGoogleBusinessConnected || s.googleBusinessAccessToken) accounts.push({ id: `gb_${s._id}`, platform: 'google_business', label: s.connectedGoogleBusinessName || 'Google Business', icon: Store, color: '#4285F4' });
-                    if (s.isThreadsConnected || s.threadsAccessToken) accounts.push({ id: `th_${s._id}`, platform: 'threads', label: s.connectedThreadsName || 'Threads', icon: AtSign, color: '#000000' });
+                    // Check suspended status from the settings extra data
+                    const getSuspendedStatus = (platform) => {
+                      if (s[`suspended_${platform}`]) return true;
+                      return false;
+                    };
+
+                    if (s.isInstagramConnected || s.instagramAccessToken || s.businessAccountId) accounts.push({ id: `ig_${s._id}`, platform: 'instagram', label: s.connectedInstagramName || s.connectedFacebookName || 'Instagram', icon: Instagram, color: '#e1306c', isSuspended: getSuspendedStatus('instagram') });
+                    if (s.isFacebookConnected || s.facebookAccessToken) accounts.push({ id: `fb_${s._id}`, platform: 'facebook', label: s.connectedFacebookName || 'Facebook', icon: Facebook, color: '#1877f2', isSuspended: getSuspendedStatus('facebook') });
+                    if (s.isLinkedInConnected || s.linkedinAccessToken) accounts.push({ id: `li_${s._id}`, platform: 'linkedin', label: s.connectedLinkedInName || s.connectedLinkedinName || 'LinkedIn', icon: Linkedin, color: '#0077b5', isSuspended: getSuspendedStatus('linkedin') });
+                    if (s.isTwitterConnected || s.twitterAccessToken) accounts.push({ id: `tw_${s._id}`, platform: 'twitter', label: s.connectedTwitterName || 'Twitter', icon: Twitter, color: '#1da1f2', isSuspended: getSuspendedStatus('twitter') });
+                    if (s.isYouTubeConnected || s.isYoutubeConnected || s.youtubeAccessToken) accounts.push({ id: `yt_${s._id}`, platform: 'youtube', label: s.youtubeChannelName || s.connectedYoutubeName || 'YouTube', icon: Youtube, color: '#ff0000', isSuspended: getSuspendedStatus('youtube') });
+                    if (s.isPinterestConnected || s.pinterestAccessToken) accounts.push({ id: `pi_${s._id}`, platform: 'pinterest', label: s.connectedPinterestName || 'Pinterest', icon: Hash, color: '#e60023', isSuspended: getSuspendedStatus('pinterest') });
+                    if (s.isTikTokConnected || s.tiktokAccessToken) accounts.push({ id: `tk_${s._id}`, platform: 'tiktok', label: 'TikTok', icon: Hash, color: '#000000', isSuspended: getSuspendedStatus('tiktok') });
+                    if (s.isGoogleBusinessConnected || s.googleBusinessAccessToken) accounts.push({ id: `gb_${s._id}`, platform: 'google_business', label: s.connectedGoogleBusinessName || 'Google Business', icon: Store, color: '#4285F4', isSuspended: getSuspendedStatus('google_business') });
+                    if (s.isThreadsConnected || s.threadsAccessToken) accounts.push({ id: `th_${s._id}`, platform: 'threads', label: s.connectedThreadsName || 'Threads', icon: AtSign, color: '#000000', isSuspended: getSuspendedStatus('threads') });
                   });
                   
                   if (accounts.length === 0) {
@@ -238,32 +251,49 @@ export default function UsersTab() {
                         key={acc.id} 
                         onClick={() => setSelectedPlatformFilter(isSelected ? null : acc.platform)}
                         style={{ 
-                          position: 'relative', overflow: 'hidden', padding: '20px', background: 'var(--bg-base)', 
-                          borderRadius: '16px', border: `2px solid ${isSelected ? acc.color : 'transparent'}`, 
+                          position: 'relative', overflow: 'hidden', padding: '20px', background: acc.isSuspended ? 'rgba(239,68,68,0.03)' : 'var(--bg-base)', 
+                          borderRadius: '16px', border: `2px solid ${acc.isSuspended ? '#ef4444' : (isSelected ? acc.color : 'transparent')}`, 
                           display: 'flex', flexDirection: 'column', gap: '16px', cursor: 'pointer', transition: 'all 0.3s ease',
-                          boxShadow: isSelected ? `0 8px 24px ${acc.color}20` : '0 2px 8px rgba(0,0,0,0.04)'
+                          boxShadow: acc.isSuspended ? '0 4px 16px rgba(239,68,68,0.12)' : (isSelected ? `0 8px 24px ${acc.color}20` : '0 2px 8px rgba(0,0,0,0.04)'),
+                          opacity: acc.isSuspended ? 0.85 : 1
                         }}
                         onMouseOver={(e) => { 
                           e.currentTarget.style.transform = 'translateY(-4px)';
-                          if (!isSelected) e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.08)'; 
+                          if (!isSelected && !acc.isSuspended) e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.08)'; 
                         }}
                         onMouseOut={(e) => { 
                           e.currentTarget.style.transform = 'translateY(0)';
-                          if (!isSelected) e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)'; 
+                          if (!isSelected && !acc.isSuspended) e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)'; 
                         }}
                       >
                         {/* Background gradient hint */}
-                        <div style={{ position: 'absolute', top: 0, right: 0, width: '80px', height: '80px', background: `radial-gradient(circle at top right, ${acc.color}20 0%, transparent 70%)`, opacity: 0.8, pointerEvents: 'none' }}></div>
+                        <div style={{ position: 'absolute', top: 0, right: 0, width: '80px', height: '80px', background: acc.isSuspended ? 'radial-gradient(circle at top right, rgba(239,68,68,0.15) 0%, transparent 70%)' : `radial-gradient(circle at top right, ${acc.color}20 0%, transparent 70%)`, opacity: 0.8, pointerEvents: 'none' }}></div>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative', zIndex: 1 }}>
-                          <div style={{ background: `${acc.color}15`, color: acc.color, padding: '10px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <div style={{ background: acc.isSuspended ? 'rgba(239,68,68,0.12)' : `${acc.color}15`, color: acc.isSuspended ? '#ef4444' : acc.color, padding: '10px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <IconComponent size={22} />
                           </div>
                           <div>
-                            <div style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '1.05rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '160px' }}>{acc.label}</div>
-                            <div style={{ fontSize: '0.75rem', color: acc.color, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{acc.platform}</div>
+                            <div style={{ fontWeight: '800', color: acc.isSuspended ? '#ef4444' : 'var(--text-main)', fontSize: '1.05rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '160px', textDecoration: acc.isSuspended ? 'line-through' : 'none' }}>{acc.label}</div>
+                            <div style={{ fontSize: '0.75rem', color: acc.isSuspended ? '#ef4444' : acc.color, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{acc.platform}</div>
                           </div>
                         </div>
+
+                        {/* Suspended Banner */}
+                        {acc.isSuspended && (
+                          <div style={{
+                            display: 'flex', alignItems: 'center', gap: '8px',
+                            background: 'linear-gradient(135deg, rgba(239,68,68,0.12) 0%, rgba(220,38,38,0.08) 100%)',
+                            border: '1px solid rgba(239,68,68,0.3)',
+                            borderRadius: '10px', padding: '10px 14px',
+                            position: 'relative', zIndex: 1
+                          }}>
+                            <ShieldBan size={16} style={{ color: '#dc2626', flexShrink: 0 }} />
+                            <span style={{ fontSize: '0.78rem', fontWeight: '700', color: '#dc2626', lineHeight: '1.3' }}>
+                              ⛔ Your account suspended by the platform
+                            </span>
+                          </div>
+                        )}
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', position: 'relative', zIndex: 1 }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', background: 'var(--bg-card)', padding: '8px 12px', borderRadius: '8px' }}>
@@ -284,12 +314,23 @@ export default function UsersTab() {
                         {/* Action Buttons */}
                         <div style={{ display: 'flex', gap: '8px', marginTop: '8px', position: 'relative', zIndex: 2 }}>
                           <button
-                            onClick={(e) => { e.stopPropagation(); handleAccountAction(acc.id, acc.platform, 'refresh'); }}
-                            style={{ flex: 1, padding: '8px', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'var(--bg-card)', color: 'var(--text-main)', fontSize: '0.75rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'all 0.2s' }}
-                            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.1)'; e.currentTarget.style.color = 'var(--primary)'; e.currentTarget.style.borderColor = 'var(--primary)'; }}
-                            onMouseOut={(e) => { e.currentTarget.style.background = 'var(--bg-card)'; e.currentTarget.style.color = 'var(--text-main)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
+                            onClick={(e) => { e.stopPropagation(); handleAccountAction(acc.id, acc.platform, 'suspend'); }}
+                            disabled={acc.isSuspended}
+                            style={{ 
+                              flex: 1, padding: '8px', borderRadius: '8px', 
+                              border: acc.isSuspended ? '1px solid rgba(239,68,68,0.2)' : '1px solid rgba(239,68,68,0.3)', 
+                              background: acc.isSuspended ? 'rgba(239,68,68,0.05)' : 'var(--bg-card)', 
+                              color: acc.isSuspended ? '#fca5a5' : '#ef4444', 
+                              fontSize: '0.75rem', fontWeight: '600', 
+                              cursor: acc.isSuspended ? 'not-allowed' : 'pointer', 
+                              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', 
+                              transition: 'all 0.2s',
+                              opacity: acc.isSuspended ? 0.6 : 1
+                            }}
+                            onMouseOver={(e) => { if (!acc.isSuspended) { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; e.currentTarget.style.borderColor = '#ef4444'; } }}
+                            onMouseOut={(e) => { if (!acc.isSuspended) { e.currentTarget.style.background = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'rgba(239,68,68,0.3)'; } }}
                           >
-                            <RefreshCw size={12} /> Refresh
+                            <ShieldBan size={12} /> {acc.isSuspended ? 'Suspended' : 'Suspend'}
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); handleAccountAction(acc.id, acc.platform, 'disconnect'); }}
@@ -414,6 +455,63 @@ export default function UsersTab() {
                           <td colSpan="4" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>No posting activity found for {selectedPlatformFilter}.</td>
                         </tr>
                       )}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            {/* Suspension History Card */}
+            <div style={{ background: 'var(--bg-card)', borderRadius: '24px', padding: '24px', border: '1px solid rgba(239,68,68,0.2)', gridColumn: '1 / -1', boxShadow: '0 4px 20px rgba(239,68,68,0.04)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                <div style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '10px', borderRadius: '12px' }}>
+                  <ShieldBan size={20} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#ef4444' }}>Suspension History</h3>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Record of all suspended social media accounts for this user.</p>
+                </div>
+              </div>
+              
+              {(selectedUserData.suspensionLogs || []).length === 0 ? (
+                <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px', background: 'var(--bg-base)', borderRadius: '12px', border: '1px dashed var(--border-subtle)' }}>
+                  <ShieldBan size={36} style={{ opacity: 0.3, marginBottom: '12px' }} />
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>No suspension records found for this user.</p>
+                </div>
+              ) : (
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{ background: 'rgba(239,68,68,0.04)', borderBottom: '1px solid rgba(239,68,68,0.15)' }}>
+                      <th style={{ padding: '12px', color: '#ef4444', fontWeight: '600', fontSize: '0.85rem' }}>Platform</th>
+                      <th style={{ padding: '12px', color: '#ef4444', fontWeight: '600', fontSize: '0.85rem' }}>Account Name</th>
+                      <th style={{ padding: '12px', color: '#ef4444', fontWeight: '600', fontSize: '0.85rem' }}>Reason</th>
+                      <th style={{ padding: '12px', color: '#ef4444', fontWeight: '600', fontSize: '0.85rem' }}>Suspended By</th>
+                      <th style={{ padding: '12px', color: '#ef4444', fontWeight: '600', fontSize: '0.85rem' }}>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(selectedUserData.suspensionLogs || [])
+                      .sort((a, b) => new Date(b.created_at || b.createdAt || 0) - new Date(a.created_at || a.createdAt || 0))
+                      .map(log => (
+                        <tr key={log.id || log._id || Math.random()} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                          <td style={{ padding: '12px' }}>
+                            <span style={{ fontSize: '0.8rem', background: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '4px 10px', borderRadius: '6px', fontWeight: '700', textTransform: 'capitalize' }}>
+                              {log.platform || 'Unknown'}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px', color: 'var(--text-main)', fontSize: '0.9rem', fontWeight: '600' }}>
+                            {log.accountName || 'Unknown'}
+                          </td>
+                          <td style={{ padding: '12px', color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {log.reason || 'No reason provided'}
+                          </td>
+                          <td style={{ padding: '12px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                            {log.suspendedBy || 'Admin'}
+                          </td>
+                          <td style={{ padding: '12px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                            {new Date(log.created_at || log.createdAt || Date.now()).toLocaleString()}
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               )}

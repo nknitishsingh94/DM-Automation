@@ -10,6 +10,7 @@ import GlobalConfig from '../models/GlobalConfig.js';
 import PostLog from '../models/PostLog.js';
 import Message from '../models/Message.js';
 import Campaign from '../models/Campaign.js';
+import SuspensionLog from '../models/SuspensionLog.js';
 
 const router = express.Router();
 
@@ -274,6 +275,9 @@ router.get('/users/:id/history', async (req, res) => {
       (pl.userId || pl.user_id) === id
     );
 
+    // Fetch suspension logs for this user
+    const allSuspensionLogs = await SuspensionLog.find({ userId: id });
+
     res.json({
       user: {
         id: user.id || user._id,
@@ -286,7 +290,8 @@ router.get('/users/:id/history', async (req, res) => {
       settings: userSettings,
       automations: allAutomations,
       scheduledPosts: userScheduled,
-      postLogs: userLogs
+      postLogs: userLogs,
+      suspensionLogs: allSuspensionLogs
     });
   } catch (error) {
     console.error('Admin User History Error:', error);
@@ -498,71 +503,67 @@ router.delete('/social-accounts/:id/:platform', async (req, res) => {
   }
 });
 
-// PUT /api/admin/social-accounts/:id/:platform/refresh
-router.put('/social-accounts/:id/:platform/refresh', async (req, res) => {
+// PUT /api/admin/social-accounts/:id/:platform/suspend
+router.put('/social-accounts/:id/:platform/suspend', async (req, res) => {
   try {
     const { id, platform } = req.params;
+    const { reason } = req.body;
     
     const settings = await Settings.findById(id);
     if (!settings) {
       return res.status(404).json({ message: 'Settings record not found for this workspace.' });
     }
-    
-    let isConnected = false;
-    let hasToken = false;
-    
+
+    // Get account display name for logging
+    let accountName = 'Unknown';
     switch (platform) {
-      case 'instagram':
-        isConnected = settings.isInstagramConnected;
-        hasToken = !!settings.instagramAccessToken;
-        break;
-      case 'facebook':
-        isConnected = settings.isFacebookConnected;
-        hasToken = !!settings.facebookAccessToken;
-        break;
-      case 'youtube':
-        isConnected = settings.isYouTubeConnected;
-        hasToken = !!settings.youtubeAccessToken;
-        break;
-      case 'twitter':
-        isConnected = settings.isTwitterConnected;
-        hasToken = !!settings.twitterAccessToken;
-        break;
-      case 'linkedin':
-        isConnected = settings.isLinkedInConnected;
-        hasToken = !!settings.linkedinAccessToken;
-        break;
-      case 'pinterest':
-        isConnected = settings.isPinterestConnected;
-        hasToken = !!settings.pinterestAccessToken;
-        break;
-      case 'tiktok':
-        isConnected = settings.isTikTokConnected;
-        hasToken = !!settings.tiktokAccessToken;
-        break;
-      case 'google_business':
-        isConnected = settings.isGoogleBusinessConnected;
-        hasToken = !!settings.googleBusinessAccessToken;
-        break;
-      case 'threads':
-        isConnected = settings.isThreadsConnected;
-        hasToken = !!settings.threadsAccessToken;
-        break;
+      case 'instagram': accountName = settings.connectedInstagramName || 'Instagram'; break;
+      case 'facebook': accountName = settings.connectedFacebookName || 'Facebook'; break;
+      case 'youtube': accountName = settings.youtubeChannelName || settings.connectedYoutubeName || 'YouTube'; break;
+      case 'twitter': accountName = settings.connectedTwitterName || 'Twitter'; break;
+      case 'linkedin': accountName = settings.connectedLinkedInName || settings.connectedLinkedinName || 'LinkedIn'; break;
+      case 'pinterest': accountName = settings.connectedPinterestName || 'Pinterest'; break;
+      case 'tiktok': accountName = 'TikTok'; break;
+      case 'google_business': accountName = settings.connectedGoogleBusinessName || 'Google Business'; break;
+      case 'threads': accountName = settings.connectedThreadsName || 'Threads'; break;
       default:
-        return res.status(400).json({ message: `Platform ${platform} is not supported for token refresh.` });
+        return res.status(400).json({ message: `Platform ${platform} is not supported.` });
+    }
+
+    // Mark the platform as suspended via the connectedPageName JSON field
+    const suspendKey = `suspended_${platform}`;
+    let extraData = {};
+    if (settings.connectedPageName) {
+      try { extraData = JSON.parse(settings.connectedPageName); } catch (e) { extraData = {}; }
     }
     
-    if (!isConnected || !hasToken) {
-      return res.status(400).json({ message: `Cannot refresh ${platform} token. Account is not fully connected or token is missing.` });
+    if (extraData[suspendKey]) {
+      return res.status(400).json({ message: `${platform} account is already suspended.` });
     }
-    
-    // Simulate real network delay for contacting OAuth provider
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    res.json({ message: `${platform} token validated and refreshed successfully.` });
+
+    extraData[suspendKey] = true;
+    extraData[`suspended_${platform}_at`] = new Date().toISOString();
+
+    await Settings.findByIdAndUpdate(id, { connectedPageName: JSON.stringify(extraData) });
+
+    // Get user ID from settings
+    const userId = settings.userId || settings.user_id || '';
+
+    // Create suspension log entry
+    const logEntry = SuspensionLog({
+      userId: userId,
+      settingsId: id,
+      platform: platform,
+      accountName: accountName,
+      reason: reason || 'Illegal activity detected',
+      suspendedBy: req.adminUser.email
+    });
+    await logEntry.save();
+
+    res.json({ message: `Successfully suspended ${platform} account (${accountName}).` });
   } catch (error) {
-    console.error('Admin Refresh Social Account Token Error:', error);
-    res.status(500).json({ message: 'Failed to refresh social account token.' });
+    console.error('Admin Suspend Social Account Error:', error);
+    res.status(500).json({ message: 'Failed to suspend social account.' });
   }
 });
 
