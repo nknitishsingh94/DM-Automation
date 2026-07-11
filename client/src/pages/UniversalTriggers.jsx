@@ -185,6 +185,15 @@ export default function UniversalTriggers() {
   const [existingTriggers, setExistingTriggers] = useState([]);
   const [showListModal, setShowListModal] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [triggerCondition, setTriggerCondition] = useState('Allow Re-entry');
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const togglePlatform = (id) => {
+    if (id === 'all') return;
+    setPlatforms(prev => prev.map(p => 
+      p.id === id ? { ...p, checked: !p.checked } : p
+    ));
+  };
 
   const handleTest = () => {
     setIsTesting(true);
@@ -325,6 +334,12 @@ Instructions:
     
     setIsSaving(true);
     try {
+      const selectedPlatforms = platforms
+        .filter(p => p.checked && p.id !== 'all')
+        .map(p => p.id);
+      
+      const platformValue = selectedPlatforms.length > 0 ? selectedPlatforms.join(',') : 'all';
+      
       const res = await fetch(`${API_BASE_URL}/api/campaigns`, {
         method: 'POST',
         headers: { 
@@ -338,12 +353,13 @@ Instructions:
           response: aiSystemPrompt,
           isAI: true,
           isAnyPost: true,
-          platform: 'all',
+          platform: platformValue,
           triggerOnDms: true,
           triggerOnComments: true,
           status: 'Active',
           isUniversal: true,
-          triggerType: triggerType
+          triggerType: triggerType,
+          triggerCondition: triggerCondition
         })
       });
       
@@ -352,8 +368,15 @@ Instructions:
         throw new Error(errorData.error || 'Failed to save trigger');
       }
 
-      alert("Universal Trigger saved successfully!");
-      fetchRealData(); // Refresh the workflow stats
+      setSaveSuccess(true);
+      setShowListModal(true);
+      
+      await fetchRealData();
+      
+      setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000);
+      
     } catch (err) {
       console.error(err);
       alert("Error saving trigger: " + err.message);
@@ -401,6 +424,21 @@ Instructions:
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {saveSuccess && (
+            <span style={{ 
+              padding: '8px 16px', 
+              background: '#dcfce7', 
+              color: '#166534', 
+              borderRadius: '8px', 
+              fontSize: '13px', 
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <Check size={16} /> Saved Successfully!
+            </span>
+          )}
           <button 
             onClick={() => setShowListModal(true)}
             style={{ padding: '8px 16px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
@@ -569,12 +607,30 @@ Instructions:
 
 
 
+            {/* Trigger Type */}
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Trigger Type</label>
+              <select 
+                value={triggerType}
+                onChange={(e) => setTriggerType(e.target.value)}
+                style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-main)' }}
+              >
+                <option value="Keyword">Keyword Match</option>
+                <option value="Any Post">Any Post Comment</option>
+                <option value="First Comment">First Comment Only</option>
+              </select>
+            </div>
+
             {/* Platforms */}
             <div style={{ marginBottom: '24px' }}>
               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Platforms</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {platforms.map((plat, i) => (
-                  <label key={plat.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: 'var(--text-main)', cursor: 'pointer' }}>
+                  <label 
+                    key={plat.id} 
+                    style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: 'var(--text-main)', cursor: plat.id === 'all' ? 'default' : 'pointer' }}
+                    onClick={() => plat.id !== 'all' && togglePlatform(plat.id)}
+                  >
                     <div style={{ width: '16px', height: '16px', borderRadius: '4px', background: plat.checked ? plat.color : 'var(--bg-card)', border: `1px solid ${plat.checked ? plat.color : 'var(--border-subtle)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {plat.checked && <Check size={12} color="white" strokeWidth={3} />}
                     </div>
@@ -584,16 +640,25 @@ Instructions:
               </div>
             </div>
 
-
-
             {/* Trigger Condition */}
-            <div>
+            <div style={{ marginBottom: '24px' }}>
               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-main)', display: 'block', marginBottom: '10px' }}>Trigger Condition</label>
-              <select style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-main)' }}>
-                <option>Allow Re-entry</option>
-                <option>Once per user</option>
+              <select 
+                value={triggerCondition}
+                onChange={(e) => setTriggerCondition(e.target.value)}
+                style={{ width: '100%', padding: '10px', fontSize: '12px', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-main)' }}
+              >
+                <option value="Allow Re-entry">Allow Re-entry</option>
+                <option value="Once per user">Once per user</option>
+                <option value="Once per post">Once per post</option>
+                <option value="Always">Always</option>
               </select>
-              <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '6px' }}>Allow user to trigger again after completion</div>
+              <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '6px' }}>
+                {triggerCondition === 'Allow Re-entry' && 'User can trigger this workflow multiple times' }
+                {triggerCondition === 'Once per user' && 'User can only trigger this workflow once' }
+                {triggerCondition === 'Once per post' && 'Only the first comment on a post triggers this' }
+                {triggerCondition === 'Always' && 'Trigger on every matching event' }
+              </div>
             </div>
             
           </div>
