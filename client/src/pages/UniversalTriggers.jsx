@@ -322,7 +322,7 @@ export default function UniversalTriggers() {
        return `${idx + 1}. [${action.toUpperCase()}] - ${detail}`;
     }).join('\n');
 
-    const aiSystemPrompt = `You are a Smart AI Assistant executing an automated workflow.
+    const aiSystemPrompt = `__TRIG_COND__:${triggerCondition}__END_TRIG_COND__You are a Smart AI Assistant executing an automated workflow.
 Follow these workflow steps sequentially when conversing with the user:
 ${promptSteps}
 
@@ -359,8 +359,7 @@ Instructions:
           triggerOnComments: true,
           status: 'Active',
           isUniversal: true,
-          triggerType: triggerType,
-          triggerCondition: triggerCondition
+          triggerType: triggerType
         })
       });
       

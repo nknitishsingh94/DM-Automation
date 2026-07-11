@@ -308,6 +308,14 @@ function convertIncoming(doc, tableName) {
           newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_MEDIA__'.length);
         }
       }
+      if (newDoc.response && newDoc.response.includes('__TRIG_COND__:')) {
+        const startIdx = newDoc.response.indexOf('__TRIG_COND__:');
+        const endIdx = newDoc.response.indexOf('__END_TRIG_COND__');
+        if (startIdx !== -1 && endIdx !== -1) {
+          newDoc.triggerCondition = newDoc.response.slice(startIdx + '__TRIG_COND__:'.length, endIdx);
+          newDoc.response = newDoc.response.slice(0, startIdx) + newDoc.response.slice(endIdx + '__END_TRIG_COND__'.length);
+        }
+      }
     }
   if (tableName === 'captions' || tableName === 'scheduled_posts') {
     if (newDoc.user_id) {
