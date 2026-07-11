@@ -22,7 +22,7 @@ router.get('/auth', verifyToken, async (req, res) => {
     return res.status(500).json({ error: 'YouTube Client ID not configured on server.' });
   }
 
-  const state = req.user.userId;
+  const state = req.user.userId + (req.workspaceId ? `_ws_${req.workspaceId}` : '');
   let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? 'https://dm-automation-w9a4.vercel.app' : 'http://localhost:5001');
   if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
   const redirectUri = `${baseUrl}/api/youtube/callback`;
@@ -42,7 +42,14 @@ router.get('/callback', async (req, res) => {
   }
 
   try {
-    const userId = state; // We passed userId in state
+    let userId = state;
+    let workspaceId = null;
+    
+    if (state && state.includes('_ws_')) {
+      const parts = state.split('_ws_');
+      userId = parts[0];
+      workspaceId = parts[1];
+    }
     let baseUrl = process.env.API_BASE_URL || (process.env.NODE_ENV === 'production' ? 'https://dm-automation-w9a4.vercel.app' : 'http://localhost:5001');
     if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
     const redirectUri = `${baseUrl}/api/youtube/callback`;
@@ -69,8 +76,13 @@ router.get('/callback', async (req, res) => {
     const channelId = channel.id;
     const channelName = channel.snippet?.customUrl || channel.snippet.title || 'YouTube Channel';
 
+    const updateQuery = { userId };
+    if (workspaceId) {
+      updateQuery.workspaceId = workspaceId;
+    }
+
     await Settings.findOneAndUpdate(
-      { userId },
+      updateQuery,
       { 
         youtubeAccessToken: access_token,
         youtubeRefreshToken: refresh_token || '', // Refresh token is only sent on first auth usually
