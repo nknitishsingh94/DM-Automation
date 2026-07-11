@@ -8,6 +8,7 @@ const templatesData = [
   { id: "respond_all_dms", title: "Respond to all your DMs", desc: "Auto-send customized replies when people DM you", type: "Quick Automation" },
   { id: "grow_followers_comments_quick", title: "Grow followers from comments", desc: "Incentivize a follow to grow your account", type: "Quick Automation", upgrade: true },
   { id: "send_affiliate_links", title: "Send affiliate product links", desc: "Include product card with photos and links of your affiliate collabs", type: "Quick Automation" },
+  { id: "reply_story_mentions", title: "Reply to Story Mentions", desc: "Automatically respond when someone mentions you in their story.", type: "Quick Automation" },
 
   { id: "follow_first_freebie", title: "Follow first, then freebie", desc: "Wanna freebie? Gotta follow first. Reward the fans, not the lurkers.", type: "Flow Builder", upgrade: true },
   { id: "grow_email_list", title: "Grow your email list", desc: "Collect emails on Instagram with a freebie offer", type: "Flow Builder", upgrade: true },
@@ -26,7 +27,6 @@ const templatesData = [
   { id: "answer_faqs_stories", title: "Answer FAQs from story replies", desc: "Reply to your followers’ questions ASAP", type: "Flow Builder" },
   { id: "auto_thank_positive_comments", title: "Auto Thank Positive Comments", desc: "Show appreciation by automatically thanking users who leave positive comments.", type: "Quick Automation" },
   { id: "auto_like_positive_messages", title: "Auto Like Positive Messages", desc: "Automatically like every positive message to show appreciation and boost engagement.", type: "Quick Automation" },
-  { id: "reply_story_mentions", title: "Reply to Story Mentions", desc: "Automatically respond when someone mentions you in their story.", type: "Quick Automation" },
 
   { id: "get_event_signups", title: "Get Event Signups", desc: "Automatically send event details and registration links to interested users via DMs.", type: "Flow Builder" },
   { id: "hide_negative_comments", title: "Hide Negative Comments", desc: "Automatically hide or filter out negative comments to maintain a positive community.", type: "Flow Builder", ai: true, upgrade: true },

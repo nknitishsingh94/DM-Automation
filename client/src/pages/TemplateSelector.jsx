@@ -24,6 +24,7 @@ export default function TemplateSelector() {
     { id: 'get_event_signups', category: 'Lead Generation', title: 'Get Event Signups', desc: 'Send registration links when users DM EVENT', icon: 'Calendar' },
     { id: 'get_collabs_stories', category: 'Lead Generation', title: 'Collabs from Story Replies', desc: 'Detect collaboration intent, collect brand details and budget', icon: 'Handshake' },
     { id: 'trigger_dms_live', category: 'Lead Generation', title: 'Trigger DMs During IG Live', desc: 'Collect leads directly from live video comments', icon: 'Video' },
+    { id: 'reply_story_mentions', category: 'AI & Support', title: 'Reply to Story Mentions', desc: 'Send thank you DMs and offers for mentions', icon: 'AtSign' },
     { id: 'auto_reply_comment_dm', category: 'Lead Generation', title: 'Auto-Reply to Comment in DM', desc: 'Send product catalog & buttons in DM after comment', icon: 'MessageCircle' },
 
     { id: 'sell_reel_comments', category: 'Sales & Offers', title: 'Sell from Reel Comments', desc: 'Match keywords on Reels to send checkout links', icon: 'ShoppingBag' },
@@ -50,7 +51,6 @@ export default function TemplateSelector() {
     { id: 'hide_negative_comments', category: 'AI & Support', title: 'Hide Negative Comments', desc: 'AI sentiment analysis to hide negative comments', icon: 'ShieldAlert' },
     { id: 'auto_thank_positive', category: 'AI & Support', title: 'Auto-Thank Positive Comments', desc: 'Like and thank positive comments automatically', icon: 'Heart' },
     { id: 'auto_like_positive_dms', category: 'AI & Support', title: 'Auto-Like Positive Messages', desc: 'Sentiment analysis to like positive DMs', icon: 'ThumbsUp' },
-    { id: 'reply_story_mentions', category: 'AI & Support', title: 'Reply to Story Mentions', desc: 'Send thank you DMs and offers for mentions', icon: 'AtSign' },
 
     { id: 'comments', category: 'Advanced', title: 'Auto-DM Links from Comments', desc: 'Classic trigger to send links and track clicks from comments', icon: 'Link' },
     { id: 'auto_send_links_dm', category: 'Advanced', title: 'Auto-Send Links in DM', desc: 'Keyword trigger to send website links in DM', icon: 'Send' },
