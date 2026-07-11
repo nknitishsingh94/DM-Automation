@@ -55,7 +55,7 @@ export default function TemplateSelector() {
     { id: 'comments', category: 'Advanced', title: 'Auto-DM Links from Comments', desc: 'Classic trigger to send links and track clicks from comments', icon: 'Link' },
     { id: 'auto_send_links_dm', category: 'Advanced', title: 'Auto-Send Links in DM', desc: 'Keyword trigger to send website links in DM', icon: 'Send' },
     { id: 'custom_flow', category: 'Advanced', title: 'Create a Custom Flow', desc: 'Start from scratch with triggers, conditions, and actions', icon: 'PlusCircle' }
-  ].map((t, index) => ({ ...t, comingSoon: index >= 5 }));
+  ].map((t, index) => ({ ...t, comingSoon: index >= 5 && t.id !== 'reply_story_mentions' }));
 
   const getIcon = (iconName) => {
     switch (iconName) {

@@ -35,7 +35,7 @@ const templatesData = [
   { id: "dm_new_follower", title: "DM to New Follower", desc: "Automatically send a welcome message to new followers to build engagement and connection.", type: "Flow Builder" },
   { id: "launch_new_product", title: "Launch a New Product", desc: "Announce and promote new product launches by sending exclusive offers and links to your audience.", type: "Flow Builder" },
   { id: "custom_flow", title: "Create a Custom Flow", desc: "Create a completely custom automations flow from the ground up.", type: "Flow Builder" },
-].map((t, idx) => ({ ...t, comingSoon: idx >= 5 }));
+].map((t, idx) => ({ ...t, comingSoon: idx >= 5 && t.id !== 'reply_story_mentions' }));
 
 export default function TemplatesModal({ isOpen, onClose }) {
   const navigate = useNavigate();
