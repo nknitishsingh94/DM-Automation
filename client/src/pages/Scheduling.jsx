@@ -574,7 +574,7 @@ export default function Scheduling() {
       const data = await res.json();
       if (data) {
         setSettings(data);
-        const isIgConnected = data.isAccountConnected || (!!data.instagramAccessToken && !!data.businessAccountId);
+        const isIgConnected = (!!data.instagramAccessToken && !!data.businessAccountId);
         const isFbConnected = data.isFacebookConnected || (!!data.facebookAccessToken && !!data.facebookPageId);
         
         let defaultTargets = [];
@@ -1346,7 +1346,7 @@ const platformList = newPost.platforms || (newPost.platform ? [newPost.platform]
     }
 
     platforms.forEach(p => {
-      if (p.id === 'instagram' && (settings.isAccountConnected || (!!settings.instagramAccessToken && !!settings.businessAccountId))) {
+      if (p.id === 'instagram' && (!!settings.instagramAccessToken && !!settings.businessAccountId)) {
         p.connected = true; p.handle = settings.connectedInstagramName || settings.instagramUsername || settings.connectedInstagramId || '';
       }
       if (p.id === 'facebook' && (settings.isFacebookConnected || (!!settings.facebookAccessToken && !!settings.facebookPageId))) {
