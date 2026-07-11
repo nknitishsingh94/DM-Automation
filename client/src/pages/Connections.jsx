@@ -687,12 +687,8 @@ export default function Connections() {
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
-                  ))}
-                </div>
-              )}
-            </div>
+               )}
+             </div>
 
             {/* All statuses dropdown */}
             <div style={{ position: 'relative' }}>
