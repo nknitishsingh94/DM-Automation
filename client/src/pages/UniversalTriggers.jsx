@@ -187,6 +187,7 @@ export default function UniversalTriggers() {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [triggerCondition, setTriggerCondition] = useState('Allow Re-entry');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [triggerSortBy, setTriggerSortBy] = useState('newest');
 
   const togglePlatform = (id) => {
     if (id === 'all') return;
@@ -688,9 +689,22 @@ Instructions:
                 <h2 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>My Universal Triggers</h2>
                 <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>Manage your created cross-platform automation rules.</p>
               </div>
-              <button onClick={() => setShowListModal(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
-                <X size={24} />
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <select 
+                  value={triggerSortBy}
+                  onChange={(e) => setTriggerSortBy(e.target.value)}
+                  style={{ padding: '6px 12px', fontSize: '12px', border: '1px solid var(--border-subtle)', borderRadius: '6px', outline: 'none', background: 'var(--bg-card)', color: 'var(--text-main)', cursor: 'pointer' }}
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="name">Name (A-Z)</option>
+                  <option value="status">Status</option>
+                  <option value="type">Type</option>
+                </select>
+                <button onClick={() => setShowListModal(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                  <X size={24} />
+                </button>
+              </div>
             </div>
             
             <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
@@ -704,55 +718,73 @@ Instructions:
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {existingTriggers.map((trig, idx) => {
-                    let trigType = "Keyword";
-                    let responsePreview = trig.response;
-                    if (responsePreview && responsePreview.includes('__TRIG_TYPE__:')) {
-                      const startIdx = responsePreview.indexOf('__TRIG_TYPE__:');
-                      const endIdx = responsePreview.indexOf('__END_TRIG_TYPE__');
-                      if (startIdx !== -1 && endIdx !== -1) {
-                        trigType = responsePreview.slice(startIdx + '__TRIG_TYPE__:'.length, endIdx);
-                        responsePreview = responsePreview.slice(0, startIdx) + responsePreview.slice(endIdx + '__END_TRIG_TYPE__'.length);
+                  {(() => {
+                    const sorted = [...existingTriggers].sort((a, b) => {
+                      switch (triggerSortBy) {
+                        case 'newest':
+                          return new Date(b.createdAt || b._id?.toString().slice(-8) || 0) - new Date(a.createdAt || a._id?.toString().slice(-8) || 0);
+                        case 'oldest':
+                          return new Date(a.createdAt || a._id?.toString().slice(-8) || 0) - new Date(b.createdAt || b._id?.toString().slice(-8) || 0);
+                        case 'name':
+                          return (a.trigger || '').localeCompare(b.trigger || '');
+                        case 'status':
+                          return (a.status || '').localeCompare(b.status || '');
+                        case 'type':
+                          return (a.triggerType || '').localeCompare(b.triggerType || '');
+                        default:
+                          return 0;
                       }
-                    }
-                    if (responsePreview && responsePreview.includes('__CAMP_NAME__:')) {
-                      const endIdx = responsePreview.indexOf('__END_CAMP_NAME__');
-                      if (endIdx !== -1) responsePreview = responsePreview.slice(endIdx + '__END_CAMP_NAME__'.length);
-                    }
-                    
-                    return (
-                      <div key={idx} style={{ padding: '16px', border: '1px solid var(--border-subtle)', borderRadius: '12px', background: 'var(--sidebar-bg)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                          <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                              <h4 style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
-                                {trig.trigger ? `"${trig.trigger}"` : 'Any Trigger'}
-                              </h4>
-                              <span style={{ padding: '2px 8px', background: trig.status === 'Active' ? '#dcfce7' : 'var(--bg-dark)', color: trig.status === 'Active' ? '#166534' : 'var(--text-muted)', borderRadius: '12px', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase' }}>
-                                {trig.status || 'Active'}
+                    });
+                    return sorted.map((trig, idx) => {
+                      let trigType = "Keyword";
+                      let responsePreview = trig.response;
+                      if (responsePreview && responsePreview.includes('__TRIG_TYPE__:')) {
+                        const startIdx = responsePreview.indexOf('__TRIG_TYPE__:');
+                        const endIdx = responsePreview.indexOf('__END_TRIG_TYPE__');
+                        if (startIdx !== -1 && endIdx !== -1) {
+                          trigType = responsePreview.slice(startIdx + '__TRIG_TYPE__:'.length, endIdx);
+                          responsePreview = responsePreview.slice(0, startIdx) + responsePreview.slice(endIdx + '__END_TRIG_TYPE__'.length);
+                        }
+                      }
+                      if (responsePreview && responsePreview.includes('__CAMP_NAME__:')) {
+                        const endIdx = responsePreview.indexOf('__END_CAMP_NAME__');
+                        if (endIdx !== -1) responsePreview = responsePreview.slice(endIdx + '__END_CAMP_NAME__'.length);
+                      }
+                      
+                      return (
+                        <div key={trig._id || trig.id || idx} style={{ padding: '16px', border: '1px solid var(--border-subtle)', borderRadius: '12px', background: 'var(--sidebar-bg)' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                            <div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                <h4 style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
+                                  {trig.trigger ? `"${trig.trigger}"` : 'Any Trigger'}
+                                </h4>
+                                <span style={{ padding: '2px 8px', background: trig.status === 'Active' ? '#dcfce7' : 'var(--bg-dark)', color: trig.status === 'Active' ? '#166534' : 'var(--text-muted)', borderRadius: '12px', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase' }}>
+                                  {trig.status || 'Active'}
+                                </span>
+                              </div>
+                              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <Type size={12} /> {trigType}
                               </span>
                             </div>
-                            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <Type size={12} /> {trigType}
-                            </span>
+                            <button 
+                              onClick={() => handleDeleteTrigger(trig._id || trig.id)}
+                              style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#ef4444', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px' }}
+                              title="Delete Trigger"
+                              onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
+                              onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                            >
+                              <Trash2 size={16} />
+                            </button>
                           </div>
-                          <button 
-                            onClick={() => handleDeleteTrigger(trig._id || trig.id)}
-                            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#ef4444', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px' }}
-                            title="Delete Trigger"
-                            onMouseOver={(e) => e.currentTarget.style.background = '#fef2f2'}
-                            onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                          <div style={{ background: 'var(--bg-card)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontSize: '13px', color: 'var(--text-main)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            <span style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Auto-Response Preview</span>
+                            {responsePreview.substring(0, 100)}{responsePreview.length > 100 ? '...' : ''}
+                          </div>
                         </div>
-                        <div style={{ background: 'var(--bg-card)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontSize: '13px', color: 'var(--text-main)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                          <span style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Auto-Response Preview</span>
-                          {responsePreview.substring(0, 100)}{responsePreview.length > 100 ? '...' : ''}
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    });
+                  })()}
                 </div>
               )}
             </div>
