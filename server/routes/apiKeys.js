@@ -14,9 +14,11 @@ router.get('/', verifyToken, async (req, res) => {
     const mappedKeys = keys.map(k => ({
       id: k.id || k._id,
       name: k.name,
-      key: k.key, // Send full key so user can copy it later
+      key: k.key,
       maskedKey: k.key.substring(0, 12) + '...' + k.key.substring(k.key.length - 4),
-      createdAt: k.createdAt || k.created_at
+      createdAt: k.createdAt || k.created_at,
+      scope: k.scope,
+      permission: k.permission
     }));
 
     res.json(mappedKeys);
@@ -27,7 +29,7 @@ router.get('/', verifyToken, async (req, res) => {
 
 router.post('/', verifyToken, async (req, res) => {
   try {
-    const { name = 'Default Key' } = req.body;
+    const { name = 'Default Key', scope = 'All profiles', permission = 'Read & Write' } = req.body;
     const uuidUserId = convertObjectIDToUUID(req.user.userId);
 
     const activeCount = await ApiKey.countDocuments({ user_id: uuidUserId, active: true });
@@ -42,6 +44,8 @@ router.post('/', verifyToken, async (req, res) => {
       user_id: uuidUserId,
       key: newKeyString,
       name: name,
+      scope: scope,
+      permission: permission,
       active: true,
       createdAt: new Date().toISOString()
     });

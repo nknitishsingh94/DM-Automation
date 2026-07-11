@@ -16,6 +16,8 @@ export default function ApiKeys() {
   
   const [newlyCreatedKey, setNewlyCreatedKey] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [connectedPlatforms, setConnectedPlatforms] = useState([]);
+  const [selectedPlatform, setSelectedPlatform] = useState('');
 
   const fetchKeys = async () => {
     try {
@@ -36,7 +38,43 @@ export default function ApiKeys() {
 
   useEffect(() => {
     fetchKeys();
+    fetchSettings();
   }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const token = localStorage.getItem('insta_agent_token');
+      const res = await fetch(`${API_BASE_URL}/api/settings`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        let threadsInfo = {};
+        if (data.connectedPageName) {
+          try { threadsInfo = JSON.parse(data.connectedPageName); } catch (e) { }
+        }
+        const mergedData = { ...data, ...threadsInfo };
+        
+        const platforms = [];
+        if (mergedData.instagramAccessToken && mergedData.businessAccountId) platforms.push('Instagram');
+        if (mergedData.facebookAccessToken && mergedData.facebookPageId) platforms.push('Facebook');
+        if (mergedData.isYouTubeConnected || mergedData.isYoutubeConnected) platforms.push('YouTube');
+        if (mergedData.isLinkedInConnected) platforms.push('LinkedIn');
+        if (mergedData.isTwitterConnected) platforms.push('Twitter');
+        if (mergedData.isGoogleBusinessConnected) platforms.push('Google Business');
+        if (mergedData.whatsappToken && mergedData.whatsappPhoneNumberId) platforms.push('WhatsApp');
+        if (mergedData.isThreadsConnected) platforms.push('Threads');
+        if (mergedData.isPinterestConnected) platforms.push('Pinterest');
+        
+        setConnectedPlatforms(platforms);
+        if (platforms.length > 0) {
+          setSelectedPlatform(platforms[0]);
+        }
+      }
+    } catch(err) {
+      console.error(err);
+    }
+  };
 
   const handleGenerateKey = async (e) => {
     e.preventDefault();
@@ -50,7 +88,11 @@ export default function ApiKeys() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ name: newKeyName })
+        body: JSON.stringify({ 
+          name: newKeyName,
+          permission: permission,
+          scope: fullAccess ? 'All profiles' : (selectedPlatform || 'All profiles')
+        })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to generate API Key');
@@ -182,7 +224,7 @@ export default function ApiKeys() {
                     </div>
                   </td>
                   <td style={{ padding: '20px 12px', verticalAlign: 'top' }}>
-                    <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>All profiles</span>
+                    <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>{k.scope || 'All profiles'}</span>
                   </td>
                   <td style={{ padding: '20px 12px', verticalAlign: 'top' }}>
                     <span style={{ display: 'inline-flex', padding: '4px 10px', background: '#dcfce7', color: '#059669', borderRadius: '4px', fontSize: '0.85rem', fontWeight: '600' }}>
@@ -191,7 +233,7 @@ export default function ApiKeys() {
                   </td>
                   <td style={{ padding: '20px 12px', verticalAlign: 'top' }}>
                     <span style={{ display: 'inline-flex', padding: '6px 12px', background: 'var(--sidebar-bg)', border: '1px solid var(--border-subtle)', color: '#059669', borderRadius: '12px', fontSize: '0.85rem', fontWeight: '600' }}>
-                      Read & Write
+                      {k.permission || 'Read & Write'}
                     </span>
                   </td>
                   <td style={{ padding: '20px 20px', verticalAlign: 'top', textAlign: 'right' }}>
@@ -283,6 +325,26 @@ export default function ApiKeys() {
                   </div>
                   <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>Full access (all profiles)</span>
                 </div>
+                {!fullAccess && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
+                    <label style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--text-muted)' }}>Select Platform Scope</label>
+                    {connectedPlatforms.length > 0 ? (
+                      <select 
+                        value={selectedPlatform}
+                        onChange={(e) => setSelectedPlatform(e.target.value)}
+                        style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '0.95rem', background: 'var(--bg-card)', color: 'var(--text-main)', cursor: 'pointer' }}
+                      >
+                        {connectedPlatforms.map(plat => (
+                          <option key={plat} value={plat}>{plat}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <div style={{ padding: '10px 14px', borderRadius: '8px', border: '1px dashed var(--border-subtle)', fontSize: '0.9rem', color: 'var(--text-muted)', background: 'var(--bg-dark)' }}>
+                        No social accounts connected yet. Go to Connections to link an account.
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
             </form>
