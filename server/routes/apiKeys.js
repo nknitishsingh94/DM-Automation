@@ -11,15 +11,28 @@ router.get('/', verifyToken, async (req, res) => {
     const uuidUserId = convertObjectIDToUUID(req.user.userId);
     const keys = await ApiKey.find({ user_id: uuidUserId, active: true });
     
-    const mappedKeys = keys.map(k => ({
-      id: k.id || k._id,
-      name: k.name,
-      key: k.key,
-      maskedKey: k.key.substring(0, 12) + '...' + k.key.substring(k.key.length - 4),
-      createdAt: k.createdAt || k.created_at,
-      scope: k.scope,
-      permission: k.permission
-    }));
+    const mappedKeys = keys.map(k => {
+      let displayName = k.name;
+      let displayScope = 'All profiles';
+      let displayPermission = 'Read & Write';
+      
+      if (k.name && k.name.includes('|||')) {
+        const parts = k.name.split('|||');
+        displayName = parts[0];
+        displayScope = parts[1] || 'All profiles';
+        displayPermission = parts[2] || 'Read & Write';
+      }
+
+      return {
+        id: k.id || k._id,
+        name: displayName,
+        key: k.key,
+        maskedKey: k.key.substring(0, 12) + '...' + k.key.substring(k.key.length - 4),
+        createdAt: k.createdAt || k.created_at,
+        scope: displayScope,
+        permission: displayPermission
+      };
+    });
 
     res.json(mappedKeys);
   } catch (err) {
@@ -40,12 +53,12 @@ router.post('/', verifyToken, async (req, res) => {
     const randomHex = crypto.randomBytes(24).toString('hex');
     const newKeyString = `sk_live_${randomHex}`;
 
+    const encodedName = `${name}|||${scope}|||${permission}`;
+
     const newKeyRecord = new ApiKey({
       user_id: uuidUserId,
       key: newKeyString,
-      name: name,
-      scope: scope,
-      permission: permission,
+      name: encodedName,
       active: true,
       createdAt: new Date().toISOString()
     });
@@ -54,8 +67,10 @@ router.post('/', verifyToken, async (req, res) => {
 
     res.status(201).json({
       id: newKeyRecord.id || newKeyRecord._id,
-      name: newKeyRecord.name,
+      name: name,
       key: newKeyString,
+      scope: scope,
+      permission: permission,
       createdAt: newKeyRecord.createdAt
     });
   } catch (err) {
