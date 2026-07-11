@@ -86,6 +86,38 @@ export default function Connections() {
     { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: false }
   ].filter(p => p.enabled);
 
+  const getConnectedPlatformsList = () => {
+    const connected = [];
+    if (settings.isAccountConnected && globalPlatforms.instagram !== false) {
+      connected.push({ name: 'Instagram', icon: Instagram, color: '#ec4899' });
+    }
+    if (settings.isFacebookConnected && globalPlatforms.facebook !== false) {
+      connected.push({ name: 'Facebook', icon: Facebook, color: '#1877f2' });
+    }
+    if (settings.isYouTubeConnected && globalPlatforms.youtube !== false) {
+      connected.push({ name: 'YouTube', icon: Youtube, color: '#ff0000' });
+    }
+    if (settings.isLinkedInConnected && globalPlatforms.linkedin !== false) {
+      connected.push({ name: 'LinkedIn', icon: Linkedin, color: '#0077b5' });
+    }
+    if (settings.isTwitterConnected && globalPlatforms.twitter !== false) {
+      connected.push({ name: 'Twitter/X', icon: Twitter, color: 'var(--text-main)' });
+    }
+    if (settings.isThreadsConnected && globalPlatforms.threads !== false) {
+      connected.push({ name: 'Threads', icon: Activity, color: 'var(--text-main)' });
+    }
+    if (settings.isPinterestConnected && globalPlatforms.pinterest !== false) {
+      connected.push({ name: 'Pinterest', icon: PinterestIcon, color: '#E60023' });
+    }
+    if (settings.isGoogleBusinessConnected && globalPlatforms.googleBusiness !== false) {
+      connected.push({ name: 'Google Business', icon: MapPin, color: '#4285f4' });
+    }
+    if (settings.isWhatsAppConnected && globalPlatforms.whatsapp !== false) {
+      connected.push({ name: 'WhatsApp', icon: MessageSquare, color: '#25d366' });
+    }
+    return connected;
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('insta_agent_token');
     const loadSettings = async () => {
@@ -645,21 +677,18 @@ export default function Connections() {
                 <span>{platformFilter}</span>
                 <ChevronDown size={15} color="#9ca3af" />
               </button>
-
               {showPlatformDropdown && (
                 <div className="filter-dropdown" style={{ right: 0, left: 'auto', maxHeight: '320px', overflowY: 'auto', width: '200px' }}>
-                  <div onClick={() => { setPlatformFilter('All platforms'); setShowPlatformDropdown(false); }} className="filter-item" style={{ fontWeight: 'bold' }}>All platforms</div>
-                  {platformsList.map(plat => (
-                    <div
-                      key={plat.name}
-                      onClick={() => { setPlatformFilter(plat.name); setShowPlatformDropdown(false); }}
-                      className="filter-item"
-                      style={{ display: 'flex', alignItems: 'center', gap: '10px', color: plat.enabled ? '#111827' : '#9ca3af' }}
-                    >
-                      <plat.icon size={15} color={plat.enabled ? plat.color : '#9ca3af'} />
+                  <div onClick={() => { setPlatformFilter('All platforms'); setShowPlatformDropdown(false); }} className="filter-item">All platforms</div>
+                  {getConnectedPlatformsList().map((plat, i) => (
+                    <div key={i} onClick={() => { setPlatformFilter(plat.name); setShowPlatformDropdown(false); }} className="filter-item" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#111827' }}>
+                      <plat.icon size={15} color={plat.color} />
                       <span>{plat.name}</span>
-                      {!plat.enabled && <span style={{ fontSize: '0.65rem', marginLeft: 'auto', background: 'var(--bg-card)', padding: '2px 6px', borderRadius: '4px' }}>coming soon</span>}
                     </div>
+                  ))}
+                </div>
+              )}
+            </div>
                   ))}
                 </div>
               )}
