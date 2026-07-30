@@ -4,7 +4,7 @@ import Settings from '../../models/Settings.js';
 /**
  * WhatsApp Cloud API: Send Message
  */
-export const sendWhatsAppMessage = async (recipientPhone, text, userId = null) => {
+export const sendWhatsAppMessage = async (recipientPhone, text, userId = null, buttons = []) => {
   try {
     let accessToken = '';
     let phoneNumberId = '';
@@ -28,12 +28,53 @@ export const sendWhatsAppMessage = async (recipientPhone, text, userId = null) =
     }
 
     const url = `https://graph.facebook.com/v19.0/${phoneNumberId}/messages`;
-    const payload = {
+    let payload = {
       messaging_product: "whatsapp",
-      to: recipientPhone,
-      type: "text",
-      text: { body: text }
+      to: recipientPhone
     };
+
+    if (buttons && buttons.length > 0) {
+      payload.type = "interactive";
+      
+      if (buttons.length <= 3) {
+        // Quick Reply Buttons (max 3)
+        payload.interactive = {
+          type: "button",
+          body: { text: text || "Choose an option:" },
+          action: {
+            buttons: buttons.map((b, i) => ({
+              type: "reply",
+              reply: {
+                id: b.payload || `btn_${i}_${Date.now()}`,
+                title: (b.text || '').substring(0, 20) // WhatsApp limit is 20 chars
+              }
+            }))
+          }
+        };
+      } else {
+        // List Menu (max 10)
+        const validButtons = buttons.slice(0, 10);
+        payload.interactive = {
+          type: "list",
+          body: { text: text || "Choose an option:" },
+          action: {
+            button: "View Options",
+            sections: [
+              {
+                title: "Available Options",
+                rows: validButtons.map((b, i) => ({
+                  id: b.payload || `list_${i}_${Date.now()}`,
+                  title: (b.text || '').substring(0, 24)
+                }))
+              }
+            ]
+          }
+        };
+      }
+    } else {
+      payload.type = "text";
+      payload.text = { body: text };
+    }
 
     const response = await axios.post(url, payload, {
       headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' }

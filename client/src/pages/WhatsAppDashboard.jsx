@@ -327,6 +327,16 @@ export default function WhatsAppDashboard() {
                         {campaign.response || '(No response set)'}
                       </p>
                     </div>
+                    
+                    {campaign.buttons && campaign.buttons.length > 0 && (
+                      <div style={{ marginTop: '12px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                        {campaign.buttons.map((b, i) => (
+                          <span key={i} style={{ fontSize: '0.75rem', background: '#e0e7ff', color: '#4338ca', padding: '4px 10px', borderRadius: '12px', fontWeight: '700' }}>
+                            {b.text}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -503,6 +513,61 @@ export default function WhatsAppDashboard() {
                     style={{ width: '100%', paddingLeft: '36px', paddingRight: '16px', paddingTop: '12px', paddingBottom: '12px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', boxSizing: 'border-box' }}
                   />
                 </div>
+              </div>
+
+              {/* Interactive Buttons */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Interactive Buttons ({newCamp.buttons.length}/10)</label>
+                  <button type="button" onClick={() => {
+                    if (newCamp.buttons.length < 10) {
+                      setNewCamp(p => ({ ...p, buttons: [...p.buttons, { text: '', payload: `btn_${Date.now()}` }] }));
+                    } else {
+                      notify('Maximum 10 buttons allowed for WhatsApp Lists', 'error');
+                    }
+                  }} style={{ background: '#f1f5f9', border: 'none', borderRadius: '8px', padding: '4px 10px', fontSize: '0.75rem', fontWeight: '700', color: '#475569', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Plus size={14} /> Add Button
+                  </button>
+                </div>
+                
+                {newCamp.buttons.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'var(--sidebar-bg)', padding: '12px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+                    {newCamp.buttons.map((btn, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <div style={{ width: '24px', height: '24px', background: WA_BG, color: WA_GREEN, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: '800', flexShrink: 0 }}>
+                          {idx + 1}
+                        </div>
+                        <input 
+                          type="text" 
+                          value={btn.text}
+                          onChange={e => {
+                            const newBtns = [...newCamp.buttons];
+                            newBtns[idx].text = e.target.value;
+                            setNewCamp(p => ({ ...p, buttons: newBtns }));
+                          }}
+                          placeholder={idx < 3 ? "Quick Reply Title..." : "List Option Title..."}
+                          style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.85rem' }}
+                          maxLength={20}
+                        />
+                        <button type="button" onClick={() => {
+                          const newBtns = newCamp.buttons.filter((_, i) => i !== idx);
+                          setNewCamp(p => ({ ...p, buttons: newBtns }));
+                        }} style={{ background: '#fef2f2', border: 'none', borderRadius: '8px', padding: '8px', color: '#ef4444', cursor: 'pointer' }}>
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    ))}
+                    
+                    <div style={{ marginTop: '8px', fontSize: '0.75rem', color: '#64748b', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
+                      <AlertCircle size={14} style={{ flexShrink: 0, marginTop: '2px' }} />
+                      <div>
+                        {newCamp.buttons.length <= 3 
+                          ? <span><strong>1-3 Buttons:</strong> Will be sent as standard Quick Replies below your message.</span>
+                          : <span><strong>4+ Buttons:</strong> Will automatically be sent as a WhatsApp List Menu (max 10).</span>}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Action Buttons */}

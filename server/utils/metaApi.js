@@ -13,13 +13,13 @@ export const sendMessageToInstagram = async (platform, recipientId, text, mediaU
   try {
     if (platform === 'whatsapp') {
       let waText = text || '';
-      if (buttonText) waText += `\n\n👉 Options:\n- ${buttonText}`;
-      if (buttons && buttons.length > 0) {
-        buttons.forEach(b => {
-          waText += `\n- ${b.text}`;
-        });
+      
+      let waButtons = [...buttons];
+      if (buttonText && waButtons.length === 0) {
+        waButtons.push({ text: buttonText, payload: buttonPayload || 'DEFAULT_BTN' });
       }
-      return await sendWhatsAppMessage(recipientId, waText, userId);
+      
+      return await sendWhatsAppMessage(recipientId, waText, userId, waButtons);
     }
 
     let accessToken = manualToken;

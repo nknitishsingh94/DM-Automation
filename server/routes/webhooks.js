@@ -547,7 +547,7 @@ router.post('/webhook', async (req, res) => {
 
           for (const msg of messages) {
             const senderPhone = msg.from;
-            const text = msg.text?.body;
+            const text = msg.text?.body || msg.interactive?.button_reply?.title || msg.interactive?.list_reply?.title;
 
             if (text) {
               console.log(`📬 WhatsApp Message from ${senderPhone}: ${text}`);
