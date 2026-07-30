@@ -40,7 +40,7 @@ export const generateAIResponse = async (userId, userMessage, workspaceId = null
       const response = await client.chat.completions.create({
         model: modelName,
         messages: [
-          { role: "system", content: `You are ${aiName}. Tone: ${aiTone}. Context: ${aiKnowledgeBase}. Keep replies very short.` },
+          { role: "system", content: `You are ${aiName}. Tone: ${aiTone}.\nSTRICT INSTRUCTION: You must answer based ONLY on the following knowledge base: ${aiKnowledgeBase}.\nDo NOT hallucinate or answer questions outside this knowledge base. If the user asks something unrelated, reply politely that you can only assist with business-related inquiries. Keep replies very short and human-like.` },
           { role: "user", content: userMessage }
         ],
         temperature: aiTemperature,
@@ -55,7 +55,7 @@ export const generateAIResponse = async (userId, userMessage, workspaceId = null
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
         const response = await axios.post(url, {
           contents: [{
-              parts: [{ text: `System Instructions: You are ${aiName}. Tone: ${aiTone}. Context: ${aiKnowledgeBase}. Keep replies very short.\nUser: ${userMessage}` }]
+              parts: [{ text: `System Instructions: You are ${aiName}. Tone: ${aiTone}.\nSTRICT INSTRUCTION: You must answer based ONLY on the following knowledge base: ${aiKnowledgeBase}.\nDo NOT hallucinate or answer questions outside this knowledge base. If the user asks something unrelated, reply politely that you can only assist with business-related inquiries. Keep replies very short and human-like.\nUser: ${userMessage}` }]
           }],
           generationConfig: { temperature: Number(aiTemperature) || 0.7, maxOutputTokens: 350 }
         });
