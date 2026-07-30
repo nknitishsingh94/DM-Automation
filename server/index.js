@@ -1643,7 +1643,19 @@ app.get('/api/settings', verifyToken, async (req, res) => {
     }
     
     console.log(`✅ SETTINGS FOUND for ${req.user.userId}: ${settings.connectedInstagramName || 'No IG Linked'}`);
-    res.json(settings);
+    
+    // Inject .env credentials if present and missing in DB
+    const settingsObj = settings.toObject ? settings.toObject() : settings;
+    if (!settingsObj.whatsappToken && process.env.WHATSAPP_TOKEN) {
+      settingsObj.whatsappToken = process.env.WHATSAPP_TOKEN;
+      settingsObj.isWhatsAppConnected = true;
+    }
+    if (!settingsObj.whatsappPhoneNumberId && process.env.WHATSAPP_PHONE_NUMBER_ID) {
+      settingsObj.whatsappPhoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+      settingsObj.isWhatsAppConnected = true;
+    }
+
+    res.json(settingsObj);
   } catch (err) {
     console.error(`❌ SETTINGS ERROR for ${req.user.userId}:`, err.message);
     res.status(500).json({
