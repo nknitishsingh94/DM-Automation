@@ -83,7 +83,7 @@ export default function Connections() {
     { name: 'Pinterest', icon: PinterestIcon, color: '#E60023', enabled: globalPlatforms.pinterest !== false },
     { name: 'Google Business', icon: MapPin, color: '#4285f4', enabled: globalPlatforms.googleBusiness !== false },
     { name: 'Telegram', icon: Send, color: '#0088cc', enabled: false },
-    { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: false }
+    { name: 'WhatsApp', icon: MessageSquare, color: '#25d366', enabled: globalPlatforms.whatsapp !== false }
   ].filter(p => p.enabled);
 
   const getConnectedPlatformsList = () => {

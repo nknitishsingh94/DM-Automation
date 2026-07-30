@@ -197,7 +197,7 @@ export default function WhatsAppDashboard() {
                 Connected
               </span>
             ) : (
-              <button onClick={() => navigate('/settings')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#fff7ed', color: '#ea580c', border: '1px solid #fed7aa', borderRadius: '20px', padding: '6px 14px', fontSize: '0.8rem', fontWeight: '700', cursor: 'pointer' }}>
+              <button onClick={() => navigate('/connections')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#fff7ed', color: '#ea580c', border: '1px solid #fed7aa', borderRadius: '20px', padding: '6px 14px', fontSize: '0.8rem', fontWeight: '700', cursor: 'pointer' }}>
                 <AlertCircle size={14} /> Connect WhatsApp
               </button>
             )}
@@ -237,7 +237,7 @@ export default function WhatsAppDashboard() {
               <p style={{ margin: 0, fontWeight: '700', color: '#9a3412' }}>WhatsApp Business Account Connect Nahi Hai</p>
               <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#c2410c' }}>Settings mein WhatsApp API Token aur Phone Number ID daalein</p>
             </div>
-            <button onClick={() => navigate('/settings')} style={{ background: '#ea580c', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 20px', fontWeight: '700', cursor: 'pointer', fontSize: '0.85rem' }}>
+            <button onClick={() => navigate('/connections')} style={{ background: '#ea580c', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 20px', fontWeight: '700', cursor: 'pointer', fontSize: '0.85rem' }}>
               Settings Kholein →
             </button>
           </div>

@@ -104,7 +104,7 @@ export default function Workplace() {
           </p>
         </div>
         <button
-          onClick={() => navigate('/settings')}
+          onClick={() => navigate('/connections')}
           style={{
             background: '#ea580c', color: 'white', padding: '10px 18px', borderRadius: '8px',
             fontWeight: '600', fontSize: '0.88rem', border: 'none', cursor: 'pointer',
@@ -227,7 +227,7 @@ export default function Workplace() {
             <p style={{ color: 'var(--text-muted)', fontSize: '1rem', maxWidth: '400px', lineHeight: '1.6' }}>
               Connect your Instagram, Facebook, WhatsApp or Threads account in
               <button
-                onClick={() => navigate('/settings')}
+                onClick={() => navigate('/connections')}
                 style={{
                   background: 'none', border: 'none', color: 'var(--accent-color)',
                   fontWeight: '700', cursor: 'pointer', padding: '0 4px', fontSize: '1rem',
@@ -236,7 +236,7 @@ export default function Workplace() {
               to get started with your Workplace.
             </p>
             <button
-              onClick={() => navigate('/settings')}
+              onClick={() => navigate('/connections')}
               style={{
                 marginTop: '22px', background: '#ea580c', color: 'white',
                 padding: '12px 24px', borderRadius: '10px', fontWeight: '700',
@@ -323,7 +323,7 @@ function WorkbenchShell({ platform, color, Icon, onBack }) {
         </div>
 
         <button
-          onClick={() => navigate('/settings')}
+          onClick={() => navigate('/connections')}
           style={{
             background: 'var(--bg-card)', color: 'var(--text-main)', padding: '8px 16px', borderRadius: '8px',
             fontWeight: '600', fontSize: '0.82rem', border: '1px solid var(--border-subtle)',
@@ -416,7 +416,7 @@ function WorkbenchShell({ platform, color, Icon, onBack }) {
             All connections, automation rules, and campaign settings for this {platform} account
             are managed from{' '}
             <button
-              onClick={() => navigate('/settings')}
+              onClick={() => navigate('/connections')}
               style={{
                 background: 'none', border: 'none', color: 'var(--accent-color)',
                 fontWeight: '700', cursor: 'pointer', padding: 0, fontSize: '0.88rem',
