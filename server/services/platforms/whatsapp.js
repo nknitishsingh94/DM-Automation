@@ -11,11 +11,16 @@ export const sendWhatsAppMessage = async (recipientPhone, text, userId = null) =
 
     if (userId) {
       const userSettings = await Settings.findOne({ userId });
-      if (userSettings && userSettings.whatsappToken && userSettings.whatsappPhoneNumberId) {
+      if (userSettings && userSettings.whatsappToken) {
         accessToken = userSettings.whatsappToken;
+      }
+      if (userSettings && userSettings.whatsappPhoneNumberId) {
         phoneNumberId = userSettings.whatsappPhoneNumberId;
       }
     }
+    
+    if (!accessToken) accessToken = process.env.WHATSAPP_TOKEN;
+    if (!phoneNumberId) phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
 
     if (!accessToken || !phoneNumberId) {
       console.warn("⚠️ WhatsApp not configured. Skipping.");
@@ -57,6 +62,9 @@ export const publishWhatsAppContent = async (userId, postData, workspaceId) => {
       accessToken = parsedSettings.whatsappToken || userSettings[0].whatsappToken;
       phoneNumberId = parsedSettings.whatsappPhoneNumberId || userSettings[0].whatsappPhoneNumberId;
     }
+
+    if (!accessToken) accessToken = process.env.WHATSAPP_TOKEN;
+    if (!phoneNumberId) phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
 
     if (!accessToken || !phoneNumberId) {
       console.warn("⚠️ WhatsApp not configured. Failing post.");
