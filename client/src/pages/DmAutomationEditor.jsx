@@ -743,7 +743,7 @@ export default function DmAutomationEditor() {
            )}
 
            {/* Step 1: Follower Growth Gating */}
-           {selectedPlatform !== 'youtube' && (
+           {selectedPlatform !== 'youtube' && selectedPlatform !== 'whatsapp' && (
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(16, 185, 129, 0.15)' }}>1</div>
@@ -773,7 +773,9 @@ export default function DmAutomationEditor() {
            {/* Step 2: Trigger Settings */}
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--accent-color)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>2</div>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--accent-color)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>
+                    {selectedPlatform === 'youtube' || selectedPlatform === 'whatsapp' ? '1' : '2'}
+                 </div>
                  <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>Trigger Settings</h3>
               </div>
               <div style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', border: '1.5px solid #e2e8f0', borderRadius: '20px', padding: '18px 22px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.04)' }}>
@@ -811,7 +813,7 @@ export default function DmAutomationEditor() {
            </div>
 
            {/* Step 3: Advanced Automations (Opening Message) */}
-           {selectedPlatform !== 'youtube' && (
+           {selectedPlatform !== 'youtube' && selectedPlatform !== 'whatsapp' && (
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ 
                 background: 'rgba(255, 255, 255, 0.8)', 
@@ -862,9 +864,11 @@ export default function DmAutomationEditor() {
            {/* Step 4: Automated DM Response */}
            <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--accent-color)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>4</div>
+                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--accent-color)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: '900', boxShadow: '0 4px 8px rgba(124, 58, 237, 0.15)' }}>
+                    {selectedPlatform === 'youtube' || selectedPlatform === 'whatsapp' ? '2' : '4'}
+                 </div>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: '900', color: '#1e1b4b', margin: 0 }}>
-                    {selectedPlatform === 'youtube' ? 'Automated Comment Reply' : 'Automated DM Response'}
+                    {selectedPlatform === 'youtube' ? 'Automated Comment Reply' : selectedPlatform === 'whatsapp' ? 'Automated WhatsApp Reply' : 'Automated DM Response'}
                   </h3>
                </div>
 
@@ -989,26 +993,68 @@ export default function DmAutomationEditor() {
                    </div>
                  ) : (
                    <>
-                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
+                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px', marginTop: '16px' }}>
                         <div style={{ fontWeight: '900', color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Interactive Elements</div>
-                        <button 
-                          onClick={openAddLinkModal} 
-                          onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 10px -3px rgba(124, 58, 237, 0.15)'; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
-                          style={{ background: '#f5f3ff', color: 'var(--accent-color)', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s', fontSize: '0.85rem' }}
-                        >
-                          <LinkIcon size={16} /> Add Call to Action
-                        </button>
+                        {selectedPlatform === 'whatsapp' ? (
+                          <button 
+                            onClick={() => {
+                              if (buttons.length < 10) {
+                                setButtons([...buttons, { text: '', payload: `btn_${Date.now()}` }]);
+                              } else {
+                                notify('Maximum 10 buttons allowed for WhatsApp Lists', 'error');
+                              }
+                            }}
+                            onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 10px -3px rgba(37, 211, 102, 0.15)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
+                            style={{ background: '#f0fdf4', color: '#16a34a', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s', fontSize: '0.85rem' }}
+                          >
+                            <PlusSquare size={16} /> Add Button ({buttons.length}/10)
+                          </button>
+                        ) : (
+                          <button 
+                            onClick={openAddLinkModal} 
+                            onMouseEnter={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 6px 10px -3px rgba(124, 58, 237, 0.15)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none'; }}
+                            style={{ background: '#f5f3ff', color: 'var(--accent-color)', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: '900', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s', fontSize: '0.85rem' }}
+                          >
+                            <LinkIcon size={16} /> Add Call to Action
+                          </button>
+                        )}
                      </div>
     
                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
                         {buttons.map((btn, idx) => (
                           <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--bg-card)', borderRadius: '12px', border: '1.5px solid #e2e8f0', boxShadow: '0 2px 4px -1px rgba(0,0,0,0.02)' }}>
-                            <span style={{ fontWeight: '800', color: '#1e1b4b', fontSize: '0.9rem' }}>{btn.text}</span>
+                            {selectedPlatform === 'whatsapp' ? (
+                              <input 
+                                type="text" 
+                                value={btn.text}
+                                onChange={e => {
+                                  const newBtns = [...buttons];
+                                  newBtns[idx].text = e.target.value;
+                                  setButtons(newBtns);
+                                }}
+                                placeholder={idx < 3 ? "Quick Reply Title..." : "List Option Title..."}
+                                style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', fontWeight: '800', color: '#1e1b4b', fontSize: '0.9rem' }}
+                                maxLength={20}
+                              />
+                            ) : (
+                              <span style={{ fontWeight: '800', color: '#1e1b4b', fontSize: '0.9rem' }}>{btn.text}</span>
+                            )}
                             <Trash2 size={16} onClick={() => setButtons(buttons.filter((_, i) => i !== idx))} style={{ cursor: 'pointer', color: '#ef4444', transition: '0.3s' }} />
                           </div>
                         ))}
                      </div>
+                     {selectedPlatform === 'whatsapp' && buttons.length > 0 && (
+                       <div style={{ marginTop: '12px', fontSize: '0.75rem', color: '#64748b', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
+                         <div style={{ flexShrink: 0, marginTop: '2px' }}>💡</div>
+                         <div>
+                           {buttons.length <= 3 
+                             ? <span><strong>1-3 Buttons:</strong> Will be sent as standard Quick Replies below your message.</span>
+                             : <span><strong>4+ Buttons:</strong> Will automatically be sent as a WhatsApp List Menu (max 10).</span>}
+                         </div>
+                       </div>
+                     )}
                    </>
                  )}
               </div>
