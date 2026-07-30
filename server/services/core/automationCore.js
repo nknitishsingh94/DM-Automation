@@ -385,7 +385,7 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
     }
   }
 
-  const isAiEnabledForPlatform = false; // Disabled temporarily due to user request (AI ka replay abhi bhi aa rha hai)
+  const isAiEnabledForPlatform = platform === 'whatsapp'; // Enabled for WhatsApp based on user request
 
   if (isAiEnabledForPlatform) {
     console.log(`😴 NO KEYWORD MATCH: Falling back to AI Studio...`);

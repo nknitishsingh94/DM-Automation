@@ -555,11 +555,10 @@ function Sidebar({ isMobileOpen, onClose }) {
                         <LayoutTemplate size={16} />
                         <span>All Template</span>
                       </div>
-                      <div onClick={() => notify("Communication integration is coming soon!", "info")} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
-                        <MessageSquare size={16} />
-                        <span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>Communication</span>
-                        <span style={{ fontSize: '0.62rem', background: 'var(--bg-card)', color: 'var(--text-muted)', padding: '2px 6px', borderRadius: '4px', marginLeft: 'auto', textTransform: 'uppercase', fontWeight: '700' }}>Soon</span>
-                      </div>
+                      <NavLink to="/platform/whatsapp" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <MessageSquare size={16} color="#25d366" />
+                        <span style={{ fontWeight: '600' }}>WhatsApp Auto</span>
+                      </NavLink>
                       {activeWorkspace?.isTelegramConnected && (
                         <NavLink to="/autoops/telegram" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <MessageSquare size={16} color="#3b82f6" />
