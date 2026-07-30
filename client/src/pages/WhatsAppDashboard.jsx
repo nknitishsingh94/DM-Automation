@@ -20,28 +20,7 @@ export default function WhatsAppDashboard() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState(null);
-  const [showCreate, setShowCreate] = useState(false);
-  const [editingCampaign, setEditingCampaign] = useState(null);
-  const [generatingAI, setGeneratingAI] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
-  const [newCamp, setNewCamp] = useState({
-    name: '',
-    trigger: '',
-    triggerType: 'keyword', // keyword | any | welcome
-    response: '',
-    platform: 'whatsapp',
-    triggerSource: 'dm',
-    isUniversal: false,
-    buttonText: '',
-    linkUrl: '',
-    replyType: 'text', // text | image | list | buttons
-    buttons: [],
-    listTitle: '',
-    listItems: [],
-    welcomeEnabled: false,
-    status: 'Active',
-  });
 
   useEffect(() => {
     fetchData();
@@ -101,62 +80,7 @@ export default function WhatsAppDashboard() {
     }
   };
 
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem('insta_agent_token');
-    try {
-      const payload = {
-        ...newCamp,
-        trigger: newCamp.triggerType === 'any' ? '*' : newCamp.trigger,
-        isUniversal: newCamp.triggerType === 'any',
-        platform: 'whatsapp',
-        triggerSource: 'dm',
-        triggerOnDms: true,
-        status: 'Active'
-      };
-      const res = await fetch(`${API_BASE_URL}/api/campaigns`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setCampaigns(prev => [data, ...prev]);
-        setShowCreate(false);
-        setNewCamp({ name: '', trigger: '', triggerType: 'keyword', response: '', platform: 'whatsapp', triggerSource: 'dm', isUniversal: false, buttonText: '', linkUrl: '', replyType: 'text', buttons: [], listTitle: '', listItems: [], status: 'Active' });
-        notify('✅ WhatsApp automation created!', 'success');
-      } else {
-        notify(data.error || 'Failed to create', 'error');
-      }
-    } catch (err) {
-      notify('Network error', 'error');
-    }
-  };
 
-  const handleGenerateAI = async () => {
-    if (!newCamp.trigger && !newCamp.name) {
-      notify('Please enter a trigger keyword or campaign name', 'error');
-      return;
-    }
-    setGeneratingAI(true);
-    const token = localStorage.getItem('insta_agent_token');
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/ai/generate`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: `Generate a professional and friendly WhatsApp auto-reply message for keyword: "${newCamp.trigger || newCamp.name}". Keep it under 150 words, conversational, and end with a call-to-action.` })
-      });
-      const data = await res.json();
-      if (data.text) {
-        setNewCamp(prev => ({ ...prev, response: data.text }));
-        notify('AI response generated!', 'success');
-      }
-    } catch (err) {
-      notify('AI generation failed', 'error');
-    } finally {
-      setGeneratingAI(false);
-    }
-  };
 
   const filteredCampaigns = campaigns.filter(c =>
     (c.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -197,7 +121,7 @@ export default function WhatsAppDashboard() {
                 <AlertCircle size={14} /> Connect WhatsApp
               </button>
             )}
-            <button onClick={() => setShowCreate(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: "var(--accent-color)", color: 'white', border: 'none', borderRadius: '12px', padding: '10px 20px', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', boxShadow: `0 4px 12px rgba(37,211,102,0.3)` }}>
+            <button onClick={() => navigate('/dm-automation-editor/new?channel=whatsapp')} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: "var(--accent-color)", color: 'white', border: 'none', borderRadius: '12px', padding: '10px 20px', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', boxShadow: `0 4px 12px rgba(37,211,102,0.3)` }}>
               <Plus size={18} /> New Automation
             </button>
           </div>
@@ -274,7 +198,7 @@ export default function WhatsAppDashboard() {
                 </div>
                 <h3 style={{ fontSize: '1.3rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 8px' }}>No WhatsApp Automations</h3>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>Create your first automation and set up auto-replies on WhatsApp</p>
-                <button onClick={() => setShowCreate(true)} style={{ background: "var(--accent-color)", color: 'white', border: 'none', borderRadius: '12px', padding: '12px 24px', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <button onClick={() => navigate('/dm-automation-editor/new?channel=whatsapp')} style={{ background: "var(--accent-color)", color: 'white', border: 'none', borderRadius: '12px', padding: '12px 24px', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                   <Plus size={18} /> Create Automation
                 </button>
               </div>
@@ -298,7 +222,10 @@ export default function WhatsAppDashboard() {
                         <button onClick={() => handleToggle(campaign)} title={campaign.status === 'Active' ? 'Pause' : 'Activate'} style={{ background: campaign.status === 'Active' ? '#f0fdf4' : 'var(--sidebar-bg)', border: `1px solid ${campaign.status === 'Active' ? '#bbf7d0' : 'var(--border-subtle)'}`, borderRadius: '8px', padding: '6px', cursor: 'pointer', color: campaign.status === 'Active' ? "var(--accent-color)" : 'var(--text-muted)', display: 'flex', alignItems: 'center' }}>
                           <Power size={15} />
                         </button>
-                        <button onClick={() => handleDelete(campaign._id)} style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '6px', cursor: 'pointer', color: '#ef4444', display: 'flex', alignItems: 'center' }}>
+                        <button onClick={() => navigate(`/dm-automation-editor/${campaign._id}?channel=whatsapp`)} title="Edit" style={{ background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '6px', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center' }}>
+                          <Edit2 size={15} />
+                        </button>
+                        <button onClick={() => handleDelete(campaign._id)} title="Delete" style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '6px', cursor: 'pointer', color: '#ef4444', display: 'flex', alignItems: 'center' }}>
                           <Trash2 size={15} />
                         </button>
                       </div>
@@ -401,184 +328,7 @@ export default function WhatsAppDashboard() {
         )}
       </div>
 
-      {/* ── CREATE AUTOMATION MODAL ── */}
-      {showCreate && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '20px' }}>
-          <div style={{ background: 'var(--bg-card)', borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '600px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '44px', height: '44px', background: "var(--sidebar-bg)", borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Zap size={22} color={"var(--accent-color)"} fill={"var(--accent-color)"} />
-                </div>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: '900', color: 'var(--text-main)' }}>New WhatsApp Automation</h3>
-                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>Set keyword trigger + auto-reply</p>
-                </div>
-              </div>
-              <button onClick={() => setShowCreate(false)} style={{ background: 'var(--sidebar-bg)', border: '1px solid var(--border-subtle)', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)' }}>
-                <X size={18} />
-              </button>
-            </div>
 
-            <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {/* Campaign Name */}
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Automation Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={newCamp.name}
-                  onChange={e => setNewCamp(p => ({ ...p, name: e.target.value }))}
-                  placeholder="e.g. Price Inquiry Auto-Reply"
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              {/* Trigger Type */}
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Trigger Type *</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
-                  {[
-                    { id: 'keyword', label: '🔑 Keyword', desc: 'Specific word pe reply' },
-                    { id: 'any', label: '🌍 Any Message', desc: 'Har message pe reply' },
-                    { id: 'welcome', label: '👋 Welcome', desc: 'Pehle message pe' },
-                  ].map(type => (
-                    <button key={type.id} type="button" onClick={() => setNewCamp(p => ({ ...p, triggerType: type.id }))}
-                      style={{ padding: '12px', borderRadius: '10px', border: `2px solid ${newCamp.triggerType === type.id ? "var(--accent-color)" : 'var(--border-subtle)'}`, background: newCamp.triggerType === type.id ? "var(--sidebar-bg)" : 'var(--bg-card)', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s' }}>
-                      <div style={{ fontWeight: '800', fontSize: '0.82rem', color: 'var(--text-main)', marginBottom: '4px' }}>{type.label}</div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{type.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Keyword */}
-              {newCamp.triggerType === 'keyword' && (
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Trigger Keyword *</label>
-                  <input
-                    type="text"
-                    required
-                    value={newCamp.trigger}
-                    onChange={e => setNewCamp(p => ({ ...p, trigger: e.target.value }))}
-                    placeholder='e.g. "price", "info", "hi", "help"'
-                    style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box' }}
-                  />
-                  <p style={{ margin: '6px 0 0', fontSize: '0.75rem', color: 'var(--text-muted)' }}>💡 Auto-reply will be sent when customer types this word</p>
-                </div>
-              )}
-
-              {/* Auto Response */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Auto Reply Message *</label>
-                  <button type="button" onClick={handleGenerateAI} disabled={generatingAI}
-                    style={{ display: 'flex', alignItems: 'center', gap: '6px', background: generatingAI ? 'var(--bg-dark)' : 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: generatingAI ? 'var(--text-muted)' : 'var(--bg-card)', border: 'none', borderRadius: '20px', padding: '5px 14px', fontSize: '0.75rem', fontWeight: '700', cursor: generatingAI ? 'not-allowed' : 'pointer' }}>
-                    <Sparkles size={13} /> {generatingAI ? 'Generating...' : 'Generate with AI'}
-                  </button>
-                </div>
-                <textarea
-                  required
-                  value={newCamp.response}
-                  onChange={e => setNewCamp(p => ({ ...p, response: e.target.value }))}
-                  placeholder="Hello! 👋 Asking about our product/service? We are ready to help you. Please ask your question!"
-                  rows={5}
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', resize: 'vertical', boxSizing: 'border-box', lineHeight: '1.5' }}
-                />
-                <div style={{ marginTop: '8px', background: "var(--sidebar-bg)", borderRadius: '10px', padding: '10px 14px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                  <MessageSquare size={16} color={"var(--accent-color)"} style={{ flexShrink: 0, marginTop: '2px' }} />
-                  <div>
-                    <p style={{ margin: 0, fontSize: '0.75rem', color: "var(--text-main)", fontWeight: '700' }}>WhatsApp Formatting Tips:</p>
-                    <p style={{ margin: '4px 0 0', fontSize: '0.72rem', color: 'var(--text-main)', lineHeight: '1.5' }}>
-                      Asterisk for *Bold* | Underscore for _Italic_ | ~Strikethrough~ | ```Code``` | Use Emojis 😊
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Link (Optional) */}
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Link (Optional)</label>
-                <div style={{ position: 'relative' }}>
-                  <Globe size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                  <input
-                    type="url"
-                    value={newCamp.linkUrl}
-                    onChange={e => setNewCamp(p => ({ ...p, linkUrl: e.target.value }))}
-                    placeholder="https://yourwebsite.com"
-                    style={{ width: '100%', paddingLeft: '36px', paddingRight: '16px', paddingTop: '12px', paddingBottom: '12px', borderRadius: '10px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.9rem', boxSizing: 'border-box' }}
-                  />
-                </div>
-              </div>
-
-              {/* Interactive Buttons */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Interactive Buttons ({newCamp.buttons.length}/10)</label>
-                  <button type="button" onClick={() => {
-                    if (newCamp.buttons.length < 10) {
-                      setNewCamp(p => ({ ...p, buttons: [...p.buttons, { text: '', payload: `btn_${Date.now()}` }] }));
-                    } else {
-                      notify('Maximum 10 buttons allowed for WhatsApp Lists', 'error');
-                    }
-                  }} style={{ background: '#f1f5f9', border: 'none', borderRadius: '8px', padding: '4px 10px', fontSize: '0.75rem', fontWeight: '700', color: '#475569', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Plus size={14} /> Add Button
-                  </button>
-                </div>
-                
-                {newCamp.buttons.length > 0 && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'var(--sidebar-bg)', padding: '12px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-                    {newCamp.buttons.map((btn, idx) => (
-                      <div key={idx} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <div style={{ width: '24px', height: '24px', background: "var(--sidebar-bg)", color: "var(--accent-color)", borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: '800', flexShrink: 0 }}>
-                          {idx + 1}
-                        </div>
-                        <input 
-                          type="text" 
-                          value={btn.text}
-                          onChange={e => {
-                            const newBtns = [...newCamp.buttons];
-                            newBtns[idx].text = e.target.value;
-                            setNewCamp(p => ({ ...p, buttons: newBtns }));
-                          }}
-                          placeholder={idx < 3 ? "Quick Reply Title..." : "List Option Title..."}
-                          style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.85rem' }}
-                          maxLength={20}
-                        />
-                        <button type="button" onClick={() => {
-                          const newBtns = newCamp.buttons.filter((_, i) => i !== idx);
-                          setNewCamp(p => ({ ...p, buttons: newBtns }));
-                        }} style={{ background: '#fef2f2', border: 'none', borderRadius: '8px', padding: '8px', color: '#ef4444', cursor: 'pointer' }}>
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    ))}
-                    
-                    <div style={{ marginTop: '8px', fontSize: '0.75rem', color: '#64748b', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
-                      <AlertCircle size={14} style={{ flexShrink: 0, marginTop: '2px' }} />
-                      <div>
-                        {newCamp.buttons.length <= 3 
-                          ? <span><strong>1-3 Buttons:</strong> Will be sent as standard Quick Replies below your message.</span>
-                          : <span><strong>4+ Buttons:</strong> Will automatically be sent as a WhatsApp List Menu (max 10).</span>}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '12px', paddingTop: '8px' }}>
-                <button type="button" onClick={() => setShowCreate(false)} style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', background: 'var(--bg-card)', color: 'var(--text-main)', fontWeight: '700', cursor: 'pointer', fontSize: '0.9rem' }}>
-                  Cancel
-                </button>
-                <button type="submit" style={{ flex: 2, padding: '14px', borderRadius: '12px', border: 'none', background: "var(--accent-color)", color: 'white', fontWeight: '800', cursor: 'pointer', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: `0 4px 12px rgba(37,211,102,0.3)` }}>
-                  <Zap size={18} fill="white" /> Create WhatsApp Automation
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }

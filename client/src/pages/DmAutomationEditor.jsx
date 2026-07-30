@@ -282,7 +282,11 @@ export default function DmAutomationEditor() {
 
       if (res.ok) {
         notify(`✅ Automation ${isEditMode ? 'updated' : 'created'} successfully!`, 'success');
-        navigate(`/campaigns?platform=${selectedPlatform}`);
+        if (selectedPlatform === 'whatsapp') {
+          navigate('/platform/whatsapp');
+        } else {
+          navigate(`/campaigns?platform=${selectedPlatform}`);
+        }
       } else {
         const data = await res.json();
         notify(data.error || `Failed to ${isEditMode ? 'update' : 'create'} automation`, 'error');
@@ -320,7 +324,11 @@ export default function DmAutomationEditor() {
                 if (!isEditMode && template) {
                   navigate(`/campaigns?openTemplates=true`);
                 } else {
-                  navigate(`/campaigns?platform=${selectedPlatform}`);
+                  if (selectedPlatform === 'whatsapp') {
+                    navigate('/platform/whatsapp');
+                  } else {
+                    navigate(`/campaigns?platform=${selectedPlatform}`);
+                  }
                 }
               }} 
               onMouseEnter={(e) => { e.target.style.background = '#e2e8f0'; e.target.style.transform = 'translateX(-2px)'; }}
