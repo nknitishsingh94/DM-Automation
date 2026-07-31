@@ -122,7 +122,7 @@ function ProtectedRoute({ children }) {
 }
 
 function Sidebar({ isMobileOpen, onClose }) {
-  const { logout, user } = useAuth();
+  const { logout, user, globalPlatforms } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const { notify } = useNotification();
@@ -555,10 +555,12 @@ function Sidebar({ isMobileOpen, onClose }) {
                         <LayoutTemplate size={16} />
                         <span>All Template</span>
                       </div>
-                      <NavLink to="/platform/whatsapp" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <MessageSquare size={16} color="#25d366" />
-                        <span style={{ fontWeight: '600' }}>WhatsApp Auto</span>
-                      </NavLink>
+                      {globalPlatforms?.whatsapp !== false && (
+                        <NavLink to="/platform/whatsapp" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <MessageSquare size={16} color="#25d366" />
+                          <span style={{ fontWeight: '600' }}>WhatsApp Auto</span>
+                        </NavLink>
+                      )}
                       {activeWorkspace?.isTelegramConnected && (
                         <NavLink to="/autoops/telegram" className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`} style={{ padding: '8px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <MessageSquare size={16} color="#3b82f6" />

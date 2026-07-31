@@ -10,7 +10,7 @@ export default function PlatformSettingsTab() {
   const [savePlatformsStatus, setSavePlatformsStatus] = useState('idle');
   const [platforms, setPlatforms] = useState({
     instagram: true, facebook: true, youtube: true, linkedin: true,
-    twitter: true, googleBusiness: true, pinterest: true, threads: true
+    twitter: true, googleBusiness: true, pinterest: true, threads: true, whatsapp: true
   });
   const [showSmtp, setShowSmtp] = useState(false);
   const [showOpenai, setShowOpenai] = useState(false);
@@ -164,6 +164,7 @@ export default function PlatformSettingsTab() {
           {[
             { id: 'instagram', name: 'Instagram', icon: <Instagram size={20} color="#E4405F" /> },
             { id: 'facebook', name: 'Facebook', icon: <Facebook size={20} color="#1877F2" /> },
+            { id: 'whatsapp', name: 'WhatsApp', icon: <MessageSquare size={20} color="#25D366" /> },
             { id: 'youtube', name: 'YouTube', icon: <Youtube size={20} color="#FF0000" /> },
             { id: 'linkedin', name: 'LinkedIn', icon: <Linkedin size={20} color="#0A66C2" /> },
             { id: 'twitter', name: 'Twitter / X', icon: <Twitter size={20} color="#1DA1F2" /> },

@@ -64,11 +64,10 @@ router.get('/global-platforms', async (req, res) => {
     if (config && config.value) {
       return res.json(config.value);
     }
-    // Default fallback
-    return res.json({
-      instagram: true, facebook: true, youtube: true, linkedin: true,
-      twitter: true, googleBusiness: true, pinterest: true, threads: true
-    });
+      return res.json({
+        instagram: true, facebook: true, youtube: true, linkedin: true,
+        twitter: true, googleBusiness: true, pinterest: true, threads: true, whatsapp: true
+      });
   } catch (error) {
     console.error('Error fetching global platforms:', error);
     res.status(500).json({ message: 'Error fetching platform config' });
@@ -88,7 +87,7 @@ router.put('/global-platforms', async (req, res) => {
     } else {
       newConfig = {
         instagram: true, facebook: true, youtube: true, linkedin: true,
-        twitter: true, googleBusiness: true, pinterest: true, threads: true,
+        twitter: true, googleBusiness: true, pinterest: true, threads: true, whatsapp: true,
         ...req.body
       };
       await GlobalConfig.create({ key: 'platforms', value: newConfig });
