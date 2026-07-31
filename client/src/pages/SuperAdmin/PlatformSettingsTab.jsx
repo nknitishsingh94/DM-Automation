@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Mail, Key, Shield, HardDrive, CheckCircle2, Copy, Instagram, Facebook, Youtube, Linkedin, Twitter, MessageCircle, Share2, Globe, Eye, EyeOff } from 'lucide-react';
+import { Settings, Mail, Key, Shield, HardDrive, CheckCircle2, Copy, Instagram, Facebook, Youtube, Linkedin, Twitter, MessageCircle, Share2, Globe, Eye, EyeOff, MessageSquare } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { API_BASE_URL } from '../../config';
 import { useAuth } from '../../context/AuthContext';
