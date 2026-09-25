@@ -1569,10 +1569,23 @@ app.post('/api/workspaces', verifyToken, async (req, res) => {
       return res.status(400).json({ error: 'Workspace name is required' });
     }
 
+    const user = await User.findById(req.user.userId);
+    const userPlan = (user?.plan || 'free').toLowerCase();
+    const existingWorkspaces = await Workspace.find({ userId });
+
+    // Plan-based Workspace Protection & Enforcement
+    const maxWorkspaces = userPlan === 'enterprise' ? 10 : userPlan === 'pro' ? 3 : 1;
+    if (existingWorkspaces.length >= maxWorkspaces) {
+      return res.status(403).json({
+        error: `Workspace limit reached (${existingWorkspaces.length}/${maxWorkspaces} allowed on ${userPlan.toUpperCase()} Plan). Please upgrade your subscription to create more workspaces.`,
+        limitReached: true,
+        userPlan,
+        maxWorkspaces
+      });
+    }
+
     let finalName = name.trim();
     let counter = 1;
-    
-    const existingWorkspaces = await Workspace.find({ userId });
     const existingNames = existingWorkspaces.map(w => w.name.toLowerCase());
     
     let tempName = finalName;

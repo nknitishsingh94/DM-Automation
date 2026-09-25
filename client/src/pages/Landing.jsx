@@ -778,7 +778,20 @@ export default function Landing() {
                   <li><Check size={18} className="check-icon" /> Dedicated Account Manager</li>
                 </ul>
               </div>
-              <Link to="/signup" className="pricing-btn outline-btn">Contact Sales</Link>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <a 
+                  href={`https://api.whatsapp.com/send?phone=918795919866&text=${encodeURIComponent("Hello Founder! I am interested in the Enterprise Plan ($99/mo) for my agency/brand. Please assist me with onboarding and white-labeling setup.")}`}
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="pricing-btn solid-btn"
+                  style={{ textDecoration: 'none', textAlign: 'center', background: '#25D366', borderColor: '#25D366' }}
+                >
+                  Contact Sales (WhatsApp)
+                </a>
+                <Link to="/signup?plan=enterprise" className="pricing-btn outline-btn" style={{ textAlign: 'center' }}>
+                  Sign Up for Enterprise
+                </Link>
+              </div>
             </div>
           </div>
         </div>
