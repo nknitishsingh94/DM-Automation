@@ -202,12 +202,23 @@ const ALLOWED_ORIGINS = [
 ].filter(Boolean);
 
 app.use(cors({
-  origin: ALLOWED_ORIGINS.length > 0 ? ALLOWED_ORIGINS : '*',
+  origin: (origin, callback) => callback(null, true),
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'X-Workspace-ID', 'x-workspace-id', 'workspace', 'Cache-Control'],
   credentials: true
 }));
-app.options('*', cors());
+app.options('*', (req, res) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, X-Workspace-ID, x-workspace-id, workspace, Cache-Control');
+  return res.status(200).end();
+});
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,   // 15 minutes
