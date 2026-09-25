@@ -12,6 +12,35 @@ export const processAutoReply = async (userId, platform, chatId, text, source = 
   const queryUserId = userId;
   
   text = typeof text === 'string' ? text : '';
+
+  // Subscription Expiry & Plan Limit Enforcement
+  try {
+    const userObj = await User.findById(userId);
+    if (userObj) {
+      if (userObj.plan && userObj.plan !== 'free' && userObj.planExpiryDate) {
+        if (new Date(userObj.planExpiryDate) < new Date()) {
+          console.log(`⏰ Subscription EXPIRED for User ${userId} (${userObj.planExpiryDate}). Reverting to Free Plan.`);
+          userObj.plan = 'free';
+          userObj.planExpiryDate = null;
+          await userObj.save();
+        }
+      }
+
+      const userPlan = (userObj.plan || 'free').toLowerCase();
+      if (userPlan === 'free') {
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0,0,0,0);
+        const monthlyCount = await Message.countDocuments({ userId, type: 'sent', isAI: true, timestamp: { $gte: startOfMonth } });
+        if (monthlyCount >= 50) {
+          console.log(`🚫 Free Plan Monthly Automation Limit Reached (${monthlyCount}/50) for User ${userId}. Automations paused.`);
+          return { skipped: true, reason: 'free_plan_limit_reached' };
+        }
+      }
+    }
+  } catch (subErr) {
+    console.warn("⚠️ Subscription check warning:", subErr.message);
+  }
   
   let userSettingsQuery = { userId };
   let contactQuery = { userId, chatId };

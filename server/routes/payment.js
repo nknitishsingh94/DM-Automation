@@ -95,7 +95,16 @@ const handleVerifyPayment = async (req, res) => {
 
     if (razorpay_signature === expectedSign) {
       const userPlan = plan.toLowerCase() === 'enterprise' ? 'enterprise' : 'pro';
-      const user = await User.findByIdAndUpdate(req.user.userId, { plan: userPlan }, { new: true });
+      const paidMonths = Math.max(1, parseInt(req.body.months) || 1);
+      
+      const expiryDate = new Date();
+      expiryDate.setDate(expiryDate.getDate() + (paidMonths * 30));
+
+      const user = await User.findByIdAndUpdate(req.user.userId, { 
+        plan: userPlan,
+        planExpiryDate: expiryDate.toISOString(),
+        planDurationMonths: paidMonths
+      }, { new: true });
 
       // Save completed transaction
       const tx = await Transaction.create({
@@ -103,18 +112,21 @@ const handleVerifyPayment = async (req, res) => {
         username: user?.username || 'User',
         email: user?.email || '',
         plan: userPlan,
-        amount: Number(amount) || 2320,
+        amount: Number(amount) || (userPlan === 'enterprise' ? 7920 : 2320),
         currency: 'INR',
         paymentMethod: 'razorpay',
         razorpayOrderId: razorpay_order_id,
         razorpayPaymentId: razorpay_payment_id,
-        status: 'completed'
+        utr: `RZP_${razorpay_payment_id}`,
+        status: 'completed',
+        notes: `Paid for ${paidMonths} Month(s). Active until ${expiryDate.toLocaleDateString()}`
       });
       
       return res.json({ 
         success: true, 
-        message: `Payment verified successfully! Welcome to ${userPlan.toUpperCase()} Plan.`,
+        message: `Payment verified! ${userPlan.toUpperCase()} Plan active for ${paidMonths} month(s) until ${expiryDate.toLocaleDateString()}.`,
         plan: userPlan,
+        planExpiryDate: expiryDate,
         transaction: tx
       });
     } else {
@@ -137,7 +149,7 @@ router.post('/payment/verify-payment', verifyToken, handleVerifyPayment);
 // POST /api/payment/submit-manual-payment (For UPI / QR / Manual payments)
 router.post(['/submit-manual-payment', '/payment/submit-manual-payment'], verifyToken, async (req, res) => {
   try {
-    const { plan = 'pro', amountInr = 2320, amountUsd = 29, paymentMethod = 'upi', utr = '', notes = '' } = req.body;
+    const { plan = 'pro', amountInr = 2320, amountUsd = 29, paymentMethod = 'upi', utr = '', notes = '', months = 1 } = req.body;
 
     const user = await User.findById(req.user.userId);
     if (!user) {
@@ -145,6 +157,7 @@ router.post(['/submit-manual-payment', '/payment/submit-manual-payment'], verify
     }
 
     const targetPlan = plan.toLowerCase() === 'enterprise' ? 'enterprise' : 'pro';
+    const paidMonths = Math.max(1, parseInt(months) || 1);
 
     const newTx = await Transaction.create({
       user: req.user.userId,
@@ -156,13 +169,13 @@ router.post(['/submit-manual-payment', '/payment/submit-manual-payment'], verify
       currency: 'INR',
       paymentMethod: paymentMethod,
       utr: utr.trim(),
-      notes: notes.trim(),
+      notes: `Requested ${paidMonths} Month(s). ${notes}`.trim(),
       status: 'pending'
     });
 
     res.json({
       success: true,
-      message: "Payment submission received! Reference recorded for verification.",
+      message: "Payment submission received! Your payment reference has been recorded and sent for instant admin verification.",
       transaction: newTx
     });
   } catch (err) {

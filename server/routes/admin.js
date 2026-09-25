@@ -740,13 +740,21 @@ router.post('/approve-transaction/:id', verifyToken, isSuperAdmin, async (req, r
       return res.status(404).json({ message: 'Transaction not found' });
     }
 
+    const paidMonths = Math.max(1, parseInt(req.body.months) || 1);
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + (paidMonths * 30));
+
     tx.status = 'completed';
     await tx.save();
 
-    // Update target user's plan
-    await User.findByIdAndUpdate(tx.user, { plan: tx.plan });
+    // Update target user's plan & expiry date
+    await User.findByIdAndUpdate(tx.user, { 
+      plan: tx.plan,
+      planExpiryDate: expiryDate.toISOString(),
+      planDurationMonths: paidMonths
+    });
 
-    res.json({ message: `Transaction approved successfully! User plan updated to ${tx.plan.toUpperCase()}.`, transaction: tx });
+    res.json({ message: `Transaction approved! User plan updated to ${tx.plan.toUpperCase()} for ${paidMonths} month(s) (Active until ${expiryDate.toLocaleDateString()}).`, transaction: tx });
   } catch (error) {
     console.error('Approve Transaction Error:', error);
     res.status(500).json({ message: 'Failed to approve transaction' });
