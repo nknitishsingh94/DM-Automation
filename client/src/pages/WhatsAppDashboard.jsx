@@ -90,7 +90,7 @@ export default function WhatsAppDashboard() {
   const stats = {
     total: campaigns.length,
     active: campaigns.filter(c => c.status === 'Active').length,
-    paused: campaigns.filter(c => c.status !== 'Active').length,
+    paused: campaigns.filter(c => c.status !== 'Active').length, 
   };
 
   return (

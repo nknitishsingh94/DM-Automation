@@ -12,6 +12,7 @@ import Message from '../models/Message.js';
 import Campaign from '../models/Campaign.js';
 import SuspensionLog from '../models/SuspensionLog.js';
 import PermanentLog from '../models/PermanentLog.js';
+import Transaction from '../models/Transaction.js';
 
 const router = express.Router();
 
@@ -689,28 +690,84 @@ const savePricingConfig = (config) => {
 // GET /api/admin/revenue
 router.get('/revenue', async (req, res) => {
   try {
-    // Calculate mock revenue based on user plans
     const users = await User.find({});
     let mrr = 0;
     
     const config = getPricingConfig();
-    const proPrice = config.pro_price;
-    const entPrice = config.enterprise_price;
+    const proPrice = config.pro_price || 29;
+    const entPrice = config.enterprise_price || 99;
 
     users.forEach(u => {
       if (u.plan === 'pro') mrr += proPrice;
       if (u.plan === 'enterprise') mrr += entPrice;
     });
 
+    const transactions = await Transaction.find({}).sort({ createdAt: -1 }).limit(50);
+    const completedTxs = transactions.filter(t => t.status === 'completed');
+    const totalTxRevenue = completedTxs.reduce((acc, t) => acc + (t.amountUsd || Math.round(t.amount / 80) || 29), 0);
+
+    const formattedTxs = transactions.map(t => ({
+      id: t._id,
+      user: t.username || 'User',
+      email: t.email,
+      plan: t.plan,
+      amount: t.amount,
+      amountUsd: t.amountUsd || Math.round(t.amount / 80),
+      paymentMethod: t.paymentMethod,
+      utr: t.utr,
+      notes: t.notes,
+      date: t.createdAt,
+      status: t.status
+    }));
+
     res.json({
       mrr: mrr,
-      totalRevenue: mrr, // Without a transaction log, current MRR is the only accurate baseline
-      activeSubscribers: users.filter(u => u.plan !== 'free').length,
-      recentTransactions: [] // No real transaction history stored currently
+      totalRevenue: totalTxRevenue > 0 ? totalTxRevenue : mrr,
+      activeSubscribers: users.filter(u => u.plan && u.plan !== 'free').length,
+      recentTransactions: formattedTxs
     });
   } catch (error) {
     console.error('Admin Revenue Error:', error);
     res.status(500).json({ message: 'Failed to fetch revenue data.' });
+  }
+});
+
+// POST /api/admin/approve-transaction/:id
+router.post('/approve-transaction/:id', verifyToken, isSuperAdmin, async (req, res) => {
+  try {
+    const tx = await Transaction.findById(req.params.id);
+    if (!tx) {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+
+    tx.status = 'completed';
+    await tx.save();
+
+    // Update target user's plan
+    await User.findByIdAndUpdate(tx.user, { plan: tx.plan });
+
+    res.json({ message: `Transaction approved successfully! User plan updated to ${tx.plan.toUpperCase()}.`, transaction: tx });
+  } catch (error) {
+    console.error('Approve Transaction Error:', error);
+    res.status(500).json({ message: 'Failed to approve transaction' });
+  }
+});
+
+// POST /api/admin/reject-transaction/:id
+router.post('/reject-transaction/:id', verifyToken, isSuperAdmin, async (req, res) => {
+  try {
+    const tx = await Transaction.findById(req.params.id);
+    if (!tx) {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+
+    tx.status = 'rejected';
+    await tx.save();
+
+    res.json({ message: 'Transaction rejected', transaction: tx });
+  } catch (error) {
+    console.error('Reject Transaction Error:', error);
+    res.status(500).json({ message: 'Failed to reject transaction' });
   }
 });
 

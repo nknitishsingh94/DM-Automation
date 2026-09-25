@@ -196,8 +196,10 @@ export default function PaymentsTab() {
             <thead>
               <tr style={{ background: 'rgba(99, 102, 241, 0.03)', borderBottom: '1px solid var(--border-subtle)' }}>
                 <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase' }}>Customer</th>
+                <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase' }}>Plan & Method</th>
                 <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase' }}>Amount</th>
                 <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase' }}>Status</th>
+                <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -206,22 +208,69 @@ export default function PaymentsTab() {
                   <td style={{ padding: '16px 24px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <span style={{ fontWeight: '600', color: 'var(--text-main)', fontSize: '0.9rem' }}>{tx.user}</span>
-                      <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{new Date(tx.date).toLocaleDateString()}</span>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{new Date(tx.date).toLocaleDateString()} {new Date(tx.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                     </div>
                   </td>
                   <td style={{ padding: '16px 24px' }}>
-                    <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>${tx.amount}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <span style={{ fontWeight: '700', textTransform: 'uppercase', fontSize: '0.8rem', color: 'var(--primary)' }}>{tx.plan || 'PRO'}</span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'capitalize' }}>
+                        Method: {tx.paymentMethod || 'razorpay'} {tx.utr ? `(UTR: ${tx.utr})` : ''}
+                      </span>
+                    </div>
                   </td>
                   <td style={{ padding: '16px 24px' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', background: '#dcfce7', color: '#166534', padding: '4px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase' }}>
+                    <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>₹{tx.amount || 2320} (${tx.amountUsd || 29})</span>
+                  </td>
+                  <td style={{ padding: '16px 24px' }}>
+                    <span style={{ 
+                      display: 'inline-flex', alignItems: 'center', 
+                      background: tx.status === 'completed' ? '#dcfce7' : tx.status === 'pending' ? '#fef3c7' : '#fee2e2', 
+                      color: tx.status === 'completed' ? '#166534' : tx.status === 'pending' ? '#92400e' : '#991b1b', 
+                      padding: '4px 10px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase' 
+                    }}>
                       {tx.status}
                     </span>
+                  </td>
+                  <td style={{ padding: '16px 24px' }}>
+                    {tx.status === 'pending' ? (
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button 
+                          onClick={async () => {
+                            try {
+                              const token = localStorage.getItem('insta_agent_token');
+                              await axios.post(`${API_BASE_URL}/api/admin/approve-transaction/${tx.id}`, {}, { headers: { Authorization: `Bearer ${token}` } });
+                              toast.success('Payment approved & Plan upgraded!');
+                              fetchData();
+                            } catch (e) { toast.error('Failed to approve transaction'); }
+                          }}
+                          style={{ background: '#10b981', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer' }}
+                        >
+                          Approve
+                        </button>
+                        <button 
+                          onClick={async () => {
+                            try {
+                              const token = localStorage.getItem('insta_agent_token');
+                              await axios.post(`${API_BASE_URL}/api/admin/reject-transaction/${tx.id}`, {}, { headers: { Authorization: `Bearer ${token}` } });
+                              toast.success('Transaction rejected');
+                              fetchData();
+                            } catch (e) { toast.error('Failed to reject transaction'); }
+                          }}
+                          style={{ background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: '700', cursor: 'pointer' }}
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    ) : (
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Verified</span>
+                    )}
                   </td>
                 </tr>
               ))}
               {!revenue?.recentTransactions?.length && (
                 <tr>
-                  <td colSpan="3" style={{ padding: '32px', textAlign: 'center', color: 'var(--text-muted)' }}>No recent transactions</td>
+                  <td colSpan="5" style={{ padding: '32px', textAlign: 'center', color: 'var(--text-muted)' }}>No recent transactions</td>
                 </tr>
               )}
             </tbody>

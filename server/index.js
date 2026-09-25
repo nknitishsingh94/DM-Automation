@@ -276,6 +276,7 @@ app.use(hpp());
 app.use('/api', webhookRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api', paymentRoutes);
 app.use('/api/forms', formRoutes);
 app.use('/api/oauth', oauthRoutes);
 app.use('/api/support', supportRoutes);
