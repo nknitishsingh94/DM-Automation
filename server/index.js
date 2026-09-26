@@ -63,6 +63,7 @@ import { generateAIResponse } from './utils/aiHandler.js';
 import { supabase, supabaseAdmin, convertObjectIDToUUID } from './utils/supabase.js';
 import Workspace from './models/Workspace.js';
 import { processYouTubeComments } from './utils/youtube-automation.js';
+import { runSchedulingWorker } from './services/scheduler.js';
 
 const settingsCache = new Map();
 const campaignsCache = new Map();
@@ -3208,13 +3209,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5001;
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 5001;
+  httpServer.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🔒 Security: Rate limiting, Helmet CSP, CORS whitelist, NoSQL sanitization, XSS protection active`);
 
-httpServer.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🔒 Security: Rate limiting, Helmet CSP, CORS whitelist, NoSQL sanitization, XSS protection active`);
-
-  if (!process.env.VERCEL) {
     console.log('⏰ [Scheduler] Running in persistent environment. Starting local 60s checker...');
     setImmediate(() => {
       runSchedulingWorker().catch(err => {
@@ -3238,8 +3238,8 @@ httpServer.listen(PORT, () => {
         console.error("❌ Error in persistent local LinkedIn Scraper scheduler:", err.message);
       });
     }, 60 * 60 * 1000);
-  }
-});
+  });
+}
 export default app;
 
 
