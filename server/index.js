@@ -63,7 +63,6 @@ import { generateAIResponse } from './utils/aiHandler.js';
 import { supabase, supabaseAdmin, convertObjectIDToUUID } from './utils/supabase.js';
 import Workspace from './models/Workspace.js';
 import { processYouTubeComments } from './utils/youtube-automation.js';
-import { runSchedulingWorker } from './services/scheduler.js';
 
 const settingsCache = new Map();
 const campaignsCache = new Map();

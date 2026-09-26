@@ -22,8 +22,10 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const router = express.Router();
 
+const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_insta_agent_key_123';
+
 const signToken = (userId) =>
-  jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '30d' });
+  jwt.sign({ userId }, JWT_SECRET, { expiresIn: '30d' });
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const isStrongPassword = (pw) => pw && pw.length >= 8;
