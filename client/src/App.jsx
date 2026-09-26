@@ -804,7 +804,7 @@ function MainLayout() {
             </div>
           }>
             <Routes>
-              <Route path="/" element={user ? <Navigate to="/connections" /> : <Landing />} />
+              <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
               <Route path="/public-home" element={<Landing />} />
               <Route path="/feature/comment-to-dm" element={<CommentToDM />} />
               <Route path="/feature/grow-followers" element={<GrowFollowers />} />
@@ -817,7 +817,7 @@ function MainLayout() {
               <Route path="/autoops/:platform" element={<ProtectedRoute><PlatformAutoOps /></ProtectedRoute>} />
               <Route path="/platform/:platformId" element={<ProtectedRoute><PlatformDashboard /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/onboarding" element={<Navigate to="/connections" replace />} />
+              <Route path="/onboarding" element={<Navigate to="/dashboard" replace />} />
               <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
               <Route path="/super-admin" element={<Navigate to="/super-admin/dashboard" replace />} />
               <Route path="/super-admin/:tab" element={<ProtectedRoute><SuperAdminLayout /></ProtectedRoute>} />
@@ -842,8 +842,8 @@ function MainLayout() {
               <Route path="/flow-builder/:id" element={<ProtectedRoute><FlowBuilder /></ProtectedRoute>} />
               <Route path="/refer" element={<ProtectedRoute><Referral /></ProtectedRoute>} />
               <Route path="/setup" element={<ProtectedRoute><Setup /></ProtectedRoute>} />
-              <Route path="/login" element={user ? <Navigate to="/connections" /> : <Login />} />
-              <Route path="/signup" element={user ? <Navigate to="/connections" /> : <Signup />} />
+              <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+              <Route path="/signup" element={user ? <Navigate to="/dashboard" /> : <Signup />} />
               <Route path="/help" element={<HelpCenter />} />
               <Route path="/about" element={<About />} />
               <Route path="/resources" element={<Resources />} />

@@ -89,11 +89,7 @@ export default function Signup() {
       
       if (res.ok) {
         login(data.user, data.token);
-        if (data.apiKey) {
-          navigate('/setup', { state: { apiKey: data.apiKey } });
-        } else {
-          navigate('/connections');
-        }
+        navigate('/dashboard');
       } else {
         setError(data.message || data.error || 'Signup failed. Please try again.');
       }
@@ -163,11 +159,7 @@ export default function Signup() {
       const data = await res.json();
       if (res.ok) {
         login(data.user, data.token);
-        if (data.apiKey) {
-          navigate('/setup', { state: { apiKey: data.apiKey } });
-        } else {
-          navigate('/connections');
-        }
+        navigate('/dashboard');
       } else {
         setError(data.message || 'Google login failed');
       }
@@ -211,11 +203,7 @@ export default function Signup() {
       const data = await res.json();
       if (res.ok) {
         login(data.user, data.token);
-        if (data.apiKey) {
-          navigate('/setup', { state: { apiKey: data.apiKey } });
-        } else {
-          navigate('/connections');
-        }
+        navigate('/dashboard');
       } else {
         setError(data.message || 'Facebook login failed');
       }
