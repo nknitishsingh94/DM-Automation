@@ -300,48 +300,48 @@ export default function Landing() {
         {/* Balanced 4-Column Grid Layout */}
         <div className="landing-features" style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '20px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gap: '24px',
           width: '100%',
           maxWidth: '1100px'
         }}>
-          <div className="feature-card">
+          <Link to="/signup" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
             <div className="feature-icon feature-icon-purple">
-              <Zap size={24} />
+              <Zap size={28} />
             </div>
             <div className="feature-text">
-              <h3 style={{ fontSize: '1rem', fontWeight: '800' }}>Instantly Active</h3>
-              <p style={{ fontSize: '0.85rem' }}>Zero wait time setup</p>
-            </div>
-          </div>
-
-          <div className="feature-card">
-            <div className="feature-icon feature-icon-dark">
-              <Bot size={24} />
-            </div>
-            <div className="feature-text">
-              <h3 style={{ fontSize: '1rem', fontWeight: '800' }}>Multi-Platform</h3>
-              <p style={{ fontSize: '0.85rem' }}>IG, FB & WhatsApp</p>
-            </div>
-          </div>
-
-          <Link to="/features/universal-triggers" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
-            <div className="feature-icon" style={{ background: 'rgba(14, 165, 233, 0.1)', color: '#0ea5e9' }}>
-              <Globe size={24} />
-            </div>
-            <div className="feature-text">
-              <h3 style={{ fontSize: '1rem', fontWeight: '800' }}>Universal Triggers</h3>
-              <p style={{ fontSize: '0.85rem' }}>One keyword, all channels</p>
+              <h2 style={{ fontSize: '1.125rem', fontWeight: '700', margin: '0 0 6px 0', color: 'var(--text-main)' }}>Instantly Active</h2>
+              <p style={{ fontSize: '0.95rem', margin: 0, color: 'var(--text-muted)' }}>Zero wait time setup</p>
             </div>
           </Link>
 
-          <Link to="/features/scheduling" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
-            <div className="feature-icon" style={{ background: 'rgba(124, 58, 237, 0.1)', color: 'var(--accent-color)' }}>
-              <Clock size={24} />
+          <Link to="/connections" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
+            <div className="feature-icon feature-icon-dark">
+              <Bot size={28} />
             </div>
             <div className="feature-text">
-              <h3 style={{ fontSize: '1rem', fontWeight: '800' }}>AI Scheduling</h3>
-              <p style={{ fontSize: '0.85rem' }}>Post + Auto DM</p>
+              <h2 style={{ fontSize: '1.125rem', fontWeight: '700', margin: '0 0 6px 0', color: 'var(--text-main)' }}>Multi-Platform</h2>
+              <p style={{ fontSize: '0.95rem', margin: 0, color: 'var(--text-muted)' }}>IG, FB & WhatsApp</p>
+            </div>
+          </Link>
+
+          <Link to="/features/universal-triggers" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
+            <div className="feature-icon" style={{ background: 'rgba(14, 165, 233, 0.1)', color: '#0ea5e9' }}>
+              <Globe size={28} />
+            </div>
+            <div className="feature-text">
+              <h2 style={{ fontSize: '1.125rem', fontWeight: '700', margin: '0 0 6px 0', color: 'var(--text-main)' }}>Universal Triggers</h2>
+              <p style={{ fontSize: '0.95rem', margin: 0, color: 'var(--text-muted)' }}>One keyword, all channels</p>
+            </div>
+          </Link>
+
+          <Link to="/features/scheduling" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
+            <div className="feature-icon" style={{ background: 'rgba(124, 58, 237, 0.1)', color: 'var(--accent-color)' }}>
+              <Clock size={28} />
+            </div>
+            <div className="feature-text">
+              <h2 style={{ fontSize: '1.125rem', fontWeight: '700', margin: '0 0 6px 0', color: 'var(--text-main)' }}>AI Scheduling</h2>
+              <p style={{ fontSize: '0.95rem', margin: 0, color: 'var(--text-muted)' }}>Post + Auto DM</p>
             </div>
           </Link>
         </div>
@@ -349,7 +349,7 @@ export default function Landing() {
         {/* Feature Breakdown Rows */}
         <div className="feature-breakdown-section" style={{ marginTop: '60px' }}>
           <div className="feature-focus-header">
-            <span className="feature-focus-label">Core Capabilities</span>
+            <span className="feature-focus-label" style={{ textTransform: 'none', letterSpacing: 'normal' }}>Core Capabilities</span>
             <h2>Turn Engagement Into Revenue</h2>
             <p className="feature-focus-description">
               Stop losing leads to slow response times. Let smart100X handle every interaction seamlessly, converting your audience while you sleep.
@@ -809,19 +809,16 @@ export default function Landing() {
                   </ul>
                 </div>
               </div>
-              <div style={{ marginTop: 'auto', paddingTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ marginTop: 'auto', paddingTop: '20px' }}>
                 <a 
                   href={`https://api.whatsapp.com/send?phone=918795919866&text=${encodeURIComponent("Hello Founder! I am interested in the Enterprise Plan ($99/mo) for my agency/brand. Please assist me with onboarding and white-labeling setup.")}`}
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="pricing-btn solid-btn"
-                  style={{ display: 'block', textDecoration: 'none', textAlign: 'center', background: '#25D366', borderColor: '#25D366', color: 'white', padding: '14px', borderRadius: '12px' }}
+                  style={{ display: 'block', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '14px', borderRadius: '12px', background: '#8b5cf6', color: 'white' }}
                 >
-                  Contact Sales (WhatsApp)
+                  Contact Sales
                 </a>
-                <Link to="/signup?plan=enterprise" className="pricing-btn outline-btn" style={{ display: 'block', textAlign: 'center', padding: '12px', borderRadius: '12px' }}>
-                  Sign Up for Enterprise
-                </Link>
               </div>
             </div>
 
