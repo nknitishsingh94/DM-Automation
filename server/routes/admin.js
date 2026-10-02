@@ -55,25 +55,25 @@ router.get('/pricing', async (req, res) => {
   }
 });
 
-// Protect all admin routes
-router.use(verifyToken);
-
-// GET /api/admin/global-platforms (Available to all verified users)
+// GET /api/admin/global-platforms (Publicly accessible to read enabled platforms)
 router.get('/global-platforms', async (req, res) => {
   try {
     const config = await GlobalConfig.findOne({ key: 'platforms' });
     if (config && config.value) {
       return res.json(config.value);
     }
-      return res.json({
-        instagram: true, facebook: true, youtube: true, linkedin: true,
-        twitter: true, googleBusiness: true, pinterest: true, threads: true, whatsapp: true
-      });
+    return res.json({
+      instagram: true, facebook: true, youtube: true, linkedin: true,
+      twitter: true, googleBusiness: true, pinterest: true, threads: true, whatsapp: true
+    });
   } catch (error) {
     console.error('Error fetching global platforms:', error);
     res.status(500).json({ message: 'Error fetching platform config' });
   }
 });
+
+// Protect all admin routes
+router.use(verifyToken);
 
 router.use(isSuperAdmin);
 
