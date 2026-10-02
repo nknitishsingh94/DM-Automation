@@ -3060,6 +3060,247 @@ tr:hover {
   transition: all 0.2s;
 }
 
+/* =========================================================
+   FEEDBACK & LANDING PAGE MOBILE RESPONSIVE FIXES (ANDROID / MOBILE)
+   ========================================================= */
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  align-items: stretch;
+}
+
+@media (max-width: 768px) {
+  /* Feedback Zone */
+  .feedback-zone {
+    padding: 48px 16px !important;
+  }
+
+  .feedback-top {
+    margin-bottom: 28px !important;
+  }
+
+  .feedback-top h2 {
+    font-size: 1.85rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .feedback-top p {
+    font-size: 0.95rem !important;
+  }
+
+  /* Feedback Metrics Bar Fix (Prevents Overlap) */
+  .feedback-metrics {
+    flex-direction: column !important;
+    gap: 20px !important;
+    padding: 20px 16px !important;
+    border-radius: 20px !important;
+    margin-bottom: 32px !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .stats-group {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .stat-item {
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .stat-number {
+    font-size: 1.35rem !important;
+    justify-content: center !important;
+  }
+
+  .stat-label {
+    font-size: 0.72rem !important;
+    text-align: center !important;
+    white-space: normal !important;
+  }
+
+  .add-feedback-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 12px 20px !important;
+    font-size: 0.9rem !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Feedback Cards Grid */
+  .feedback-layout {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    margin-bottom: 30px !important;
+  }
+
+  .feedback-item {
+    padding: 20px 16px !important;
+    border-radius: 20px !important;
+  }
+
+  .feedback-msg {
+    font-size: 0.95rem !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* Write Review Modal Mobile Overlay */
+  .write-review-modal-overlay {
+    padding: 12px !important;
+    align-items: flex-end !important;
+  }
+
+  .write-review-modal {
+    max-height: 85vh !important;
+    border-radius: 24px 24px 20px 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .modal-header {
+    padding: 18px 20px 12px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .modal-header h3 {
+    font-size: 1.15rem !important;
+  }
+
+  .modal-form-content {
+    padding: 16px 20px 24px !important;
+    flex: 1 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    max-height: calc(85vh - 70px) !important;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .platform-selector {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .platform-box {
+    padding: 8px 4px !important;
+    font-size: 0.75rem !important;
+    border-radius: 10px !important;
+  }
+
+  /* Landing Page Header */
+  .landing-header {
+    width: 92% !important;
+    top: 10px !important;
+    padding: 8px 16px !important;
+  }
+
+  .logo-text {
+    font-size: 1.1rem !important;
+  }
+
+  .header-actions {
+    gap: 6px !important;
+  }
+
+  .header-login {
+    font-size: 0.8rem !important;
+  }
+
+  .header-signup {
+    padding: 8px 12px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    padding: 120px 16px 48px !important;
+  }
+
+  .landing-headline {
+    font-size: 1.9rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .landing-sub {
+    font-size: 0.95rem !important;
+    margin-bottom: 24px !important;
+  }
+
+  .landing-cta {
+    padding: 14px 28px !important;
+    font-size: 1rem !important;
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Pricing Grid */
+  .pricing-section {
+    padding: 48px 16px 60px !important;
+  }
+
+  .pricing-heading {
+    margin-bottom: 40px !important;
+  }
+
+  .pricing-heading h2 {
+    font-size: 1.85rem !important;
+  }
+
+  .pricing-heading p {
+    font-size: 0.95rem !important;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .pricing-card {
+    padding: 24px 20px !important;
+    border-radius: 20px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-group {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .stat-number {
+    font-size: 1.15rem !important;
+    gap: 2px !important;
+  }
+
+  .stat-label {
+    font-size: 0.68rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .hero-section {
+    padding: 110px 12px 40px !important;
+  }
+
+  .landing-headline {
+    font-size: 1.7rem !important;
+  }
+}
+
 .success-done-btn:hover {
   background: #7c3aed;
   transform: translateY(-1px);

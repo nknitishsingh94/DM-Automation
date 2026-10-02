@@ -446,7 +446,7 @@ export default function Landing() {
           </div>
 
           {/* Reviews Grid */}
-          <div className="feedback-layout" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+          <div className="feedback-layout">
             {reviews.slice(0, 4).map((review) => (
               <div key={review.id || review._id || Math.random()} className="feedback-item">
                 <div className="feedback-item-top">
@@ -730,7 +730,7 @@ export default function Landing() {
             <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Choose the plan that's right for your business. No hidden fees.</p>
           </div>
 
-          <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', alignItems: 'stretch' }}>
+          <div className="pricing-grid">
             
             {/* Starter Plan Card */}
             <div className="pricing-card" style={{
