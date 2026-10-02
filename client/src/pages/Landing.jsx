@@ -68,10 +68,10 @@ export default function Landing() {
     fetch(`${API_BASE_URL}/api/admin/pricing`)
       .then(res => res.json())
       .then(data => {
-        if (data.pro_price) {
-          setPricing({ pro_price: data.pro_price, enterprise_price: data.enterprise_price || 99 });
-        } else if (data.pro && data.pro.price) {
-          setPricing({ pro_price: data.pro.price, enterprise_price: data.enterprise?.price || 99 });
+        if (data) {
+          const proVal = data.pro_price !== undefined ? data.pro_price : (data.pro?.price ?? 29);
+          const entVal = data.enterprise_price !== undefined ? data.enterprise_price : (data.enterprise?.price ?? 99);
+          setPricing({ pro_price: Number(proVal), enterprise_price: Number(entVal) });
         }
       })
       .catch(console.error);
