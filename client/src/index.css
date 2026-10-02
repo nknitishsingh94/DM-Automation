@@ -3313,42 +3313,7 @@ tr:hover {
   to { transform: translateY(-8px); }
 }
 
-/* Responsiveness for Reviews */
-@media (max-width: 768px) {
-  .feedback-zone {
-    padding: 60px 16px;
-  }
-  .feedback-top h2 {
-    font-size: 2.25rem;
-  }
-  .feedback-metrics {
-    flex-direction: column;
-    gap: 24px;
-    padding: 24px;
-    align-items: center;
-    text-align: center;
-  }
-  .stats-group {
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-  }
-  .stat-item {
-    align-items: center;
-  }
-  .add-feedback-btn {
-    width: 100%;
-    justify-content: center;
-  }
-  .feedback-layout {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-}
+
 
 /* ============================================================
    COMPREHENSIVE MOBILE RESPONSIVENESS FIX
