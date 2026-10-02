@@ -270,10 +270,10 @@ export default function Landing() {
         </div>
       </header>
 
-      {/* Hero Section with Enhanced Gradient Overlay for High Contrast */}
+      {/* Hero Section with Enhanced Glassmorphic Dark Overlay for High Contrast */}
       <div className="hero-section" style={{
         position: 'relative',
-        background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.7) 0%, rgba(15, 23, 42, 0.5) 100%), url("/hero-bg.jpg")',
+        background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 27, 75, 0.88) 60%, rgba(15, 23, 42, 0.95) 100%), url("/hero-bg.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}>
@@ -298,14 +298,8 @@ export default function Landing() {
       <section id="features" className="features-section">
         
         {/* Balanced 4-Column Grid Layout */}
-        <div className="landing-features" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: '24px',
-          width: '100%',
-          maxWidth: '1100px'
-        }}>
-          <Link to="/signup" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
+        <div className="landing-features">
+          <Link to="/signup" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
             <div className="feature-icon feature-icon-purple">
               <Zap size={28} />
             </div>
@@ -315,7 +309,7 @@ export default function Landing() {
             </div>
           </Link>
 
-          <Link to="/connections" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
+          <Link to="/connections" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
             <div className="feature-icon feature-icon-dark">
               <Bot size={28} />
             </div>
@@ -325,7 +319,7 @@ export default function Landing() {
             </div>
           </Link>
 
-          <Link to="/features/universal-triggers" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
+          <Link to="/features/universal-triggers" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
             <div className="feature-icon" style={{ background: 'rgba(14, 165, 233, 0.1)', color: '#0ea5e9' }}>
               <Globe size={28} />
             </div>
@@ -335,7 +329,7 @@ export default function Landing() {
             </div>
           </Link>
 
-          <Link to="/features/scheduling" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
+          <Link to="/features/scheduling" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
             <div className="feature-icon" style={{ background: 'rgba(124, 58, 237, 0.1)', color: 'var(--accent-color)' }}>
               <Clock size={28} />
             </div>
