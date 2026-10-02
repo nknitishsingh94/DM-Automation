@@ -29,7 +29,10 @@ export function AuthProvider({ children }) {
     fetch(`${API_BASE_URL}/api/admin/global-platforms`, {
       headers: token ? { 'Authorization': `Bearer ${token}` } : {}
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) return null;
+        return res.json();
+      })
       .then(data => {
         if (data) setGlobalPlatforms(data);
       })
