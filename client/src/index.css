@@ -1555,7 +1555,6 @@ tr:hover {
   .pro-card {
     grid-column: span 2;
     transform: scale(1);
-    order: -1;
   }
   .pro-card:hover {
     transform: translateY(-10px);
@@ -3204,7 +3203,6 @@ tr:hover {
   .pro-card {
     grid-column: span 1 !important;
     transform: scale(1) !important;
-    order: -1;
   }
   .pricing-card {
     padding: 24px !important;
