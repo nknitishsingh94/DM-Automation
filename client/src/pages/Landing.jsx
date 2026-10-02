@@ -24,7 +24,7 @@ const defaultReviews = [
     handle: '@sarah_creative',
     role: 'E-commerce Founder',
     rating: 5,
-    text: 'smart100X transformed our Instagram DMs into our #1 sales channel! Auto-replying to reel comments generated over $14k in our first month alone.',
+    text: 'Smart100X transformed our Instagram DMs into our #1 sales channel! Auto-replying to reel comments generated over $14k in our first month alone.',
     platform: 'instagram',
     verified: true
   },
@@ -44,7 +44,7 @@ const defaultReviews = [
     handle: '@vancemedia',
     role: 'Growth Agency Director',
     rating: 5,
-    text: 'Managing 8 client accounts used to take hours. Now with smart100X Enterprise, universal triggers automate everything across IG and WhatsApp seamlessly.',
+    text: 'Managing 8 client accounts used to take hours. Now with Smart100X Enterprise, universal triggers automate everything across IG and WhatsApp seamlessly.',
     platform: 'whatsapp',
     verified: true
   },
@@ -160,8 +160,8 @@ export default function Landing() {
         <div className="header-content">
           <div className="header-left">
             <div className="header-logo">
-              <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="smart10X Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
-              <span className="logo-text">smart10X</span>
+              <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="Smart100X Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
+              <span className="logo-text">Smart100X</span>
             </div>
             <div className="header-divider"></div>
             <nav className="header-nav">
@@ -331,7 +331,7 @@ export default function Landing() {
             <span className="feature-focus-label">Core Capabilities</span>
             <h2>Turn Engagement Into Revenue</h2>
             <p className="feature-focus-description">
-              Stop losing leads to slow response times. Let smart10X handle every interaction seamlessly, converting your audience while you sleep.
+              Stop losing leads to slow response times. Let Smart100X handle every interaction seamlessly, converting your audience while you sleep.
             </p>
           </div>
 
@@ -400,7 +400,7 @@ export default function Landing() {
             </span>
             <h2>Loved by <span>1,200+ Creators</span> & Brands</h2>
             <p>
-              See how creators, coaches, and businesses use smart10X to automate their DMs, multiply their engagement, and scale sales.
+              See how creators, coaches, and businesses use Smart100X to automate their DMs, multiply their engagement, and scale sales.
             </p>
           </div>
 
@@ -528,7 +528,7 @@ export default function Landing() {
         <div className="write-review-modal-overlay" onClick={() => { if(!submitting) { setModalOpen(false); setSuccess(false); } }}>
           <div className="write-review-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Share Your smart10X Experience</h3>
+              <h3>Share Your Smart100X Experience</h3>
               <button 
                 className="modal-close-btn" 
                 onClick={() => { setModalOpen(false); setSuccess(false); }}
@@ -550,7 +550,7 @@ export default function Landing() {
                   setSubmitting(true);
 
                   const formattedHandle = newReview.handle ? (newReview.handle.startsWith('@') ? newReview.handle : '@' + newReview.handle) : '@' + newReview.name.toLowerCase().replace(/\s+/g, '');
-                  const formattedRole = newReview.role || 'smart10X Creator';
+                  const formattedRole = newReview.role || 'Smart100X Creator';
 
                   fetch(`${API_BASE_URL}/api/user-feedback`, {
                     method: 'POST',
@@ -715,7 +715,7 @@ export default function Landing() {
                     id="rev-text"
                     rows="4"
                     className="form-input"
-                    placeholder="Tell other creators about your success using smart10X..."
+                    placeholder="Tell other creators about your success using Smart100X..."
                     value={newReview.text}
                     onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
                     style={{ resize: 'vertical', minHeight: '100px' }}
