@@ -8,6 +8,10 @@ export default defineConfig({
     viteCompression({
       algorithm: 'brotliCompress',
       ext: '.br',
+    }),
+    viteCompression({
+      algorithm: 'gzip',
+      ext: '.gz',
     })
   ],
   server: {
@@ -17,9 +21,12 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['lucide-react']
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('lucide-react')) return 'icons';
+            if (id.includes('react')) return 'vendor';
+            return 'libs';
+          }
         }
       }
     },

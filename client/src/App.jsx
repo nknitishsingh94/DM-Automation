@@ -9,12 +9,8 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import CookieBanner from './components/CookieBanner';
-import UniversalTriggers from './pages/UniversalTriggers';
-import SuperAdminLayout from './pages/SuperAdmin/SuperAdminLayout';
 
-import CommentToDM from './pages/features/CommentToDM';
-import GrowFollowers from './pages/features/GrowFollowers';
-import NeverMissComment from './pages/features/NeverMissComment';const lazyRetry = (componentImport) => {
+const lazyRetry = (componentImport) => {
   return lazy(async () => {
     const pageHasAlreadyBeenForceRefreshed = JSON.parse(
       window.sessionStorage.getItem('page-has-been-force-refreshed') || 'false'
@@ -33,10 +29,16 @@ import NeverMissComment from './pages/features/NeverMissComment';const lazyRetry
   });
 };
 
-import Dashboard from './pages/Dashboard';
-import Inbox from './pages/Inbox';
-import Connections from './pages/Connections';
-import Campaigns from './pages/Campaigns';
+const UniversalTriggers = lazyRetry(() => import('./pages/UniversalTriggers'));
+const SuperAdminLayout = lazyRetry(() => import('./pages/SuperAdmin/SuperAdminLayout'));
+const CommentToDM = lazyRetry(() => import('./pages/features/CommentToDM'));
+const GrowFollowers = lazyRetry(() => import('./pages/features/GrowFollowers'));
+const NeverMissComment = lazyRetry(() => import('./pages/features/NeverMissComment'));
+
+const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
+const Inbox = lazyRetry(() => import('./pages/Inbox'));
+const Connections = lazyRetry(() => import('./pages/Connections'));
+const Campaigns = lazyRetry(() => import('./pages/Campaigns'));
 
 const SettingsPage = lazyRetry(() => import('./pages/Settings'));
 const Profile = lazyRetry(() => import('./pages/Profile'));
