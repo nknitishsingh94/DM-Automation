@@ -1,3 +1,4 @@
+
 const getSafeImageUrl = (url) => {
   if (!url || typeof url !== 'string') return url;
   if (url.includes('cdninstagram.com') || url.includes('scontent-') || url.includes('fbcdn.net')) {
@@ -8,7 +9,6 @@ const getSafeImageUrl = (url) => {
   }
   return url;
 };
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Bot, Zap, Facebook, Instagram, Youtube, Linkedin, MessageCircle, Infinity, Heart, Check, MessageSquare, Clock, Calendar, Globe, Image, Radio, Star, Sparkles } from 'lucide-react';
@@ -136,7 +136,7 @@ export default function Landing() {
         }
       }
     } catch (err) {
-      console.error("Failed to load reviews from API, using default reviews:", err);
+      console.error("Failed to load reviews from API:", err);
     }
   };
 
@@ -156,18 +156,14 @@ export default function Landing() {
 
   return (
     <div className="landing-container">
-      {/* Navigation Header */}
       <header className="landing-header">
         <div className="header-content">
           <div className="header-left">
             <div className="header-logo">
-              <img referrerPolicy="no-referrer" src="/smart100x-logo.png" alt="smart100X Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
-              <span className="logo-text">smart100X</span>
+              <img referrerPolicy="no-referrer" src="/zenxchat-logo.png" alt="smart10X Logo" className="header-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
+              <span className="logo-text">smart10X</span>
             </div>
-            
-            {/* Optically Centered Header Divider */}
-            <div className="header-divider" style={{ width: '1px', height: '24px', background: 'var(--border-subtle)', margin: '0 20px' }}></div>
-            
+            <div className="header-divider"></div>
             <nav className="header-nav">
               <Link to="/about">About</Link>
 
@@ -194,65 +190,66 @@ export default function Landing() {
                       background: 'var(--bg-card)', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
                       border: '1px solid var(--border-subtle)', padding: '24px', width: '560px'
                     }}>
+                      {/* Arrow */}
                       <div style={{ position: 'absolute', top: '5px', left: '50%', transform: 'translateX(-50%)', width: '14px', height: '14px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderBottom: 'none', borderRight: 'none', rotate: '45deg', zIndex: 1 }} />
 
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0' }}>
-                        {/* Core Features Column */}
-                        <div style={{ paddingRight: '24px' }}>
-                          <p style={{ fontSize: '0.75rem', fontWeight: '800', color: '#8b5cf6', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Core Features</p>
-                          {[
-                            { icon: <MessageCircle size={18} color="#64748b" />, title: 'Comment Automation', desc: 'Auto-reply to comments with DMs', link: '/campaigns' },
-                            { icon: <Zap size={18} color="#64748b" />, title: 'DM Automation', desc: 'Visual flow builder for conversations', link: '/campaigns' },
-                            { icon: <Clock size={18} color="#64748b" />, title: 'Follow-up Messages', desc: 'Automated nurture sequences', link: '/campaigns' },
-                            { icon: <Calendar size={18} color="#64748b" />, title: 'Schedule with AutoDM', desc: 'Post + automation together', link: '/features/scheduling' },
-                          ].map((item, i) => (
-                            <Link key={i} to={item.link} onClick={(e) => { if(item.link === '#features') { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); } else { setFeaturesOpen(false); } }}
-                              style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: 'inherit' }}
-                              onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-color)'}
-                              onMouseLeave={e => e.currentTarget.style.color = 'inherit'}
-                            >
-                              <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
-                              <div>
-                                <p style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 2px 0' }}>{item.title}</p>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>{item.desc}</p>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-
-                        {/* Advanced Column */}
-                        <div style={{ paddingLeft: '24px' }}>
-                          <p style={{ fontSize: '0.75rem', fontWeight: '800', color: '#0ea5e9', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Advanced</p>
-                          {[
-                            { icon: <Globe size={18} color="#64748b" />, title: 'Universal Triggers', desc: 'One keyword, all channels', link: '/features/universal-triggers' },
-                            { icon: <Bot size={18} color="#64748b" />, title: 'Facebook Automation', desc: 'Sync to Facebook instantly', link: '/settings' },
-                            { icon: <Image size={18} color="#64748b" />, title: 'Story Replies', desc: 'Automate story interactions', link: '/campaigns' },
-                            { icon: <Radio size={18} color="#64748b" />, title: 'Live Comment Auto DM', desc: 'DM viewers during lives', link: '/campaigns' },
-                          ].map((item, i) => (
-                            <Link key={i} to={item.link} onClick={(e) => { if(item.link === '#features') { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); } else { setFeaturesOpen(false); } }}
-                              style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: 'inherit' }}
-                              onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-color)'}
-                              onMouseLeave={e => e.currentTarget.style.color = 'inherit'}
-                            >
-                              <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
-                              <div>
-                                <p style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 2px 0' }}>{item.title}</p>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>{item.desc}</p>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0' }}>
+                      {/* Core Features Column */}
+                      <div style={{ paddingRight: '24px' }}>
+                        <p style={{ fontSize: '11px', fontWeight: '800', color: '#8b5cf6', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Core Features</p>
+                        {[
+                          { icon: <MessageCircle size={18} color="#64748b" />, title: 'Comment Automation', desc: 'Auto-reply to comments with DMs', link: '/campaigns' },
+                          { icon: <Zap size={18} color="#64748b" />, title: 'DM Automation', desc: 'Visual flow builder for conversations', link: '/campaigns' },
+                          { icon: <Clock size={18} color="#64748b" />, title: 'Follow-up Messages', desc: 'Automated nurture sequences', link: '/campaigns' },
+                          { icon: <Calendar size={18} color="#64748b" />, title: 'Schedule with AutoDM', desc: 'Post + automation together', link: '/features/scheduling' },
+                        ].map((item, i) => (
+                          <Link key={i} to={item.link} onClick={(e) => { if(item.link === '#features') { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); } else { setFeaturesOpen(false); } }}
+                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: 'inherit' }}
+                            onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-color)'}
+                            onMouseLeave={e => e.currentTarget.style.color = 'inherit'}
+                          >
+                            <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
+                            <div>
+                              <p style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 2px 0' }}>{item.title}</p>
+                              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>{item.desc}</p>
+                            </div>
+                          </Link>
+                        ))}
                       </div>
 
-                      {/* View All Features CTA */}
-                      <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', textAlign: 'right' }}>
-                        <a href="#features" onClick={(e) => { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }}
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.8125rem', fontWeight: '700', color: '#8b5cf6', textDecoration: 'none' }}>
-                          View All Features <ArrowRight size={14} />
-                        </a>
+                      {/* Advanced Column */}
+                      <div style={{ paddingLeft: '24px' }}>
+                        <p style={{ fontSize: '11px', fontWeight: '800', color: '#0ea5e9', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Advanced</p>
+                        {[
+                          { icon: <Globe size={18} color="#64748b" />, title: 'Universal Triggers', desc: 'One keyword, all channels', link: '/features/universal-triggers' },
+                          { icon: <Bot size={18} color="#64748b" />, title: 'Facebook Automation', desc: 'Sync to Facebook instantly', link: '/settings' },
+                          { icon: <Image size={18} color="#64748b" />, title: 'Story Replies', desc: 'Automate story interactions', link: '/campaigns' },
+                          { icon: <Radio size={18} color="#64748b" />, title: 'Live Comment Auto DM', desc: 'DM viewers during lives', link: '/campaigns' },
+                        ].map((item, i) => (
+                          <Link key={i} to={item.link} onClick={(e) => { if(item.link === '#features') { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); } else { setFeaturesOpen(false); } }}
+                            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 8px', borderRadius: '10px', textDecoration: 'none', transition: 'color 0.15s', marginBottom: '4px', cursor: 'pointer', color: 'inherit' }}
+                            onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-color)'}
+                            onMouseLeave={e => e.currentTarget.style.color = 'inherit'}
+                          >
+                            <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
+                            <div>
+                              <p style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 2px 0' }}>{item.title}</p>
+                              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>{item.desc}</p>
+                            </div>
+                          </Link>
+                        ))}
                       </div>
                     </div>
+
+                    {/* View All Features CTA */}
+                    <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', textAlign: 'right' }}>
+                      <a href="#features" onClick={(e) => { e.preventDefault(); setFeaturesOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '700', color: '#8b5cf6', textDecoration: 'none' }}>
+                        View All Features <ArrowRight size={14} />
+                      </a>
+                    </div>
                   </div>
+                </div>
                 )}
               </div>
 
@@ -263,26 +260,18 @@ export default function Landing() {
           </div>
           <div className="header-actions">
             <Link to="/login" className="header-login">Sign In</Link>
-            <Link to="/signup" className="header-signup" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              Get Started Free <ArrowRight size={16} />
-            </Link>
+            <Link to="/signup" className="header-signup">Start For Free</Link>
           </div>
         </div>
       </header>
 
-      {/* Hero Section with Enhanced Gradient Overlay for High Contrast */}
-      <div className="hero-section" style={{
-        position: 'relative',
-        background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.7) 0%, rgba(15, 23, 42, 0.5) 100%), url("/hero-bg.jpg")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}>
+      <div className="hero-section">
         <div className="landing-content">
-          <h1 className="landing-headline" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
+          <h1 className="landing-headline">
             Automate Your DMs.<br /> <span className="highlight-text">Multiply Your Sales.</span>
           </h1>
 
-          <p className="landing-sub" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
+          <p className="landing-sub">
             Deploy intelligent AI Agents that instantly reply to comments, engage followers 24/7, and convert conversations into loyal customers across Instagram, Facebook, and WhatsApp.
           </p>
 
@@ -294,65 +283,55 @@ export default function Landing() {
         </div>
       </div>
 
-      {/* Features & Core Capabilities Section */}
       <section id="features" className="features-section">
-        
-        {/* Balanced 4-Column Grid Layout */}
-        <div className="landing-features" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: '24px',
-          width: '100%',
-          maxWidth: '1100px'
-        }}>
-          <Link to="/signup" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
+        <div className="landing-features">
+          <div className="feature-card">
             <div className="feature-icon feature-icon-purple">
-              <Zap size={28} />
+              <Zap size={24} />
             </div>
             <div className="feature-text">
-              <h2 style={{ fontSize: '1.125rem', fontWeight: '700', margin: '0 0 6px 0', color: 'var(--text-main)' }}>Instantly Active</h2>
-              <p style={{ fontSize: '0.95rem', margin: 0, color: 'var(--text-muted)' }}>Zero wait time setup</p>
+              <h3>Instantly Active</h3>
+              <p>Zero wait time</p>
             </div>
-          </Link>
+          </div>
 
-          <Link to="/connections" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
+          <div className="feature-card">
             <div className="feature-icon feature-icon-dark">
-              <Bot size={28} />
+              <Bot size={24} />
             </div>
             <div className="feature-text">
-              <h2 style={{ fontSize: '1.125rem', fontWeight: '700', margin: '0 0 6px 0', color: 'var(--text-main)' }}>Multi-Platform</h2>
-              <p style={{ fontSize: '0.95rem', margin: 0, color: 'var(--text-muted)' }}>IG, FB & WhatsApp</p>
+              <h3>Multi-Platform</h3>
+              <p>IG, FB & WhatsApp</p>
             </div>
-          </Link>
+          </div>
 
-          <Link to="/features/universal-triggers" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
+          <Link to="/features/universal-triggers" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
             <div className="feature-icon" style={{ background: 'rgba(14, 165, 233, 0.1)', color: '#0ea5e9' }}>
-              <Globe size={28} />
+              <Globe size={24} />
             </div>
             <div className="feature-text">
-              <h2 style={{ fontSize: '1.125rem', fontWeight: '700', margin: '0 0 6px 0', color: 'var(--text-main)' }}>Universal Triggers</h2>
-              <p style={{ fontSize: '0.95rem', margin: 0, color: 'var(--text-muted)' }}>One keyword, all channels</p>
+              <h3>Universal Triggers</h3>
+              <p>One keyword, all channels</p>
             </div>
           </Link>
 
-          <Link to="/features/scheduling" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
+          <Link to="/features/scheduling" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
             <div className="feature-icon" style={{ background: 'rgba(124, 58, 237, 0.1)', color: 'var(--accent-color)' }}>
-              <Clock size={28} />
+              <Clock size={24} />
             </div>
             <div className="feature-text">
-              <h2 style={{ fontSize: '1.125rem', fontWeight: '700', margin: '0 0 6px 0', color: 'var(--text-main)' }}>AI Scheduling</h2>
-              <p style={{ fontSize: '0.95rem', margin: 0, color: 'var(--text-muted)' }}>Post + Auto DM</p>
+              <h3>AI Scheduling</h3>
+              <p>Post + Auto DM</p>
             </div>
           </Link>
         </div>
 
-        {/* Feature Breakdown Rows */}
-        <div className="feature-breakdown-section" style={{ marginTop: '60px' }}>
+        <div className="feature-breakdown-section">
           <div className="feature-focus-header">
-            <span className="feature-focus-label" style={{ textTransform: 'none', letterSpacing: 'normal' }}>Core Capabilities</span>
+            <span className="feature-focus-label">Core Capabilities</span>
             <h2>Turn Engagement Into Revenue</h2>
             <p className="feature-focus-description">
-              Stop losing leads to slow response times. Let smart100X handle every interaction seamlessly, converting your audience while you sleep.
+              Stop losing leads to slow response times. Let smart10X handle every interaction seamlessly, converting your audience while you sleep.
             </p>
           </div>
 
@@ -403,26 +382,29 @@ export default function Landing() {
               </p>
             </div>
           </div>
+
+
         </div>
+
 
       </section>
 
-      {/* ==================== REVIEWS / WALL OF LOVE SECTION ==================== */}
-      <section id="reviews" className="feedback-zone" style={{ padding: '80px 20px', borderTop: '1px solid var(--border-subtle)' }}>
+      {/* ==================== REVIEW SYSTEM SECTION ==================== */}
+      <section id="reviews" className="feedback-zone">
         <div className="feedback-wrap">
           
           {/* Header */}
           <div className="feedback-top">
-            <span className="feedback-label" style={{ textTransform: 'capitalize' }}>
+            <span className="feedback-label">
               <Sparkles size={14} style={{ marginRight: '4px' }} /> Wall of Love
             </span>
             <h2>Loved by <span>1,200+ Creators</span> & Brands</h2>
             <p>
-              See how creators, coaches, and businesses use smart100X to automate their DMs, multiply their engagement, and scale sales.
+              See how creators, coaches, and businesses use smart10X to automate their DMs, multiply their engagement, and scale sales.
             </p>
           </div>
 
-          {/* Stats Bar & Write a Review CTA */}
+          {/* Stats Bar */}
           <div className="feedback-metrics">
             <div className="stats-group">
               <div className="stat-item">
@@ -440,77 +422,99 @@ export default function Landing() {
                 <div className="stat-label">Response Accuracy</div>
               </div>
             </div>
-            <button className="add-feedback-btn" onClick={() => setModalOpen(true)} style={{ textDecoration: 'none', border: 'none' }}>
+            <Link className="add-feedback-btn" to="/write-review" style={{ textDecoration: 'none' }}>
               <MessageSquare size={18} /> Write a Review
-            </button>
+            </Link>
           </div>
 
           {/* Reviews Grid */}
-          <div className="feedback-layout" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-            {reviews.slice(0, 4).map((review) => (
-              <div key={review.id || review._id || Math.random()} className="feedback-item">
-                <div className="feedback-item-top">
-                  <div className="feedback-rating">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        size={16}
-                        fill={i < (review.rating || 5) ? "#fbbf24" : "none"}
-                        stroke={i < (review.rating || 5) ? "none" : "#fbbf24"}
-                      />
-                    ))}
+          {reviewsLoading ? (
+            <LoadingSpinner minHeight="150px" size={36} />
+          ) : reviews.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+              <p>No reviews yet. Be the first to share your experience!</p>
+            </div>
+          ) : (
+            <div className="feedback-layout">
+              {reviews.slice(0, 4).map((review) => (
+                <div key={review.id || review._id || Math.random()} className="feedback-item">
+                  <div className="feedback-item-top">
+                    <div className="feedback-rating">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          size={16}
+                          fill={i < review.rating ? "#fbbf24" : "none"}
+                          stroke={i < review.rating ? "none" : "#fbbf24"}
+                        />
+                      ))}
+                    </div>
+                    <span className={`platform-badge ${review.platform}`}>
+                      {review.platform === 'instagram' && <Instagram size={12} style={{ marginRight: '4px' }} />}
+                      {review.platform === 'facebook' && <Facebook size={12} style={{ marginRight: '4px' }} />}
+                      {review.platform === 'whatsapp' && <MessageCircle size={12} style={{ marginRight: '4px' }} />}
+                      {review.platform}
+                    </span>
                   </div>
-                  <span className={`platform-badge ${review.platform || 'instagram'}`}>
-                    {review.platform === 'instagram' && <Instagram size={12} style={{ marginRight: '4px' }} />}
-                    {review.platform === 'facebook' && <Facebook size={12} style={{ marginRight: '4px' }} />}
-                    {review.platform === 'whatsapp' && <MessageCircle size={12} style={{ marginRight: '4px' }} />}
-                    {review.platform || 'instagram'}
-                  </span>
+                  
+                  <p className="feedback-msg">"{review.text}"</p>
+                  
+                  <div className="feedback-author">
+                    <div className="feedback-user-img">
+                      {review.avatarUrl ? (
+                        <img referrerPolicy="no-referrer" src={getSafeImageUrl(review.avatarUrl)} alt={review.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                      ) : (
+                        <div className="feedback-user-initial">
+                          {(review.name || 'User').split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase()}
+                        </div>
+                      )}
+                      {review.verified && (
+                        <span className="verified-indicator" title="Verified Purchase">
+                          <Check size={10} strokeWidth={4} />
+                        </span>
+                      )}
+                    </div>
+                    <div className="feedback-user-info">
+                      <span className="feedback-user-name">{review.name}</span>
+                      <span className="feedback-user-tag">{review.handle}</span>
+                      <span className="feedback-user-job">{review.role}</span>
+                    </div>
+                  </div>
                 </div>
-                
-                <p className="feedback-msg">"{review.text}"</p>
-                
-                <div className="feedback-author">
-                  <div className="feedback-user-img">
-                    {review.avatarUrl ? (
-                      <img referrerPolicy="no-referrer" src={getSafeImageUrl(review.avatarUrl)} alt={review.name} style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '50%' }} />
-                    ) : (
-                      <div className="feedback-user-initial">
-                        {(review.name || 'User').split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase()}
-                      </div>
-                    )}
-                    {review.verified && (
-                      <span className="verified-indicator" title="Verified Creator">
-                        <Check size={10} strokeWidth={4} />
-                      </span>
-                    )}
-                  </div>
-                  <div className="feedback-user-info">
-                    <span className="feedback-user-name">{review.name}</span>
-                    <span className="feedback-user-tag">{review.handle}</span>
-                    <span className="feedback-user-job">{review.role}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* See All Reviews Button */}
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '40px' }}>
             <Link 
-              to="/all-reviews"
+              to="/reviews" 
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '14px 28px',
+                padding: '14px 32px',
                 borderRadius: '50px',
                 border: '2px solid #7c3aed',
                 color: 'var(--accent-color)',
                 fontWeight: '800',
                 fontSize: '1rem',
                 background: 'transparent',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.05)',
                 textDecoration: 'none'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(135deg, #7c3aed, #6d28d9)';
+                e.currentTarget.style.color = 'var(--bg-card)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(124, 58, 237, 0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.color = 'var(--accent-color)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.05)';
               }}
             >
               See all Reviews &rarr;
@@ -524,7 +528,7 @@ export default function Landing() {
         <div className="write-review-modal-overlay" onClick={() => { if(!submitting) { setModalOpen(false); setSuccess(false); } }}>
           <div className="write-review-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Share Your smart100X Experience</h3>
+              <h3>Share Your smart10X Experience</h3>
               <button 
                 className="modal-close-btn" 
                 onClick={() => { setModalOpen(false); setSuccess(false); }}
@@ -546,7 +550,7 @@ export default function Landing() {
                   setSubmitting(true);
 
                   const formattedHandle = newReview.handle ? (newReview.handle.startsWith('@') ? newReview.handle : '@' + newReview.handle) : '@' + newReview.name.toLowerCase().replace(/\s+/g, '');
-                  const formattedRole = newReview.role || 'smart100X Creator';
+                  const formattedRole = newReview.role || 'smart10X Creator';
 
                   fetch(`${API_BASE_URL}/api/user-feedback`, {
                     method: 'POST',
@@ -570,6 +574,15 @@ export default function Landing() {
                        setSuccess(true);
                        toast.success('Thank you! Your review was successfully saved.');
                        await fetchReviews();
+                       setNewReview({
+                         name: '',
+                         handle: '',
+                         role: '',
+                         rating: 5,
+                         text: '',
+                         platform: 'instagram',
+                         avatarUrl: ''
+                       });
                      } else {
                        throw new Error('Failed to save review');
                      }
@@ -652,6 +665,24 @@ export default function Landing() {
                   />
                 </div>
 
+                {/* Profile Picture Upload */}
+                <div className="form-group">
+                  <label className="form-label">Profile Picture (Optional)</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    {newReview.avatarUrl && (
+                      <img referrerPolicy="no-referrer" src={getSafeImageUrl(newReview.avatarUrl)} alt="Avatar Preview" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarUpload}
+                      disabled={uploadingAvatar}
+                      style={{ fontSize: '14px' }}
+                    />
+                    {uploadingAvatar && <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Uploading...</span>}
+                  </div>
+                </div>
+
                 {/* Platform select fields */}
                 <div className="form-group">
                   <label className="form-label">Which channel do you automate? *</label>
@@ -684,7 +715,7 @@ export default function Landing() {
                     id="rev-text"
                     rows="4"
                     className="form-input"
-                    placeholder="Tell other creators about your success using smart100X..."
+                    placeholder="Tell other creators about your success using smart10X..."
                     value={newReview.text}
                     onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
                     style={{ resize: 'vertical', minHeight: '100px' }}
@@ -709,6 +740,15 @@ export default function Landing() {
                   onClick={() => {
                     setModalOpen(false);
                     setSuccess(false);
+                    setNewReview({
+                      name: '',
+                      handle: '',
+                      role: '',
+                      rating: 5,
+                      text: '',
+                      platform: 'instagram',
+                      avatarUrl: ''
+                    });
                   }}
                 >
                   Close Window
@@ -719,109 +759,67 @@ export default function Landing() {
         </div>
       )}
 
-      {/* Global Toast Container */}
+      {/* Global Hot Toast Container */}
       <Toaster position="bottom-right" />
 
-      {/* ==================== PRICING SECTION ==================== */}
-      <section id="pricing" className="pricing-section" style={{ padding: '80px 20px', background: 'var(--bg-card)' }}>
-        <div className="pricing-container" style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div className="pricing-heading" style={{ textAlign: 'center', marginBottom: '50px' }}>
-            <h2 style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '12px' }}>Simple, Transparent Pricing</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Choose the plan that's right for your business. No hidden fees.</p>
+      <section id="pricing" className="pricing-section">
+        <div className="pricing-container">
+          <div className="pricing-heading">
+            <h2>Simple, transparent pricing</h2>
+            <p>Choose the plan that's right for your business. No hidden fees.</p>
           </div>
 
-          <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', alignItems: 'stretch' }}>
-            
-            {/* Starter Plan Card */}
-            <div className="pricing-card" style={{
-              background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px',
-              display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
-            }}>
-              <div>
-                <div className="card-header">
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)' }}>Starter</h3>
-                  <div className="price" style={{ fontSize: '2.5rem', fontWeight: '800', margin: '16px 0', color: 'var(--text-main)' }}><span>$</span>0<span>/mo</span></div>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Perfect for trying out the platform.</p>
-                </div>
-                <div className="card-features" style={{ margin: '24px 0' }}>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem' }}><Check size={18} color="#10b981" /> 100 Auto-Replies / month</li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem' }}><Check size={18} color="#10b981" /> Basic Flow Builder</li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem' }}><Check size={18} color="#10b981" /> Standard Support</li>
-                  </ul>
-                </div>
+          <div className="pricing-grid">
+            <div className="pricing-card">
+              <div className="card-header">
+                <h3>Starter</h3>
+                <div className="price"><span>$</span>0<span>/mo</span></div>
+                <p>Perfect for trying out the platform.</p>
               </div>
-              <div style={{ marginTop: 'auto', paddingTop: '20px' }}>
-                <Link to="/signup" className="pricing-btn outline-btn" style={{ display: 'block', textAlign: 'center', width: '100%', padding: '14px', borderRadius: '12px' }}>
-                  Get Started Free
-                </Link>
+              <div className="card-features">
+                <ul>
+                  <li><Check size={18} className="check-icon" /> 100 Auto-Replies / month</li>
+                  <li><Check size={18} className="check-icon" /> Basic Flow Builder</li>
+                  <li><Check size={18} className="check-icon" /> Standard Support</li>
+                </ul>
               </div>
+              <Link to="/signup" className="pricing-btn outline-btn">Get Started</Link>
             </div>
 
-            {/* Pro Plan Card */}
-            <div className="pricing-card pro-card" style={{
-              background: 'var(--bg-main)', border: '2px solid #a855f7', borderRadius: '24px', padding: '32px',
-              position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-              boxShadow: '0 20px 40px rgba(168, 85, 247, 0.15)'
-            }}>
-              <div className="pro-badge" style={{ position: 'absolute', top: '-14px', right: '24px', background: '#a855f7', color: 'white', padding: '4px 14px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '800' }}>
-                MOST POPULAR
+            <div className="pricing-card pro-card">
+              <div className="pro-badge">Most Popular</div>
+              <div className="card-header">
+                <h3>Pro</h3>
+                <div className="price"><span>$</span>{pricing.pro_price}<span>/mo</span></div>
+                <p>For growing creators and businesses.</p>
               </div>
-              <div>
-                <div className="card-header">
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)' }}>Pro</h3>
-                  <div className="price" style={{ fontSize: '2.5rem', fontWeight: '800', margin: '16px 0', color: 'var(--text-main)' }}><span>$</span>{pricing.pro_price}<span>/mo</span></div>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>For growing creators and businesses.</p>
-                </div>
-                <div className="card-features" style={{ margin: '24px 0' }}>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem' }}><Check size={18} color="#10b981" /> Unlimited Auto-Replies</li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem' }}><Check size={18} color="#10b981" /> Advanced AI Agent</li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem' }}><Check size={18} color="#10b981" /> Analytics Dashboard</li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem' }}><Check size={18} color="#10b981" /> Priority Support</li>
-                  </ul>
-                </div>
+              <div className="card-features">
+                <ul>
+                  <li><Check size={18} className="check-icon" /> Unlimited Auto-Replies</li>
+                  <li><Check size={18} className="check-icon" /> Advanced AI AI-Agent</li>
+                  <li><Check size={18} className="check-icon" /> Analytics Dashboard</li>
+                  <li><Check size={18} className="check-icon" /> Priority Support</li>
+                </ul>
               </div>
-              <div style={{ marginTop: 'auto', paddingTop: '20px' }}>
-                <Link to="/signup" className="pricing-btn solid-btn" style={{ display: 'block', textAlign: 'center', width: '100%', padding: '14px', borderRadius: '12px', background: '#a855f7', color: 'white' }}>
-                  Start 14-Day Free Trial
-                </Link>
-              </div>
+              <Link to="/signup" className="pricing-btn solid-btn">Start 14-Day Free Trial</Link>
             </div>
 
-            {/* Enterprise Plan Card */}
-            <div className="pricing-card" style={{
-              background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px',
-              display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
-            }}>
-              <div>
-                <div className="card-header">
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)' }}>Enterprise</h3>
-                  <div className="price" style={{ fontSize: '2.5rem', fontWeight: '800', margin: '16px 0', color: 'var(--text-main)' }}><span>$</span>{pricing.enterprise_price}<span>/mo</span></div>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>For high-volume brands and agencies.</p>
-                </div>
-                <div className="card-features" style={{ margin: '24px 0' }}>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem' }}><Check size={18} color="#8b5cf6" /> Everything in Pro</li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem' }}><Check size={18} color="#8b5cf6" /> White-labeling Options</li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem' }}><Check size={18} color="#8b5cf6" /> Manage up to 10 Clients</li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem' }}><Check size={18} color="#8b5cf6" /> Dedicated Account Manager</li>
-                  </ul>
-                </div>
+            <div className="pricing-card">
+              <div className="card-header">
+                <h3>Enterprise</h3>
+                <div className="price"><span>$</span>{pricing.enterprise_price}<span>/mo</span></div>
+                <p>For high-volume brands and agencies.</p>
               </div>
-              <div style={{ marginTop: 'auto', paddingTop: '20px' }}>
-                <a 
-                  href={`https://api.whatsapp.com/send?phone=918795919866&text=${encodeURIComponent("Hello Founder! I am interested in the Enterprise Plan ($99/mo) for my agency/brand. Please assist me with onboarding and white-labeling setup.")}`}
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="pricing-btn solid-btn"
-                  style={{ display: 'block', textDecoration: 'none', textAlign: 'center', width: '100%', padding: '14px', borderRadius: '12px', background: '#8b5cf6', color: 'white' }}
-                >
-                  Contact Sales
-                </a>
+              <div className="card-features">
+                <ul>
+                  <li><Check size={18} className="check-icon" /> Everything in Pro</li>
+                  <li><Check size={18} className="check-icon" /> White-labeling Options</li>
+                  <li><Check size={18} className="check-icon" /> Manage up to 10 Clients</li>
+                  <li><Check size={18} className="check-icon" /> Dedicated Account Manager</li>
+                </ul>
               </div>
+              <Link to="/signup" className="pricing-btn outline-btn">Contact Sales</Link>
             </div>
-
           </div>
         </div>
       </section>
@@ -830,3 +828,8 @@ export default function Landing() {
     </div>
   );
 }
+
+
+
+
+
