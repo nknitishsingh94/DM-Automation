@@ -62,7 +62,7 @@ const defaultReviews = [
 
 export default function Landing() {
   const [featuresOpen, setFeaturesOpen] = useState(false);
-  const [pricing, setPricing] = useState({ pro_price: 29, enterprise_price: 99 });
+  const [pricing, setPricing] = useState({ pro_price: 0, enterprise_price: 0 });
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/admin/pricing`)

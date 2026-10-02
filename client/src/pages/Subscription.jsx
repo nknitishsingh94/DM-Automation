@@ -11,7 +11,7 @@ export default function Subscription() {
   const [paymentStep, setPaymentStep] = useState('select');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [pricing, setPricing] = useState({ pro_price: 29, enterprise_price: 99 });
+  const [pricing, setPricing] = useState({ pro_price: 0, enterprise_price: 0 });
   const [myTransactions, setMyTransactions] = useState([]);
 
   // Manual payment state
