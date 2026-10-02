@@ -693,10 +693,7 @@ tr:hover {
 }
 
 .highlight-text {
-  background: linear-gradient(135deg, #c4b5fd 0%, #38bdf8 50%, #f472b6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
+  color: #c4b5fd; /* Light Purple that works well on dark/photo backgrounds */
 }
 
 @media (max-width: 768px) {

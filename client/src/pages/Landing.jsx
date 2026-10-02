@@ -270,10 +270,10 @@ export default function Landing() {
         </div>
       </header>
 
-      {/* Hero Section with Enhanced Glassmorphic Dark Overlay for High Contrast */}
+      {/* Hero Section with Enhanced Gradient Overlay for High Contrast */}
       <div className="hero-section" style={{
         position: 'relative',
-        background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 27, 75, 0.88) 60%, rgba(15, 23, 42, 0.95) 100%), url("/hero-bg.jpg")',
+        background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.7) 0%, rgba(15, 23, 42, 0.5) 100%), url("/hero-bg.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}>
