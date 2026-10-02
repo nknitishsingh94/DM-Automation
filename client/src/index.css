@@ -717,19 +717,19 @@ tr:hover {
   align-items: center;
   gap: 12px;
   padding: 18px 48px;
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  background: #7c3aed;
   color: #ffffff;
   border-radius: 50px;
   font-size: 1.2rem;
   font-weight: 700;
-  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.35);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
 }
 
 .landing-cta:hover {
   transform: scale(1.05);
-  box-shadow: 0 15px 40px rgba(124, 58, 237, 0.5);
+  box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4);
 }
 
 
@@ -739,29 +739,27 @@ tr:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden;
 }
 
 .landing-features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  display: flex;
   gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
   width: 100%;
-  max-width: 1100px;
+  max-width: 1000px;
 }
 
 .feature-card {
   background: #ffffff;
-  border: 1px solid rgba(124, 58, 237, 0.12);
-  padding: 24px 28px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 24px 32px;
   border-radius: 20px;
   display: flex;
   align-items: center;
-  gap: 18px;
-  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.04);
+  gap: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-sizing: border-box;
-  width: 100%;
 }
 
 .feature-card:hover {
@@ -3062,247 +3060,6 @@ tr:hover {
   transition: all 0.2s;
 }
 
-/* =========================================================
-   FEEDBACK & LANDING PAGE MOBILE RESPONSIVE FIXES (ANDROID / MOBILE)
-   ========================================================= */
-
-.pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  align-items: stretch;
-}
-
-@media (max-width: 768px) {
-  /* Feedback Zone */
-  .feedback-zone {
-    padding: 48px 16px !important;
-  }
-
-  .feedback-top {
-    margin-bottom: 28px !important;
-  }
-
-  .feedback-top h2 {
-    font-size: 1.85rem !important;
-    line-height: 1.25 !important;
-  }
-
-  .feedback-top p {
-    font-size: 0.95rem !important;
-  }
-
-  /* Feedback Metrics Bar Fix (Prevents Overlap) */
-  .feedback-metrics {
-    flex-direction: column !important;
-    gap: 20px !important;
-    padding: 20px 16px !important;
-    border-radius: 20px !important;
-    margin-bottom: 32px !important;
-    align-items: stretch !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .stats-group {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-around !important;
-    align-items: center !important;
-    gap: 12px !important;
-    width: 100% !important;
-  }
-
-  .stat-item {
-    align-items: center !important;
-    text-align: center !important;
-  }
-
-  .stat-number {
-    font-size: 1.35rem !important;
-    justify-content: center !important;
-  }
-
-  .stat-label {
-    font-size: 0.72rem !important;
-    text-align: center !important;
-    white-space: normal !important;
-  }
-
-  .add-feedback-btn {
-    width: 100% !important;
-    justify-content: center !important;
-    padding: 12px 20px !important;
-    font-size: 0.9rem !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Feedback Cards Grid */
-  .feedback-layout {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
-    margin-bottom: 30px !important;
-  }
-
-  .feedback-item {
-    padding: 20px 16px !important;
-    border-radius: 20px !important;
-  }
-
-  .feedback-msg {
-    font-size: 0.95rem !important;
-    margin-bottom: 16px !important;
-  }
-
-  /* Write Review Modal Mobile Overlay */
-  .write-review-modal-overlay {
-    padding: 12px !important;
-    align-items: flex-end !important;
-  }
-
-  .write-review-modal {
-    max-height: 85vh !important;
-    border-radius: 24px 24px 20px 20px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .modal-header {
-    padding: 18px 20px 12px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .modal-header h3 {
-    font-size: 1.15rem !important;
-  }
-
-  .modal-form-content {
-    padding: 16px 20px 24px !important;
-    flex: 1 !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    max-height: calc(85vh - 70px) !important;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-  }
-
-  .platform-selector {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 6px !important;
-  }
-
-  .platform-box {
-    padding: 8px 4px !important;
-    font-size: 0.75rem !important;
-    border-radius: 10px !important;
-  }
-
-  /* Landing Page Header */
-  .landing-header {
-    width: 92% !important;
-    top: 10px !important;
-    padding: 8px 16px !important;
-  }
-
-  .logo-text {
-    font-size: 1.1rem !important;
-  }
-
-  .header-actions {
-    gap: 6px !important;
-  }
-
-  .header-login {
-    font-size: 0.8rem !important;
-  }
-
-  .header-signup {
-    padding: 8px 12px !important;
-    font-size: 0.8rem !important;
-  }
-
-  /* Hero Section */
-  .hero-section {
-    padding: 120px 16px 48px !important;
-  }
-
-  .landing-headline {
-    font-size: 1.9rem !important;
-    line-height: 1.25 !important;
-  }
-
-  .landing-sub {
-    font-size: 0.95rem !important;
-    margin-bottom: 24px !important;
-  }
-
-  .landing-cta {
-    padding: 14px 28px !important;
-    font-size: 1rem !important;
-    width: 100% !important;
-    justify-content: center !important;
-  }
-
-  /* Pricing Grid */
-  .pricing-section {
-    padding: 48px 16px 60px !important;
-  }
-
-  .pricing-heading {
-    margin-bottom: 40px !important;
-  }
-
-  .pricing-heading h2 {
-    font-size: 1.85rem !important;
-  }
-
-  .pricing-heading p {
-    font-size: 0.95rem !important;
-  }
-
-  .pricing-grid {
-    grid-template-columns: 1fr !important;
-    gap: 20px !important;
-  }
-
-  .pricing-card {
-    padding: 24px 20px !important;
-    border-radius: 20px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .stats-group {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 6px !important;
-  }
-
-  .stat-number {
-    font-size: 1.15rem !important;
-    gap: 2px !important;
-  }
-
-  .stat-label {
-    font-size: 0.68rem !important;
-    line-height: 1.2 !important;
-  }
-
-  .hero-section {
-    padding: 110px 12px 40px !important;
-  }
-
-  .landing-headline {
-    font-size: 1.7rem !important;
-  }
-}
-
 .success-done-btn:hover {
   background: #7c3aed;
   transform: translateY(-1px);
@@ -3313,7 +3070,42 @@ tr:hover {
   to { transform: translateY(-8px); }
 }
 
-
+/* Responsiveness for Reviews */
+@media (max-width: 768px) {
+  .feedback-zone {
+    padding: 60px 16px;
+  }
+  .feedback-top h2 {
+    font-size: 2.25rem;
+  }
+  .feedback-metrics {
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px;
+    align-items: center;
+    text-align: center;
+  }
+  .stats-group {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
+  .stat-item {
+    align-items: center;
+  }
+  .add-feedback-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .feedback-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
 
 /* ============================================================
    COMPREHENSIVE MOBILE RESPONSIVENESS FIX
@@ -3469,52 +3261,13 @@ img, video, iframe {
 }
 
 /* --- Forms on mobile --- */
-/* --- Global Body & Landing Overflow Prevention for Mobile --- */
-html, body {
-  overflow-x: hidden !important;
-  max-width: 100vw !important;
-}
-
-.landing-container {
-  width: 100% !important;
-  max-width: 100vw !important;
-  overflow-x: hidden !important;
-}
-
-@media (max-width: 768px) {
-  .landing-features {
+@media (max-width: 640px) {
+  .form-row {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
   }
-
-  .feature-card {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    padding: 16px 20px !important;
-  }
-
-  .landing-header {
-    width: calc(100% - 24px) !important;
-    max-width: calc(100% - 24px) !important;
-    box-sizing: border-box !important;
-    top: 10px !important;
-    padding: 8px 14px !important;
-  }
-
-  .header-actions {
-    gap: 4px !important;
-  }
-
-  .header-login {
-    display: none !important; /* Prevents crowding and text cutoff on small mobile screens */
-  }
-
-  .header-signup {
-    padding: 8px 14px !important;
-    font-size: 0.8rem !important;
-    border-radius: 50px !important;
+  .platform-selector {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 

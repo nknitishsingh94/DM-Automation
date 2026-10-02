@@ -298,8 +298,14 @@ export default function Landing() {
       <section id="features" className="features-section">
         
         {/* Balanced 4-Column Grid Layout */}
-        <div className="landing-features">
-          <Link to="/signup" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
+        <div className="landing-features" style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gap: '24px',
+          width: '100%',
+          maxWidth: '1100px'
+        }}>
+          <Link to="/signup" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
             <div className="feature-icon feature-icon-purple">
               <Zap size={28} />
             </div>
@@ -309,7 +315,7 @@ export default function Landing() {
             </div>
           </Link>
 
-          <Link to="/connections" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
+          <Link to="/connections" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
             <div className="feature-icon feature-icon-dark">
               <Bot size={28} />
             </div>
@@ -319,7 +325,7 @@ export default function Landing() {
             </div>
           </Link>
 
-          <Link to="/features/universal-triggers" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
+          <Link to="/features/universal-triggers" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
             <div className="feature-icon" style={{ background: 'rgba(14, 165, 233, 0.1)', color: '#0ea5e9' }}>
               <Globe size={28} />
             </div>
@@ -329,7 +335,7 @@ export default function Landing() {
             </div>
           </Link>
 
-          <Link to="/features/scheduling" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
+          <Link to="/features/scheduling" className="feature-card" style={{ textDecoration: 'none', cursor: 'pointer', padding: '24px' }}>
             <div className="feature-icon" style={{ background: 'rgba(124, 58, 237, 0.1)', color: 'var(--accent-color)' }}>
               <Clock size={28} />
             </div>
@@ -440,7 +446,7 @@ export default function Landing() {
           </div>
 
           {/* Reviews Grid */}
-          <div className="feedback-layout">
+          <div className="feedback-layout" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
             {reviews.slice(0, 4).map((review) => (
               <div key={review.id || review._id || Math.random()} className="feedback-item">
                 <div className="feedback-item-top">
@@ -724,7 +730,7 @@ export default function Landing() {
             <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Choose the plan that's right for your business. No hidden fees.</p>
           </div>
 
-          <div className="pricing-grid">
+          <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', alignItems: 'stretch' }}>
             
             {/* Starter Plan Card */}
             <div className="pricing-card" style={{
