@@ -69,8 +69,8 @@ export default function Landing() {
       .then(res => res.json())
       .then(data => {
         if (data) {
-          const proVal = data.pro_price !== undefined ? data.pro_price : (data.pro?.price ?? 29);
-          const entVal = data.enterprise_price !== undefined ? data.enterprise_price : (data.enterprise?.price ?? 99);
+          const proVal = data.pro_price !== undefined ? data.pro_price : (data.pro?.price ?? 0);
+          const entVal = data.enterprise_price !== undefined ? data.enterprise_price : (data.enterprise?.price ?? 0);
           setPricing({ pro_price: Number(proVal), enterprise_price: Number(entVal) });
         }
       })
