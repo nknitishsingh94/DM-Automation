@@ -50,10 +50,12 @@
   }
   .mobile-show { display: block !important; }
   .mobile-hide { display: none !important; }
+  .desktop-hide { display: flex !important; }
 }
 
 .mobile-show { display: none; }
 .mobile-hide { display: block; }
+.desktop-hide { display: none !important; }
 
 @keyframes gradientBG {
   0% { background-position: 0% 50%; }
@@ -201,10 +203,12 @@ button {
 
 .sidebar-middle-scroll {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   scrollbar-width: thin;
   display: flex;
   flex-direction: column;
+  -webkit-overflow-scrolling: touch;
 }
 
 .nav-links {

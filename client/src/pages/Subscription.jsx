@@ -284,7 +284,7 @@ export default function Subscription() {
             <p style={{ color: 'var(--text-muted)' }}>Choose the plan that powers your Instagram & multi-channel automation.</p>
           </div>
 
-          <div className="pricing-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', maxWidth: '850px', margin: '0 auto', gap: '24px', alignItems: 'stretch' }}>
+          <div className="pricing-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', maxWidth: '850px', margin: '0 auto', gap: '24px', alignItems: 'stretch' }}>
 
             {/* Pro Plan */}
             <div className="pricing-card pro-card" style={{

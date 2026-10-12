@@ -553,7 +553,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                   </div>
                   {showAutoOpsDropdown && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', paddingLeft: '32px', marginTop: '4px' }}>
-                      <div onClick={() => { navigate(location.pathname + '?openTemplates=true'); setShowTemplatesModal(true); }} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                      <div onClick={() => { if (onClose) onClose(); setShowTemplatesModal(true); }} className="nav-item sub-item" style={{ padding: '8px 12px', fontSize: '0.85rem', cursor: 'pointer', transition: 'background 0.2s', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseOver={e => e.currentTarget.style.background = 'var(--bg-dark)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                         <LayoutTemplate size={16} />
                         <span>All Template</span>
                       </div>
@@ -678,57 +678,57 @@ function Sidebar({ isMobileOpen, onClose }) {
             </NavLink>
           </div>
         </div>
-
-        {showWorkspaceModal && (
-          <div style={{
-            position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-            background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-          }}>
-            <div style={{
-              background: 'var(--bg-card)', padding: '32px', borderRadius: '24px', width: '90%', maxWidth: '400px',
-              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
-            }}>
-              <h3 style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px' }}>Create Workspace</h3>
-              <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px' }}>Organize your settings, campaigns, messages, and contacts under a new workspace.</p>
-
-              <form onSubmit={handleCreateWorkspace}>
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Workspace Name</label>
-                  <input
-                    type="text"
-                    value={newWorkspaceName}
-                    onChange={(e) => setNewWorkspaceName(e.target.value)}
-                    placeholder="e.g. Acme Marketing"
-                    required
-                    style={{
-                      width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-subtle)',
-                      fontSize: '14px', outline: 'none', transition: 'border-color 0.2s'
-                    }}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                  <button
-                    type="button"
-                    onClick={() => { setShowWorkspaceModal(false); setNewWorkspaceName(''); }}
-                    style={{ padding: '10px 16px', borderRadius: '12px', border: '1px solid var(--border-subtle)', background: 'transparent', fontSize: '14px', fontWeight: '600', color: 'var(--text-muted)', cursor: 'pointer' }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    style={{ padding: '10px 20px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', fontSize: '14px', fontWeight: '600', color: 'white', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(139, 92, 246, 0.3)' }}
-                  >
-                    Create
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-        <TemplatesModal isOpen={showTemplatesModal} onClose={() => setShowTemplatesModal(false)} />
       </aside>
+
+      {showWorkspaceModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100000
+        }}>
+          <div style={{
+            background: 'var(--bg-card)', padding: '32px', borderRadius: '24px', width: '90%', maxWidth: '400px',
+            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
+          }}>
+            <h3 style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px' }}>Create Workspace</h3>
+            <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px' }}>Organize your settings, campaigns, messages, and contacts under a new workspace.</p>
+
+            <form onSubmit={handleCreateWorkspace}>
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Workspace Name</label>
+                <input
+                  type="text"
+                  value={newWorkspaceName}
+                  onChange={(e) => setNewWorkspaceName(e.target.value)}
+                  placeholder="e.g. Acme Marketing"
+                  required
+                  style={{
+                    width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-subtle)',
+                    fontSize: '14px', outline: 'none', transition: 'border-color 0.2s'
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  onClick={() => { setShowWorkspaceModal(false); setNewWorkspaceName(''); }}
+                  style={{ padding: '10px 16px', borderRadius: '12px', border: '1px solid var(--border-subtle)', background: 'transparent', fontSize: '14px', fontWeight: '600', color: 'var(--text-muted)', cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  style={{ padding: '10px 20px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', fontSize: '14px', fontWeight: '600', color: 'white', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(139, 92, 246, 0.3)' }}
+                >
+                  Create
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      <TemplatesModal isOpen={showTemplatesModal} onClose={() => setShowTemplatesModal(false)} />
     </>
   );
 }
@@ -762,13 +762,15 @@ function TopBar({ onMenuClick }) {
 
   if (!user) return null;
 
+  const isDesktopSpecial = ['/dashboard', '/connections'].includes(location.pathname);
+
   return (
-    <header className="topbar" style={{ background: 'transparent', borderBottom: 'none', height: '60px', padding: window.innerWidth < 640 ? '0 16px' : '0 40px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <button onClick={onMenuClick} className="mobile-show" style={{ color: 'var(--text-main)' }}>
+    <header className={`topbar ${isDesktopSpecial ? '' : 'desktop-hide'}`} style={{ background: 'transparent', borderBottom: 'none', height: '60px', padding: '0 16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <button onClick={onMenuClick} className="mobile-show" style={{ color: 'var(--text-main)', background: 'transparent', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <MenuIcon size={24} />
         </button>
-        <h1 className="page-title" style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-main)' }}>{getTitle()}</h1>
+        <h1 className="page-title" style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>{getTitle()}</h1>
       </div>
       <div className="topbar-actions" id="topbar-actions-portal">
         {/* Support button removed */}
@@ -787,7 +789,7 @@ function MainLayout() {
     location.pathname.startsWith('/flow-builder');
   const isMessageOnlyHub = location.pathname === '/hub/message-only';
   const hideSidebar = isPublic; // Sidebar should remain visible on editor pages
-  const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub || !['/dashboard', '/connections'].includes(location.pathname);
+  const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub;
 
   return (
     <div className="app-container" style={{ height: '100%', width: '100%', position: 'fixed', top: 0, left: 0 }}>
