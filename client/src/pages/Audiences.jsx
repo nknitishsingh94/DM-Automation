@@ -154,7 +154,7 @@ export default function Audiences() {
     const userMessages = allMessages.filter(m => m.chatId === selectedContact.chatId).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 50);
 
     return (
-      <div style={{ maxWidth: '1200px', animation: 'fadeIn 0.3s ease-out' }}>
+      <div style={{ width: '100%', maxWidth: 'none', animation: 'fadeIn 0.3s ease-out' }}>
         <button 
           onClick={() => setSelectedContact(null)}
           style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', marginBottom: '24px', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '500' }}>
@@ -318,7 +318,7 @@ export default function Audiences() {
   }
 
   return (
-    <div style={{ maxWidth: '1200px', animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ width: '100%', maxWidth: 'none', animation: 'fadeIn 0.5s ease-out' }}>
       {/* Stunning Header Banner */}
       <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', borderRadius: '24px', padding: 'var(--page-padding)', color: 'white', marginBottom: '32px', position: 'relative', overflow: 'hidden', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.2)' }}>
         <div style={{ position: 'relative', zIndex: 1 }}>

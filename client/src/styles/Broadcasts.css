@@ -1,7 +1,9 @@
 /* client/src/styles/Broadcasts.css */
 
 .broadcasts-container {
-  padding: 40px;
+  padding: 0 0 60px 0;
+  width: 100%;
+  box-sizing: border-box;
   background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent),
               radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.05), transparent);
   min-height: 100vh;

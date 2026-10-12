@@ -139,21 +139,24 @@ export default function ApiKeys() {
 
 
   return (
-    <div style={{ width: '100%', padding: '24px 24px 100px 24px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
-      {/* Header & Create Button */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+    <div style={{ width: '100%', maxWidth: 'none', padding: '0 0 100px 0', margin: '0', boxSizing: 'border-box', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
+      {/* Top navbar action portal button */}
+      {!showGenerateForm && document.getElementById('topbar-actions-portal') && createPortal(
+        <button
+          onClick={() => { setShowGenerateForm(true); setNewlyCreatedKey(null); }}
+          style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.85rem', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)', whiteSpace: 'nowrap' }}
+        >
+          <Plus size={16} /> Create key
+        </button>,
+        document.getElementById('topbar-actions-portal')
+      )}
+
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ margin: '0 0 8px 0', fontSize: '28px', fontWeight: '800', color: 'var(--text-main)' }}>API Keys</h1>
-          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '1.05rem' }}>Authentication tokens for the programmatic API</p>
+          <h2 style={{ margin: '0 0 4px 0', fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '-0.02em' }}>API Keys</h2>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500' }}>Authentication tokens for the programmatic API</p>
         </div>
-        {!showGenerateForm && (
-          <button
-            onClick={() => { setShowGenerateForm(true); setNewlyCreatedKey(null); }}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 6px rgba(59, 130, 246, 0.25)' }}
-          >
-            <Plus size={18} /> Create key
-          </button>
-        )}
       </div>
 
       {/* Display newly created key ONCE */}

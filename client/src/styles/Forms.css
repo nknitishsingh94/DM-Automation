@@ -1,7 +1,9 @@
 /* client/src/styles/Forms.css */
 
 .forms-container {
-  padding: 40px;
+  padding: 0 0 60px 0;
+  width: 100%;
+  box-sizing: border-box;
   background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.03), transparent),
               radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.03), transparent);
   min-height: 100vh;

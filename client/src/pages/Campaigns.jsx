@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Zap, Plus, Trash2, Power, MessageCircle, MessageSquare, Instagram, Facebook, AlertCircle, CheckCircle, Video, Link as LinkIcon, History, X, Crown, Edit2, Globe, Share2, Sparkles, Brain, Bot } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
@@ -401,55 +402,54 @@ export default function Campaigns({ platformFilter: propPlatformFilter }) {
   return (
     <div style={{ 
       width: '100%',
-      maxWidth: '100%', 
+      maxWidth: 'none', 
       margin: '0',
-      padding: '0 40px 60px 40px',
+      padding: '0 0 60px 0',
       boxSizing: 'border-box'
     }}>
-      {/* Page Header */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        padding: '24px 40px 16px 40px',
-        margin: '0 -40px 24px -40px',
-        borderBottom: '1px solid var(--border-subtle)',
-        flexWrap: 'wrap',
-        gap: '16px',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(8px)'
-      }}>
-        <div>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--text-main)', margin: 0, letterSpacing: '-0.02em' }}>Active Automations</h2>
-          <p style={{ color: 'var(--text-muted)', margin: '4px 0 0 0', fontSize: '0.9rem', fontWeight: '500' }}>
-            Manage and monitor your live reply automation campaigns.
-          </p>
-        </div>
+      {/* Top navbar action portal button */}
+      {document.getElementById('topbar-actions-portal') && createPortal(
         <button
           onClick={() => navigate(location.pathname + '?openTemplates=true')}
           style={{
             background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
             color: 'white',
             border: 'none',
-            padding: '12px 24px',
-            borderRadius: '12px',
+            padding: '8px 16px',
+            borderRadius: '10px',
             fontWeight: '700',
             fontSize: '0.85rem',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)',
-            transition: 'all 0.2s'
+            gap: '6px',
+            boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)',
+            transition: 'all 0.2s',
+            whiteSpace: 'nowrap'
           }}
           onMouseOver={e => e.currentTarget.style.opacity = '0.9'}
           onMouseOut={e => e.currentTarget.style.opacity = '1'}
         >
-          <Plus size={16} /> Create Automation
-        </button>
+          <Plus size={16} /> New Automation
+        </button>,
+        document.getElementById('topbar-actions-portal')
+      )}
+
+      {/* In-page Subtitle Banner */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: '24px',
+        flexWrap: 'wrap',
+        gap: '16px'
+      }}>
+        <div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>Active Automations</h2>
+          <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.9rem', fontWeight: '500' }}>
+            Manage and monitor your live reply automation campaigns across all channels.
+          </p>
+        </div>
       </div>
 
       {message.text && (

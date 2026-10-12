@@ -736,6 +736,7 @@ function Sidebar({ isMobileOpen, onClose }) {
 function TopBar({ onMenuClick }) {
   const location = useLocation();
   const { user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const getTitle = () => {
     switch (location.pathname) {
@@ -749,31 +750,72 @@ function TopBar({ onMenuClick }) {
       case '/ai-studio': return 'AI Studio';
       case '/forms': return 'Forms';
       case '/broadcasts': return 'Broadcasts';
-      case '/scheduling': return '';
+      case '/scheduling': return 'Scheduling';
       case '/hub': return 'Hub';
       case '/developer': return 'API Keys';
+      case '/workplace': return 'Workplace';
+      case '/inbox': return 'Live Inbox';
+      case '/communication': return 'Communication Hub';
+      case '/profile': return 'Profile';
       default:
         if (location.pathname.startsWith('/flow-builder/')) return 'Editing Flow';
         if (location.pathname.startsWith('/automation-editor/')) return 'Automation';
         if (location.pathname.startsWith('/platform/')) return 'Hub';
+        if (location.pathname.startsWith('/workplace/')) return 'Workplace';
         return 'OneView';
     }
   };
 
   if (!user) return null;
 
-  const isDesktopSpecial = ['/dashboard', '/connections'].includes(location.pathname);
-
   return (
-    <header className={`topbar ${isDesktopSpecial ? '' : 'desktop-hide'}`} style={{ background: 'transparent', borderBottom: 'none', height: '48px', padding: '0 24px' }}>
+    <header className="topbar">
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        <button onClick={onMenuClick} className="mobile-show" style={{ color: 'var(--text-main)', background: 'transparent', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <MenuIcon size={24} />
+        <button 
+          onClick={onMenuClick} 
+          className="mobile-show" 
+          style={{ 
+            color: 'var(--text-main)', 
+            background: 'transparent', 
+            border: 'none', 
+            cursor: 'pointer', 
+            padding: '6px', 
+            borderRadius: '8px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center' 
+          }}
+          aria-label="Toggle navigation menu"
+        >
+          <MenuIcon size={22} />
         </button>
-        <h1 className="page-title" style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>{getTitle()}</h1>
+        <h1 className="page-title" style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-main)', margin: 0, letterSpacing: '-0.3px' }}>
+          {getTitle()}
+        </h1>
       </div>
-      <div className="topbar-actions" id="topbar-actions-portal">
-        {/* Support button removed */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="topbar-actions" id="topbar-actions-portal" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}></div>
+        <button
+          onClick={toggleTheme}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '7px 12px',
+            borderRadius: '10px',
+            border: '1px solid var(--border-subtle)',
+            background: 'var(--bg-card)',
+            color: 'var(--text-main)',
+            cursor: 'pointer',
+            fontSize: '0.8rem',
+            fontWeight: '600',
+            transition: 'all 0.2s ease',
+          }}
+          title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+        >
+          {theme === 'light' ? <Moon size={15} /> : <Sun size={15} />}
+          <span className="mobile-hide">{theme === 'light' ? 'Dark' : 'Light'}</span>
+        </button>
       </div>
     </header>
   );

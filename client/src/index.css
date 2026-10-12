@@ -273,15 +273,22 @@ button {
 }
 
 .topbar {
-  height: 48px;
+  height: 56px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
   padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border-subtle);
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(24px);
-  z-index: 5;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
   transition: all 0.2s ease;
 }
 
@@ -3119,15 +3126,17 @@ tr:hover {
 /* --- Topbar mobile fix --- */
 @media (max-width: 768px) {
   .topbar {
-    padding: 0 12px;
-    height: 60px;
+    padding: 0 16px;
+    height: 54px;
+    position: sticky;
+    top: 0;
   }
   .page-title {
-    font-size: 1rem;
+    font-size: 1.05rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 160px;
+    max-width: 200px;
   }
 }
 
