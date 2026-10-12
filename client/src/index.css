@@ -3273,6 +3273,11 @@ img, video, iframe {
   }
 }
 
+/* --- Settings zero top-gap rule --- */
+.page-container:has(.settings-header) {
+  padding: 0 !important;
+}
+
 
 
 

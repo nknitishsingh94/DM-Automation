@@ -789,15 +789,21 @@ function MainLayout() {
     location.pathname.startsWith('/flow-builder');
   const isMessageOnlyHub = location.pathname === '/hub/message-only';
   const hideSidebar = isPublic; // Sidebar should remain visible on editor pages
-  const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub;
+  const hideTopBar = hideSidebar || isEditor || isMessageOnlyHub || location.pathname === '/settings';
+
+  useEffect(() => {
+    const handleOpenSidebar = () => setIsSidebarOpen(true);
+    window.addEventListener('open-mobile-sidebar', handleOpenSidebar);
+    return () => window.removeEventListener('open-mobile-sidebar', handleOpenSidebar);
+  }, []);
 
   return (
     <div className="app-container" style={{ height: '100%', width: '100%', position: 'fixed', top: 0, left: 0 }}>
       {user && !hideSidebar && <Sidebar isMobileOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />}
-      <main className="main-content" style={{ paddingTop: hideTopBar ? '0' : undefined }}>
+      <main className="main-content" style={{ paddingTop: '0' }}>
         {!hideTopBar && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
         <div className="page-container" style={{
-          padding: hideTopBar ? '0' : undefined,
+          padding: (hideTopBar || location.pathname === '/settings') ? '0' : undefined,
           overflow: (isEditor || ['/inbox', '/universal-triggers', '/scheduling', '/hub/message-only'].includes(location.pathname)) ? 'hidden' : 'auto',
           display: 'flex',
           flexDirection: 'column'

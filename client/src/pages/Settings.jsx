@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, Moon, Sun, BookOpen } from 'lucide-react';
+import { AlertTriangle, Moon, Sun, BookOpen, Menu as MenuIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { API_BASE_URL } from '../config';
@@ -44,9 +44,9 @@ export default function Settings() {
   };
 
   return (
-    <div style={{ width: '100%', maxWidth: 'none', display: 'flex', flexDirection: 'column', gap: '24px', padding: '0 0 100px 0', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
+    <div style={{ width: '100%', maxWidth: 'none', display: 'flex', flexDirection: 'column', padding: '0', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
       
-      {/* Settings Header */}
+      {/* Settings Header / Navbar */}
       <div className="settings-header" style={{ 
         display: 'flex', 
         flexDirection: 'row', 
@@ -61,13 +61,25 @@ export default function Settings() {
         backdropFilter: 'blur(10px)',
         paddingTop: '12px',
         paddingBottom: '0px',
-        margin: '0 -16px',
+        margin: '0',
         paddingLeft: '24px',
         paddingRight: '24px',
+        width: '100%',
+        boxSizing: 'border-box',
         borderBottom: '1px solid var(--border-subtle)'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingBottom: '12px' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>Settings</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', paddingBottom: '12px' }}>
+          <button 
+            onClick={() => window.dispatchEvent(new CustomEvent('open-mobile-sidebar'))}
+            className="mobile-show"
+            style={{ 
+              color: 'var(--text-main)', background: 'transparent', border: 'none', cursor: 'pointer', 
+              padding: '4px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' 
+            }}
+          >
+            <MenuIcon size={22} />
+          </button>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: '900', margin: 0, letterSpacing: '-0.5px' }}>Settings</h2>
           
           <button 
             onClick={() => window.open(`${API_BASE_URL}/api-docs`, '_blank')}
@@ -150,85 +162,87 @@ export default function Settings() {
         </div>
       </div>
 
-      {activeTab === 'billing' && (
-        <div style={{ marginTop: '20px' }}>
-          <Subscription hideSidebar={true} />
-        </div>
-      )}
+      <div className="settings-content-body" style={{ padding: '24px', width: '100%', boxSizing: 'border-box' }}>
+        {activeTab === 'billing' && (
+          <div>
+            <Subscription hideSidebar={true} />
+          </div>
+        )}
 
-      {activeTab === 'profile' && (
-        <div style={{ marginTop: '20px' }}>
-          <Profile hideSidebar={true} />
-        </div>
-      )}
+        {activeTab === 'profile' && (
+          <div>
+            <Profile hideSidebar={true} />
+          </div>
+        )}
 
-      {activeTab === 'danger' && (
-        <div style={{ marginTop: '20px' }}>
-          <div style={{ border: '1px solid var(--border-subtle)', borderRadius: '12px', background: 'var(--bg-card)', overflow: 'hidden' }}>
-            <div style={{ padding: '24px', background: '#fff1f2' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#be123c', marginBottom: '12px' }}>
-                <AlertTriangle size={24} />
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '800', margin: 0 }}>Permanently Delete Account</h3>
-              </div>
-              
-              <p style={{ color: '#9f1239', fontSize: '0.85rem', lineHeight: '1.5', marginBottom: '20px', fontWeight: '500' }}>
-                Deleting your account is permanent. All your automated DM configurations, rules, active message counters, and connected platform credentials will be wiped from our database forever.
-              </p>
-
-              {!showDeleteConfirm ? (
-                <button 
-                  onClick={() => setShowDeleteConfirm(true)}
-                  style={{ 
-                    padding: '10px 20px', background: '#e11d48', color: 'white', border: 'none', 
-                    borderRadius: '8px', fontWeight: '700', fontSize: '0.82rem', cursor: 'pointer' 
-                  }}
-                >
-                  Delete my account
-                </button>
-              ) : (
-                <div style={{ background: 'var(--bg-card)', padding: '16px', borderRadius: '8px', border: '1px solid #fecdd3' }}>
-                  <p style={{ margin: '0 0 16px 0', fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)' }}>
-                    Are you absolutely sure? Type 'DELETE' to confirm.
-                  </p>
-                  <input
-                    type="text"
-                    placeholder="DELETE"
-                    value={deleteConfirmationText}
-                    onChange={(e) => setDeleteConfirmationText(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '10px',
-                      marginBottom: '16px',
-                      border: '1px solid #fecdd3',
-                      borderRadius: '8px',
-                      outline: 'none',
-                      fontSize: '0.9rem'
-                    }}
-                  />
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <button 
-                      onClick={handleDeleteAccount} 
-                      disabled={deleting || deleteConfirmationText !== 'DELETE'}
-                      style={{ flex: 1, background: '#e11d48', color: 'white', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: (deleting || deleteConfirmationText !== 'DELETE') ? 'not-allowed' : 'pointer', fontSize: '0.82rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', opacity: (deleting || deleteConfirmationText !== 'DELETE') ? 0.5 : 1 }}
-                    >
-                      {deleting ? 'Deleting...' : 'Yes, Delete Everything'}
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setShowDeleteConfirm(false);
-                        setDeleteConfirmationText('');
-                      }} 
-                      style={{ flex: 1, background: 'var(--bg-dark)', color: 'var(--text-muted)', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontSize: '0.82rem' }}
-                    >
-                      Cancel
-                    </button>
-                  </div>
+        {activeTab === 'danger' && (
+          <div>
+            <div style={{ border: '1px solid var(--border-subtle)', borderRadius: '12px', background: 'var(--bg-card)', overflow: 'hidden' }}>
+              <div style={{ padding: '24px', background: '#fff1f2' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#be123c', marginBottom: '12px' }}>
+                  <AlertTriangle size={24} />
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: '800', margin: 0 }}>Permanently Delete Account</h3>
                 </div>
-              )}
+                
+                <p style={{ color: '#9f1239', fontSize: '0.85rem', lineHeight: '1.5', marginBottom: '20px', fontWeight: '500' }}>
+                  Deleting your account is permanent. All your automated DM configurations, rules, active message counters, and connected platform credentials will be wiped from our database forever.
+                </p>
+
+                {!showDeleteConfirm ? (
+                  <button 
+                    onClick={() => setShowDeleteConfirm(true)}
+                    style={{ 
+                      padding: '10px 20px', background: '#e11d48', color: 'white', border: 'none', 
+                      borderRadius: '8px', fontWeight: '700', fontSize: '0.82rem', cursor: 'pointer' 
+                    }}
+                  >
+                    Delete my account
+                  </button>
+                ) : (
+                  <div style={{ background: 'var(--bg-card)', padding: '16px', borderRadius: '8px', border: '1px solid #fecdd3' }}>
+                    <p style={{ margin: '0 0 16px 0', fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)' }}>
+                      Are you absolutely sure? Type 'DELETE' to confirm.
+                    </p>
+                    <input
+                      type="text"
+                      placeholder="DELETE"
+                      value={deleteConfirmationText}
+                      onChange={(e) => setDeleteConfirmationText(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        marginBottom: '16px',
+                        border: '1px solid #fecdd3',
+                        borderRadius: '8px',
+                        outline: 'none',
+                        fontSize: '0.9rem'
+                      }}
+                    />
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button 
+                        onClick={handleDeleteAccount} 
+                        disabled={deleting || deleteConfirmationText !== 'DELETE'}
+                        style={{ flex: 1, background: '#e11d48', color: 'white', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: (deleting || deleteConfirmationText !== 'DELETE') ? 'not-allowed' : 'pointer', fontSize: '0.82rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', opacity: (deleting || deleteConfirmationText !== 'DELETE') ? 0.5 : 1 }}
+                      >
+                        {deleting ? 'Deleting...' : 'Yes, Delete Everything'}
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setShowDeleteConfirm(false);
+                          setDeleteConfirmationText('');
+                        }} 
+                        style={{ flex: 1, background: 'var(--bg-dark)', color: 'var(--text-muted)', padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontSize: '0.82rem' }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Global CSS Style Rules */}
       <style>{`
