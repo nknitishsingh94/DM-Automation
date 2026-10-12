@@ -58,7 +58,7 @@ export default function SuperAdminLayout() {
   };
 
   return (
-    <div style={{ padding: '24px', maxWidth: '1400px', margin: '0 auto', width: '100%', height: '100%' }}>
+    <div style={{ padding: '16px 0', width: '100%', maxWidth: 'none', margin: '0', height: '100%' }}>
       {renderContent()}
     </div>
   );

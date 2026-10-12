@@ -330,7 +330,7 @@ export default function YoutubeDashboard() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%', padding: '20px', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%', padding: '12px 0', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out', width: '100%', maxWidth: 'none', margin: '0' }}>
       
       {/* HEADER */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', paddingBottom: '20px', borderBottom: '1px solid var(--border-subtle)' }}>

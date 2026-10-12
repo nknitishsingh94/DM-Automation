@@ -613,7 +613,7 @@ export default function Connections() {
   if (loading) return <LoadingSpinner minHeight="60vh" />;
 
   return (
-    <div className="connections-container" style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', padding: '0 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', boxSizing: 'border-box', animation: 'fadeIn 0.5s ease-out' }}>
+    <div className="connections-container" style={{ width: '100%', maxWidth: 'none', display: 'flex', flexDirection: 'column', gap: '8px', padding: '0 0 60px 0', margin: '0', fontFamily: 'Inter, system-ui, sans-serif', boxSizing: 'border-box', animation: 'fadeIn 0.5s ease-out' }}>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
 
@@ -1684,28 +1684,14 @@ export default function Connections() {
           transform: scale(1.05);
         }
 
-        /* Connection Card Grid System */
+        /* Connection Card Grid System - Fluid Full Screen */
         .connection-card-grid {
           display: grid !important;
-          grid-template-columns: repeat(4, 1fr) !important;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
           gap: 16px !important;
           align-items: stretch !important;
           width: 100% !important;
           box-sizing: border-box !important;
-        }
-
-        @media (max-width: 1200px) {
-          .connection-card-grid {
-            grid-template-columns: repeat(3, 1fr) !important;
-            gap: 14px !important;
-          }
-        }
-
-        @media (max-width: 880px) {
-          .connection-card-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 12px !important;
-          }
         }
 
         @media (max-width: 580px) {

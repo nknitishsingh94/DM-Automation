@@ -144,7 +144,7 @@ export default function TemplateSelector() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', maxWidth: '1400px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', width: '100%', maxWidth: 'none', margin: '0' }}>
         {/* Sidebar Categories */}
         <div style={{ width: '250px', padding: '32px 24px', borderRight: '1px solid var(--border-subtle)', height: 'calc(100vh - 85px)', position: 'sticky', top: '85px', overflowY: 'auto' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>

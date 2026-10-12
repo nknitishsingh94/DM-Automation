@@ -98,7 +98,7 @@ export default function WhatsAppDashboard() {
 
       {/* Header */}
       <div style={{ background: 'var(--bg-card)', borderBottom: '1px solid var(--border-subtle)', padding: '0 24px', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '16px', height: '64px' }}>
+        <div style={{ width: '100%', maxWidth: 'none', margin: '0', display: 'flex', alignItems: 'center', gap: '16px', height: '54px' }}>
           <button onClick={() => navigate(-1)} style={{ background: 'var(--sidebar-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)', transition: 'all 0.2s' }}>
             <ArrowLeft size={20} />
           </button>
@@ -128,7 +128,7 @@ export default function WhatsAppDashboard() {
         </div>
       </div>
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px' }}>
+      <div style={{ width: '100%', maxWidth: 'none', margin: '0', padding: '16px 0' }}>
 
         {/* Stats Row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>

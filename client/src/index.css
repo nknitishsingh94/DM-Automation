@@ -14,8 +14,8 @@
   --transition-fast: 0.2s ease-out;
   --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   --sidebar-width: 280px;
-  --page-padding: 40px;
-  --page-padding-bottom: 40px;
+  --page-padding: 8px 24px;
+  --page-padding-bottom: 32px;
 }
 
 [data-theme="dark"] {
@@ -273,16 +273,16 @@ button {
 }
 
 .topbar {
-  height: 72px;
-  padding: 0 32px;
+  height: 48px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border-subtle);
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(24px);
   z-index: 5;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .topbar-dashboard {
@@ -291,8 +291,8 @@ button {
 }
 
 .page-title {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
 }
 
 .topbar-actions {

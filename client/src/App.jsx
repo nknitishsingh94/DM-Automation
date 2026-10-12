@@ -765,12 +765,12 @@ function TopBar({ onMenuClick }) {
   const isDesktopSpecial = ['/dashboard', '/connections'].includes(location.pathname);
 
   return (
-    <header className={`topbar ${isDesktopSpecial ? '' : 'desktop-hide'}`} style={{ background: 'transparent', borderBottom: 'none', height: '60px', padding: '0 16px' }}>
+    <header className={`topbar ${isDesktopSpecial ? '' : 'desktop-hide'}`} style={{ background: 'transparent', borderBottom: 'none', height: '48px', padding: '0 24px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
         <button onClick={onMenuClick} className="mobile-show" style={{ color: 'var(--text-main)', background: 'transparent', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <MenuIcon size={24} />
         </button>
-        <h1 className="page-title" style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>{getTitle()}</h1>
+        <h1 className="page-title" style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>{getTitle()}</h1>
       </div>
       <div className="topbar-actions" id="topbar-actions-portal">
         {/* Support button removed */}

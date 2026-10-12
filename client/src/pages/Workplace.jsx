@@ -88,8 +88,8 @@ export default function Workplace() {
 
   return (
     <div style={{
-      maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column',
-      gap: '28px', padding: '0 16px 100px 16px', margin: '0 auto',
+      width: '100%', maxWidth: 'none', display: 'flex', flexDirection: 'column',
+      gap: '24px', padding: '0 0 100px 0', margin: '0',
       fontFamily: 'Inter, system-ui, sans-serif',
       animation: 'fadeIn 0.45s ease-out',
     }}>
@@ -278,8 +278,8 @@ export function FacebookWorkbench() {
 function WorkbenchShell({ platform, color, Icon, onBack }) {
   return (
     <div style={{
-      maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column',
-      gap: '24px', padding: '0 16px 100px 16px', margin: '0 auto',
+      width: '100%', maxWidth: 'none', display: 'flex', flexDirection: 'column',
+      gap: '24px', padding: '0 0 100px 0', margin: '0',
       fontFamily: 'Inter, system-ui, sans-serif',
       animation: 'fadeIn 0.5s ease-out',
     }}>
