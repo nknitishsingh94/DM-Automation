@@ -613,25 +613,23 @@ export default function Connections() {
   if (loading) return <LoadingSpinner minHeight="60vh" />;
 
   return (
-    <div style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', padding: '0 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', animation: 'fadeIn 0.5s ease-out' }}>
+    <div className="connections-container" style={{ maxWidth: '1100px', width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', padding: '0 16px 100px 16px', margin: '0 auto', fontFamily: 'Inter, system-ui, sans-serif', boxSizing: 'border-box', animation: 'fadeIn 0.5s ease-out' }}>
 
-
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
 
         {/* Top-right button portal */}
         {document.getElementById('topbar-actions-portal') && createPortal(
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <button
               className="settings-header-btn"
               onClick={() => setShowConnectModal(true)}
               style={{
                 background: 'var(--accent-color)',
                 color: 'white',
-                padding: '10px 20px',
+                padding: '8px 16px',
                 borderRadius: '8px',
                 fontWeight: '600',
-                fontSize: '0.95rem',
+                fontSize: '0.88rem',
                 border: 'none',
                 cursor: 'pointer',
                 display: 'flex',
@@ -644,7 +642,7 @@ export default function Connections() {
               onMouseOver={(e) => { e.currentTarget.style.background = '#6d28d9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
               onMouseOut={(e) => { e.currentTarget.style.background = 'var(--accent-color)'; e.currentTarget.style.transform = 'translateY(0)'; }}
             >
-              <Plus size={18} /> New Connection
+              <Plus size={16} /> New Connection
             </button>
           </div>,
           document.getElementById('topbar-actions-portal')
@@ -668,10 +666,11 @@ export default function Connections() {
             {/* All platforms dropdown */}
             <div style={{ position: 'relative' }}>
               <button
+                className="filter-select-btn"
                 onClick={() => setShowPlatformDropdown(!showPlatformDropdown)}
                 style={{
-                  background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '8px 16px',
-                  fontSize: '0.88rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: '150px', justifyContent: 'space-between'
+                  background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '8px 14px',
+                  fontSize: '0.88rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: '0', justifyContent: 'space-between'
                 }}
               >
                 <span>{platformFilter}</span>
@@ -693,10 +692,11 @@ export default function Connections() {
             {/* All statuses dropdown */}
             <div style={{ position: 'relative' }}>
               <button
+                className="filter-select-btn"
                 onClick={() => setShowStatusDropdown(!showStatusDropdown)}
                 style={{
-                  background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '8px 16px',
-                  fontSize: '0.88rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: '130px', justifyContent: 'space-between'
+                  background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '8px 14px',
+                  fontSize: '0.88rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: '0', justifyContent: 'space-between'
                 }}
               >
                 <span>{statusFilter}</span>
@@ -736,7 +736,7 @@ export default function Connections() {
         </div>
 
         {/* Main Connection Table Card (matches screenshot empty slots or renders connected card) */}
-        <div style={{
+        <div className="connections-main-card" style={{
           background: 'var(--bg-card)',
           borderRadius: '12px',
           border: '1px solid var(--border-subtle)',
@@ -746,7 +746,9 @@ export default function Connections() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          padding: '24px'
+          padding: '24px',
+          boxSizing: 'border-box',
+          width: '100%'
         }}>
 
           {/* Check if ANY channel is connected based on active filters */}
@@ -755,7 +757,7 @@ export default function Connections() {
               {hasSocialConnected && (
                 <>
                   <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: 'var(--text-main)', marginBottom: '16px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>Social Account connection</h3>
-                  <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'stretch' }}>
+                  <div className="connection-card-grid">
 
                     {/* ---- INSTAGRAM CARD ---- */}
                     {settings.isAccountConnected && globalPlatforms.instagram !== false && (platformFilter === 'All platforms' || platformFilter === 'Instagram') && (statusFilter === 'All statuses' || statusFilter === 'Connected') && (
@@ -1124,7 +1126,7 @@ export default function Connections() {
               {hasWhatsAppConnected && (
                 <div style={{ marginTop: hasSocialConnected ? '32px' : '0px' }}>
                   <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: 'var(--text-main)', marginBottom: '16px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>Communication Channels</h3>
-                  <div className="connection-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', alignItems: 'stretch' }}>
+                  <div className="connection-card-grid">
                     <div className="connection-card" style={{ width: '100%', height: '100%', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '20px', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1205,11 +1207,12 @@ export default function Connections() {
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
           animation: 'fadeIn 0.2s ease-out'
         }}>
-          <div style={{
+          <div className="connect-modal-card" style={{
             background: 'var(--bg-card)', borderRadius: '20px', width: '100%', maxWidth: '640px',
             padding: '32px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             border: '1px solid var(--border-subtle)', position: 'relative', margin: '20px',
-            animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+            animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+            boxSizing: 'border-box'
           }}>
             {/* Close Button */}
             <button
@@ -1227,7 +1230,7 @@ export default function Connections() {
             </p>
 
             {/* Grid of Platforms */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '12px', maxHeight: '380px', overflowY: 'auto', padding: '4px' }}>
+            <div className="connect-platforms-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '12px', maxHeight: '380px', overflowY: 'auto', padding: '4px' }}>
               {platformsList.map(platform => (
                 <div
                   key={platform.name}
@@ -1308,11 +1311,12 @@ export default function Connections() {
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1001,
           animation: 'fadeIn 0.2s ease-out'
         }}>
-          <div style={{
+          <div className="telegram-modal-card" style={{
             background: 'var(--bg-card)', borderRadius: '24px', width: '100%', maxWidth: '500px',
             padding: '36px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             border: '1px solid var(--border-subtle)', position: 'relative', margin: '20px',
-            animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+            animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+            boxSizing: 'border-box'
           }}>
             {/* Close Button */}
             <button
@@ -1431,14 +1435,14 @@ export default function Connections() {
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100,
           animation: 'fadeIn 0.2s ease-out'
         }}>
-          <div style={{
+          <div className="settings-modal-card" style={{
             background: 'var(--sidebar-bg)', borderRadius: '16px', width: '100%', maxWidth: '580px',
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             border: '1px solid var(--border-subtle)', position: 'relative', margin: '20px',
             overflow: 'hidden', animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            display: 'flex', flexDirection: 'column'
+            display: 'flex', flexDirection: 'column', boxSizing: 'border-box', maxHeight: '90vh'
           }}>
-            <div style={{ padding: '24px', background: 'var(--bg-card)', borderBottom: '1px solid var(--border-subtle)' }}>
+            <div className="settings-modal-header" style={{ padding: '24px', background: 'var(--bg-card)', borderBottom: '1px solid var(--border-subtle)' }}>
               <button
                 onClick={() => setSelectedSettingsPlatform(null)}
                 style={{ position: 'absolute', top: '24px', right: '24px', background: 'var(--bg-dark)', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
@@ -1454,17 +1458,17 @@ export default function Connections() {
                 </div>
                 <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>{selectedSettingsPlatform.name} settings</h2>
               </div>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0, paddingLeft: '52px' }}>Manage your {selectedSettingsPlatform.name} account connection and messaging preferences.</p>
+              <p className="settings-modal-header-desc" style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0, paddingLeft: '52px' }}>Manage your {selectedSettingsPlatform.name} account connection and messaging preferences.</p>
             </div>
 
-            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div className="settings-modal-body" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', overflowY: 'auto' }}>
 
               {/* Account Connection Section */}
               <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '20px', border: '1px solid var(--border-subtle)' }}>
                 <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 6px 0' }}>Account connection</h3>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 20px 0' }}>Your connected {selectedSettingsPlatform.name} account and connection status.</p>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>
+                <div className="settings-modal-account-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', flexWrap: 'wrap', gap: '12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--bg-dark)', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: '700' }}>
                       {selectedSettingsPlatform.username ? selectedSettingsPlatform.username.substring(0, 2).toUpperCase() : 'UI'}
@@ -1477,7 +1481,7 @@ export default function Connections() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <div className="settings-modal-account-actions" style={{ display: 'flex', gap: '8px' }}>
                     <button
                       onClick={() => {
                         let logoutUrl = '';
@@ -1538,7 +1542,7 @@ export default function Connections() {
 
               {/* Automation Channel Section */}
               {['instagram', 'facebook', 'whatsapp'].includes(selectedSettingsPlatform.id) && (
-                <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '20px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div className="settings-modal-channel-row" style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '20px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
                   <div>
                     <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 6px 0' }}>{selectedSettingsPlatform.name} channel</h3>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>
@@ -1570,7 +1574,7 @@ export default function Connections() {
               )}
 
               {/* Remove Account Section */}
-              <div style={{ background: '#fff1f2', borderRadius: '12px', padding: '20px', border: '1px solid #fecdd3', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+              <div className="settings-modal-remove-row" style={{ background: '#fff1f2', borderRadius: '12px', padding: '20px', border: '1px solid #fecdd3', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
                 <div style={{ paddingRight: '20px' }}>
                   <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#9f1239', margin: '0 0 6px 0' }}>Remove {selectedSettingsPlatform.name} account</h3>
                   <p style={{ color: '#be123c', fontSize: '0.85rem', margin: 0, lineHeight: '1.4' }}>
@@ -1680,48 +1684,138 @@ export default function Connections() {
           transform: scale(1.05);
         }
 
+        /* Connection Card Grid System */
+        .connection-card-grid {
+          display: grid !important;
+          grid-template-columns: repeat(4, 1fr) !important;
+          gap: 16px !important;
+          align-items: stretch !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+        }
+
+        @media (max-width: 1200px) {
+          .connection-card-grid {
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 14px !important;
+          }
+        }
+
+        @media (max-width: 880px) {
+          .connection-card-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
+          }
+        }
+
+        @media (max-width: 580px) {
+          .connection-card-grid {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+          }
+        }
+
         /* Premium Mobile Responsiveness Queries */
         @media (max-width: 640px) {
-          .settings-header {
-            flex-direction: column;
-            align-items: stretch !important;
-            gap: 16px !important;
+          .connections-container {
+            padding: 0 0 100px 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+          }
+          .connections-main-card {
+            padding: 14px 10px !important;
+            border-radius: 14px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
           }
           .settings-header-btn {
-            width: 100%;
-            justify-content: center;
-            padding: 12px 18px !important;
-            font-size: 0.95rem !important;
+            padding: 6px 12px !important;
+            font-size: 0.8rem !important;
+            border-radius: 6px !important;
           }
           .settings-filters {
-            width: 100%;
-            justify-content: space-between !important;
-            gap: 12px !important;
-            padding: 12px 0 !important;
+            width: 100% !important;
+            justify-content: stretch !important;
+            gap: 8px !important;
+            padding: 6px 0 !important;
+            box-sizing: border-box !important;
           }
           .settings-filters-group {
-            width: 100%;
+            width: 100% !important;
             display: flex !important;
-            flex-direction: row !important; /* side by side */
-            gap: 10px !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
             align-items: center !important;
           }
           .settings-filters-group > div {
-            flex: 1;
-            width: 100%;
+            flex: 1 1 calc(50% - 4px) !important;
+            min-width: 0 !important;
           }
-          .settings-filters-group button {
-            width: 100%;
-            justify-content: space-between;
-            padding: 10px 14px !important;
-            font-size: 0.85rem !important;
+          .filter-select-btn {
+            width: 100% !important;
+            min-width: 0 !important;
+            justify-content: space-between !important;
+            padding: 8px 10px !important;
+            font-size: 0.8rem !important;
+            box-sizing: border-box !important;
           }
-          .connection-card-grid {
-            justify-content: center !important;
+          .filter-dropdown {
+            width: 100% !important;
+            min-width: 160px !important;
+            max-width: 85vw !important;
+            right: 0 !important;
+            left: auto !important;
           }
           .connection-card {
             width: 100% !important;
             max-width: 100% !important;
+            padding: 16px 14px !important;
+            box-sizing: border-box !important;
+            border-radius: 12px !important;
+          }
+          .connect-modal-card,
+          .telegram-modal-card,
+          .settings-modal-card {
+            margin: 10px !important;
+            padding: 18px 14px !important;
+            border-radius: 16px !important;
+            max-height: 90vh !important;
+            width: calc(100% - 20px) !important;
+            box-sizing: border-box !important;
+          }
+          .connect-platforms-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 8px !important;
+          }
+          .settings-modal-header {
+            padding: 16px 14px !important;
+          }
+          .settings-modal-header-desc {
+            padding-left: 0 !important;
+            margin-top: 6px !important;
+          }
+          .settings-modal-body {
+            padding: 16px 12px !important;
+            gap: 16px !important;
+          }
+          .settings-modal-account-row,
+          .settings-modal-channel-row,
+          .settings-modal-remove-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
+          }
+          .settings-modal-account-actions {
+            width: 100% !important;
+            display: flex !important;
+            gap: 8px !important;
+          }
+          .settings-modal-account-actions button,
+          .settings-modal-remove-row button {
+            width: 100% !important;
+            justify-content: center !important;
           }
         }
       `}</style>
