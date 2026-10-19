@@ -8,7 +8,7 @@
     "server": "cd server && npm run dev",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "start": "node server/index.js",
-    "build": "cd client && npm install && npm run build && cd .. && node -e \"const fs = require('fs'); if (fs.existsSync('dist')) fs.rmSync('dist', {recursive: true, force: true}); fs.cpSync('client/dist', 'dist', {recursive: true})\""
+    "build": "node build.js"
   },
   "dependencies": {
     "acorn": "^8.17.0",
